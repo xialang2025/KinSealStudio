@@ -1,0 +1,105 @@
+{
+  "startedAtUtc": "2026-11-10T15:10:37.579106+00:00",
+  "status": "failed",
+  "steps": [
+    {
+      "label": "stage3-single-page-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-single-page.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:38.567178+00:00",
+      "completedAtUtc": "2026-11-10T15:10:38.894179+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage3-single-page-reopen",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-single-page.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-single-page-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:38.895179+00:00",
+      "completedAtUtc": "2026-11-10T15:10:39.033194+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage3-two-pages-one-window-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-two-pages-one-window.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:39.040182+00:00",
+      "completedAtUtc": "2026-11-10T15:10:39.177825+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage3-two-pages-one-window-reopen",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-two-pages-one-window.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-two-pages-one-window-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:39.179825+00:00",
+      "completedAtUtc": "2026-11-10T15:10:39.313663+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "window-source-refusal",
+      "arguments": [
+        "--export-native-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-two-pages-one-window.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\protected-window.sm"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:39.466662+00:00",
+      "completedAtUtc": "2026-11-10T15:10:39.638065+00:00",
+      "exitCode": 20,
+      "expectedExitCode": 20,
+      "result": {
+        "message": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+        "ok": false
+      }
+    },
+    {
+      "label": "window-compile-refusal",
+      "arguments": [
+        "--compile-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\stage3-two-pages-one-window.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\portable-offline-r2\\window-rejected"
+      ],
+      "startedAtUtc": "2026-11-10T15:10:39.640063+00:00",
+      "completedAtUtc": "2026-11-10T15:10:39.827638+00:00",
+      "exitCode": 19,
+      "expectedExitCode": 19,
+      "result": {
+        "message": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+        "ok": false
+      }
+    }
+  ],
+  "usbAccessed": false,
+  "physicalTouchConfirmed": false,
+  "firmwareVersion": null,
+  "scope": "one-page-five-control-transfer; multi-page/window editor persistence only",
+  "executable": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage3-0.10.0-final\\KinSealStudioLite.exe",
+    "sha256": "0220e2b0727e3c452d506608c9481709a608be7d5a02d35286afffdc8bd21bf1",
+    "bytes": 46381996
+  },
+  "error": "export-source: expected 0, got 20: {'message': '原生源保存尚未验证图库条目的改写，已取消保存。', 'ok': False}",
+  "completedAtUtc": "2026-11-10T15:10:40.026228+00:00"
+}

@@ -1,0 +1,51 @@
+{
+  "mode": "read_only_then_authorized_repairs",
+  "reviewers": [
+    "root",
+    "stage2_dialogs"
+  ],
+  "findings": [
+    {
+      "id": "R1",
+      "issue": "Rejected or failed placement retains resource draft",
+      "repair": "Register only accepted pending placement; clear draft on final model validation failure",
+      "test": "rejectedPlacementCannotLeakResources"
+    },
+    {
+      "id": "R2",
+      "issue": "Existing object edit during placement consumes pending draft",
+      "repair": "Consume only finished placement resources; cancel interaction before property apply",
+      "test": "placementCancelAndCommitAreAtomic"
+    },
+    {
+      "id": "R3",
+      "issue": "Floating fontSize implicitly truncated",
+      "repair": "Integer sizes use pixels; fractional sizes use pointSizeF normalized to actual paint-device DPI",
+      "test": "pixelFontsIgnorePaintDeviceDpi plus frozen 0.9.0 Windows compiler comparison"
+    },
+    {
+      "id": "R4",
+      "issue": "Save may publish in-flight geometry then Escape leaves wrong dirty checkpoint",
+      "repair": "Read tools capture committed model; save/export/download cancel interaction before snapshot",
+      "test": "saveCancelsUncommittedGeometry"
+    },
+    {
+      "id": "R5",
+      "issue": "Independent Qt test targets require new shared decode helper",
+      "repair": "Explicit CMake target_sources for all standalone property/model/render consumers",
+      "test": "full build/link"
+    },
+    {
+      "id": "R6",
+      "issue": "Old fractional layers rewritten by ineffective layer command",
+      "repair": "Reindex only on actual order changes",
+      "test": "noOpDoesNotCreateHistory"
+    }
+  ],
+  "unknowns": [
+    "Cross-Qt selectedItems set iteration order",
+    "Native group node and lock source format",
+    "Dynamic transparent overlap and screen touch",
+    "All fonts and adaptive glyph equivalence"
+  ]
+}

@@ -128,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     QDockWidget *tool_dock;
     QTimer *device_timer;
 
-    setWindowTitle(QStringLiteral("KinSealStudio Lite 0.9.0 工程工作流版")); //20261110-7 change
+    setWindowTitle(QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版")); //20261110-7 change
     setMinimumSize(900, 480);
     resize(1376, 736); //20261108-7 change: Match the measured vendor window dimensions.
     setDockNestingEnabled(true);
@@ -170,6 +170,10 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
             this, &MainWindow::updateCoordinates);
     connect(m_canvas, &ScreenCanvas::documentChanged,
             this, &MainWindow::addSelectedControl);
+    connect(m_canvas, &ScreenCanvas::interactionCancelled, this, [this]() { //20261110-8 add
+        m_hasPendingControlResources = false;
+        m_pendingControlResources = HmiProject();
+    });
     connect(m_canvas, &ScreenCanvas::controlLimitReached, this, [this]() {
         statusBar()->showMessage(QStringLiteral("该机型最多支持 100 个控件。"), 5000);
     });
@@ -321,6 +325,19 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
         else { edit->addAction(action); }
         connect(action, &QAction::triggered, this, [this, commands, index]() { dispatchEditCommand(commands.at(index)); });
     }
+    //20261110-8 add: The recovered arrangement commands share the same selection and whole-project history routing.
+    ids = {QStringLiteral("action_widthsame"), QStringLiteral("action_heightsame"), QStringLiteral("action_widthheightsame"),
+           QStringLiteral("action_horizontal"), QStringLiteral("action_vertcal")};
+    labels = {QStringLiteral("宽度相同"), QStringLiteral("高度相同"), QStringLiteral("宽度高度都相同"),
+              QStringLiteral("水平等间距"), QStringLiteral("垂直等间距")};
+    commands = {QStringLiteral("alignWidth"), QStringLiteral("alignHeight"), QStringLiteral("alignSize"),
+                QStringLiteral("alignHorizontalSpacing"), QStringLiteral("alignVerticalSpacing")};
+    for (index = 0; index < ids.size(); ++index) {
+        action = command(ids.at(index), labels.at(index));
+        action->setProperty("editCommand", commands.at(index));
+        align->addAction(action);
+        connect(action, &QAction::triggered, this, [this, commands, index]() { dispatchEditCommand(commands.at(index)); });
+    }
     edit->addSeparator();
     ids = {QStringLiteral("action_items_table"), QStringLiteral("action_TextView"), QStringLiteral("action_address_table"), QStringLiteral("action_macro_find")};
     labels = {QStringLiteral("控件一览表..."), QStringLiteral("文本一览表..."), QStringLiteral("地址一览表..."), QStringLiteral("宏指令查找...")};
@@ -340,6 +357,9 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
     action = command(QStringLiteral("action_languages"), QStringLiteral("工程语言设置..."));
     tools->addAction(action);
     connect(action, &QAction::triggered, this, &MainWindow::configureLanguages);
+    action = command(QStringLiteral("action_project_pictures"), QStringLiteral("工程图片管理...")); //20261110-8 add
+    tools->addAction(action);
+    connect(action, &QAction::triggered, this, &MainWindow::manageProjectPictures);
     action = command(QStringLiteral("action_connections"), QStringLiteral("PLC连接设置..."));
     tools->addAction(action);
     connect(action, &QAction::triggered, this, &MainWindow::configureConnections);
@@ -415,7 +435,7 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
     action = command(QStringLiteral("action_KinSeal"), QStringLiteral("关于 KinSealStudio Lite"));
     help->addAction(action);
     connect(action, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.9.0 工程工作流版\n工程/画面事务、全局索引与地址替换，既有五类单页编译及USB下载。"));
+        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版\n画布事务、跨工程复制、多重复制及工程图片管理，五类单页编译及USB下载。"));
     });
 }
 
@@ -840,6 +860,7 @@ void MainWindow::exportNativeTest() //20261108-7 add
     {
         path.append(QStringLiteral(".sm"));
     }
+    m_canvas->cancelInteraction(); //20261110-8 add: Export committed page geometry only.
     m_project.objects = m_canvas->objects(); //20261109-0 add: Export the current edited geometry and properties.
     nativeSource = !m_project.nativeSourceSnapshot.isEmpty();
     Q_FOREACH (object, m_project.objects) { nativeSource = nativeSource || object.hasBitButtonProperties; }
@@ -869,18 +890,30 @@ void MainWindow::addSelectedControl() //20261110-5 change
 {
     HmiProject candidate;
     QString error;
+    bool completedPlacement; //20261110-8 add
 
     candidate = m_project;
     candidate.objects = m_canvas->objects();
+    completedPlacement = m_hasPendingControlResources && !m_canvas->hasPendingPlacement();
+    if (completedPlacement) { //20261110-8 add
+        candidate.macros = m_pendingControlResources.macros;
+        candidate.pictures = m_pendingControlResources.pictures;
+    }
     if (!candidate.validateModel(&error))
     {
         // A canvas deletion must not leave persisted cross-page references dangling.
+        m_hasPendingControlResources = false; //20261110-8 add: Failed final placement drops its resource draft even after canvas flags have cleared.
+        m_pendingControlResources = HmiProject();
         m_canvas->setProject(m_project);
         rebuildProjectTree();
         QMessageBox::warning(this, QStringLiteral("工程修改未提交"), error);
         return;
     }
     m_project = candidate;
+    if (completedPlacement) { //20261110-8 change: An unrelated edit cannot consume a still-pending placement's resources.
+        m_hasPendingControlResources = false;
+        m_pendingControlResources = HmiProject();
+    }
     rebuildProjectTree();
     setDirty(true);
 }
@@ -931,10 +964,8 @@ void MainWindow::applySelectedProperties() //20261107-6 add
     geometry.moveTopLeft(QPoint(qBound(0, m_xSpin->value(), maximum_x),
                                 qBound(0, m_ySpin->value(), maximum_y)));
     object.geometry = geometry;
+    m_canvas->cancelInteraction(); //20261110-8 add: Apply captured property values only after cancelling uncommitted geometry or placement.
     m_canvas->updateSelectedObject(object);
-    m_project.objects = m_canvas->objects();
-    rebuildProjectTree();
-    setDirty(true);
 }
 
 /******************************************************************************
@@ -988,6 +1019,7 @@ void MainWindow::downloadToDevice() //20261108-10 change
         return;
     }
 
+    m_canvas->cancelInteraction(); //20261110-8 add: Never send a move/resize preview to the device.
     m_project.objects = m_canvas->objects();
     if (!m_project.validateSinglePageBackend(&error)) //20261110-5 add: Show the whole-document boundary before starting a worker.
     {
@@ -1225,6 +1257,8 @@ void MainWindow::setProject(const HmiProject &project, const QString &path) //20
     QJsonArray connectionsJson; //20261109-0 add
     PlcConnection connection;
 
+    m_hasPendingControlResources = false; //20261110-8 add: Replacing or restoring a document discards unplaced property drafts.
+    m_pendingControlResources = HmiProject();
     m_project = project;
     m_hasProject = true; //20261110-7 add
     m_canvas->setEnabled(true);
@@ -1267,7 +1301,7 @@ void MainWindow::setDirty(bool dirty) //20261107-6 add
     if (dirty) { recordProjectHistory(); } //20261110-7 add
     m_dirty = dirty && m_hasProject && projectIsModified();
     if (!dirty && !m_restoringProject && m_hasProject) { storeSavedCheckpoint(); }
-    title = QStringLiteral("KinSealStudio Lite 0.9.0 工程工作流版 - %1%2") //20261110-7 change
+    title = QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版 - %1%2") //20261110-7 change
                 .arg(m_project.name)
                 .arg(m_dirty ? QStringLiteral(" *") : QString());
     setWindowTitle(title);
@@ -1311,6 +1345,7 @@ bool MainWindow::writeProject(const QString &path) //20261107-6 add
     HmiProject candidate; //20261110-7 add
 
     if (!m_hasProject) { return false; } //20261110-7 add
+    m_canvas->cancelInteraction(); //20261110-8 add: Saving resolves the interaction before capturing geometry and the clean checkpoint.
     if (QFileInfo(path).suffix().compare(QStringLiteral("ksp"), Qt::CaseInsensitive) != 0) {
         QMessageBox::critical(this, QStringLiteral("保存失败"), QStringLiteral("工程保存目标必须为.ksp，原厂源请使用导出命令。"));
         return false;

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(KinSealStudioLite VERSION 0.9.0 LANGUAGES CXX) #20261110-7 change: Publish the project workflow edition independently.
+project(KinSealStudioLite VERSION 0.10.0 LANGUAGES CXX) #20261110-8 change: Publish the canvas and resource edition independently.
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,6 +18,12 @@ qt_add_executable(KinSealStudioLite WIN32
     src/main_window.cpp
     src/main_window.h
     src/main_window_workflow.cpp #20261110-7 add: Share command state and whole-project transactions.
+    src/stage3_project_edits.h #20261110-8 add
+    src/stage3_project_edits.cpp
+    src/stage3_resources.h
+    src/stage3_resources.cpp
+    src/control_rendering.h
+    src/control_rendering.cpp
     src/stage2_project_dialogs.h
     src/stage2_project_dialogs.cpp
     src/stage2_global_tools.h
@@ -130,6 +136,15 @@ foreach(KINSEAL_STAGE2_TARGET KinSealStage2DialogsTests KinSealStage2GlobalTools
     target_compile_definitions(${KINSEAL_STAGE2_TARGET} PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 endforeach()
 
+#20261110-8 add: Exercise canvas gestures and complete host transactions against production implementations.
+qt_add_executable(KinSealStage3CanvasTests ${KINSEAL_TEST_SOURCES} tests/stage3_canvas_tests.cpp)
+qt_add_executable(KinSealStage3ProjectEditsTests ${KINSEAL_TEST_SOURCES} tests/stage3_project_edits_tests.cpp)
+qt_add_executable(KinSealStage3IntegrationTests ${KINSEAL_TEST_SOURCES} tests/stage3_integration_tests.cpp)
+foreach(KINSEAL_STAGE3_TARGET KinSealStage3CanvasTests KinSealStage3ProjectEditsTests KinSealStage3IntegrationTests)
+    target_include_directories(${KINSEAL_STAGE3_TARGET} PRIVATE src third_party/lzokay)
+    target_link_libraries(${KINSEAL_STAGE3_TARGET} PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+    target_compile_definitions(${KINSEAL_STAGE3_TARGET} PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+endforeach()
 
 qt_add_executable(KinSealStaticTextTests ${KINSEAL_TEST_SOURCES} tests/static_text_tests.cpp)
 target_include_directories(KinSealStaticTextTests PRIVATE src third_party/lzokay)
@@ -250,8 +265,13 @@ target_compile_definitions(KinSealStudioLite PRIVATE
 )
 
 #20261109-0 add: Share the recovered pure address catalog with every project/model consumer.
-foreach(KINSEAL_CODEC_TARGET KinSealStudioLite KinSealProjectModelTests KinSealStage1BackendTests KinSealStage2DialogsTests KinSealStage2GlobalToolsTests KinSealStage2WorkflowTests KinSealStaticTextTests KinSealWordButtonDialogTests KinSealLampDialogTests KinSealFunctionButtonDialogTests KinSealDeviceMacroTests KinSealPlcAddressTests KinSealNativeSourceTests) #20261110-7 change
+foreach(KINSEAL_CODEC_TARGET KinSealStudioLite KinSealProjectModelTests KinSealStage1BackendTests KinSealStage2DialogsTests KinSealStage2GlobalToolsTests KinSealStage2WorkflowTests KinSealStage3CanvasTests KinSealStage3ProjectEditsTests KinSealStage3IntegrationTests KinSealStaticTextTests KinSealWordButtonDialogTests KinSealLampDialogTests KinSealFunctionButtonDialogTests KinSealDeviceMacroTests KinSealPlcAddressTests KinSealNativeSourceTests) #20261110-8 change
     target_sources(${KINSEAL_CODEC_TARGET} PRIVATE src/plc_native_catalog.cpp src/plc_native_catalog.h)
+endforeach()
+
+#20261110-8 add: Independent property and renderer targets share bounded source-image decoding and the page-pixel font contract.
+foreach(KINSEAL_RENDER_TARGET KinSealNativeFunctionControlTests KinSealNativeLampControlTests KinSealBitButtonRendererTests KinSealNativeControlTests KinSealNativeWordControlTests KinSealNativeStaticControlTests KinSealDeviceMacroTests KinSealNativeSourceTests)
+    target_sources(${KINSEAL_RENDER_TARGET} PRIVATE src/control_rendering.cpp src/control_rendering.h)
 endforeach()
 
 #20261109-6 add: Every independent project-model target must resolve word-property serialization.

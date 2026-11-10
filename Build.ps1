@@ -1,7 +1,7 @@
 ﻿param(
     [switch]$Deploy,
     [ValidatePattern('^[A-Za-z0-9_-]+$')]
-    [string]$DeployDirectoryName = 'KinSealStudioLite-Stage2-0.9.0' #20261110-7 change: Publish independently while the previous editor remains open.
+    [string]$DeployDirectoryName = 'KinSealStudioLite-Stage3-0.10.0-final' #20261110-8 change: Publish independently while the previous editor remains open.
 )
 
 # 20261107-6 add: Build the Qt editor and optionally create a self-contained deployment directory.
@@ -15,6 +15,11 @@ $Compiler = Join-Path $ToolRoot 'mingw1310_64\bin\g++.exe'
 $CompilerBin = Join-Path $ToolRoot 'mingw1310_64\bin'
 $env:Path = "$CompilerBin;$($QtRoot)\bin;$($ToolRoot)\Ninja;$env:Path"
 $env:QT_QPA_PLATFORM = 'offscreen' # 20261108-7 change: Keep tests off the user's desktop.
+#20261110-8 add: Keep compiler and SDK temporary files on the workspace drive.
+$Stage3Temp = Join-Path $ProjectRoot '..\.scratch\kinseal-stage3-20261110\temp'
+New-Item -ItemType Directory -Force -Path $Stage3Temp | Out-Null
+$env:TEMP = [System.IO.Path]::GetFullPath($Stage3Temp)
+$env:TMP = $env:TEMP
 
 & $CMake -S $ProjectRoot -B (Join-Path $ProjectRoot 'build') -G Ninja `
     "-DCMAKE_MAKE_PROGRAM=$Ninja" `
@@ -57,7 +62,7 @@ if ($DeviceTransferTest.ExitCode -ne 0) {
     throw "Device transfer plan tests failed: $($DeviceTransferTest.ExitCode)."
 }
 #20261109-0 add: Record codec and macro compiler tests separately; no test opens USB.
-foreach ($CodecTestName in @('KinSealProjectModelTests', 'KinSealStage1BackendTests', 'KinSealStage2DialogsTests', 'KinSealStage2GlobalToolsTests', 'KinSealStage2WorkflowTests', 'KinSealNativeControlTests', 'KinSealNativeWordControlTests', 'KinSealNativeStaticControlTests', 'KinSealBitButtonRendererTests', 'KinSealDeviceMacroTests', 'KinSealPlcAddressTests', 'KinSealPlcNativeCatalogTests', 'KinSealDeviceScanTests', 'KinSealNativeSourceTests', 'KinSealWordButtonDialogTests', 'KinSealLampDialogTests', 'KinSealNativeLampControlTests', 'KinSealFunctionButtonDialogTests', 'KinSealNativeFunctionControlTests')) { #20261110-5 change
+foreach ($CodecTestName in @('KinSealProjectModelTests', 'KinSealStage1BackendTests', 'KinSealStage2DialogsTests', 'KinSealStage2GlobalToolsTests', 'KinSealStage2WorkflowTests', 'KinSealStage3CanvasTests', 'KinSealStage3ProjectEditsTests', 'KinSealStage3IntegrationTests', 'KinSealNativeControlTests', 'KinSealNativeWordControlTests', 'KinSealNativeStaticControlTests', 'KinSealBitButtonRendererTests', 'KinSealDeviceMacroTests', 'KinSealPlcAddressTests', 'KinSealPlcNativeCatalogTests', 'KinSealDeviceScanTests', 'KinSealNativeSourceTests', 'KinSealWordButtonDialogTests', 'KinSealLampDialogTests', 'KinSealNativeLampControlTests', 'KinSealFunctionButtonDialogTests', 'KinSealNativeFunctionControlTests')) { #20261110-5 change
     $CodecTestLog = Join-Path $ProjectRoot ("build\" + $CodecTestName + '.txt')
     $CodecTest = Start-Process -FilePath (Join-Path $ProjectRoot ("build\" + $CodecTestName + '.exe')) `
         -ArgumentList @('-o', ($CodecTestLog + ',txt')) -Wait -PassThru -WindowStyle Hidden
@@ -255,7 +260,7 @@ if ($Deploy) {
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'design_plan\指示灯复刻手册.assets') -Destination $DesignGuideDirectory -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'design_plan\功能按钮功能与交互复刻手册.md') -Destination $DesignGuideDirectory -Force #20261110-0 add
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'design_plan\功能按钮复刻手册.assets') -Destination $DesignGuideDirectory -Recurse -Force
-    foreach ($Stage1Guide in @('02_阶段1_工程模型与文件格式.md', 'A05_源格式与设备编译契约.md', '03_阶段2_主窗口与工程配置.md', 'A02_全局入口与工程配置规范.md')) { #20261110-7 change: Include the workflow contract and its explicit implementation boundaries.
+    foreach ($Stage1Guide in @('02_阶段1_工程模型与文件格式.md', 'A05_源格式与设备编译契约.md', '03_阶段2_主窗口与工程配置.md', 'A02_全局入口与工程配置规范.md', '04_阶段3_画布资源与一致渲染.md', 'A03_基础图形与表格规范.md')) { #20261110-7 change: Include the workflow contract and its explicit implementation boundaries.
         Copy-Item -LiteralPath (Join-Path $ProjectRoot ('design_plan\' + $Stage1Guide)) -Destination $DesignGuideDirectory -Force
     }
     $Stage1FixtureDirectory = Join-Path $DeployDirectory 'tests\fixtures'
@@ -286,7 +291,7 @@ if ($Deploy) {
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'samples\word-button') -Destination $SampleDirectory -Recurse -Force #20261109-6 add
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'samples\lamp') -Destination $SampleDirectory -Recurse -Force #20261109-8 add
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'samples\function-button') -Destination $SampleDirectory -Recurse -Force #20261110-0 add
-    foreach ($StageSampleName in @('stage0', 'stage1', 'stage2')) { #20261110-7 change: Ship workflow-only and downloadable examples with explicit boundaries.
+    foreach ($StageSampleName in @('stage0', 'stage1', 'stage2', 'stage3')) { #20261110-7 change: Ship workflow-only and downloadable examples with explicit boundaries.
         if (Test-Path -LiteralPath (Join-Path $ProjectRoot ('samples\' + $StageSampleName))) {
             Copy-Item -LiteralPath (Join-Path $ProjectRoot ('samples\' + $StageSampleName)) -Destination $SampleDirectory -Recurse -Force
         }

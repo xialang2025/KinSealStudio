@@ -1,5 +1,6 @@
-#include "bit_button_renderer.h"
+﻿#include "bit_button_renderer.h"
 #include "static_text_renderer.h"
+#include "control_rendering.h" //20261110-8 add
 #include "kvg_library.h" //20261109-0 add
 #include <QImage>
 #include <QFont> //20261109-0 add
@@ -17,18 +18,13 @@
 static void paintBitButtonCaption(QPainter *painter, const QRectF &rect, const QString &content,
                                    const StaticTextProperties &properties) //20261109-0 add
 {
-    QFont font(properties.fontFamily);
+    QFont font = controlPixelFont(properties, painter->device()->logicalDpiY()); //20261110-8 change
     int alignment;
 
     painter->save();
     painter->setClipRect(rect, Qt::IntersectClip);
     painter->setRenderHint(QPainter::TextAntialiasing, false);
-    font.setPointSizeF(properties.fontSize * 0.75);
-    font.setLetterSpacing(QFont::AbsoluteSpacing, properties.spacing);
-    font.setItalic(properties.italic);
-    font.setBold(properties.bold);
-    font.setUnderline(properties.underline);
-    font.setStyleStrategy(QFont::NoAntialias);
+    //20261110-8 change: The shared font uses target-page pixels at every view/device DPI.
     painter->setFont(font);
     painter->setPen(properties.textColor);
     alignment = Qt::AlignVCenter | (properties.alignment == 1 ? Qt::AlignLeft :
@@ -123,7 +119,7 @@ void paintBitButton(QPainter *painter, const QRectF &rect, const BitButtonState 
     {
         if (!state.picturePng.isEmpty())
         {
-            image = QImage::fromData(state.picturePng, "PNG"); imageRect = rect;
+            image = decodedControlPng(state.picturePng); imageRect = rect;
             if (state.imageMode != 0)
             {
                 imageSize = image.size();

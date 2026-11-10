@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include "project_model.h"
+#include "stage3_project_edits.h" //20261110-8 add: Keep complete object/resource clipboard values across document navigation.
 
 #include <QMainWindow>
 #include <QPoint>
@@ -28,6 +29,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     friend class Stage1BackendTests; //20261110-5 add: Verify page switching and persistence through the actual editor model.
     friend class Stage2WorkflowTests; //20261110-7 add: Exercise whole-project transactions without operating user windows.
+    friend class Stage3IntegrationTests; //20261110-8 add: Verify resource placement and project clipboard transactions.
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -62,6 +64,7 @@ private slots:
     void createLamp(); //20261109-8 add
     void createFunctionButton(); //20261110-0 add
     void editBitButton();
+    void manageProjectPictures(); //20261110-8 add
 
 private:
     HmiProject m_project;
@@ -96,6 +99,9 @@ private:
     bool m_hasProject = true;
     bool m_restoringProject = false;
     bool m_updatingNavigation = false;
+    Stage3Clipboard m_objectClipboard; //20261110-8 add
+    HmiProject m_pendingControlResources;
+    bool m_hasPendingControlResources = false;
 
     void createActionsAndMenus();
     void createToolbars();
@@ -106,6 +112,8 @@ private:
     bool applyControlDraft(const HmiObject &object, const QMap<QString, QString> &macros,
                            const QMap<QString, QByteArray> &pictures, bool editing,
                            QString *error); //20261110-5 add
+    void beginControlDraftPlacement(const HmiObject &object, const QMap<QString, QString> &macros,
+                                    const QMap<QString, QByteArray> &pictures); //20261110-8 add
     void setProject(const HmiProject &project, const QString &path);
     void setDirty(bool dirty);
     bool confirmDiscardChanges();

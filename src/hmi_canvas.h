@@ -51,6 +51,10 @@ public:
     void setZoomPercent(int percent);
     void setActiveTool(const QString &type);
     void selectObject(const QString &id);
+    void selectObjects(const QStringList &ids); //20261110-8 add: Stable programmatic selection without exposing graphics items.
+    bool hasPendingPlacement() const;
+    bool hasActiveInteraction() const;
+    void cancelInteraction();
     void beginStaticTextPlacement(const HmiObject &object); //20261108-14 add
     void beginControlPlacement(const HmiObject &object); //20261108-15 add
     void executeEdit(const QString &command);
@@ -58,6 +62,8 @@ public:
     void setExternalEditRouting(bool enabled) { m_externalEditRouting = enabled; }
     bool canExecuteEdit(const QString &command) const;
     QStringList selectedObjectIds() const;
+    QString arrangementReferenceObjectId(const QString &command) const; //20261110-8 add: Expose the actual operand instead of inventing a native primary-selection rule.
+    void setArrangementReferenceObject(const QString &id);
     void setLanguage(const QString &language);
     QString language() const { return m_language; }
 
@@ -68,6 +74,7 @@ signals:
     void controlLimitReached();
     void editObjectRequested(); //20261108-14 add
     void editCommandRequested(const QString &command); //20261110-7 add
+    void interactionCancelled(); //20261110-8 add: Cancel pending resources without creating an edit transaction.
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -102,6 +109,12 @@ private:
     int m_historyIndex = -1;
     bool m_restoring = false;
     bool m_externalEditRouting = false; //20261110-7 add: Standalone canvases retain their existing local command behavior.
+    bool m_moving = false; //20261110-8 add: Whole-selection movement uses one shared delta and one history transaction.
+    QPointF m_moveOrigin;
+    QRect m_moveBounds;
+    QList<HmiObject> m_interactionOriginal;
+    QStringList m_interactionSelection;
+    QString m_arrangementReferenceId; //20261110-8 add: Optional explicit reference; empty keeps the observed native list-first/list-last policy.
 
     void rebuildPage(int width, int height, bool preserveItems);
     void publishSelection();
@@ -109,6 +122,8 @@ private:
     void restoreObjects(const QList<HmiObject> &objects);
     bool beginResize(const QPointF &point);
     void updateResize(const QPointF &point);
+    void updateMove(const QPointF &point);
+    bool publishDocumentChange(const QList<HmiObject> &before);
 };
 
 #endif

@@ -32,6 +32,7 @@ void ScreenCanvas::beginStaticTextPlacement(const HmiObject &object) //20261108-
  ******************************************************************************/
 void ScreenCanvas::beginControlPlacement(const HmiObject &object) //20261108-15 add
 {
+    cancelInteraction(); //20261110-8 add: Cancel the preceding interaction before accepting a new property draft.
     if (objects().size() >= 100) { emit controlLimitReached(); return; }
     setActiveTool(QStringLiteral("select"));
     setActiveTool(object.type);
@@ -74,24 +75,35 @@ bool ScreenCanvas::beginResize(const QPointF &point) //20261108-14 add
     bool selected;
     QPointF handle;
     int index;
-    double tolerance;
+    QPointF viewportHandle;
+    QPointF viewportPoint;
+    double nearest;
+    double distance;
+    int chosen;
 
     object = selectedObject(&selected);
     if (!selected || m_scene->selectedItems().size() != 1) { return false; }
-    tolerance = 6.0 * 100 / m_zoomPercent;
+    viewportPoint = viewportTransform().map(point);
+    nearest = 6.0; chosen = -1;
     for (index = 0; index < 9; ++index)
     {
         if (index == 4) { continue; }
         handle = QPointF(object.geometry.x() + (index % 3) * object.geometry.width() / 2.0,
                           object.geometry.y() + (index / 3) * object.geometry.height() / 2.0);
-        if (QLineF(point, handle).length() <= tolerance)
+        viewportHandle = viewportTransform().map(handle);
+        distance = QLineF(viewportPoint, viewportHandle).length();
+        if (distance <= nearest) //20261110-8 change: Prefer the nearest handle when small controls have overlapping hit zones.
         {
-            m_resizeId = object.id;
-            m_resizeOriginal = object.geometry;
-            m_resizeHandle = (index % 3 == 0 ? 1 : index % 3 == 2 ? 2 : 0) |
-                             (index / 3 == 0 ? 4 : index / 3 == 2 ? 8 : 0);
-            return true;
+            nearest = distance; chosen = index;
         }
+    }
+    if (chosen >= 0)
+    {
+        m_interactionOriginal = objects(); m_interactionSelection = selectedObjectIds();
+        m_resizeId = object.id; m_resizeOriginal = object.geometry;
+        m_resizeHandle = (chosen % 3 == 0 ? 1 : chosen % 3 == 2 ? 2 : 0) |
+                         (chosen / 3 == 0 ? 4 : chosen / 3 == 2 ? 8 : 0);
+        return true;
     }
     return false;
 }
@@ -223,7 +235,15 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
     int copies;
     int offset;
     int position;
+    QList<HmiObject> before; //20261110-8 add: Mutating commands share the same no-op transaction guard.
+    QString referenceId;
+    QRect referenceGeometry;
+    bool horizontal;
+    qreal totalSize;
+    qreal gap;
+    qreal coordinate;
 
+    cancelInteraction(); before = objects();
     selected = m_scene->selectedItems();
     if (command == QStringLiteral("properties")) { emit editObjectRequested(); return; }
     if (command == QStringLiteral("undo") || command == QStringLiteral("redo"))
@@ -231,7 +251,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
         position = m_historyIndex + (command == QStringLiteral("undo") ? -1 : 1);
         if (position < 0 || position >= m_history.size()) { return; }
         m_historyIndex = position;
-        m_restoring = true; restoreObjects(m_history.at(position)); emit documentChanged(); m_restoring = false;
+        m_restoring = true; restoreObjects(m_history.at(position)); publishDocumentChange(before); m_restoring = false;
         return;
     }
     if (command == QStringLiteral("grid")) { m_grid = !m_grid; viewport()->update(); return; }
@@ -269,7 +289,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
     {
         if (selected.isEmpty()) { return; }
         Q_FOREACH (graphicsItem, selected) { delete graphicsItem; }
-        m_previousSelectionValid = false; publishSelection(); emit documentChanged(); return;
+        m_previousSelectionValid = false; publishSelection(); publishDocumentChange(before); return;
     }
     if (command == QStringLiteral("paste") || command == QStringLiteral("multiCopy"))
     {
@@ -302,9 +322,41 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
                 m_scene->addItem(item); all.append(item); item->setSelected(true);
             }
         }
-        publishSelection(); emit documentChanged(); return;
+        publishSelection(); publishDocumentChange(before); return;
     }
     if (selected.isEmpty()) { return; }
+    if (command == QStringLiteral("alignHorizontalSpacing") || command == QStringLiteral("alignVerticalSpacing")) //20261110-8 add
+    {
+        Q_FOREACH (item, all) { if (item->isSelected()) { ordered.append(item); } }
+        if (ordered.size() < 3) { return; }
+        horizontal = command == QStringLiteral("alignHorizontalSpacing");
+        std::stable_sort(ordered.begin(), ordered.end(), [horizontal](HmiControlItem *first, HmiControlItem *second) {
+            return horizontal ? first->toHmiObject().geometry.x() < second->toHmiObject().geometry.x() :
+                                first->toHmiObject().geometry.y() < second->toHmiObject().geometry.y();
+        });
+        totalSize = 0;
+        Q_FOREACH (item, ordered)
+        {
+            object = item->toHmiObject(); totalSize += horizontal ? object.geometry.width() : object.geometry.height();
+        }
+        bounds = ordered.first()->toHmiObject().geometry; object = ordered.last()->toHmiObject();
+        coordinate = horizontal ? bounds.x() : bounds.y();
+        gap = ((horizontal ? object.geometry.x() + object.geometry.width() : object.geometry.y() + object.geometry.height()) -
+               coordinate - totalSize) / (ordered.size() - 1);
+        // Native r3 preserves both endpoint objects and distributes the free edge-to-edge space.
+        for (index = 0; index < ordered.size(); ++index)
+        {
+            item = ordered.at(index); object = item->toHmiObject();
+            if (index > 0 && index + 1 < ordered.size())
+            {
+                if (horizontal) { object.geometry.moveLeft(qRound(coordinate)); }
+                else { object.geometry.moveTop(qRound(coordinate)); }
+                item->setObject(object); item->update();
+            }
+            coordinate += (horizontal ? object.geometry.width() : object.geometry.height()) + gap;
+        }
+        publishSelection(); publishDocumentChange(before); return;
+    }
     if (command.startsWith(QStringLiteral("imageMode"))) //20261108-15 add: Image sizing applies to both states, without altering text.
     {
         Q_FOREACH (item, all)
@@ -325,7 +377,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
                 item->setObject(object); item->update();
             }
         }
-        emit documentChanged(); return;
+        publishDocumentChange(before); return;
     }
     if (command.startsWith(QStringLiteral("layer")))
     {
@@ -350,27 +402,37 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
                 if (ordered.at(index)->isSelected() && !ordered.at(index - 1)->isSelected()) { ordered.swapItemsAt(index, index - 1); }
             }
         }
-        for (index = 0; index < ordered.size(); ++index) { ordered.at(index)->setZValue(index + 1); }
+        if (ordered != all) //20261110-8 change: An ineffective layer command must retain existing fractional layer values.
+        {
+            for (index = 0; index < ordered.size(); ++index) { ordered.at(index)->setZValue(index + 1); }
+        }
     }
     else
     {
-        Q_FOREACH (item, all) { if (item->isSelected()) { bounds = bounds.united(item->toHmiObject().geometry); } }
+        referenceId = arrangementReferenceObjectId(command); //20261110-8 change: Native r2/r3 position and size operations use different list operands.
+        Q_FOREACH (item, all)
+        {
+            if (item->toHmiObject().id == referenceId) { referenceGeometry = item->toHmiObject().geometry; break; }
+        }
         group = command == QStringLiteral("group") ? QUuid::createUuid().toString(QUuid::WithoutBraces) : QString();
         Q_FOREACH (item, all)
         {
             if (!item->isSelected()) { continue; }
             object = item->toHmiObject();
             if (command == QStringLiteral("group") || command == QStringLiteral("ungroup")) { object.group = group; }
-            else if (command == QStringLiteral("alignLeft")) { object.geometry.moveLeft(bounds.left()); }
-            else if (command == QStringLiteral("alignRight")) { object.geometry.moveRight(bounds.right()); }
-            else if (command == QStringLiteral("alignTop")) { object.geometry.moveTop(bounds.top()); }
-            else if (command == QStringLiteral("alignBottom")) { object.geometry.moveBottom(bounds.bottom()); }
-            else if (command == QStringLiteral("alignCenter")) { object.geometry.moveCenter(QPoint(bounds.center().x(), object.geometry.center().y())); }
-            else if (command == QStringLiteral("alignMiddle")) { object.geometry.moveCenter(QPoint(object.geometry.center().x(), bounds.center().y())); }
+            else if (command == QStringLiteral("alignLeft")) { object.geometry.moveLeft(referenceGeometry.x()); }
+            else if (command == QStringLiteral("alignRight")) { object.geometry.moveLeft(referenceGeometry.x() + referenceGeometry.width() - object.geometry.width()); }
+            else if (command == QStringLiteral("alignTop")) { object.geometry.moveTop(referenceGeometry.y()); }
+            else if (command == QStringLiteral("alignBottom")) { object.geometry.moveTop(referenceGeometry.y() + referenceGeometry.height() - object.geometry.height()); }
+            else if (command == QStringLiteral("alignCenter")) { object.geometry.moveLeft(qRound(referenceGeometry.x() + (referenceGeometry.width() - object.geometry.width()) / 2.0)); }
+            else if (command == QStringLiteral("alignMiddle")) { object.geometry.moveTop(qRound(referenceGeometry.y() + (referenceGeometry.height() - object.geometry.height()) / 2.0)); }
+            else if (command == QStringLiteral("alignWidth")) { object.geometry.setWidth(referenceGeometry.width()); }
+            else if (command == QStringLiteral("alignHeight")) { object.geometry.setHeight(referenceGeometry.height()); }
+            else if (command == QStringLiteral("alignSize")) { object.geometry.setSize(referenceGeometry.size()); }
             item->setObject(object); item->update();
         }
     }
-    publishSelection(); emit documentChanged();
+    publishSelection(); publishDocumentChange(before);
 }
 
 /******************************************************************************
@@ -403,8 +465,10 @@ void ScreenCanvas::contextMenuEvent(QContextMenuEvent *event) //20261108-14 add
                 QStringLiteral("paste"),QStringLiteral("delete"),QStringLiteral("selectAll")};
     for (index = 0; index < labels.size(); ++index) { action = menu.addAction(labels.at(index)); action->setData(commands.at(index)); }
     align = menu.addMenu(QStringLiteral("对齐"));
-    labels = {QStringLiteral("左对齐"),QStringLiteral("右对齐"),QStringLiteral("顶端对齐"),QStringLiteral("底端对齐"),QStringLiteral("水平居中"),QStringLiteral("垂直居中")};
-    commands = {QStringLiteral("alignLeft"),QStringLiteral("alignRight"),QStringLiteral("alignTop"),QStringLiteral("alignBottom"),QStringLiteral("alignCenter"),QStringLiteral("alignMiddle")};
+    labels = {QStringLiteral("左对齐"),QStringLiteral("右对齐"),QStringLiteral("上对齐"),QStringLiteral("下对齐"),QStringLiteral("水平居中"),QStringLiteral("垂直居中"),
+              QStringLiteral("宽度相同"),QStringLiteral("高度相同"),QStringLiteral("宽度高度都相同"),QStringLiteral("水平等间距"),QStringLiteral("垂直等间距")}; //20261110-8 change
+    commands = {QStringLiteral("alignLeft"),QStringLiteral("alignRight"),QStringLiteral("alignTop"),QStringLiteral("alignBottom"),QStringLiteral("alignCenter"),QStringLiteral("alignMiddle"),
+                QStringLiteral("alignWidth"),QStringLiteral("alignHeight"),QStringLiteral("alignSize"),QStringLiteral("alignHorizontalSpacing"),QStringLiteral("alignVerticalSpacing")};
     for (index = 0; index < labels.size(); ++index) { align->addAction(labels.at(index))->setData(commands.at(index)); }
     layers = menu.addMenu(QStringLiteral("层次"));
     labels = {QStringLiteral("移到最上层"),QStringLiteral("移到上一层"),QStringLiteral("移到最下层"),QStringLiteral("移到下一层")};
@@ -450,7 +514,7 @@ void ScreenCanvas::keyPressEvent(QKeyEvent *event) //20261108-14 add
     else if (event->key() == Qt::Key_Delete) { command = QStringLiteral("delete"); }
     else if (event->key() == Qt::Key_Escape)
     {
-        delete m_draftRect; m_draftRect = nullptr; m_drawing = false; m_hasPending = false; m_resizeId.clear();
+        cancelInteraction(); //20261110-8 change: Restore original geometry as well as discarding unplaced resources.
         setActiveTool(QStringLiteral("select")); event->accept(); return;
     }
     if (!command.isEmpty()) { requestEditCommand(command); event->accept(); return; } //20261110-7 change
@@ -464,15 +528,217 @@ void ScreenCanvas::keyPressEvent(QKeyEvent *event) //20261108-14 add
  * Return Value    : None
  * Date            : 2026.11.08
  ******************************************************************************/
-void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261108-14 add
+void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261110-8 change
 {
+    QGraphicsItem *graphics;
+    HmiControlItem *item;
+    QRectF bounds;
+    QPointF handle;
+    QTransform mapping;
     int x;
     int y;
+    int index;
     Q_UNUSED(rect);
-    if (!m_grid) { return; }
-    painter->setPen(QPen(QColor(100, 120, 140, 110), 0));
-    for (y = 10; y < m_pageHeight; y += 10)
+
+    if (m_grid)
     {
-        for (x = 10; x < m_pageWidth; x += 10) { painter->drawPoint(x, y); }
+        painter->setPen(QPen(QColor(100, 120, 140, 110), 0));
+        for (y = 10; y < m_pageHeight; y += 10)
+        {
+            for (x = 10; x < m_pageWidth; x += 10) { painter->drawPoint(x, y); }
+        }
     }
+    if (m_scene->selectedItems().size() != 1) { return; }
+    graphics = m_scene->selectedItems().first(); item = dynamic_cast<HmiControlItem *>(graphics);
+    if (item == nullptr) { return; }
+    bounds = item->toHmiObject().geometry;
+    // Remove the world transform only for editor adornments; device rasterizers never see these pixels.
+    mapping = painter->worldTransform(); painter->save(); painter->resetTransform();
+    painter->setPen(QPen(QColor(36, 111, 206), 1)); painter->setBrush(Qt::white);
+    for (index = 0; index < 9; ++index)
+    {
+        if (index == 4) { continue; }
+        handle = mapping.map(QPointF(bounds.x() + (index % 3) * bounds.width() / 2,
+                                     bounds.y() + (index / 3) * bounds.height() / 2));
+        painter->drawRect(QRectF(handle.x() - 2, handle.y() - 2, 4, 4));
+    }
+    painter->restore();
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::hasPendingPlacement
+ * Description     : Let the host distinguish accepted property resources from a committed control.
+ * Input Parameters: None
+ * Return Value    : True until the placement is canceled or committed
+ * Date            : 2026.11.10
+ ******************************************************************************/
+bool ScreenCanvas::hasPendingPlacement() const //20261110-8 add
+{
+    return m_hasPending;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::hasActiveInteraction
+ * Description     : Detect drawing, movement or resize state without exposing scene items.
+ * Input Parameters: None
+ * Return Value    : True for an uncommitted interaction
+ * Date            : 2026.11.10
+ ******************************************************************************/
+bool ScreenCanvas::hasActiveInteraction() const //20261110-8 add
+{
+    return m_hasPending || m_drawing || m_moving || !m_resizeId.isEmpty();
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::cancelInteraction
+ * Description     : Roll back gesture geometry and discard pending placement without dirty/history events.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void ScreenCanvas::cancelInteraction() //20261110-8 add
+{
+    bool canceled;
+    bool restore;
+    QList<HmiObject> original;
+    QStringList selection;
+
+    canceled = hasActiveInteraction(); restore = m_moving || !m_resizeId.isEmpty();
+    original = m_interactionOriginal; selection = m_interactionSelection;
+    m_hasPending = false; m_drawing = false; m_moving = false;
+    m_resizeId.clear(); m_resizeHandle = 0; m_pendingObject = HmiObject();
+    m_interactionOriginal.clear(); m_interactionSelection.clear();
+    delete m_draftRect; m_draftRect = nullptr;
+    if (canceled)
+    {
+        m_activeTool = QStringLiteral("select");
+        setDragMode(QGraphicsView::RubberBandDrag); setCursor(Qt::ArrowCursor);
+    }
+    if (restore) { restoreObjects(original); selectObjects(selection); }
+    viewport()->update();
+    if (canceled) { emit interactionCancelled(); }
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::updateMove
+ * Description     : Apply one clamped logical delta to the whole selection, preserving relative positions.
+ * Input Parameters: point
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void ScreenCanvas::updateMove(const QPointF &point) //20261110-8 add
+{
+    HmiObject original;
+    HmiObject updated;
+    QGraphicsItem *graphics;
+    HmiControlItem *item;
+    int dx;
+    int dy;
+
+    dx = qBound(-m_moveBounds.x(), qRound(point.x() - m_moveOrigin.x()), m_pageWidth - m_moveBounds.x() - m_moveBounds.width());
+    dy = qBound(-m_moveBounds.y(), qRound(point.y() - m_moveOrigin.y()), m_pageHeight - m_moveBounds.y() - m_moveBounds.height());
+    Q_FOREACH (original, m_interactionOriginal)
+    {
+        if (!m_interactionSelection.contains(original.id)) { continue; }
+        Q_FOREACH (graphics, m_scene->items())
+        {
+            item = dynamic_cast<HmiControlItem *>(graphics);
+            if (item != nullptr && item->toHmiObject().id == original.id)
+            {
+                updated = original; updated.geometry.translate(dx, dy); item->setObject(updated); break;
+            }
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::selectedObjectIds
+ * Description     : Return stable control identities without exposing scene pointers to project tools.
+ * Input Parameters: None
+ * Return Value    : Selected object IDs.
+ * Date            : 2026.11.10
+ ******************************************************************************/
+QStringList ScreenCanvas::selectedObjectIds() const //20261110-7 add
+{
+    QStringList ids;
+    QGraphicsItem *graphics;
+    HmiControlItem *item;
+
+    Q_FOREACH (graphics, m_scene->selectedItems()) {
+        item = dynamic_cast<HmiControlItem *>(graphics);
+        if (item != nullptr) { ids.append(item->toHmiObject().id); }
+    }
+    return ids;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::arrangementReferenceObjectId
+ * Description     : Report the current position/size operand, keeping Qt collection-order uncertainty visible to the host.
+ * Input Parameters: command
+ * Return Value    : Selected reference ID, or an empty string for operations without a reference
+ * Date            : 2026.11.10
+ ******************************************************************************/
+QString ScreenCanvas::arrangementReferenceObjectId(const QString &command) const //20261110-8 add
+{
+    QStringList ids;
+    bool sizeCommand;
+    bool positionCommand;
+
+    sizeCommand = command == QStringLiteral("alignWidth") || command == QStringLiteral("alignHeight") || command == QStringLiteral("alignSize");
+    positionCommand = command == QStringLiteral("alignLeft") || command == QStringLiteral("alignRight") || command == QStringLiteral("alignTop") ||
+                      command == QStringLiteral("alignBottom") || command == QStringLiteral("alignCenter") || command == QStringLiteral("alignMiddle");
+    if (!sizeCommand && !positionCommand) { return QString(); }
+    ids = selectedObjectIds();
+    if (ids.isEmpty()) { return QString(); }
+    if (ids.contains(m_arrangementReferenceId)) { return m_arrangementReferenceId; }
+    // Two native probes support list-first for position and list-last for size; neither establishes mouse selection chronology.
+    return sizeCommand ? ids.last() : ids.first();
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::setArrangementReferenceObject
+ * Description     : Allow an explicit selected reference without relying on cross-version Qt set iteration order.
+ * Input Parameters: id; empty or unselected IDs restore the observed native operand policy
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void ScreenCanvas::setArrangementReferenceObject(const QString &id) //20261110-8 add
+{
+    m_arrangementReferenceId = selectedObjectIds().contains(id) ? id : QString();
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::canExecuteEdit
+ * Description     : Derive edit availability from actual selection, clipboard and local history state.
+ * Input Parameters: command
+ * Return Value    : True when the canvas has the required command operands.
+ * Date            : 2026.11.10
+ ******************************************************************************/
+bool ScreenCanvas::canExecuteEdit(const QString &command) const //20261110-7 add
+{
+    int selected;
+
+    selected = selectedObjectIds().size();
+    if (command == QStringLiteral("undo")) { return m_historyIndex > 0; }
+    if (command == QStringLiteral("redo")) { return m_historyIndex + 1 < m_history.size(); }
+    if (command == QStringLiteral("paste")) { return !m_clipboard.isEmpty() && objects().size() < 100; }
+    if (command == QStringLiteral("selectAll")) { return !objects().isEmpty(); }
+    if (command == QStringLiteral("grid")) { return true; }
+    if (command == QStringLiteral("alignHorizontalSpacing") || command == QStringLiteral("alignVerticalSpacing")) { return selected > 2; } //20261110-8 add
+    if (command.startsWith(QStringLiteral("align")) || command == QStringLiteral("group")) { return selected > 1; }
+    if (command == QStringLiteral("properties")) { return selected == 1; }
+    return selected > 0;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::requestEditCommand
+ * Description     : Preserve standalone canvas behavior while sharing hosted key/menu transactions.
+ * Input Parameters: command
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void ScreenCanvas::requestEditCommand(const QString &command) //20261110-7 add
+{
+    if (m_externalEditRouting) { emit editCommandRequested(command); }
+    else { executeEdit(command); }
 }

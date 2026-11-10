@@ -48,8 +48,32 @@ bool MainWindow::applyControlDraft(const HmiObject &object, const QMap<QString, 
         }
     }
     if (!candidate.validateModel(error)) { return false; }
-    m_project = candidate;
-    return true;
+    //20261110-8 change: A creation draft is validated here, then retained outside the document until placement completes.
+    if (!editing) { return true; }
+    return commitProjectDraft(candidate, error);
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::beginControlDraftPlacement
+ * Description     : Hold accepted picture and macro drafts outside project history until a complete object rectangle exists.
+ * Input Parameters: object, macros, pictures
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void MainWindow::beginControlDraftPlacement(const HmiObject &object, const QMap<QString, QString> &macros,
+                                           const QMap<QString, QByteArray> &pictures) //20261110-8 add
+{
+    m_canvas->beginControlPlacement(object);
+    if (!m_canvas->hasPendingPlacement()) { //20261110-8 add: A rejected placement must never attach resources to a later unrelated edit.
+        m_hasPendingControlResources = false;
+        m_pendingControlResources = HmiProject();
+        return;
+    }
+    // Starting a placement cancels its predecessor synchronously; register the new resources afterwards.
+    m_pendingControlResources = m_project;
+    m_pendingControlResources.macros = macros;
+    m_pendingControlResources.pictures = pictures;
+    m_hasPendingControlResources = true;
 }
 
 /******************************************************************************
@@ -133,7 +157,7 @@ void MainWindow::createBitButton() //20261108-15 add
             delete dialog;
             return;
         }
-        m_canvas->beginControlPlacement(dialog->object()); setDirty(true);
+        beginControlDraftPlacement(dialog->object(), dialog->macros(), dialog->pictures()); //20261110-8 change
         statusBar()->showMessage(QStringLiteral("在画布拖出位按钮；按 Esc 取消。"), 10000);
     }
     else { m_canvas->setActiveTool(QStringLiteral("select")); }
@@ -167,7 +191,7 @@ void MainWindow::createWordButton() //20261109-6 add
             delete dialog;
             return;
         }
-        m_canvas->beginControlPlacement(dialog->object()); setDirty(true);
+        beginControlDraftPlacement(dialog->object(), dialog->macros(), dialog->pictures()); //20261110-8 change
         statusBar()->showMessage(QStringLiteral("在画布拖出字按钮；按 Esc 取消。"), 10000);
     }
     else { m_canvas->setActiveTool(QStringLiteral("select")); }
@@ -200,7 +224,7 @@ void MainWindow::createLamp() //20261109-8 add
             delete dialog;
             return;
         }
-        m_canvas->beginControlPlacement(dialog->object()); setDirty(true);
+        beginControlDraftPlacement(dialog->object(), dialog->macros(), dialog->pictures()); //20261110-8 change
         statusBar()->showMessage(QStringLiteral("在画布拖出指示灯；按 Esc 取消。"), 10000);
     }
     else { m_canvas->setActiveTool(QStringLiteral("select")); }
@@ -233,7 +257,7 @@ void MainWindow::createFunctionButton() //20261110-0 add
             delete dialog;
             return;
         }
-        m_canvas->beginControlPlacement(dialog->object()); setDirty(true);
+        beginControlDraftPlacement(dialog->object(), dialog->macros(), dialog->pictures()); //20261110-8 change
         statusBar()->showMessage(QStringLiteral("在画布拖出功能按钮；按 Esc 取消。"), 10000);
     }
     else { m_canvas->setActiveTool(QStringLiteral("select")); }
@@ -264,7 +288,7 @@ void MainWindow::editBitButton() //20261108-15 add
             delete dialog;
             return;
         }
-        m_canvas->updateSelectedObject(dialog->object());
+        //20261110-8 change: applyControlDraft has already published the complete object/resource transaction once.
     }
     delete dialog;
 }

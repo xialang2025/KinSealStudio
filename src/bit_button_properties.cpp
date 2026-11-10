@@ -1,4 +1,5 @@
-#include "bit_button_properties.h"
+﻿#include "bit_button_properties.h"
+#include "control_rendering.h" //20261110-8 add
 #include <QJsonArray>
 #include <QImage>
 #include <QBuffer>
@@ -11,14 +12,9 @@
  * Return Value    : True for a supported PNG within editor resource limits.
  * Date            : 2026.11.08
  ******************************************************************************/
-bool validateButtonImage(const QByteArray &png) //20261108-15 add
+bool validateButtonImage(const QByteArray &png) //20261110-8 change: Reuse bounded content-addressed source decoding.
 {
-    QBuffer buffer;
-    QImageReader reader;
-    QSize size;
-    if (png.isEmpty() || png.size() > 16 * 1024 * 1024) { return false; }
-    buffer.setData(png); buffer.open(QIODevice::ReadOnly); reader.setDevice(&buffer); reader.setFormat(QByteArrayLiteral("PNG")); size = reader.size();
-    return size.isValid() && size.width() <= 4096 && size.height() <= 4096 && !reader.read().isNull();
+    return !decodedControlPng(png).isNull();
 }
 
 /******************************************************************************

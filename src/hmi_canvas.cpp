@@ -4,6 +4,8 @@
 
 #include <QBrush>
 #include <QGraphicsScene>
+#include <QJsonArray>
+#include <QSignalBlocker>
 #include <QGraphicsSceneMouseEvent>
 #include <QLinearGradient>
 #include <QMouseEvent>
@@ -90,8 +92,6 @@ void HmiControlItem::paint(QPainter *painter,
     QPen selection_pen;
     QColor fill_color;
     QString display_text;
-    QPointF handle;
-    int handle_index;
     int button_state; //20261109-6 add
     const BitButtonState *lamp_state; //20261109-8 add
 
@@ -164,14 +164,8 @@ void HmiControlItem::paint(QPainter *painter,
         painter->setPen(selection_pen);
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(item_rect.adjusted(1.0, 1.0, -1.0, -1.0));
-        painter->setBrush(Qt::white); //20261108-14 add: Eight handles correspond to the resize hit zones.
-        for (handle_index = 0; handle_index < 9; ++handle_index)
-        {
-            if (handle_index == 4) { continue; }
-            handle = QPointF(item_rect.left() + (handle_index % 3) * item_rect.width() / 2,
-                              item_rect.top() + (handle_index / 3) * item_rect.height() / 2);
-            painter->drawRect(QRectF(handle.x() - 2, handle.y() - 2, 4, 4));
-        }
+        //20261110-8 change: The view paints resize handles in viewport pixels, independent of object rendering.
+
     }
 }
 
@@ -245,6 +239,8 @@ void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
 {
     QList<HmiObject>::const_iterator object_iterator;
 
+    cancelInteraction(); //20261110-8 add: A page replacement cannot retain partial geometry or a placement draft.
+    m_arrangementReferenceId.clear(); //20261110-8 add: An explicit reference belongs only to the current page selection.
     m_pageWidth = project.pageWidth;
     m_pageHeight = project.pageHeight;
     m_previousSelectionValid = false;
@@ -431,7 +427,7 @@ void ScreenCanvas::updateSelectedObject(const HmiObject &object) //20261107-6 ad
     {
         control_item = dynamic_cast<HmiControlItem *>(selected_items.first());
     }
-    if (control_item != nullptr)
+    if (control_item != nullptr && control_item->toHmiObject().toJson() != object.toJson()) //20261110-8 change: Applying unchanged properties is not an edit.
     {
         control_item->setObject(object);
         control_item->update();
@@ -465,25 +461,17 @@ void ScreenCanvas::setZoomPercent(int percent) //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::setActiveTool(const QString &type) //20261107-6 add
+void ScreenCanvas::setActiveTool(const QString &type) //20261110-8 change
 {
-    if (type != QStringLiteral("text")) //20261108-14 add: Leaving drawing mode must not retain a stale draft rectangle.
-    {
-        delete m_draftRect;
-        m_draftRect = nullptr;
-        m_drawing = false;
-        m_hasPending = false;
-    }
+    cancelInteraction();
     m_activeTool = type;
     if (m_activeTool == QStringLiteral("select"))
     {
-        setDragMode(QGraphicsView::RubberBandDrag);
-        setCursor(Qt::ArrowCursor);
+        setDragMode(QGraphicsView::RubberBandDrag); setCursor(Qt::ArrowCursor);
     }
     else
     {
-        setDragMode(QGraphicsView::NoDrag);
-        setCursor(Qt::CrossCursor);
+        setDragMode(QGraphicsView::NoDrag); setCursor(Qt::CrossCursor);
     }
 }
 
@@ -494,27 +482,31 @@ void ScreenCanvas::setActiveTool(const QString &type) //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::selectObject(const QString &id) //20261107-6 add
+void ScreenCanvas::selectObject(const QString &id) //20261110-8 change
 {
-    QList<QGraphicsItem *> graphics_items;
-    QGraphicsItem *graphics_item;
-    HmiControlItem *control_item;
-    int item_index;
+    selectObjects(QStringList{id});
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::selectObjects
+ * Description     : Select exact stable IDs without implicitly changing group membership.
+ * Input Parameters: ids
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void ScreenCanvas::selectObjects(const QStringList &ids) //20261110-8 add
+{
+    QGraphicsItem *graphics;
+    HmiControlItem *item;
+    QSignalBlocker blocker(m_scene);
 
     m_scene->clearSelection();
-    graphics_items = m_scene->items();
-    for (item_index = 0; item_index < graphics_items.size(); ++item_index)
+    Q_FOREACH (graphics, m_scene->items())
     {
-        graphics_item = graphics_items.at(item_index);
-        control_item = dynamic_cast<HmiControlItem *>(graphics_item);
-        if (control_item != nullptr && control_item->toHmiObject().id == id)
-        {
-            control_item->setSelected(true);
-            publishSelection();
-            return;
-        }
+        item = dynamic_cast<HmiControlItem *>(graphics);
+        if (item != nullptr) { item->setSelected(ids.contains(item->toHmiObject().id)); }
     }
-    publishSelection();
+    publishSelection(); viewport()->update();
 }
 
 /******************************************************************************
@@ -524,47 +516,59 @@ void ScreenCanvas::selectObject(const QString &id) //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261107-6 add
+void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
 {
-    QPointF scene_point;
-    HmiObject selected_object; //20261108-14 add
+    QPointF point;
+    HmiObject selectedObjectRecord;
     HmiControlItem *member;
-    QGraphicsItem *graphics_item;
+    HmiControlItem *hit;
+    QGraphicsItem *graphics;
+    HmiObject object;
     bool selected;
 
-    scene_point = mapToScene(event->position().toPoint());
-    if (event->button() == Qt::LeftButton && m_hasPending) //20261108-14 add
+    point = mapToScene(event->position().toPoint());
+    if (event->button() == Qt::RightButton && hasActiveInteraction())
     {
-        m_dragOrigin = QPointF(qBound(0.0, scene_point.x(), double(m_pageWidth)),
-                               qBound(0.0, scene_point.y(), double(m_pageHeight)));
-        m_drawing = true;
-        m_draftRect = m_scene->addRect(QRectF(m_dragOrigin, QSizeF()), QPen(Qt::blue, 1, Qt::DashLine));
-        m_draftRect->setZValue(10000);
-        event->accept();
-        return;
+        cancelInteraction(); event->accept(); return;
     }
-    if (event->button() == Qt::LeftButton && m_activeTool == QStringLiteral("select") && beginResize(scene_point))
+    if (event->button() == Qt::LeftButton && m_hasPending)
     {
-        event->accept();
-        return;
+        m_dragOrigin = QPointF(qBound(0.0, point.x(), double(m_pageWidth)), qBound(0.0, point.y(), double(m_pageHeight)));
+        m_drawing = true;
+        m_draftRect = m_scene->addRect(QRectF(m_dragOrigin, QSizeF()), QPen(Qt::blue, 0, Qt::DashLine));
+        m_draftRect->setZValue(10000); event->accept(); return;
+    }
+    if (event->button() == Qt::LeftButton && m_activeTool == QStringLiteral("select") && beginResize(point))
+    {
+        event->accept(); return;
     }
     if (m_activeTool != QStringLiteral("select") && event->button() == Qt::LeftButton)
     {
-        addControl(m_activeTool, scene_point);
-        event->accept();
-        return;
+        addControl(m_activeTool, point); event->accept(); return;
     }
+    hit = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
     QGraphicsView::mousePressEvent(event);
-    selected_object = selectedObject(&selected); //20261108-14 add: Selecting one grouped item selects all members for common movement.
-    if (selected && !selected_object.group.isEmpty())
+    selectedObjectRecord = selectedObject(&selected);
+    // Preserve the existing group-selection rule until a separate native probe establishes its modifiers.
+    if (selected && !selectedObjectRecord.group.isEmpty())
     {
-        Q_FOREACH (graphics_item, m_scene->items())
+        Q_FOREACH (graphics, m_scene->items())
         {
-            member = dynamic_cast<HmiControlItem *>(graphics_item);
-            if (member != nullptr && member->toHmiObject().group == selected_object.group) { member->setSelected(true); }
+            member = dynamic_cast<HmiControlItem *>(graphics);
+            if (member != nullptr && member->toHmiObject().group == selectedObjectRecord.group) { member->setSelected(true); }
         }
     }
-    publishSelection();
+    if (event->button() == Qt::LeftButton && hit != nullptr && hit->isSelected())
+    {
+        m_interactionOriginal = objects(); m_interactionSelection = selectedObjectIds();
+        m_moveOrigin = point; m_moveBounds = QRect();
+        Q_FOREACH (object, m_interactionOriginal)
+        {
+            if (m_interactionSelection.contains(object.id)) { m_moveBounds = m_moveBounds.united(object.geometry); }
+        }
+        m_moving = !m_moveBounds.isEmpty();
+    }
+    publishSelection(); viewport()->update();
 }
 
 /******************************************************************************
@@ -574,26 +578,18 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261107-6 add
+void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261110-8 change
 {
     QPoint point;
 
-    point = mapToScene(event->position().toPoint()).toPoint();
-    emit pageCoordinatesChanged(point);
-    if (m_drawing && m_draftRect != nullptr) //20261108-14 add
+    point = mapToScene(event->position().toPoint()).toPoint(); emit pageCoordinatesChanged(point);
+    if (m_drawing && m_draftRect != nullptr)
     {
-        point.setX(qBound(0, point.x(), m_pageWidth));
-        point.setY(qBound(0, point.y(), m_pageHeight));
-        m_draftRect->setRect(QRectF(m_dragOrigin, QPointF(point)).normalized());
-        event->accept();
-        return;
+        point.setX(qBound(0, point.x(), m_pageWidth)); point.setY(qBound(0, point.y(), m_pageHeight));
+        m_draftRect->setRect(QRectF(m_dragOrigin, QPointF(point)).normalized()); event->accept(); return;
     }
-    if (!m_resizeId.isEmpty())
-    {
-        updateResize(point);
-        event->accept();
-        return;
-    }
+    if (!m_resizeId.isEmpty()) { updateResize(point); viewport()->update(); event->accept(); return; }
+    if (m_moving) { updateMove(point); viewport()->update(); event->accept(); return; }
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -604,52 +600,44 @@ void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261107-6 add
+void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
 {
     HmiObject object;
     HmiControlItem *item;
     QRect geometry;
+    QList<HmiObject> before;
 
-    if (m_drawing && m_draftRect != nullptr) //20261108-14 add
+    if (event->button() != Qt::LeftButton) { QGraphicsView::mouseReleaseEvent(event); return; }
+    if (m_drawing && m_draftRect != nullptr)
     {
         geometry = m_draftRect->rect().toRect();
-        delete m_draftRect;
-        m_draftRect = nullptr;
-        m_drawing = false;
-        if (geometry.width() > 0 && geometry.height() > 0 && objects().size() < 100)
+        if (geometry.width() <= 0 || geometry.height() <= 0 || objects().size() >= 100)
         {
-            object = m_pendingObject;
-            object.geometry = geometry;
-            object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
-            object.name = (object.hasLampProperties ? QStringLiteral("指示灯%1") : //20261109-8 change
-                           object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261110-0 add
-                           object.hasWordButtonProperties ? QStringLiteral("字按钮%1") :
-                           object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") :
-                           QStringLiteral("静态文本%1")).arg(objects().size() + 1); //20261109-6 change
-            object.layer = objects().size() + 1;
-            item = new HmiControlItem(object);
-            item->setData(10, m_language);
-            m_scene->clearSelection();
-            m_scene->addItem(item);
-            item->setSelected(true);
-            emit documentChanged();
+            cancelInteraction(); event->accept(); return;
         }
-        m_hasPending = false;
-        setActiveTool(QStringLiteral("select"));
-        publishSelection();
-        event->accept();
-        return;
+        before = objects(); object = m_pendingObject;
+        delete m_draftRect; m_draftRect = nullptr;
+        m_drawing = false; m_hasPending = false; m_pendingObject = HmiObject();
+        object.geometry = geometry; object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        object.name = (object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") :
+            object.hasWordButtonProperties ? QStringLiteral("字按钮%1") : object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") : QStringLiteral("静态文本%1")).arg(before.size() + 1);
+        object.layer = before.size() + 1; item = new HmiControlItem(object); item->setData(10, m_language);
+        m_scene->clearSelection(); m_scene->addItem(item); item->setSelected(true);
+        setActiveTool(QStringLiteral("select")); publishSelection();
+        // All interaction flags are clear before the host publishes its deferred image/macro resources.
+        publishDocumentChange(before); event->accept(); return;
     }
-    if (!m_resizeId.isEmpty())
+    if (!m_resizeId.isEmpty() || m_moving)
     {
-        m_resizeId.clear();
-        publishSelection();
-        emit documentChanged();
-        event->accept();
-        return;
+        if (!m_resizeId.isEmpty()) { updateResize(mapToScene(event->position().toPoint())); }
+        else { updateMove(mapToScene(event->position().toPoint())); }
+        before = m_interactionOriginal;
+        m_resizeId.clear(); m_resizeHandle = 0; m_moving = false;
+        m_interactionOriginal.clear(); m_interactionSelection.clear();
+        QGraphicsView::mouseReleaseEvent(event);
+        publishSelection(); viewport()->update(); publishDocumentChange(before); event->accept(); return;
     }
-    QGraphicsView::mouseReleaseEvent(event);
-    publishSelection();
+    QGraphicsView::mouseReleaseEvent(event); publishSelection(); viewport()->update();
 }
 
 /******************************************************************************
@@ -705,19 +693,31 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
-void ScreenCanvas::publishSelection() //20261107-6 add
+void ScreenCanvas::publishSelection() //20261110-8 change
 {
     bool selected;
     HmiObject object;
 
     object = selectedObject(&selected);
     emit objectSelectionChanged(object, selected);
-    if (selected && m_previousSelectionValid &&
-        m_previousSelection.id == object.id &&
-        m_previousSelection.geometry != object.geometry)
-    {
-        emit documentChanged();
-    }
-    m_previousSelection = object;
-    m_previousSelectionValid = selected;
+    m_previousSelection = object; m_previousSelectionValid = selected;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::publishDocumentChange
+ * Description     : Publish a completed object transaction exactly once, excluding all no-op gestures.
+ * Input Parameters: before
+ * Return Value    : True only if complete persisted object records changed
+ * Date            : 2026.11.10
+ ******************************************************************************/
+bool ScreenCanvas::publishDocumentChange(const QList<HmiObject> &before) //20261110-8 add
+{
+    QJsonArray oldRecords;
+    QJsonArray newRecords;
+    HmiObject object;
+
+    Q_FOREACH (object, before) { oldRecords.append(object.toJson()); }
+    Q_FOREACH (object, objects()) { newRecords.append(object.toJson()); }
+    if (oldRecords == newRecords) { return false; }
+    emit documentChanged(); return true;
 }

@@ -3,6 +3,7 @@
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
 #include "stage2_system_settings.h"
+#include "stage3_resources.h" //20261110-8 add
 
 #include <QAction>
 #include <QAbstractSpinBox>
@@ -63,61 +64,6 @@ QJsonObject projectContent(const HmiProject &project) //20261110-7 add
 }
 
 /******************************************************************************
- * Function Name   : ScreenCanvas::selectedObjectIds
- * Description     : Return stable control identities without exposing scene pointers to project tools.
- * Input Parameters: None
- * Return Value    : Selected object IDs.
- * Date            : 2026.11.10
- ******************************************************************************/
-QStringList ScreenCanvas::selectedObjectIds() const //20261110-7 add
-{
-    QStringList ids;
-    QGraphicsItem *graphics;
-    HmiControlItem *item;
-
-    Q_FOREACH (graphics, m_scene->selectedItems()) {
-        item = dynamic_cast<HmiControlItem *>(graphics);
-        if (item != nullptr) { ids.append(item->toHmiObject().id); }
-    }
-    return ids;
-}
-
-/******************************************************************************
- * Function Name   : ScreenCanvas::canExecuteEdit
- * Description     : Derive edit availability from actual selection, clipboard and local history state.
- * Input Parameters: command
- * Return Value    : True when the canvas has the required command operands.
- * Date            : 2026.11.10
- ******************************************************************************/
-bool ScreenCanvas::canExecuteEdit(const QString &command) const //20261110-7 add
-{
-    int selected;
-
-    selected = selectedObjectIds().size();
-    if (command == QStringLiteral("undo")) { return m_historyIndex > 0; }
-    if (command == QStringLiteral("redo")) { return m_historyIndex + 1 < m_history.size(); }
-    if (command == QStringLiteral("paste")) { return !m_clipboard.isEmpty() && objects().size() < 100; }
-    if (command == QStringLiteral("selectAll")) { return !objects().isEmpty(); }
-    if (command == QStringLiteral("grid")) { return true; }
-    if (command.startsWith(QStringLiteral("align")) || command == QStringLiteral("group")) { return selected > 1; }
-    if (command == QStringLiteral("properties")) { return selected == 1; }
-    return selected > 0;
-}
-
-/******************************************************************************
- * Function Name   : ScreenCanvas::requestEditCommand
- * Description     : Preserve standalone canvas behavior while sharing hosted key/menu transactions.
- * Input Parameters: command
- * Return Value    : None
- * Date            : 2026.11.10
- ******************************************************************************/
-void ScreenCanvas::requestEditCommand(const QString &command) //20261110-7 add
-{
-    if (m_externalEditRouting) { emit editCommandRequested(command); }
-    else { executeEdit(command); }
-}
-
-/******************************************************************************
  * Function Name   : MainWindow::currentEditorProject
  * Description     : Capture active canvas records together with every hidden page and project resource.
  * Input Parameters: None
@@ -129,7 +75,7 @@ HmiProject MainWindow::currentEditorProject() const //20261110-7 add
     HmiProject project;
 
     project = m_project;
-    if (m_hasProject) { project.objects = m_canvas->objects(); }
+    if (m_hasProject && !m_canvas->hasActiveInteraction()) { project.objects = m_canvas->objects(); } //20261110-8 change: Read-only tools never persist a live geometry preview.
     return project;
 }
 
@@ -489,6 +435,13 @@ void MainWindow::dispatchEditCommand(const QString &command) //20261110-7 add
     QTextEdit *rich;
     QTextCursor cursor;
     QByteArray method;
+    HmiProject candidate; //20261110-8 add
+    Stage3Clipboard clipboard;
+    QStringList newIds;
+    QString error;
+    bool accepted;
+    QString referenceId; //20261110-8 add
+    HmiObject reference;
 
     focus = QApplication::focusWidget();
     if (qobject_cast<QAbstractSpinBox *>(focus) != nullptr) {
@@ -518,9 +471,42 @@ void MainWindow::dispatchEditCommand(const QString &command) //20261110-7 add
         return;
     }
     if (!m_hasProject) { return; }
+    m_canvas->cancelInteraction(); //20261110-8 add: Editing commands consume committed geometry, never an in-flight move or resize preview.
     if (command == QStringLiteral("undo")) { restoreProjectHistory(-1); }
     else if (command == QStringLiteral("redo")) { restoreProjectHistory(1); }
-    else { m_canvas->executeEdit(command); }
+    else if (command == QStringLiteral("copy")) { //20261110-8 add: Preserve all resource identities and inactive property drafts.
+        if (!captureStage3Selection(currentEditorProject(), m_canvas->selectedObjectIds(), &m_objectClipboard, &error)) {
+            statusBar()->showMessage(error, 8000);
+        }
+    } else if (command == QStringLiteral("cut") || command == QStringLiteral("delete")) {
+        accepted = command == QStringLiteral("cut") ?
+            cutStage3Selection(currentEditorProject(), m_canvas->selectedObjectIds(), &clipboard, &candidate, &error) :
+            deleteStage3Selection(currentEditorProject(), m_canvas->selectedObjectIds(), &candidate, &error);
+        if (accepted) { accepted = commitProjectDraft(candidate, &error); }
+        if (accepted && command == QStringLiteral("cut")) { m_objectClipboard = clipboard; }
+        if (!accepted) { statusBar()->showMessage(error, 8000); }
+    } else if (command == QStringLiteral("paste")) {
+        // Sixteen page pixels is the existing editor paste offset, independent of viewport zoom or DPI.
+        if (pasteStage3Selection(currentEditorProject(), m_objectClipboard, QPoint(16, 16), &candidate, &newIds, &error) &&
+            commitProjectDraft(candidate, &error)) { m_canvas->selectObjects(newIds); }
+        else { statusBar()->showMessage(error, 8000); }
+    } else if (command == QStringLiteral("multiCopy")) {
+        Stage3DuplicateDialog dialog(currentEditorProject(), m_canvas->selectedObjectIds(), this);
+        if (dialog.exec() == QDialog::Accepted) {
+            if (commitProjectDraft(dialog.draftProject(), &error)) { m_canvas->selectObjects(dialog.newObjectIds()); }
+            else { statusBar()->showMessage(error, 8000); }
+        }
+    }
+    else {
+        referenceId = m_canvas->arrangementReferenceObjectId(command); //20261110-8 add: Make the observed scene-order anchor visible to the editor user.
+        m_canvas->executeEdit(command);
+        Q_FOREACH (reference, m_project.objects) {
+            if (!referenceId.isEmpty() && reference.id == referenceId) {
+                statusBar()->showMessage(QStringLiteral("本次对齐参考：%1").arg(reference.name), 8000);
+                break;
+            }
+        }
+    }
     updateCommandStates();
 }
 
@@ -557,6 +543,7 @@ void MainWindow::updateCommandStates() //20261110-7 add
         } else if (!command.isEmpty()) {
             enabled = m_hasProject && (command == QStringLiteral("undo") ? m_projectHistoryIndex > 0 :
                 command == QStringLiteral("redo") ? m_projectHistoryIndex + 1 < m_projectHistory.size() :
+                command == QStringLiteral("paste") ? !m_objectClipboard.objectIds.isEmpty() :
                 m_canvas->canExecuteEdit(command));
             if (textEditor && (command == QStringLiteral("copy") || command == QStringLiteral("cut") ||
                 command == QStringLiteral("paste") || command == QStringLiteral("selectAll") ||
@@ -566,6 +553,23 @@ void MainWindow::updateCommandStates() //20261110-7 add
     }
     if (m_languageCombo != nullptr) { m_languageCombo->setEnabled(m_hasProject); } //20261110-7 add
     if (m_pageCombo != nullptr) { m_pageCombo->setEnabled(m_hasProject); }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::manageProjectPictures
+ * Description     : Publish imported, renamed or replaced image bytes and their references as one reversible document edit.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.10
+ ******************************************************************************/
+void MainWindow::manageProjectPictures() //20261110-8 add
+{
+    Stage3PicturesDialog dialog(currentEditorProject(), this);
+    QString error;
+    if (!m_hasProject) { return; }
+    if (dialog.exec() == QDialog::Accepted && !commitProjectDraft(dialog.draftProject(), &error)) {
+        QMessageBox::warning(this, QStringLiteral("工程图片修改未提交"), error);
+    }
 }
 
 /******************************************************************************

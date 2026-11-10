@@ -1,4 +1,5 @@
-#include "static_text_renderer.h"
+﻿#include "static_text_renderer.h"
+#include "control_rendering.h" //20261110-8 add
 #include <QFont>
 #include <QLinearGradient>
 #include <QPainter>
@@ -28,7 +29,7 @@ QString staticTextContent(const HmiObject &object, const QString &language) //20
 void paintStaticText(QPainter *painter, const QRectF &rect, const QString &text,
                       const StaticTextProperties &properties) //20261108-14 add
 {
-    QFont font(properties.fontFamily);
+    QFont font = controlPixelFont(properties, painter->device()->logicalDpiY()); //20261110-8 change: Retain fractional font sizes at every paint-device DPI.
     QLinearGradient linear;
     QRadialGradient radial;
     QBrush brush;
@@ -92,12 +93,7 @@ void paintStaticText(QPainter *painter, const QRectF &rect, const QString &text,
         painter->fillRect(rect, brush);
         painter->setOpacity(1);
     }
-    font.setPointSizeF(properties.fontSize * 0.75);
-    font.setLetterSpacing(QFont::AbsoluteSpacing, properties.spacing);
-    font.setItalic(properties.italic);
-    font.setBold(properties.bold);
-    font.setUnderline(properties.underline);
-    font.setStyleStrategy(QFont::NoAntialias);
+    //20261110-8 change: The shared font uses target-page pixels at every view/device DPI.
     painter->setFont(font);
     painter->setPen(properties.textColor);
     alignment = Qt::AlignVCenter | (properties.alignment == 1 ? Qt::AlignLeft :
