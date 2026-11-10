@@ -64,7 +64,7 @@
 
 ## 构建与离线验证
 
-本机使用Qt 6.12 MinGW 13.1、CMake和Ninja。运行 `./Build.ps1` 构建与自测，`./Build.ps1 -Deploy` 更新独立的阶段1便携目录。测试使用offscreen或私有Windows桌面，不操作用户正在使用的窗口或输入设备。
+本机使用Qt 6.12 MinGW 13.1、CMake和Ninja。运行 `./Build.ps1` 构建与自测，`./Build.ps1 -Deploy` 默认发布到 `dist/KinSealStudioLite-Stage3-0.10.0-final/`，可用 `-DeployDirectoryName` 指定独立目录。测试使用offscreen或私有Windows桌面，不操作用户正在使用的窗口或输入设备。
 
 ```text
 KinSealStudioLite.exe --project-capabilities input.ksp
@@ -79,7 +79,7 @@ KinSealStudioLite.exe --download-project input.ksp
 
 字按钮六份样例在 `samples/word-button/`，包括49种组合、七操作实机测试、七种数值类型、双语按下/闪烁、通知权限和宏绑定。此前样例在 `samples/bit-button/`、`samples/static-text/` 和 `samples/single-text/`。历史说明见[静态文本验收](docs/静态文本手册实现与验收.md)和[USB协议已验证部分](docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md)。
 
-当前工程根目录及本子目录均未识别为Git仓库，因此无法执行项目规则要求的GitHub提交推送。
+`KinSealStudio` 已建立Git仓库，远端为 <https://github.com/xialang2025/KinSealStudio>。本轮阶段3实现和证据已提交并推送；外层REA工作区仍无Git元数据。本机发布产物和测试运行体按 `.gitignore` 保留在本地。
 
 ## 阶段0基线与证据管理（2026年11月10日）
 
