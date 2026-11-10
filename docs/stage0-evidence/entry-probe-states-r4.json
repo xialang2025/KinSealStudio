@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-10",
+  "desktop": "KinSealStage0EntriesStates20261110",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "input": {
+    "path": "KinSealStudio/docs/stage0-evidence/baseline-run-usb-r2/baseline.sm",
+    "sha256": "105a6c2589be6328a61d5a6271ce8bd54d12b2c642a2cf8bedeb5e84de54dd55"
+  },
+  "systemInput": false,
+  "compileOrUsbOrPlc": false,
+  "steps": [],
+  "snapshots": [],
+  "limitations": [
+    "Selection and dirty-state probes only; not full action behavior or format validation",
+    "Same copied EXE/small config/installed PATH environment as read-only probe",
+    "Read-only/running and prerequisite configuration state not inferred"
+  ],
+  "pid": 23048,
+  "status": "partial-or-error",
+  "error": "RPCException(\"unable to find method 'setGuiThread'\")",
+  "exitCodeBeforeCleanup": 259,
+  "ownedProcessTerminated": true,
+  "inputSha256After": "105a6c2589be6328a61d5a6271ce8bd54d12b2c642a2cf8bedeb5e84de54dd55",
+  "workingCopySha256After": "105a6c2589be6328a61d5a6271ce8bd54d12b2c642a2cf8bedeb5e84de54dd55",
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 3
+  }
+}

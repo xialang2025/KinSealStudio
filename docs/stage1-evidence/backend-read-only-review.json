@@ -1,0 +1,258 @@
+{
+  "task": "S01-09主窗口与后端独立只读复核",
+  "reviewer": "/root/function_ui",
+  "date": "2026-11-10",
+  "modification_marker": "//20261110-5",
+  "captured_at_utc": "2026-11-10T07:36:23.985857+00:00",
+  "mode": "read_only",
+  "business_files_changed_by_reviewer": false,
+  "build_or_runtime_executed_by_reviewer": false,
+  "usb_or_plc_accessed": false,
+  "source_identities_captured_for_review_record": [
+    {
+      "path": "src/main_window.cpp",
+      "sha256": "764feb1f3326740fe0cffe67f379cdecf6b3a305d3047cdc7916b03d35cf87a8",
+      "bytes": 65609
+    },
+    {
+      "path": "src/main_window.h",
+      "sha256": "cd74f1b475d3e4ed2f52e00e536dd1b445ad54de11425458631d71451afb4d31",
+      "bytes": 3094
+    },
+    {
+      "path": "src/static_text_actions.cpp",
+      "sha256": "459aa92c8d9cc5aff04dba379dc579036a58c98102521e036d76ce929716763c",
+      "bytes": 15068
+    },
+    {
+      "path": "src/project_capabilities.cpp",
+      "sha256": "6a2bdd1dab0ad839c83d0b225f5734db208af77e5c33be390553ef882705cc58",
+      "bytes": 5269
+    },
+    {
+      "path": "src/project_capabilities.h",
+      "sha256": "3c59bc6c6ab39dae6fe14cc62eed91ac1ad823824f4ca968721b508e163fb1da",
+      "bytes": 678
+    },
+    {
+      "path": "src/main.cpp",
+      "sha256": "2a744eda568dd9982be811cc1f22ea3afb47e6ad6ad91a552ee5473622b9ccf2",
+      "bytes": 17742
+    },
+    {
+      "path": "src/independent_downloader.cpp",
+      "sha256": "dd78877983eb47efb8c09dd882b741625a2f7ce798b651f90374f773780522ec",
+      "bytes": 67669
+    },
+    {
+      "path": "src/device_address_compiler.cpp",
+      "sha256": "0cc2ef546fe30e1caadea161cc70f5d3c1af64d58e22d9aa57c74ea737d4a695",
+      "bytes": 11061
+    },
+    {
+      "path": "src/native_test_project.cpp",
+      "sha256": "3fe10f51cd64b9fed5f19ac0d7594feb3f9e549e9de32429efacfd82dd357b62",
+      "bytes": 10220
+    },
+    {
+      "path": "src/text_payload_compiler.cpp",
+      "sha256": "c120b4aa41543c7da8ffe4b0ec06499f149a84f0a039f57fb9753adbbc05fe91",
+      "bytes": 6767
+    },
+    {
+      "path": "src/project_model.h",
+      "sha256": "29ac460a1795623291bfb2fc56277770ef7761c6ae77950120e52236c04b3ea9",
+      "bytes": 5338
+    },
+    {
+      "path": "src/project_model.cpp",
+      "sha256": "9341d7708be078f51214e90138063f69a6bc77db40d8809ae0f9a0250e35c5d1",
+      "bytes": 87912
+    },
+    {
+      "path": "src/hmi_canvas.cpp",
+      "sha256": "13cd9bc91a23c903ddca30880db7233f041e8d6ca0178b9d4e1bc321827b1487",
+      "bytes": 27972
+    },
+    {
+      "path": "src/canvas_editing.cpp",
+      "sha256": "9906b5078f5ada33686f5874fba715c08ea1b4bb6168e7c7888b5fcb35258b27",
+      "bytes": 22516
+    },
+    {
+      "path": "src/bit_button_dialog.cpp",
+      "sha256": "2e1ce62231815031ab8cf0653eab14e00afa473f29b507f0bbf74fa1c44e6824",
+      "bytes": 103826
+    }
+  ],
+  "finding_count": 6,
+  "findings": [
+    {
+      "id": "R-S01-BACKEND-001",
+      "priority": 1,
+      "title": "旧单文本编译绕过已知设备配置守卫",
+      "locations": [
+        {
+          "path": "src/independent_downloader.cpp",
+          "line": 577
+        },
+        {
+          "path": "src/independent_downloader.cpp",
+          "line": 641
+        },
+        {
+          "path": "src/independent_downloader.cpp",
+          "line": 1400
+        }
+      ],
+      "trigger": "合法固定单文本工程增加COM2/非默认站号/未知node连接，或携带结构合法的非默认原生配置snapshot；调用direct旧单文本编译或下载入口。",
+      "observation_basis": "validateSinglePageBackend只证明模型拓扑；旧函数没有通用默认配置指纹/地址编译检查而直接读取默认模板。",
+      "impact": "配置未编码而编译或下载仍可能成功；通用入口的明确拒绝可被legacy路径绕开。",
+      "recommended_regression": "全部旧入口对已知不支持配置在USB前拒绝，payload哨兵不变；原始默认TEST继续字节一致。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    },
+    {
+      "id": "R-S01-BACKEND-002",
+      "priority": 2,
+      "title": "固定原厂源导出丢弃更丰富模型",
+      "locations": [
+        {
+          "path": "src/native_test_project.cpp",
+          "line": 34
+        },
+        {
+          "path": "src/main_window.cpp",
+          "line": 832
+        }
+      ],
+      "trigger": "单个无专有属性的TEST文本、固定几何，两种工程语言且启动语言为第二种；导出原厂测试源。",
+      "observation_basis": "旧模板导出只检查目标/对象/几何/四字符，没有拒绝语言、连接、宏资源或snapshot，直接修补固定原厂模板。",
+      "impact": "成功导出不包含模型活动语言/配置；GUI无snapshot无按钮时也优先尝试此入口。",
+      "recommended_regression": "活动语言/连接/配置超出模板能力时拒绝并保留旧输出，或安全转typed codec；明确K元数据采用边界。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    },
+    {
+      "id": "R-S01-BACKEND-003",
+      "priority": 2,
+      "title": "连接UI删除未检查显式稳定引用",
+      "locations": [
+        {
+          "path": "src/static_text_actions.cpp",
+          "line": 263
+        }
+      ],
+      "trigger": "合法连接只被HmiReference的targetKind=connection引用，无控件@地址；配置窗口删除该连接并确认。",
+      "observation_basis": "configureConnections只调用validatePlcConfiguration而非validateModel，然后直接写connections。",
+      "impact": "工作模型提交悬空引用，后续save才失败。",
+      "recommended_regression": "真实UI删除必须拒绝，模型/plcConnections动态属性/脏状态/画布保持原值；覆盖隐藏页地址及取消。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    },
+    {
+      "id": "R-S01-BACKEND-004",
+      "priority": 1,
+      "title": "按钮资源先提交后验证导致拒绝无法回滚",
+      "locations": [
+        {
+          "path": "src/static_text_actions.cpp",
+          "line": 194
+        },
+        {
+          "path": "src/static_text_actions.cpp",
+          "line": 87
+        },
+        {
+          "path": "src/main_window.cpp",
+          "line": 860
+        },
+        {
+          "path": "src/bit_button_dialog.cpp",
+          "line": 1473
+        }
+      ],
+      "trigger": "项目图片被显式reference引用，在按钮工程图库右键删除后确认图库及属性；编辑和四种创建路径均可直接先替换工程资源。",
+      "observation_basis": "m_project.macros/pictures在canvas更新前赋值；addSelectedControl验证失败时从已污染m_project恢复，缺少资源候选事务。",
+      "impact": "原磁盘文件尚在，但工作模型图片已丢失并含悬空引用，保存被阻塞。",
+      "recommended_regression": "资源/对象/引用/选择完整候选一起验证提交；拒绝或取消保持全部原值；各创建入口含未画出对象路径。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    },
+    {
+      "id": "R-S01-BACKEND-005",
+      "priority": 1,
+      "title": "迁移CLI可把JSON写成.sm并覆盖原厂源",
+      "locations": [
+        {
+          "path": "src/main.cpp",
+          "line": 303
+        }
+      ],
+      "trigger": "--migrate-project input.ksp output.sm；或原厂input.sm作为相同输出路径。",
+      "observation_basis": "CLI直接将用户输出路径交给JSON save；load按.sm后缀选择二进制源解析。",
+      "impact": "命令成功生成下次无法按后缀打开的文件，原厂源还可能被原子覆盖。",
+      "recommended_regression": "只允许.ksp目的格式，拒绝原.sm原位覆盖，断言原文件SHA不变；.sm到新.ksp及.ksp原位原子迁移通过。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    },
+    {
+      "id": "R-S01-BACKEND-006",
+      "priority": 2,
+      "title": "能力报告遗漏已知设备阻塞及诊断原因",
+      "locations": [
+        {
+          "path": "src/project_capabilities.cpp",
+          "line": 36
+        },
+        {
+          "path": "src/project_capabilities.cpp",
+          "line": 72
+        }
+      ],
+      "trigger": "模型合法但连接为COM2/非默认站号/node未确认；另测试空对象或number/image。",
+      "observation_basis": "设备candidate没有检查prepare的已知连接白名单；blocked原因表达式没有纳入对象类型和数量条件。",
+      "impact": "确定不可编译状态报candidate；若已blocked，reason又可能为空。",
+      "recommended_regression": "已知不支持连接阻塞且原因定位；空/不支持对象有明确reason；正常默认五类继续candidate且查询不访问USB。",
+      "status": "open_at_initial_read_only_review",
+      "reproduced_this_review": false,
+      "evidence_level": "静态控制流；具体可达刺激与建议回归，非新运行或硬件结果"
+    }
+  ],
+  "positive_checks": [
+    "切树前复制id/pageId，重建后无旧current直接解引用；树信号重建期间关闭。",
+    "切页捕获当前canvas后事务selectPage，保持startup独立。",
+    "语言设置candidate.setLanguages按名字重映射全部页功能13并保留翻译草稿。",
+    "通用编译/扫描/栅格/固定下载入口多页角色守卫已接入；downloadProject先编译后传输。",
+    "保存QSaveFile与模型验证保留；目录编译逐文件提交是A05既有阶段5边界。"
+  ],
+  "existing_verification": [
+    {
+      "path": "docs/stage1-evidence/model-tests-first.txt",
+      "sha256": "84bdd912ccc3999d02471f3c0430ff80527ecb3ae61a1b99a8b5094ec5aaf83b",
+      "passed": 53,
+      "failed": 0,
+      "run_by": "主代理",
+      "reused_not_rerun": true
+    },
+    {
+      "path": "docs/stage1-evidence/backend-tests-first.txt",
+      "sha256": "b209663d48e69c63e07c2b030953d168fc568569de1ee6385ca36c77e935c359",
+      "passed": 8,
+      "failed": 0,
+      "run_by": "主代理",
+      "reused_not_rerun": true
+    }
+  ],
+  "limitations": [
+    "源codec内部仍由另一代理负责，本报告不重复其审查。",
+    "本轮只读，发现状态不随主代理未来修复自动关闭；修复需记录新SHA与有意义回归。",
+    "UI切页及语言重建清空画布undo是当前已记录行为，未在缺少契约时列为必修逻辑缺陷。",
+    "输入SHA在报告落盘时采集；主代理并行修复时应以保留的发现路径/刺激与修复后回归区分，不把新SHA冒称初次运行证据。"
+  ]
+}

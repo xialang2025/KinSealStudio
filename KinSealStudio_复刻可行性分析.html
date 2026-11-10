@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KinSealStudio 5.1 复刻可行性分析</title>
+<style>body{max-width:1120px;margin:42px auto;padding:0 28px;font:16px/1.8 system-ui,"Microsoft YaHei",sans-serif;color:#18232b;background:#fafbfc}h1{font-size:30px;line-height:1.4}h2{font-size:23px;margin-top:42px;border-bottom:1px solid #dce3e9;padding-bottom:8px}h3{font-size:19px;margin-top:26px}p{margin:14px 0}table{border-collapse:collapse;width:100%;margin:18px 0;background:white;font-size:14px}th,td{border:1px solid #dce3e9;padding:11px 13px;text-align:left;vertical-align:top}th{background:#edf2f6}code,pre{font:13px/1.65 Consolas,monospace}code{background:#edf2f6;padding:2px 4px;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#edf2f6;padding:18px;border-radius:6px}.lead{padding:18px 22px;border-left:5px solid #20726d;background:#eaf5f2}.meta,.small{color:#5a6872;font-size:14px}a{color:#166d9b;overflow-wrap:anywhere}li{margin:7px 0}.note{padding:14px 18px;background:#fff7e7;border-left:4px solid #b68322}@media print{body{max-width:none;margin:0;padding:0;background:white;font-size:11pt}h2{break-after:avoid}tr,pre,.lead{break-inside:avoid}a{color:inherit}}</style>
+<h1>KinSealStudio 5.1 复刻可行性分析</h1>
+<p class="meta">分析日期：2026年11月7日（北京时间）｜目标：标准版 2026-08-25 安装包及用户提供的 Installed 目录｜证据类型：文件解析、交付帮助文档、REA 与 Ghidra 静态反编译</p>
+<div class="lead"><strong>结论：具备实质性的复刻条件，建议立项做“独立编辑器 + 单型号兼容验证”。</strong><p>画面编辑、常用控件、PLC地址配置、报警/曲线/配方等功能，可以根据交付文档和实际数据重新实现。旧工程双向兼容已有格式入口；兼容原触摸屏需要继续恢复编译 DAT 格式、屏端 ABI 和下载协议。现有证据尚不能支持“全部型号、全部控件和原硬件完整兼容”，也不能将反编译结果当成原始源码。</p></div>
+<h2>1 需要区分的复刻目标</h2>
+<table><tr><th>目标</th><th>当前判断</th><th>关键条件</th></tr>
+<tr><td>重做同类 HMI 编辑器和功能</td><td>技术可行性高，可从常用子集开始</td><td>建立独立工程模型、编辑交互、运行时与业务规格；界面相似只是其中一部分</td></tr>
+<tr><td>读取和写回原 .hs / .knr 工程</td><td>有明确切入点，尚未完成兼容证明</td><td>恢复 QDataStream 的字段顺序、控件类型、版本分支和资源引用；验证原软件可重新打开</td></tr>
+<tr><td>新编辑器产物由官方仿真器和原屏运行</td><td>单型号值得验证，属于主要技术风险</td><td>恢复各 DAT 的记录布局、像素格式、驱动/宏 ABI、封装与下载握手；必须实测</td></tr>
+<tr><td>完全独立重写屏端固件和所有驱动</td><td>工作量显著扩大，现阶段不建议作为首期目标</td><td>需要处理显示/触摸/存储/USB/串口、RTOS、GUI、历史数据和异常恢复，并取得硬件资料及样机</td></tr>
+<tr><td>恢复与原公司工程相同的完整源码</td><td>不能据此承诺</td><td>目标是无 CLR 的原生程序，主程序无 COFF 符号；反编译不能恢复原注释、完整类型、工程结构和构建历史</td></tr></table>
+<h2>2 目标身份与检查边界</h2>
+<p>检查对象是用户指定的安装包和安装树，没有执行安装程序、编辑器、仿真器、屏端代码或宏编译器。分析工具在后台运行，未操作桌面焦点。目标安装文件未被修改。</p>
+<table><tr><th>对象</th><th>实测结果</th></tr>
+<tr><td>安装包</td><td>310,729,584 字节；包含 <code>Inno Setup Setup Data (5.5.7) (u)</code> 标记。现有 7-Zip 无法直接将此 EXE 列为归档；已有 Installed 完整分析入口，无须重装。</td></tr>
+<tr><td>安装目录</td><td>6,392 个文件，总计 585,346,447 字节，约 558.2 MiB。其中含 100 个 DLL、33 个 EXE、42 个 .a、225 个 .bin、5,624 个 .kvg。</td></tr>
+<tr><td>主程序</td><td><code>KinSealStudio5.1.exe</code>，18,682,368 字节，PE32 / x86，CLR 目录为零，COFF 符号数为零；PE 时间戳对应 2026-08-25 16:11:10 北京时间。时间戳是文件元数据，不作签名认证。</td></tr>
+<tr><td>主程序 SHA256</td><td><code>305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c</code></td></tr>
+<tr><td>安装包 SHA256</td><td><code>cd32476728fa1be0034ce8586ae85108bbdb908d510a152c93bc46fb7bdf5c06</code></td></tr></table>
+<p class="small">核心文件身份及 PE 结构见 [S1]，安装包标记及散列见 [S2]。本报告中“已观察”指交付文件或反编译中的事实；“文档声明”只表示帮助所述功能；“建议/估算”是工程判断。</p>
+<h2>3 技术架构及其对复刻的影响</h2>
+<p><strong>主机编辑器是原生 C++ / Qt 4.6.3 / MinGW 路线。</strong> 依据是 PE 导入表、GCC C++ 修饰名、<code>mingwm10.dll</code>、<code>libgcc_s_dw2-1.dll</code>，以及 QtCore4.dll 内的 <code>4.6.3</code> 与构建前缀。还实际使用 QScintilla、Qt XML/SQL/Network/SVG、QuaZip、MiniLZO 和 QDataStream。界面、属性对话框、对象序列化、像素生成和编译逻辑可能分布在同一个大 EXE，不能把 DLL 边界当成完整业务边界。</p>
+<p><strong>现有组件有可分析的原生机器码。</strong> 已用 Ghidra 12.1.4 对 USB 包装函数、Modbus 驱动入口做出有效伪代码。主程序也保留 Qt 信号/槽和诊断字符串，例如 <code>SaveProjectToFile(QString,int)</code>、<code>MainWindow::SaveProjectToData b</code>、<code>StartCompileThread()</code>，可作为下一步追踪入口。上述证据不等于已经恢复全部保存、编译或加密算法。</p>
+<pre>主机编辑器：画面 / 控件 / 地址 / 数据业务 / 宏
+       ↓ 工程序列化                    ↓ 编译与渲染
+.hs 编辑工程、.knr 迁移工程       参数 DAT、像素 DAT、宏代码、驱动选择
+                                     ↓
+                              compile 产物与 load.kns 归档
+                                ↙                 ↘
+                  官方 Windows 仿真程序       USB / 串口 / U盘部署链路
+                                                    ↓
+                                       ARM 固件 + GUI + PLC驱动 + 宏</pre>
+<p class="small">图中的流程是文件证据支持的架构推断；各部署通道究竟传整个归档还是拆分文件，仍需运行时/通信记录确认。</p>
+<h2>4 工程和编译格式已经确认了什么</h2>
+<h3>4.1 三类后缀需要分别处理</h3>
+<table><tr><th>对象</th><th>证据强度</th><th>结论与边界</th></tr>
+<tr><td>.hs</td><td>中文帮助正文</td><td>文档称其为可编辑工程。尚未收集一组真实的 .hs 工程并验证完整读取/写回。</td></tr>
+<tr><td>.knr</td><td>帮助正文 + 现有 upLoad.knr 实物</td><td>文档称可把 .hs 压缩为 .knr 以跨电脑迁移。compile/upLoad.knr 实物是“4字节大端解压长度 + zlib”的结构。不能由一个上传样本推及所有历史、带密码或迁移文件。</td></tr>
+<tr><td>.kns</td><td>compile/load.kns 实际归档解析</td><td>该样本是普通 ZIP / Deflate，19 个成员未设加密位；全部成员均成功解压，并与 compile 下同名文件逐字节一致。它是编译/部署相关产物，不应当成编辑工程格式。</td></tr></table>
+<h3>4.2 QDataStream 有可复核的结构证据</h3>
+<p><code>compile/upLoad.knr</code> 的前4字节为大端长度 <code>0x0015F16B</code>，即 1,438,059；随后是以 <code>78 DA</code> 开始的 zlib 数据。实际解压长度与声明完全一致。解压后偏移0出现大端长度40，后接 UTF-16BE 的 <code>KinSealStudio-V1.0.2</code>；随后有整数122、型号、PLC配置和 PNG 资源等。与 Qt 的 qCompress + QDataStream 行为高度吻合。[S3]</p>
+<p>根目录 <code>tempFile</code> 也能解析相同的字符串头。更重要的是，其中一个 PNG 的长度、800×480 RGB8 IHDR、144个chunk、IDAT解压长度和 IEND 边界已完整核对：PNG占文件约99.73%，其余元数据只有3,169字节。这是有效的格式起点，却不是复杂工程的充分样本。[S4]</p>
+<p class="note">Qt 流默认使用大端，但应用可以混用自定义结构、原始字节块、不同精度和版本分支。工程头中的122目前只能视为版本相关候选字段。不能把看见的 QString 串直接连接成“完整格式定义”，也不能用当前无密码样本推断所有保护工程都没有加密。</p>
+<h3>4.3 编译 ZIP 已拆到真实数据层</h3>
+<p><code>load.kns</code> 包含 <code>AMZ101W01.bin</code>、<code>HZ.bin</code>、<code>Modbus_RTU_com1.bin</code>、<code>load.bin</code>、<code>Usbload.bin</code>、<code>upLoad.knr</code>，以及 <code>SysPara.dat</code>、<code>AddrPara.dat</code>、<code>ControlPara.dat</code>、<code>ControlPixel.dat</code>、<code>SheetPara.dat</code>、<code>SheetPixel.dat</code>、报警、采集、曲线、图片索引等数据。已确认19项的名称、偏移、压缩方式、长度、SHA256和目录文件一致性。[S5]</p>
+<p><strong>真正的兼容难点已经缩小到 DAT 的语义。</strong> 要恢复控件类型编号、记录尺寸、页/控件索引、地址编码、字节序、图像色彩格式、对齐/保留字段、资源偏移、长度和校验。ZIP本身容易重建，生成“结构有效但行为错误”的参数表才是主要风险。</p>
+<p>当前 language.ini、tempFile 与编译残留中出现不同的型号字段，编译归档还携带 AMZ101W01 固件；这些材料不能被当成同一次操作的一致运行快照。必须通过字段解析和差分工程确定具体含义。</p>
+<h2>5 型号配置和 PLC 驱动的证据</h2>
+<h3>5.1 型号能力是明文 XML</h3>
+<p><code>model.dat</code> 和 <code>modelInfo.dat</code> 都是带 BOM 的 UTF-8 XML。前者81个条目、80个唯一型号，重复项为 <code>AMT070W016-L1024X600R</code>；后者80条，与唯一型号集合匹配。字段明确给出分辨率、设备ID、传输缓冲、画面/控件配额、固件、字库、宏库、运行入口、LB/LW/RWI地址、驱动目录和仿真程序。[S6]</p>
+<p>例如 AMZ070W01 定义为800×480，并引用 <code>script_amzlib.a</code>、<code>Link/serial_amz/</code>、<code>V51_800x480.exe</code> 和 <code>onlineV51_800x480.exe</code>。这些配置可直接用来建立新的设备描述层，不必先逆向一个“加密型号数据库”。</p>
+<p><strong>配置数量不能等同于实物支持数量。</strong> 对80个型号进行安装树文件名交叉检查，脚本库、GUI库、字库和两类仿真程序均能找到引用文件，但8个型号引用的底层固件缺少同名文件，另有2条启动图像引用未找到同名外部文件。启动图可能内嵌于 Qt 资源；固件也可能存在回退/别名机制，均未验证。[S7]</p>
+<p class="small">缺少同名固件的型号：AMT035W124-L320X480C、AMT035W124-L320X480R、AMT050W016-L480X854R、AMT080W124-L800X600C、AMT080W124-L800X600R、AMT150W016-L1024X768C、AMZ035W06、AMZ043HW04。</p>
+<h3>5.2 Windows 与屏端协议插件属于两套机器码</h3>
+<p><code>PlcDll</code> 的51个DLL全部是 x86 原生 PE，每个仅有一个命名导出 <code>DllFun</code>。<code>Link/serial_amz</code> 则有63对 COM1/COM2 裸 ARM 驱动；两端口版本均不完全相同，Modbus RTU 两个版本仅差19字节。这支持“共同协议逻辑 + 端口/宿主接口差异”的推断，尚不构成完整 ABI 说明。[S8]</p>
+<p>Modbus Windows DLL 的 <code>DllFun</code> 导出跳到 <code>0x100123c0</code>。反编译确认它保存传入函数指针，用7个全局地址调用该指针，再调用内部初始化函数。这证明存在宿主回调/共享数据契约；7个地址的完整类型、读写方向和生命周期仍未恢复。REA证据 <code>ev_f291ea1c3142b960636895ff3a75322230b84a9e1c851e312f86248ccfd6bd8d</code>。[R3]</p>
+<p>Link下许多扩展名为.ini的文件实际上也是 XML，提供串口参数、寄存器类型、地址范围和进制。例如 Fx3U 的 X/Y 八进制与串口配置已有明确数据依据。实现时仍需确认位/字/双字映射、站号、读写命令、错误应答和时序，不能仅加载清单就称为协议兼容。</p>
+<p><strong>若需要复用旧 DLL，64位新程序不能直接加载32位 DLL。</strong> 可将其放在独立 x86 桥接进程，通过 IPC 连接新编辑器；屏端 ARM 驱动仍需另行处理。Windows 的 DllFun 入口不能直接作为屏端驱动实现。</p>
+<h2>6 USB 下载和仿真的可复刻边界</h2>
+<h3>6.1 USB 传输层已经得到反编译证据</h3>
+<p><code>AMZUsb.dll!AmzUsb_connect</code> 使用 <code>usb_init / usb_find_busses / usb_find_devices</code>，打开设备后调用 <code>usb_claim_interface(handle, 0)</code>，设备日志常量为 <code>VID 0x7365 / PID 0x616C</code>。驱动INF也包含这一ID。REA证据 <code>ev_4f56ffb112d2f4a8d44371119bb6199c0ad0ac9892ef33daf5cf76ae1305aaf0</code>。[R1]</p>
+<p><code>AmzUsb_writeRaw</code> 通过 <code>usb_bulk_write(handle, 1, buffer, remaining, 5000)</code> 进行写入，循环处理部分写入。即已确认 OUT端点参数1、每次调用超时5000毫秒及基本返回行为。REA证据 <code>ev_7c8d1ef75ecf2439e688bd46f198a5b973ac9d8976265caca1e3cb7be93848c1</code>。[R2]</p>
+<p><strong>“能发 USB 字节”与“能下载运行工程”之间仍有应用协议。</strong> 尚未确认下载会话握手、设备/型号识别、包头、命令号、分包序号、CRC/校验、确认/重试、写入目标和完成激活流程。本次没有抓取通信，也没有向设备写入数据。</p>
+<h3>6.2 仿真器是很有价值的验证基准</h3>
+<p>离线和在线目录各有8个分辨率程序。二者包含 uC/OS-II WIN32 / uC/GUI 相关字符串；在线版实际额外导入串口 API、<code>LoadLibraryA</code>、<code>GetProcAddress</code> 并包含 PlcDll 路径。800×480在线版中有明确的 compile 数据路径，如 <code>ControlPara.dat</code> 位于文件偏移1,689,532，<code>SheetPara.dat</code> 位于1,689,432。[S9]</p>
+<p>这使“新工具生成 DAT → 官方仿真器验证显示与读写”成为有希望的中间关口。但路径字符串不等于已经观察到真实加载流程，仍需在隔离副本中确定工作目录、启动参数和共享内存契约，再做后台运行测试。</p>
+<p>帮助声明离线模拟不支持宏，在线模拟30分钟后退出。这是规格线索，不作为本次实测结论，也不能用离线模拟成功替代宏或原屏测试。[S10]</p>
+<h2>7 宏指令与屏端固件是独立的高成本部分</h2>
+<p>宏帮助声明支持 ANSI C89、初始化/全局/画面/按钮等宏。实际交付 ARM Developer Suite 1.2 工具、头文件、标准 ar 静态库及 ELF 目标文件。已解析 <code>script_amzlib.a</code> 等库的导出索引，存在 <code>PUTCHARS</code>、<code>GETCHARS</code>、<code>ScreenOpen</code>、CRC、LB/LW/RWI 和绘图相关接口。[S11]</p>
+<p>当前型号配置把宏库和固定入口/地址明确关联起来，例如 <code>macroEntry=80520400</code>、<code>macroRWEntry=80440000</code> 及 <code>macroLB=0x804c5010</code>。因此语法能编译只是第一步，还需要调用约定、链接地址、重定位、运行时支持、变量宽度和共享内存布局保持一致。不能默认换成 GCC、Clang 或 WebAssembly 就能在原固件上执行。</p>
+<p>Firmware的87个BIN中，84个带 ARM 分支与 <code>eGON.EXE / EXEC</code> 头，另3个是HZ字库。样本还含 <code>uC/OS-II Idle</code>、uC/GUI诊断及 <code>suniii</code> USB驱动路径。这支持 ARM + RTOS/嵌入式GUI的判断；具体SoC、RAM映射和启动链仍不能仅由字符串确定。随附TurboWriter是旧W55FA91/93/95工具，不能据此把当前AMZ设备认定为Nuvoton。[S12]</p>
+<p>如果目标是沿用原屏，优先恢复数据与ABI；如果目标是自研屏，可设计新的运行时和脚本引擎，但这会改变“原屏兼容”的项目目标。原厂固件、GUI库、编译器或驱动的技术复用还会形成持续依赖，交付分发时需核对其许可。</p>
+<h2>8 功能范围和建议优先级</h2>
+<p>下表依据实际中文帮助正文归纳，不代表各功能已经运行验证。完整来源及原文在[S10]。</p>
+<table id="features"><tr><th>功能组</th><th>交付规格线索</th><th>建议</th></tr>
+<tr><td>工程、型号、通信向导</td><td>.hs打开保存、.knr迁移、设备/方向/通信配置</td><td>首期</td></tr>
+<tr><td>基础图形与版面</td><td>直线、曲线、矩形、圆、多边形、组合、对齐、层次、旋转</td><td>首期</td></tr>
+<tr><td>基础控件</td><td>位/字开关、数据输入显示、文本、图片、刻度、表格</td><td>首期选择常用子集</td></tr>
+<tr><td>画面与弹窗</td><td>多画面、背景、窗口位置、画面宏</td><td>先画面/弹窗，后宏</td></tr>
+<tr><td>PLC地址与通信</td><td>COM1/COM2、超时/重试/间隔/轮询周期</td><td>先Modbus RTU，再Fx3U</td></tr>
+<tr><td>扩展控件</td><td>多功能按钮、仪表/圆环、GIF、滚轮、滑块、二维码、移动轨迹</td><td>分批实施，单独验证记录格式</td></tr>
+<tr><td>采集和曲线</td><td>周期/触发/整点采集、实时/历史趋势、XY曲线</td><td>第二期；历史存储与时间行为需单测</td></tr>
+<tr><td>报警</td><td>位报警、条件报警、动态报警条、历史报警、多语言消息</td><td>第二期；确认/历史语义须校准</td></tr>
+<tr><td>配方、资料传输</td><td>连续/非连续地址、数据类型、定时/触发传输</td><td>第二期</td></tr>
+<tr><td>宏与脚本API</td><td>C89、地址绑定、串口、转换、绘图、画面切换</td><td>独立兼容阶段</td></tr>
+<tr><td>系统与权限</td><td>多语言、屏保、用户等级、文件/HMI保护、状态回写</td><td>业务重写可分期；保护文件兼容另列验证</td></tr>
+<tr><td>模拟、部署与回读</td><td>离线/在线模拟、USB/U盘部署、允许上传时取回工程</td><td>先仿真，再单型号原屏，再拓展通道</td></tr></table>
+<p>5,624个.kvg已全部扫描并确认包含明文SVG根，73个layout.xml提供图库布局。矢量格式层面没有明显特殊门槛，核心难度在编辑、对象语义和设备输出。图库可自行重建，原图库使用权需要独立核对。[S13]</p>
+<h2>9 推荐的实现路径与验收关口</h2>
+<p>建议采用 Qt 6 / C++ 建立独立画布、属性系统、撤销重做和统一项目模型。原格式读取器、原格式写入器、编译后端、PLC通信和部署器分别实现。自有项目格式应包含明确版本；原格式作为导入/导出适配层。复用32位组件时以独立x86进程隔离其ABI，不把整个新编辑器锁在Qt4。</p>
+<table><tr><th>阶段</th><th>具体产物</th><th>进入下一阶段的验收条件</th></tr>
+<tr><td>格式与运行链路PoC</td><td>一个有实物的AMZ型号、800×480、Modbus RTU；最小工程、2个画面/1个弹窗、按钮/位灯/数值输入/文本/位图</td><td>单属性差分得到稳定字段映射；工程导入导出可被原软件打开，控件/地址/图层无丢失；确认DAT与仿真器输入契约</td></tr>
+<tr><td>最小编辑器</td><td>画布、属性、地址绑定、撤销重做、自有工程保存、原工程导入</td><td>用原工程样本对照几何、字体、颜色、触摸区域、数值范围与地址语义，形成可重复对照集</td></tr>
+<tr><td>兼容编译与官方仿真</td><td>生成最小DAT集合及所需封装，接入Modbus测试端</td><td>官方仿真器显示/触摸/读写行为符合预期；断线重连、超时、错误应答和边界值有效；不是只看启动成功</td></tr>
+<tr><td>单型号原屏</td><td>下载会话、数据传输、完成/重启/回读验证</td><td>真实屏能显示并控制PLC；掉电后保留符合预期；下载中断有可恢复路径；上传工程能再编辑</td></tr>
+<tr><td>扩展功能与型号</td><td>Fx3U、报警/曲线/配方、宏、多语言和更多型号</td><td>按型号×分辨率×协议×控件×保护状态建立覆盖矩阵，每增加一项有对应样本和回归结果</td></tr></table>
+<p><strong>最有价值的第一个验证：</strong>让新工具生成的一个按钮和一个数值显示控件，被官方仿真器识别，并能读写Modbus；随后用一个实际型号验证原屏。这个关口能同时检验控件记录、地址、渲染数据和运行链路，比先实现大量外观界面更能校准可行性。</p>
+<h2>10 人力与周期的条件估算</h2>
+<p>下列是规划用的粗估，不是由文件规模推导出的承诺。假设2名熟悉Qt/C++及嵌入式/协议的工程师，有测试支持、目标屏和PLC，以及可重复的原软件样本生成环境。格式PoC建议先投入2–4周，之后以结果重新估算。</p>
+<table><tr><th>交付范围</th><th>粗略日历尺度</th><th>主要变化因素</th></tr>
+<tr><td>常用控件的独立编辑器与自有运行/预览</td><td>约2–3个月</td><td>不要求原工程双向兼容和原屏部署；复杂图形/字体交互会增加工作量</td></tr>
+<tr><td>单型号、常用控件、Modbus/Fx3U的核心兼容版本</td><td>约4–8个月</td><td>以格式PoC通过为前提；宏、完整历史业务和全部保护模式可能需要后续阶段</td></tr>
+<tr><td>全功能、多型号、全部协议及宏高度兼容</td><td>12个月以上，仍需持续维护</td><td>缺样机/缺固件、隐藏版本分支、实时与异常行为可能成为主导成本；不宜现在固定总价或兼容率</td></tr></table>
+<p>“只做界面”与“原项目能在原屏可靠运行”不属于同一个预算范围。下一轮投入应围绕兼容格式和运行链路取证，而不是继续统计菜单数量。</p>
+<h2>11 当前未知项与结论边界</h2>
+<ul><li><strong>原工程兼容：</strong>有序列化样本，但未完整恢复.hs对象schema、所有控件类型、版本迁移、密码工程或资源跨目录关系。</li>
+<li><strong>编译兼容：</strong>ZIP和qCompress外层已解析；所有DAT内部结构、宏编译过程、像素编码及校验尚未恢复。</li>
+<li><strong>通信兼容：</strong>USB主机传输层和驱动入口有反编译实证；应用下载协议、屏端驱动ABI、PLC各协议行为尚未完整验证。</li>
+<li><strong>运行兼容：</strong>未启动编辑器/仿真器，没有USB抓包、PLC交互或实物触摸屏测试，所以本次不作“已兼容/已下载成功”的结论。</li>
+<li><strong>交付完整性：</strong>8型号固件同名引用缺失，部分帮助保留旧.sm、旧画面数量和HMIStudio称谓，单个样本中也混有型号字段；这些都需要运行行为校准。</li>
+<li><strong>主程序深度反编译：</strong>对18.7MB主EXE的Ghidra自动分析达到330秒时限后超时，本次未得到保存/编译函数伪代码。已取得的有效伪代码仅来自USB库和Modbus驱动；主程序相关结论依据PE表与静态字符串。后续可延长时限或缩小分析器范围。</li><li><strong>源码恢复：</strong>反编译提供机器行为的伪代码；无原始源码恢复率或复刻成功率的数字承诺。</li></ul>
+<table><tr><th>原始问题</th><th>回答状态</th></tr><tr><td>是什么技术，能否进行静态分析</td><td>已回答：原生x86 Qt4编辑器，已有有效Ghidra反编译</td></tr><tr><td>功能范围与规格从何取得</td><td>已回答：交付帮助、型号XML、宏头/库和实际配置；行为一致性待验证</td></tr><tr><td>工程与编译格式是否存在可突破入口</td><td>部分回答：外层与若干结构已验证，字段schema和双向兼容未完成</td></tr><tr><td>能否兼容原触摸屏与全部PLC</td><td>未证明：已有传输/驱动入口，仍需要原屏和协议测试</td></tr><tr><td>是否值得开展下一步</td><td>建议：值得做单型号PoC；先以兼容链路决定后续规模</td></tr></table>
+<h2>12 可复核证据索引</h2>
+<p>下列本地JSON是普通静态解析证据；以R开头的条目才是实际REA Evidence。所有反编译均为Ghidra输出，不是原始源码。</p>
+<ul>
+<li>[S1] <a href="../.scratch/kinseal-20261107/main/KinSealStudio5.1.exe.pe.json">主程序PE导入/节/身份</a>；<a href="../.scratch/kinseal-20261107/main/Common.dll.pe.json">Common导出</a>；<a href="../.scratch/kinseal-20261107/main/QtCore4.dll.strings.json">Qt版本字符串</a></li>
+<li>[S2] <a href="../.scratch/kinseal-20261107/main/installer-identity.json">安装包身份与Inno标记</a></li>
+<li>[S3] <a href="../.scratch/kinseal-20261107/runtime/upload-decompressed-evidence.json">上传工程解压证据</a>；<a href="../.scratch/kinseal-20261107/runtime/qdatastream-evidence.json">Qt字符串偏移</a></li>
+<li>[S4] <a href="../.scratch/kinseal-20261107/resources/tempfile_structure.json">临时工程流和PNG边界</a></li>
+<li>[S5] <a href="../.scratch/kinseal-20261107/runtime/load-kns-zip-evidence.json">ZIP全部19成员的解析和一致性</a></li>
+<li>[S6] <a href="../.scratch/kinseal-20261107/resources/model_analysis.json">型号XML分析</a></li>
+<li>[S7] <a href="../.scratch/kinseal-20261107/main/model-file-crossrefs.json">80型号的安装文件交叉引用</a></li>
+<li>[S8] <a href="../.scratch/kinseal-20261107/runtime/pe-metadata.json">PLC DLL元数据</a>；<a href="../.scratch/kinseal-20261107/runtime/arm-driver-pairs.json">屏端ARM驱动成对比较</a>；<a href="../.scratch/kinseal-20261107/runtime/link-xml-evidence.json">PLC XML参数</a></li>
+<li>[S9] <a href="../.scratch/kinseal-20261107/runtime/simulator-contract-evidence.json">仿真程序导入与数据路径偏移</a></li>
+<li>[S10] <a href="../.scratch/kinseal-20261107/resources/feature_catalog.json">15组功能及帮助原文</a>；<a href="../.scratch/kinseal-20261107/resources/final-findings.txt">资源分析完整说明</a></li>
+<li>[S11] <a href="../.scratch/kinseal-20261107/resources/script_ar_exports.json">ARM静态库成员和导出</a></li>
+<li>[S12] <a href="../.scratch/kinseal-20261107/runtime/raw-metadata.json">固件与工具的头部/字符串证据</a></li>
+<li>[S13] <a href="../.scratch/kinseal-20261107/runtime/vector-assets-evidence.json">全部KVG的SVG扫描</a></li>
+<li>[R1] <a href="../.scratch/kinseal-20261107/main/amzusb-connect-rea.json">AmzUsb_connect反编译</a></li>
+<li>[R2] <a href="../.scratch/kinseal-20261107/main/amzusb-write-rea.json">AmzUsb_writeRaw反编译</a></li>
+<li>[R3] <a href="../.scratch/kinseal-20261107/main/modbus-dllfun-rea.json">Modbus DllFun入口反编译</a></li><li>[限制记录] <a href="../.scratch/kinseal-20261107/main/studio-save-trace-rea.json">主程序自动分析超时诊断</a>，此记录不是成功分析的REA Evidence。</li>
+</ul>
+<p class="small">结论适用于本次给定版本和安装快照。后续新增工程、其他版本、真实设备记录应保留各自散列与环境，不与本次静态证据混用。</p>
+</html>

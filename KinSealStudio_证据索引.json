@@ -1,0 +1,194 @@
+{
+  "analysis_date": "2026-11-07",
+  "timezone": "Asia/Shanghai",
+  "target_installed": "G:/01_Professional/触摸屏/金玺/KinSealStudio_Setup_V5.1/Installed",
+  "report": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/KinSealStudio_复刻可行性分析.html",
+  "installer": {
+    "path": "G:/01_Professional/触摸屏/金玺/KinSealStudio_Setup_V5.1/KinSealStudio_Setup_V5.1_标准_2026-8-25_16点.exe",
+    "size": 310729584,
+    "sha256": "cd32476728fa1be0034ce8586ae85108bbdb908d510a152c93bc46fb7bdf5c06",
+    "markers": [
+      {
+        "key": "Inno Setup Setup Data",
+        "offset": 72760,
+        "context": "Inno Setup Setup Data (5.5.7) (u)...............................Inno Setup Messages (5.5.3) (u)....."
+      },
+      {
+        "key": "Inno Setup",
+        "offset": 72760,
+        "context": "Inno Setup Setup Data (5.5.7) (u)...............................Inno Setup Messages (5.5.3) (u)....."
+      },
+      {
+        "key": "Inno Setup Setup Data",
+        "offset": 310130693,
+        "context": "Inno Setup Setup Data (5.5.7) (u)...............................=.].[....Quc.].. ....0.`.mmyl.n.5.y."
+      },
+      {
+        "key": "Inno Setup",
+        "offset": 310130693,
+        "context": "Inno Setup Setup Data (5.5.7) (u)...............................=.].[....Quc.].. ....0.`.mmyl.n.5.y."
+      }
+    ]
+  },
+  "main_identity": {
+    "sha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+    "machine": "x86",
+    "clr_rva": 0
+  },
+  "conclusions": [
+    {
+      "claim": "独立编辑器与常用功能重写具有较高技术可行性",
+      "type": "engineering-inference",
+      "sources": [
+        "S1",
+        "S6",
+        "S10",
+        "S13"
+      ]
+    },
+    {
+      "claim": "当前样本中的ZIP和qCompress外层已解析，原工程完整schema未恢复",
+      "type": "observed-with-limitation",
+      "sources": [
+        "S3",
+        "S4",
+        "S5"
+      ]
+    },
+    {
+      "claim": "USB传输和PLC宿主接口有局部反编译证据，完整下载协议和驱动ABI仍未知",
+      "type": "observed-with-limitation",
+      "sources": [
+        "S8",
+        "R1",
+        "R2",
+        "R3"
+      ]
+    },
+    {
+      "claim": "80个唯一型号不能视为80型号均可部署，8型号引用的固件缺少同名文件",
+      "type": "bounded-static-observation",
+      "sources": [
+        "S6",
+        "S7"
+      ]
+    },
+    {
+      "claim": "原屏和全量兼容性必须由后续运行与设备验证，当前未证明",
+      "type": "unknown"
+    }
+  ],
+  "limitations": {
+    "target_executed": false,
+    "hardware_tested": false,
+    "usb_traffic_captured": false,
+    "project_roundtrip_tested": false,
+    "complete_dat_schema_recovered": false,
+    "main_ghidra": {
+      "status": "provider_timeout",
+      "timeout_ms": 330000,
+      "diagnostic": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/studio-save-trace-rea.json"
+    },
+    "protected_project_coverage": "not tested"
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/KinSealStudio5.1.exe.pe.json"
+    },
+    {
+      "id": "S2",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/installer-identity.json"
+    },
+    {
+      "id": "S3",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/upload-decompressed-evidence.json"
+    },
+    {
+      "id": "S4",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/resources/tempfile_structure.json"
+    },
+    {
+      "id": "S5",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/load-kns-zip-evidence.json"
+    },
+    {
+      "id": "S6",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/resources/model_analysis.json"
+    },
+    {
+      "id": "S7",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/model-file-crossrefs.json"
+    },
+    {
+      "id": "S8",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/pe-metadata.json"
+    },
+    {
+      "id": "S9",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/simulator-contract-evidence.json"
+    },
+    {
+      "id": "S10",
+      "type": "shipped-manual",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/resources/feature_catalog.json"
+    },
+    {
+      "id": "S11",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/resources/script_ar_exports.json"
+    },
+    {
+      "id": "S12",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/raw-metadata.json"
+    },
+    {
+      "id": "S13",
+      "type": "shell-static",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/runtime/vector-assets-evidence.json"
+    },
+    {
+      "id": "R1",
+      "type": "rea-ghidra",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/amzusb-connect-rea.json",
+      "evidence_id": "ev_4f56ffb112d2f4a8d44371119bb6199c0ad0ac9892ef33daf5cf76ae1305aaf0",
+      "provider": {
+        "id": "ghidra",
+        "name": "Ghidra",
+        "version": "12.1.4"
+      }
+    },
+    {
+      "id": "R2",
+      "type": "rea-ghidra",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/amzusb-write-rea.json",
+      "evidence_id": "ev_7c8d1ef75ecf2439e688bd46f198a5b973ac9d8976265caca1e3cb7be93848c1",
+      "provider": {
+        "id": "ghidra",
+        "name": "Ghidra",
+        "version": "12.1.4"
+      }
+    },
+    {
+      "id": "R3",
+      "type": "rea-ghidra",
+      "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-20261107/main/modbus-dllfun-rea.json",
+      "evidence_id": "ev_f291ea1c3142b960636895ff3a75322230b84a9e1c851e312f86248ccfd6bd8d",
+      "provider": {
+        "id": "ghidra",
+        "name": "Ghidra",
+        "version": "12.1.4"
+      }
+    }
+  ]
+}

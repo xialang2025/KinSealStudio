@@ -1,0 +1,205 @@
+{
+  "marker": "//20261110-5",
+  "scope": "原厂UI新保存和完整typed后对照独立预期；不宣称恢复旧丢失源身份",
+  "records": [
+    {
+      "sample": "bit-operation-set-native-ui",
+      "sha256": "e196f4ad2a962972c9f3918c40ed837c37ed12c1cbdf82ed665c6f09d2ff3263",
+      "field_checks": {
+        "object[0].switch.144.0": {
+          "expected": 0,
+          "actual": 0,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-operation-reset-native-ui",
+      "sha256": "25abbadc373a068e5f840aad776a375084a68579992b9165334d91c4cbe4687a",
+      "field_checks": {
+        "object[0].switch.144.0": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-operation-jog-native-ui",
+      "sha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+      "field_checks": {
+        "object[0].switch.144.0": {
+          "expected": 2,
+          "actual": 2,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-operation-toggle-native-ui",
+      "sha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+      "field_checks": {
+        "object[0].switch.144.0": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-notice-word7-native-ui",
+      "sha256": "31b160235cc9f57d9cb1f94d2d835f1d36f5241539612cf33995681d4cab2225",
+      "field_checks": {
+        "object[0].common.58.2": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.c8.3": {
+          "expected": 2,
+          "actual": 2,
+          "passed": true
+        },
+        "object[0].common.fc.0": {
+          "expected": "LW0",
+          "actual": "LW0",
+          "passed": true
+        },
+        "object[0].common.118.0": {
+          "expected": "7",
+          "actual": "7",
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-external-U32-native-ui",
+      "sha256": "3cde3164bac53828e4cfde13fd9097cd0423d4315ac9c517ed658b70f9c74933",
+      "field_checks": {
+        "object[0].common.touch.0": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.touch.1": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        },
+        "object[0].common.a8.2": {
+          "expected": 5,
+          "actual": 5,
+          "passed": true
+        },
+        "object[0].common.60.0": {
+          "expected": "[Modbus_RTU]4x0",
+          "actual": "[Modbus_RTU]4x0",
+          "passed": true
+        },
+        "object[0].common.78.1": {
+          "expected": "7",
+          "actual": "7",
+          "passed": true
+        },
+        "object[0].common.58.1": {
+          "expected": 0,
+          "actual": 0,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-external-I32-native-ui",
+      "sha256": "fdbbe6e3de01b31540c12dd7ccdf160bb4a14c062a9fd72a16dfe0dcc5ac2d6e",
+      "field_checks": {
+        "object[0].common.touch.0": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.touch.1": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        },
+        "object[0].common.a8.2": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        },
+        "object[0].common.60.0": {
+          "expected": "[Modbus_RTU]4x0",
+          "actual": "[Modbus_RTU]4x0",
+          "passed": true
+        },
+        "object[0].common.78.1": {
+          "expected": "7",
+          "actual": "7",
+          "passed": true
+        },
+        "object[0].common.58.1": {
+          "expected": 0,
+          "actual": 0,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "bit-external-F32-native-ui",
+      "sha256": "56bfa9eaafd79c9c237dcc1a05dbe083fb8ea0bc1f0d1042442a5613c301f8d4",
+      "field_checks": {
+        "object[0].common.touch.0": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.touch.1": {
+          "expected": 3,
+          "actual": 3,
+          "passed": true
+        },
+        "object[0].common.a8.2": {
+          "expected": 8,
+          "actual": 8,
+          "passed": true
+        },
+        "object[0].common.60.0": {
+          "expected": "[Modbus_RTU]4x0",
+          "actual": "[Modbus_RTU]4x0",
+          "passed": true
+        },
+        "object[0].common.78.1": {
+          "expected": "7",
+          "actual": "7",
+          "passed": true
+        },
+        "object[0].common.58.1": {
+          "expected": 0,
+          "actual": 0,
+          "passed": true
+        }
+      }
+    },
+    {
+      "sample": "static-visible-level3-native-ui",
+      "sha256": "732d83658c07e6e71b0bb9a312ac1acfa9a204ea513cac22a99e8cfd5d145f25",
+      "field_checks": {
+        "object[0].common.visibility.0": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.visibility.1": {
+          "expected": 1,
+          "actual": 1,
+          "passed": true
+        },
+        "object[0].common.a8.1": {
+          "expected": 2,
+          "actual": 2,
+          "passed": true
+        }
+      }
+    }
+  ]
+}

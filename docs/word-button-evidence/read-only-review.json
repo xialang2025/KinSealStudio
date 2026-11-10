@@ -1,0 +1,31 @@
+{
+  "checkedAtUtc": "2026-11-09T09:54:31.3088017+00:00",
+  "kind": "read-only-final-review",
+  "scope": [
+    "Word schema/roundtrip and switch subtype guards",
+    "Word address roles and one/two-word scan spans",
+    "Native union offsets, active-value masks and frame ordering",
+    "Shared macro/permission/notification header preservation",
+    "Font family retention and canvas copy/history",
+    "CMake linkage, Build BOM, sample source reopen and portable packaging"
+  ],
+  "blockingSoftwareFindings": 0,
+  "resolvedFindings": [
+    "Missing font fallback no longer overwrites saved family on unrelated edits",
+    "Wide Word address pickers now enforce the final source-word boundary",
+    "Device-frame test advances over native 32-byte LZO padding"
+  ],
+  "evidence": [
+    "KinSealStudio/build/static-text-tests.txt",
+    "KinSealStudio/build/static-text-windows-tests.txt",
+    "KinSealStudio/build/KinSealNativeWordControlTests.txt",
+    "KinSealStudio/build/KinSealNativeSourceTests.txt",
+    ".scratch/kinseal-wordbutton-20261109/device-analysis/native-product-comparison.json"
+  ],
+  "limitations": [
+    "Native writer oracle ran in private copy with only startup elevation-check patch; documented hashes and scope",
+    "Uninitialized hidden flags/secondary address are zeroed, not implemented as features",
+    "Native positive UI-pressed automation and second successful native matrix repeat are not established",
+    "Actual keypad/touch/permissions/notification/macro and overlapping-control firmware priority need screen-side observation"
+  ]
+}

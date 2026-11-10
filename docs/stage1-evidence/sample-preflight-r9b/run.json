@@ -1,0 +1,245 @@
+{
+  "startedAtUtc": "2026-11-10T08:42:53.700148+00:00",
+  "status": "passed_with_physical_observation_pending",
+  "usbAccessed": false,
+  "physicalTouchConfirmed": false,
+  "firmwareVersion": null,
+  "steps": [
+    {
+      "label": "stage1-inactive-config-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-inactive-config.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:54.237125+00:00",
+      "completedAtUtc": "2026-11-10T08:42:54.340126+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage1-inactive-config-migrate",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-inactive-config.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-inactive-config-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:54.341126+00:00",
+      "completedAtUtc": "2026-11-10T08:42:54.464127+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-inactive-config-repeat",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-inactive-config-migrated.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-inactive-config-second.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:54.466128+00:00",
+      "completedAtUtc": "2026-11-10T08:42:54.593851+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-reordered-languages-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-reordered-languages.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.011905+00:00",
+      "completedAtUtc": "2026-11-10T08:42:55.184660+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage1-reordered-languages-migrate",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-reordered-languages.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-reordered-languages-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.185661+00:00",
+      "completedAtUtc": "2026-11-10T08:42:55.320130+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-reordered-languages-repeat",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-reordered-languages-migrated.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-reordered-languages-second.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.321106+00:00",
+      "completedAtUtc": "2026-11-10T08:42:55.440109+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-single-page-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.629561+00:00",
+      "completedAtUtc": "2026-11-10T08:42:55.748557+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage1-single-page-migrate",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.750560+00:00",
+      "completedAtUtc": "2026-11-10T08:42:55.890567+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-single-page-repeat",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page-migrated.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page-second.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:55.891559+00:00",
+      "completedAtUtc": "2026-11-10T08:42:56.020559+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-two-pages-validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-two-pages.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:56.239560+00:00",
+      "completedAtUtc": "2026-11-10T08:42:56.349558+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": null
+    },
+    {
+      "label": "stage1-two-pages-migrate",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-two-pages.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-two-pages-migrated.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:56.350557+00:00",
+      "completedAtUtc": "2026-11-10T08:42:56.481558+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "stage1-two-pages-repeat",
+      "arguments": [
+        "--migrate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-two-pages-migrated.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-two-pages-second.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:56.482557+00:00",
+      "completedAtUtc": "2026-11-10T08:42:56.658803+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "compile-direct",
+      "arguments": [
+        "--compile-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\direct"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:57.040637+00:00",
+      "completedAtUtc": "2026-11-10T08:42:58.253736+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程设备数据编译完成，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "export-source",
+      "arguments": [
+        "--export-native-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.sm"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:58.255738+00:00",
+      "completedAtUtc": "2026-11-10T08:42:58.565958+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "原厂工程导出完成。",
+        "ok": true
+      }
+    },
+    {
+      "label": "compile-source",
+      "arguments": [
+        "--compile-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\stage1-single-page.sm",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\sample-preflight-r9b\\roundtrip"
+      ],
+      "startedAtUtc": "2026-11-10T08:42:58.567962+00:00",
+      "completedAtUtc": "2026-11-10T08:42:59.859338+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "result": {
+        "message": "工程设备数据编译完成，尚未访问USB。",
+        "ok": true
+      }
+    }
+  ],
+  "executable": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\KinSealStudioLite.exe",
+    "sha256": "2b1714325bafdca81ef77b78a8176790ffa3e92f6f1d60767497fd8e12ebe1f8",
+    "bytes": 44969155
+  },
+  "startupLanguageChecks": {
+    "editorLanguage": "中文",
+    "startupLanguage": "English",
+    "initialIndex": 1,
+    "reorderedIndex": 0
+  },
+  "completedAtUtc": "2026-11-10T08:43:01.615026+00:00"
+}

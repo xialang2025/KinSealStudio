@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-09",
+  "task": "word-button native source codec",
+  "marker": "20261109-6",
+  "test": "24 passed, 0 failed, 0 skipped; Release",
+  "testLog": "qtest-release.txt",
+  "seed": "../device-analysis/corpus/word-default-r1-saved.sm",
+  "seedBytes": 4237,
+  "seedSha256": "e794ea66a57c1c7738bef006bce2d183a3a845fd6763e18ea9b4ded9200aca95",
+  "sourceRecord": {
+    "subtype": 1,
+    "address": "word.150",
+    "dataType": "word.16c.0: direct UI index 0..6",
+    "operation": "word.16c.1: direct index 0..6",
+    "constant": "word.16c.2: f64",
+    "opaqueFlagA": "word.16c.3: original bool byte retained",
+    "minimum": "word.16c.4: f64",
+    "maximum": "word.16c.5: f64",
+    "opaqueFlagB": "word.16c.6: original bool byte; nonzero includes word.198 address",
+    "totalDigits": "word.18c.0: i32",
+    "decimalDigits": "word.18c.1: i32",
+    "pressedEffect": "switch.tail.8: source+230",
+    "stateCount": "switch.248.3; switch.290 and switch.294 lists",
+    "defaultBackground": "#f0f0f0; one stored state"
+  },
+  "compatibility": [
+    "existing bit-button and static-text typed branches retained",
+    "common permissions/macros/notification/press-time/multilingual source retained",
+    "unknown word flags and second address preserved with explicit warning",
+    "inactive word numeric fields show type defaults and retain original source bytes until edited or activated"
+  ],
+  "api": [
+    "nativeProjectUsesSupportedDeviceDefaults: unchanged, original Word seed passes",
+    "nativeProjectInitialLanguageIndex: unchanged",
+    "new resource :/native/word-button-default.sm"
+  ],
+  "productOracles": [
+    "product-word-type-operation-matrix-49.sm: object index=7*type+operation, LW=2*index",
+    "product-new-word-mixed-multilingual.sm: word/bit/static text, two languages, ordinary macro binding"
+  ],
+  "review": [
+    "No identified build or typed-boundary blocker",
+    "Real vendor 49-combination reopen and pressed-state-one default color remain pending control agent evidence"
+  ],
+  "recovery": "A full Z volume truncated the owned test file; complete restoration replayed 22 prior successful tool patches. All original cases were compared with the earlier 24-pass QTest log and rebuilt/retested."
+}

@@ -1,0 +1,118 @@
+{
+  "marker": "//20261110-5",
+  "date": "2026-11-10",
+  "mode": "只读复核：读取差异/完整相关函数和既有运行记录；未在此检查阶段改业务逻辑",
+  "source_files": [
+    {
+      "before": {
+        "path": ".scratch/kinseal-stage1-20261110/before/src/native_project_codec.cpp",
+        "sha256": "ee4ac89238b8c6138037866c31bb8b1cbc06b32ee7fff15cdc4d5da2b05591a5",
+        "bytes": 198783
+      },
+      "after": {
+        "path": "KinSealStudio/src/native_project_codec.cpp",
+        "sha256": "5afb3442fa8cf0ecda7e1636a94d932f3e3df7b1dfe87f5d4e65ed36e2e849a7",
+        "bytes": 207281
+      }
+    },
+    {
+      "before": {
+        "path": ".scratch/kinseal-stage1-20261110/before/src/native_project_codec.h",
+        "sha256": "00aa937b286e87157e55eb64fd4397d12966facf5e98c2c3f16af0ef7290ccf2",
+        "bytes": 6720
+      },
+      "after": {
+        "path": "KinSealStudio/src/native_project_codec.h",
+        "sha256": "1ec106937f46dde85f49db81ba654267e9a110dd307dc7d12a955642ce25d060",
+        "bytes": 7713
+      }
+    },
+    {
+      "before": {
+        "path": ".scratch/kinseal-stage1-20261110/before/tests/native_project_codec_tests.cpp",
+        "sha256": "b35bf7c348b04db378d7d73a4233a35f927ef7aa3aec27578aaf8ff2524618ee",
+        "bytes": 109396
+      },
+      "after": {
+        "path": "KinSealStudio/tests/native_project_codec_tests.cpp",
+        "sha256": "030c839aacb1b4de806cecf4005f9d91d9a9c7dc5e93921b1195657546393ca4",
+        "bytes": 138134
+      }
+    }
+  ],
+  "checks": [
+    "调用方模型、字节与span列表均在成功后一次替换",
+    "QString奇数/长度/UTF16字节/null与空串独立边界",
+    "未知version/type/子图元与EOF拒绝",
+    "每集合/剩余字节/总typed字段三层资源保护",
+    "多页首面兼容路径和后续前缀唯一，sourceProject入口拒绝多页",
+    "新schema配置/引用及未映射画面扩展拒绝，不按删除pages比较项静默通过",
+    "未改opaque/隐藏按下帧/同文值保留，导出结果再次语义读取",
+    "自产诊断超过128时127条+明确汇总，不截snapshot或放宽对外资源限制",
+    "多页只读parser不隐式扩大设备默认/启动语言助手支持，两个API显式拒绝",
+    "fixture目录存在后才构造迭代器；QFIND路径ASCII；没有QSKIP"
+  ],
+  "findings": [
+    {
+      "id": "SRC-S01-REV-001",
+      "finding": "缺失旧scratch导致空路径递归扫描与修改前300秒超时",
+      "resolution": "真实固定fixture+目录前置断言+延迟构造迭代器",
+      "status": "已修复，当前源全量54通过/0失败/0跳过"
+    },
+    {
+      "id": "SRC-S01-REV-002",
+      "finding": "source导出移除pages比较后可能丢新实体/画面扩展",
+      "resolution": "活动模型能力守卫与无映射页面扩展拒绝",
+      "status": "已修复，当前源全量54通过/0失败/0跳过"
+    },
+    {
+      "id": "SRC-S01-REV-003",
+      "finding": "真实大型矩阵自产诊断超过模型128条上限",
+      "resolution": "按主代理明确授权127+1提示汇总，完整快照不变，新增独立规格核对的真实67控件回归",
+      "status": "已修复，当前源全量54通过/0失败/0跳过"
+    },
+    {
+      "id": "SRC-S01-REV-004",
+      "finding": "parser开放多页只读后两个后端助手缺显式单页约束",
+      "resolution": "只读反馈并获授权后，为设备默认与startup助手分别加count!=1拒绝及index事务反例",
+      "status": "已修复，当前源全量54通过/0失败/0跳过"
+    },
+    {
+      "id": "SRC-S01-REV-005",
+      "finding": "整合r8两新建矩阵只清snapshot却留warnings，67控件大矩阵误断言60",
+      "resolution": "三处新建构造同步清除成对来源字段，保留模型守卫；独立JSON规格67项并逐对象核对功能类型",
+      "status": "已修复，当前源全量54通过/0失败/0跳过"
+    }
+  ],
+  "remaining_boundaries": [
+    "新原厂English 0/1字段组合可原厂打开，但当前受限语义互通拒绝；不能说原厂源损坏或两字段在所有条件下同义",
+    "原厂回存宏名清空且宏列表disabled，不能宣告原厂宏绑定或编译成功；产品源和人工MD5缓存格式回归另列",
+    "多页窗口/键盘/Logo/跨页引用、其余26类型、完整配置与独立按语言样式仍未知",
+    "NativeSourceSnapshot只验证结构/受限语义保全；不是来源认证或原厂编译证明"
+  ],
+  "current_full_source_suite": {
+    "status": "当前目标已重新构建并后台离屏运行，54通过/0失败/0跳过",
+    "final": "source-final-tests.txt",
+    "passed": 54,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_ms": 36394,
+    "baseline": "source-baseline-tests.txt",
+    "interim": "source-interim-tests.txt",
+    "integration_r8": "source-integration-r8-tests.txt",
+    "new_guard_subset": "source-new-guards-tests.txt",
+    "limitation": "仅当前源目标；完整Build/Deploy与实际设备证据由主代理独立记录"
+  },
+  "gui_sample": {
+    "path": "KinSealStudio/samples/bit-button/四操作实机验收.ksp",
+    "sha256": "de331d51888b4f6c22b9b15527bd112b9cc5640c891df701eab304376c3d9dbb",
+    "bytes": 30978
+  },
+  "fixture_integrity": {
+    "files": 42,
+    "bytes": 272404,
+    "sha_and_sizes_match": true,
+    "errors": [],
+    "manifest_sha256": "d3c7ba4069d0c736d17386cfa3ea63660a804e3da34ed5b0768bca424fdb22fc"
+  }
+}

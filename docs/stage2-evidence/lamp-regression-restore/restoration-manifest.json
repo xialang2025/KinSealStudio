@@ -1,0 +1,1529 @@
+{
+  "createdAtUtc": "2026-11-10T11:24:59.591145+00:00",
+  "oldExactSpecialSourceUnavailable": {
+    "artifact": "product-lamp-noimage-samelanguage.sm",
+    "historicalBytes": 4953,
+    "historicalSha256": "DE269318A9B6D30232648967552CB4144133485DD92A5405AC73DC2A50319E92",
+    "replacementIsDistinctNewInput": true
+  },
+  "records": [
+    {
+      "fixture": "lamp-default-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-default-r1.sm",
+      "inputBytes": 4213,
+      "inputSha256": "e87452849500e52d3fd4730030c6ee62d8e2adc8efaf43e472c4070cc15f95c8",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-default-r1/ControlPara.dat",
+      "outputSha256": "1d457b09537e982c90c09763ccb84ad0476b1b95f8f18fcb8b88119018491fe0",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 4200,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 28800,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 0,
+        "mode": 1,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "d56b31084dbe884585da9b7edd92d6d3802c94192fc863c19662dec4aeeb7821"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "1d457b09537e982c90c09763ccb84ad0476b1b95f8f18fcb8b88119018491fe0"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4213,
+          "sha256": "e87452849500e52d3fd4730030c6ee62d8e2adc8efaf43e472c4070cc15f95c8"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18170,
+          "sha256": "d69c4be0d3935af2de0752558b59bb94f23a5a8dd558ac0ebf371061b53c6c38"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "f9f61fb461a03a51c633f56533439d75f02abcf2f42a87a154550217e386e11c"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "1feac7ff14c8371f2701fd0ea198490c1b144ccf6abef1d1e9e1338bb524d357"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1126,
+          "sha256": "ce041bb0ef70c6bbf761eda7362fed9fe6cf27a06bcce823183a41cd760aaf4f"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "52b4ae575fdfa45a1be4876431413cbedfa268bf814929198b41dc1f63804c49"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:20:03.509941+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:20:08.995136+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "multiDataType": 4278190080,
+        "wordBit": 0
+      }
+    },
+    {
+      "fixture": "lamp-wordbit7-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-wordbit7-r1.sm",
+      "inputBytes": 4215,
+      "inputSha256": "fee839cda253fc4dee20654512bc1c9e4764ebed7d2f99a0cfc1b2cdc38fc1bd",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-wordbit7-r1/ControlPara.dat",
+      "outputSha256": "b1190d2d831b5a7dce4ff789e0ef2d8f1e83e6e1573c05a3a2fc4e3eda04e7fd",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 8956,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 28800,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 1,
+        "wordBit": 7,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "2fabdc4d28c9361a78caa7642ea8d499f837f24d483a8d9f8126384fc894ed2a"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "b1190d2d831b5a7dce4ff789e0ef2d8f1e83e6e1573c05a3a2fc4e3eda04e7fd"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4215,
+          "sha256": "fee839cda253fc4dee20654512bc1c9e4764ebed7d2f99a0cfc1b2cdc38fc1bd"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18150,
+          "sha256": "0deac55fd2316bd45261e10e8853cfbdfe8b5ce0723029c27aeb09fab8865deb"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "06e9724620c83af89bc090a35b17144ebe5d7d02c14d32df17893f4a1944f0da"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "9e6c38c24e26dbc9c433bd17739e62ea592a992c3b90e7a5b2122422dfc9e0c6"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1144,
+          "sha256": "b0101dbaaccf344990e1164444e84a3dcde91d17f01cc7129265ffb1689c1251"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "bb91927a18e64c55055b1a7fb2695442262e56918d3bec2a30a1490c18697a96"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:21:31.820959+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:21:36.810657+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "multiDataType": 102404784
+      }
+    },
+    {
+      "fixture": "lamp-wordbit15-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-wordbit15-r1.sm",
+      "inputBytes": 4217,
+      "inputSha256": "90e763aefa4037e66e4b513655bef423cc42cf4c74bc18d38efd0423025b8893",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-wordbit15-r1/ControlPara.dat",
+      "outputSha256": "116c45a0118d2f5010d2b3ebdb987471b76e54ebb6f148a993ec0d0de697bde2",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 21664,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 28800,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 1,
+        "wordBit": 15,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "707e7d912cb2b765b667339416bf096668f785203cfd8eb03974510a5f4ff8b4"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "116c45a0118d2f5010d2b3ebdb987471b76e54ebb6f148a993ec0d0de697bde2"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4217,
+          "sha256": "90e763aefa4037e66e4b513655bef423cc42cf4c74bc18d38efd0423025b8893"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18130,
+          "sha256": "f273db88aaa9bb23e26f7c86fac3b352a4b86dd049b1e3315988e3b5e02e22e9"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "2fae20b5623ae6a74f3e8033d59957ff2d544c8ec837cf0394037680cfdc8803"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "c92a0fb51347122746d5710f32f9b46ae9fbdbb34f5a5e99cdfd916d73f1d4b1"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1148,
+          "sha256": "0733f6e0869a6257ae2187cb47cd7f18382a131b0137cae3cd7fa929db8b9f6f"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "bbc6a28191c3b7a06189d96c09f897a1dbb7aae89924875a1954dccc0c642ec7"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:21:40.324682+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:21:48.522466+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "multiDataType": 103974176
+      }
+    },
+    {
+      "fixture": "lamp-multi5-u16-r4",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-multi5-u16-r4.sm",
+      "inputBytes": 4613,
+      "inputSha256": "57b3267aae55308406c5742727645395083057ba2819538b2bbaa08c6874bfb0",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-multi5-u16-r4/ControlPara.dat",
+      "outputSha256": "a9511a48ddab78bbfedba970742910feeebd0b0fad0cffe7470a22c4304390ed",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 25616,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 72000,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 5,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "063e604b27045c69b3bea5dccd608abd6d815e6ed80c9587110a348735b3f415"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "a9511a48ddab78bbfedba970742910feeebd0b0fad0cffe7470a22c4304390ed"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 17760,
+          "sha256": "12c64cd5834e2c776443ec196eadc887250e7a61d51641dc207100a177741891"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4613,
+          "sha256": "57b3267aae55308406c5742727645395083057ba2819538b2bbaa08c6874bfb0"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 19018,
+          "sha256": "5d0777e199192b8e65a7e049770cc18c8d883b646ce69bbceae90814b8b3f3c1"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2460,
+          "sha256": "7b1d6bb4c8433b8f5343814ef1099b2f16a9760579d864f65e5f7809ffe71099"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9b40337d2f41ce38280ac5a7c5dec0f7884834f32c6d39c91b136525a028ebe3"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "13887de76fd98da79c4f82872b2d01a5b4c6ebaf349efe45d1e121d4c4750c86"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1192,
+          "sha256": "7302fbebbae8b844df155130090d4ae2f3b24fbc184990a341d2b12bfaa412ad"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "0b2976a5e07de324e61dbd1973ef90848bb77e9e9a416c047694e6a422009c80"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:21:50.786375+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:21:56.425003+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 101861640
+      }
+    },
+    {
+      "fixture": "lamp-multi5-u32-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-multi5-u32-r1.sm",
+      "inputBytes": 4613,
+      "inputSha256": "738c3a76c7010585fde9149ba9e2e0ed5bb61b1bcf6edb05fe8a0b9218f18f3b",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-multi5-u32-r1/ControlPara.dat",
+      "outputSha256": "6a8d6a3575aa859e687c2cedef8ea57058b7d7ffdf5bd9a023ca4632fbaaad5c",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 19728,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 72000,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 1,
+        "states": 5,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "a8a3839316e641397fdb3b276219ed43a89856da5a46a53c2919f13a978e0a89"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "6a8d6a3575aa859e687c2cedef8ea57058b7d7ffdf5bd9a023ca4632fbaaad5c"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 17760,
+          "sha256": "12c64cd5834e2c776443ec196eadc887250e7a61d51641dc207100a177741891"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4613,
+          "sha256": "738c3a76c7010585fde9149ba9e2e0ed5bb61b1bcf6edb05fe8a0b9218f18f3b"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 19036,
+          "sha256": "0b282a05103bf970544579fe56a8425512b697bdf4dd704ad11b3d35323b5b57"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2460,
+          "sha256": "7b1d6bb4c8433b8f5343814ef1099b2f16a9760579d864f65e5f7809ffe71099"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "58b860b148ceaa65306b2f2eab57ffcd4befb469cded9ca9484e8af31d8c954a"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "1e8b254d3af5eb7258c10e92c18ec4ef6dce7706aa0ffea4ad32a40d45df0ca6"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1193,
+          "sha256": "7ed29e8137a0399bdbf2d916207f308497a60f19f329304e47de3db1d6bcb490"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "5f0ee432ae4638cb701c518f2c558378dc26057f082183137b53d267df9d379a"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:00.586031+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:05.504114+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 103438056
+      }
+    },
+    {
+      "fixture": "lamp-none-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-none-r1.sm",
+      "inputBytes": 4207,
+      "inputSha256": "dfa8802449a7d8fc298257b086c37b3b98e143235f22f3cbc6745cabe087031b",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-none-r1/ControlPara.dat",
+      "outputSha256": "c5d45c2cfc439e2342cadc0c845a8ce1a8a28abe2840b8a5f9afd2b8cacfbb7d",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 21180,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 28800,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "f788f06af3d7aca90849289ca1b4daeeaa3dcb0160fe37dec436286b471874fe"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "c5d45c2cfc439e2342cadc0c845a8ce1a8a28abe2840b8a5f9afd2b8cacfbb7d"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "1d19b28742932721cf73efd8a09f21f0e09d301713f81099f3486fb5a0589340"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4207,
+          "sha256": "dfa8802449a7d8fc298257b086c37b3b98e143235f22f3cbc6745cabe087031b"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18176,
+          "sha256": "e132fe0c5c9c6bb96b49e98d502d5a23ebddccb4cd28e938c41a65bbf53275e1"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "1f055e9a3ad346fb0a88079737844d9ff026d7bd51ac4e91f2f9978455d2c255"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a70f4616763d45b50e8d995bccbab97daa878b48867878cab41c4318a93da673"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "4e30b9eeb3947261169b44d3d34d74faf3ba1edc69dc81597ae23600cb32b87e"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1139,
+          "sha256": "22a9a31a72aa2479f0268e9855583826c57cefa7c0008df80f1f3148ac64dd4e"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "0b38dfa3b429e15643fdaf1ff5e9f118d5b6cfd7e72624ee313757597aac4051"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:07.648712+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:12.945845+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 3971942
+      }
+    },
+    {
+      "fixture": "lamp-multi5-flash0-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-multi5-flash0-r1.sm",
+      "inputBytes": 4619,
+      "inputSha256": "9aa119c2636cde799d6015a63afdc2a7f7eefe84e31202305874fe498d43dfab",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-multi5-flash0-r1/ControlPara.dat",
+      "outputSha256": "7b0b71622eea40f4bbcb79371e73ec9e7ae341d9bbf38aa547df69ba417b08f8",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 20192,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 72000,
+        "subtype": 4,
+        "flash0": 1,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 5,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "a059a0a995129e8d00befda8657584cdc8fe6cc5196b4a693f1526a9b1f0fb32"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "7b0b71622eea40f4bbcb79371e73ec9e7ae341d9bbf38aa547df69ba417b08f8"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 17760,
+          "sha256": "12c64cd5834e2c776443ec196eadc887250e7a61d51641dc207100a177741891"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4619,
+          "sha256": "9aa119c2636cde799d6015a63afdc2a7f7eefe84e31202305874fe498d43dfab"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 19033,
+          "sha256": "f108f68585b6eb9eb0ca43fc261a280340a644b3a3eb98350872e0672107407c"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2460,
+          "sha256": "7b1d6bb4c8433b8f5343814ef1099b2f16a9760579d864f65e5f7809ffe71099"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "58b860b148ceaa65306b2f2eab57ffcd4befb469cded9ca9484e8af31d8c954a"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "719ff3edf5a7a2ecb9a641c0cd0538a6ef23f4d7619f98538db99f1b89cdb01e"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1200,
+          "sha256": "91d279ccf4ddeda29ffcbeeb2793a68a4f2f7d504d4bf0a597b4d2c5f42973c0"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "a7da87c35a32120acaed18e05f55d4c32bba1ab3db52fa50e1dd8658ed191198"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:15.054546+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:19.971160+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 102531720
+      }
+    },
+    {
+      "fixture": "lamp-multi5-flash2-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-multi5-flash2-r1.sm",
+      "inputBytes": 4619,
+      "inputSha256": "5c41645511891fb12d5393dba2f2ccafe1fe3263b1201f9a87e7d8dbe956edc1",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-multi5-flash2-r1/ControlPara.dat",
+      "outputSha256": "2ca163b59494701eb9f727ccc19c1d798ed6810d2ddcad61598ad626c88f2e3d",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 15424,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 72000,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 5,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "cb91e6921618890d3f89e4fc60c6f31bf6a4cb4491d84e4cd116c801847b6086"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "2ca163b59494701eb9f727ccc19c1d798ed6810d2ddcad61598ad626c88f2e3d"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 17760,
+          "sha256": "12c64cd5834e2c776443ec196eadc887250e7a61d51641dc207100a177741891"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4619,
+          "sha256": "5c41645511891fb12d5393dba2f2ccafe1fe3263b1201f9a87e7d8dbe956edc1"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 19030,
+          "sha256": "6c057cab98f78da71c2a6fafcc709e0ce10db502c3e67df17d9ebf9e11be61ef"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2460,
+          "sha256": "7b1d6bb4c8433b8f5343814ef1099b2f16a9760579d864f65e5f7809ffe71099"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "58b860b148ceaa65306b2f2eab57ffcd4befb469cded9ca9484e8af31d8c954a"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "a238c8db16e5ad6d4e5fbf465813e1c63171e5246d20297d1618c5bdbb6ebf4f"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1200,
+          "sha256": "ee9253a2c6900eb7a579af31afcb0598a38fda09c728259bcec6065e105a2943"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "07f08400c9062a233a97808e6f1d51aac70e5494fa88d184eeb6fb847e94f4d7"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:22.413524+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:27.549860+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 102853800
+      }
+    },
+    {
+      "fixture": "lamp-dual-flash0-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-dual-flash0-r1.sm",
+      "inputBytes": 4221,
+      "inputSha256": "ba27e8036f6ada101225301e463763df8ee07dc6c46d65e92fca9ee1fbbf2b93",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-dual-flash0-r1/ControlPara.dat",
+      "outputSha256": "229bc81f1a66c7dd8c10f5314b30a09d28bbda8779ce10cfb25cfc655bfdb78f",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 19912,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 43200,
+        "subtype": 4,
+        "flash0": 1,
+        "flash1": 0,
+        "monitorWord": 0,
+        "mode": 1,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "4006661f936739e5dd51fe1868370169e24fddcc6029eb60189c4a7b69ca42a2"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "229bc81f1a66c7dd8c10f5314b30a09d28bbda8779ce10cfb25cfc655bfdb78f"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 10592,
+          "sha256": "c6785182e14e30372bf56d48104d1a1dfb5bb16957022f5be8ff4f7c6f940610"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4221,
+          "sha256": "ba27e8036f6ada101225301e463763df8ee07dc6c46d65e92fca9ee1fbbf2b93"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18716,
+          "sha256": "d9a9cea878a1eecc0d031458ede4ba60cae3c35c6e5b0ffd30fb783c8e1baa26"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2436,
+          "sha256": "dae2c092caecd64812ae35b642c4e07b734586c47b11727020a9e5addf050e5f"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "3dfe474e0a10f2ab73a3d8d26800bfcdac04ac237b62cd15e570eace0b54c47b"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "07490a3064a7999e1051794d736100a63a6b3dfbc31e101c322f8942498076ef"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1145,
+          "sha256": "1a16c6ea9f3efcc77928a6a2263b227b47a56fefa17c31be01bea49d64fd3f05"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "ce2c6e17c7def23ee524e59eb97eca6be1a4b2e5993352e5f787ea50c319a107"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:29.651247+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:34.758255+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "multiDataType": 102192616,
+        "wordBit": 15
+      }
+    },
+    {
+      "fixture": "lamp-multi2-flash0-r1",
+      "classification": "historical-native-UI-source-fresh-native-recompilation",
+      "inputPath": "KinSealStudio/tests/fixtures/native-source/lamp/lamp-multi2-flash0-r1.sm",
+      "inputBytes": 4225,
+      "inputSha256": "6e94e8ce5ef72728d028c1da2dc8883061eee65d3d44843ed0f5bd5760557f75",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/lamp-multi2-flash0-r1/ControlPara.dat",
+      "outputSha256": "fe255b09cc4e28b4d0754d15535f261563b7eba5d53d0ca1e78ced2e5d14d4d8",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 7616,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          244,
+          112,
+          120,
+          60
+        ],
+        "uncompressedPixelBytes": 28800,
+        "subtype": 4,
+        "flash0": 1,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 2,
+        "sameLanguage": 0
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "44912affb23435076e2d12d4b9a6cc7687a6017b44806b4ef59f6dc87af1254b"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "fe255b09cc4e28b4d0754d15535f261563b7eba5d53d0ca1e78ced2e5d14d4d8"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "1d19b28742932721cf73efd8a09f21f0e09d301713f81099f3486fb5a0589340"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 4225,
+          "sha256": "6e94e8ce5ef72728d028c1da2dc8883061eee65d3d44843ed0f5bd5760557f75"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 18178,
+          "sha256": "658d174684f89d69486d09c6ec2c3a4fb9a53846fbff20bd5ed0b4fa30542ff9"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "1f055e9a3ad346fb0a88079737844d9ff026d7bd51ac4e91f2f9978455d2c255"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "06e9724620c83af89bc090a35b17144ebe5d7d02c14d32df17893f4a1944f0da"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "7da0f21a1395fe096680c7df4ccd3e8f67cb2211f01cd49327143c61e2366ffe"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1149,
+          "sha256": "545e99a14e3f1ab7a7237967755dcd814442e3227d747e1104b37991e9e6c9a0"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "8a0872fbe45fe6419ff8eebc6119d63cb80b1f04b6cfa1866675f5f013514f8d"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:22:37.060133+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:22:41.859658+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 102073288
+      }
+    },
+    {
+      "fixture": "product-shared-lamp-new-native",
+      "classification": "original-native-compiled-product-input-new-regression-not-old-recovery",
+      "inputPath": "KinSealStudio/docs/stage2-evidence/product-lamp-input/shared-lamp-product.sm",
+      "inputBytes": 5056,
+      "inputSha256": "f0ca66db052af78f6e79be20cbd67c88572f8bb59d17fe90eaa0b1798b1bd464",
+      "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "startupPatch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "outputPath": "KinSealStudio/docs/stage2-evidence/lamp-regression-restore/compiled/product-shared-lamp-new-native/ControlPara.dat",
+      "outputSha256": "66066641547c63cb4389bab977bf86f3bd9b72a641e80bfdea5a1e60290a4788",
+      "outputBytes": 640,
+      "nativeCompilationStatus": "native-stage2-scenario-completed",
+      "guiThreadOnly": true,
+      "systemInput": false,
+      "usbOrPlcCommandsInvoked": false,
+      "ownedPid": 23820,
+      "ownedPidTerminated": true,
+      "activeFields": {
+        "type": 10,
+        "geometryU16": [
+          40,
+          40,
+          180,
+          60
+        ],
+        "uncompressedPixelBytes": 108000,
+        "subtype": 4,
+        "flash0": 0,
+        "flash1": 0,
+        "monitorWord": 1,
+        "mode": 2,
+        "multiDataType": 0,
+        "states": 5,
+        "sameLanguage": 1
+      },
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "f07ee61706ebb6f3251fb2d279eb1d5e0df545dbcb9246a378bd5228c980ac75"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "66066641547c63cb4389bab977bf86f3bd9b72a641e80bfdea5a1e60290a4788"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 19392,
+          "sha256": "920d0eafcdea3ab9376e9852ae1f94afbd65c6b6f669f9eab833c7018d606bc0"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "input-native.sm",
+          "bytes": 5056,
+          "sha256": "f0ca66db052af78f6e79be20cbd67c88572f8bb59d17fe90eaa0b1798b1bd464"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 253,
+          "sha256": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 21343,
+          "sha256": "7d6ad90c2be700987bfd815d76e1ec27082a2243de85e1e01f45350bc0b408df"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Modbus_RTU_com1.bin",
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2460,
+          "sha256": "7fb94b6cb9aed37ae107866a9c43d3878afc870f771cee710c31d533f6947c49"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "06fb323ac97e64959996064f52ce5185134edcdcc5f4ea2d1f59c27f6e00ca64"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "feb0d1743d4bc3a11b8782c29c2e97d01ddb34fca6e14ed1be4038778cc099f5"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1241,
+          "sha256": "c6952ee7c39605693c566a6b452d808da96cb8e0578c38efab864f0a8ed70b89"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "c10ab1711b378433f557705e7b8732dc820b158bc0fc20d5d9b669bacb6a94f5"
+        }
+      ],
+      "nativeRunStartedAtUtc": "2026-11-10T11:23:23.707942+00:00",
+      "nativeOutputLastWriteTimeUtc": "2026-11-10T11:23:29.308594+00:00",
+      "rawInactiveUnionObservationsNotComparedAsConstants": {
+        "wordBit": 0
+      }
+    }
+  ]
+}

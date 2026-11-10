@@ -1,0 +1,995 @@
+{
+  "executionId": "stage0-20261110-4",
+  "completedAtUtc": "2026-11-10T06:39:48.068945+00:00",
+  "status": "baseline_tooling_and_real_transfer_delivered; full_native_M0_open; cleanup_blocked",
+  "programVersion": "0.7.0",
+  "executableSha256": "259cda65c3f16a80950bad96e55d70a75f8c3134b66de94a36bf2533ae752c2d",
+  "newBuildPerformed": false,
+  "inputFilesCaptured": 130,
+  "manualsTracked": 31,
+  "candidateStatistics": {
+    "original_candidate_count": 308,
+    "semantic_reviewed_candidate_count": 308,
+    "candidate_classification_counts": {
+      "复合父项": 167,
+      "单一问题": 119,
+      "说明文字": 9,
+      "已有证据": 12,
+      "重复": 1
+    },
+    "candidate_status_counts": {
+      "初审开放": 263,
+      "说明上下文保留，关联问题开放": 8,
+      "已有历史补证，整体未关闭": 31,
+      "沿用事实关闭": 2,
+      "复合父项开放，18功能分别接续": 1,
+      "重复映射，目标问题仍开放": 1,
+      "部分关闭：范围事实已闭，渲染分支开放": 1,
+      "说明排除，保留原行": 1
+    },
+    "candidate_fact_closed_count": 2,
+    "candidate_partially_closed_count": 1,
+    "excluded_non_problem_candidate_count": 1,
+    "duplicate_mapped_candidate_count": 1,
+    "formal_question_record_count": 799,
+    "concrete_atomic_question_count": 613,
+    "parent_question_count": 186,
+    "atomic_fact_closed_count": 3,
+    "atomic_not_closed_count": 610,
+    "tests_executed_this_run": 0,
+    "new_fact_closures_this_run": 0,
+    "function_runtime_function_group_count": 18,
+    "function_runtime_atomic_count": 59
+  },
+  "entryRecords": 194,
+  "realMultipleSelectionObserved": 12,
+  "fullSingleOrDirtyStateDeclaredPassed": false,
+  "fieldTrackingRecords": 1521,
+  "fieldAtomicSpecificationDeclaredComplete": false,
+  "transportAccepted": true,
+  "screenDisplayAndTouchConfirmed": false,
+  "firmwareIdentity": null,
+  "shutdownRequested": false,
+  "crossRegistryChecks": {
+    "checkedAtUtc": "2026-11-10T06:39:45.294575+00:00",
+    "status": "passed",
+    "candidateCount": 308,
+    "candidateQuestions": 799,
+    "manuals": 31,
+    "fieldTrackingCandidates": 1521,
+    "entryRecords": 194,
+    "entryQuestions": 195,
+    "sourceDocumentAppendOnlyUpdates": [
+      {
+        "path": "KinSealStudio/design_plan/01_阶段0_基线范围与证据管理.md",
+        "capturedSourcePrefixPreserved": true,
+        "note": "Parent execution note appended after field audit; original source lines unchanged."
+      }
+    ],
+    "crossRegistryQuestionCollisions": false,
+    "foreignReferencesValid": true,
+    "frozenCandidateRowsUnchanged": true,
+    "coreLocalLinksChecked": 21,
+    "productionSourceAndExecutableInputsUnchanged": true,
+    "protocolOriginalPrefixPreserved": true,
+    "sourceRoundtripFileMatches": 4,
+    "currentTaskStatesPreserveHistory": 6,
+    "scope": "Structural/evidence checks; not full atomic native-specification or physical E acceptance"
+  },
+  "portableFilesVerified": 145,
+  "protocolAndPortableDocumentHashesMatch": true,
+  "cleanup": {
+    "status": "blocked_by_automatic_approval",
+    "deletedBytes": 0,
+    "entryRegenerableFilesRetained": 40,
+    "entryRetainedBytes": 151066487,
+    "pythonCacheRetainedBytes": 23823,
+    "bypassAttempted": false,
+    "historicalS02Untouched": true,
+    "details": [
+      "entry-cleanup.json",
+      "tool-cache-cleanup.json"
+    ]
+  },
+  "git": {
+    "repository": false,
+    "committed": false,
+    "pushed": false
+  },
+  "artifacts": [
+    {
+      "path": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md",
+      "bytes": 85502,
+      "sha256": "6afc843f365c458d093a581fc884095b643c1380285b9727ff22ca3c8a4c5a05",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/阶段0基线与验收.md",
+      "bytes": 9113,
+      "sha256": "5cbae22f9f3df364d4a0af90fff3a24f636e38a8e5db72c05737d777fc2add7b",
+      "portableCopy": true
+    },
+    {
+      "path": "README.md",
+      "bytes": 10667,
+      "sha256": "a98e19faf7f0fe2f29f0c179d5f75e11a349ce6a7f4d8201655c7e3fbea105ec",
+      "portableCopy": true
+    },
+    {
+      "path": "samples/stage0/stage0-baseline.ksp",
+      "bytes": 85018,
+      "sha256": "e72bc578e01f26a305192370d26875add7b00b1e5c2602bbc3e2733ee64bab02",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/baseline.ksp",
+      "bytes": 85018,
+      "sha256": "e72bc578e01f26a305192370d26875add7b00b1e5c2602bbc3e2733ee64bab02",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/baseline.sm",
+      "bytes": 19378,
+      "sha256": "105a6c2589be6328a61d5a6271ce8bd54d12b2c642a2cf8bedeb5e84de54dd55",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-direct-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-direct-stdout.txt",
+      "bytes": 77,
+      "sha256": "7cd9b9619417bf04a676cb631c99b99873f1ca9aac92cd0a4a37556e827ee25e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-direct.json",
+      "bytes": 538,
+      "sha256": "1552dee17adf83782007cbe47cba653ebc42b1d52bac0ca84043908da068a47e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-source-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-source-stdout.txt",
+      "bytes": 77,
+      "sha256": "7cd9b9619417bf04a676cb631c99b99873f1ca9aac92cd0a4a37556e827ee25e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/compile-source.json",
+      "bytes": 540,
+      "sha256": "564a931005bde61bd7feabe89a8f879a3764c9516703ce47d3ffdbd25d99db40",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/device-resources.json",
+      "bytes": 1108,
+      "sha256": "f8595a82a05fb68216cc27878efa0f9a45712b1c0495bdc9336f13511d95ec64",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/AddrPara.dat",
+      "bytes": 200,
+      "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/AlarmPara.dat",
+      "bytes": 47840,
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/Collect.dat",
+      "bytes": 1424,
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/compiler-manifest.json",
+      "bytes": 2004,
+      "sha256": "7973b87e55d3a1834f98aa98914b4a3bd3c4dff9664a1caf9a9be88dd99ad53b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/ControlPara.dat",
+      "bytes": 7680,
+      "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/ControlPixel.dat",
+      "bytes": 136992,
+      "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/Curve.dat",
+      "bytes": 501,
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/Modbus_RTU_com1.bin",
+      "bytes": 12496,
+      "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/PicLenPara.dat",
+      "bytes": 2952,
+      "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/SheetPara.dat",
+      "bytes": 72,
+      "sha256": "7bf83635ba4255b1cc0b8ecc42c0fb906ccb05685cab689d3e32c42937fd2bcc",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/SheetPixel.dat",
+      "bytes": 4137,
+      "sha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/SysPara.dat",
+      "bytes": 4998,
+      "sha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/direct/upLoad.knr",
+      "bytes": 1946,
+      "sha256": "106945eea4d843b2d4adf9e9b9fc232b95b0717e55a57a0daadd3c886d7b6a72",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/export-source-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/export-source-stdout.txt",
+      "bytes": 53,
+      "sha256": "328b62fbbcf8313993507d2b7a6af28e217ac455df1ae8f79eecb41e2bdf511d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/export-source.json",
+      "bytes": 524,
+      "sha256": "ed08ab4a1b5cde790613092bdb32602193949745d065a5dd3b52aaa3a371e55a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/input-manifest.json",
+      "bytes": 47505,
+      "sha256": "097a85f720ba69b141d61352961759662396b6334f5a0e28c14509a4276698ee",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/AddrPara.dat",
+      "bytes": 200,
+      "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/AlarmPara.dat",
+      "bytes": 47840,
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/Collect.dat",
+      "bytes": 1424,
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/compiler-manifest.json",
+      "bytes": 2004,
+      "sha256": "427d9d7653fce09fe2a639ea1bdcd4e198d3e1b50af83196931a5a6e42e89e8d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/ControlPara.dat",
+      "bytes": 7680,
+      "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/ControlPixel.dat",
+      "bytes": 136992,
+      "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/Curve.dat",
+      "bytes": 501,
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/Modbus_RTU_com1.bin",
+      "bytes": 12496,
+      "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/PicLenPara.dat",
+      "bytes": 2952,
+      "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/SheetPara.dat",
+      "bytes": 72,
+      "sha256": "7bf83635ba4255b1cc0b8ecc42c0fb906ccb05685cab689d3e32c42937fd2bcc",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/SheetPixel.dat",
+      "bytes": 4137,
+      "sha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/SysPara.dat",
+      "bytes": 4998,
+      "sha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip/upLoad.knr",
+      "bytes": 6278,
+      "sha256": "dc822b093f130aadfcf2aaa570458b86062bf39fc7789d6b7d1ddbb3b1141d87",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/roundtrip-comparison.json",
+      "bytes": 3110,
+      "sha256": "03898eaca8c4655363ae334e72fb1b6a9176678a3f705c7ba3f7029bdcbf9f53",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/run.json",
+      "bytes": 6596,
+      "sha256": "e0d0766213ef1a20e5d47499c64377a6db2bf179ae0774509e97197a7af180b4",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/validate-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/validate-stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-r1/validate.json",
+      "bytes": 339,
+      "sha256": "022968ea83155592d4125672125061b29222b971d6c10d903ff8c21f586fe65a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/baseline.ksp",
+      "bytes": 85018,
+      "sha256": "e72bc578e01f26a305192370d26875add7b00b1e5c2602bbc3e2733ee64bab02",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/baseline.sm",
+      "bytes": 19378,
+      "sha256": "105a6c2589be6328a61d5a6271ce8bd54d12b2c642a2cf8bedeb5e84de54dd55",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-direct-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-direct-stdout.txt",
+      "bytes": 77,
+      "sha256": "7cd9b9619417bf04a676cb631c99b99873f1ca9aac92cd0a4a37556e827ee25e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-direct.json",
+      "bytes": 546,
+      "sha256": "0f36224f531a156b4c121b86ec2c6030edac1a3c57a64e4d0043068e4cd4fcd7",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-source-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-source-stdout.txt",
+      "bytes": 77,
+      "sha256": "7cd9b9619417bf04a676cb631c99b99873f1ca9aac92cd0a4a37556e827ee25e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/compile-source.json",
+      "bytes": 548,
+      "sha256": "7ec7ee85c589f88c403864d5b982477d235c4f288ea44dfacbbc33d5622c569b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/device-resources.json",
+      "bytes": 1108,
+      "sha256": "eee1f1f583117591962b52fa3c3b8d6440898f13a99dbc274150d206f61036f8",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/AddrPara.dat",
+      "bytes": 200,
+      "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/AlarmPara.dat",
+      "bytes": 47840,
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/Collect.dat",
+      "bytes": 1424,
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/compiler-manifest.json",
+      "bytes": 2004,
+      "sha256": "7973b87e55d3a1834f98aa98914b4a3bd3c4dff9664a1caf9a9be88dd99ad53b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/ControlPara.dat",
+      "bytes": 7680,
+      "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/ControlPixel.dat",
+      "bytes": 136992,
+      "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/Curve.dat",
+      "bytes": 501,
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/Modbus_RTU_com1.bin",
+      "bytes": 12496,
+      "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/PicLenPara.dat",
+      "bytes": 2952,
+      "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/SheetPara.dat",
+      "bytes": 72,
+      "sha256": "7bf83635ba4255b1cc0b8ecc42c0fb906ccb05685cab689d3e32c42937fd2bcc",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/SheetPixel.dat",
+      "bytes": 4137,
+      "sha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/SysPara.dat",
+      "bytes": 4998,
+      "sha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/direct/upLoad.knr",
+      "bytes": 1946,
+      "sha256": "106945eea4d843b2d4adf9e9b9fc232b95b0717e55a57a0daadd3c886d7b6a72",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/export-source-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/export-source-stdout.txt",
+      "bytes": 53,
+      "sha256": "328b62fbbcf8313993507d2b7a6af28e217ac455df1ae8f79eecb41e2bdf511d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/export-source.json",
+      "bytes": 532,
+      "sha256": "fc4a8b9473c5ea4ae65717e775a99e7b0bb039410259224b14c40b805e03c88f",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/input-manifest.json",
+      "bytes": 47505,
+      "sha256": "53737ebd33c61d182d9f4045427f5854cfe6be34193b90837b9fcb1254b917e6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/mixed-record-audit.json",
+      "bytes": 2842,
+      "sha256": "a7dcee90e76cb2afc3e1c517f8925827da7b609f21d8cc6b241e175541ff246b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/pre-transfer-device-resources.json",
+      "bytes": 1108,
+      "sha256": "b9593be654ffe58b1fbb0db22781dba0fdea5813191b27d8804d8d58c05ccdba",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/AddrPara.dat",
+      "bytes": 200,
+      "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/AlarmPara.dat",
+      "bytes": 47840,
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/Collect.dat",
+      "bytes": 1424,
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/compiler-manifest.json",
+      "bytes": 2004,
+      "sha256": "427d9d7653fce09fe2a639ea1bdcd4e198d3e1b50af83196931a5a6e42e89e8d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/ControlPara.dat",
+      "bytes": 7680,
+      "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/ControlPixel.dat",
+      "bytes": 136992,
+      "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/Curve.dat",
+      "bytes": 501,
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/Modbus_RTU_com1.bin",
+      "bytes": 12496,
+      "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/PicLenPara.dat",
+      "bytes": 2952,
+      "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/SheetPara.dat",
+      "bytes": 72,
+      "sha256": "7bf83635ba4255b1cc0b8ecc42c0fb906ccb05685cab689d3e32c42937fd2bcc",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/SheetPixel.dat",
+      "bytes": 4137,
+      "sha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/SysPara.dat",
+      "bytes": 4998,
+      "sha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip/upLoad.knr",
+      "bytes": 6278,
+      "sha256": "dc822b093f130aadfcf2aaa570458b86062bf39fc7789d6b7d1ddbb3b1141d87",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/roundtrip-comparison.json",
+      "bytes": 3142,
+      "sha256": "838336e4414e4b0383eaba0c44c128d9717aaab6a7c5ba056b772b7c1278c000",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/run.json",
+      "bytes": 7380,
+      "sha256": "b706619c8d6071aa837af4d197088ed3593d93584a5b8cd20a934d488ebaab0f",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/usb-download-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/usb-download-stdout.txt",
+      "bytes": 140,
+      "sha256": "6170ac6115f69416038f74c65592cb70de05c850a4626005a124228bda4a4552",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/usb-download.json",
+      "bytes": 499,
+      "sha256": "e5a63c02947216000900b829481e8772552e94557303412f364db003bc8ee768",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/validate-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/validate-stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/baseline-run-usb-r2/validate.json",
+      "bytes": 343,
+      "sha256": "a1432661392a738df8dfc831a2482e9084a5ee27d8f418bf2762355adf444816",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-ledger.json",
+      "bytes": 2201983,
+      "sha256": "2c42c87d1f257ecf7baa2abe2f3d800f72baef3997ad393f295f6276afb9671e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-ledger.md",
+      "bytes": 1143255,
+      "sha256": "8683ed4f4e7458878e616b12b20cbe0492888a4de354b124b90d146290811f87",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-review-source/build_candidate_ledger.py",
+      "bytes": 48561,
+      "sha256": "6dd96a73d750e631732f2ccebe19b5de69ecb00a3447acda94d03b2dcdf3c1b3",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-review-source/id-lock-snapshot.json",
+      "bytes": 105430,
+      "sha256": "cf68adee54c6436d4b7b32cbaa71b5566ebaa408ffabd1bcf727b4788bb74f2d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-review-source/integrity-audit.json",
+      "bytes": 4940,
+      "sha256": "539ca5d49e356bd5f28a1f07ef1e51674513c6d59ae4c8ba97b1c6a8cc7b401c",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-review-source/reproducibility-audit.json",
+      "bytes": 1242,
+      "sha256": "7d5e8b0e54ee4b905e280b245d3a2cd7bef49f355861b7603c5bb7b28922f39b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/candidate-review-source/review.tsv",
+      "bytes": 32071,
+      "sha256": "7c7469de502f6968f55d66052fe5a967f4991c984b9d2dcfedef61eb989fc1b0",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/cross-registry-checks.json",
+      "bytes": 972,
+      "sha256": "5d6b9b2c758b815c35e78ac9b2fa0d872cbc86f23597a971ce70e0e8cf4c5d13",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-cleanup.json",
+      "bytes": 15120,
+      "sha256": "c283ba68d1685fae8daa3fb5d4c87b9d17a87e92d8ef6fe362353a62f3e329fe",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-inventory.json",
+      "bytes": 960991,
+      "sha256": "ba3fe24784c3c85533578a67986a73325af133c113ac9d8d0b89910ea9eff1a9",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-inventory.md",
+      "bytes": 28280,
+      "sha256": "0623c48b5dfb1153a9d88a11783b453bd2b977d5e765290e34e45df552d5f24b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-build-inventory.py",
+      "bytes": 44808,
+      "sha256": "eef90a00025fe1d5ab56dbf31eb106eb14bcec8c3a266800155fbd1a80da90d9",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-close-prompt-win32.json",
+      "bytes": 50017,
+      "sha256": "a93cbe17a15dec265bba208cc46f54ca7343e318df677ac2e03e3a83f74d8603",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly-r1.json",
+      "bytes": 328860,
+      "sha256": "9849892d477b98f99e4d86d4e549b7e6022f8bb7c520d9ffc498db4d5d652a3d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly-r1.py",
+      "bytes": 11999,
+      "sha256": "09adc19e4d30fe1bbe65e37878756f9bc962cce4098d724ab08f7089e6378007",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly-r2.json",
+      "bytes": 341283,
+      "sha256": "31f69ef86d752325c232292417c027e7b19a2b98851227f3a30801c7e196a9b1",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly-r2.py",
+      "bytes": 12157,
+      "sha256": "765b1391cab7f803e31c9e6857d41777c8f04e78d15dfa6e179a160207261cd5",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly.json",
+      "bytes": 415826,
+      "sha256": "c4e7e05c4623d96d3b004da2cd492bc5afda5a45b8f5828905c1a008f7e114cf",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-readonly.py",
+      "bytes": 12260,
+      "sha256": "43a8e863ad9056ed6e7138d545b0ad54a069039b8629d0259de455bdec997a04",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r1.json",
+      "bytes": 505208,
+      "sha256": "9193d538e38e3a5d774a4f9d6d03af031acca29a03fce14729b6f5e80861f527",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r1.py",
+      "bytes": 13721,
+      "sha256": "43cca880d52a4cb1f172767d28dfc68a880cf8780da76a828cbcdf8d1405ec7d",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r2.json",
+      "bytes": 864715,
+      "sha256": "ee20ffdfd443d50d9abf58b53afc5062100c7f0502f582772bdd3b40d8417543",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r2.py",
+      "bytes": 14087,
+      "sha256": "8144cb4d7be69bf5bb2e8313045941bbd4629ae644bf5b80345373a1136be055",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r3.json",
+      "bytes": 1091644,
+      "sha256": "df428b768412f39bb05f3b06fca35a203ccaa71512b6c515a7b66819cf06c03b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r3.py",
+      "bytes": 15902,
+      "sha256": "47216164493534266cbccbd297a59813543b40ae597add53e20ec668298aab5b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r4.json",
+      "bytes": 1360,
+      "sha256": "fecf1039bb203be3d3173ef88be5af84a0e2a6b4e3783fe903b28dc5779870f6",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states-r4.py",
+      "bytes": 16641,
+      "sha256": "def29e363c1255c833e9b9a070e1dd5c88f8f6d896833ec695268656efeb133a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states.json",
+      "bytes": 1134166,
+      "sha256": "5c2ae6135ffa76bbd669f140b64f7882e8c9413f2e24ab98e0e27acd76fc6ef0",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-states.py",
+      "bytes": 16791,
+      "sha256": "b5894539d82132b223eb65e391dd456857aa518b354b65ca61330ce41ad08add",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/entry-probe-validation.json",
+      "bytes": 335,
+      "sha256": "99a145bdff8d3c06b5f037e5565174b48b78fbdcdd4fae7129dfd9f3ba2e3a5a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/environment-supplement.json",
+      "bytes": 3295,
+      "sha256": "1d29517d6971cb833f16065d8b94f7119bfea1114217168c5daab46431f8b446",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/audit-result.json",
+      "bytes": 602,
+      "sha256": "ce660076e69bef6ebea14be1f7e3259934021d8ca5b45ce818fae793d152d690",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/audit_traceability.py",
+      "bytes": 4403,
+      "sha256": "4b183f43d0bc5b7b4738a9ffe67ec34e5e50a199ee154c3d050a117712c9b626",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/build-audit.json",
+      "bytes": 789,
+      "sha256": "62ec44eb3ef363770273988095550d78dfb29e17165df95f5ce0c08ba74cdd37",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/build_traceability.py",
+      "bytes": 45952,
+      "sha256": "65dff6e0ed855ab56029d6801b31a6796a3c05e4c6a5d2baa89a3921f77d175b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/README.md",
+      "bytes": 4048,
+      "sha256": "e6b179a5af692ae3cc6c0bc1747475375e922610e3d1e5958ec248d96654c60b",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/repeatability-result.json",
+      "bytes": 1066,
+      "sha256": "f1f28b600c7a71a814488bcf47e362322784a42fb4e780bd78e114aae294e6fd",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/verify_repeatability.py",
+      "bytes": 3093,
+      "sha256": "6006fdba9eb9c3fcbe56ec67fd2127c263ef5672314a9960b52b8ef88d2638f8",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-review-source/write_report.py",
+      "bytes": 13759,
+      "sha256": "01bf28b3cf263a6fcca91af8dd37533d1bee7d7db99b27efb081d37efdc3b31a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-traceability.json",
+      "bytes": 3633238,
+      "sha256": "b63bbd697349d898b4f017de8e0e24c824a9d279801a7af2fea419fdadf36595",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/field-traceability.md",
+      "bytes": 66738,
+      "sha256": "12f66d615b57f1257ec2ab6381ddd0d48431aeee47f31ca1b69cbb20cb5f65fb",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/git-status.json",
+      "bytes": 267,
+      "sha256": "8188eb38f02b0c93c96746e79630cfaa502e8bf90ee3cc9d229e82b2f1609004",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/identity-guard-checks.json",
+      "bytes": 173,
+      "sha256": "b82e2c84ff6caddd01da05aa18da206fd86a7c370c58e1abe17330b9fe007b0e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/post-run-input-drift.json",
+      "bytes": 1514,
+      "sha256": "af62347779a9df0bf5789b2d8db8984b9088f5fa6211201d8a9817d7b7b8429e",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/protocol-append-check.json",
+      "bytes": 270,
+      "sha256": "30987c3b1c27015249d50594be7e44e0a4ce9798033fbbfda3898bda105d33da",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/read-only-review.json",
+      "bytes": 1268,
+      "sha256": "edbf4fff7c7eab1ff7224a119ac213494d8849a7455ad1ba1c36e7c66066ff3a",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/resources-and-cases.json",
+      "bytes": 3011,
+      "sha256": "2953950508448d1abc473ca1c77260070e61b3c3afb088f67ae4bafe18f4c63f",
+      "portableCopy": true
+    },
+    {
+      "path": "docs/stage0-evidence/tool-cache-cleanup.json",
+      "bytes": 409,
+      "sha256": "b65716c9ca12520a83e9aa5c1dc8a61027ec7b006a1f27872e8b7eefc1955731",
+      "portableCopy": true
+    },
+    {
+      "path": "tools/stage0_baseline.py",
+      "bytes": 16835,
+      "sha256": "ce11e992d562f86c3a87850888a6ef93606f1ee6bea1af2312976296609c2d3c",
+      "portableCopy": false
+    },
+    {
+      "path": "tools/RunStage0.ps1",
+      "bytes": 1111,
+      "sha256": "08a40abcbc76ab2c5f60c72feb5d319f5069bfed3208d99f934b49b5860ce7da",
+      "portableCopy": false
+    },
+    {
+      "path": "design_plan/01_阶段0_基线范围与证据管理.md",
+      "bytes": 10035,
+      "sha256": "dfe0276c9fd2a89fabeeb2ac4f6446a2310fc00cc431e4694e61ae02cd5a4845",
+      "portableCopy": false
+    },
+    {
+      "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+      "bytes": 121167,
+      "sha256": "2602099c14a4f4350c3f6c9e3d514db46b68715bf6d24a557b3135567cb1211a",
+      "portableCopy": false
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "taskId": "S00-06",
+  "target": {
+    "model": "AMT070W124-L800X480R",
+    "resolution": [
+      800,
+      480
+    ],
+    "identityBasis": "user target and project metadata",
+    "firmware": null
+  },
+  "observation": "baseline-run-usb-r2/device-resources.json",
+  "cases": [
+    {
+      "id": "AC-S00-LB0",
+      "stimulus": "按切换LB0按钮两次",
+      "expected": "LB0双态灯随地址值切换并再次返回",
+      "observation": "屏端灯及按钮；人工反馈待提供",
+      "result": "not_run",
+      "questionId": "Q-S00-E-LB0"
+    },
+    {
+      "id": "AC-S00-LW20",
+      "stimulus": "U16归零后按U16加1至5，再归零",
+      "expected": "LW20五状态灯与0..4映射及越状态范围行为需按原厂核对",
+      "observation": "屏端灯、独立寄存器值尚未读回",
+      "result": "not_run",
+      "questionId": "Q-S00-E-LW20"
+    },
+    {
+      "id": "AC-S00-LW30",
+      "stimulus": "U32归零与设置为3",
+      "expected": "32位地址两字处理和五状态显示符合已核记录；实际值需独立观察",
+      "observation": "屏端灯及连续两字值未读回",
+      "result": "not_run",
+      "questionId": "Q-S00-E-LW30"
+    },
+    {
+      "id": "AC-S00-LANGUAGE",
+      "stimulus": "中文与English切换",
+      "expected": "工程语言索引0/1生效，标题和控件显示正常",
+      "observation": "屏端显示及语言未现场确认",
+      "result": "not_run",
+      "questionId": "Q-S00-E-LANGUAGE"
+    },
+    {
+      "id": "AC-S00-SYSTEM",
+      "stimulus": "点击系统设置并退出",
+      "expected": "系统设置弹窗和返回行为与原厂固件一致",
+      "observation": "未代替用户操作屏",
+      "result": "not_run",
+      "questionId": "Q-S00-E-SYSTEM"
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q-S00-HW-FIRMWARE",
+      "blockedLayers": [
+        "E"
+      ],
+      "nextProbe": "用户在系统版本页读取型号与固件，或以后恢复并核验原厂版本查询响应；不能由USB bcdDevice推断。"
+    },
+    {
+      "id": "Q-S00-HW-PLC",
+      "blockedLayers": [
+        "E",
+        "PLC通信"
+      ],
+      "nextProbe": "登记用户指定PLC/独立模拟从站、串口/线缆/站号/参数，再另行实际读写；本轮串口枚举为空不等于没有任何硬件。"
+    }
+  ],
+  "usbResult": {
+    "label": "usb-download",
+    "arguments": [
+      "--download-project",
+      "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.ksp"
+    ],
+    "startedAtUtc": "2026-11-10T06:05:49.938379+00:00",
+    "completedAtUtc": "2026-11-10T06:06:00.585659+00:00",
+    "exitCode": 0,
+    "result": {
+      "message": "工程数据段和提交命令均获设备确认，重启命令已发送；请核对屏端显示与触控行为。",
+      "ok": true
+    }
+  },
+  "screenDisplayAndTouchConfirmed": false,
+  "shutdownRequested": false
+}

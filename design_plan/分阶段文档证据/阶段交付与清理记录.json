@@ -1,0 +1,3086 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-10",
+  "verifiedAt": "2026-11-10T11:35:50.521761+08:00",
+  "status": "documentation_checks_passed; cleanup_blocked",
+  "scope": "13份顺序主文档+6份编号共用子文档；调用31份原手册；本轮只后台调查和文档，不改业务代码、不写屏",
+  "userDecisions": {
+    "firstTarget": "AMT070W124-L800X480R / 800x480 / applicable original firmware",
+    "LT779": "independent extension",
+    "interaction": "match verified V5.1; decide known defects individually",
+    "executionThisRun": "documentation and background investigation only",
+    "organization": "ordered main documents and called topic manuals",
+    "unknowns": "explicit probes and blocked layer; no invented native rules",
+    "cleanup": "own new regenerable transient files only; preserve minimum evidence",
+    "continuation": "continue sequential documentation; revisit dependencies locally"
+  },
+  "documents": [
+    {
+      "file": "KinSealStudio/design_plan/00_复刻执行总入口.md",
+      "sha256": "d5125103f7203f1fe34b595adbe16f8f48a97f23d6bddf9b6561c10bbc20db02",
+      "bytes": 12189
+    },
+    {
+      "file": "KinSealStudio/design_plan/01_阶段0_基线范围与证据管理.md",
+      "sha256": "2889dd5b24ee468775be47a3a648b5770f379ef85f924d6508066644e9d61b2f",
+      "bytes": 7826
+    },
+    {
+      "file": "KinSealStudio/design_plan/02_阶段1_工程模型与文件格式.md",
+      "sha256": "f34ae6b380f1605f7a9b8afe8a2ca2f82189c3fb823b6871d10265f7f75dd420",
+      "bytes": 19701
+    },
+    {
+      "file": "KinSealStudio/design_plan/03_阶段2_主窗口与工程配置.md",
+      "sha256": "8d04e076b3bdb610a23dad8448878b35aeeffce4654e5c631051959082490d11",
+      "bytes": 8810
+    },
+    {
+      "file": "KinSealStudio/design_plan/04_阶段3_画布资源与一致渲染.md",
+      "sha256": "28253f74d22779cf4ea2f1b71c78da6658a48f7e6f2dd15d56781a4e072d5dd4",
+      "bytes": 9856
+    },
+    {
+      "file": "KinSealStudio/design_plan/05_阶段4_控件逐项复刻.md",
+      "sha256": "02488fa94eb06cd6b858e2c90598ad18e029ee15dd5a4554ec40dedc0129cfaa",
+      "bytes": 9663
+    },
+    {
+      "file": "KinSealStudio/design_plan/06_阶段5_设备编译与格式差分.md",
+      "sha256": "5d26284f52819f141eeb8c3d8884b67c1235a2593fc780adb8a009da1c93972c",
+      "bytes": 21623
+    },
+    {
+      "file": "KinSealStudio/design_plan/07_阶段6_USB上传与介质下载.md",
+      "sha256": "d130a77097a4020a8a5d58719f9873d9f7d503a35eac744294173334a6d591c7",
+      "bytes": 12422
+    },
+    {
+      "file": "KinSealStudio/design_plan/08_阶段7_离线与在线模拟.md",
+      "sha256": "0996c84cb19f5e7303bd7af0f2d4bb5fd7f59d3c3a3af20dc97bfaebae4cd572",
+      "bytes": 9949
+    },
+    {
+      "file": "KinSealStudio/design_plan/09_阶段8_宏系统与调度.md",
+      "sha256": "2e87139a4daa6005242608aa29ef36337414d7b45225d1bb9ccb03488df29441",
+      "bytes": 12422
+    },
+    {
+      "file": "KinSealStudio/design_plan/10_阶段9_PLC地址模板与通信.md",
+      "sha256": "48b1395948f6edc8b014c192491e56233cb36205cc5489f785cd4be736dec794",
+      "bytes": 11237
+    },
+    {
+      "file": "KinSealStudio/design_plan/11_阶段10_设备运行兼容与性能验收.md",
+      "sha256": "668de98cc9078af64f8f5c694f8182611d447fe2b639b614a9d3a0dfd883bf90",
+      "bytes": 10007
+    },
+    {
+      "file": "KinSealStudio/design_plan/12_阶段11_部署帮助与发布.md",
+      "sha256": "b481ae853cf263427bd55b438fa1dde0c80d0da71da2592d498b13ac63115522",
+      "bytes": 9284
+    },
+    {
+      "file": "KinSealStudio/design_plan/A01_公共属性与事务规范.md",
+      "sha256": "19d1c4565b5fd7eb8c1b67dc4871b8cbb4816c10d32ddc5a664e5aee1f1acf34",
+      "bytes": 12835
+    },
+    {
+      "file": "KinSealStudio/design_plan/A02_全局入口与工程配置规范.md",
+      "sha256": "811b2e00ba7ffe226e47161350242d310476c2302a0226004ee4d20ffea67e44",
+      "bytes": 32561
+    },
+    {
+      "file": "KinSealStudio/design_plan/A03_基础图形与表格规范.md",
+      "sha256": "b0d5b0c235d449e3c71cb710c70abccb9806d54fe756327c39c863ab661dcc8c",
+      "bytes": 21324
+    },
+    {
+      "file": "KinSealStudio/design_plan/A04_31控件实施索引.md",
+      "sha256": "09a646eb8509b96d1db86a592aa1be83f240f7fef6c8b5b26ccc664f6fc0c852",
+      "bytes": 53754
+    },
+    {
+      "file": "KinSealStudio/design_plan/A05_源格式与设备编译契约.md",
+      "sha256": "3db30dbeb0cd4fa72dcb5194966cd3a4fb0d9ff47dc1d8485563e4eecbfb2e67",
+      "bytes": 19414
+    },
+    {
+      "file": "KinSealStudio/design_plan/A06_运行与发布验收用例.md",
+      "sha256": "454a3680d04d1921e6e2cecae839f8e8c6148dfbd470281a58cfb3c5507f5fbd",
+      "bytes": 23014
+    }
+  ],
+  "updatedExistingDocuments": [
+    {
+      "file": "KinSealStudio/design_plan/完整复刻路线图.md",
+      "sha256": "5e2cc71c38db28947e7f242cbc68b653e07d0d6056534075ee6a6f0841b5be72",
+      "bytes": 42891
+    },
+    {
+      "file": "KinSealStudio/design_plan/工具箱控件复刻总览.md",
+      "sha256": "b73c10adbb5d436e8b9a4399c2c0f2da8fba5416ecb6ec949376f394dd443fde",
+      "bytes": 11993
+    },
+    {
+      "file": "程序修改记录.md",
+      "sha256": "4e85417e3e923f90b7d6d9afdec960a47f4c866ab3936edcb98667d1ea1a4896",
+      "bytes": 89738
+    }
+  ],
+  "mainDocumentCount": 13,
+  "topicDocumentCount": 6,
+  "newMarkdownBytes": 317891,
+  "controlManualCount": 31,
+  "existingFamilies": [
+    "静态文本",
+    "位按钮",
+    "字按钮",
+    "指示灯",
+    "功能按钮"
+  ],
+  "remainingFamilies": 26,
+  "remainingBatchCounts": [
+    3,
+    2,
+    3,
+    2,
+    2,
+    4,
+    1,
+    4,
+    5
+  ],
+  "candidateSnapshot": {
+    "identity": "CAND-20261110",
+    "rows": 308,
+    "sha256": "27f423c4b35d387b243d0e4ca69485ff2a892b41e8b3cd81e19cfc81b532b87c",
+    "allCandidatesRoutedToManuals": true,
+    "historicallyReviewedCandidates": 5,
+    "notInitiallyReviewedCandidates": 303,
+    "newlyClosedByRouting": 0
+  },
+  "newEvidence": [
+    {
+      "file": "KinSealStudio/design_plan/分阶段文档证据/原厂帮助正文_20261110.json",
+      "sha256": "37bc84f93d223807daeb03b01cd83b0c407b4a182d0280b5cac5a493593c0269",
+      "bytes": 634604
+    },
+    {
+      "file": "KinSealStudio/design_plan/分阶段文档证据/V51后台入口采集_20261110.json",
+      "sha256": "1e4156d3c5b158e36298a177a69555de80abf6ae9168432d832dbe439e353b56",
+      "bytes": 121173
+    },
+    {
+      "file": "KinSealStudio/design_plan/分阶段文档证据/后台入口采集.py",
+      "sha256": "99b1795bcecade99c7d652d29e9d680564582ff98d15ed6be455fb97c0fd8dcd",
+      "bytes": 14649
+    },
+    {
+      "file": "KinSealStudio/design_plan/分阶段文档证据/阶段2临时清理.json",
+      "sha256": "0377a99069a85a9e89913740d1528a4296f079b8b4e7b701fdbd923f99f9c334",
+      "bytes": 2279
+    }
+  ],
+  "runtimeCoverage": {
+    "status": "captured_partial: some menu entries unreadable",
+    "rootMenusReturned": 7,
+    "widgetsReturned": 247,
+    "menuReadErrors": 2,
+    "drawingActionProbes": 10,
+    "dialogsReturned": 0,
+    "limitations": [
+      "Only root executable and small model files copied; dependencies resolved through installed PATH",
+      "Command existence/enabled snapshot does not establish command behavior",
+      "shortcutStringConversion is a QVariant conversion result; empty does not prove absence of shortcut",
+      "Default dialogs only; creation gestures, saving, all branches and device semantics remain untested",
+      "No dialog after this action-only probe does not prove absence of properties or determine the drawing gesture"
+    ],
+    "probeProcessEnded": true,
+    "recentListCleanup": {
+      "own_entry_removed": 1,
+      "other_entries_preserved": 3
+    }
+  },
+  "helpCoverage": {
+    "topics": 348,
+    "bytes": 634604,
+    "imagesExtracted": 0,
+    "evidenceKind": "H/static; older version text not automatically V5.1 behavior"
+  },
+  "phaseStates": [
+    {
+      "phase": 0,
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      },
+      "executionUpdates": [
+        {
+          "executionId": "stage0-20261110-4",
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00",
+          "status": "baseline_tooling_and_transport_executed_full_native_M0_open",
+          "report": "../docs/阶段0基线与验收.md",
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "cleanupStatus": "blocked_by_automatic_approval"
+        }
+      ]
+    },
+    {
+      "phase": 1,
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 9,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 2,
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "documentationStatus": "maintained_after_actual_execution",
+      "productStageStatus": "partial_workflow_UI_K_delivered; full_N_C_E_open",
+      "taskCount": 7,
+      "cleanup": {
+        "status": "blocked_by_automatic_approval",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 5,
+        "remainingTransientBytes": 18873629,
+        "retainedEvidence": "阶段2临时清理.json"
+      },
+      "executionId": "stage2-20261110-7"
+    },
+    {
+      "phase": 3,
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 8,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 4,
+      "document": "05_阶段4_控件逐项复刻.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 12,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 5,
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 10,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 6,
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 7,
+      "document": "08_阶段7_离线与在线模拟.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 8,
+      "document": "09_阶段8_宏系统与调度.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 9,
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 10,
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 8,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    },
+    {
+      "phase": 11,
+      "document": "12_阶段11_部署帮助与发布.md",
+      "documentationStatus": "generated_and_checked",
+      "productStageStatus": "not_declared_passed",
+      "taskCount": 6,
+      "cleanup": {
+        "status": "no_transient_files_created",
+        "deletedFiles": 0,
+        "deletedBytes": 0,
+        "remainingTransientFiles": 0,
+        "remainingTransientBytes": 0,
+        "retainedEvidence": "文档及共用最小证据；未复制安装/图库或运行构建"
+      }
+    }
+  ],
+  "taskStates": [
+    {
+      "taskId": "S00-01",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-01 固定当前输入",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "captured_current_inputs",
+        "scope": "固定130个本轮输入、原件/帮助/候选身份及实际EXE；旧16个scratch缺链仅为历史可选引用",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "下次执行创建新目录、新输入清单；对文档追加与程序变化分别处理",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "bounded_partial_new_evidence",
+              "scope": "新身份/帮助正文/部分菜单Qt快照已归档，完整入口/字段/行为仍未闭合"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-01 固定当前输入",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S00-02",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-02 建立全功能入口台账",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "partial_with_new_native_runtime_evidence",
+        "scope": "194入口记录、8根菜单、31控件/9图形/表格；真实多选12已确认，其他状态缺口逐项保留",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "按Q-S00-ENTRY-STATE-SINGLE/EMPTY/CONFIG/READONLY/RUNNING补用户等价原生状态；DIRTY仍需持久化闭环",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "bounded_partial_new_evidence",
+              "scope": "新身份/帮助正文/部分菜单Qt快照已归档，完整入口/字段/行为仍未闭合"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-02 建立全功能入口台账",
+              "nextAction": "从A02有界菜单/字段清单继续补未覆盖的全局入口与真实状态；不把2条读取异常当不存在"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S00-03",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-03 把手册字段接入规格与验收",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "structured_traceability_atomic_specification_open",
+        "scope": "31手册6708行完整接入，1521条字段/复合/正文候选；不是1521个核定原子字段或D通过",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "从840条需原子化记录及未链接事件的字段继续补单字段规格，保留H/B/I/V来源区分",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-03 把手册字段接入规格与验收",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S00-04",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-04 核销冻结候选",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "all_frozen_candidates_initially_reviewed",
+        "scope": "308候选初审及799正式Q映射；613具体问题中沿用3事实关闭，610开放，本轮无新关闭",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "按候选台账的具体next_probe逐问题补证，不因T成功关闭E问题",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "historical_partial_only",
+              "scope": "保留先前5条初审核销，本次仅接入全部308候选归属，没有批量关闭"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-04 核销冻结候选",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S00-05",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-05 原生后台调查与最小证据",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "bounded_private_desktop_probes_archived",
+        "scope": "本任务私有桌面、修正QList采集及多选/编辑探针已归档；失败保留，不声称全行为通过",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "复用entry-probe配方从具体剩余状态补证；不重复全目录或安装调查",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "bounded_partial_new_evidence",
+              "scope": "新身份/帮助正文/部分菜单Qt快照已归档，完整入口/字段/行为仍未闭合"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-05 原生后台调查与最小证据",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S00-06",
+      "document": "01_阶段0_基线范围与证据管理.md",
+      "heading": "S00-06 固定后续验收资源",
+      "documentation": "maintained_after_actual_stage0_execution",
+      "investigation": {
+        "state": "resources_registered_and_real_transport_passed",
+        "scope": "五类12控件双语源往返四文件一致，正式USB获确认；固件/E/外部PLC仍未确认",
+        "evidence": "../docs/阶段0基线与验收.md"
+      },
+      "implementation": {
+        "state": "baseline_tooling_or_traceability_implemented",
+        "scope": "本轮新增基线工具/样例/证据管理；0.7.0生产C++及EXE未改；不声明26未实施控件完成"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "01_阶段0_基线范围与证据管理.md",
+        "nextAction": "收集屏固件身份、用户现场显示/触控反馈及指定PLC端点，再执行相应独立E用例",
+        "executionId": "stage0-20261110-4"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage0-20261110-4",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "01_阶段0_基线范围与证据管理.md",
+              "heading": "S00-06 固定后续验收资源",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-01",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-01 冻结格式基线与回归入口",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "completed_in_declared_scope",
+        "scope": "冻结修改前85程序文件、最终EXE/源码、现存正反例及运行身份",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "completed_in_declared_scope",
+        "scope": "冻结修改前85程序文件、最终EXE/源码、现存正反例及运行身份",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "下次变更先建立新基线，保留本轮失败与最终身份",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-01 冻结格式基线与回归入口",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-02",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-02 建立工程领域模型和稳定引用",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "K_model_and_callers_implemented_native_rules_partial",
+        "scope": "稳定ID/多页/引用/事务API、全页改名/语言映射及实际树切换",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "K_model_and_callers_implemented_native_rules_partial",
+        "scope": "稳定ID/多页/引用/事务API、全页改名/语言映射及实际树切换",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "按Q-S01-001补特殊页与原厂复制/删除/跨页引用规则",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [
+              "S01-01"
+            ],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-02 建立工程领域模型和稳定引用",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-03",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-03 .ksp版本、迁移和损坏输入",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "completed_in_declared_K_scope",
+        "scope": "schema1..8迁移、schema9严格格式、原子保存；真实旧空宏表别名兼容",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "completed_in_declared_K_scope",
+        "scope": "schema1..8迁移、schema9严格格式、原子保存；真实旧空宏表别名兼容",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "新能力使用新schema，未知活动字段/未来版本继续拒绝",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-03 .ksp版本、迁移和损坏输入",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-04",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-04 扩展原生typed结构，先恢复边界",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "typed_readonly_slice_completed_semantics_partial",
+        "scope": "五类单页语义及1/2/3页完整typed只读、span/字段预算",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "typed_readonly_slice_completed_semantics_partial",
+        "scope": "五类单页语义及1/2/3页完整typed只读、span/字段预算",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "Q-S01-001/002继续角色/跨页引用/未知类型，不能只透传到C",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [
+              "S01-01"
+            ],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-04 扩展原生typed结构，先恢复边界",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-05",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-05 原生保全、隐藏字段与冲突取舍",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "preservation_slice_completed_known_semantic_gaps",
+        "scope": "源span/snapshot保全、语言双镜像、旧入口配置守卫、67对象完整快照",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "preservation_slice_completed_known_semantic_gaps",
+        "scope": "源span/snapshot保全、语言双镜像、旧入口配置守卫、67对象完整快照",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "Q-S01-004继续独立每语言样式等不可表达活动语义",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-05 原生保全、隐藏字段与冲突取舍",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-06",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-06 系统/配置节点、引用与语言",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "startup_language_and_inactive_nodes_implemented",
+        "scope": "编辑/启动语言分离、功能13重排、未实施配置空节点",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "startup_language_and_inactive_nodes_implemented",
+        "scope": "编辑/启动语言分离、功能13重排、未实施配置空节点",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "Q-S01-003继续各活动配置消费者；占位不冒充已实施",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [
+              "S01-02"
+            ],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-06 系统/配置节点、引用与语言",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-07",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-07 目标能力与格式家族",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "AMT_scope_registered_firmware_limits_pending",
+        "scope": "AMT61字段XML原文与K/N/C能力查询、连接/型号后端白名单",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "AMT_scope_registered_firmware_limits_pending",
+        "scope": "AMT61字段XML原文与K/N/C能力查询、连接/型号后端白名单",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "固件版本、容量进制/单位与其他型号仍待验",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [
+              "S01-01"
+            ],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-07 目标能力与格式家族",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-08",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-08 整理格式规范和最小语料",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "completed_in_declared_corpus_scope",
+        "scope": "42夹具272404B、来源SHA/原厂正反例/实际测试及规范交接",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "completed_in_declared_corpus_scope",
+        "scope": "42夹具272404B、来源SHA/原厂正反例/实际测试及规范交接",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "新字段必须关联现存原厂证据，不复用缺失旧SHA",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-08 整理格式规范和最小语料",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S01-09",
+      "document": "02_阶段1_工程模型与文件格式.md",
+      "heading": "S01-09 只读复核、交接和阶段清理",
+      "documentation": "maintained_after_actual_stage1_implementation",
+      "investigation": {
+        "state": "review_and_delivery_complete_cleanup_not_completed",
+        "scope": "独立只读复核后修复，637离线及43Windows、正式包/USB/交接",
+        "evidence": "../docs/阶段1工程模型与验收.md"
+      },
+      "implementation": {
+        "state": "review_and_delivery_complete_cleanup_not_completed",
+        "scope": "独立只读复核后修复，637离线及43Windows、正式包/USB/交接",
+        "wholeNativeSoftwareComplete": false
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "02_阶段1_工程模型与文件格式.md",
+        "nextAction": "清理受已有policy限制保留，不重试或换通道；E继续独立验收",
+        "executionId": "stage1-20261110-5"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage1-20261110-5",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "02_阶段1_工程模型与文件格式.md",
+              "heading": "S01-09 只读复核、交接和阶段清理",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00"
+        }
+      ],
+      "followupExecutions": [
+        {
+          "executionId": "stage1-20261110-6",
+          "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+          "report": "../docs/stage1-language-evidence/README.md",
+          "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+          "fullStageExitPassed": false,
+          "declaredSliceDelivered": true,
+          "transportAccepted": true,
+          "screenDisplayAndTouchConfirmed": false,
+          "firmwareVersion": null,
+          "shutdownRequested": false,
+          "protocolSection": "25",
+          "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+          "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+        }
+      ]
+    },
+    {
+      "taskId": "S02-01",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-01 主窗口命令与启用真值表",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "partial_workflow_slice_delivered",
+        "scope": "共享命令/启用条件/文本和数字局部路由/窗口生命周期完成有界切片；全部原生入口图标语言仍未闭合",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "共享命令/启用条件/文本和数字局部路由/窗口生命周期完成有界切片；全部原生入口图标语言仍未闭合；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "bounded_partial_new_evidence",
+              "scope": "新身份/帮助正文/部分菜单Qt快照已归档，完整入口/字段/行为仍未闭合"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-01 主窗口命令与启用真值表",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-02",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-02 新建/打开/关闭/另存为向导",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "partial_workflow_slice_delivered",
+        "scope": "三步事务向导、保存放弃取消、同路径重开、最近工程；仅AMT水平800x480默认通信/noLogo，全型号等未实现",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "三步事务向导、保存放弃取消、同路径重开、最近工程；仅AMT水平800x480默认通信/noLogo，全型号等未实现；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-02 新建/打开/关闭/另存为向导",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-03",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-03 两画面加一窗口的最小工程骨架",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "partial_workflow_slice_delivered",
+        "scope": "两页一窗CRUD/稳定ID导航/完整历史和K保存；多页N/C、背景位置编号仍未实现",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "两页一窗CRUD/稳定ID导航/完整历史和K保存；多页N/C、背景位置编号仍未实现；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-03 两画面加一窗口的最小工程骨架",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-04",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-04 系统参数、状态与PLC控制",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "partial_workflow_slice_delivered",
+        "scope": "五字段UI/K及原厂五源字段与四项C测试值证据；生产N/C、HMI/PLC/时钟/保护等未实现",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "五字段UI/K及原厂五源字段与四项C测试值证据；生产N/C、HMI/PLC/时钟/保护等未实现；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-04 系统参数、状态与PLC控制",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-05",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-05 采集、数位/条件报警与配方",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "open_with_preserved_dependencies",
+        "scope": "采集/报警/配方未实现；没有伪造活动配置",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "采集/报警/配方未实现；没有伪造活动配置；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-05 采集、数位/条件报警与配方",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-06",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-06 资料传输、键盘、Logo与画面宏引用",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "open_with_preserved_dependencies",
+        "scope": "宏/图片/角色保全及源码定位；资料传输/键盘/Logo/画面宏运行未闭合",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "宏/图片/角色保全及源码定位；资料传输/键盘/Logo/画面宏运行未闭合；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-06 资料传输、键盘、Logo与画面宏引用",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S02-07",
+      "document": "03_阶段2_主窗口与工程配置.md",
+      "heading": "S02-07 全局编辑工具与帮助",
+      "documentation": "maintained_after_actual_stage2_execution",
+      "investigation": {
+        "state": "partial_with_new_native_source_and_compiler_evidence",
+        "evidence": "../docs/stage2-evidence/native/README.md"
+      },
+      "implementation": {
+        "state": "partial_workflow_slice_delivered",
+        "scope": "一览/宏查找/源码行/地址预览替换/帮助已实现；尺寸坐标优化和全部原生复制选项未闭合",
+        "evidence": "../docs/阶段2主窗口与工程配置验收.md"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "03_阶段2_主窗口与工程配置.md",
+        "executionId": "stage2-20261110-7",
+        "nextAction": "一览/宏查找/源码行/地址预览替换/帮助已实现；尺寸坐标优化和全部原生复制选项未闭合；按A02逐字段补P0/N/C/E，不以单页ACK关闭整任务"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage2-20261110-7",
+          "recordedAtUtc": "2026-11-10T11:47:34.437788+00:00",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "resumePoint": {
+              "document": "03_阶段2_主窗口与工程配置.md",
+              "heading": "S02-07 全局编辑工具与帮助",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "taskId": "S03-01",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-01 明确坐标与命中契约",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-01 明确坐标与命中契约",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-02",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-02 创建和编辑的完整状态机",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-02 创建和编辑的完整状态机",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-03",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-03 对齐、选择、层次、分组与锁定",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-03 对齐、选择、层次、分组与锁定",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-04",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-04 剪贴板、多重复制与地址递增",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-04 剪贴板、多重复制与地址递增",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-05",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-05 历史、dirty与资源事务",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-05 历史、dirty与资源事务",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-06",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-06 文本、填充、图片与像素一致性",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-06 文本、填充、图片与像素一致性",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-07",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-07 图库、外链、缺失和缓存",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-07 图库、外链、缺失和缓存",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S03-08",
+      "document": "04_阶段3_画布资源与一致渲染.md",
+      "heading": "S03-08 动态透明合成和触控命中",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "04_阶段3_画布资源与一致渲染.md",
+        "heading": "S03-08 动态透明合成和触控命中",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-01",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-01 核验已有5类，不重复实现",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-01 核验已有5类，不重复实现",
+        "nextAction": "先读5类最新报告和A04，选择具体未核字段做核销/回归，不重写已恢复控件"
+      }
+    },
+    {
+      "taskId": "S04-02",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-02 4A：消息显示、刻度、二维码",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-02 4A：消息显示、刻度、二维码",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-03",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-03 4B：图片显示、GIF显示",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-03 4B：图片显示、GIF显示",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-04",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-04 4C：数值显示、ASCII显示、时间显示",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-04 4C：数值显示、ASCII显示、时间显示",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-05",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-05 4D：画面按钮、多态按钮",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-05 4D：画面按钮、多态按钮",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-06",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-06 4E：多功能按钮、下拉框",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-06 4E：多功能按钮、下拉框",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-07",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-07 4F：流动块、滑动开关、滚轮、移动轨迹",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-07 4F：流动块、滑动开关、滚轮、移动轨迹",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-08",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-08 4G：图表",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-08 4G：图表",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-09",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-09 4H：趋势图、历史趋势图、X-Y曲线、数据群组",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-09 4H：趋势图、历史趋势图、X-Y曲线、数据群组",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-10",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-10 4I：动态报警条、报警显示、历史报警显示、历史数据显示器、配方显示器",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-10 4I：动态报警条、报警显示、历史报警显示、历史数据显示器、配方显示器",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-11",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-11 4J：9类基础图形与表格",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-11 4J：9类基础图形与表格",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S04-12",
+      "document": "05_阶段4_控件逐项复刻.md",
+      "heading": "S04-12 混合工程和统一回归",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "05_阶段4_控件逐项复刻.md",
+        "heading": "S04-12 混合工程和统一回归",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-01",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-01 冻结目标、5类编译基线和纯离线入口",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-01 冻结目标、5类编译基线和纯离线入口",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-02",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-02 建立最小原厂差分语料和稳定性基线",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [
+        "S05-01"
+      ],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-02 建立最小原厂差分语料和稳定性基线",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-03",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-03 建立语义编译中间结果与整体预检",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-03 建立语义编译中间结果与整体预检",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-04",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-04 逐类型恢复并实现设备控制记录",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-04 逐类型恢复并实现设备控制记录",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-05",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-05 页面背景、动态图帧、字体及压缩索引",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-05 页面背景、动态图帧、字体及压缩索引",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-06",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-06 地址扫描、驱动程序和宏段联合校验",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-06 地址扫描、驱动程序和宏段联合校验",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-07",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-07 多页、窗口及复杂配置扩展",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [
+        "S05-02"
+      ],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-07 多页、窗口及复杂配置扩展",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-08",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-08 离线包、清单和失败发布",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-08 离线包、清单和失败发布",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-09",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-09 回归、只读复核和向阶段6交接",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-09 回归、只读复核和向阶段6交接",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S05-10",
+      "document": "06_阶段5_设备编译与格式差分.md",
+      "heading": "S05-10 阶段清理与支持表冻结",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "06_阶段5_设备编译与格式差分.md",
+        "heading": "S05-10 阶段清理与支持表冻结",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-01",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-01 · 固定输入并核对只读计划",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-01 · 固定输入并核对只读计划",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-02",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-02 · 补齐下载窗口交互与取消事务",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-02 · 补齐下载窗口交互与取消事务",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-03",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-03 · 错误注入与完成判定",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-03 · 错误注入与完成判定",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-04",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-04 · 工程上载独立恢复",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-04 · 工程上载独立恢复",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-05",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-05 · U盘/SD卡包",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-05 · U盘/SD卡包",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S06-06",
+      "document": "07_阶段6_USB上传与介质下载.md",
+      "heading": "S06-06 · 收口与交接",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "07_阶段6_USB上传与介质下载.md",
+        "heading": "S06-06 · 收口与交接",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S07-01",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-01 · 恢复启动与退出协议",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-01 · 恢复启动与退出协议",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S07-02",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-02 · 内部地址和事件执行器",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-02 · 内部地址和事件执行器",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S07-03",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-03 · 复用渲染与窗口模型",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-03 · 复用渲染与窗口模型",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S07-04",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-04 · 配置型功能与离线限制",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-04 · 配置型功能与离线限制",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S07-05",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-05 · 在线传输与断线恢复",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [
+        "S09-05"
+      ],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-05 · 在线传输与断线恢复",
+        "nextAction": "先读取S09-05在线PC后端契约；只完成本次协议范围后返回，不等待全部51DLL"
+      }
+    },
+    {
+      "taskId": "S07-06",
+      "document": "08_阶段7_离线与在线模拟.md",
+      "heading": "S07-06 · 收口",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "08_阶段7_离线与在线模拟.md",
+        "heading": "S07-06 · 收口",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-01",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-01 · 宏管理器和编辑器完整规格",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-01 · 宏管理器和编辑器完整规格",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-02",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-02 · SDK配置与可重复编译",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-02 · SDK配置与可重复编译",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-03",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-03 · 名称、索引与编译状态",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-03 · 名称、索引与编译状态",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-04",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-04 · 地址变量表",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-04 · 地址变量表",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-05",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-05 · 初始化、全局、周期和事件调度",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-05 · 初始化、全局、周期和事件调度",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S08-06",
+      "document": "09_阶段8_宏系统与调度.md",
+      "heading": "S08-06 · 统一权限和发布边界",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "09_阶段8_宏系统与调度.md",
+        "heading": "S08-06 · 统一权限和发布边界",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-01",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-01 · 建协议能力表而非按DLL数承诺",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-01 · 建协议能力表而非按DLL数承诺",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-02",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-02 · 地址窗口与保存事务补齐",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-02 · 地址窗口与保存事务补齐",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-03",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-03 · 恢复一个完整Modbus DLL ABI",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-03 · 恢复一个完整Modbus DLL ABI",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-04",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-04 · 扫描与资料传输",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-04 · 扫描与资料传输",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-05",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-05 · PC在线后端",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-05 · PC在线后端",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S09-06",
+      "document": "10_阶段9_PLC地址模板与通信.md",
+      "heading": "S09-06 · 原固件解释及跨协议扩展",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "10_阶段9_PLC地址模板与通信.md",
+        "heading": "S09-06 · 原固件解释及跨协议扩展",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-01",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-01 · 冻结现场矩阵与恢复能力",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-01 · 冻结现场矩阵与恢复能力",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-02",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-02 · 先闭合内部LB/LW的五类现场行为",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-02 · 先闭合内部LB/LW的五类现场行为",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-03",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-03 · 公共权限、按压、通知、语言与重叠",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-03 · 公共权限、按压、通知、语言与重叠",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-04",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-04 · 画面与工程配置运行",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-04 · 画面与工程配置运行",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-05",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-05 · 外部Modbus与真实PLC",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-05 · 外部Modbus与真实PLC",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-06",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-06 · 保持、上载与失败恢复",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-06 · 保持、上载与失败恢复",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-07",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-07 · 性能、规模和长期运行",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-07 · 性能、规模和长期运行",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S10-08",
+      "document": "11_阶段10_设备运行兼容与性能验收.md",
+      "heading": "S10-08 · 发布判定",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "11_阶段10_设备运行兼容与性能验收.md",
+        "heading": "S10-08 · 发布判定",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-01",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-01 · 冻结版本和声明",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-01 · 冻结版本和声明",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-02",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-02 · 依赖和许可盘点",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-02 · 依赖和许可盘点",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-03",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-03 · 可重复打包与干净环境",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-03 · 可重复打包与干净环境",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-04",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-04 · 安装器、升级与卸载",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-04 · 安装器、升级与卸载",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-05",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-05 · 本地帮助与用户操作说明",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-05 · 本地帮助与用户操作说明",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    },
+    {
+      "taskId": "S11-06",
+      "document": "12_阶段11_部署帮助与发布.md",
+      "heading": "S11-06 · 发布审查与交付",
+      "documentation": "generated_and_checked",
+      "investigation": {
+        "state": "not_revalidated_in_this_run",
+        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+      },
+      "implementation": {
+        "state": "not_assessed_this_run",
+        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+      },
+      "blockingDependencies": [],
+      "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+      "resumePoint": {
+        "document": "12_阶段11_部署帮助与发布.md",
+        "heading": "S11-06 · 发布审查与交付",
+        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+      }
+    }
+  ],
+  "nextDocumentationInvestigationTask": "S00-02",
+  "readOnlyCrossReview": {
+    "findingsAddressed": [
+      "new versus existing object commit/undo timing",
+      "vendor-created valid source can precede Lite export for sampling",
+      "stable cross-stage Q-ID table in A06",
+      "fixed task status index with explicit dependencies and resume points",
+      "separate worker-local statements from whole-task private-desktop evidence"
+    ],
+    "businessLogicChanged": false
+  },
+  "checks": {
+    "taskDefinitions": 90,
+    "duplicateTaskDefinitions": [],
+    "undefinedTaskReferences": [],
+    "unchangedManualHashMismatch": [],
+    "A06SourceHashMismatch": [],
+    "sampledAssetReferences": [
+      {
+        "manual": "静态文本功能与交互复刻手册.md",
+        "asset_links_checked": 28,
+        "missing": []
+      },
+      {
+        "manual": "字按钮功能与交互复刻手册.md",
+        "asset_links_checked": 52,
+        "missing": []
+      },
+      {
+        "manual": "图表功能与交互复刻手册.md",
+        "asset_links_checked": 14,
+        "missing": []
+      }
+    ],
+    "missingLinks": [],
+    "badAnchors": []
+  },
+  "cleanupSummary": {
+    "status": "blocked_by_automatic_approval_for_S02",
+    "deletedFiles": 0,
+    "deletedBytes": 0,
+    "remainingFiles": 5,
+    "remainingBytes": 18873629,
+    "directory": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stages-20261110\\transient\\S02",
+    "reason": "Both recursive directory removal and safer explicit single-file removal were rejected: blocked by policy; no more specific reason supplied",
+    "bypassAttempted": false,
+    "otherPhases": "no new transient files; historical directories untouched"
+  },
+  "notRun": [
+    "business build or code tests",
+    "macro SDK execution",
+    "USB download/upload",
+    "PLC/serial/network write",
+    "screen/touch observation"
+  ],
+  "remainingSpecificationWork": [
+    "complete global V5.1 entry/state/field verification",
+    "all primitive creation/end/vertex gestures and typed records",
+    "unrestored source/config/compiled structures",
+    "simulation startup/session/macro scheduling",
+    "upload/media layouts and complete protocol ABI",
+    "hardware runtime and performance thresholds"
+  ],
+  "git": "root and KinSealStudio are not Git repositories; no initialization/remote changes/commit/push",
+  "stage0Executions": [
+    {
+      "executionId": "stage0-20261110-4",
+      "recordedAtUtc": "2026-11-10T06:36:11.640446+00:00",
+      "authorization": "用户要求实际执行阶段0、确保下载并追加协议；此前文档编写轮的只调查限制不代表本轮未授权",
+      "report": "../docs/阶段0基线与验收.md",
+      "inputManifest": "../docs/stage0-evidence/baseline-run-usb-r2/input-manifest.json",
+      "productMilestoneM0Passed": false,
+      "transportAccepted": true,
+      "screenDisplayAndTouchConfirmed": false,
+      "shutdownRequested": false,
+      "cleanup": {
+        "tool": "../docs/stage0-evidence/tool-cache-cleanup.json",
+        "entry": "../docs/stage0-evidence/entry-cleanup.json",
+        "historicalS02Untouched": true
+      }
+    }
+  ],
+  "stage1Executions": [
+    {
+      "executionId": "stage1-20261110-5",
+      "recordedAtUtc": "2026-11-10T09:03:34.360835+00:00",
+      "authorization": "用户要求阶段1实际复刻、成功下载并追加协议；本轮生产/背景Windows/USB均已授权",
+      "report": "../docs/阶段1工程模型与验收.md",
+      "declaredSlice": "K/M模型与调用方，既有五类单页N/C，多页typed只读",
+      "fullStageExitPassed": false,
+      "declaredSliceDelivered": true,
+      "transportAccepted": true,
+      "screenDisplayAndTouchConfirmed": false,
+      "firmwareVersion": null,
+      "shutdownRequested": false,
+      "cleanup": "native runtime retained due prior policy/target ambiguity; all owned PID terminated",
+      "protocolSection": "24"
+    },
+    {
+      "executionId": "stage1-20261110-6",
+      "recordedAtUtc": "2026-11-10T10:06:57.272528+00:00",
+      "report": "../docs/stage1-language-evidence/README.md",
+      "declaredSlice": "原厂独立语言选择N/C、无损往返、按名称重排及真实USB",
+      "fullStageExitPassed": false,
+      "declaredSliceDelivered": true,
+      "transportAccepted": true,
+      "screenDisplayAndTouchConfirmed": false,
+      "firmwareVersion": null,
+      "shutdownRequested": false,
+      "protocolSection": "25",
+      "finalExecutableSha256": "e2e661c04741535c2f6ed5eb15884df2a0a5a39eea64c94b49e6c468c77d21e8",
+      "finalUsbCompletedAtUtc": "2026-11-10T10:11:12.877321+00:00"
+    }
+  ],
+  "stage2Executions": [
+    {
+      "executionId": "stage2-20261110-7",
+      "version": "0.9.0",
+      "status": "partial_workflow_slice_delivered; full_stage_open",
+      "executableSha256": "dd61fe6bdf1a51e02ed20794743ccf9e9979699fd3fcd085d2a10b437c351a94",
+      "report": "../docs/阶段2主窗口与工程配置验收.md",
+      "transportAccepted": true,
+      "physicalTouchConfirmed": false,
+      "completedAtUtc": "2026-11-10T11:47:34.437788+00:00"
+    }
+  ]
+}

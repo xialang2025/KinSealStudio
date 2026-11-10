@@ -1,0 +1,78 @@
+********* Start testing of NativeProjectCodecTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : NativeProjectCodecTests::initTestCase()
+FAIL!  : NativeProjectCodecTests::nativeCorpusKeepsExactBytes() 'count >= 10' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(186) : failure location
+PASS   : NativeProjectCodecTests::malformedHeadersAreTransactional()
+PASS   : NativeProjectCodecTests::changedArchivesAreRejected()
+PASS   : NativeProjectCodecTests::opaqueBodyIsNeverReportedAsValidated()
+PASS   : NativeProjectCodecTests::nativeAddressOracleRoundTrip()
+PASS   : NativeProjectCodecTests::sourceAddressMatchesQt4Primitives()
+PASS   : NativeProjectCodecTests::malformedAddressesAreTransactional()
+PASS   : NativeProjectCodecTests::semanticOperationsFailExplicitly()
+PASS   : NativeProjectCodecTests::supportedEditsKeepNativeStructure()
+FAIL!  : NativeProjectCodecTests::nativeUiVariantSemantics() 'file.open(QIODevice::ReadOnly)' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(517) : failure location
+PASS   : NativeProjectCodecTests::inactiveDirtyConditionsBecomeCanonicalWhenEnabled()
+PASS   : NativeProjectCodecTests::createAddCopyDeleteNativeButtons()
+WARNING: NativeProjectCodecTests::mixedNativeButtonsAndStaticTitles() testdata ../samples/bit-button/Àƒ≤Ÿ◊˜ µª˙—È???.ksp could not be located!
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(669) : message location
+QWARN  : NativeProjectCodecTests::mixedNativeButtonsAndStaticTitles() QFSFileEngine::open: No file name specified
+FAIL!  : NativeProjectCodecTests::mixedNativeButtonsAndStaticTitles() 'HmiProject::load(path, &project, &error)' returned FALSE. (No file name specified)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(670) : failure location
+PASS   : NativeProjectCodecTests::nativeExternalWordTypeOracles()
+PASS   : NativeProjectCodecTests::unsupportedMetadataEditsAreTransactional()
+WARNING: NativeProjectCodecTests::nativeMultilingualSourcesAndLanguageDefaults() testdata fixtures/native-source/bit/analysis could not be located!
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(812) : message location
+FAIL!  : NativeProjectCodecTests::nativeMultilingualSourcesAndLanguageDefaults() 'file.open(QIODevice::ReadOnly)' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(816) : failure location
+WARNING: NativeProjectCodecTests::nativeStartupLanguageRemainsIndependentOfEditorSelection() testdata fixtures/native-source/bit/analysis/two-language-initial-english-ui.sm could not be located!
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(889) : message location
+QWARN  : NativeProjectCodecTests::nativeStartupLanguageRemainsIndependentOfEditorSelection() QFSFileEngine::open: No file name specified
+FAIL!  : NativeProjectCodecTests::nativeStartupLanguageRemainsIndependentOfEditorSelection() 'file.open(QIODevice::ReadOnly)' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(891) : failure location
+PASS   : NativeProjectCodecTests::nativeIndicatorStateListsCanShrinkAndGrow()
+WARNING: NativeProjectCodecTests::nativeMacroSourcesAndBindingsRemainEditable() testdata fixtures/native-source/bit/analysis could not be located!
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1003) : message location
+FAIL!  : NativeProjectCodecTests::nativeMacroSourcesAndBindingsRemainEditable() 'file.open(QIODevice::ReadOnly)' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1005) : failure location
+QINFO  : NativeProjectCodecTests::nativeWordButtonCorpusKeepsExactBytes() Original word-button source snapshots checked: 1
+PASS   : NativeProjectCodecTests::nativeWordButtonCorpusKeepsExactBytes()
+FAIL!  : NativeProjectCodecTests::nativeWordButtonOperationsAndNewMixedProjects() 'exportNativeProjectSource(matrix, &output, &error)' returned FALSE. (π§≥Ã…Ì∑›°¢ƒø±ÍªÚ µÃÂ ˝¡ø≥¨≥ˆLite±£ª§∑∂Œß°£)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1195) : failure location
+PASS   : NativeProjectCodecTests::nativeWordButtonPressedStatesAndGuards()
+QINFO  : NativeProjectCodecTests::nativeLampCorpusKeepsExactBytes() Original lamp source snapshots checked: 16
+PASS   : NativeProjectCodecTests::nativeLampCorpusKeepsExactBytes()
+FAIL!  : NativeProjectCodecTests::nativeLampMonitoringEditsAndMixedCreation() 'exportNativeProjectSource(project, &output, &error)' returned FALSE. (π§≥Ã…Ì∑›°¢ƒø±ÍªÚ µÃÂ ˝¡ø≥¨≥ˆLite±£ª§∑∂Œß°£)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1468) : failure location
+PASS   : NativeProjectCodecTests::nativeLampStateExpansionAndGuards()
+PASS   : NativeProjectCodecTests::nativeLampNoImageAndSharedText()
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(u16-five)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(u32-thirty-two)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(dual-bit)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(dual-word-bit)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(bilingual-visibility)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(device-mixed)
+FAIL!  : NativeProjectCodecTests::nativeFunctionCorpusKeepsExactBytes() 'importNativeProjectSource(source, &project, &error)' returned FALSE. (Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/fixtures/native-source/function/function-valid-r4.sm: π§≥Ã…Ì∑›°¢ƒø±ÍªÚ µÃÂ ˝¡ø≥¨≥ˆLite±£ª§∑∂Œß°£)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1843) : failure location
+PASS   : NativeProjectCodecTests::nativeFunctionUnsupportedUnicodeIsExplicit()
+PASS   : NativeProjectCodecTests::nativeFunctionOpaqueMetadataAndKeyWidth()
+FAIL!  : NativeProjectCodecTests::nativeFunctionAllSelectionsAndFreshProjects() 'exportNativeProjectSource(ksp, &output, &error)' returned FALSE. (π§≥Ã…Ì∑›°¢ƒø±ÍªÚ µÃÂ ˝¡ø≥¨≥ˆLite±£ª§∑∂Œß°£)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(1998) : failure location
+PASS   : NativeProjectCodecTests::nativeFunctionAppearancePermissionsAndGuards()
+FAIL!  : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(18ÂäüËÉΩ‰∏éÂÖ®ÈÉ®Á±ªÂûãÁü©Èòµ.ksp) 'exportNativeProjectSource(project, &output, &error)' returned FALSE. (Z:/Project/vscode_prj_temp/REA/KinSealStudio/build/../samples/function-button/18π¶ƒ‹”Î»´≤ø¿‡–Õæÿ’Û.ksp: π§≥Ã…Ì∑›°¢ƒø±ÍªÚ µÃÂ ˝¡ø≥¨≥ˆLite±£ª§∑∂Œß°£)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/native_project_codec_tests.cpp(2197) : failure location
+PASS   : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(ÂäüËÉΩÊåâÈíÆÂÆûÊú∫ËÅîË∞É.ksp)
+PASS   : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(ÂçÅÈîÆ‰∏éUnicodeÂ≠óÁ¨¶.ksp)
+PASS   : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(ÂèåËØ≠Êåâ‰∏ãÈó™ÁÉÅ‰∏éÊó†Âõæ.ksp)
+PASS   : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(ÊùÉÈôêÈÄöÁü•‰∏éÊåâÂéã.ksp)
+PASS   : NativeProjectCodecTests::nativeFunctionActualSamplesRoundTrip(Á≥ªÁªüÂäüËÉΩ18È°π.ksp)
+PASS   : NativeProjectCodecTests::typedFieldBoundariesAndMalformedCollections()
+PASS   : NativeProjectCodecTests::everyTruncatedPrefixPreservesSemanticOutputs()
+PASS   : NativeProjectCodecTests::multiplePagesAreReadOnlyArchives()
+PASS   : NativeProjectCodecTests::sourceRejectsUnmappedModelEntities()
+PASS   : NativeProjectCodecTests::explicitStartupLanguageUpdatesBothMirrors()
+PASS   : NativeProjectCodecTests::typedMetadataBudgetIsBounded()
+PASS   : NativeProjectCodecTests::cleanupTestCase()
+Totals: 40 passed, 11 failed, 0 skipped, 0 blacklisted, 29360ms
+********* Finished testing of NativeProjectCodecTests *********

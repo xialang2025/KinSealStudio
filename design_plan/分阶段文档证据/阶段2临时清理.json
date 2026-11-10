@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-10",
+  "stage": "S02",
+  "root": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stages-20261110\\transient\\S02",
+  "scope": "只删除已列出的本轮5个临时文件，再删除2个已确认空目录",
+  "status": "blocked_by_automatic_approval",
+  "files": [
+    {
+      "relativePath": "KinSealStudio5.1-private.exe",
+      "bytes": 18682368,
+      "sha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89"
+    },
+    {
+      "relativePath": "language.ini",
+      "bytes": 224,
+      "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0"
+    },
+    {
+      "relativePath": "model.dat",
+      "bytes": 25936,
+      "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384"
+    },
+    {
+      "relativePath": "modelInfo.dat",
+      "bytes": 161214,
+      "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67"
+    },
+    {
+      "relativePath": "Probe.sm",
+      "bytes": 3887,
+      "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+    }
+  ],
+  "plannedBytes": 18873629,
+  "retainedSource": "KinSealStudio/samples/native-device-test/CodexProbeTest.sm",
+  "retainedSourceSha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422",
+  "ownedRunningProcesses": 0,
+  "recursiveDeleteAttempt": "自动审批拦截，未执行；改为明确文件清单及空目录删除",
+  "deletedFileCount": 0,
+  "deletedBytes": 0,
+  "protected": "不清理安装目录、历史scratch、业务源码、样本、31手册及assets",
+  "remainingFileCount": 5,
+  "remainingBytes": 18873629,
+  "rejections": [
+    {
+      "action": "删除S02整个临时目录（递归）",
+      "result": "blocked by policy",
+      "executed": false
+    },
+    {
+      "action": "按已列清单单独删除KinSealStudio5.1-private.exe（非递归）",
+      "result": "blocked by policy",
+      "executed": false
+    }
+  ],
+  "limitation": "工具未给出更具体拦截原因；不绕过拦截，保留临时文件，未报告清理成功",
+  "manualCleanupDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stages-20261110\\transient\\S02",
+  "remainingFilesVerified": true
+}

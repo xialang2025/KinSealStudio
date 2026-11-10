@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-09",
+  "task": "Lamp native source codec",
+  "marker": "20261109-8",
+  "status": "READY; final source frozen; six actual KSP samples passed; vendor verification pending on additional artifacts",
+  "testResult": "34 passed, 0 failed, 0 skipped",
+  "testLog": "qtest-actual-final.txt",
+  "originalLampSources": 16,
+  "seed": "../device-analysis/corpus/lamp-default-r1.sm",
+  "seedSha256": "e87452849500e52d3fd4730030c6ee62d8e2adc8efaf43e472c4070cc15f95c8",
+  "sourceContract": {
+    "subtype": 4,
+    "operation": "No subtype-specific payload and no operation address",
+    "monitorAddress": "switch.254",
+    "transferWordCount": "switch.254.7 / source+268: dual/U16=1; U32=2",
+    "dualAddressType": "switch.248.0 / source+248",
+    "dualWordBit": "switch.248.1 / source+24c",
+    "sameAddress": "switch.248.2 / source+250; disabled in observed original Lamp UI",
+    "stateCount": "switch.248.3 / source+270",
+    "multiDataType": "switch.248.4 / source+26c: UI indices 0=U16, 1=U32",
+    "monitorMode": "switch.248.5 / source+244: 1=dual, 2=multi",
+    "stateValues": "switch.278 vector: sequential 0..N-1; observed original two-state empty vector retained with warning",
+    "stateText": "switch.290[state][language]",
+    "statePicture": "switch.294[state]",
+    "stateOrder": "Source rows map directly to model state indices; no device bit-button sprite reversal",
+    "maximumStates": 32
+  },
+  "appearance": {
+    "state0": "OFF; switch_OFF.kvg; Song Ti 16 (original null family); #f0f0f0",
+    "state1": "ON; switch_ON.kvg; Song Ti 16 (original null family); #f0f0f0",
+    "newStates": "Empty text; switch_ON.kvg; Microsoft YaHei 16; #a0a0a0; opacity255"
+  },
+  "guards": [
+    "No semantic Lamp mode0 import/export: original UI both unchecked serializes mode2; original reader rewrites zero",
+    "Active macro/notification/touch/press-time/pressed-effect rejected; opaque archive remains available",
+    "Unknown nonsequential active state values rejected",
+    "Active source address word count must match selected type",
+    "Dormant original garbage stays in snapshot; dual inactive numeric type displays default with warning",
+    "Address edits retain inherited validated LB/LW 0..4096 scope; external source addresses preserve original snapshot but new external profile encoding was not added"
+  ],
+  "api": [
+    "nativeProjectUsesSupportedDeviceDefaults unchanged and strict hashes pass",
+    "nativeProjectInitialLanguageIndex unchanged",
+    "Root must embed :/native/lamp-default.sm"
+  ],
+  "product": "product-new-lamp-mixed-multilingual.sm",
+  "productBytes": 8186,
+  "productSha256": "CEADE2A22F6FFB33FDFDB71FC2DC395781D6D39068DC78F4B07112EE83382358",
+  "backups": [
+    "%TEMP%/kinseal-lamp-source-baseline-20261109-195819",
+    "%TEMP%/kinseal-lamp-source-final-20261109",
+    "C:\\Users\\lenovo\\AppData\\Local\\Temp\\kinseal-lamp-source-actual-final-20261109-212123"
+  ],
+  "review": [
+    "Checked typed boundaries, state indexing, model flags, monitor modes, active source width and unchanged old branches",
+    "Original24 regression plus11 actual Lamp source roundtrips passed",
+    "32-state expansion/shrink and U16/U32 conversion tested",
+    "Original-vendor mixed-product reopen/compile is owned by lamp_device",
+    "Actual GUI factory KSP regression: six rows verified native export/import, active semantics, no input draft mutation and byte-exact canonical re-export."
+  ],
+  "originalUiCountChanges": "Observed original UI 5->2->5 clears the removed state4; source state-list rebuild serializes active appearances only. Hidden JSON drafts are not claimed to survive native source reduction.",
+  "vendorProductVerification": {
+    "sourceSha256": "CEADE2A22F6FFB33FDFDB71FC2DC395781D6D39068DC78F4B07112EE83382358",
+    "output": "../device-analysis/corpus/product-mixed-multilingual-r2-compiled",
+    "controls": "4 x 640 bytes",
+    "lamp": "mode2, unsigned32, five states, two languages, raw196000",
+    "sprites": "8..12 Chinese state0..4; 13..17 English STATE0..4",
+    "order": "Language outside, state inside; no bit-button reversal for multi-state Lamp",
+    "pixels": "Device agent visually checked OFF, STATE0 and STATE4 PNG sprites",
+    "hardware": "No USB action was performed by this source-codec agent"
+  },
+  "imageAndSharedText": {
+    "useImage": "Lamp picture kind1=image; kind3=no image, original path retained",
+    "preview": "Selected state is switch.274.1; graphical child13 is Pixmap, child0x1000f is filled Rectangle",
+    "sameLanguage": "switch.tail.4 is a single global bool; all active model state flags must agree",
+    "languageExport": "When global sameLanguage=true, sharedText expands into every registered language; project/KSP draft values remain unchanged",
+    "languageImport": "Restores the real global bool to every Lamp state; per-language text maps reflect saved expanded values",
+    "unregisteredLanguages": "Still rejected, including shared-language mode",
+    "scope": "Lamp only. Bit/Word sameLanguage changes retain the old guard; non-Lamp native kind3 is explicitly rejected semantically while raw archive retention remains available",
+    "artifact": "product-lamp-noimage-samelanguage.sm",
+    "artifactBytes": 4953,
+    "artifactSha256": "DE269318A9B6D30232648967552CB4144133485DD92A5405AC73DC2A50319E92",
+    "coverage": "One added feature case: real no-image import, rectangle geometry, registered-language fan-out without draft mutation, Rectangle->Pixmap->Rectangle rebuild, canonical source roundtrip, mixed global flag/unregistered language/old Bit guard rejection",
+    "backup": "%TEMP%/kinseal-lamp-source-image-final-20261109"
+  },
+  "actualKspRegression": {
+    "manifest": "actual-samples-manifest.json",
+    "before": "qtest-actual-before.txt: 2 passed, 6 failed",
+    "after": "qtest-actual-final.txt: 34 passed, 0 failed",
+    "rootCause": "Full disabled touch JSON comparison rejected the real GUI factory defaults minimumLevel=2 and wordAddress=LW0 against original source defaults 1/LB0.",
+    "fix": "Require Lamp touch master flag false and restore original touch metadata in the local shared-patch copy; KSP draft values remain unchanged.",
+    "pressTime": "All eight real fixture Lamp objects disabled/255; guard unchanged.",
+    "codeFrozen": true
+  }
+}

@@ -1,0 +1,9 @@
+# 20261108-8 add: Keep local proprietary runtimes and generated binaries out of source control.
+.local/
+build/
+dist/
+
+# Exclude generated verification runtimes and Python bytecode caches.
+/docs/stage2-evidence/**/harness/
+__pycache__/
+*.py[cod]

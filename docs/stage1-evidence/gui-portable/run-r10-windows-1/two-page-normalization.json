@@ -1,0 +1,131 @@
+{
+  "scope": "r10 two-page migration raw JSON comparison diagnosis",
+  "diff_count": 24,
+  "only_declared_default_additions": true,
+  "source_fields_removed_or_changed": 0,
+  "differences": [
+    {
+      "path": "/pages/0/objects/0/group",
+      "kind": "added_default",
+      "restored": ""
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/bitAddress",
+      "kind": "added_default",
+      "restored": "LB0"
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/bitEnabled",
+      "kind": "added_default",
+      "restored": false
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/bitState",
+      "kind": "added_default",
+      "restored": true
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/compareValue",
+      "kind": "added_default",
+      "restored": "0"
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/comparison",
+      "kind": "added_default",
+      "restored": 0
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/dataType",
+      "kind": "added_default",
+      "restored": 0
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/levelEnabled",
+      "kind": "added_default",
+      "restored": false
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/minimumLevel",
+      "kind": "added_default",
+      "restored": 1
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/tolerance",
+      "kind": "added_default",
+      "restored": "0"
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/wordAddress",
+      "kind": "added_default",
+      "restored": "LW0"
+    },
+    {
+      "path": "/pages/0/objects/0/staticText/wordEnabled",
+      "kind": "added_default",
+      "restored": false
+    },
+    {
+      "path": "/pages/1/objects/0/group",
+      "kind": "added_default",
+      "restored": ""
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/bitAddress",
+      "kind": "added_default",
+      "restored": "LB0"
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/bitEnabled",
+      "kind": "added_default",
+      "restored": false
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/bitState",
+      "kind": "added_default",
+      "restored": true
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/compareValue",
+      "kind": "added_default",
+      "restored": "0"
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/comparison",
+      "kind": "added_default",
+      "restored": 0
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/dataType",
+      "kind": "added_default",
+      "restored": 0
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/levelEnabled",
+      "kind": "added_default",
+      "restored": false
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/minimumLevel",
+      "kind": "added_default",
+      "restored": 1
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/tolerance",
+      "kind": "added_default",
+      "restored": "0"
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/wordAddress",
+      "kind": "added_default",
+      "restored": "LW0"
+    },
+    {
+      "path": "/pages/1/objects/0/staticText/wordEnabled",
+      "kind": "added_default",
+      "restored": false
+    }
+  ],
+  "basis": "HmiObject group defaults empty; StaticTextProperties defaults for omitted dormant permission fields are explicitly declared in src/static_text_properties.h; both text objects omit these optional values in the supplied sample.",
+  "next_test": "Preserve all supplied fields and ordered list contents, compare core topology/startup/reference fields, and assert a second full CLI migration is idempotent.",
+  "product_code_changed": false
+}

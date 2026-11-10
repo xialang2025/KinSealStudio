@@ -1,0 +1,207 @@
+{
+  "record_type": "后续grill-you自审；独立于上次修订复核，保留历史文件和旧文档哈希",
+  "verified_at": "2026-11-10T08:38:25.977869+08:00",
+  "scope": "仅文档自审及受影响文档一致性检查；未启动程序、未重跑历史测试、未编译、未USB下载或屏端观察",
+  "status": "文档一致性通过",
+  "historical_record": {
+    "file": "KinSealStudio\\design_plan\\复刻路线图证据\\路线图修订复核记录.json",
+    "sha256": "eff4e2fc1be3b33a179abdf0900720e5576c7a6738e4f36ab381ac9eecab034d",
+    "bytes": 3916
+  },
+  "actionable_findings": [
+    {
+      "finding": "整软件完整复刻的规格就绪程度易被高估",
+      "applied": "明确入口与逐字段调查未闭合、M0未完成，保留已有局部成果"
+    },
+    {
+      "finding": "覆盖矩阵缺少实际的逐行分层状态",
+      "applied": "31行增加D/U/P/R/C/T/E及状态字典，不把历史局部记作整层通过"
+    },
+    {
+      "finding": "顺序候选编号重生成会漂移，人工核销状态会被覆盖",
+      "applied": "冻结CSV哈希、稳定Q-ID、另存快照再合并；初审5条，保留全部原始计数"
+    },
+    {
+      "finding": "全专题门槛和全阶段依赖可能造成可独立工作相互等待",
+      "applied": "按编辑/源互通/编译/运行切片判门槛，未恢复能力在对应入口拒绝"
+    },
+    {
+      "finding": "模板只有占位，缺少可照填的具体示例",
+      "applied": "补字符字段的UI/事件/KSP/源/设备映射；新验收ID保持未执行状态"
+    }
+  ],
+  "checks": {
+    "scope": "仅受影响文档的一致性检查；没有重新执行程序/USB/屏端测试",
+    "documents": 4,
+    "matrix_rows": 31,
+    "matrix_columns": 12,
+    "raw_candidates": 308,
+    "initially_reviewed_candidates": 5,
+    "not_initially_reviewed_candidates": 303,
+    "candidate_sha256": "27f423c4b35d387b243d0e4ca69485ff2a892b41e8b3cd81e19cfc81b532b87c",
+    "formal_specific_questions": 4,
+    "formal_parent_items": 1,
+    "specific_questions_closed_from_historical_evidence": 3,
+    "specific_questions_partial": 1,
+    "excluded_non_question_candidates": 1,
+    "batches": [
+      3,
+      2,
+      3,
+      2,
+      2,
+      4,
+      1,
+      4,
+      5
+    ],
+    "missing_links": [],
+    "bad_anchors": [],
+    "unchanged_manual_hash_mismatch": []
+  },
+  "candidate_snapshot": {
+    "identity": "CAND-20261110",
+    "sha256": "27f423c4b35d387b243d0e4ca69485ff2a892b41e8b3cd81e19cfc81b532b87c",
+    "reviewed_raw_ids": [
+      "U-071",
+      "U-178",
+      "U-181",
+      "U-079",
+      "U-308"
+    ],
+    "raw_csv_unchanged": true
+  },
+  "formal_records": [
+    {
+      "id": "Q-FUNC-MACRO-001",
+      "candidate": "U-071",
+      "status": "历史补证关闭",
+      "scope": "所核V5.1功能按钮宏组禁用"
+    },
+    {
+      "id": "Q-LAMP-MACRO-001",
+      "candidate": "U-178",
+      "status": "历史补证关闭",
+      "scope": "所核V5.1指示灯宏组禁用"
+    },
+    {
+      "id": "Q-LAMP-COUNT-001",
+      "candidate": "U-181",
+      "status": "历史补证关闭",
+      "scope": "真实切入多态后2..32及索引0..N-1"
+    },
+    {
+      "id": "Q-LAMP-RENDER-001",
+      "candidate": "U-181",
+      "status": "部分补证",
+      "scope": "源/图帧已解释，全部状态/语言/闪烁现场未闭合"
+    },
+    {
+      "id": "Q-FUNC-RUN-001",
+      "candidate": "U-079",
+      "status": "未关闭的待拆分父项",
+      "scope": "18功能固件动作；USB ACK不可核销运行"
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "candidate": "U-308",
+      "reason": "已知缺口章节的说明性结尾，无独立待验证行为；保留原始行"
+    }
+  ],
+  "affected_documents": [
+    {
+      "file": "KinSealStudio\\design_plan\\完整复刻路线图.md",
+      "sha256": "5d46523e6a1765f6d8275feb137aa04704bad5c1557a8d746ccea57769f940ff",
+      "bytes": 41382,
+      "lines": 384,
+      "previous_revision_sha256": "2a680c58732b8dbb18df856c710b136df9ff9137136f79e28653760892762341"
+    },
+    {
+      "file": "KinSealStudio\\design_plan\\控件文档与实施覆盖矩阵.md",
+      "sha256": "92d76becfd9060203c30f37f48e010baeb4cbf8540f94230349a8211e9eb859c",
+      "bytes": 9922,
+      "lines": 47,
+      "previous_revision_sha256": "a17544346dc2a60c5b7d6776dba267c33c1b66e889f3586473cbe397a50c70c7"
+    },
+    {
+      "file": "KinSealStudio\\design_plan\\功能复刻说明书模板.md",
+      "sha256": "9c79636d0952488f065c729df6c31713ca750a39494f6bd22726bae8a9e2f8ed",
+      "bytes": 12391,
+      "lines": 124,
+      "previous_revision_sha256": "6e52cfbec02c18f87b54bd3bdba9c792d45e487ffff2497f9a92467ced773e9e"
+    },
+    {
+      "file": "KinSealStudio\\design_plan\\复刻待验核销记录.md",
+      "sha256": "190a579681645204712fd21c4e3e6a164782a2b25d3832fac998fa3d720be3f3",
+      "bytes": 7329,
+      "lines": 50,
+      "previous_revision_sha256": null
+    }
+  ],
+  "change_log": {
+    "file": "程序修改记录.md",
+    "sha256": "bf9636dfbba1652e1be360df80088ae0423c56be0477f69c964562cb995988ea",
+    "bytes": 85076,
+    "marker": "//20261110-2 change"
+  },
+  "read_only_sources": [
+    {
+      "file": "KinSealStudio\\docs\\功能按钮手册实现与验收.md",
+      "sha256": "fef9ca574ff2dea3ea902a09c08377e3859923b6e917c30e78d2f140deb804e7",
+      "bytes": 7875
+    },
+    {
+      "file": "KinSealStudio\\docs\\指示灯手册实现与验收.md",
+      "sha256": "31012b898d8637a42d9aa7c394985191dcb229f4471b9605061b48c91d1593f0",
+      "bytes": 6853
+    },
+    {
+      "file": "KinSealStudio\\docs\\function-button-evidence\\原厂设备补证.md",
+      "sha256": "9589e24e3fcd754721787fd6aba564c10031ac619be7eef9e6e3052ca8ff8229",
+      "bytes": 5809
+    },
+    {
+      "file": "KinSealStudio\\docs\\function-button-evidence\\usb-function-integration.json",
+      "sha256": "dc1fa600c54d6ea1fbed368abca0fc23f965f0deaa1d07bac6609e662549b624",
+      "bytes": 941
+    },
+    {
+      "file": "KinSealStudio\\src\\function_button_properties.cpp",
+      "sha256": "ef6a4625e0f211eb069c42fde51f04b0b9bcfec6fc85d54888c37da4d525316a",
+      "bytes": 9706
+    },
+    {
+      "file": "KinSealStudio\\src\\function_button_properties.h",
+      "sha256": "ed9bb744e18746b48789f3d1404682e42fa8220b5e1047ffc58f21ce337ac0ce",
+      "bytes": 720
+    },
+    {
+      "file": "KinSealStudio\\src\\project_model.cpp",
+      "sha256": "b635079ee23344ad77fb7936c91cc49972874bdf57d21a877346015e0b176adc",
+      "bytes": 33865
+    },
+    {
+      "file": "KinSealStudio\\src\\native_function_button_control.cpp",
+      "sha256": "da4a893b3e9d317f4975cd9fe97133a1cddbf5474937831ab643b1b500f08400",
+      "bytes": 7985
+    },
+    {
+      "file": "KinSealStudio\\samples\\function-button\\十键与Unicode字符.ksp",
+      "sha256": "5d608cf32371b2b6f8973e84e1459379e3b991203caf88166ae7e0a40cfe2964",
+      "bytes": 79680
+    }
+  ],
+  "new_test_design_ids": [
+    "AC-FUNC-CHAR-01",
+    "AC-FUNC-CHAR-02",
+    "AC-FUNC-CHAR-03"
+  ],
+  "new_test_design_status": "仅设计，未执行；不借用历史测试数标记新ID通过",
+  "limitations": [
+    "303条原始候选尚未初审，本批仍有待拆分父项",
+    "31手册未逐字段通过整层D；整软件入口和全局专题仍缺",
+    "屏端运行及原厂双语60控件额外交叉验证未因本次自审得到证明"
+  ],
+  "git": "当前工作区不是Git仓库；未初始化仓库或推送未知远端"
+}

@@ -1,0 +1,91 @@
+{
+  "task": "阶段1最终冻结便携与Windows后台GUI独立验收",
+  "marker": "//20261110-5",
+  "status": "passed",
+  "productionCodeModified": false,
+  "buildExecuted": false,
+  "hardwareTransfersExecutedByReviewer": false,
+  "result": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\gui-portable\\run-r10-windows-2\\result.json",
+  "resultSha256": "038529640fc71d7309b74c87e87b70ce5a67fe93bfa7db0a196fa35646e3fe11",
+  "frozenExecutable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\KinSealStudioLite.exe",
+  "frozenSha256Before": "a5859fbb97238f23873240256f5e09427de2da37009d1120276d6f46cb44615f",
+  "frozenSha256After": "a5859fbb97238f23873240256f5e09427de2da37009d1120276d6f46cb44615f",
+  "runChecks": 29,
+  "semanticChecks": 13,
+  "staticWindowsSuite": {
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0,
+    "nativeFontAndFillEvidence": "PASS",
+    "logSha256": "69b7a9eecdcd04bbe26530ef778ce1a56cc290b19c2e9538ed9c8b2e6caa4e82"
+  },
+  "mainWindowBridge": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      "editorSwitchesPagesWithoutDiscardingHiddenObjects",
+      "resourceDraftFailurePreservesEditorState"
+    ],
+    "logSha256": "50db53f99dc3774ef7348f116446e6f294d3538274949b49a9a492cf0ee523ba"
+  },
+  "visualInspection": {
+    "performedByReviewer": true,
+    "file": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\gui-portable\\run-r10-windows-2\\portable-main-window.png",
+    "sha256": "7a0e8efbff9540aaafdc59a64960e5194da8ca87947052bf8f552a7a10e50ee6",
+    "dimensions": [
+      1376,
+      736
+    ],
+    "result": "1376x736中文主窗体、树和工具箱可见，800x480蓝色空白画布无明显裁切或异常；截图不是从磁盘打开双页样例的证据。"
+  },
+  "privateDesktopHandleClosed": true,
+  "processClosureSnapshot": {
+    "checkedAt": "2026-11-10T17:02:10.9786520+08:00",
+    "names": [
+      "KinSealStudioLite.exe",
+      "KinSealStage1BackendTests.exe",
+      "KinSealStaticTextTests.exe"
+    ],
+    "found": [],
+    "parentNotifiedAllOwnedGuiProcessesExited": true
+  },
+  "observedQtModules": [
+    "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\Qt6Core.dll",
+    "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\Qt6Gui.dll",
+    "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\Qt6Svg.dll",
+    "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\Qt6Widgets.dll",
+    "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage1\\platforms\\qwindows.dll"
+  ],
+  "unexpectedQtModules": [],
+  "dependencyTraceLimit": "Modules are sampled only while each owned process remains alive; a short process can exit before complete enumeration.",
+  "r1Retained": {
+    "result": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\gui-portable\\run-r10-windows-1\\result.json",
+    "passed": false,
+    "staticTotals": "41 passed, 2 failed, 0 skipped",
+    "cause": "Test harness omitted executableDir/../artifacts; gallery PNG saves failed. Product executable and tests unchanged.",
+    "migrationComparisonDiagnosis": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\gui-portable\\run-r10-windows-1\\two-page-normalization.json"
+  },
+  "r2Corrections": [
+    "Created test-only artifacts folder",
+    "Preserve every supplied JSON source field and ordered list, compare core topology, and require a second CLI migration to be exactly idempotent"
+  ],
+  "migrationNormalization": {
+    "addedDeclaredDefaults": 24,
+    "sourceFieldsRemovedOrChanged": 0,
+    "sourceFieldsPreserved": true,
+    "secondMigrationIdempotent": true
+  },
+  "cleanup": {
+    "receipt": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\gui-portable\\harness-cleanup.json",
+    "removedBytes": 181097928,
+    "removedOnlySixHashedCopies": true
+  },
+  "limits": [
+    "Single-page and language reorder offline compilation passed; multi-page/new active configuration deliberately blocked before transfer.",
+    "GUI screenshot is a blank project; MainWindow bridge, not disk-sample GUI opening, verifies page switching and hidden-page persistence.",
+    "QtTest is a separately identified test-only dependency, not a portable product dependency.",
+    "No USB/PLC transfer, physical screen rendering or physical touch acceptance executed by this reviewer.",
+    "Connection deletion entire dialog interaction and every individual gallery-selection transaction were not separately stimulated here."
+  ]
+}

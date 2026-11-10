@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-11-10T11:41:06.069009+00:00",
+  "mode": "read-only review first, then authorized fixes in separate edits",
+  "findings": [
+    {
+      "problem": "Same-path recent open could adopt a stale pre-save candidate",
+      "severity": "P1",
+      "resolution": "Reload target after save/discard confirmation",
+      "test": "openingSamePathReloadsAfterSave"
+    },
+    {
+      "problem": "Numeric property menu edits could target canvas history",
+      "severity": "P2",
+      "resolution": "Resolve QAbstractSpinBox internal line edit and keep operations local",
+      "test": "numericDraftCommandsStayLocal"
+    },
+    {
+      "problem": "Inactive page object array order could manufacture dirty state after visiting",
+      "severity": "P2",
+      "resolution": "Stable sort by explicit layer for content comparison, retain same-layer ordering",
+      "test": "visitingUnsortedLayersIsNavigationOnly"
+    },
+    {
+      "problem": "Macro search returned only a transient status message",
+      "severity": "P2",
+      "resolution": "Open read-only source and navigate to the recorded line",
+      "test": "macroSearchLocationOpensSource"
+    },
+    {
+      "problem": "System tree stayed disabled after document close/reopen; transfer state not refreshed",
+      "severity": "P2",
+      "resolution": "Restore tree and derive shared transfer action from owned-worker lifetime",
+      "test": "reopenAfterCloseRestoresEditor/sharedCommandsAndAvailability"
+    },
+    {
+      "problem": "Windows focused widget teardown could invoke focusChanged after derived members were destroyed",
+      "severity": "P1",
+      "resolution": "Explicit destructor disconnects application-wide signals before derived teardown",
+      "test": "focusedWindowDestructionIsSafe/private Windows full suites; prior c0000005 retained"
+    },
+    {
+      "problem": "Direct cursor Delete could alter a read-only source display",
+      "severity": "P2",
+      "resolution": "Honor isReadOnly before all cursor-based Delete calls",
+      "test": "macroSearchLocationOpensSource additionally dispatches Delete to the read-only view"
+    }
+  ],
+  "remaining": "Whole stage2 is partial; see acceptance scope. No unresolved issue above is being marked passed without a final targeted/full result."
+}

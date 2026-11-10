@@ -1,0 +1,5123 @@
+{
+  "date": "2026-11-10",
+  "scope": "Private desktop menus and default drawing dialogs; no compile/download or system input",
+  "original_sha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtime_sha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "runtime_patch": {
+    "offset": "0x7c4",
+    "old": "5589e5",
+    "new": "b001c3",
+    "purpose": "previously identified startup token check"
+  },
+  "desktop": "KinSealStages20261110",
+  "input_sample": {
+    "retained_path": "KinSealStudio/samples/native-device-test/CodexProbeTest.sm",
+    "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+  },
+  "limitations": [
+    "Only root executable and small model files copied; dependencies resolved through installed PATH",
+    "Command existence/enabled snapshot does not establish command behavior",
+    "shortcutStringConversion is a QVariant conversion result; empty does not prove absence of shortcut",
+    "Default dialogs only; creation gestures, saving, all branches and device semantics remain untested",
+    "No dialog after this action-only probe does not prove absence of properties or determine the drawing gesture"
+  ],
+  "pid": 15348,
+  "exit_code_before_cleanup": 259,
+  "top_windows": [
+    {
+      "hwnd": 2559664,
+      "title": "KinSealStudio5",
+      "class": "QPopup",
+      "visible": false
+    },
+    {
+      "hwnd": 3215020,
+      "title": "KinSealStudio5",
+      "class": "QPopup",
+      "visible": false
+    },
+    {
+      "hwnd": 3477160,
+      "title": "KinSealStudio5",
+      "class": "QPopup",
+      "visible": false
+    },
+    {
+      "hwnd": 6098428,
+      "title": "KinSealStudio5",
+      "class": "QPopup",
+      "visible": false
+    },
+    {
+      "hwnd": 526794,
+      "title": "Tooltip",
+      "class": "Touch Tooltip Window",
+      "visible": false
+    },
+    {
+      "hwnd": 10751516,
+      "title": "",
+      "class": "UAC_InputIndicatorOverlayWnd",
+      "visible": true
+    },
+    {
+      "hwnd": 722118,
+      "title": "",
+      "class": "UAC Input Indicator",
+      "visible": true
+    },
+    {
+      "hwnd": 2098650,
+      "title": "CiceroUIWndFrame",
+      "class": "CiceroUIWndFrame",
+      "visible": false
+    },
+    {
+      "hwnd": 1705182,
+      "title": "TF_FloatingLangBar_WndTitle",
+      "class": "CiceroUIWndFrame",
+      "visible": false
+    },
+    {
+      "hwnd": 2559600,
+      "title": "KinSealStudio",
+      "class": "QWidget",
+      "visible": false
+    },
+    {
+      "hwnd": 1770788,
+      "title": "ÕýÔÚ´ò¿ª×éÌ¬ÎÄ¼þ",
+      "class": "QWidget",
+      "visible": false
+    },
+    {
+      "hwnd": 2426104,
+      "title": "KinSealStudio5",
+      "class": "QWidget",
+      "visible": false
+    },
+    {
+      "hwnd": 4064470,
+      "title": "KinSealStudio5",
+      "class": "QWidget",
+      "visible": false
+    },
+    {
+      "hwnd": 6816924,
+      "title": "KinSealStudio5",
+      "class": "QWidget",
+      "visible": false
+    },
+    {
+      "hwnd": 1968620,
+      "title": "WISPTIS",
+      "class": "TabletPenServiceHelperClass",
+      "visible": false
+    },
+    {
+      "hwnd": 7868658,
+      "title": "",
+      "class": "QEventDispatcherWin32_Internal_Widget1781336700",
+      "visible": false
+    },
+    {
+      "hwnd": 3280752,
+      "title": "",
+      "class": "CicLoaderWndClass",
+      "visible": false
+    },
+    {
+      "hwnd": 7081674,
+      "title": "MSCTFIME UI",
+      "class": "MSCTFIME UI",
+      "visible": false
+    },
+    {
+      "hwnd": 3738064,
+      "title": "Default IME",
+      "class": "IME",
+      "visible": false
+    },
+    {
+      "hwnd": 983554,
+      "title": "Default IME",
+      "class": "IME",
+      "visible": false
+    }
+  ],
+  "editor_title": "KinSealStudio--Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stages-20261110\\transient\\S02\\Probe.sm--画面1",
+  "widgets": [
+    {
+      "hwnd": 6882722,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "myDockWidget"
+      }
+    },
+    {
+      "hwnd": 17240090,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabWidget",
+        "currentIndex": "0",
+        "count": "2"
+      }
+    },
+    {
+      "hwnd": 7671850,
+      "win_text": "qt_tabwidget_tabbar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_tabbar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabBar",
+        "currentIndex": "0",
+        "count": "2"
+      }
+    },
+    {
+      "hwnd": 17698852,
+      "win_text": "qt_tabwidget_stackedwidget",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_stackedwidget",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QStackedWidget",
+        "currentIndex": "0",
+        "count": "2"
+      }
+    },
+    {
+      "hwnd": 16650288,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QScrollArea"
+      }
+    },
+    {
+      "hwnd": 7868478,
+      "win_text": "qt_scrollarea_vcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_vcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 6820900,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QScrollBar",
+        "minimum": "0",
+        "maximum": "357",
+        "value": "0",
+        "singleStep": "20"
+      }
+    },
+    {
+      "hwnd": 11997242,
+      "win_text": "qt_scrollarea_hcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_hcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 12850202,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QScrollBar",
+        "minimum": "0",
+        "maximum": "0",
+        "value": "0",
+        "singleStep": "20"
+      }
+    },
+    {
+      "hwnd": 13504562,
+      "win_text": "qt_scrollarea_viewport",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_viewport",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 11538496,
+      "win_text": "m_toolwidgetCtl",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "m_toolwidgetCtl",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 13832264,
+      "win_text": "groupBox_control",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "groupBox_control",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QGroupBox",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1376530,
+      "win_text": "btn_picture",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_picture",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7279596,
+      "win_text": "btn_switch_MultiState",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_MultiState",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2232224,
+      "win_text": "label_39",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_39",
+        "text": "ASCII显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2494060,
+      "win_text": "label_41",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_41",
+        "text": "时间显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2559686,
+      "win_text": "label_37",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_37",
+        "text": "指示灯",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2821738,
+      "win_text": "label_4",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_4",
+        "text": "字按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2625426,
+      "win_text": "label_11",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_11",
+        "text": "刻度",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3346194,
+      "win_text": "btn_scale",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_scale",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3018496,
+      "win_text": "label_qrcode",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_qrcode",
+        "text": "二维码",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2100966,
+      "win_text": "label_30",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_30",
+        "text": "滚轮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3411788,
+      "win_text": "label_23",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_23",
+        "text": "移动轨迹",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3936032,
+      "win_text": "btn_qrcode",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_qrcode",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 722978,
+      "win_text": "btn_wheelview",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_wheelview",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3215158,
+      "win_text": "btn_moveTrack",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_moveTrack",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3346232,
+      "win_text": "label_29",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_29",
+        "text": "滑动开关",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3149588,
+      "win_text": "label_21",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_21",
+        "text": "流动块",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3214918,
+      "win_text": "label_22",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_22",
+        "text": "下拉框",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 1312020,
+      "win_text": "btn_slider",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_slider",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8327866,
+      "win_text": "btn_flow",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_flow",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1970608,
+      "win_text": "btn_droplist",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_droplist",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 5378372,
+      "win_text": "label_14",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_14",
+        "text": "图表",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 9441520,
+      "win_text": "label_28",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_28",
+        "text": "配方\n显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 17764590,
+      "win_text": "label_20",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_20",
+        "text": "历史数据\n显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 11669740,
+      "win_text": "btn_metre",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_metre",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8720616,
+      "win_text": "btn__recipetable",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn__recipetable",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6295782,
+      "win_text": "btn_hisdataDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_hisdataDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 13308132,
+      "win_text": "label_18",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_18",
+        "text": "历史\n趋势图",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 14487772,
+      "win_text": "label_19",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_19",
+        "text": "数据群组",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7344342,
+      "win_text": "label_16",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_16",
+        "text": "趋势图",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 13373652,
+      "win_text": "btn_HisTrend",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_HisTrend",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 13045970,
+      "win_text": "btn_dataGroup",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_dataGroup",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 13242570,
+      "win_text": "btn_trend",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_trend",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7737544,
+      "win_text": "label_36",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_36",
+        "text": " X-Y\n曲线",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7672004,
+      "win_text": "label_17",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_17",
+        "text": "消息显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7540930,
+      "win_text": "label_13",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_13",
+        "text": "静态文本",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7737526,
+      "win_text": "btn_XYtrend",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_XYtrend",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 9506996,
+      "win_text": "btn_messageDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_messageDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7737518,
+      "win_text": "btn_text",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_text",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8851628,
+      "win_text": "label_25",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_25",
+        "text": "报警显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 11014310,
+      "win_text": "label_27",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_27",
+        "text": "历史\n报警显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7868580,
+      "win_text": "label_26",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_26",
+        "text": "动态\n报警条",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 14553248,
+      "win_text": "btn_alarmDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_alarmDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 13504670,
+      "win_text": "btn_hisalarmDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_hisalarmDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7016602,
+      "win_text": "btn_alarmbar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_alarmbar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 14553226,
+      "win_text": "label_15",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_15",
+        "text": "图片显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 14487688,
+      "win_text": "label_24",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_24",
+        "text": "GIF显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 13635718,
+      "win_text": "label_31",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_31",
+        "text": "多功能\n按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 8065152,
+      "win_text": "btn_switch_bit",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_bit",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 10817662,
+      "win_text": "label_40",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_40",
+        "text": "画面按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 6557818,
+      "win_text": "btn_MF",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_MF",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8065136,
+      "win_text": "label_32",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_32",
+        "text": "数值显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 11473004,
+      "win_text": "btn_gif",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_gif",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7606372,
+      "win_text": "btn_switch_Lamp",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_Lamp",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8196194,
+      "win_text": "label_33",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_33",
+        "text": "功能按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 13701216,
+      "win_text": "btn_switch_Fun",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_Fun",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 11210844,
+      "win_text": "btn_dataDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_dataDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7934042,
+      "win_text": "btn_timeDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_timeDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 16781400,
+      "win_text": "btn_switch_Screen",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_Screen",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7606358,
+      "win_text": "label_35",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label_35",
+        "text": "多态按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 11407442,
+      "win_text": "btn_switch_word",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_switch_word",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6426702,
+      "win_text": "label",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "label",
+        "text": "位按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 14225482,
+      "win_text": "btn_asciiDisplay",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "btn_asciiDisplay",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QPushButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7933998,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QScrollArea"
+      }
+    },
+    {
+      "hwnd": 7147544,
+      "win_text": "qt_dockwidget_closebutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_closebutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7671830,
+      "win_text": "qt_dockwidget_floatbutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_floatbutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1509182,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "myDockWidget"
+      }
+    },
+    {
+      "hwnd": 3477420,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QFrame"
+      }
+    },
+    {
+      "hwnd": 2297774,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabWidget",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 2101170,
+      "win_text": "qt_tabwidget_tabbar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_tabbar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabBar",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 3411888,
+      "win_text": "qt_tabwidget_stackedwidget",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_stackedwidget",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QStackedWidget",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 2297782,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 1642424,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTreeWidget"
+      }
+    },
+    {
+      "hwnd": 2625472,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QHeaderView"
+      }
+    },
+    {
+      "hwnd": 2953150,
+      "win_text": "qt_scrollarea_vcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_vcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 7868348,
+      "win_text": "qt_scrollarea_hcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_hcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2822074,
+      "win_text": "qt_scrollarea_viewport",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_viewport",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2232208,
+      "win_text": "qt_dockwidget_closebutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_closebutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2625416,
+      "win_text": "qt_dockwidget_floatbutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_floatbutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2557730,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "myDockWidget"
+      }
+    },
+    {
+      "hwnd": 2625482,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QTableWidget"
+      }
+    },
+    {
+      "hwnd": 2887650,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QTableCornerButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3870682,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QHeaderView"
+      }
+    },
+    {
+      "hwnd": 3280854,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QHeaderView"
+      }
+    },
+    {
+      "hwnd": 2035668,
+      "win_text": "qt_scrollarea_vcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_vcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2363342,
+      "win_text": "qt_scrollarea_hcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_hcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2756556,
+      "win_text": "qt_scrollarea_viewport",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_viewport",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2822086,
+      "win_text": "qt_dockwidget_closebutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_closebutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3018690,
+      "win_text": "qt_dockwidget_floatbutton",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_dockwidget_floatbutton",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QDockWidgetTitleButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 9570078,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "toolBar_Control",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 5967352,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "配方显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 9113034,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "滚轮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6032838,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "滑动开关",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 7146948,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "表格",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3149246,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "二维码",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 11865522,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "文字",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 723442,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "刻度",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 723440,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "数据群组",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2886126,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "移动轨迹",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1313252,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "下拉框",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 723418,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "XY曲线",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395736,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "报警控件",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 4917056,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "动态报警条",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 854486,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "历史趋势图",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395732,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "历史报警显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1051084,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "趋势图",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6229540,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "图表",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 14749214,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "历史数据显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 9047572,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "流动块",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2297360,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "多功能按钮开关",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 855550,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "图片显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789998,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "GIF显示器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789996,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "消息显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789994,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "时间显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789990,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "ASCII显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789988,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "数值显示",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789986,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "多态按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789984,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "画面按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789982,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "功能按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789980,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "指示灯",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789978,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "字按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789976,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "位按钮",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 855510,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 2033436,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "toolBar_Graphs",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 789972,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "扇形",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 986578,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "椭圆(E)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789968,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "多边形(Y)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 789964,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "圆角矩形",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 5836214,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "矩形(R)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395302,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "自由直线",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395304,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "曲线/圆弧(A)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395306,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "折线(B)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 16518576,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "直线(L)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 5770668,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 8193198,
+      "win_text": "menuBar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "menuBar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QMenuBar"
+      }
+    },
+    {
+      "hwnd": 3868068,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "toolBar_Combox",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 7802582,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 3739372,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QComboBox",
+        "currentIndex": "0",
+        "currentText": "画面1",
+        "count": "1",
+        "items": [
+          "画面1"
+        ],
+        "itemsTruncated": false
+      }
+    },
+    {
+      "hwnd": 2887396,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QComboBox",
+        "currentIndex": "0",
+        "currentText": "中文",
+        "count": "1",
+        "items": [
+          "中文"
+        ],
+        "itemsTruncated": false
+      }
+    },
+    {
+      "hwnd": 3215074,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": " ÓïÑÔ",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 4001502,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QComboBox",
+        "currentIndex": "-1",
+        "count": "256",
+        "items": [
+          "×´Ì¬0",
+          "×´Ì¬1",
+          "×´Ì¬2",
+          "×´Ì¬3",
+          "×´Ì¬4",
+          "×´Ì¬5",
+          "×´Ì¬6",
+          "×´Ì¬7",
+          "×´Ì¬8",
+          "×´Ì¬9",
+          "×´Ì¬10",
+          "×´Ì¬11",
+          "×´Ì¬12",
+          "×´Ì¬13",
+          "×´Ì¬14",
+          "×´Ì¬15",
+          "×´Ì¬16",
+          "×´Ì¬17",
+          "×´Ì¬18",
+          "×´Ì¬19",
+          "×´Ì¬20",
+          "×´Ì¬21",
+          "×´Ì¬22",
+          "×´Ì¬23",
+          "×´Ì¬24",
+          "×´Ì¬25",
+          "×´Ì¬26",
+          "×´Ì¬27",
+          "×´Ì¬28",
+          "×´Ì¬29",
+          "×´Ì¬30",
+          "×´Ì¬31",
+          "×´Ì¬32",
+          "×´Ì¬33",
+          "×´Ì¬34",
+          "×´Ì¬35",
+          "×´Ì¬36",
+          "×´Ì¬37",
+          "×´Ì¬38",
+          "×´Ì¬39",
+          "×´Ì¬40",
+          "×´Ì¬41",
+          "×´Ì¬42",
+          "×´Ì¬43",
+          "×´Ì¬44",
+          "×´Ì¬45",
+          "×´Ì¬46",
+          "×´Ì¬47",
+          "×´Ì¬48",
+          "×´Ì¬49",
+          "×´Ì¬50",
+          "×´Ì¬51",
+          "×´Ì¬52",
+          "×´Ì¬53",
+          "×´Ì¬54",
+          "×´Ì¬55",
+          "×´Ì¬56",
+          "×´Ì¬57",
+          "×´Ì¬58",
+          "×´Ì¬59",
+          "×´Ì¬60",
+          "×´Ì¬61",
+          "×´Ì¬62",
+          "×´Ì¬63"
+        ],
+        "itemsTruncated": true
+      }
+    },
+    {
+      "hwnd": 4132572,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": " ×´Ì¬",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 1248968,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 1181418,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "toolBar_Tool",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 920996,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "地址一览表",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 920990,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "控件一览表",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3148264,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "宏指令\n查找",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3082720,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "宏指令\n管理器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6359518,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "文本\n一览表",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1182172,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "属性设置",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395720,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "初始化宏",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395718,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "全局宏",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 395716,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "打开宏指令编辑器",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3410370,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "工程图库",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1640556,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "升级底层",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1837160,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "下载\n工程",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 4391990,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "上载数据",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2557226,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "在线模拟",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 459806,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "离线\n模拟",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1180092,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 526010,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "toolBar_Aligning",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 7999132,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "垂直等间距",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3542678,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "水平等间距",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3608212,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "宽度高度都相同",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3477138,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "高度相同",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6033018,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "宽度相同",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 10358392,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "移到下一层(B)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6098550,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "移到最下层",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8195684,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "移到上一层",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 9440858,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "移到最上层(F)",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2821718,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "垂直居中",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 10817090,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "水平居中",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2625088,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "右对齐",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8588856,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "左对齐",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8064562,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "下对齐",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 8982034,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "上对齐",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 4001288,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 1967520,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "mapToolBar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 1115304,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "查找\n替换",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1771614,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n删除",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 460854,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n剪切",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 460844,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n粘贴",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1312800,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n复制",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2818114,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "缩小",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2032864,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "放大",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2360548,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "恢复\n原图",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2361342,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "垂直\n翻转",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2230070,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "水平\n翻转",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1902576,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n解锁",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3999666,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n锁定",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1902498,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n网格",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 3474534,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "取消\n组合",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 1705262,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n组合",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 4457440,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 2950534,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "standardToolBar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolBar"
+      }
+    },
+    {
+      "hwnd": 2819906,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n»Ö¸´",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 6948654,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n³·Ïú",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2098502,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "\n保存",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 4523286,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "打开\n工程",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 460822,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "新建\n画面",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 591834,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "新建\n工程",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QToolButton",
+        "checked": "false",
+        "checkable": "false"
+      }
+    },
+    {
+      "hwnd": 2164558,
+      "win_text": "qt_toolbar_ext_button",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_toolbar_ext_button",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QToolBarExtension",
+        "checked": "false",
+        "checkable": "true"
+      }
+    },
+    {
+      "hwnd": 2032910,
+      "win_text": "statusBar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "statusBar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QStatusBar"
+      }
+    },
+    {
+      "hwnd": 3346304,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "½ðçôÖÇ¿Ø",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3280758,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 3215220,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "¸ß:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3346284,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 4001638,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "¿í:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3280736,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "¿Ø¼þ´óÐ¡:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3477340,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 3542868,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "ÉÏ:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 4591442,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 4067112,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "×ó:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 4329240,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "¿Ø¼þ×ø±ê:",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3477262,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 9047820,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "800*480",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 4329226,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "·Ö±æÂÊ",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 4263686,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "1",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 8195844,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "¿Ø¼þ×ÜÊý",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 7016188,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 2821880,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "Ò³ÃæÄÚ´æ",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 3084022,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 1,
+        "kind": "QLineEdit",
+        "maxLength": "32767"
+      }
+    },
+    {
+      "hwnd": 3804912,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "Ñ¹Ëõ´óÐ¡",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2494190,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QSizeGrip"
+      }
+    },
+    {
+      "hwnd": 1049808,
+      "win_text": "centralWidget",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "centralWidget",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 3149798,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabWidget",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 27201544,
+      "win_text": "qt_tabwidget_tabbar",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_tabbar",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QTabBar",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 10948608,
+      "win_text": "qt_tabwidget_stackedwidget",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_tabwidget_stackedwidget",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QStackedWidget",
+        "currentIndex": "0",
+        "count": "1"
+      }
+    },
+    {
+      "hwnd": 14553102,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QLabel"
+      }
+    },
+    {
+      "hwnd": 2887652,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "myGraphicsView"
+      }
+    },
+    {
+      "hwnd": 3215340,
+      "win_text": "qt_scrollarea_vcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_vcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 3346426,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QScrollBar",
+        "minimum": "0",
+        "maximum": "1048",
+        "value": "0",
+        "singleStep": "24"
+      }
+    },
+    {
+      "hwnd": 2887658,
+      "win_text": "qt_scrollarea_hcontainer",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_scrollarea_hcontainer",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 2822130,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QScrollBar",
+        "minimum": "0",
+        "maximum": "1319",
+        "value": "0",
+        "singleStep": "36"
+      }
+    },
+    {
+      "hwnd": 2297838,
+      "win_text": "",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "kind": "QWidget"
+      }
+    },
+    {
+      "hwnd": 1441890,
+      "win_text": "qt_rubberband",
+      "class": "QWidget",
+      "qt": {
+        "objectName": "qt_rubberband",
+        "text": "",
+        "title": "",
+        "enabled": 1,
+        "visible": 0,
+        "kind": "QRubberBand"
+      }
+    }
+  ],
+  "menus": [
+    {
+      "text": "文件(&F)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "新建工程(&N)...",
+          "objectName": "action_new_pro",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+N",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "打开工程(&O)...",
+          "objectName": "action_open_pro",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+O",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "关闭",
+          "objectName": "action_close",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "保存(&S)",
+          "objectName": "action_save",
+          "enabled": 0,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+S",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "另存为",
+          "objectName": "action_save_as",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "最近打开的工程",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "index": 2,
+              "error": "Error: access violation accessing 0x2b0065"
+            },
+            {
+              "text": "&1 Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stages-20261110\\transient\\S02\\Probe.sm",
+              "objectName": "",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "&2 Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-function-20261110\\source-analysis\\diagnostic-bilingual-single-control.sm",
+              "objectName": "",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "&3 Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-function-20261110\\source-analysis\\product-new-function-matrix.sm",
+              "objectName": "",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "解压V31标准组态",
+          "objectName": "actionCompress",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "退出(&Q)",
+          "objectName": "action_quit",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "编辑(&E)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "index": 0,
+          "error": "Error: access violation accessing 0x200015"
+        },
+        {
+          "text": "³·Ïú",
+          "objectName": "action_undo",
+          "enabled": 0,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+Z",
+          "children": []
+        },
+        {
+          "text": "»Ö¸´",
+          "objectName": "action_redo",
+          "enabled": 0,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+Y",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "剪切(&T)",
+          "objectName": "action_cut",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+X",
+          "children": []
+        },
+        {
+          "text": "粘贴(&P)",
+          "objectName": "action_paste",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+V",
+          "children": []
+        },
+        {
+          "text": "复制(&C)",
+          "objectName": "action_copy",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+C",
+          "children": []
+        },
+        {
+          "text": "多重复制(&D)",
+          "objectName": "action_copym",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "删除(&D)",
+          "objectName": "action_delete",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Del",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "全选(&A)",
+          "objectName": "action_checkall",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+A",
+          "children": []
+        },
+        {
+          "text": "层次",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "移到最上层(&F)",
+              "objectName": "action_bringtop",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "移到上一层",
+              "objectName": "action_bringforward",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "移到最下层",
+              "objectName": "action_sengtoback",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "对齐",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "上对齐",
+              "objectName": "action_top",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+Up",
+              "children": []
+            },
+            {
+              "text": "下对齐",
+              "objectName": "action_under",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+Down",
+              "children": []
+            },
+            {
+              "text": "水平居中",
+              "objectName": "action_vcenter",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "左对齐",
+              "objectName": "action_left",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+Left",
+              "children": []
+            },
+            {
+              "text": "右对齐",
+              "objectName": "action_right",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+Right",
+              "children": []
+            },
+            {
+              "text": "垂直居中",
+              "objectName": "action_hcenter",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "",
+              "objectName": "",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "水平等间距",
+              "objectName": "action_horizontal",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "垂直等间距",
+              "objectName": "action_vertcal",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "",
+              "objectName": "",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "宽度相同",
+              "objectName": "action_widthsame",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+W",
+              "children": []
+            },
+            {
+              "text": "高度相同",
+              "objectName": "action_heightsame",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+H",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "组合",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "组合",
+              "objectName": "action_group",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "锁定",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "锁定",
+              "objectName": "action_lock",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "Ctrl+L",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "镜像",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "水平翻转",
+              "objectName": "action_h",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "图像比例",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "放大",
+              "objectName": "action_zoonbig",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "图像复原",
+              "objectName": "action_zoonfit",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "网格",
+          "objectName": "action_grid",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "平移视图",
+          "objectName": "action_panview",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "上一幅画面",
+          "objectName": "action_upscreen",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "下一幅画面",
+          "objectName": "action_nextscreen",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "反向选择",
+          "objectName": "action_reverse_selection",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "查找替换",
+          "objectName": "action_address_find",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+F",
+          "children": []
+        },
+        {
+          "text": "控件一览表",
+          "objectName": "action_items_table",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "文本\n一览表",
+          "objectName": "action_TextView",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+T",
+          "children": []
+        },
+        {
+          "text": "地址一览表",
+          "objectName": "action_address_table",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+U",
+          "children": []
+        },
+        {
+          "text": "属性设置",
+          "objectName": "action_openpropertiset",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "Ctrl+P",
+          "children": []
+        },
+        {
+          "text": "优化控件尺寸坐标",
+          "objectName": "action_Size",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "宏指令\n查找",
+          "objectName": "action_macro_find",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "视图(V)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "标准状态栏",
+          "objectName": "action_40",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 1,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "标准工具栏",
+          "objectName": "action_36",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 1,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "组态工具箱",
+          "objectName": "action_tool",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 1,
+          "shortcutStringConversion": "Ctrl+B",
+          "children": []
+        },
+        {
+          "text": "扩展工具栏",
+          "objectName": "action_37",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 1,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "信息输出窗口",
+          "objectName": "action_41",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "工程管理器",
+          "objectName": "action_42",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 1,
+          "shortcutStringConversion": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "控件(K)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "直线(&L)",
+          "objectName": "action_line",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "自由直线",
+          "objectName": "action_freeline",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "曲线/圆弧(&A)",
+          "objectName": "action_blight_circle",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "折线(&B)",
+          "objectName": "action_foldline",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "圆角矩形",
+          "objectName": "action_RoundedRect",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "椭圆(&E)",
+          "objectName": "action_ellipse",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "扇形",
+          "objectName": "action_ArcItem",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "矩形(&R)",
+          "objectName": "action_rect",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "多边形(&Y)",
+          "objectName": "action_polygon",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "刻度",
+          "objectName": "action_mark",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "文字",
+          "objectName": "action_text",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "表格",
+          "objectName": "action_table",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "位按钮",
+          "objectName": "action_bitBtn",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "字按钮",
+          "objectName": "action_wordbutton",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "指示灯",
+          "objectName": "action_lamp",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "功能按钮",
+          "objectName": "action_funbutton",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "画面按钮",
+          "objectName": "action_screenbutton",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "多态按钮",
+          "objectName": "action_polyBtn",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "数值显示",
+          "objectName": "action_dataDisplay",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "ASCII显示",
+          "objectName": "action_asciiDisplay",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "时间显示",
+          "objectName": "action_timeDisplay",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "消息显示",
+          "objectName": "action_messagedisplay",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "GIF显示器",
+          "objectName": "action_GIFoutput",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "图片显示",
+          "objectName": "pictruedisplay",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "多功能按钮开关",
+          "objectName": "action_MFbtn",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "历史数据显示器",
+          "objectName": "action_historyrecord",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "流动块",
+          "objectName": "action_flow_block",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "图表",
+          "objectName": "graphicsitem",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "移动轨迹",
+          "objectName": "action_moveTrack",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "滑动开关",
+          "objectName": "action_Slider",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "配方显示器",
+          "objectName": "action_recipetable",
+          "enabled": 1,
+          "checkable": 1,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "滚轮",
+          "objectName": "action_wheelView",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "下拉框",
+          "objectName": "action_droplist",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "二维码",
+          "objectName": "action_qrcode",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "曲线",
+          "objectName": "",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": [
+            {
+              "text": "趋势图",
+              "objectName": "action_trendchart",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "历史趋势图",
+              "objectName": "action_DatagroupDisplay",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            },
+            {
+              "text": "XY曲线",
+              "objectName": "action_X_Y",
+              "enabled": 1,
+              "checkable": 0,
+              "checked": 0,
+              "shortcutStringConversion": "",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "添加(A)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "添加配方",
+          "objectName": "action_rep",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "添加数据采集",
+          "objectName": "action_datasamp",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "添加数位地址报警",
+          "objectName": "action_waring",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "添加条件报警",
+          "objectName": "action_conalarm",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "打开宏指令编辑器",
+          "objectName": "action_script",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "初始化宏",
+          "objectName": "action_InitMacro",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "全局宏",
+          "objectName": "action_GlobalMacro",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "工具(&T)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "上载数据",
+          "objectName": "action_upload",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "下载工程(&D)",
+          "objectName": "action_USBdownload",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "离线\n模拟",
+          "objectName": "action_offline_simulation",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "在线模拟",
+          "objectName": "action_online_simulation",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "升级",
+          "objectName": "action_upgrade",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        },
+        {
+          "text": "底层版本号",
+          "objectName": "action_version",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "°ïÖú(&H)",
+      "objectName": "",
+      "enabled": 1,
+      "checkable": 0,
+      "checked": 0,
+      "shortcutStringConversion": "",
+      "children": [
+        {
+          "text": "帮助(&H)",
+          "objectName": "action_H",
+          "enabled": 1,
+          "checkable": 0,
+          "checked": 0,
+          "shortcutStringConversion": "F1",
+          "children": []
+        }
+      ]
+    }
+  ],
+  "status": "captured_partial: some menu entries unreadable",
+  "drawing_dialogs": [
+    {
+      "action": "action_line",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_freeline",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_blight_circle",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_foldline",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_RoundedRect",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_ellipse",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_ArcItem",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_rect",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_polygon",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    },
+    {
+      "action": "action_table",
+      "queue_status": "queued",
+      "activation_result": null,
+      "dialogs": []
+    }
+  ],
+  "menu_read_errors": 2,
+  "coverage": {
+    "status": "bounded-partial",
+    "root_menus_returned": 7,
+    "widgets_returned": 247,
+    "menu_read_errors": 2,
+    "drawing_dialogs_captured": 0
+  },
+  "recent_list_cleanup": {
+    "own_entry_removed": 1,
+    "other_entries_preserved": 3
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "taskIds": [
+    "S00-01",
+    "S00-06"
+  ],
+  "startedAtUtc": "2026-11-10T06:05:37.119502+00:00",
+  "status": "passed_with_external_observation_gaps",
+  "shutdownRequested": false,
+  "screenDisplayAndTouchConfirmed": false,
+  "newBuildPerformed": false,
+  "steps": [
+    {
+      "label": "validate",
+      "arguments": [
+        "--validate-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T06:05:42.795215+00:00",
+      "completedAtUtc": "2026-11-10T06:05:42.870216+00:00",
+      "exitCode": 0,
+      "result": null
+    },
+    {
+      "label": "compile-direct",
+      "arguments": [
+        "--compile-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\direct"
+      ],
+      "startedAtUtc": "2026-11-10T06:05:42.871216+00:00",
+      "completedAtUtc": "2026-11-10T06:05:43.974785+00:00",
+      "exitCode": 0,
+      "result": {
+        "message": "工程设备数据编译完成，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "export-source",
+      "arguments": [
+        "--export-native-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.ksp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.sm"
+      ],
+      "startedAtUtc": "2026-11-10T06:05:43.975786+00:00",
+      "completedAtUtc": "2026-11-10T06:05:44.153626+00:00",
+      "exitCode": 0,
+      "result": {
+        "message": "原厂工程导出完成。",
+        "ok": true
+      }
+    },
+    {
+      "label": "compile-source",
+      "arguments": [
+        "--compile-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.sm",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\roundtrip"
+      ],
+      "startedAtUtc": "2026-11-10T06:05:44.154624+00:00",
+      "completedAtUtc": "2026-11-10T06:05:45.289030+00:00",
+      "exitCode": 0,
+      "result": {
+        "message": "工程设备数据编译完成，尚未访问USB。",
+        "ok": true
+      }
+    },
+    {
+      "label": "usb-download",
+      "arguments": [
+        "--download-project",
+        "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\baseline.ksp"
+      ],
+      "startedAtUtc": "2026-11-10T06:05:49.938379+00:00",
+      "completedAtUtc": "2026-11-10T06:06:00.585659+00:00",
+      "exitCode": 0,
+      "result": {
+        "message": "工程数据段和提交命令均获设备确认，重启命令已发送；请核对屏端显示与触控行为。",
+        "ok": true
+      }
+    }
+  ],
+  "executable": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-FunctionButton\\KinSealStudioLite.exe",
+    "role": "actual-cli-executable",
+    "required": true,
+    "exists": true,
+    "bytes": 44319115,
+    "sha256": "259cda65c3f16a80950bad96e55d70a75f8c3134b66de94a36bf2533ae752c2d"
+  },
+  "project": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\stage0\\stage0-baseline.ksp",
+    "role": "actual-run-input",
+    "required": true,
+    "exists": true,
+    "bytes": 85018,
+    "sha256": "e72bc578e01f26a305192370d26875add7b00b1e5c2602bbc3e2733ee64bab02"
+  },
+  "historicalValidationIsNewRun": false,
+  "sourceRoundtripFiles": [
+    {
+      "name": "ControlPara.dat",
+      "direct": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\direct\\ControlPara.dat",
+        "role": "direct-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 7680,
+        "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471"
+      },
+      "roundtrip": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\roundtrip\\ControlPara.dat",
+        "role": "source-roundtrip-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 7680,
+        "sha256": "5178ae8731e9324504a419445c8063fc1f9913b614aef14993d65109a0697471"
+      },
+      "equal": true
+    },
+    {
+      "name": "ControlPixel.dat",
+      "direct": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\direct\\ControlPixel.dat",
+        "role": "direct-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 136992,
+        "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef"
+      },
+      "roundtrip": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\roundtrip\\ControlPixel.dat",
+        "role": "source-roundtrip-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 136992,
+        "sha256": "2c479daf2f783df61185afbd6f7924333ed92ee3ed3807e03865dd9f1bcabfef"
+      },
+      "equal": true
+    },
+    {
+      "name": "PicLenPara.dat",
+      "direct": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\direct\\PicLenPara.dat",
+        "role": "direct-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 2952,
+        "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe"
+      },
+      "roundtrip": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\roundtrip\\PicLenPara.dat",
+        "role": "source-roundtrip-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 2952,
+        "sha256": "59e531def3ee1ca6597accb6b0fc10d109e8f8d97209be6576cb2fadf33a3cfe"
+      },
+      "equal": true
+    },
+    {
+      "name": "AddrPara.dat",
+      "direct": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\direct\\AddrPara.dat",
+        "role": "direct-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 200,
+        "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      "roundtrip": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage0-evidence\\baseline-run-usb-r2\\roundtrip\\AddrPara.dat",
+        "role": "source-roundtrip-compiled-data",
+        "required": true,
+        "exists": true,
+        "bytes": 200,
+        "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      "equal": true
+    }
+  ],
+  "preTransferIdentityMismatches": [],
+  "usbDevice": {
+    "Name": "Smart Control Device ",
+    "DeviceID": "USB\\VID_7365&PID_616C\\5&1AA452E9&0&2",
+    "Status": "OK",
+    "Service": "libusb0"
+  },
+  "transportAccepted": true,
+  "completedAtUtc": "2026-11-10T06:06:00.586661+00:00"
+}

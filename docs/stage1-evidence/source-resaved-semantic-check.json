@@ -1,0 +1,87 @@
+{
+  "marker": "//20261110-5",
+  "scope": "真实原厂writer回存后，经完整C++ typed及语义解码，与明确产品输入比较对象/几何/操作地址、两语言文字及共同样式；对象列表顺序与K层ID不当作原厂ID保留。原厂宏/English-r1负例另列。",
+  "records": [
+    {
+      "sample": "two-language-distinct-native-resaved",
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "objects": 1,
+      "types": [
+        "switch"
+      ],
+      "activeLanguage": "中文",
+      "sha256": "03469026a8f3b3c6690010303e394d3e37466fcdbd366c94168ce7cfd1bf98ca"
+    },
+    {
+      "sample": "mixed-two-language-distinct-native-resaved",
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "objects": 8,
+      "types": [
+        "text",
+        "text",
+        "text",
+        "text",
+        "switch",
+        "switch",
+        "switch",
+        "switch"
+      ],
+      "activeLanguage": "中文",
+      "sha256": "cee8e0c19d515963c9557621670778e03cc940d2ba5e643cf20f4563e3a49c1f"
+    },
+    {
+      "sample": "two-language-startup-english-ui-native-resaved",
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "objects": 1,
+      "types": [
+        "switch"
+      ],
+      "activeLanguage": "English",
+      "sha256": "a143fad0591ae95d04e8844af8d6f37936ec5bc87c9381b326df94a81f395513"
+    }
+  ],
+  "active_semantic_comparisons": [
+    {
+      "product_input": "two-language-distinct-product",
+      "native_resaved": "two-language-distinct-native-resaved",
+      "object_count": 1,
+      "same_object_geometry_and_names": true,
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "differences": []
+    },
+    {
+      "product_input": "mixed-two-language-distinct-product",
+      "native_resaved": "mixed-two-language-distinct-native-resaved",
+      "object_count": 8,
+      "same_object_geometry_and_names": true,
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "differences": []
+    },
+    {
+      "product_input": "two-language-startup-english-product",
+      "native_resaved": "two-language-startup-english-ui-native-resaved",
+      "object_count": 1,
+      "same_object_geometry_and_names": true,
+      "languages": [
+        "中文",
+        "English"
+      ],
+      "differences": []
+    }
+  ]
+}

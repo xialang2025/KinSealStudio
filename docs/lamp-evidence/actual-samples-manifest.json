@@ -1,0 +1,85 @@
+{
+  "date": "2026-11-09",
+  "testLog": "qtest-actual-final.txt",
+  "testResult": "34 passed, 0 failed, 0 skipped",
+  "realKspSamples": [
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\多态U16五状态.ksp",
+      "kspSha256": "7d6cedaca35cab6af709bd521b1a654bf96805d3b304582291fef3bf43fb3d65",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-u16-five.sm",
+      "sourceBytes": 4631,
+      "sourceSha256": "ce58e9eb2149aac62218a706bc53b2db93dc87f4822866defac01e30c00c61d6",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    },
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\多态U32三十二状态.ksp",
+      "kspSha256": "58514caa18a5191577677de803e5b78c0eb935439f47ccdefa14af83a14c972d",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-u32-thirty-two.sm",
+      "sourceBytes": 8135,
+      "sourceSha256": "ebd538b54aa4abffb6cb7e22093d533e7a270e77e007195946d33914fbdf907f",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    },
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\双态位地址.ksp",
+      "kspSha256": "d089fbb2c30519644f1fbe8fb7432ca67b1b15b0208657ce56a42e0df06fa1fb",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-dual-bit.sm",
+      "sourceBytes": 4221,
+      "sourceSha256": "458ccb70dabf65e39b667bed120d51411ce26ec6fc9220fa93ec789ba05c1b97",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    },
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\双态字位.ksp",
+      "kspSha256": "d48d53c87754555dfcbbe3896e5327b84cf53ea99295ed9338b0bca0e8e6025f",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-dual-word-bit.sm",
+      "sourceBytes": 4225,
+      "sourceSha256": "79fdb5afe57db5237aca57f8b08bcc8638cab3b2fcb204522dc85b3caefe0ec0",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    },
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\双语多态与显现条件.ksp",
+      "kspSha256": "a4d4320647faf3cec483935d2aa2e751fff996b17a5a51701a24a7a93b8305c4",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-bilingual-visibility.sm",
+      "sourceBytes": 4910,
+      "sourceSha256": "5136d9007d7432611ea8d4267d507a1884b1cb301d72bc9ca00ca9b3ef1c75a2",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    },
+    {
+      "ksp": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\lamp\\指示灯实机联调.ksp",
+      "kspSha256": "f82fa4fa85b153e220d5c9ac6870dc84a86fd83a24d38d052e8a366142cfca4d",
+      "source": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-lamp-20261109\\source-analysis\\actual-ksp-device-mixed.sm",
+      "sourceBytes": 13512,
+      "sourceSha256": "9a6932094263cc91323a9aea5673c9bba92046fd6c4402caa8b3d3b303c2e773",
+      "exportImportCanonicalExport": "PASS",
+      "kspDraftUnchanged": "PASS"
+    }
+  ],
+  "frozenCode": [
+    {
+      "path": "KinSealStudio/src/native_project_codec.cpp",
+      "sha256": "1a19eb064aca0cf1c722f4b144ddd9e344310427b4eb96ed156001ee5d9e5a83"
+    },
+    {
+      "path": "KinSealStudio/src/native_project_codec.h",
+      "sha256": "00aa937b286e87157e55eb64fd4397d12966facf5e98c2c3f16af0ef7290ccf2"
+    },
+    {
+      "path": "KinSealStudio/tests/native_project_codec_tests.cpp",
+      "sha256": "628a93325d5ee4a5edf1992ff4bbf99cf8250bf3a71d476fe1ce6dfe98e36f4a"
+    }
+  ],
+  "backup": "C:\\Users\\lenovo\\AppData\\Local\\Temp\\kinseal-lamp-source-actual-final-20261109-212123",
+  "readOnlyReview": [
+    "Only disabled Lamp touch drafts bypass equality; original source touch metadata is restored in a copy before shared patching.",
+    "Active touch, macro, notification, press-time and existing press-time value guards remain active.",
+    "Eight real fixture Lamp objects use disabled pressTime=255, identical to the original Lamp seed; no press-time guard was relaxed.",
+    "All six actual KSP projects preserve active monitor, state count, image/no-image, language and visibility semantics.",
+    "Inactive shared-text and visibility text-style drafts have no native source field; export leaves the original KSP model unchanged.",
+    "Original 28 regression results remain green, including sixteen byte-exact original Lamp source snapshots."
+  ],
+  "reviewFindings": []
+}

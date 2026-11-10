@@ -1,0 +1,53 @@
+{
+  "task": "阶段1 0.8.0私有桌面/干净PATH便携验收准备",
+  "status": "executed_final_frozen_r2_passed",
+  "script": "probe.py",
+  "script_sha256": "5885677e11ae0b95483cc008d6f9bdfe5ba2819e5f7424a18c44b9d9657a2976",
+  "requires": [
+    "主代理通知冻结的便携EXE路径及SHA",
+    "samples/stage1/stage1-single-page.ksp",
+    "samples/stage1/stage1-two-pages.ksp",
+    "samples/stage1/stage1-reordered-languages.ksp",
+    "samples/stage1/stage1-inactive-config.ksp",
+    "新建本任务输出子目录，不覆盖旧结果",
+    "Final KinSealStaticTextTests.exe and test-only Qt6Test.dll copied only into this run harness"
+  ],
+  "launch": {
+    "api": "CreateDesktopW + CreateProcess STARTUPINFO.lpDesktop",
+    "desktop_switch": false,
+    "foreground_activation": false,
+    "global_input": false,
+    "production_path": "SystemRoot/System32;SystemRoot only",
+    "gui_capture": "Portable EXE --capture-preview, real Windows Qt backend on private desktop",
+    "optional_test_harness": "Separate frozen BackendTests EXE + explicitly hashed Qt6Test.dll; other Qt deps and qwindows from portable package"
+  },
+  "checks": [
+    "All four packaged stage1 samples exist and exactly match source SHA",
+    "Portable self-test and embedded payload integrity",
+    "single/two page validate and separate model/device capability reports",
+    "two-page migration semantic equality and .sm destination refusal preserving sentinel",
+    "single-page offline compile/source roundtrip",
+    "two-page generic and legacy compile/source refusal before any transfer",
+    "owned-window GUI PNG and subsequent visual inspection",
+    "optional actual MainWindow page and resource transaction regression tests",
+    "Observed main Qt modules resolve under frozen package; trace completeness is explicitly limited",
+    "Final KinSealStaticTextTests full Windows suite must have zero failures and zero skips, with nativeFontAndFillEvidence explicitly PASS",
+    "Actual packaged stage0 baseline with macros=[] validates and migrates losslessly to canonical {} retaining 12 controls"
+  ],
+  "limitations": [
+    "Preparation does not establish runtime success.",
+    "Existing Stage0/0.7 helper recipes are reused without changing their output or binary identity.",
+    "The QtTest harness is test-only and is not described as the portable product.",
+    "Qt MainWindow may perform read-only USB presence enumeration; no hardware transfer command is in this recipe."
+  ],
+  "syntax_check": "ast.parse passed, no processes launched",
+  "harness_corrections_after_r1": [
+    "Create test-only ../artifacts directory before full static suite",
+    "Migration verifies every source field plus core topology and a second idempotent migration; retain exact default-addition diagnosis"
+  ],
+  "executedRuns": [
+    "run-r10-windows-1/result.json",
+    "run-r10-windows-2/result.json"
+  ],
+  "finalSummary": "final-summary.json"
+}

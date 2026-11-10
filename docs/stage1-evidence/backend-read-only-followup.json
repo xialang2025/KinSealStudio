@@ -1,0 +1,149 @@
+{
+  "task": "阶段1独立修复复核",
+  "marker": "//20261110-5",
+  "reviewed_at_utc": "2026-11-10T07:53:33.944240+00:00",
+  "mode": "read_only",
+  "business_code_modified": false,
+  "build_or_new_runtime_executed": false,
+  "static_fixes_pass": true,
+  "findings": [
+    {
+      "id": "R-S01-BACKEND-001",
+      "static_fix_review": "passed",
+      "path": "src/independent_downloader.cpp",
+      "line": 585,
+      "sha256": "dd78877983eb47efb8c09dd882b741625a2f7ce798b651f90374f773780522ec",
+      "conclusion": "旧单文本入口先检查snapshot默认指纹及地址编译白名单，并拒绝模板不能承载的连接/宏/图片。",
+      "regression_scope": "legacyEntriesRejectUnrepresentedConfiguration",
+      "reexecuted_by_this_reviewer": false
+    },
+    {
+      "id": "R-S01-BACKEND-002",
+      "static_fix_review": "passed",
+      "path": "src/native_test_project.cpp",
+      "line": 119,
+      "sha256": "3fe10f51cd64b9fed5f19ac0d7594feb3f9e549e9de32429efacfd82dd357b62",
+      "conclusion": "固定源导出先拒绝多语言/连接/资源；写文件前将非空snapshot与完成文字patch的模板逐字节比较，非一致即拒绝。",
+      "regression_scope": "新增非默认snapshot反例等待主代理实际日志",
+      "reexecuted_by_this_reviewer": false
+    },
+    {
+      "id": "R-S01-BACKEND-003",
+      "static_fix_review": "passed",
+      "path": "src/static_text_actions.cpp",
+      "line": 337,
+      "sha256": "459aa92c8d9cc5aff04dba379dc579036a58c98102521e036d76ce929716763c",
+      "conclusion": "连接UI使用整个工程候选验证，显式稳定引用与隐藏页地址都参与；失败前没有提交connections或动态属性。",
+      "regression_scope": "完整连接UI删除引用刺激尚未在r3日志独立执行",
+      "reexecuted_by_this_reviewer": false
+    },
+    {
+      "id": "R-S01-BACKEND-004",
+      "static_fix_review": "passed",
+      "path": "src/static_text_actions.cpp",
+      "line": 20,
+      "sha256": "459aa92c8d9cc5aff04dba379dc579036a58c98102521e036d76ce929716763c",
+      "conclusion": "对象和宏/图片进入同一候选；编辑和四类创建都调用helper，验证失败不修改模型或画布。",
+      "regression_scope": "resourceDraftFailurePreservesEditorState",
+      "reexecuted_by_this_reviewer": false
+    },
+    {
+      "id": "R-S01-BACKEND-005",
+      "static_fix_review": "passed",
+      "path": "src/main.cpp",
+      "line": 305,
+      "sha256": "2a744eda568dd9982be811cc1f22ea3afb47e6ad6ad91a552ee5473622b9ccf2",
+      "conclusion": "迁移CLI在load/save前强制.ksp目的格式，.sm原位覆盖被拒绝。",
+      "regression_scope": "冻结便携后CLI哨兵文件测试",
+      "reexecuted_by_this_reviewer": false
+    },
+    {
+      "id": "R-S01-BACKEND-006",
+      "static_fix_review": "passed",
+      "path": "src/project_capabilities.cpp",
+      "line": 72,
+      "sha256": "6a2bdd1dab0ad839c83d0b225f5734db208af77e5c33be390553ef882705cc58",
+      "conclusion": "能力查询加入纯离线prepare，阻塞连接明确返回原因，数量与对象类型原因单独传到设备分支。",
+      "regression_scope": "capabilitiesExplainKnownBlockedRoutes",
+      "reexecuted_by_this_reviewer": false
+    }
+  ],
+  "existing_regression_logs": [
+    {
+      "path": "docs/stage1-evidence/backend-tests-r3.txt",
+      "sha256": "fea38a804cc3dc651a1536955437638062d05382e1247e8dcc06eb2e1264f6e2",
+      "totals": "Totals: 11 passed, 0 failed, 0 skipped, 0 blacklisted, 417ms",
+      "run_by": "主代理",
+      "not_rerun_by_this_reviewer": true
+    },
+    {
+      "path": "docs/stage1-evidence/model-tests-r3.txt",
+      "sha256": "c79948eb9a6d3dd1da118612ef0bbb01c1c33e4b8c6c4921fb4dc755bad420ff",
+      "totals": "Totals: 53 passed, 0 failed, 0 skipped, 0 blacklisted, 237ms",
+      "run_by": "主代理",
+      "not_rerun_by_this_reviewer": true
+    }
+  ],
+  "portable_gui_status": "executed_final_frozen_r2_passed",
+  "portable_recipe": "gui-portable/probe.py",
+  "review_correction": "初次补充消息未看到native_test_project.cpp后段snapshot精确比较；经主代理指出后本轮已完整核对输出open前条件，未将其误记为持续缺陷。",
+  "limitations": [
+    "历史静态复核中的new_runtime=false仅描述当时阶段；最终独立运行见runtime_activity_after_static_review。",
+    "本代理未逐项操作连接删除/所有图库选择事务完整对话框；资源事务helper和真实MainWindow桥接已运行。",
+    "无USB/PLC传输或实机显示触控结论；多页/新激活配置仍由当前源/设备后端明确拒绝。"
+  ],
+  "integration_regressions_reviewed_after_r5": [
+    {
+      "issue": "configureLanguages canvas rebuild loses selected object",
+      "source": "src/static_text_actions.cpp",
+      "static_fix_review": "passed",
+      "observation": "selectedId captured before setProject and reselected by stable ID afterwards",
+      "new_runtime_by_reviewer": false
+    },
+    {
+      "issue": "legacy single-text English language registration regression",
+      "source": "src/independent_downloader.cpp",
+      "static_fix_review": "passed",
+      "observation": "Existing snapshot or non-default single language uses typed export before source archive replacement; fixed legacy SM remains Chinese-only",
+      "new_runtime_by_reviewer": false
+    }
+  ],
+  "final_windows_static_suite_requirement": {
+    "suite": "KinSealStaticTextTests.exe",
+    "private_desktop": true,
+    "qt_platform": "windows",
+    "required_failed": 0,
+    "required_skipped": 0,
+    "required_font_case": "nativeFontAndFillEvidence PASS",
+    "state": "passed_final_frozen_r2",
+    "observed": "43 passed, 0 failed, 0 skipped; nativeFontAndFillEvidence PASS",
+    "evidence": "gui-portable/run-r10-windows-2/static-text-windows.txt"
+  },
+  "legacy_empty_macro_migration_review": {
+    "static_fix_review": "passed",
+    "scope": "macros empty array only, schema3..8 after existing capability floor; save canonical object",
+    "rejected": [
+      "nonempty old array",
+      "null",
+      "schema9 array",
+      "other resource arrays",
+      "schema1..2 resource capability misuse"
+    ],
+    "actual_fixture_test": "actualStage0EmptyMacroArrayMigrates, actual 12-control stage0 baseline plus failure output atomicity",
+    "model_sha256_at_review": "21e787adb77876e6133461a405385a2e74aa3fe856d3efba905154dfbc2f3149",
+    "new_runtime_by_reviewer": false,
+    "r10_build_state": "not inferred from static review"
+  },
+  "runtime_activity_after_static_review": {
+    "build_executed_by_reviewer": false,
+    "production_code_modified": false,
+    "new_runtime_executed_by_reviewer": true,
+    "scope": "gui-portable/final-summary.json",
+    "hardware_transfers": false
+  },
+  "independent_runtime_evidence_for_findings": {
+    "R-S01-BACKEND-004": "gui-portable/run-r10-windows-2/private-gui-regressions.txt resourceDraftFailurePreservesEditorState PASS",
+    "R-S01-BACKEND-005": "gui-portable/run-r10-windows-2/result.json migration-refuses-sm expected 21, sentinel SHA preserved",
+    "capability_cli_cases": "gui-portable/run-r10-windows-2/result.json four model/backend route reports match expected single/reordered candidate vs two/configuration blocked"
+  }
+}

@@ -1,0 +1,1282 @@
+{
+  "marker": "//20261110-5",
+  "capturedAtUtc": "2026-11-10T08:11:14.347718+00:00",
+  "evidenceProvider": "ordinary Python, Frida and task-owned private desktop; not newly generated REA Evidence",
+  "originalExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "privateRuntimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "privatePatch": {
+    "offset": "0x7c4",
+    "length": 3,
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage1Native20261110",
+  "globalInput": false,
+  "usbOrPlc": false,
+  "qtCallsGuiThreadOnly": true,
+  "nativeCompilationPerformed": false,
+  "currentRecipe": {
+    "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native_probe.py",
+    "bytes": 35309,
+    "sha256": "262405f73cfa585586a6b68c8889bb6a8ef84716e0336fd3439a56221ff67ec8"
+  },
+  "recipeScope": "Hash of final reviewable recipe, not a claim that every earlier run used identical script bytes.",
+  "samples": [
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/A-empty-one-page.sm",
+      "bytes": 3110,
+      "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6",
+      "origin": "native-original-project-delete-all-save",
+      "writerRun": "r4",
+      "writerPid": 17440,
+      "writerStatus": "page-created-and-native-source-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r4.json",
+        "bytes": 2221219,
+        "sha256": "c8989d634becc8111638ecddcccd05a9c4c0344e583ab49d9bbddb9270f7c149"
+      },
+      "writerInput": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\native-device-test\\CodexProbeTest.sm",
+        "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+      },
+      "independentReopen": {
+        "run": "empty-a-reopen-r1",
+        "pid": 9344,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\A-empty-one-page.sm",
+          "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-empty-a-reopen-r1.json",
+          "bytes": 256671,
+          "sha256": "02b5f7af0c190fce27d8baea8c17c099b8fb711f77e5dd0240255106831cc59a"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/A-empty-one-page-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/B-two-empty-pages.sm",
+      "bytes": 3335,
+      "sha256": "95e4d00badaaa21c6a45aa8047ef83eaf9cd5095abe4880c30fb9617209a44fc",
+      "origin": "native-new-screen-defaults-save",
+      "writerRun": "r4",
+      "writerPid": 17440,
+      "writerStatus": "page-created-and-native-source-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r4.json",
+        "bytes": 2221219,
+        "sha256": "c8989d634becc8111638ecddcccd05a9c4c0344e583ab49d9bbddb9270f7c149"
+      },
+      "writerInput": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\samples\\native-device-test\\CodexProbeTest.sm",
+        "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+      },
+      "independentReopen": {
+        "run": "r6",
+        "pid": 20468,
+        "status": "page-created-and-native-source-saved",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\B-two-empty-pages.sm",
+          "sha256": "95e4d00badaaa21c6a45aa8047ef83eaf9cd5095abe4880c30fb9617209a44fc"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r6.json",
+          "bytes": 1530310,
+          "sha256": "130c72ae508b7ca78aa3d17459b9e5a45c2419d5fca8266adf88dc02e3049d4c"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/B-two-empty-pages-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/C-third-page-number9.sm",
+      "bytes": 3560,
+      "sha256": "2ea5d521305f721dd53cff6fcacf45053ccf4e6171f751a02ebd9603fd5a17c1",
+      "origin": "native-new-screen-number9-save",
+      "writerRun": "r6",
+      "writerPid": 20468,
+      "writerStatus": "page-created-and-native-source-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r6.json",
+        "bytes": 1530310,
+        "sha256": "130c72ae508b7ca78aa3d17459b9e5a45c2419d5fca8266adf88dc02e3049d4c"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\B-two-empty-pages.sm",
+        "sha256": "95e4d00badaaa21c6a45aa8047ef83eaf9cd5095abe4880c30fb9617209a44fc"
+      },
+      "independentReopen": {
+        "run": "r8",
+        "pid": 17440,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\C-third-page-number9.sm",
+          "sha256": "2ea5d521305f721dd53cff6fcacf45053ccf4e6171f751a02ebd9603fd5a17c1"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r8.json",
+          "bytes": 1384212,
+          "sha256": "672f0e456682be6ef9fd4cf339baffaafed96e4675197f80c5b1ee31ded94cfb"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/C-third-page-number9-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/D-third-page-name.sm",
+      "bytes": 3574,
+      "sha256": "5e8ee1a3b1e054aef7caa814b354996ddb42f3389b83228bec7d133af4340c4f",
+      "origin": "native-new-screen-name-Stage1_Third-save",
+      "writerRun": "r7",
+      "writerPid": 10888,
+      "writerStatus": "page-created-and-native-source-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r7.json",
+        "bytes": 1529752,
+        "sha256": "1f9fea7bdba36e949c1aa4c2cdcebd93fab43b1ccbd277b737bfc769ea7121f4"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\B-two-empty-pages.sm",
+        "sha256": "95e4d00badaaa21c6a45aa8047ef83eaf9cd5095abe4880c30fb9617209a44fc"
+      },
+      "independentReopen": {
+        "run": "named-d-reopen-r1",
+        "pid": 18800,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\D-third-page-name.sm",
+          "sha256": "5e8ee1a3b1e054aef7caa814b354996ddb42f3389b83228bec7d133af4340c4f"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-named-d-reopen-r1.json",
+          "bytes": 1120291,
+          "sha256": "6b59e2e5bc8cfcba84040791ca7ac27012b0331de9d96942fdcfc9ad445490f7"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/D-third-page-name-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-set-native-ui.sm",
+      "bytes": 4275,
+      "sha256": "e196f4ad2a962972c9f3918c40ed837c37ed12c1cbdf82ed665c6f09d2ff3263",
+      "origin": "native-bit-operation-index0-save",
+      "writerRun": "bit-operations-r2",
+      "writerPid": 492,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r2.json",
+        "bytes": 6127337,
+        "sha256": "f12e450c299b1bb2b7af18ea61e49c889cd93e2cf379328640327c5c07235ac0"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-set-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-reset-native-ui.sm",
+      "bytes": 4275,
+      "sha256": "25abbadc373a068e5f840aad776a375084a68579992b9165334d91c4cbe4687a",
+      "origin": "native-bit-operation-index1-save",
+      "writerRun": "bit-operations-r2",
+      "writerPid": 492,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r2.json",
+        "bytes": 6127337,
+        "sha256": "f12e450c299b1bb2b7af18ea61e49c889cd93e2cf379328640327c5c07235ac0"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-reset-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-jog-native-ui.sm",
+      "bytes": 4275,
+      "sha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+      "origin": "native-bit-operation-index2-save",
+      "writerRun": "bit-operations-r2",
+      "writerPid": 492,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r2.json",
+        "bytes": 6127337,
+        "sha256": "f12e450c299b1bb2b7af18ea61e49c889cd93e2cf379328640327c5c07235ac0"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-jog-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-toggle-native-ui.sm",
+      "bytes": 4275,
+      "sha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+      "origin": "native-bit-operation-index3-save",
+      "writerRun": "bit-operations-r2",
+      "writerPid": 492,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r2.json",
+        "bytes": 6127337,
+        "sha256": "f12e450c299b1bb2b7af18ea61e49c889cd93e2cf379328640327c5c07235ac0"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-operation-toggle-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-notice-word7-native-ui.sm",
+      "bytes": 4269,
+      "sha256": "31b160235cc9f57d9cb1f94d2d835f1d36f5241539612cf33995681d4cab2225",
+      "origin": "native-notice-word-LW0-value7-save",
+      "writerRun": "bit-notice-r2",
+      "writerPid": 304,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-notice-r2.json",
+        "bytes": 2500230,
+        "sha256": "1c35ae60887932b16e693b291d64a161874fed4bfd1a2645344511a4d0d350fa"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-notice-word7-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-U32-native-ui.sm",
+      "bytes": 4319,
+      "sha256": "3cde3164bac53828e4cfde13fd9097cd0423d4315ac9c517ed658b70f9c74933",
+      "origin": "native-external-touch-U32-save",
+      "writerRun": "bit-external-r1",
+      "writerPid": 17444,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-external-r1.json",
+        "bytes": 5822502,
+        "sha256": "58f7d320f8af51dcf0dede48cc45fe20035271d0a91e18fb6d90d402338aca9e"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-U32-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-I32-native-ui.sm",
+      "bytes": 4319,
+      "sha256": "fdbbe6e3de01b31540c12dd7ccdf160bb4a14c062a9fd72a16dfe0dcc5ac2d6e",
+      "origin": "native-external-touch-I32-save",
+      "writerRun": "bit-external-r1",
+      "writerPid": 17444,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-external-r1.json",
+        "bytes": 5822502,
+        "sha256": "58f7d320f8af51dcf0dede48cc45fe20035271d0a91e18fb6d90d402338aca9e"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-I32-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-F32-native-ui.sm",
+      "bytes": 4319,
+      "sha256": "56bfa9eaafd79c9c237dcc1a05dbe083fb8ea0bc1f0d1042442a5613c301f8d4",
+      "origin": "native-external-touch-F32-save",
+      "writerRun": "bit-external-r1",
+      "writerPid": 17444,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-external-r1.json",
+        "bytes": 5822502,
+        "sha256": "58f7d320f8af51dcf0dede48cc45fe20035271d0a91e18fb6d90d402338aca9e"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\resources\\native-bit-button-default.sm",
+        "sha256": "c5cfdcb75d7f8b6f7c8b5a2bdacbe8a4335b3d5f1f90c3fbddb94e037c03455f"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/bit-external-F32-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/static-visible-level3-native-ui.sm",
+      "bytes": 4041,
+      "sha256": "732d83658c07e6e71b0bb9a312ac1acfa9a204ea513cac22a99e8cfd5d145f25",
+      "origin": "native-static-visible-userlevel3-save",
+      "writerRun": "static-level-r1",
+      "writerPid": 17312,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-static-level-r1.json",
+        "bytes": 1826556,
+        "sha256": "538400c4890e88b2b992d990b4cb4ac166b9284f4b7a20a9ec1f508327e51d78"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\samples\\native-device-test\\CodexProbeTest.sm",
+        "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+      },
+      "independentReopen": null,
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/static-visible-level3-native-ui-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-distinct-native-resaved.sm",
+      "bytes": 4413,
+      "sha256": "03469026a8f3b3c6690010303e394d3e37466fcdbd366c94168ce7cfd1bf98ca",
+      "origin": "product-export-native-bit-edit-restore-save",
+      "writerRun": "bilingual-resave-r1",
+      "writerPid": 19392,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-resave-r1.json",
+        "bytes": 2023081,
+        "sha256": "ab116f4213adb7d81b2ef565d837c3d98a0bc7ecc359004420a80cf0cd0061a7"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\source-inputs\\two-language-distinct-product.sm",
+        "sha256": "6e1b734795553fbea0e3ddb6f7bb258f39b6bff047ae7cf550305397e5607f46"
+      },
+      "independentReopen": {
+        "run": "bilingual-reopen-r1",
+        "pid": 21800,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\two-language-distinct-native-resaved.sm",
+          "sha256": "03469026a8f3b3c6690010303e394d3e37466fcdbd366c94168ce7cfd1bf98ca"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-reopen-r1.json",
+          "bytes": 256433,
+          "sha256": "1c5c9ffc8c12f24dc54369446fb621e7f6510b367b2a34afb4ff5d1fce935689"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-distinct-native-resaved-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      },
+      "semanticDecode": {
+        "result": {
+          "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-distinct-native-resaved-decode-result.json",
+          "bytes": 101,
+          "sha256": "0ad512f767aedacfa40edc7b7efe9665c0d2c878888e00be4b0f357914abf724"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/mixed-two-language-distinct-native-resaved.sm",
+      "bytes": 12492,
+      "sha256": "cee8e0c19d515963c9557621670778e03cc940d2ba5e643cf20f4563e3a49c1f",
+      "origin": "product-export-native-control-list-select-single-bit-edit-restore-save",
+      "writerRun": "mixed-list-resave-r3",
+      "writerPid": 23656,
+      "writerStatus": "native-mixed-source-resaved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-list-resave-r3.json",
+        "bytes": 2380325,
+        "sha256": "2586a1e4359f1a3e6ef358e1b3ea5327046cf527b649a126f41385ca74b96fd8"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\source-inputs\\mixed-two-language-distinct-product.sm",
+        "sha256": "96159f4d257c3ad4df96d5da38bdf612f6387bf1eeb32db1882347eb77d0320f"
+      },
+      "independentReopen": {
+        "run": "mixed-bilingual-reopen-r1",
+        "pid": 15300,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\mixed-two-language-distinct-native-resaved.sm",
+          "sha256": "cee8e0c19d515963c9557621670778e03cc940d2ba5e643cf20f4563e3a49c1f"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-bilingual-reopen-r1.json",
+          "bytes": 256799,
+          "sha256": "30a5cce9d1ecb413e786a95ce331e6d9a7e4b10f3aa70b1757f1f7c33f00ae93"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/mixed-two-language-distinct-native-resaved-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      },
+      "semanticDecode": {
+        "result": {
+          "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/mixed-two-language-distinct-native-resaved-decode-result.json",
+          "bytes": 101,
+          "sha256": "0ad512f767aedacfa40edc7b7efe9665c0d2c878888e00be4b0f357914abf724"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-native-resaved.sm",
+      "bytes": 4425,
+      "sha256": "a0c4b02c721af9856d4a18f4e7fc0692a4cea91c8078967b99ee5b11a66240c1",
+      "origin": "product-export-native-bit-edit-restore-save-config-conflict-negative",
+      "writerRun": "english-startup-resave-r1",
+      "writerPid": 9356,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-resave-r1.json",
+        "bytes": 1835408,
+        "sha256": "41ff1f20fe1efb327bbe4b0e9a114478112e09cf50d3957ea8fd67f1fe9edf81"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\source-inputs\\two-language-startup-english-product.sm",
+        "sha256": "242373efc006307674d0562e4826ff412bdbdde82940c5cb70c79f212a8de66e"
+      },
+      "independentReopen": {
+        "run": "english-startup-reopen-r1",
+        "pid": 19728,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\two-language-startup-english-native-resaved.sm",
+          "sha256": "a0c4b02c721af9856d4a18f4e7fc0692a4cea91c8078967b99ee5b11a66240c1"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-reopen-r1.json",
+          "bytes": 256509,
+          "sha256": "bd4a09e6210068c86826d07b9db4f52dd56365c73eb961c786dae052801425b7"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-native-resaved-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      },
+      "semanticDecode": {
+        "result": {
+          "message": "原生工程语言数量、初始语言或注册表不对应。",
+          "ok": false
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-native-resaved-decode-result.json",
+          "bytes": 90,
+          "sha256": "567a91c0dcf1014aa7de2d9c1bf3c74e6b8680b9770d5f6c33ffd93080f40164"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-ui-native-resaved.sm",
+      "bytes": 4425,
+      "sha256": "a143fad0591ae95d04e8844af8d6f37936ec5bc87c9381b326df94a81f395513",
+      "origin": "product-export-native-editor-language-English-then-bit-edit-restore-save",
+      "writerRun": "english-startup-resave-r2",
+      "writerPid": 20956,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-resave-r2.json",
+        "bytes": 2387146,
+        "sha256": "682d8aaaf05922d6a94d05e2df1250ab4412f1c186f84b99b43d231b0e9426de"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\source-inputs\\two-language-startup-english-product.sm",
+        "sha256": "242373efc006307674d0562e4826ff412bdbdde82940c5cb70c79f212a8de66e"
+      },
+      "independentReopen": {
+        "run": "english-startup-reopen-r2",
+        "pid": 2008,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\two-language-startup-english-ui-native-resaved.sm",
+          "sha256": "a143fad0591ae95d04e8844af8d6f37936ec5bc87c9381b326df94a81f395513"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-reopen-r2.json",
+          "bytes": 256774,
+          "sha256": "46c39b9104f4067588a02b560a7e18f6caad77ba88fcc99a2525bf0db109bb58"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-ui-native-resaved-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      },
+      "semanticDecode": {
+        "result": {
+          "message": "工程已验证并原子保存；保留页面与引用，尚未访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/two-language-startup-english-ui-native-resaved-decode-result.json",
+          "bytes": 101,
+          "sha256": "0ad512f767aedacfa40edc7b7efe9665c0d2c878888e00be4b0f357914abf724"
+        }
+      }
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/macro-bound-native-resaved.sm",
+      "bytes": 4471,
+      "sha256": "eec68e03808ad380c38072278a43b896118166f5402755e024a062ec43105669",
+      "origin": "product-export-native-bit-edit-restore-save-macro-binding-guard-negative",
+      "writerRun": "macro-bound-resave-r1",
+      "writerPid": 21824,
+      "writerStatus": "native-oracles-saved",
+      "writerLog": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-macro-bound-resave-r1.json",
+        "bytes": 1834848,
+        "sha256": "6f5d854df801b030728a142884ea5756ed51cb6df0f77d1dad99eb593b68119b"
+      },
+      "writerInput": {
+        "path": "KinSealStudio\\docs\\stage1-evidence\\source-inputs\\macro-bound-product.sm",
+        "sha256": "c96dc79f98315529d1d516671eb6ece448310a2271c661aabe944c2877c4d5be"
+      },
+      "independentReopen": {
+        "run": "macro-bound-reopen-r1",
+        "pid": 1764,
+        "status": "native-source-reopened-and-pages-cycled",
+        "input": {
+          "path": "KinSealStudio\\docs\\stage1-evidence\\native-analysis\\macro-bound-native-resaved.sm",
+          "sha256": "eec68e03808ad380c38072278a43b896118166f5402755e024a062ec43105669"
+        },
+        "log": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-macro-bound-reopen-r1.json",
+          "bytes": 256437,
+          "sha256": "e14ad9fec443b5a8e47ea478984a39052c5a115a041fd73242b96f0052c957fc"
+        },
+        "scope": "B is independently opened as input of r6; r6 then creates C. Other reopen runs are read-only."
+      },
+      "typedInspection": {
+        "result": {
+          "message": "原厂源typed边界已完整检查并记录；未进行语义编辑或访问USB。",
+          "ok": true
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/macro-bound-native-resaved-inspect-result.json",
+          "bytes": 109,
+          "sha256": "10e8578a73572d94ca385cfba2bac8e5c7e3632a4fabacb8175dbd61578b5ed9"
+        }
+      },
+      "semanticDecode": {
+        "result": {
+          "message": "原生按钮宏绑定含未核实的入口、扩展标志或云端宏信息。",
+          "ok": false
+        },
+        "file": {
+          "path": "KinSealStudio/docs/stage1-evidence/native-analysis/macro-bound-native-resaved-decode-result.json",
+          "bytes": 105,
+          "sha256": "005389e55bf29d848d152ed11d19116a6a451823493c38583aafcfebcf092555"
+        }
+      }
+    }
+  ],
+  "runs": [
+    {
+      "run": "bilingual-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 21800,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-reopen-r1.json",
+        "bytes": 256433,
+        "sha256": "1c5c9ffc8c12f24dc54369446fb621e7f6510b367b2a34afb4ff5d1fce935689"
+      }
+    },
+    {
+      "run": "bilingual-resave-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 19392,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-resave-r1.json",
+        "bytes": 2023081,
+        "sha256": "ab116f4213adb7d81b2ef565d837c3d98a0bc7ecc359004420a80cf0cd0061a7"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 14352,
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"GUI-thread queued operation timeout: {'op': 'batch', 'hwnds': [5181076, 3213118, 15208582, 16060552, 2819094, 6423654, 7409070, 7475622, 2230316, 11276668, 4851154, 7736774, 6358294, 6820200, 9441636, 11014498, 19009888, 8917336, 15077716, 21893456, 14356814, 24056140, 15077706, 13046088, 9179462, 6951236, 12521790, 15208754, 14815536, 13242670, 14618924, 13766954, 15012136, 10031392, 14356766, 9900314, 18354454, 8655118, 15536394, 9441522, 11014384, 19337454, 13242604, 10293480, 7868646, 14880996, 16060636, 8917206, 14946516, 14618834, 14815434, 9310408, 9244868, 9113794, 9310390, 11079860, 9310382, 10424492, 12587174, 9441444, 16126112, 15077534, 8589466, 16126090, 4460260, 2361306, 5443294, 5834674, 4132544, 16977464, 5768612, 2756062, 3410028, 2295842, 3147498, 11996792, 9638016, 12390526, 5047686, 19271716, 8327208, 9506862, 9244714, 18223152, 15077426, 8851524, 13111360, 9441342, 13570106, 18812954, 8720408, 5309694, 13045836, 12783708, 9572442, 18354264, 9179222, 12980306, 7999566, 15798346, 15405128, 7734326, 5836550, 9768708, 4591360, 8720124, 4394744, 4656886, 5377776, 4067054, 5312236, 3673830, 4787938, 5705436, 2952904, 8982210, 13110972, 5508792, 3346100, 4787890, 4787884, 5050024, 4329122, 9571996, 5115542, 5050002, 3346060, 7671414, 4263532, 4787818, 4656744, 4591206, 7540308, 12914254, 7081542, 11142340, 4263488, 5377582, 8261158, 16322078, 12324380, 10620434, 3870224, 4984328, 2428414, 4263398, 3999542, 2229946, 4526014, 3477448, 4394950, 3411908, 4591554, 4198336, 9703356, 3802436, 2428388, 2428384, 3149272, 2887126, 2559444, 2559440, 2559436, 10816970, 8850884, 6950326, 13503922, 18222512, 2756004, 2624926, 1575544, 1772018, 4261162, 3739518, 4788086, 4788084, 4853616, 4919148, 5574502, 3215202, 4853600, 3870558, 5050204, 6164306, 6950734, 4394822, 4788022, 4722452, 4919058, 5965048, 2427376, 4524526, 3017188, 4852192, 8128990, 2361818, 2099672, 2558422, 2099668, 5442000, 1903054, 2165194, 2165192, 2753818, 2165188, 5179842, 5440752, 3344496, 3606632, 3541086, 2164778, 2164776, 3737584, 5638050, 2360518, 9244694, 14749714, 16125966, 28774408, 12521472, 10686462, 4919290, 3084276, 4394994, 3870702, 4788204, 4460522, 4722662, 4460516, 4460514, 5443546, 4853718, 3608532, 3936206, 4329420, 4198346, 5050126, 15274080, 8130682, 13242484, 9309732, 11210846, 9179236, 9638000, 9769058, 13045868, 17633382, 4787870]}\")",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r1.json",
+        "bytes": 425616,
+        "sha256": "9f12cfe287352c61eba62feded7565d65e88f35549523f61694062224f9fea14"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 16820,
+      "status": "partial-or-error",
+      "error": "RuntimeError('Native Save-as filename control not uniquely identified; controls retained')",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r2.json",
+        "bytes": 430685,
+        "sha256": "8fdc68474457ef55c840cb145b8dd1eb2357eabd3ee7e69719dff002ed6638a4"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r3",
+      "runNameInferredFromFilename": false,
+      "pid": 15176,
+      "status": "partial-or-error",
+      "error": "AssertionError()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r3.json",
+        "bytes": 431074,
+        "sha256": "3897e2865871b62dcd45b59b7133b8fc47dfdd6ac2bc763f71e60856908cead7"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r4",
+      "runNameInferredFromFilename": false,
+      "pid": 12404,
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"GUI-thread queued operation timeout: {'op': 'batch', 'hwnds': [2950426, 2361800, 9441476, 15012042, 9507016, 15143124, 13439212, 4457770, 16257244, 4721134, 9113814, 4591352, 8916732, 4263662, 3739246, 4916452, 11538010, 5638608, 2688030, 3279308, 1905470, 2625422, 2821534, 7279514, 6361864, 1642948, 3150270, 6361506, 7213464, 8655250, 16978318, 8458626, 10752384, 11473276, 7016808, 9638244, 14553422, 15077680, 15274280, 14946598, 9638130, 10817042, 4066832, 5180936, 2625022, 4460006, 11338948, 4196150, 2426554, 2624996, 2624992, 2689062, 2754582, 7147342, 5443384, 4984630, 6033186, 11210992, 10883070, 4591602, 5115898, 4067310, 3280884, 4657130, 7082116, 10490088, 3215262, 5312340, 5246734, 19534062, 6098698, 4591368, 6033158, 9965316, 4787968, 14815442, 9310402, 9506998, 2361796, 4656868, 2426924, 3083730, 7605678, 9703470, 18419760, 9375844, 9965666, 15470688, 19009562, 2557914, 5639902, 5376450, 9834608, 16257160, 15405190, 9834624, 12587134, 8327290, 13439092, 13242476, 17829990, 3541104, 3674056, 3608516, 4788162, 5377684, 9899964, 4394944, 4722622, 4591546, 4919060, 5115666, 4853494, 5574384, 5508844, 3870438, 3868786, 4525730, 4984478, 9768604, 5312150, 3212520, 5181014, 4131302, 4984432, 5115354, 3213344, 7867986, 4589566, 3409726, 5244294, 5506302, 4984546, 5902044, 4132570, 3803240, 9113290, 3149512, 3280580, 9178818, 13307580, 5705400, 3542708, 4984498, 4984492, 5246632, 3737694, 1771602, 13307968, 8196174, 13242444, 15994954, 15601736, 9048132, 9637950, 2426934, 5246610, 3542668, 7868022, 4984426, 4853352, 4787814, 7736916, 13110862, 7278150, 4460096, 7930934, 5574190, 8457766, 16518686, 12520988, 8785420, 2361386, 16322574, 28971016, 4984812, 3936184, 4657078, 4263858, 4067246, 7802490, 4919270, 4657124, 4657122, 5640154, 5050326, 3805140, 4132814, 4526028, 3999044, 3083734, 2756052, 2756044, 11013578, 9047492, 5049790, 7146934, 13700530, 18419120, 7736748, 2952612, 1772152, 1968626, 2623984, 3213796, 5048800, 2885216, 8325598, 2558426, 2296280, 2755030, 2296276, 2099662, 2361802, 8848802, 6031282, 4329152, 17174072, 5965220, 2952670, 3606636, 2492450, 3344106, 6554902, 7933382, 5047762, 6620262, 12193400, 3015702, 9506340, 11407454, 12980316, 9769050, 18550872, 9375830, 13176914, 2819280, 12587156, 9506990, 10621100, 11276468, 16322698, 15274142, 12783782, 8786074, 9638052, 16322720, 4917026]}\")",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r4.json",
+        "bytes": 425517,
+        "sha256": "b403b0959b8d2eb07fe3743e8ec8279602dea3dee614485bdab7794623da1561"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r5",
+      "runNameInferredFromFilename": false,
+      "pid": 24064,
+      "status": "partial-or-error",
+      "error": "AssertionError()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r5.json",
+        "bytes": 432548,
+        "sha256": "a25c43fcf8b046bfadaa2a635b1a3f3a5b6a3767d8a91a58f7b5d9eb222dd26c"
+      }
+    },
+    {
+      "run": "bilingual-saveas-r6",
+      "runNameInferredFromFilename": false,
+      "pid": 15128,
+      "status": "partial-or-error",
+      "error": "RuntimeError('Native SetFileName hook did not confirm prefill; no file dialog accepted')",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bilingual-saveas-r6.json",
+        "bytes": 431353,
+        "sha256": "735785aa7719090222ab9af69dd739204f268b901686d764e6ac62bb66f4b52e"
+      }
+    },
+    {
+      "run": "bit-external-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 17444,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-external-r1.json",
+        "bytes": 5822502,
+        "sha256": "58f7d320f8af51dcf0dede48cc45fe20035271d0a91e18fb6d90d402338aca9e"
+      }
+    },
+    {
+      "run": "bit-monitor-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 19396,
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 41, 'status': 'error', 'error': 'Error: system error'}\")",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-monitor-r1.json",
+        "bytes": 1261306,
+        "sha256": "876e622e1469b7673c04a5681134308fe11bc13b162ac1f9c7da6d29191659d9"
+      }
+    },
+    {
+      "run": "bit-notice-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 20760,
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 41, 'status': 'error', 'error': 'Error: expected an integer'}\")",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-notice-r1.json",
+        "bytes": 1261188,
+        "sha256": "58ce598f89aa21b2a15e757be547d1142c446384a0e9b0173c57d3df32c083a1"
+      }
+    },
+    {
+      "run": "bit-notice-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 304,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-notice-r2.json",
+        "bytes": 2500230,
+        "sha256": "1c35ae60887932b16e693b291d64a161874fed4bfd1a2645344511a4d0d350fa"
+      }
+    },
+    {
+      "run": "bit-operations-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 17388,
+      "status": "partial-or-error",
+      "error": "StopIteration()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r1.json",
+        "bytes": 1261040,
+        "sha256": "7264d41715e3086785964993363beb536b1efddfd894aaea4d801f8d1042a313"
+      }
+    },
+    {
+      "run": "bit-operations-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 492,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-bit-operations-r2.json",
+        "bytes": 6127337,
+        "sha256": "f12e450c299b1bb2b7af18ea61e49c889cd93e2cf379328640327c5c07235ac0"
+      }
+    },
+    {
+      "run": "empty-a-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 9344,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-empty-a-reopen-r1.json",
+        "bytes": 256671,
+        "sha256": "02b5f7af0c190fce27d8baea8c17c099b8fb711f77e5dd0240255106831cc59a"
+      }
+    },
+    {
+      "run": "english-startup-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 19728,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-reopen-r1.json",
+        "bytes": 256509,
+        "sha256": "bd4a09e6210068c86826d07b9db4f52dd56365c73eb961c786dae052801425b7"
+      }
+    },
+    {
+      "run": "english-startup-reopen-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 2008,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-reopen-r2.json",
+        "bytes": 256774,
+        "sha256": "46c39b9104f4067588a02b560a7e18f6caad77ba88fcc99a2525bf0db109bb58"
+      }
+    },
+    {
+      "run": "english-startup-resave-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 9356,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-resave-r1.json",
+        "bytes": 1835408,
+        "sha256": "41ff1f20fe1efb327bbe4b0e9a114478112e09cf50d3957ea8fd67f1fe9edf81"
+      }
+    },
+    {
+      "run": "english-startup-resave-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 20956,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-english-startup-resave-r2.json",
+        "bytes": 2387146,
+        "sha256": "682d8aaaf05922d6a94d05e2df1250ab4412f1c186f84b99b43d231b0e9426de"
+      }
+    },
+    {
+      "run": "macro-bound-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 1764,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-macro-bound-reopen-r1.json",
+        "bytes": 256437,
+        "sha256": "e14ad9fec443b5a8e47ea478984a39052c5a115a041fd73242b96f0052c957fc"
+      }
+    },
+    {
+      "run": "macro-bound-resave-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 21824,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-macro-bound-resave-r1.json",
+        "bytes": 1834848,
+        "sha256": "6f5d854df801b030728a142884ea5756ed51cb6df0f77d1dad99eb593b68119b"
+      }
+    },
+    {
+      "run": "mixed-bilingual-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 15300,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-bilingual-reopen-r1.json",
+        "bytes": 256799,
+        "sha256": "30a5cce9d1ecb413e786a95ce331e6d9a7e4b10f3aa70b1757f1f7c33f00ae93"
+      }
+    },
+    {
+      "run": "mixed-list-inspect-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 18824,
+      "status": "native-control-list-inspected",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-list-inspect-r1.json",
+        "bytes": 702855,
+        "sha256": "c02fd66e0c57d412068337397e79d3817233e9e8e6a716d9229f82cbd49bfaac"
+      }
+    },
+    {
+      "run": "mixed-list-resave-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 20440,
+      "status": "partial-or-error",
+      "error": "AssertionError()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-list-resave-r1.json",
+        "bytes": 703405,
+        "sha256": "e0ab6b5715d85756a058a530ba8d4a6fca73b6016988bfbb40b927c0a24e4127"
+      }
+    },
+    {
+      "run": "mixed-list-resave-r2",
+      "runNameInferredFromFilename": false,
+      "pid": 15128,
+      "status": "partial-or-error",
+      "error": "StopIteration()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-list-resave-r2.json",
+        "bytes": 966451,
+        "sha256": "bf383855a6b4047c9c7971fbaa72a9625908972917839b938fb12278cbc0ad0a"
+      }
+    },
+    {
+      "run": "mixed-list-resave-r3",
+      "runNameInferredFromFilename": false,
+      "pid": 23656,
+      "status": "native-mixed-source-resaved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-mixed-list-resave-r3.json",
+        "bytes": 2380325,
+        "sha256": "2586a1e4359f1a3e6ef358e1b3ea5327046cf527b649a126f41385ca74b96fd8"
+      }
+    },
+    {
+      "run": "named-d-reopen-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 18800,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-named-d-reopen-r1.json",
+        "bytes": 1120291,
+        "sha256": "6b59e2e5bc8cfcba84040791ca7ac27012b0331de9d96942fdcfc9ad445490f7"
+      }
+    },
+    {
+      "run": "r1",
+      "runNameInferredFromFilename": true,
+      "pid": 13488,
+      "status": "partial-or-error",
+      "error": "StopIteration()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 259,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r1.json",
+        "bytes": 586497,
+        "sha256": "26c3ec7129011a914efc96d8fb24d3dc6b4c8a8dc04a08704d95a2bbea65f9c6"
+      }
+    },
+    {
+      "run": "r2",
+      "runNameInferredFromFilename": true,
+      "pid": 14352,
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"GUI-thread queued operation timeout: {'op': 'batch', 'hwnds': [4394732]}\")",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 259,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r2.json",
+        "bytes": 1090512,
+        "sha256": "6c29683ee7d7c1cfc57e89beaf17f1ddea2aeb53ad34d0362ea9da4256f1e254"
+      }
+    },
+    {
+      "run": "r3",
+      "runNameInferredFromFilename": true,
+      "pid": 19940,
+      "status": "captured-page-create-dialog",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": -1,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r3.json",
+        "bytes": 1352869,
+        "sha256": "5212577058cdbc2cc1314685e25907aece050a5ecad1754121e9815784298124"
+      }
+    },
+    {
+      "run": "r4",
+      "runNameInferredFromFilename": false,
+      "pid": 17440,
+      "status": "page-created-and-native-source-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r4.json",
+        "bytes": 2221219,
+        "sha256": "c8989d634becc8111638ecddcccd05a9c4c0344e583ab49d9bbddb9270f7c149"
+      }
+    },
+    {
+      "run": "r5",
+      "runNameInferredFromFilename": false,
+      "pid": 24336,
+      "status": "partial-or-error",
+      "error": "StopIteration()",
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r5.json",
+        "bytes": 606212,
+        "sha256": "6006df15e321432f10117b61d79535c75c4aa6801d594bb527e59e497f690470"
+      }
+    },
+    {
+      "run": "r6",
+      "runNameInferredFromFilename": false,
+      "pid": 20468,
+      "status": "page-created-and-native-source-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r6.json",
+        "bytes": 1530310,
+        "sha256": "130c72ae508b7ca78aa3d17459b9e5a45c2419d5fca8266adf88dc02e3049d4c"
+      }
+    },
+    {
+      "run": "r7",
+      "runNameInferredFromFilename": false,
+      "pid": 10888,
+      "status": "page-created-and-native-source-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r7.json",
+        "bytes": 1529752,
+        "sha256": "1f9fea7bdba36e949c1aa4c2cdcebd93fab43b1ccbd277b737bfc769ea7121f4"
+      }
+    },
+    {
+      "run": "r8",
+      "runNameInferredFromFilename": false,
+      "pid": 17440,
+      "status": "native-source-reopened-and-pages-cycled",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-r8.json",
+        "bytes": 1384212,
+        "sha256": "672f0e456682be6ef9fd4cf339baffaafed96e4675197f80c5b1ee31ded94cfb"
+      }
+    },
+    {
+      "run": "static-level-r1",
+      "runNameInferredFromFilename": false,
+      "pid": 17312,
+      "status": "native-oracles-saved",
+      "error": null,
+      "ownedProcessTerminated": true,
+      "exitCodeBeforeCleanup": 0,
+      "log": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/native-probe-static-level-r1.json",
+        "bytes": 1826556,
+        "sha256": "538400c4890e88b2b992d990b4cb4ac166b9284f4b7a20a9ec1f508327e51d78"
+      }
+    }
+  ],
+  "modelMetadata": [
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/model-metadata.json",
+      "bytes": 9193,
+      "sha256": "16bb73793793453a6ec697393fa58620feb65076985632f71819ed7fa806abb7"
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/model-metadata.md",
+      "bytes": 3874,
+      "sha256": "dbcbd73f7fa6f606a5a4be5dbdda1ece9279a328b8e058be2b326251fb0b74ee"
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/model.dat.target.xml",
+      "bytes": 315,
+      "sha256": "0d4585d5af378594a7f2c506e52e2bcd43e06f3b10b19a105e6efb55ca93f92f"
+    },
+    {
+      "path": "KinSealStudio/docs/stage1-evidence/native-analysis/modelInfo.dat.target.xml",
+      "bytes": 2020,
+      "sha256": "2d145a867229a9730aa84e5b58dd9240288964fee3c2590d333568421e27511a"
+    }
+  ],
+  "limits": [
+    "Native open and save do not prove semantic editability or compilation support.",
+    "Product-export/native-writer samples are mixed provenance, not native creation from blank and not historical missing oracles.",
+    "English r1 preserves configuration mismatch as a negative; actual editor English r2 is a separate sample.",
+    "Macro UI is disabled with an empty macro list; binding is not confirmed and semantic guard remains active.",
+    "No successful Save As output exists. All successful resaves use task-owned source working copies and normal native save."
+  ]
+}

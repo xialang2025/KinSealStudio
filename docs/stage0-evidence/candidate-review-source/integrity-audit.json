@@ -1,0 +1,183 @@
+{
+  "task": "S00-04",
+  "modification_marker": "#20261110-4",
+  "mode": "只读完整性复核",
+  "audited_at_utc": "2026-11-10T06:32:01.959569+00:00",
+  "passed": true,
+  "checks": {
+    "frozen_csv_sha_unchanged": {
+      "passed": true,
+      "detail": "27f423c4b35d387b243d0e4ca69485ff2a892b41e8b3cd81e19cfc81b532b87c"
+    },
+    "candidate_count_and_source_order": {
+      "passed": true,
+      "detail": null
+    },
+    "every_original_source_field_preserved": {
+      "passed": true,
+      "detail": null
+    },
+    "every_candidate_retains_frozen_sha": {
+      "passed": true,
+      "detail": null
+    },
+    "unique_question_ids": {
+      "passed": true,
+      "detail": null
+    },
+    "unique_stable_assignments": {
+      "passed": true,
+      "detail": null
+    },
+    "unique_candidate_ids": {
+      "passed": true,
+      "detail": null
+    },
+    "all_candidate_question_references_exist": {
+      "passed": true,
+      "detail": null
+    },
+    "all_question_candidate_references_exist": {
+      "passed": true,
+      "detail": null
+    },
+    "candidate_question_links_are_bidirectional": {
+      "passed": true,
+      "detail": null
+    },
+    "all_parent_child_references_exist": {
+      "passed": true,
+      "detail": null
+    },
+    "parent_child_links_are_bidirectional": {
+      "passed": true,
+      "detail": null
+    },
+    "atomic_records_have_no_children": {
+      "passed": true,
+      "detail": null
+    },
+    "parent_records_have_children": {
+      "passed": true,
+      "detail": null
+    },
+    "all_evidence_references_exist": {
+      "passed": true,
+      "detail": null
+    },
+    "related_candidates_and_duplicate_targets_exist": {
+      "passed": true,
+      "detail": null
+    },
+    "atomic_destination_aggregation_exact": {
+      "passed": true,
+      "detail": null
+    },
+    "layer_aggregation_exact": {
+      "passed": true,
+      "detail": null
+    },
+    "parent_graph_acyclic": {
+      "passed": true,
+      "detail": null
+    },
+    "only_three_legacy_facts_closed": {
+      "passed": true,
+      "detail": null
+    },
+    "no_device_execution_closure": {
+      "passed": true,
+      "detail": null
+    },
+    "no_new_execution_or_observation": {
+      "passed": true,
+      "detail": null
+    },
+    "Q-FUNC-RUN-001_remains_open": {
+      "passed": true,
+      "detail": null
+    },
+    "Q-LAMP-RENDER-001_remains_open": {
+      "passed": true,
+      "detail": null
+    },
+    "u308_retained_without_questions": {
+      "passed": true,
+      "detail": null
+    },
+    "u79_has_eighteen_function_groups_and_fifty_nine_actions": {
+      "passed": true,
+      "detail": null
+    },
+    "function17_actions_reuse_u78_exactly": {
+      "passed": true,
+      "detail": null
+    },
+    "u85_maps_two_open_alarm_gate_questions": {
+      "passed": true,
+      "detail": null
+    },
+    "reported_counts_match_records": {
+      "passed": true,
+      "detail": null
+    },
+    "stable_id_lock_matches_formal_authority": {
+      "passed": true,
+      "detail": null
+    },
+    "all_799_markdown_anchors_exist_once": {
+      "passed": true,
+      "detail": null
+    },
+    "all_internal_markdown_links_resolve": {
+      "passed": true,
+      "detail": 803
+    },
+    "no_unicode_replacement_characters": {
+      "passed": true,
+      "detail": null
+    },
+    "archived_review.tsv_sha_matches_ledger": {
+      "passed": true,
+      "detail": null
+    },
+    "archived_review.tsv_equals_working_copy": {
+      "passed": true,
+      "detail": null
+    },
+    "archived_build_candidate_ledger.py_sha_matches_ledger": {
+      "passed": true,
+      "detail": null
+    },
+    "archived_build_candidate_ledger.py_equals_working_copy": {
+      "passed": true,
+      "detail": null
+    },
+    "evidence_identities_match_current_files": {
+      "passed": true,
+      "detail": []
+    }
+  },
+  "check_count": 38,
+  "failed_checks": [],
+  "counts": {
+    "candidates": 308,
+    "questions": 799,
+    "atomic": 613,
+    "parents": 186,
+    "legacy_closed": 3,
+    "atomic_not_closed": 610,
+    "new_tests": 0,
+    "new_fact_closures": 0
+  },
+  "output_identities": {
+    "candidate-ledger.json": "2c42c87d1f257ecf7baa2abe2f3d800f72baef3997ad393f295f6276afb9671e",
+    "candidate-ledger.md": "8683ed4f4e7458878e616b12b20cbe0492888a4de354b124b90d146290811f87"
+  },
+  "frozen_csv_sha256": "27f423c4b35d387b243d0e4ca69485ff2a892b41e8b3cd81e19cfc81b532b87c",
+  "archived_review_source": {
+    "review.tsv": "7c7469de502f6968f55d66052fe5a967f4991c984b9d2dcfedef61eb989fc1b0",
+    "build_candidate_ledger.py": "6dd96a73d750e631732f2ccebe19b5de69ecb00a3447acda94d03b2dcdf3c1b3"
+  },
+  "limitation": "结构与引用检查不表示799项测试或软件完成；本脚本不执行原生、构建、USB、PLC，也不更新阶段状态。"
+}

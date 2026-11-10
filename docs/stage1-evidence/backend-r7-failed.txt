@@ -1,0 +1,18 @@
+********* Start testing of Stage1BackendTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : Stage1BackendTests::initTestCase()
+PASS   : Stage1BackendTests::singlePageCompilationRemainsAvailable()
+PASS   : Stage1BackendTests::multiPageNeverCompilesOnlyTheSelectedPage()
+PASS   : Stage1BackendTests::specialPageNeverUsesTheOrdinaryPageBackend()
+PASS   : Stage1BackendTests::startupAndEditorLanguagesAreIndependent()
+PASS   : Stage1BackendTests::capabilityQueriesSeparateModelAndBackend()
+QWARN  : Stage1BackendTests::editorSwitchesPagesWithoutDiscardingHiddenObjects() QFontDatabase: Cannot find font directory G:/01_Professional/QT6/Installed/6.12.0/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+PASS   : Stage1BackendTests::editorSwitchesPagesWithoutDiscardingHiddenObjects()
+PASS   : Stage1BackendTests::resourceDraftFailurePreservesEditorState()
+FAIL!  : Stage1BackendTests::legacyEntriesRejectUnrepresentedConfiguration() 'buildSingleTextPayload(project, &payloads, &error)' returned FALSE. (控件 测试文字 含尚未验证可无损保存的原生属性编辑；已取消保存。)
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/stage1_backend_tests.cpp(310) : failure location
+PASS   : Stage1BackendTests::capabilitiesExplainKnownBlockedRoutes()
+PASS   : Stage1BackendTests::cleanupTestCase()
+Totals: 10 passed, 1 failed, 0 skipped, 0 blacklisted, 263ms
+********* Finished testing of Stage1BackendTests *********

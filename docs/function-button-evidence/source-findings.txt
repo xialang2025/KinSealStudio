@@ -1,0 +1,91 @@
+# 功能按钮原生源格式与往返验收
+
+日期：2026-11-10。修改标记：`//20261110-0`。本分工负责 `.sm` 源文件编解码、源资源和往返测试；没有启动原厂窗口、占用 REA 会话或执行 USB 下载。
+
+程序文件和测试已冻结，独立 Release 构建的完整结果为 **45 passed / 0 failed / 0 skipped**。其中包含原有位按钮、字按钮、指示灯回归，以及六份最终新建 KSP 的导出、导入、再次导出。日志为 [qtest-full-final.txt](qtest-full-final.txt)，样例文件身份和源输出哈希为 [actual-samples-manifest.json](actual-samples-manifest.json)。
+
+## 证据类型与文件身份
+
+本报告区分以下证据：
+
+1. **原件静态证据**：同一 SHA-256 原厂程序恢复的 Ghidra writer 伪码，确定 Qt 流操作符及字段顺序。保留文件为 [switch-source-decomp.txt](../../kinseal-bitbutton-20261109/control-analysis/switch-source-decomp.txt)，功能按钮分支在第 86–98 行附近。本分工读取既有反编译结果，没有把普通文件解析包装成新的 REA Evidence。
+2. **私有副本动态证据**：由设备分工在私有 Windows 桌面操作原厂程序保存的 `.sm`，包括默认、完整功能矩阵、隐藏按下态和无图样例。本分工只读取这些产物，解析完整文件边界并验证无修改导出逐字节相同。
+3. **本项目实现验证**：从无原生快照的新建模型及最终实际 KSP 生成 `.sm`，再导入、重导并比较全部字节。这证明本项目源编解码的行为，不能代替原厂编译或屏端触控验证。
+4. **原厂编译结果**：设备分工执行后台重开、离线编译并反馈结果；与本分工的源码测试分开记录。USB 传输和屏端实际动作由主分工单独验收。
+
+| 文件 | SHA-256 |
+|---|---|
+| 安装原件 `G:\01_Professional\触摸屏\金玺\KinSealStudio_Setup_V5.1\Installed\KinSealStudio5.1.exe` | `305592B4E4BC1B15A707C7BC832C31F27CA0958B97F9C79A5B50AC6DF49E907C` |
+| 动态私有副本 `.scratch/kinseal-wordbutton-20261109/sandbox/KinSealStudio5.1-private.exe` | `38100BF47294342119560DADFBD6A35D6AB51180C0EEAF4B7B21517BEA20ED89` |
+| 原厂默认单例 `function-default-r1.sm`，4137 字节 | `140DE0AD76BEBAB16FA16A3042CA476619332402216FC7E31E11BBBD4F60BC65` |
+| 原厂正常完整矩阵 `function-valid-r4.sm`，70185 字节 | `E56AA8091B898F4C9D04AA15E8DACE607546EF99A4A8C495962C36669EEFA80E` |
+| 原厂按下/无图 `function-advanced-r1.sm`，5423 字节 | `BA89FDCA108AC575776EC92D1E0DCE8AF73DB84B6DA92C3A00CF59DF2FB5535E` |
+| 原厂非法代理项探针 `function-tail-r2.sm`，21332 字节 | `34BE999492921D25790401D2A273249C1FB23ABDB27BA1643D1353C39FB57DC2` |
+| 保留的 writer 反编译文本 | `E5F58E2254BF1FDE2ED21E6BE710095BDB8E468C07D5A1BFF66B40D7E1CE3965` |
+
+已逐字节比较安装原件与运行副本：长度相同，仅文件偏移 `0x7c4..0x7c6` 的 `55 89 e5` 改为 `b0 01 c3`，用于跳过启动管理员令牌检查。这里不是“移除 UAC 清单”的修改，源 writer、设备编码和资源字节没有变化。静态证据仍归属安装原件，动态结果明确归属该副本。
+
+## 最终原生流布局
+
+功能按钮为控件家族 `kind 10 / subtype 3`，没有 PLC 操作地址。版本 122 的功能专用流序列确定为 **`iiqbbiq`**：
+
+| 顺序 | Codec 字段名 | Qt 流类型 | 对应原厂成员及含义 |
+|---|---|---|---|
+| 0 | `function.1c8.0` | 大端 i32 | `+0x1c8`，功能索引，18 项原厂顺序 |
+| 1 | `function.1c8.1` | 大端 i32 | `+0x1cc`，类型索引；没有类型时原厂写 `-1`，编辑模型规范化为 `0` |
+| 2 | `function.1c8.2` | QString | `+0x1d8`，尚未开放编辑的元数据，原样保留 |
+| 3 | `function.1c8.3` | byte | `+0x1dc`，休眠元数据，原样保留，可能含非 0/1 构造残留 |
+| 4 | `function.1c8.4` | byte | `+0x1dd`，休眠元数据，原样保留 |
+| 5 | `function.1c8.5` | 大端 i32 | `+0x1d0`，键盘键索引 `0..9`；源版本大于 117 时保存 |
+| 6 | `function.1c8.6` | QString | `+0x1d4`，键盘字符文本 |
+
+字段名中的 `1c8` 是原厂对象成员偏移的助记，不是所有 `.sm` 的固定文件偏移。仅默认 4137 字节 oracle 的对应文件位置是：功能 `3489`、类型 `3493`、opaque QString `3497`、两个 byte `3501/3502`、完整 i32 键 `3503`、字符 QString `3507`。
+
+早期小键样例的 22 字节长度可被错误解释成 `iiiisq`，也能完整到达文件尾。最终实现已经依据原件 writer 改成 `iiqbbiq`，没有沿用长度猜测。回归同时验证：非空 opaque QString 仍能导入并逐字节重导；键值 `65536` 必须拒绝，不能错误地只读低 16 位并当作 Enter。最终完整解析记录为 [function-valid-r4-parse.json](function-valid-r4-parse.json)；早期 `function.1e8` 解析记录属于已被纠正的探针。
+
+全部 18 功能、历史 7 类型、配方 13 类型、报警 14 类型、工程语言类型和下载方式 2 类型均已覆盖。切到无类型功能时原生写 `-1`，编辑属性保持 `type=0`。功能按钮不进入位/字按钮的操作地址 union，也不改写休眠监视字段。
+
+## Space 的两类事实
+
+原厂正常 UI 的完整矩阵实际保存的键集合是 **`{0,1,2,3,4,5,6,7,9}`**。设备分工证实 Space 单选不在其余键的排他组中，点击 Space 后 Enter 仍被勾选，保存结果是 `keyboardKey=0`。源回归读取 [function-valid-r4-specs.json](../device-analysis/corpus/function-valid-r4-specs.json)，按真实创建顺序与源对象逆序的对应关系，明确断言“点击 Space 的对象保存为 Enter 0”。没有把这个正常 UI 探针报告为十种合法键的原厂保存证据。
+
+合法源键值 **8 仍受原厂编译支持**。本项目新建 KSP 的十键测试严格要求 `0..9` 全部保存、导入、重导一致。设备分工又将 [diagnostic-single-language-matrix.sm](diagnostic-single-language-matrix.sm) 作为源文件在原厂程序重开并串行编译成功，输出 `ControlPara.dat` 为 `38400` 字节，即 `60 × 640` 记录，包含键 8。此结论证明原厂编译器接受合法 key8，不能反过来证明其正常 UI 没有排他组缺陷。
+
+原厂并行实例会共用全局编译互斥。曾出现的提示实际为“有其他组态正在编译中，继续可能会造成文件冲突，是否继续”，不是源格式错误；设备分工切换严格串行后确认上述结果。其余原厂编译验收以设备分工最终报告为准。
+
+## 按下态、图库与权限保留
+
+- `switch.tail.8` 是按下效果。未启用保存 1 套状态，启用保存 **2 套**。状态选择器在原厂 UI 固定 0，不代表状态 1 不存在。启用时源 codec 完整保留隐藏状态 1 的文字、字体、图片、颜色、透明度等数据；默认是独立的橙色 ON 外观，不能由状态 0 的暗化图片替代。
+- `switch.tail.4` 是全局同语言标志。按下态启用时两套模型状态的该标志必须一致；写源时将共享文字展开到已注册语言，KSP 的独立语言草稿不被修改。未注册语言继续显式拒绝。
+- 无图状态为 `switch.294[state].0=3`，原图片路径继续保留。正常预览子对象改为 `0x1000f` 填充矩形；有图为 kind1 和 Pixmap13。已覆盖有图与无图转换、颜色与几何更新、单态和带按下态的保存。
+- 3D 与透明标志仍是全局源标志；两态外观保持与其一致。按下、闪烁与同文不互相替代。
+- 显现、触控双列和位/字/等级条件复用已验证的公共源字段。通知位与通知字互斥，通知地址和数值可保存；功能按钮按压范围为 `0..255`，已测试 0 的成功往返和 256 的拒绝。
+- 原厂功能按钮宏组真实 `enabled=false`。活动宏明确拒绝；未启用宏和其他未开放元数据保留原始源字节。
+- 纯新建 KSP 与原厂 seed 的休眠默认值可能不同。功能按钮未启用的条件、监视和第二外观草稿在局部写入副本中处理，避免把不可见草稿当作原生元数据改写，也不修改输入 KSP。
+
+## 字符范围
+
+原厂字符框 `maxLength=1` 的含义是一个 UTF-16 code unit。原厂实际把 `AB` 保存为 `A`，把 `😀` 截为孤立高代理项 `D83D`。本实现允许空串和单个合法 BMP 字符；活动 ASCII/Unicode 键的孤立代理项明确拒绝。非法原厂探针仍可以作为原始归档逐字节恢复，不会冒充已完成语义转换。具体设备字符值与屏端输入行为属于设备分工的编码/运行证据。
+
+## 最终样例与日志
+
+六份样例均从实际新建 KSP 加载，原生快照为空；测试还比较输入项目 JSON，确认源导出不反向修改编辑草稿。
+
+| 最终 KSP | 对象数 | 生成 `.sm` 字节数 |
+|---|---:|---:|
+| `18功能与全部类型矩阵.ksp` | 60 | 69536 |
+| `系统功能18项.ksp` | 18 | 21802 |
+| `十键与Unicode字符.ksp` | 12 | 15552 |
+| `双语按下闪烁与无图.ksp` | 6 | 10021 |
+| `权限通知与按压.ksp` | 5 | 8279 |
+| `功能按钮实机联调.ksp` | 16 | 20680 |
+
+全部源输出位于当前 `source-analysis` 目录，KSP 位于 `KinSealStudio/samples/function-button`。文件哈希见 [actual-samples-manifest.json](actual-samples-manifest.json)。
+
+- [qtest-full-final.txt](qtest-full-final.txt)：最终完整 **45/0/0**，包含旧回归、正常原厂三个源、Space 缺陷明确断言、新建全功能/全部类型/十键、opaque QString/i32 键、非法代理项、权限外观、最终六样例。
+- [qtest-regression-final.txt](qtest-regression-final.txt)：Space 事实断言落地前的其余完整回归 **44/0/0**。
+- [qtest-actual-final.txt](qtest-actual-final.txt)：最终六实际 KSP 与新增定向场景 **12/0/0**。
+- [qtest-actual-initial.txt](qtest-actual-initial.txt)：早期单语样例包含未注册 English 草稿的失败记录，供追溯；样例生成器已按注册语言过滤，最终六样例全部通过，没有放宽 codec 对未注册语言的检查。
+- [source-codec-handoff.json](source-codec-handoff.json)：机器可读的字段合同、资源、测试和证据摘要。
+
+本报告不将上述 PC 往返或原厂编译结果称作全部触控实机验收，也不包含关机安排。

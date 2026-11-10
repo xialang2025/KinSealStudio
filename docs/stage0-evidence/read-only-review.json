@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-10",
+  "mode": "read-only review; no business-logic edits in review phase",
+  "files": [
+    "KinSealStudio/tools/stage0_baseline.py",
+    "KinSealStudio/tools/RunStage0.ps1",
+    "KinSealStudio/samples/stage0/stage0-baseline.ksp"
+  ],
+  "checks": {
+    "originalNativeAndHelpFrozen": true,
+    "priorRunDirectoriesNeverOverwritten": true,
+    "transferRequiresExplicitFlag": true,
+    "offlineValidationBeforeTransfer": true,
+    "sourceRoundtripComparisonBeforeTransfer": true,
+    "singleOnlineVidPidRequired": true,
+    "sourceAndExecutableIdentityRecheckedBeforeTransfer": true,
+    "allCliWindowsHidden": true,
+    "noForegroundInputOrShutdownCalls": true,
+    "existingCompilerAcknowledgementFlagsUnchanged": true,
+    "historicalAcceptanceNotCopiedAsCurrent": true
+  },
+  "findings": [],
+  "limits": [
+    "Target model derives from the authorized project; VID/PID is not firmware/model proof.",
+    "Exact firmware and physical screen behavior are not observed.",
+    "Current source manifest is not a new compilation or a source-to-executable provenance proof.",
+    "Download result is the formal CLI result, not a new captured USB packet trace."
+  ],
+  "runtimeEvidence": "baseline-run-usb-r2/run.json"
+}

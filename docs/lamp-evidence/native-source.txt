@@ -1,0 +1,41 @@
+********* Start testing of NativeProjectCodecTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : NativeProjectCodecTests::initTestCase()
+QINFO  : NativeProjectCodecTests::nativeCorpusKeepsExactBytes() Native source snapshots checked: 36
+PASS   : NativeProjectCodecTests::nativeCorpusKeepsExactBytes()
+PASS   : NativeProjectCodecTests::malformedHeadersAreTransactional()
+PASS   : NativeProjectCodecTests::changedArchivesAreRejected()
+PASS   : NativeProjectCodecTests::opaqueBodyIsNeverReportedAsValidated()
+PASS   : NativeProjectCodecTests::nativeAddressOracleRoundTrip()
+PASS   : NativeProjectCodecTests::sourceAddressMatchesQt4Primitives()
+PASS   : NativeProjectCodecTests::malformedAddressesAreTransactional()
+PASS   : NativeProjectCodecTests::semanticOperationsFailExplicitly()
+PASS   : NativeProjectCodecTests::supportedEditsKeepNativeStructure()
+PASS   : NativeProjectCodecTests::nativeUiVariantSemantics()
+PASS   : NativeProjectCodecTests::inactiveDirtyConditionsBecomeCanonicalWhenEnabled()
+PASS   : NativeProjectCodecTests::createAddCopyDeleteNativeButtons()
+PASS   : NativeProjectCodecTests::mixedNativeButtonsAndStaticTitles()
+PASS   : NativeProjectCodecTests::nativeExternalWordTypeOracles()
+PASS   : NativeProjectCodecTests::unsupportedMetadataEditsAreTransactional()
+PASS   : NativeProjectCodecTests::nativeMultilingualSourcesAndLanguageDefaults()
+PASS   : NativeProjectCodecTests::nativeStartupLanguageRemainsIndependentOfEditorSelection()
+PASS   : NativeProjectCodecTests::nativeIndicatorStateListsCanShrinkAndGrow()
+PASS   : NativeProjectCodecTests::nativeMacroSourcesAndBindingsRemainEditable()
+QINFO  : NativeProjectCodecTests::nativeWordButtonCorpusKeepsExactBytes() Original word-button source snapshots checked: 2
+PASS   : NativeProjectCodecTests::nativeWordButtonCorpusKeepsExactBytes()
+PASS   : NativeProjectCodecTests::nativeWordButtonOperationsAndNewMixedProjects()
+PASS   : NativeProjectCodecTests::nativeWordButtonPressedStatesAndGuards()
+QINFO  : NativeProjectCodecTests::nativeLampCorpusKeepsExactBytes() Original lamp source snapshots checked: 16
+PASS   : NativeProjectCodecTests::nativeLampCorpusKeepsExactBytes()
+PASS   : NativeProjectCodecTests::nativeLampMonitoringEditsAndMixedCreation()
+PASS   : NativeProjectCodecTests::nativeLampStateExpansionAndGuards()
+PASS   : NativeProjectCodecTests::nativeLampNoImageAndSharedText()
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(u16-five)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(u32-thirty-two)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(dual-bit)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(dual-word-bit)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(bilingual-visibility)
+PASS   : NativeProjectCodecTests::nativeLampActualSamplesRoundTrip(device-mixed)
+PASS   : NativeProjectCodecTests::cleanupTestCase()
+Totals: 34 passed, 0 failed, 0 skipped, 0 blacklisted, 3305ms
+********* Finished testing of NativeProjectCodecTests *********

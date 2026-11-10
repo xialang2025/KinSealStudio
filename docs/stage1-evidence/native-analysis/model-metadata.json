@@ -1,0 +1,358 @@
+{
+  "date": "2026-11-10",
+  "targetModel": "AMT070W124-L800X480R",
+  "method": "Python hashlib + ElementTree and exact bounded XML member extraction; not a REA execution or firmware readback",
+  "artifacts": [
+    {
+      "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\model.dat",
+      "length": 25936,
+      "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+      "encoding": "UTF-8 with BOM; XML declares UTF-8",
+      "rootTag": "KNSModel",
+      "modelElementCount": 81,
+      "matchingTargetCount": 1,
+      "targetByteRange": {
+        "start": 18195,
+        "endExclusive": 18510
+      },
+      "targetSnippet": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/model.dat.target.xml",
+        "length": 315,
+        "sha256": "0d4585d5af378594a7f2c506e52e2bcd43e06f3b10b19a105e6efb55ca93f92f"
+      },
+      "fields": [
+        {
+          "tag": "Seris",
+          "rawText": "AMT",
+          "attributes": {}
+        },
+        {
+          "tag": "Inch",
+          "rawText": "7.0",
+          "attributes": {}
+        },
+        {
+          "tag": "Pixels",
+          "rawText": "800*480",
+          "attributes": {}
+        },
+        {
+          "tag": "Colors",
+          "rawText": "1667M",
+          "attributes": {}
+        },
+        {
+          "tag": "Memory",
+          "rawText": "8M",
+          "attributes": {}
+        },
+        {
+          "tag": "NFlash",
+          "rawText": "16M(Nor Flash)",
+          "attributes": {}
+        },
+        {
+          "tag": "Voltage",
+          "rawText": "DC24V(+/-15%)",
+          "attributes": {}
+        },
+        {
+          "tag": "COM1",
+          "rawText": "true",
+          "attributes": {}
+        },
+        {
+          "tag": "COM2",
+          "rawText": "true",
+          "attributes": {}
+        },
+        {
+          "tag": "USB",
+          "rawText": "true",
+          "attributes": {}
+        }
+      ]
+    },
+    {
+      "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\modelInfo.dat",
+      "length": 161214,
+      "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+      "encoding": "UTF-8 with BOM; XML declares UTF-8",
+      "rootTag": "KNSModel",
+      "modelElementCount": 80,
+      "matchingTargetCount": 1,
+      "targetByteRange": {
+        "start": 114539,
+        "endExclusive": 116559
+      },
+      "targetSnippet": {
+        "path": "KinSealStudio/docs/stage1-evidence/native-analysis/modelInfo.dat.target.xml",
+        "length": 2020,
+        "sha256": "2d145a867229a9730aa84e5b58dd9240288964fee3c2590d333568421e27511a"
+      },
+      "fields": [
+        {
+          "tag": "Device",
+          "rawText": "76",
+          "attributes": {}
+        },
+        {
+          "tag": "USB",
+          "rawText": "2",
+          "attributes": {}
+        },
+        {
+          "tag": "SerialPortDown",
+          "rawText": "false",
+          "attributes": {}
+        },
+        {
+          "tag": "AsciiSize",
+          "rawText": "410,410",
+          "attributes": {}
+        },
+        {
+          "tag": "AsciiSSize",
+          "rawText": "320,288",
+          "attributes": {}
+        },
+        {
+          "tag": "NumberSize",
+          "rawText": "320,288",
+          "attributes": {}
+        },
+        {
+          "tag": "HexSize",
+          "rawText": "320,288",
+          "attributes": {}
+        },
+        {
+          "tag": "MessageFile",
+          "rawText": "20000",
+          "attributes": {}
+        },
+        {
+          "tag": "TransBuf",
+          "rawText": "40000",
+          "attributes": {}
+        },
+        {
+          "tag": "UploadSize",
+          "rawText": "f0000",
+          "attributes": {}
+        },
+        {
+          "tag": "Pagenocolect",
+          "rawText": "144000",
+          "attributes": {}
+        },
+        {
+          "tag": "Pagecolect",
+          "rawText": "144000",
+          "attributes": {}
+        },
+        {
+          "tag": "SigleScreen",
+          "rawText": "300000",
+          "attributes": {}
+        },
+        {
+          "tag": "SigleScreenBK",
+          "rawText": "0",
+          "attributes": {}
+        },
+        {
+          "tag": "macrofileSize",
+          "rawText": "20000",
+          "attributes": {}
+        },
+        {
+          "tag": "SiglecontrolSize",
+          "rawText": "300000",
+          "attributes": {}
+        },
+        {
+          "tag": "maxScreen",
+          "rawText": "200",
+          "attributes": {}
+        },
+        {
+          "tag": "maxControl",
+          "rawText": "100",
+          "attributes": {}
+        },
+        {
+          "tag": "controlFileSize",
+          "rawText": "350000",
+          "attributes": {}
+        },
+        {
+          "tag": "controlParaFileSize",
+          "rawText": "1E0000",
+          "attributes": {}
+        },
+        {
+          "tag": "screenFileSize",
+          "rawText": "310000",
+          "attributes": {}
+        },
+        {
+          "tag": "LogoSize",
+          "rawText": "40000",
+          "attributes": {}
+        },
+        {
+          "tag": "addrRange",
+          "rawText": "4096",
+          "attributes": {}
+        },
+        {
+          "tag": "gifFrames",
+          "rawText": "0",
+          "attributes": {}
+        },
+        {
+          "tag": "MfbStates",
+          "rawText": "32",
+          "attributes": {}
+        },
+        {
+          "tag": "MonitorStates",
+          "rawText": "32",
+          "attributes": {}
+        },
+        {
+          "tag": "collectMaxsize",
+          "rawText": "65535",
+          "attributes": {}
+        },
+        {
+          "tag": "collectMaxlength",
+          "rawText": "32",
+          "attributes": {}
+        },
+        {
+          "tag": "collectMen",
+          "rawText": "FD84",
+          "attributes": {}
+        },
+        {
+          "tag": "buseSPI",
+          "rawText": "true",
+          "attributes": {}
+        },
+        {
+          "tag": "bDataHL",
+          "rawText": "true",
+          "attributes": {}
+        },
+        {
+          "tag": "bgb2312",
+          "rawText": "true",
+          "attributes": {}
+        },
+        {
+          "tag": "macroRWEntry",
+          "rawText": "80440000",
+          "attributes": {}
+        },
+        {
+          "tag": "macrogetData",
+          "rawText": "804c5070",
+          "attributes": {}
+        },
+        {
+          "tag": "macroEntry",
+          "rawText": "80520400",
+          "attributes": {}
+        },
+        {
+          "tag": "macroEntryStr",
+          "rawText": "80520400",
+          "attributes": {}
+        },
+        {
+          "tag": "guilib",
+          "rawText": "guilib70.a",
+          "attributes": {}
+        },
+        {
+          "tag": "guilibT",
+          "rawText": "guilib70_amt.a",
+          "attributes": {}
+        },
+        {
+          "tag": "script",
+          "rawText": "script_amzlib.a",
+          "attributes": {}
+        },
+        {
+          "tag": "macroLB",
+          "rawText": "0x804c5010",
+          "attributes": {}
+        },
+        {
+          "tag": "macroLW",
+          "rawText": "0x804c5020",
+          "attributes": {}
+        },
+        {
+          "tag": "macroRWI",
+          "rawText": "0x804c5030",
+          "attributes": {}
+        },
+        {
+          "tag": "HzFile",
+          "rawText": "HZ_ASmall.bin",
+          "attributes": {}
+        },
+        {
+          "tag": "fbottomFile",
+          "rawText": "AMT070W124-L800X480R.bin",
+          "attributes": {}
+        },
+        {
+          "tag": "cbottomFile",
+          "rawText": "AMT070W124-L800X480R.bin",
+          "attributes": {}
+        },
+        {
+          "tag": "offlineExe",
+          "rawText": "V51_800X480.exe",
+          "attributes": {}
+        },
+        {
+          "tag": "onlineExe",
+          "rawText": "onlineV51_800X480.exe",
+          "attributes": {}
+        },
+        {
+          "tag": "com1Suffix",
+          "rawText": "_com1.bin",
+          "attributes": {}
+        },
+        {
+          "tag": "com2Suffix",
+          "rawText": "_com2.bin",
+          "attributes": {}
+        },
+        {
+          "tag": "drivePath",
+          "rawText": "Link/serial_amz/",
+          "attributes": {}
+        },
+        {
+          "tag": "startScreen",
+          "rawText": "HMIStudiostart_800x480.png",
+          "attributes": {}
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "XML metadata is static installed configuration, not observed firmware behavior or full UI capability proof",
+    "Keep every raw lexical value: decimal/hex interpretation and size units require consumer confirmation",
+    "Device=76 is an internal XML field; not inferred as USB VID/PID",
+    "fbottomFile/cbottomFile name a disk image, not the connected device firmware identity"
+  ]
+}
