@@ -671,8 +671,8 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     m_pageWidth = width;
     m_pageHeight = height;
     page_item = m_scene->addRect(QRectF(0.0, 0.0, width, height),
-                                 QPen(QColor(90, 101, 116), 1.0),
-                                 QBrush(QColor(194, 219, 249)));
+                                 QPen(Qt::black, 1.0) /*20261111-1 change: Preserve the native one-pixel page outline.*/,
+                                 QBrush(QColor(197, 222, 255))); //20261111-1 change: Match the original editor default page fill.
     page_item->setZValue(-10.0);
     page_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
     page_item->setFlag(QGraphicsItem::ItemIsMovable, false);

@@ -383,7 +383,7 @@ void StaticTextTests::toolbarCreationFlow() //20261108-14 add
     window.show(); QApplication::processEvents();
     Q_FOREACH (action, window.findChildren<QAction *>())
     {
-        if (action->text() == QStringLiteral("静态文本")) { textAction = action; }
+        if (action->objectName() == QStringLiteral("action_text")) { textAction = action; } //20261111-1 change: Native labels differ; command identity remains stable.
     }
     QVERIFY(textAction != nullptr);
     QTimer::singleShot(0, &window, [&window, &opened]() {
@@ -1177,7 +1177,7 @@ void StaticTextTests::galleryArtworkTransparency() //20261109-4 add
     canvasObject = object; canvasObject.geometry.moveTopLeft(QPoint(50, 50)); project.objects = {canvasObject};
     canvas.setProject(project);
     painter.begin(&image); canvas.scene()->render(&painter, image.rect(), image.rect()); painter.end();
-    QCOMPARE(image.pixelColor(50, 50), QColor(194, 219, 249));
+    QCOMPARE(image.pixelColor(50, 50), QColor(197, 222, 255)); //20261111-1 change: The native shell restores the original default page fill.
     QVERIFY(image.save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/gallery-alpha-canvas.png"))));
     underlay = QImage(128, 128, QImage::Format_RGB16); underlay.fill(pageColor);
     QVERIFY2(buildBitButtonSprites(object, QStringLiteral("中文"), {0}, &sprites, &error, underlay), qPrintable(error));

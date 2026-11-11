@@ -1,7 +1,7 @@
 ﻿param(
     [switch]$Deploy,
     [ValidatePattern('^[A-Za-z0-9_-]+$')]
-    [string]$DeployDirectoryName = 'KinSealStudioLite-Stage3-0.10.0-final' #20261110-8 change: Publish independently while the previous editor remains open.
+    [string]$DeployDirectoryName = 'KinSealStudioLite-MainWindow-0.10.1' #20261111-1 change: Publish the native shell independently of unfinished stage-3 work.
 )
 
 # 20261107-6 add: Build the Qt editor and optionally create a self-contained deployment directory.

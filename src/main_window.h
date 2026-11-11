@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    bool openProjectPath(const QString &path, QString *error = nullptr); //20261111-1 add: Reuse the validated open transaction for file arguments and owned captures.
     ~MainWindow() override; //20261110-7 add: Detach application-wide signals before derived state is destroyed.
 
 private slots:
@@ -104,6 +105,11 @@ private:
     bool m_hasPendingControlResources = false;
 
     void createActionsAndMenus();
+    void initializeNativeShell(); //20261111-1 add: Bind the recovered shell resources to existing command transactions.
+    void createNativeStatusBar();
+    QWidget *createNativePalette(const QString &group);
+    void updateNativeStatusBar();
+    void decorateNativeSystemTree();
     void createToolbars();
     QWidget *createToolbox();
     QWidget *createPropertyEditor();
@@ -120,7 +126,6 @@ private:
     bool writeProject(const QString &path);
     HmiProject currentEditorProject() const; //20261110-7 add
     bool commitProjectDraft(const HmiProject &project, QString *error = nullptr);
-    bool openProjectPath(const QString &path, QString *error = nullptr);
     bool activatePageId(const QString &pageId, const QString &objectId = QString());
     void refreshPageNavigation();
     void rebuildSystemSettings();

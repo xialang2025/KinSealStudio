@@ -15,6 +15,7 @@
 #include <QJsonDocument>
 #include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QSettings>
 #include <QSpinBox>
 #include <QTabBar>
@@ -23,6 +24,13 @@
 #include <QTest>
 #include <QTimer>
 #include <QToolBar>
+#include <QToolButton> //20261111-1 add
+#include <QDockWidget>
+#include <QMenuBar>
+#include <QMenu>
+#include <QScrollArea>
+#include <QStatusBar>
+#include <QDir>
 #include <QTreeWidget>
 
 //20261110-7 add: Exercise the real main-window transactions without using physical input or USB.
@@ -51,6 +59,9 @@ private slots:
     void invalidDraftAndNativeOverwriteAreAtomic();
     void reopenAfterCloseRestoresEditor();
     void recentFilesAreBoundedAndIsolated();
+    void nativeShellResourcesAndNavigation(); //20261111-1 add
+    void nativeShellQuickPropertiesPreserveEditing();
+    void nativeShellPendingCommandsAreReadOnly();
 };
 
 /******************************************************************************
@@ -662,6 +673,135 @@ void Stage2WorkflowTests::recentFilesAreBoundedAndIsolated() //20261110-7 add
     QCOMPARE(paths.size(), 10);
     QCOMPARE(paths.first(), path);
     QCOMPARE(paths.count(path), 1);
+}
+
+/******************************************************************************
+ * Function Name   : nativeShellResourcesAndNavigation
+ * Description     : Check retained icons, native shell geometry, recent-file routing and live status clearing.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.11
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeShellResourcesAndNavigation() //20261111-1 add
+{
+    MainWindow window;
+    QToolBar *bar;
+    QScrollArea *palette;
+    QLineEdit *field;
+    QTemporaryDir files;
+    QMenu *fileMenu;
+    QAction *action;
+    bool recentFound;
+    QString captures;
+
+    window.setProject(workflowProject(), QString()); window.resize(1353, 708); window.show();
+    QTest::qWait(30);
+    QCOMPARE(window.menuBar()->actions().size(), 8);
+    QCOMPARE(window.findChildren<QToolBar *>().size(), 7);
+    bar = window.findChild<QToolBar *>(QStringLiteral("standardToolBar"));
+    QVERIFY(bar != nullptr); QCOMPARE(bar->geometry(), QRect(0, 19, 198, 34));
+    bar = window.findChild<QToolBar *>(QStringLiteral("toolBar_Control"));
+    QCOMPARE(bar->geometry().y(), 95); QCOMPARE(bar->height(), 34);
+    QCOMPARE(window.findChild<QDockWidget *>(QStringLiteral("ProjectTreeDock"))->width(), 242);
+    QCOMPARE(window.findChild<QDockWidget *>(QStringLiteral("ToolPropertyDock"))->width(), 337);
+    QCOMPARE(window.statusBar()->height(), 25);
+    QCOMPARE(window.m_systemSettingsTree->mapTo(&window, QPoint()), QPoint(20, 188));
+    QCOMPARE(window.m_rightTabs->mapTo(&window, QPoint()).y(), 149);
+    QCOMPARE(window.m_rightTabs->tabText(2), QStringLiteral("基本控件"));
+    QVERIFY(!window.m_rightTabs->isTabVisible(1));
+    palette = window.findChild<QScrollArea *>(QStringLiteral("NativeControlPalette"));
+    QCOMPARE(palette->findChildren<QToolButton *>().size(), 31);
+    palette = window.findChild<QScrollArea *>(QStringLiteral("NativeBasicPalette"));
+    QCOMPARE(palette->findChildren<QToolButton *>().size(), 10);
+    QVERIFY(!window.m_commands.value(QStringLiteral("action_H"))->icon().isNull());
+    QVERIFY(!window.m_commands.value(QStringLiteral("action_h"))->icon().isNull());
+    QVERIFY(window.m_commands.value(QStringLiteral("action_H"))->icon().pixmap(24).toImage() !=
+            window.m_commands.value(QStringLiteral("action_h"))->icon().pixmap(24).toImage());
+    QVERIFY(!window.windowIcon().isNull());
+    window.m_commands.value(QStringLiteral("action_zoonbig"))->trigger();
+    QCOMPARE(window.m_canvas->transform().m11(), 1.25);
+    window.m_commands.value(QStringLiteral("action_zoonfit"))->trigger();
+    QCOMPARE(window.m_canvas->transform().m11(), 1.0); QVERIFY(!window.m_dirty);
+    QVERIFY(!window.m_commands.value(QStringLiteral("action_dataDisplay"))->property("nativeShellPending").toBool());
+    QVERIFY(!window.m_commands.value(QStringLiteral("pictruedisplay"))->property("nativeShellPending").toBool());
+    QVERIFY(files.isValid()); window.updateRecentProjects(files.filePath(QStringLiteral("visible-recent.ksp")));
+    fileMenu = window.menuBar()->actions().first()->menu(); recentFound = false;
+    Q_FOREACH (action, fileMenu->actions()) { if (action->menu() == window.m_recentProjectsMenu) { recentFound = true; } }
+    QVERIFY(recentFound); QVERIFY(!window.m_recentProjectsMenu->actions().isEmpty());
+    window.m_canvas->selectObject(QStringLiteral("workflow-text"));
+    field = window.findChild<QLineEdit *>(QStringLiteral("NativeObjectX"));
+    QVERIFY(field != nullptr); QCOMPARE(field->text(), QStringLiteral("244"));
+    captures = qEnvironmentVariable("KINSEAL_SHELL_CAPTURE_DIR");
+    if (!captures.isEmpty())
+    {
+        QVERIFY(window.grab().save(QDir(captures).filePath(QStringLiteral("selected-control.png"))));
+        window.m_rightTabs->setCurrentIndex(2); QTest::qWait(20);
+        QVERIFY(window.grab().save(QDir(captures).filePath(QStringLiteral("basic-controls.png"))));
+    }
+    window.closeProject();
+    QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeControlCount"))->text(), QString());
+    QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeResolution"))->text(), QString());
+    QCOMPARE(field->text(), QString());
+}
+
+/******************************************************************************
+ * Function Name   : nativeShellQuickPropertiesPreserveEditing
+ * Description     : Exercise the relocated exact-geometry editor and restore the native toolbox after modal closing.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.11
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeShellQuickPropertiesPreserveEditing() //20261111-1 add
+{
+    MainWindow window;
+    QAction *quick;
+    bool edited;
+
+    window.setProject(workflowProject(), QString()); window.show();
+    window.m_canvas->selectObject(QStringLiteral("workflow-text"));
+    quick = window.findChild<QAction *>(QStringLiteral("ShellQuickProperties"));
+    QVERIFY(quick != nullptr); edited = false;
+    QTimer::singleShot(0, &window, [&window, &edited]() {
+        QDialog *dialog;
+        QPushButton *apply;
+        dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (dialog == nullptr) { return; }
+        QVERIFY(window.m_xSpin->isVisible());
+        QVERIFY(window.m_nameEdit->isVisible());
+        window.m_xSpin->setValue(123);
+        apply = dialog->findChild<QPushButton *>(QStringLiteral("ApplyPropertiesButton"));
+        if (apply != nullptr) { apply->click(); edited = true; }
+        dialog->reject();
+    });
+    quick->trigger(); QVERIFY(edited);
+    QCOMPARE(window.m_canvas->objects().first().geometry.x(), 123);
+    QCOMPARE(window.m_rightTabs->count(), 3); QVERIFY(!window.m_rightTabs->isTabVisible(1));
+    QCOMPARE(window.m_rightTabs->tabText(2), QStringLiteral("基本控件"));
+}
+
+/******************************************************************************
+ * Function Name   : nativeShellPendingCommandsAreReadOnly
+ * Description     : Confirm future-stage icons give an explicit message and cannot mutate the current project.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.11
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeShellPendingCommandsAreReadOnly() //20261111-1 add
+{
+    MainWindow window;
+    QJsonObject before;
+    bool explained;
+
+    window.setProject(workflowProject(), QString()); window.show();
+    before = window.currentEditorProject().toJson(); explained = false;
+    QTimer::singleShot(0, &window, [&explained]() {
+        QMessageBox *message;
+        message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+        if (message != nullptr) { explained = message->text().contains(QStringLiteral("后续阶段")); message->accept(); }
+    });
+    window.m_commands.value(QStringLiteral("action_qrcode"))->trigger();
+    QVERIFY(explained); QCOMPARE(window.currentEditorProject().toJson(), before);
+    QVERIFY(!window.m_dirty);
 }
 
 QTEST_MAIN(Stage2WorkflowTests)

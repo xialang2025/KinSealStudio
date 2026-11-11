@@ -71,6 +71,7 @@
  * Return Value    : A 28 by 28 icon used by one toolbox entry.
  * Date            : 2026.11.08
  ******************************************************************************/
+#if 0 //20261111-1 del: Original resource icons replace the earlier generated symbols.
 static QIcon paletteIcon(const QString &glyph, const QColor &color) //20261108-7 add
 {
     QPixmap image(28, 28);
@@ -92,6 +93,7 @@ static QIcon paletteIcon(const QString &glyph, const QColor &color) //20261108-7
     painter.end();
     return QIcon(image);
 }
+#endif
 #include <windows.h>
 #include <setupapi.h>
 #endif
@@ -128,13 +130,14 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     QDockWidget *tool_dock;
     QTimer *device_timer;
 
-    setWindowTitle(QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版")); //20261110-7 change
+    setWindowTitle(QStringLiteral("KinSealStudio")); //20261111-1 change
     setMinimumSize(900, 480);
-    resize(1376, 736); //20261108-7 change: Match the measured vendor window dimensions.
+    resize(1353, 708); //20261111-1 change: Match the supplied native client at 96 DPI. //20261108-7 change: Match the measured vendor window dimensions.
     setDockNestingEnabled(true);
     m_pageTabs->addTab(m_canvas, QStringLiteral("画面1"));
     setCentralWidget(m_pageTabs); //20261108-7 change: Preserve the vendor's page tab above the canvas.
     createActionsAndMenus();
+    initializeNativeShell(); //20261111-1 add
     createToolbars();
 
     project_dock = new QDockWidget(QStringLiteral("窗口"), this);
@@ -157,12 +160,13 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     m_projectTree->setSelectionMode(QAbstractItemView::SingleSelection);
     m_leftTabs->addTab(createSystemSettingsTree(), QStringLiteral("系统参数"));
     m_leftTabs->addTab(m_projectTree, QStringLiteral("对象列表"));
+    m_leftTabs->setTabVisible(1, false); //20261111-1 change: Retain the object navigator without adding a non-native visible tab.
     m_rightTabs->addTab(createToolbox(), QStringLiteral("控件"));
     m_rightTabs->addTab(createPropertyEditor(), QStringLiteral("属性"));
-    statusBar()->addPermanentWidget(m_projectLabel);
-    statusBar()->addPermanentWidget(m_coordinateLabel);
-    statusBar()->addPermanentWidget(m_connectionLabel, 1);
-    resizeDocks({project_dock, tool_dock}, {250, 350}, Qt::Horizontal);
+    m_rightTabs->setTabVisible(1, false); //20261111-1 change: Full property dialogs remain the visible editing entry.
+    m_rightTabs->addTab(createNativePalette(QStringLiteral("basic")), QStringLiteral("基本控件"));
+    createNativeStatusBar(); //20261111-1 change
+    resizeDocks({project_dock, tool_dock}, {242, 337}, Qt::Horizontal);
 
     connect(m_canvas, &ScreenCanvas::objectSelectionChanged,
             this, &MainWindow::updateSelection);
@@ -435,7 +439,7 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
     action = command(QStringLiteral("action_KinSeal"), QStringLiteral("关于 KinSealStudio Lite"));
     help->addAction(action);
     connect(action, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版\n画布事务、跨工程复制、多重复制及工程图片管理，五类单页编译及USB下载。"));
+        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.10.1\n主窗口外观版\n支持的工程与设备功能以随包说明为准。"));
     });
 }
 
@@ -446,6 +450,7 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
+#if 0 //20261111-1 del: Preserve the earlier simplified toolbar implementation for traceability.
 void MainWindow::createToolbars() //20261110-7 change
 {
     QToolBar *file;
@@ -501,6 +506,8 @@ void MainWindow::createToolbars() //20261110-7 change
     });
 }
 
+#endif
+
 /******************************************************************************
  * Function Name   : MainWindow::createToolbox
  * Description     : Create a small palette of selectable controls that can be placed on the page.
@@ -508,6 +515,7 @@ void MainWindow::createToolbars() //20261110-7 change
  * Return Value    : Toolbox widget with prototype control placement buttons.
  * Date            : 2026.11.07
  ******************************************************************************/
+#if 0 //20261111-1 del: Native icons and the complete palette are implemented in native_shell_ui.cpp.
 QWidget *MainWindow::createToolbox() //20261107-6 add
 {
     QWidget *page;
@@ -614,6 +622,8 @@ QWidget *MainWindow::createToolbox() //20261107-6 add
     return page;
 }
 
+#endif
+
 /******************************************************************************
  * Function Name   : MainWindow::createSystemSettingsTree
  * Description     : Present the model and system-parameter sections seen in the vendor editor.
@@ -623,10 +633,13 @@ QWidget *MainWindow::createToolbox() //20261107-6 add
  ******************************************************************************/
 QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
 {
+    QWidget *page; //20261111-1 add
+    QVBoxLayout *layout;
+
     m_systemSettingsTree = new QTreeWidget(this);
     m_systemSettingsTree->setObjectName(QStringLiteral("SystemSettingsTree"));
     m_systemSettingsTree->setHeaderHidden(true);
-    m_systemSettingsTree->setStyleSheet(QStringLiteral("QTreeWidget { background: #d8efdc; border: 1px solid #a5c1aa; }"));
+    m_systemSettingsTree->setStyleSheet(QStringLiteral("QTreeWidget { background: #caeace; border: 1px solid #8e9a8f; }"));
     connect(m_systemSettingsTree, &QTreeWidget::itemDoubleClicked, this, [this](QTreeWidgetItem *item) {
         QString role;
         QString pageId;
@@ -644,7 +657,9 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
             QMessageBox::information(this, label, QStringLiteral("此配置尚未开放编辑。现有工程数据会保留；下载前会校验支持范围。"));
         }
     });
-    return m_systemSettingsTree;
+    page = new QWidget(this); layout = new QVBoxLayout(page); //20261111-1 change
+    layout->setContentsMargins(10, 9, 12, 12); layout->addWidget(m_systemSettingsTree);
+    return page;
 }
 
 /******************************************************************************
@@ -1162,7 +1177,7 @@ void MainWindow::updateSelection(const HmiObject &object, bool selected) //20261
 {
     fillProperties(object, selected);
     rebuildProjectTree();
-    m_rightTabs->setCurrentIndex(selected ? 1 : 0);
+    updateNativeStatusBar(); //20261111-1 change: Selection updates native status fields without replacing the toolbox tab.
     if (selected) //20261108-14 add: Show the selected rectangle rather than only the pointer coordinate.
     {
         m_coordinateLabel->setText(QStringLiteral("%1  左:%2 上:%3 宽:%4 高:%5")
@@ -1243,6 +1258,7 @@ void MainWindow::rebuildProjectTree() //20261110-5 change
     m_projectTree->blockSignals(false);
     refreshPageNavigation(); //20261110-7 add
     updateCommandStates();
+    updateNativeStatusBar(); //20261111-1 add
 }
 
 /******************************************************************************
@@ -1301,10 +1317,12 @@ void MainWindow::setDirty(bool dirty) //20261107-6 add
     if (dirty) { recordProjectHistory(); } //20261110-7 add
     m_dirty = dirty && m_hasProject && projectIsModified();
     if (!dirty && !m_restoringProject && m_hasProject) { storeSavedCheckpoint(); }
-    title = QStringLiteral("KinSealStudio Lite 0.10.0 画布与资源版 - %1%2") //20261110-7 change
-                .arg(m_project.name)
+    title = QStringLiteral("KinSealStudio--%1--%2%3") //20261111-1 change
+                .arg(m_currentPath.isEmpty() ? m_project.name : QDir::toNativeSeparators(m_currentPath))
+                .arg(m_project.pageName)
                 .arg(m_dirty ? QStringLiteral(" *") : QString());
     setWindowTitle(title);
+    updateNativeStatusBar(); //20261111-1 add: Closing a document clears the visible native fields as well.
     updateCommandStates(); //20261110-7 add
 }
 
@@ -1387,7 +1405,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_ySpin->setEnabled(selected);
     m_widthSpin->setEnabled(selected);
     m_heightSpin->setEnabled(selected);
-    buttons = m_rightTabs->findChildren<QPushButton *>(QStringLiteral("ApplyPropertiesButton"));
+    buttons = findChildren<QPushButton *>(QStringLiteral("ApplyPropertiesButton"));
     apply_button = buttons.isEmpty() ? nullptr : buttons.first();
     if (apply_button != nullptr)
     {

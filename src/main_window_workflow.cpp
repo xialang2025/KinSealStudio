@@ -381,22 +381,30 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
 
     if (m_systemSettingsTree == nullptr) { return; }
     m_systemSettingsTree->clear();
+    //20261111-1 change: Match the original navigation hierarchy without creating unsupported configuration records.
     settings = new QTreeWidgetItem(m_systemSettingsTree, {QStringLiteral("设置")});
     connections = new QTreeWidgetItem(settings, {QStringLiteral("连接设置")});
-    Q_FOREACH (connection, m_project.connections) {
-        item = new QTreeWidgetItem(connections, {connection.id + QStringLiteral(" / ") + connection.profileId});
-        item->setData(0, Qt::UserRole, QStringLiteral("connections"));
-    }
     connections->setData(0, Qt::UserRole, QStringLiteral("connections"));
+    for (number = 1; number <= 2; ++number)
+    {
+        item = new QTreeWidgetItem(connections, {QStringLiteral("COM%1").arg(number)});
+        item->setData(0, Qt::UserRole, number == 1 ? QStringLiteral("connections") : QStringLiteral("unsupported"));
+        if (number == 1)
+        {
+            parent = new QTreeWidgetItem(item, {QStringLiteral("Modbus_RTU")});
+            parent->setData(0, Qt::UserRole, QStringLiteral("connections"));
+        }
+    }
     normal = new QTreeWidgetItem(settings, {QStringLiteral("画面")});
     windows = new QTreeWidgetItem(settings, {QStringLiteral("窗口")});
     keyboards = new QTreeWidgetItem(settings, {QStringLiteral("自定义键盘")});
     logos = new QTreeWidgetItem(settings, {QStringLiteral("开机Logo")});
     number = 0;
-    Q_FOREACH (page, m_project.allPages()) {
+    Q_FOREACH (page, m_project.allPages())
+    {
         parent = page.kind == QStringLiteral("normal") ? normal : page.kind == QStringLiteral("window") ? windows :
                  page.kind == QStringLiteral("keyboard") ? keyboards : logos;
-        item = new QTreeWidgetItem(parent, {QStringLiteral("%1: %2").arg(number++, 3, 10, QLatin1Char('0')).arg(page.name)});
+        item = new QTreeWidgetItem(parent, {QStringLiteral("%1:%2").arg(number++, 3, 10, QLatin1Char('0')).arg(page.name)});
         item->setData(0, Qt::UserRole, QStringLiteral("page"));
         item->setData(0, Qt::UserRole + 1, page.id);
     }
@@ -404,20 +412,32 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     windows->setData(0, Qt::UserRole, QStringLiteral("project"));
     system = new QTreeWidgetItem(settings, {QStringLiteral("系统设置")});
     Q_FOREACH (label, (QStringList{QStringLiteral("参数设置"), QStringLiteral("HMI状态"), QStringLiteral("PLC控制"),
-        QStringLiteral("时钟"), QStringLiteral("文件保护"), QStringLiteral("HMI保护"), QStringLiteral("语言设置")})) {
+        QStringLiteral("时钟"), QStringLiteral("文件保护"), QStringLiteral("HMI保护"), QStringLiteral("语言设置")}))
+    {
         item = new QTreeWidgetItem(system, {label});
         item->setData(0, Qt::UserRole, label == QStringLiteral("参数设置") ? QStringLiteral("system") :
                       label == QStringLiteral("语言设置") ? QStringLiteral("languages") : QStringLiteral("unsupported"));
     }
-    Q_FOREACH (label, (QStringList{QStringLiteral("数据采集"), QStringLiteral("数位地址报警"), QStringLiteral("条件报警"),
-                                  QStringLiteral("配方"), QStringLiteral("资料传输")})) {
-        item = new QTreeWidgetItem(m_systemSettingsTree, {label});
-        item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+    item = new QTreeWidgetItem(settings, {QStringLiteral("数据采集")});
+    item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+    parent = new QTreeWidgetItem(settings, {QStringLiteral("报警登录")});
+    Q_FOREACH (label, (QStringList{QStringLiteral("数位地址报警"), QStringLiteral("条件报警")}))
+    {
+        item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
     }
-    item = new QTreeWidgetItem(m_systemSettingsTree, {QStringLiteral("宏指令查找")});
-    item->setData(0, Qt::UserRole, QStringLiteral("macros"));
+    parent = new QTreeWidgetItem(settings, {QStringLiteral("宏指令")});
+    Q_FOREACH (label, (QStringList{QStringLiteral("全局宏"), QStringLiteral("初始化宏"), QStringLiteral("宏指令编辑器")}))
+    {
+        item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, QStringLiteral("macros"));
+    }
+    Q_FOREACH (label, (QStringList{QStringLiteral("配方"), QStringLiteral("资料传输")}))
+    {
+        item = new QTreeWidgetItem(settings, {label}); item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+    }
+    decorateNativeSystemTree(); //20261111-1 add
     m_systemSettingsTree->setEnabled(m_hasProject);
     m_systemSettingsTree->expandAll();
+    connections->child(0)->setExpanded(false); //20261111-1 add: Preserve the native initial COM1 expansion state.
 }
 
 /******************************************************************************

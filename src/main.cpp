@@ -8,6 +8,7 @@
 #include "project_capabilities.h" //20261110-5 add
 
 #include <QApplication>
+#include <QSettings> //20261111-1 add: Keep automated captures out of the user recent-file preferences.
 #include <QDir>
 #include <QFile> //20261108-11 add
 #include <QFileInfo>
@@ -153,6 +154,12 @@ int main(int argc, char *argv[]) //20261107-6 add
     QStringList arguments;
     std::unique_ptr<MainWindow> window;
     QString capture_path;
+    QTemporaryDir captureSettings; //20261111-1 add
+    QJsonArray captureWidgets;
+    QJsonObject captureWidget;
+    QWidget *captureChild;
+    QPoint capturePosition;
+    QFile captureMetadata;
     HmiProject validation_project;
     QString validation_error;
     QImage preview;
@@ -415,10 +422,25 @@ int main(int argc, char *argv[]) //20261107-6 add
     if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--capture-preview"))
     {
         capture_path = QFileInfo(arguments.at(2)).absoluteFilePath();
+        QSettings::setDefaultFormat(QSettings::IniFormat); //20261111-1 add
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, captureSettings.path());
         window = std::make_unique<MainWindow>();
-        window->resize(1376, 736); //20261108-7 change: Capture at the vendor comparison size.
+        window->resize(1353, 708); //20261111-1 change: Compare the same logical client extent as the native reference.
+        if (arguments.size() >= 4 && !window->openProjectPath(arguments.at(3), &validation_error)) { return 7; }
+        //20261108-7 //20261108-7 change: Capture at the vendor comparison size.
         window->show();
         application.processEvents();
+        Q_FOREACH (captureChild, window->findChildren<QWidget *>()) //20261111-1 add: Retain layout evidence separately from screenshots.
+        {
+            capturePosition = captureChild->mapTo(window.get(), QPoint());
+            captureWidget = QJsonObject();
+            captureWidget.insert(QStringLiteral("id"), captureChild->objectName());
+            captureWidget.insert(QStringLiteral("class"), QString::fromLatin1(captureChild->metaObject()->className()));
+            captureWidget.insert(QStringLiteral("rect"), QJsonArray{capturePosition.x(), capturePosition.y(), captureChild->width(), captureChild->height()});
+            captureWidget.insert(QStringLiteral("visible"), captureChild->isVisible()); captureWidgets.append(captureWidget);
+        }
+        captureMetadata.setFileName(capture_path + QStringLiteral(".json"));
+        if (captureMetadata.open(QIODevice::WriteOnly)) { captureMetadata.write(QJsonDocument(captureWidgets).toJson()); }
         preview = window->grab().toImage();
         if (preview.isNull() || !preview.save(capture_path))
         {
@@ -427,6 +449,6 @@ int main(int argc, char *argv[]) //20261107-6 add
         return 0;
     }
     window = std::make_unique<MainWindow>();
-    window->show();
+    window->showMaximized(); //20261111-1 change: Start the editor in the native full-workspace presentation.
     return application.exec();
 }

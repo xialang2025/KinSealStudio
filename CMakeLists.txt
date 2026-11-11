@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(KinSealStudioLite VERSION 0.10.0 LANGUAGES CXX) #20261110-8 change: Publish the canvas and resource edition independently.
+project(KinSealStudioLite VERSION 0.10.1 LANGUAGES CXX) #20261111-1 change: Publish the native main-window shell independently.
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,6 +18,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/main_window.cpp
     src/main_window.h
     src/main_window_workflow.cpp #20261110-7 add: Share command state and whole-project transactions.
+    src/native_shell_ui.cpp #20261111-1 add: Reproduce the original desktop shell using retained native icons and layout.
+    native_shell.qrc
     src/stage3_project_edits.h #20261110-8 add
     src/stage3_project_edits.cpp
     src/stage3_resources.h

@@ -1,0 +1,26 @@
+/* 原版 QApplication.styleSheet 属性为空。下面保留真实 QWidget 直接声明；选择器为本次导出添加，仅用于对应主窗口控件。 */
+
+QWidget#m_toolwidgetCtl {
+background-color: rgb(255, 255, 255);
+color: rgb(8, 45, 105);
+}
+
+QMainWindow QTreeWidget {
+QTreeView::item:selected{background-color:rgb(0,120,215)}
+}
+
+QMenuBar#menuBar {
+background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(233, 239, 249, 255), stop:1 rgba(191, 214, 243, 255));
+border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 178, 102, 255), stop:0.55 rgba(235, 148, 61, 255), stop:0.98 rgba(0, 0, 0, 255), stop:1 rgba(0, 0, 0, 0));
+color: rgb(8, 45, 105);
+font: 9pt "宋体";
+}
+
+/* 未自动应用的匿名控件声明，kind=QWidget，geometry={'x': 10, 'y': 2, 'width': 370, 'height': 38, 'rawQRect': [10, 2, 379, 39]}：
+font: 9pt '宋体';
+*/
+
+QStatusBar#statusBar {
+background-color: rgb(197, 222, 255);
+font: 9pt "宋体";
+}
