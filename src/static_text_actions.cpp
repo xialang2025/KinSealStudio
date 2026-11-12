@@ -120,7 +120,7 @@ void MainWindow::editStaticText() //20261108-14 add
     StaticTextDialog *dialog;
 
     object = m_canvas->selectedObject(&selected);
-    if (selected && object.type == QStringLiteral("message")) { editStage4Control(); return; } //20261112-0 add
+    if (selected && (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale"))) { editStage4Control(); return; } //20261112-0 add
     if (selected && object.type == QStringLiteral("switch")) //20261108-15 add: Every property entry dispatches by control type.
     {
         editBitButton(); return;

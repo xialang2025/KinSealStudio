@@ -1410,6 +1410,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_nameEdit->setEnabled(selected);
     m_textEdit->setEnabled(selected);
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
+    if (selected && object.type == QStringLiteral("scale")) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 add
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
     m_widthSpin->setEnabled(selected);

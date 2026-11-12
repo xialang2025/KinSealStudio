@@ -1,0 +1,1259 @@
+{
+  "date": "2026-11-12",
+  "run": "scale-color-r2",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Scale20261112",
+  "input": {
+    "path": "KinSealStudio\\references\\vendor-minimal-blank\\CodexProbeBlank7.sm",
+    "sha256": "5745d7d4e797801469ee029e42740c31c43e5fbcacec582095845a0277bfd217"
+  },
+  "steps": [
+    {
+      "request": {
+        "op": "invoke",
+        "pointer": "0x60a2478",
+        "slot": "trigger"
+      },
+      "result": {
+        "serial": 19,
+        "status": "completed",
+        "value": {
+          "queuedMetaInvoke": 1,
+          "slot": "trigger",
+          "pointer": "0x60a2478"
+        },
+        "guiThread": 10324,
+        "dispatchHook": "DispatchMessageW"
+      }
+    },
+    {
+      "request": {
+        "op": "invoke",
+        "hwnd": 593400,
+        "slot": "click"
+      },
+      "result": {
+        "serial": 22,
+        "status": "completed",
+        "value": {
+          "queuedMetaInvoke": 1,
+          "slot": "click",
+          "pointer": "0x628f758"
+        },
+        "guiThread": 10324,
+        "dispatchHook": "DispatchMessageW"
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "scale-text-color-dialog",
+      "windows": [
+        {
+          "hwnd": 658910,
+          "title": "选择颜色",
+          "winClass": "QWidget",
+          "widgets": [
+            {
+              "hwnd": 658910,
+              "qt": {
+                "pointer": "0x16c2710",
+                "kind": "QColorDialog",
+                "objectName": "",
+                "text": "",
+                "title": "选择颜色",
+                "enabled": 1,
+                "visible": 1,
+                "currentColor": "#000000",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658874,
+              "qt": {
+                "pointer": "0x6025b20",
+                "kind": "QDialogButtonBox",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658868,
+              "qt": {
+                "pointer": "0x6025e20",
+                "kind": "QPushButton",
+                "objectName": "",
+                "text": "取消",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593344,
+              "qt": {
+                "pointer": "0x6025c40",
+                "kind": "QPushButton",
+                "objectName": "",
+                "text": "确定",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658862,
+              "qt": {
+                "pointer": "0xe11df90",
+                "kind": "QColorShower",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1838326,
+              "qt": {
+                "pointer": "0x6025780",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "Alpha通道(&A)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 462300,
+              "qt": {
+                "pointer": "0x6025740",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "255",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "255",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 593920,
+              "qt": {
+                "pointer": "0x6025900",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "255",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 593874,
+              "qt": {
+                "pointer": "0x6025500",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "蓝色(&U)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593870,
+              "qt": {
+                "pointer": "0x60254c0",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 659458,
+              "qt": {
+                "pointer": "0x60254e0",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 528366,
+              "qt": {
+                "pointer": "0x60258a0",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "绿色(&G)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593924,
+              "qt": {
+                "pointer": "0x60257c0",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 593926,
+              "qt": {
+                "pointer": "0x60255a0",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 1704890,
+              "qt": {
+                "pointer": "0x6025560",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "红色(&R)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1246482,
+              "qt": {
+                "pointer": "0x6025160",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 2623718,
+              "qt": {
+                "pointer": "0x60257a0",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 854908,
+              "qt": {
+                "pointer": "0x6025820",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "亮度(&V)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593346,
+              "qt": {
+                "pointer": "0x6025520",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 1707232,
+              "qt": {
+                "pointer": "0x6025600",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 527902,
+              "qt": {
+                "pointer": "0x60252e0",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "饱和度(&S)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658860,
+              "qt": {
+                "pointer": "0x60252c0",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 2493122,
+              "qt": {
+                "pointer": "0x6025460",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 527948,
+              "qt": {
+                "pointer": "0x60253c0",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "色调(&E)：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658866,
+              "qt": {
+                "pointer": "0x6025340",
+                "kind": "QSpinBox",
+                "objectName": "",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "359",
+                "value": "0",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 1180844,
+              "qt": {
+                "pointer": "0x60251c0",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 658872,
+              "qt": {
+                "pointer": "0x62d8ce8",
+                "kind": "QColorShowLabel",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593350,
+              "qt": {
+                "pointer": "0xe10b9b0",
+                "kind": "QColorLuminancePicker",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 724426,
+              "qt": {
+                "pointer": "0xe10b5f0",
+                "kind": "QColorPicker",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593352,
+              "qt": {
+                "pointer": "0x60250e0",
+                "kind": "QPushButton",
+                "objectName": "",
+                "text": "添加到自定义颜色(&A)",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593358,
+              "qt": {
+                "pointer": "0x60253e0",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "自定义颜色(&C)",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593356,
+              "qt": {
+                "pointer": "0x6019d18",
+                "kind": "QWellArray",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593342,
+              "qt": {
+                "pointer": "0x6025120",
+                "kind": "QLabel",
+                "objectName": "",
+                "text": "基本颜色(&B)",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593360,
+              "qt": {
+                "pointer": "0x6019c10",
+                "kind": "QWellArray",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            }
+          ]
+        },
+        {
+          "hwnd": 724978,
+          "title": "刻度",
+          "winClass": "QWidget",
+          "widgets": [
+            {
+              "hwnd": 724978,
+              "qt": {
+                "pointer": "0x622b730",
+                "kind": "qScale",
+                "objectName": "qScale",
+                "text": "",
+                "title": "刻度",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593904,
+              "qt": {
+                "pointer": "0x628f0d8",
+                "kind": "QPushButton",
+                "objectName": "accept",
+                "text": "确定",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 527874,
+              "qt": {
+                "pointer": "0x628f198",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_preview",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 658940,
+              "qt": {
+                "pointer": "0x628f298",
+                "kind": "QGraphicsView",
+                "objectName": "MainView",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "styleSheet": "background-color: rgba(255, 255, 255, 0);"
+              }
+            },
+            {
+              "hwnd": 1314774,
+              "qt": {
+                "pointer": "0x628f498",
+                "kind": "QWidget",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593386,
+              "qt": {
+                "pointer": "0x62bf498",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1314138,
+              "qt": {
+                "pointer": "0x62bf3f8",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 659434,
+              "qt": {
+                "pointer": "0x628f218",
+                "kind": "QPushButton",
+                "objectName": "cancel",
+                "text": "取消",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593892,
+              "qt": {
+                "pointer": "0x628f318",
+                "kind": "QTabWidget",
+                "objectName": "tabWidget",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 920428,
+              "qt": {
+                "pointer": "0x628f258",
+                "kind": "QTabBar",
+                "objectName": "qt_tabwidget_tabbar",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 920434,
+              "qt": {
+                "pointer": "0x628f3f8",
+                "kind": "QStackedWidget",
+                "objectName": "qt_tabwidget_stackedwidget",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 920432,
+              "qt": {
+                "pointer": "0x62358d0",
+                "kind": "ScalesDlg",
+                "objectName": "ScalesDlg",
+                "text": "",
+                "title": "Form",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 985966,
+              "qt": {
+                "pointer": "0x628fa58",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_4",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 527872,
+              "qt": {
+                "pointer": "0x628fb38",
+                "kind": "QRadioButton",
+                "objectName": "m_radio4",
+                "text": "下",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "true",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1836208,
+              "qt": {
+                "pointer": "0x628fc18",
+                "kind": "QRadioButton",
+                "objectName": "m_radio3",
+                "text": "上",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "true",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 985962,
+              "qt": {
+                "pointer": "0x628fc98",
+                "kind": "QRadioButton",
+                "objectName": "m_radio2",
+                "text": "右",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "true",
+                "checkable": "true",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 985972,
+              "qt": {
+                "pointer": "0x628fab8",
+                "kind": "QRadioButton",
+                "objectName": "m_radio1",
+                "text": "左",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "true",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 659454,
+              "qt": {
+                "pointer": "0x628f518",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_5",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 789916,
+              "qt": {
+                "pointer": "0x628f8d8",
+                "kind": "QLabel",
+                "objectName": "label_6",
+                "text": "最大值：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 789914,
+              "qt": {
+                "pointer": "0x628fbb8",
+                "kind": "QLabel",
+                "objectName": "label_8",
+                "text": "小数位：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 789912,
+              "qt": {
+                "pointer": "0x628f998",
+                "kind": "QLabel",
+                "objectName": "label_5",
+                "text": "最小值：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1051970,
+              "qt": {
+                "pointer": "0x628fbf8",
+                "kind": "QLineEdit",
+                "objectName": "m_minedit",
+                "text": "0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "15",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 658916,
+              "qt": {
+                "pointer": "0x628f9d8",
+                "kind": "QLineEdit",
+                "objectName": "m_maxedit",
+                "text": "100",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "15",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 4393622,
+              "qt": {
+                "pointer": "0x628f558",
+                "kind": "QComboBox",
+                "objectName": "m_pointnumcmb",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "0",
+                "count": "4",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "items": [
+                  "0",
+                  "1",
+                  "2",
+                  "3"
+                ]
+              }
+            },
+            {
+              "hwnd": 659444,
+              "qt": {
+                "pointer": "0x628f738",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_2",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1052642,
+              "qt": {
+                "pointer": "0x628f6b8",
+                "kind": "QCheckBox",
+                "objectName": "m_showtextcheck",
+                "text": "显示刻度值",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "true",
+                "checkable": "true",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 855456,
+              "qt": {
+                "pointer": "0x628f578",
+                "kind": "QSpinBox",
+                "objectName": "m_subspin",
+                "text": "1",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "0",
+                "maximum": "5",
+                "value": "1",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 593378,
+              "qt": {
+                "pointer": "0x628f4f8",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "1",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 659448,
+              "qt": {
+                "pointer": "0x628f878",
+                "kind": "QLabel",
+                "objectName": "label_4",
+                "text": "副刻度分割数：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 724982,
+              "qt": {
+                "pointer": "0x628f858",
+                "kind": "QSpinBox",
+                "objectName": "m_mainspin",
+                "text": "4",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "2",
+                "maximum": "20",
+                "value": "4",
+                "singleStep": "1",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 659450,
+              "qt": {
+                "pointer": "0x628f4d8",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "4",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "acceptableInput": "true"
+              }
+            },
+            {
+              "hwnd": 593496,
+              "qt": {
+                "pointer": "0x628f5f8",
+                "kind": "QLabel",
+                "objectName": "label_3",
+                "text": "主刻度分割数：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 659452,
+              "qt": {
+                "pointer": "0x628f798",
+                "kind": "QGroupBox",
+                "objectName": "groupBox",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593394,
+              "qt": {
+                "pointer": "0x628f838",
+                "kind": "QPushButton",
+                "objectName": "m_linecolorbtn",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "styleSheet": "background:#000000"
+              }
+            },
+            {
+              "hwnd": 527862,
+              "qt": {
+                "pointer": "0x628f7f8",
+                "kind": "QLabel",
+                "objectName": "label",
+                "text": "线条色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593400,
+              "qt": {
+                "pointer": "0x628f758",
+                "kind": "QPushButton",
+                "objectName": "m_textcolorbtn",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "styleSheet": "background:#000000"
+              }
+            },
+            {
+              "hwnd": 593402,
+              "qt": {
+                "pointer": "0x628f718",
+                "kind": "QLabel",
+                "objectName": "label_2",
+                "text": "文本色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 659408,
+              "qt": {
+                "pointer": "0x628f118",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_3",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 1574608,
+              "qt": {
+                "pointer": "0x628f638",
+                "kind": "QLabel",
+                "objectName": "label_9",
+                "text": "文本方向：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 527854,
+              "qt": {
+                "pointer": "0x628f658",
+                "kind": "QComboBox",
+                "objectName": "m_textdirectioncmb",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "向上",
+                "count": "2",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "items": [
+                  "向上",
+                  "向下"
+                ]
+              }
+            },
+            {
+              "hwnd": 593406,
+              "qt": {
+                "pointer": "0x628f778",
+                "kind": "QComboBox",
+                "objectName": "m_fontsizecmb",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "11",
+                "currentText": "16",
+                "count": "16",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                "items": [
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10",
+                  "11",
+                  "12",
+                  "13",
+                  "14",
+                  "15",
+                  "16",
+                  "17",
+                  "18",
+                  "19",
+                  "20"
+                ]
+              }
+            },
+            {
+              "hwnd": 527876,
+              "qt": {
+                "pointer": "0x628f138",
+                "kind": "QLabel",
+                "objectName": "label_7",
+                "text": "字体大小：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            },
+            {
+              "hwnd": 593896,
+              "qt": {
+                "pointer": "0x628f1f8",
+                "kind": "QPushButton",
+                "objectName": "help",
+                "text": "帮助",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false",
+                "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 436,
+  "screenshots": [
+    {
+      "path": "scale-text-color-dialog-r1.png",
+      "hwnd": 658910,
+      "pid": 436,
+      "width": 558,
+      "height": 384,
+      "sha256": "e68fbd414735010e24cfcb03c9c863b6fd074f861cfbbc1d722b331f45f0a283",
+      "method": "PrintWindow owned modal on private desktop; no foreground or global capture"
+    }
+  ],
+  "createdSources": [],
+  "workingCopyAfter": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-scale-qr\\runtime-scale-color-r2\\NativePages.sm",
+    "sha256": "5745d7d4e797801469ee029e42740c31c43e5fbcacec582095845a0277bfd217"
+  },
+  "status": "native-stage3-scenario-completed",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "rawRecordSha256": "55bcea8e322b25882e53f7c77b68ee203468fbb5a3754d1f1d54111c38a8f292",
+    "removed": "重复主窗/菜单/查找用batch；保留具名观察快照、动作结果、源及编译全部文件哈希。"
+  }
+}

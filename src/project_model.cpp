@@ -250,6 +250,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
         json.insert(QStringLiteral("functionButton"), functionButton.toJson());
     }
     if (type == QStringLiteral("message")) { json.insert(QStringLiteral("messageDisplay"), messageDisplay.toJson()); } //20261112-0 add
+    if (type == QStringLiteral("scale")) { json.insert(QStringLiteral("scale"), scale.toJson()); } //20261112-0 add
     return json;
 }
 
@@ -286,7 +287,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -301,6 +302,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("scale")) //20261112-0 add
+        {
+            if (!item.value().isObject() || !ScaleProperties::fromJson(item.value().toObject(), &object->scale, error)) { return false; }
         }
         else if (key == QStringLiteral("messageDisplay")) //20261112-0 add: Its 128-row language/state schema has its own strict parser.
         {
@@ -323,6 +328,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     object->type = json.value(QStringLiteral("type")).toString();
     if ((object->type == QStringLiteral("message")) != json.contains(QStringLiteral("messageDisplay"))) //20261112-0 add
     { return modelError(error, QStringLiteral("消息显示类型与专有属性不匹配。")); }
+    if ((object->type == QStringLiteral("scale")) != json.contains(QStringLiteral("scale")))
+    { return modelError(error, QStringLiteral("刻度类型与专有属性不匹配。")); }
     object->name = json.value(QStringLiteral("name")).toString();
     object->text = json.value(QStringLiteral("text")).toString();
     object->address = json.value(QStringLiteral("address")).toString();
@@ -394,6 +401,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->type != QStringLiteral("number") &&
          object->type != QStringLiteral("image") &&
          object->type != QStringLiteral("message") && //20261112-0 add
+         object->type != QStringLiteral("scale") && //20261112-0 add
          object->type != QStringLiteral("text")))
     {
         if (error != nullptr)
@@ -672,7 +680,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     //20261112-0 add: Schema10 is reserved for stage-3 editor flags; message data starts at schema11.
     Q_FOREACH (page, allPages())
     {
-        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message")) { schema = 11; stage1 = true; } }
+        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale")) { schema = 11; stage1 = true; } }
     }
     resolution = {{QStringLiteral("width"), pageWidth}, {QStringLiteral("height"), pageHeight}};
     if (stage1)

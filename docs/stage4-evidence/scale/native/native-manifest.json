@@ -1,0 +1,855 @@
+{
+  "date": "2026-11-12",
+  "family": "scale",
+  "scope": "原厂自有私有桌面：Qt getter、属性变化、最小源及离线编译；未执行USB传输、PLC通信或前置/切换桌面。",
+  "runtimeTerminationVerifiedInEachRun": true,
+  "records": [
+    {
+      "path": "native-probe-scale-color-r2.json",
+      "run": "scale-color-r2",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 39504,
+      "sha256": "da2ac218fefb17c2f4a40d8d0b940a1805b74afb81c50eed9b4903fb3384d84b"
+    },
+    {
+      "path": "native-probe-scale-default-r1.json",
+      "run": "scale-default-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 125505,
+      "sha256": "a305794d950d768ed6a013d1d8fff433186ea79753f5b29299040d38722d1d29"
+    },
+    {
+      "path": "native-probe-scale-direction-down-r1.json",
+      "run": "scale-direction-down-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 31207,
+      "sha256": "6f9b72b4d410d92b64c1f87461d1597c5319d7ab859a8e63249a3f5446762234"
+    },
+    {
+      "path": "native-probe-scale-direction-down-reopen-r1.json",
+      "run": "scale-direction-down-reopen-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 39562,
+      "sha256": "50053ecef47740f379982e70eb83eddd3cab39a249db80dff95adcfb3dd4c1b1"
+    },
+    {
+      "path": "native-probe-scale-equal-zero-r1.json",
+      "run": "scale-equal-zero-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 31100,
+      "sha256": "6191b72f7bf26037700763db101fb0f2f1ba7adac87f6e359a6e7ca8da662bfb"
+    },
+    {
+      "path": "native-probe-scale-inspect-r1.json",
+      "run": "scale-inspect-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 23192,
+      "sha256": "3cdae32bc79cd361281ff7d26fa93f54bd5d8a108e53d8e02e4c1d9a45f18017"
+    },
+    {
+      "path": "native-probe-scale-invalid-r1.json",
+      "run": "scale-invalid-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 26315,
+      "sha256": "ad271cbc21378fdcccd61df737501f8611bf261581dbae15bf5df20981684515"
+    },
+    {
+      "path": "native-probe-scale-main6-r1.json",
+      "run": "scale-main6-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 31131,
+      "sha256": "9eeb3ba8d8a7d2e06b396ba70ec9f5e3e6244c71567ac64d0d2ec3c3e9074d63"
+    },
+    {
+      "path": "native-probe-scale-position-top-r1.json",
+      "run": "scale-position-top-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 30879,
+      "sha256": "436db32d7ef06f3b00603cc07e92b0667dc6c1e02661964794d3653cfb0cc964"
+    },
+    {
+      "path": "native-probe-scale-position-top-reopen-r1.json",
+      "run": "scale-position-top-reopen-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 39501,
+      "sha256": "20fc4a2542176848f84b61af59b3918384bb4e54235981a9b301a710e0040ce0"
+    },
+    {
+      "path": "native-probe-scale-sub4-r1.json",
+      "run": "scale-sub4-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 31145,
+      "sha256": "ca3b6c8fd2a4e4ff8d8285c4eecdccbbe596dfa8d7cc8ef264621521ed0643e5"
+    },
+    {
+      "path": "native-probe-scale-sub4-reopen-r1.json",
+      "run": "scale-sub4-reopen-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 28937,
+      "sha256": "697d618a1ade6ee25ea86e06c4aba13376d2c41ba1b3ef7847a6f822cfd59ead"
+    }
+  ],
+  "excludedDiagnostics": [
+    {
+      "run": "scale-color-r1",
+      "status": "partial-or-error",
+      "error": "AssertionError([1182914, 1510430])",
+      "sha256": "690e19c96baf65a8100d1f1c7a8e58f2d0e636deca26eb1f20eb6de0ec63e91d",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "scale-colors-r1",
+      "status": "partial-or-error",
+      "error": "error(1400, 'GetClassName', '无效的窗口句柄。')",
+      "sha256": "d07d9eb3fbb2714c0f26dd65cd9c78b8e9ff6626b45894d42d598b27058f250c",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "scale-default-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-default-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "901bdb1fbd3e53769a10b3c12491090e98d530dcdd41473903d21acca9a2e18a",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 5402,
+          "sha256": "1502f0404df7133cfd71b6a4b847f9815ae17323bb355fdaf4bd96635f61c2d4",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7216,
+          "sha256": "e26889b715aefaa43336d364584069f9be5b903b55b0e2859b004c9754ff7730",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "0727ce0506e519d7962adbdbe5b13c30b4516c09e8fe7065b62ad34e152396f8",
+          "retainedPath": "compiled/scale-default-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-default-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 5048,
+          "sha256": "761880f92347075b031889c8cb686be13fde11440d07d0c16292539f206375d2",
+          "retainedPath": "compiled/scale-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "0363212205341963220598ad24f42f6cd1d575ba867c10c91090052d86a636c1",
+          "retainedPath": "compiled/scale-default-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1334,
+          "sha256": "0dd17d5bfd5ccfcbbef49c4dae9f728f90a543805d257245d7ba29a9edfa68ab",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "a9e3da17e9c6bf704aa5172a362676d119daf3e9f06ebd4f5806ac8db0f07e18",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "scale-direction-down-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-direction-down-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "5a175c874e9c64355e5363ab534169561c7cd099159cf270742d81e999ed9484",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 5416,
+          "sha256": "6d172f46aa81bda49219bbf0e5893440b44921b2598f9b02ab3d918b46ba0a54",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7228,
+          "sha256": "ac8df4cff435f3347a9d568a2ce288804ab24a4550f4f1fc8fbc99956421b29c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "18d0d1bd63d614cb226b0c8f446f8bf2b56b6c76b2f87869d190e2075a2c4130",
+          "retainedPath": "compiled/scale-direction-down-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-direction-down-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 5043,
+          "sha256": "fa618808773c4e261317403a6a4d275cf2fa4237881de243275e4256b6ac1630",
+          "retainedPath": "compiled/scale-direction-down-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "95b0d4c8a3fa9968fab8664b571c67f47cbb78dfbd6cc45878871b60ead00e4a",
+          "retainedPath": "compiled/scale-direction-down-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1345,
+          "sha256": "bc0173542a956744f6ce5261ed2e671dff37f11f9bf305e213632ecfda2c66b0",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "4db6542ee83aaef6fad9632d6853297dba5fa728d014a2bf9969a4a0f2352211",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "scale-equal-zero-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-equal-zero-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "a9c78f3d1e000ead043007742fab9a9395ec46c12a6b54b1f6c3454fa06c8adc",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 5396,
+          "sha256": "cf8ae314b56bc2596a79c8ebed21b0605979b89fabe53656c777fb49de5f5caf",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 6824,
+          "sha256": "ed0b18a02f6c235202cd8b9d629f514d09d15a450cd7d713a5bea92bcb1af44f",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "21bb674c2de4a358fd4ed1631a91bdb2b8dbfd1b6a233e22218c4a7dd667c781",
+          "retainedPath": "compiled/scale-equal-zero-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-equal-zero-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 4837,
+          "sha256": "2dc257ec14bb2e1534208a239506c9b4060ab52c7ce2aa0c867a98d9ba5d9ae3",
+          "retainedPath": "compiled/scale-equal-zero-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "59a26daea6676660f2b1a0dec04e7fa61be436f3640aa7be09584102578c8dbf",
+          "retainedPath": "compiled/scale-equal-zero-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1308,
+          "sha256": "108767c27a2968d6066f8cdc025f6f8180304039b94b2d0cfdbd01ff7ab03410",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "c9bd7cf5536faa584c7a2ade96a9f91aafd823c0d8b79494305799c2d903a9a0",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "scale-main6-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-main6-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "c12e52bbe297c5d08d68bbae020401c558d5076fb9ba24e16496c8ad3939904c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 6308,
+          "sha256": "22782b3b0c93376f45da32526310129a4e6fb96fff3b38eca79be8ee78b70b7f",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7653,
+          "sha256": "045bde9839c4888f0cb3b0662cea5cb5661ad71e7318c0177562ba7503f4d4c3",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "a4f7359a27382c678b5897910d860355f548bc4fd9699ac4cd3b6df9f93e3915",
+          "retainedPath": "compiled/scale-main6-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-main6-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 5417,
+          "sha256": "0a763930705c495b91540f67abdc3b8a0683da9edf32ff9ea613a75099d1319b",
+          "retainedPath": "compiled/scale-main6-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "a1a837b0dc6d25b14e90e8916070afa40bc7a7ef1c0eb560ee2e366fc38fb461",
+          "retainedPath": "compiled/scale-main6-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1397,
+          "sha256": "7d03056125cd97ea1c33050aff3b7c53af556ea35561dfa84eb1fd3b4861db3c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "f8eea0157950d3bfa6b55e5484b7fc849f60283bf19d1eb18e1d34fa498ac90e",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "scale-position-top-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-position-top-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "ca160d95ac39ec24d0557691bb0e03b73087e52678a1ea83cb3ce243e7def9e0",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 5412,
+          "sha256": "7838bd5f0e7dc76832bb4f9c08e1862e4e842c6f66f0b282f88fd7a2731bf05b",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 6930,
+          "sha256": "60b83916c0ab509033d28ae551b8e7e4b069b9dcbdf187b1ba149b39e3bb7741",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "09008829628721de469b6dd8c0119fc6c36c47ef4a9839659832a9c10cf4f2b5",
+          "retainedPath": "compiled/scale-position-top-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-position-top-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 4502,
+          "sha256": "621b1cf19679dd3e1a11be6c20e9b4e521e00cdae5bf3f2b39cccaaad5348169",
+          "retainedPath": "compiled/scale-position-top-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "1c963a42f2cb4340a64b356c78b96e7d566495b5f907f528d7404b0a231387e7",
+          "retainedPath": "compiled/scale-position-top-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1314,
+          "sha256": "88790c1c13b4b277506387d403809a106065d1bf21cba7a9f0c727f33bc49cbd",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "09b751096cdc47e80ba2175d9eec0687d182d71e6a1d59f7888661e059023837",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "scale-sub4-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/scale-sub4-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "88689ef04b9feb21afe9c4da32e4506f6df885e73519d777a4ff068fd14c65bc",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 6592,
+          "sha256": "e38e71dccc675c638102c69634e2effcd41584647c89929164641f172c483236",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7463,
+          "sha256": "8ddc8f56f0c069cf3e2e9f80d774fa2e70d9ff051de1384fdde19facb3aaa66b",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "9a7938fadf044943717a446c3e236ecee3ce23ce08c3f1d2667f185c0724b3fc",
+          "retainedPath": "compiled/scale-sub4-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+          "retainedPath": "compiled/scale-sub4-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 4926,
+          "sha256": "1cc3663714daf8162a03338f49133fb6791458fede1fc8a6312be165d252a65e",
+          "retainedPath": "compiled/scale-sub4-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "bdc0bb84150ab653d83e6db5cfc21a5c73a38cc0d60c46776c8f5c8d31be4429",
+          "retainedPath": "compiled/scale-sub4-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1483,
+          "sha256": "ffadaeb265c68c7ece2b0133eb8cbf50b70e3803f0ef08c0fc050751416a216d",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "5f797d656a1e510bd79ca3969e8c04a3e5db52e2ac72129739292ac92534f714",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    }
+  ],
+  "sources": [
+    {
+      "path": "scale-default.sm",
+      "bytes": 5402,
+      "sha256": "1502f0404df7133cfd71b6a4b847f9815ae17323bb355fdaf4bd96635f61c2d4"
+    },
+    {
+      "path": "scale-direction-down.sm",
+      "bytes": 5416,
+      "sha256": "6d172f46aa81bda49219bbf0e5893440b44921b2598f9b02ab3d918b46ba0a54"
+    },
+    {
+      "path": "scale-equal-zero.sm",
+      "bytes": 5396,
+      "sha256": "cf8ae314b56bc2596a79c8ebed21b0605979b89fabe53656c777fb49de5f5caf"
+    },
+    {
+      "path": "scale-main6.sm",
+      "bytes": 6308,
+      "sha256": "22782b3b0c93376f45da32526310129a4e6fb96fff3b38eca79be8ee78b70b7f"
+    },
+    {
+      "path": "scale-position-top.sm",
+      "bytes": 5412,
+      "sha256": "7838bd5f0e7dc76832bb4f9c08e1862e4e842c6f66f0b282f88fd7a2731bf05b"
+    },
+    {
+      "path": "scale-sub4.sm",
+      "bytes": 6592,
+      "sha256": "e38e71dccc675c638102c69634e2effcd41584647c89929164641f172c483236"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "scale-default-r1.png",
+      "bytes": 11129,
+      "sha256": "117f9a8147d7fe80265f339178a3e0fff5ffa50b63e4c9e8ab3c71a06862b08e"
+    },
+    {
+      "path": "scale-direction-down-preview-r1.png",
+      "bytes": 11143,
+      "sha256": "c2edca917873b3d015bd959674980335a87c97c1d68e765148d78dfef8b24df2"
+    },
+    {
+      "path": "scale-position-top-preview-r1.png",
+      "bytes": 11028,
+      "sha256": "e5039ef3414203ef41b125a818290b16c5764cec02bb8820e75bef95f9e394d8"
+    },
+    {
+      "path": "scale-sub4-preview-r1.png",
+      "bytes": 11174,
+      "sha256": "d161b841adf4e4a3f5df947f959cab4c00a18e8363226cf764517f2c949af4cd"
+    },
+    {
+      "path": "scale-text-color-dialog-r1.png",
+      "bytes": 13778,
+      "sha256": "e68fbd414735010e24cfcb03c9c863b6fd074f861cfbbc1d722b331f45f0a283"
+    }
+  ],
+  "observations": {
+    "fontSizes": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "mainHardRange": [
+      2,
+      20
+    ],
+    "subHardRange": [
+      0,
+      5
+    ],
+    "rangeValidator": {
+      "type": "QIntValidator",
+      "minimum": -2147483648,
+      "maximum": 2147483647,
+      "lineEditMaxLength": 15
+    },
+    "invalidRange": "确认后弹KinSealStudio消息框：最小值不能大于最大值；刻度窗保留。",
+    "equalRange0": "min=max=0创建/保存/原生离线编译成功。",
+    "colorDialog": "原生文字色按钮click确实弹QColorDialog，标题选择颜色，默认#000000；颜色写回route未闭合。",
+    "direction": "竖向向上=max在顶部，向下=max在底部；数值保持水平未旋转。横向位置时下拉改为向左/向右，向左=左max右min；旧assets/07含上/下同序。",
+    "subdivision": "主4/副4的原生scene恰12条短横线、4条长横线、1轴：每相邻主刻度间N条副线。",
+    "compiledDefault": "没有ControlPara/ControlPixel，刻度烘入SheetPixel；不能猜动态设备type。",
+    "unknown": [
+      "所有字体像素精确映射",
+      "颜色确认写回路线",
+      "负范围极值渲染",
+      "完整typed源格式",
+      "其他方向/尺寸全矩阵及屏端"
+    ]
+  },
+  "scripts": [
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/audit_evidence.py",
+      "bytes": 3798,
+      "sha256": "88c4b6922126fc15057fc11f47ac5f764345bfed89821cd0f225f570e6799c8e"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/base-message-probe.py",
+      "bytes": 50758,
+      "sha256": "3051b9e4cabae9d99110db41de1cac8d9388fb196d62f61ead5f61370e30e787"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/finalize_evidence.py",
+      "bytes": 7602,
+      "sha256": "7e622cbf48a68db82fae066964ad20c4f6408ccf705b78991813bd39d624d148"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/native_qrcode_probe.py",
+      "bytes": 52052,
+      "sha256": "8fc15729f294ceae8b19ad3c936d5155c576e5e866bad777cfe47c9c5e10b8b3"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/native_scale_probe.py",
+      "bytes": 52050,
+      "sha256": "363f02ea2886743258788d36491ece0ea5cec9bd33180b037d895d36222d93e6"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/prepare_probe.py",
+      "bytes": 3837,
+      "sha256": "8f3b524a7b077a991a9232b38faeb0042b0ee95b84bea2c9337c86acf960ffd1"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/scenarios.py",
+      "bytes": 6618,
+      "sha256": "a1c553e6877326ace36d599b8aa9cdac4704521c301cd7b01330edaed6e0e344"
+    }
+  ],
+  "cleanup": {
+    "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/cleanup.json",
+    "sha256": "148fe9b0ddebfde11faadaf4eec0eaac05d3fb10fded9950cb55ed3bd4d63c77",
+    "result": {
+      "filesRemoved": 645,
+      "unknownRetained": [],
+      "remainingRuntimeDirectories": []
+    }
+  },
+  "integrityAudit": {
+    "checkedContentHashes": 53,
+    "result": "passed",
+    "notes": "验证全部源/截图/保留JSON及每个保留/共享dat引用的真实文件哈希。"
+  }
+}

@@ -12,6 +12,7 @@
 #include "function_button_properties.h" //20261110-0 add
 #include "plc_address.h" //20261109-0 add
 #include "message_display_properties.h" //20261112-0 add
+#include "scale_properties.h" //20261112-0 add
 
 struct HmiObject
 {
@@ -32,6 +33,7 @@ struct HmiObject
     bool hasFunctionButtonProperties = false; //20261110-0 add: System functions have no PLC operation address.
     FunctionButtonProperties functionButton;
     MessageDisplayProperties messageDisplay; //20261112-0 add: Message states use their own source/device family.
+    ScaleProperties scale; //20261112-0 add: A scale is a static graphic with no PLC role.
     double layer = 1;
     QString group;
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.

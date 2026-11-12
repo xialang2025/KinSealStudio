@@ -1760,18 +1760,18 @@
       "heading": "S04-02 4A：消息显示、刻度、二维码",
       "documentation": "updated_per_control",
       "investigation": {
-        "state": "C06_native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/message/native/findings.json"
+        "state": "native_ui_and_minimal_compile_captured",
+        "evidence": "../docs/stage4-evidence/scale/native/native-manifest.json"
       },
       "implementation": {
-        "state": "partial_C06_editor_and_KSP_slice",
-        "scope": "消息编辑器交付；C07/C08尚未交付；完整C06源/设备编码仍阻塞"
+        "state": "partial_editor_and_KSP_slices",
+        "scope": "本次C07编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "C07刻度；C06未决层按Q-S04-C06-001～003保留"
+        "nextAction": "进入C08；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -1799,6 +1799,26 @@
             "executionHistory": []
           },
           "recordedAtUtc": "2026-11-12T02:08:42.234083+00:00"
+        },
+        {
+          "executionId": "stage4-scale-20261112",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "C06_native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/message/native/findings.json"
+            },
+            "implementation": {
+              "state": "partial_C06_editor_and_KSP_slice",
+              "scope": "消息编辑器交付；C07/C08尚未交付；完整C06源/设备编码仍阻塞"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "C07刻度；C06未决层按Q-S04-C06-001～003保留"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T02:39:01.968366+00:00"
         }
       ]
     },
@@ -3210,6 +3230,14 @@
       "nativeRunsCompleted": 8,
       "nativeRunsPartial": 2,
       "cleanupLogicalBytes": 227929498,
+      "usbAccessed": false,
+      "completeControl": false
+    },
+    {
+      "id": "stage4-scale-20261112",
+      "productPassed": 16,
+      "productFailed": 0,
+      "productSkipped": 0,
       "usbAccessed": false,
       "completeControl": false
     }

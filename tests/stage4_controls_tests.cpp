@@ -1,18 +1,23 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
 #include "message_display_dialog.h"
+#include "scale_dialog.h"
 #include "hmi_property_widgets.h"
 #include "native_project_codec.h"
 #include "project_capabilities.h"
+#include "independent_downloader.h"
 #include "stage3_project_edits.h"
 #include <QAction>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QJsonArray>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPainter>
+#include <QMessageBox>
+#include <QRadioButton>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSettings>
@@ -22,6 +27,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
+#include <limits>
 
 //20261112-0 add: Exercise real control dialogs, persisted values and whole-document transactions.
 class Stage4ControlTests : public QObject
@@ -41,6 +47,10 @@ private slots:
     void messageCopyAndMixedPersistence();
     void messageCreationAndCancellationAreAtomic();
     void messageUnknownDeviceAndSourceAreRejected();
+    void scaleNativeBoundsAndDirectionLinkage();
+    void scaleRangeErrorsAndEqualLimits();
+    void scaleRenderingCountsAndClipping();
+    void scaleTypedRoundTripMixedAndCreation();
 };
 
 /******************************************************************************
@@ -323,6 +333,7 @@ void Stage4ControlTests::messageUnknownDeviceAndSourceAreRejected() //20261112-0
 {
     HmiProject project;
     QByteArray source = QByteArrayLiteral("unchanged");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("unchanged")};
     QString error;
     QJsonObject capabilities;
     project.objects.append(messageObject()); capabilities = describeProjectCapabilities(project);
@@ -330,6 +341,143 @@ void Stage4ControlTests::messageUnknownDeviceAndSourceAreRejected() //20261112-0
     QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
     QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged"));
+    QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")}); QVERIFY(!error.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : scaleObject
+ * Description     : Provide a bounded scale record without borrowing a dynamic control subtype.
+ * Input Parameters: None
+ * Return Value    : Independent scale object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject scaleObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("stage4-scale"); object.type = QStringLiteral("scale"); object.name = QStringLiteral("刻度"); object.geometry = QRect(300, 50, 160, 110);
+    return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::scaleNativeBoundsAndDirectionLinkage
+ * Description     : Validate the native hard bounds and positional up/down versus left/right labels without permission pages.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::scaleNativeBoundsAndDirectionLinkage() //20261112-0 add
+{
+    ScaleDialog dialog(scaleObject());
+    QComboBox *font;
+    QComboBox *direction;
+    QSpinBox *major;
+    QSpinBox *minor;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+    font = dialog.findChild<QComboBox *>(QStringLiteral("ScaleFontSize")); direction = dialog.findChild<QComboBox *>(QStringLiteral("ScaleDirection"));
+    major = dialog.findChild<QSpinBox *>(QStringLiteral("ScaleMajorCount")); minor = dialog.findChild<QSpinBox *>(QStringLiteral("ScaleMinorCount"));
+    QCOMPARE(font->count(), 16); QCOMPARE(font->itemText(0), QStringLiteral("5")); QCOMPARE(font->itemText(15), QStringLiteral("20")); QCOMPARE(font->currentText(), QStringLiteral("16"));
+    QCOMPARE(major->minimum(), 2); QCOMPARE(major->maximum(), 20); QCOMPARE(major->value(), 4); QCOMPARE(minor->minimum(), 0); QCOMPARE(minor->maximum(), 5); QCOMPARE(minor->value(), 1);
+    QCOMPARE(direction->itemText(0), QStringLiteral("向上")); direction->setCurrentIndex(1);
+    dialog.findChild<QRadioButton *>(QStringLiteral("ScalePosition0"))->click(); QCOMPARE(direction->itemText(0), QStringLiteral("向左")); QCOMPARE(direction->currentIndex(), 1);
+    dialog.findChild<QRadioButton *>(QStringLiteral("ScalePosition3"))->click(); QCOMPARE(direction->itemText(1), QStringLiteral("向下"));
+    QCOMPARE(dialog.findChild<QTabWidget *>()->count(), 1); QVERIFY(dialog.findChild<HmiPermissionEditor *>() == nullptr);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR"))
+    { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("scale-general.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::scaleRangeErrorsAndEqualLimits
+ * Description     : Reproduce the native invalid-range message and retain the dialog while accepting equal endpoints.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::scaleRangeErrorsAndEqualLimits() //20261112-0 add
+{
+    ScaleDialog dialog(scaleObject());
+    QLineEdit *minimum;
+    QLineEdit *maximum;
+    bool explained = false;
+    dialog.show(); minimum = dialog.findChild<QLineEdit *>(QStringLiteral("ScaleMinimum")); maximum = dialog.findChild<QLineEdit *>(QStringLiteral("ScaleMaximum"));
+    minimum->setText(QStringLiteral("101"));
+    QTimer::singleShot(0, &dialog, [&explained]() {
+        QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+        if (message != nullptr) { explained = message->text() == QStringLiteral("最小值不能大于最大值"); message->accept(); }
+    });
+    dialog.findChild<QDialogButtonBox *>(QStringLiteral("ScaleButtons"))->button(QDialogButtonBox::Ok)->click(); QVERIFY(explained); QVERIFY(dialog.isVisible());
+    minimum->setText(QStringLiteral("0")); maximum->setText(QStringLiteral("0"));
+    dialog.findChild<QDialogButtonBox *>(QStringLiteral("ScaleButtons"))->button(QDialogButtonBox::Ok)->click(); QCOMPARE(dialog.result(), int(QDialog::Accepted)); QCOMPARE(dialog.object().scale.maximum, 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::scaleRenderingCountsAndClipping
+ * Description     : Count major/minor strokes in the real raster and check clipping, orientation, equal limits and tiny geometry.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::scaleRenderingCountsAndClipping() //20261112-0 add
+{
+    ScaleProperties properties;
+    QImage image(150, 171, QImage::Format_ARGB32);
+    QImage other;
+    QPainter painter;
+    int y;
+    int major = 0;
+    int all = 0;
+    properties.showValues = false; properties.minorCount = 4;
+    image.fill(Qt::white); painter.begin(&image); paintScale(&painter, QRectF(40, 30, 100, 116), properties); painter.end();
+    for (y = 0; y < image.height(); ++y)
+    {
+        if (image.pixelColor(65, y) == QColor(Qt::black)) { ++major; }
+        if (image.pixelColor(47, y) == QColor(Qt::black)) { ++all; }
+    }
+    QCOMPARE(major, 4); QCOMPARE(all, 16); QCOMPARE(image.pixelColor(0, 0), QColor(Qt::white));
+    other = image; properties.position = 0; properties.direction = 1; properties.minimum = -100; properties.maximum = 100;
+    image.fill(Qt::white); painter.begin(&image); paintScale(&painter, QRectF(10, 10, 120, 60), properties); painter.end(); QVERIFY(image != other);
+    properties.minimum = properties.maximum; painter.begin(&image); paintScale(&painter, QRectF(1, 1, 1, 1), properties); painter.end();
+    QCOMPARE(image.pixelColor(0, 0), QColor(Qt::white));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::scaleTypedRoundTripMixedAndCreation
+ * Description     : Preserve all fields in mixed KSP, reject unknown types, create through the real command and undo atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::scaleTypedRoundTripMixedAndCreation() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiObject object = scaleObject();
+    HmiObject parsed;
+    QJsonObject json;
+    QJsonObject properties;
+    QByteArray source = QByteArrayLiteral("unchanged");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("unchanged")};
+    QString error;
+    MainWindow window;
+    object.scale.minimum = std::numeric_limits<int>::min(); object.scale.maximum = std::numeric_limits<int>::max(); object.scale.decimals = 3; object.scale.position = 1; object.scale.direction = 1;
+    project.objects = {messageObject(), object};
+    QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson());
+    json = object.toJson(); properties = json.value(QStringLiteral("scale")).toObject(); properties.insert(QStringLiteral("majorCount"), 4.5); json.insert(QStringLiteral("scale"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    json = object.toJson(); json.insert(QStringLiteral("type"), QStringLiteral("text")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("scale-mixed.ksp")), &error), qPrintable(error)); }
+    project.objects.clear(); window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window));
+    QTimer::singleShot(0, &window, []() {
+        ScaleDialog *dialog = qobject_cast<ScaleDialog *>(QApplication::activeModalWidget());
+        if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("ScaleButtons"))->button(QDialogButtonBox::Ok)->click(); }
+    });
+    window.m_commands.value(QStringLiteral("action_mark"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20)));
+    QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 130)));
+    QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 130)));
+    QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("scale"));
+    window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(1); QCOMPARE(window.currentEditorProject().objects.size(), 1);
+    QCOMPARE(describeProjectCapabilities(window.currentEditorProject()).value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
+    QVERIFY(!buildProjectPayload(window.currentEditorProject(), &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
+    QVERIFY(!exportNativeProjectSource(window.currentEditorProject(), &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged"));
 }
 
 QTEST_MAIN(Stage4ControlTests)

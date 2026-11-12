@@ -151,7 +151,11 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             action = new QAction(label, this);
             action->setObjectName(id);
             m_commands.insert(id, action);
-            if (id == QStringLiteral("action_messagedisplay")) //20261112-0 add
+            if (id == QStringLiteral("action_mark")) //20261112-0 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("scale")); });
+            }
+            else if (id == QStringLiteral("action_messagedisplay")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("message")); });
             }
@@ -516,7 +520,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (state != nullptr)
     {
         blocked = state->blockSignals(true);
-        count = !selected || object.type == QStringLiteral("text") ? 0 : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
+        count = !selected || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") ? 0 : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
         state->clear();
         for (index = 0; index < count; ++index) { state->addItem(QString::number(index)); }
         state->setEnabled(m_hasProject && count > 1);
@@ -528,7 +532,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (typeLabel != nullptr)
     {
         typeLabel->setText(!selected ? QString() : object.type == QStringLiteral("text") ? QStringLiteral("静态文本") :
-                           object.type == QStringLiteral("message") ? QStringLiteral("消息显示器") : object.type == QStringLiteral("lamp") ? QStringLiteral("指示灯") : object.type == QStringLiteral("image") ? QStringLiteral("图片显示") : //20261112-0 change
+                           object.type == QStringLiteral("scale") ? QStringLiteral("刻度") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器") : object.type == QStringLiteral("lamp") ? QStringLiteral("指示灯") : object.type == QStringLiteral("image") ? QStringLiteral("图片显示") : //20261112-0 change
                            object.type == QStringLiteral("number") ? QStringLiteral("数值显示") : QStringLiteral("开关"));
     }
     values.insert(QStringLiteral("NativeControlCount"), m_hasProject ? QString::number(m_canvas->objects().size()) : QString());

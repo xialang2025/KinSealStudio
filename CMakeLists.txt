@@ -67,6 +67,10 @@ qt_add_executable(KinSealStudioLite WIN32
     src/message_display_properties.cpp
     src/message_display_dialog.h
     src/message_display_dialog.cpp
+    src/scale_properties.h
+    src/scale_properties.cpp
+    src/scale_dialog.h
+    src/scale_dialog.cpp
     src/canvas_editing.cpp
     src/bit_button_properties.h #20261108-15 add
     src/bit_button_properties.cpp
@@ -291,6 +295,7 @@ endforeach()
 #20261109-6 add: Every independent project-model target must resolve word-property serialization.
 foreach(KINSEAL_WORD_MODEL_TARGET KinSealDeviceMacroTests KinSealNativeSourceTests)
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/message_display_properties.cpp src/message_display_properties.h) #20261112-0 add
+    target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/scale_properties.cpp src/scale_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/word_button_properties.cpp src/word_button_properties.h)
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/lamp_properties.cpp src/lamp_properties.h) #20261109-8 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/function_button_properties.cpp src/function_button_properties.h) #20261110-0 add

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 1,
-  "blockedLayers": 3,
-  "active": "C07",
+  "editorSlicesDelivered": 2,
+  "blockedLayers": 6,
+  "active": "C08",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -68,14 +68,29 @@
     {
       "id": "C07",
       "name": "刻度",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "刻度全部可见外观字段、横竖方向联动、主副分线/标签、预览/画布共用绘制、属性确认后放置、KSP/混合重开/撤销重做",
+      "evidence": "scale/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C07-001",
+        "Q-S04-C07-002",
+        "Q-S04-C07-003"
+      ]
     },
     {
       "id": "C08",
       "name": "二维码",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
