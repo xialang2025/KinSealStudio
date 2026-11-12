@@ -21,6 +21,7 @@
 #include "time_display_properties.h" //20261112-0 add
 #include "screen_button_properties.h" //20261112-0 add
 #include "multi_state_button_properties.h"
+#include "flow_block_properties.h" //20261112-0 add
 #include "dropdown_properties.h" //20261112-0 add
 #include "multi_function_button_properties.h" //20261112-0 add //20261112-0 add
 
@@ -53,6 +54,7 @@ struct HmiObject
     AsciiDisplayProperties asciiDisplay; //20261112-0 add: ASCII options remain distinct from numeric enum/range semantics.
     TimeDisplayProperties timeDisplay; //20261112-0 add: System clock formatting has no PLC monitor carrier.
     ScreenButtonProperties screenButton; //20261112-0 add: Navigation targets are stable identities rather than switch addresses.
+    FlowBlockProperties flowBlock; //20261112-0 add: Display-only flow does not inherit input-button operations.
     DropdownProperties dropdown; //20261112-0 add: Row values and labels have no button/native union aliases.
     MultiFunctionButtonProperties multiFunctionButton; //20261112-0 add: Ordered MF commands retain their own types and page dependencies.
     MultiStateButtonProperties multiStateButton; //20261112-0 add: Multi-state input does not use the lamp native subtype.

@@ -9,6 +9,7 @@
 #include "number_display_dialog.h" //20261112-0 add
 #include "bit_button_dialog.h" //20261112-0 add
 #include "dropdown_dialog.h" //20261112-0 add
+#include "flow_block_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
@@ -133,6 +134,12 @@ private slots:
     void dropdownStrictMixedPersistenceAndBackendGates();
     void dropdownActualFaceAndDirectionRaster();
     void dropdownShellMacroPlacementCompactAndUndo();
+    void flowDefaultsAndMeasuredOrientationResets(); //20261112-0 add
+    void flowColorPickersAndNativeBorderEnablement();
+    void flowVisibilityAcceptanceAndAddressRoles();
+    void flowStrictMixedPersistenceAndBackendGates();
+    void flowActualRasterCountPatternsAndClipping();
+    void flowShellPlacementEditingCompactAndUndo();
 };
 
 /******************************************************************************
@@ -2422,6 +2429,143 @@ void Stage4ControlTests::dropdownShellMacroPlacementCompactAndUndo() //20261112-
     QTimer::singleShot(0, &window, acceptWithNewMacro); window.m_commands.value(QStringLiteral("action_droplist"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro"))); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(!window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro")));
     QTimer::singleShot(0, &window, acceptWithNewMacro); window.m_commands.value(QStringLiteral("action_droplist"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QVERIFY(window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro"))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("下拉框")); QVERIFY(!window.m_textEdit->isEnabled()); QCOMPARE(window.m_addressEdit->text(), QStringLiteral("LW10")); window.m_addressEdit->setText(QStringLiteral("LW12")); window.applySelectedProperties(); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty()); QCOMPARE(window.currentEditorProject().objects.first().dropdown.address, QStringLiteral("LW12"));
     QTimer::singleShot(0, &window, []() { DropdownDialog *dialog = qobject_cast<DropdownDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("DropdownCount"))->setValue(7); dialog->findChild<QDialogButtonBox *>(QStringLiteral("DropdownButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().dropdown.entries.size(), 7); options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}}; QVERIFY2(duplicateStage3Selection(window.currentEditorProject(), {window.currentEditorProject().objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().dropdown.address, QStringLiteral("LW14")); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().dropdown.entries.size(), 2); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro")));
+}
+
+/******************************************************************************
+ * Function Name   : flowObject
+ * Description     : Provide a display-only flow fixture with an independent bit trigger and no button carrier.
+ * Input Parameters: None
+ * Return Value    : Typed fresh flow object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject flowObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("flow-object"); object.type = QStringLiteral("flow"); object.name = QStringLiteral("流动块"); object.geometry = QRect(620, 350, 160, 60); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowDefaultsAndMeasuredOrientationResets
+ * Description     : Regress real measured bounds and reset direction/style instead of incorrectly preserving their old indices.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowDefaultsAndMeasuredOrientationResets() //20261112-0 add
+{
+    FlowBlockDialog dialog(flowObject(), HmiProject());
+    QComboBox *pattern = dialog.findChild<QComboBox *>(QStringLiteral("FlowPattern"));
+    QComboBox *direction = dialog.findChild<QComboBox *>(QStringLiteral("FlowDirection"));
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("FlowCount"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("流动块")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("FlowTabs"))->count(), 2); QCOMPARE(count->minimum(), 1); QCOMPARE(count->maximum(), 30); QCOMPARE(count->value(), 3); count->setValue(0); QCOMPARE(count->value(), 1); count->setValue(31); QCOMPARE(count->value(), 30); QCOMPARE(pattern->count(), 13); QCOMPARE(pattern->itemText(11), QStringLiteral("左上角辐射")); QCOMPARE(pattern->currentIndex(), 5); QCOMPARE(direction->itemText(0), QStringLiteral("向左")); QVERIFY(dialog.findChild<QRadioButton *>(QStringLiteral("FlowSpeed1"))->isChecked());
+    direction->setCurrentIndex(1); pattern->setCurrentIndex(2); dialog.findChild<QRadioButton *>(QStringLiteral("FlowVertical"))->click(); QCOMPARE(direction->currentIndex(), 0); QCOMPARE(direction->itemText(0), QStringLiteral("向上")); QCOMPARE(pattern->currentIndex(), 3); pattern->setCurrentIndex(9); direction->setCurrentIndex(1); dialog.findChild<QRadioButton *>(QStringLiteral("FlowHorizontal"))->click(); QCOMPARE(direction->currentIndex(), 0); QCOMPARE(pattern->currentIndex(), 5); dialog.findChild<QRadioButton *>(QStringLiteral("FlowSpeed0"))->click(); QCOMPARE(dialog.object().flowBlock.speed, 0); QVERIFY(!dialog.object().hasBitButtonProperties); QVERIFY(dialog.object().address.isEmpty());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("flow-appearance.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowColorPickersAndNativeBorderEnablement
+ * Description     : Check all five independent color slots and preserve native frame-color editing even when no border is selected.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowColorPickersAndNativeBorderEnablement() //20261112-0 add
+{
+    HmiObject original = flowObject();
+    FlowBlockDialog dialog(original, HmiProject());
+    QPushButton *frame = dialog.findChild<QPushButton *>(QStringLiteral("FlowColor4"));
+    int index;
+    QVERIFY(frame->isEnabled()); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("FlowNoBorder"))->isChecked()); dialog.findChild<QCheckBox *>(QStringLiteral("FlowNoBorder"))->setChecked(false); QVERIFY(frame->isEnabled());
+    for (index = 0; index < 5; ++index)
+    {
+        QTimer::singleShot(0, &dialog, []() { QColorDialog *color = qobject_cast<QColorDialog *>(QApplication::activeModalWidget()); if (color != nullptr) { color->setCurrentColor(QColor(Qt::blue)); color->accept(); } }); dialog.findChild<QPushButton *>(QStringLiteral("FlowColor%1").arg(index))->click();
+    }
+    QCOMPARE(dialog.object().flowBlock.flowFront, QStringLiteral("#0000ff")); QCOMPARE(dialog.object().flowBlock.flowBack, QStringLiteral("#0000ff")); QCOMPARE(dialog.object().flowBlock.pipeFront, QStringLiteral("#0000ff")); QCOMPARE(dialog.object().flowBlock.pipeBack, QStringLiteral("#0000ff")); QCOMPARE(dialog.object().flowBlock.borderColor, QStringLiteral("#0000ff"));
+    QTimer::singleShot(0, &dialog, []() { QDialog *color = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (color != nullptr) { color->reject(); } }); frame->click(); QCOMPARE(dialog.object().flowBlock.borderColor, QStringLiteral("#0000ff")); dialog.reject(); QCOMPARE(original.flowBlock.flowBack, QStringLiteral("#ff0000")); QCOMPARE(original.flowBlock.borderColor, QStringLiteral("#000000"));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowVisibilityAcceptanceAndAddressRoles
+ * Description     : Distinguish fresh empty radios from the observed accepted default, protect chosen zero and validate pure display carriers.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowVisibilityAcceptanceAndAddressRoles() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject result;
+    HmiObject object = flowObject();
+    FlowBlockDialog dialog(object, project);
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("FlowTabs"))->setCurrentIndex(1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("FlowVisibilityBitOn"))->isChecked()); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("FlowVisibilityBitOff"))->isChecked()); QVERIFY(dialog.findChild<QGroupBox *>(QStringLiteral("DropdownNotice")) == nullptr); QVERIFY(!dialog.object().flowBlock.visibilityBitChosen);
+    dialog.findChild<QDialogButtonBox *>(QStringLiteral("FlowButtons"))->button(QDialogButtonBox::Ok)->click(); object = dialog.object(); QVERIFY(object.flowBlock.visibilityBitChosen); QVERIFY(object.flowBlock.visibility.bitState); FlowBlockDialog reopened(object, project); reopened.show(); QVERIFY(QTest::qWaitForWindowExposed(&reopened)); reopened.findChild<QTabWidget *>(QStringLiteral("FlowTabs"))->setCurrentIndex(1); QCOMPARE(reopened.findChildren<HmiPermissionEditor *>().size(), 1); QVERIFY(reopened.findChild<QRadioButton *>(QStringLiteral("FlowVisibilityBitOn"))->isChecked()); reopened.findChild<QGroupBox *>(QStringLiteral("FlowVisibility"))->setChecked(true); reopened.findChild<QGroupBox *>(QStringLiteral("FlowVisibilityBit"))->setChecked(true); reopened.findChild<QRadioButton *>(QStringLiteral("FlowVisibilityBitOff"))->click(); object = reopened.object(); QVERIFY(!object.flowBlock.visibility.bitState); object.flowBlock.triggerAddress = QStringLiteral("LB10"); object.flowBlock.visibility.bitAddress = QStringLiteral("LB20"); project.objects = {object}; options.columns = 2; options.offsetX = -16; options.increments = {{Stage3AddressField::MonitorBit, 2, 0}, {Stage3AddressField::VisibilityBit, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().flowBlock.triggerAddress, QStringLiteral("LB12")); QCOMPARE(result.objects.last().flowBlock.visibility.bitAddress, QStringLiteral("LB23"));
+    object.flowBlock.triggerAddress = QStringLiteral("LW0"); QVERIFY(!object.flowBlock.validateAddresses({}, &error)); object.flowBlock.triggerAddress = QStringLiteral("LB0"); object.flowBlock.visibility.wordEnabled = true; object.flowBlock.visibility.dataType = 1; object.flowBlock.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.flowBlock.validateAddresses({}, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(reopened.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("flow-permissions.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip eighteen families and flow-only schema12 while refusing malformed enums/colors and unrecovered source/device output.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = flowObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.flowBlock.setVertical(true); object.flowBlock.direction = 1; object.flowBlock.pattern = 11; object.flowBlock.visibilityBitChosen = true; project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 18); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.flowBlock.toJson(); props.insert(QStringLiteral("count"), 31); json.insert(QStringLiteral("flowBlock"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props = object.flowBlock.toJson(); props.insert(QStringLiteral("flowBack"), QStringLiteral("bad-color")); json.insert(QStringLiteral("flowBlock"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); props = object.flowBlock.toJson(); props.insert(QStringLiteral("pattern"), 1.5); json.insert(QStringLiteral("flowBlock"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("flow-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowActualRasterCountPatternsAndClipping
+ * Description     : Count real static blocks and exercise all named PC brushes while checking border/transparent behavior and clipping.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowActualRasterCountPatternsAndClipping() //20261112-0 add
+{
+    FlowBlockProperties properties;
+    QImage image(380, 80, QImage::Format_ARGB32);
+    QPainter painter;
+    int x;
+    int groups = 0;
+    int pattern;
+    bool previous = false;
+    bool red;
+    image.fill(Qt::transparent); properties.pattern = 1; properties.count = 30; painter.begin(&image); paintFlowBlock(&painter, QRectF(10, 10, 360, 60), properties); painter.end();
+    for (x = 10; x < 370; ++x) { red = image.pixelColor(x, 40) == QColor(Qt::red); if (red && !previous) { ++groups; } previous = red; } QCOMPARE(groups, 30); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+    for (pattern = 0; pattern < 13; ++pattern) { image.fill(Qt::transparent); properties.pattern = pattern; painter.begin(&image); paintFlowBlock(&painter, QRectF(10, 10, 360, 60), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); }
+    image.fill(Qt::transparent); properties.pattern = 0; properties.noBorder = false; painter.begin(&image); paintFlowBlock(&painter, QRectF(10, 10, 360, 60), properties); painter.end(); QCOMPARE(image.pixelColor(100, 40).alpha(), 0); QVERIFY(image.pixelColor(100, 10) == QColor(Qt::black) || image.pixelColor(100, 11) == QColor(Qt::black));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("flow-transparent-frame.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::flowShellPlacementEditingCompactAndUndo
+ * Description     : Exercise real control entry, cancellation, display-only sidebars, orientation editing and whole-document undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::flowShellPlacementEditingCompactAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_flow_block"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_flow_block"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, []() { FlowBlockDialog *dialog = qobject_cast<FlowBlockDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("FlowButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_flow_block"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("流动块")); QVERIFY(!window.m_textEdit->isEnabled()); QCOMPARE(window.m_addressEdit->text(), QStringLiteral("LB0")); window.m_addressEdit->setText(QStringLiteral("LB8")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().flowBlock.triggerAddress, QStringLiteral("LB8")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
+    QTimer::singleShot(0, &window, []() { FlowBlockDialog *dialog = qobject_cast<FlowBlockDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("FlowVertical"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("FlowButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QVERIFY(window.currentEditorProject().objects.first().flowBlock.vertical); window.restoreProjectHistory(-1); QVERIFY(!window.currentEditorProject().objects.first().flowBlock.vertical); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

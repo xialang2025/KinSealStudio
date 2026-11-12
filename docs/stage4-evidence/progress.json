@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 12,
-  "blockedLayers": 45,
-  "active": "C18",
+  "editorSlicesDelivered": 13,
+  "blockedLayers": 49,
+  "active": "C19",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -319,14 +319,30 @@
     {
       "id": "C18",
       "name": "流动块",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立flow两页与五色13样式、1..30块和方向切换重置、始终可编辑边框色与静态共享预览、显现新建空圈及默认接受重开、完整bit触发/显现字跨度与独立递增、18类混合和flow-only schema12、真实工具箱拖框/侧栏/编辑/撤销；纠正C16/C17批次归档",
+      "evidence": "flow/windows-r2/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C18-001",
+        "Q-S04-C18-002",
+        "Q-S04-C18-003",
+        "Q-S04-C18-004"
+      ]
     },
     {
       "id": "C19",
       "name": "滑动开关",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

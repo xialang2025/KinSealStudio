@@ -1,0 +1,148 @@
+{
+  "date": "2026-11-12",
+  "family": "flow",
+  "records": [
+    {
+      "path": "native-probe-flow-default-r1.json",
+      "sha256": "6419dbe23ac70b48372b114fc75cff9612d930a243955bbf112d4486b8529c7a",
+      "rawSha256": "a49c7bbbce04b10c248ea0e2e635a8f1c0f2cb4b6bb620f508d6c2283d830b5e",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-flow-default-r1.json.gz"
+    },
+    {
+      "path": "native-probe-flow-followup-r2.json",
+      "sha256": "281b3814d9b6462a579760e0f5ffbbef766f3ce3def32e1dd8b4adea83594ad2",
+      "rawSha256": "d40bb7ffa20d7fe436caf0de7bd4fa4bd4209265778ccfbdd72dd7a81aa4b091",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 32, 'status': 'error', 'error': 'Error: expected an integer'}\")",
+      "rawArchive": "raw\\native-probe-flow-followup-r2.json.gz"
+    },
+    {
+      "path": "native-probe-flow-followup-r3.json",
+      "sha256": "d4f8658be1c4b81958264910009b366d54d4d4779d4ba03aa1c058e4e9158d9e",
+      "rawSha256": "8f337723e034449919e7275cefc3e8f61eee64bc7602ad6be2ed101cb5161bce",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-flow-followup-r3.json.gz"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "flow-default-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled\\flow-default-r1\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "729c8d6ba5f226d1eb1f27af42a49654ff6e4b570a38a50598bcdc496543f246",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "9483a55f5f4faf45cb1eb1108616d9e6a4c4f05a510f2ad08bddb247c05f8d44",
+          "retainedPath": "compiled\\flow-default-r1\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7776,
+          "sha256": "5c6b6248c96e0bb1550f09108c02507ab170479ecc360224f2762766dd25141d",
+          "retainedPath": "compiled\\flow-default-r1\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 5732,
+          "sha256": "1614f19909c635eafce41578dadcad4ffa1ec201577541050a8427af847ca007",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 8794,
+          "sha256": "306e46a506d062e9e9a755def750182a00a5ad47ae4a6aac93dc5710bad09dd8",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2436,
+          "sha256": "2c39c29ff6e381f7705601cb4c19a6d96b0097ead6228b5e98a14feb94072934",
+          "retainedPath": "compiled\\flow-default-r1\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "64d96e615d404d73614a0e7ecb7cf529e7a9b07e3ca657aeecad1c5c9ab9631d",
+          "retainedPath": "compiled\\flow-default-r1\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3919,
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "retainedPath": "compiled\\flow-default-r1\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "dccc06676a9b47a2bed16361586fec276f8743845efaad347f4ef13128fec0e0",
+          "retainedPath": "compiled\\flow-default-r1\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1351,
+          "sha256": "5390bd9d3165569bae450f5091d721a2d8988fc64d6972af0289edd5e0b8187e",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "74ba403d872efe6b1ec402d17ce9b84da8fb5287ddb85d2ae1bc985a118e5acb",
+          "omittedReproducible": true
+        }
+      ]
+    }
+  ],
+  "source": {
+    "path": "flow-default.sm",
+    "bytes": 5732,
+    "sha256": "1614f19909c635eafce41578dadcad4ffa1ec201577541050a8427af847ca007"
+  },
+  "usbAccessed": false,
+  "systemInput": false,
+  "ownedProcessTerminated": true,
+  "observations": "findings.json"
+}

@@ -79,6 +79,8 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("flow")) //20261112-0 add: Trigger and visibility are separate read-only roles; no touch/notice carriers are created.
+    { addressSlots.append({Stage3AddressField::MonitorBit, &object->flowBlock.triggerAddress, PlcAddressRole::Bit, 1U}); addConditionSlots(&object->flowBlock.visibility, false, &addressSlots); }
     if (object->type == QStringLiteral("dropdown")) //20261112-0 add: The selector owns one full-width operation carrier and independent notification roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->dropdown.address, PlcAddressRole::Word, u32(object->dropdown.transferWordCount())});
