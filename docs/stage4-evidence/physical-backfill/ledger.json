@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 11,
-  "queued": 4,
+  "newNativeReferenceCompleted": 12,
+  "queued": 3,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -1014,7 +1014,7 @@
       "id": "C16",
       "name": "多功能按钮",
       "family": "multi-function-button",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C16-product.ksp",
         "sha256": "35f9e11f0556c71fb6cac64cb55128d1d180431affe1346736b34c07b1f15d34",
@@ -1095,7 +1095,16 @@
         "bytes": 4278
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/multi-function-button/physical/multi-function-button-native-baseline-r1/run.json",
+        "sourceSha256": "d6ec1b9568180869cb9181d94c131c311a838c22d1bf82d161b8a254a43cedaa",
+        "completedAtUtc": "2026-11-12T11:29:55.777631+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80659008.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C17",
@@ -1367,7 +1376,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C16",
+  "next": "C17",
   "complete": false,
   "referenceBackfillComplete": false
 }
