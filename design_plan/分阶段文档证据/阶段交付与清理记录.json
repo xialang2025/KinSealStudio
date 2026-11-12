@@ -1710,22 +1710,49 @@
       "taskId": "S04-01",
       "document": "05_阶段4_控件逐项复刻.md",
       "heading": "S04-01 核验已有5类，不重复实现",
-      "documentation": "generated_and_checked",
+      "documentation": "maintained_after_actual_revalidation",
       "investigation": {
-        "state": "not_revalidated_in_this_run",
-        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+        "state": "existing_implementation_revalidated",
+        "scope": "5类支持范围/编码器/历史限制复核，10个新编译测试目标Windows465/0/0",
+        "evidence": "../docs/stage4-evidence/existing-five/windows-r2/run.json"
       },
       "implementation": {
-        "state": "not_assessed_this_run",
-        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+        "state": "existing_implementation_reused",
+        "scope": "跳过5类重复实现，不升级现场E结论"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "heading": "S04-01 核验已有5类，不重复实现",
-        "nextAction": "先读5类最新报告和A04，选择具体未核字段做核销/回归，不重写已恢复控件"
-      }
+        "nextAction": "进入C06消息显示W1～W7，已有5类只作混合回归"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage4-existing-five-20261112",
+          "previousState": {
+            "taskId": "S04-01",
+            "document": "05_阶段4_控件逐项复刻.md",
+            "heading": "S04-01 核验已有5类，不重复实现",
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "heading": "S04-01 核验已有5类，不重复实现",
+              "nextAction": "先读5类最新报告和A04，选择具体未核字段做核销/回归，不重写已恢复控件"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T01:53:36.402159+00:00"
+        }
+      ]
     },
     {
       "taskId": "S04-02",
@@ -3137,6 +3164,16 @@
         "完整渐变/字体",
         "动态透明刷新与屏端E"
       ]
+    }
+  ],
+  "stage4Executions": [
+    {
+      "id": "stage4-existing-five-20261112",
+      "passed": 465,
+      "failed": 0,
+      "skipped": 0,
+      "cleanupBytes": 0,
+      "note": "未生成原生副本；共享构建目录保留到本轮结束；空stdout/stderr已清理"
     }
   ]
 }
