@@ -163,6 +163,10 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void historyAlarmSharedDialogKeepsDistinctIdentity(); //20261113-2 add
+    void historyAlarmStrictTypeLanguagesAndBackendGates(); //20261113-2 add
+    void historyAlarmWordVisibilityAndCopyDependencies(); //20261113-2 add
+    void historyAlarmShellEntryPlacementEditAndUndo(); //20261113-2 add
     void alarmDisplayDefaultsAndStrictRecords(); //20261113-2 add
     void alarmDisplayCaptionLanguagesAndCommonStyles(); //20261113-2 add
     void alarmDisplaySharedPrerequisitesCopyAndVisibility(); //20261113-2 add
@@ -4098,6 +4102,92 @@ void Stage4ControlTests::alarmDisplayShellGatePlacementEditingAndUndo() //202611
     HmiProject project = alarmDisplayProject();
     auto acceptTable = []() { AlarmDisplayDialog *dialog = qobject_cast<AlarmDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmDisplayButtons"))->button(QDialogButtonBox::Ok)->click(); } };
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_arlamcontrol"))); QTimer::singleShot(0, &window, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { QCOMPARE(message->text(), QStringLiteral("位报警和条件报警都不存在")); message->accept(); } }); window.m_commands.value(QStringLiteral("action_arlamcontrol"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); project.objects.clear(); window.setProject(project, QString()); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_arlamcontrol"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTable); window.m_commands.value(QStringLiteral("action_arlamcontrol"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20,20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(340,180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(340,180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(320,160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("报警显示器")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled()); QTimer::singleShot(0, &window, []() { AlarmDisplayDialog *dialog = qobject_cast<AlarmDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("AlarmDisplayRows"))->setValue(20); dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmDisplayButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().alarmDisplay.rows, 20); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().alarmDisplay.rows, 5); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1);
+
+}
+
+/******************************************************************************
+ * Function Name   : historyAlarmProject
+ * Description     : Create a history table with the same editable columns and a separate object identity.
+ * Input Parameters: None
+ * Return Value    : Complete C29 editor project.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject historyAlarmProject() //20261113-2 add
+{
+    HmiProject project = alarmDisplayProject();
+    project.objects[0].type = QStringLiteral("historyalarm"); project.objects[0].id = QStringLiteral("history-alarm-1"); project.objects[0].name = QStringLiteral("历史报警显示器"); return project;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyAlarmSharedDialogKeepsDistinctIdentity
+ * Description     : Retain historical identity through the shared table editor and detached cancellation.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyAlarmSharedDialogKeepsDistinctIdentity() //20261113-2 add
+{
+    HmiProject project = historyAlarmProject();
+    HmiObject original = project.objects.first();
+    AlarmDisplayDialog dialog(original, project);
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("历史报警显示器")); QCOMPARE(dialog.object().type, QStringLiteral("historyalarm")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("AlarmDisplayFontSize"))->count(), 7); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("AlarmDisplayRows"))->value(), 5); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-alarm-basic.png")))); } dialog.findChild<QComboBox *>(QStringLiteral("AlarmDisplayFontSize"))->setCurrentText(QStringLiteral("192")); dialog.findChild<QSpinBox *>(QStringLiteral("AlarmDisplayRows"))->setValue(20); dialog.findChild<QCheckBox *>(QStringLiteral("AlarmDisplayShowDate"))->setChecked(false); QCOMPARE(dialog.object().type, QStringLiteral("historyalarm")); QCOMPARE(dialog.object().alarmDisplay.fontSize, 192); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("AlarmDisplayDateCaption"))->isEnabled()); dialog.reject(); QCOMPARE(project.objects.first().toJson(), original.toJson());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyAlarmStrictTypeLanguagesAndBackendGates
+ * Description     : Keep current and historical records distinct in schema12 and maintain source/device refusal with immutable outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyAlarmStrictTypeLanguagesAndBackendGates() //20261113-2 add
+{
+    HmiProject project = historyAlarmProject();
+    HmiProject loaded;
+    HmiProject mixed = alarmDisplayProject();
+    HmiObject parsed;
+    QJsonObject json;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    project.objects[0].alarmDisplay.captions[QStringLiteral("English")].message = QStringLiteral("History"); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.first().type, QStringLiteral("historyalarm")); QCOMPARE(loaded.toJson(), project.toJson()); json = project.objects.first().toJson(); QVERIFY(json.contains(QStringLiteral("alarmDisplay"))); json.insert(QStringLiteral("type"), QStringLiteral("text")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &loaded, &error)); QVERIFY(project.setLanguages({QStringLiteral("English")}, &error)); QCOMPARE(project.objects.first().alarmDisplay.captions.size(), 1); QCOMPARE(project.objects.first().alarmDisplay.captionsFor(QStringLiteral("English")).message, QStringLiteral("History")); QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")}); mixed.objects.append(historyAlarmProject().objects.first()); mixed.objects.append(alarmProject().objects.first()); QVERIFY2(HmiProject::fromJson(mixed.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 3); QCOMPARE(loaded.objects[0].type, QStringLiteral("alarmdisplay")); QCOMPARE(loaded.objects[1].type, QStringLiteral("historyalarm")); QCOMPARE(loaded.objects[2].type, QStringLiteral("alarmbar")); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-alarm-only.ksp")), &error)); QVERIFY(mixed.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-alarm-mixed.ksp")), &error)); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyAlarmWordVisibilityAndCopyDependencies
+ * Description     : Validate full visibility word width, global alarm prerequisites and atomic language-compatible pasting for history tables.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyAlarmWordVisibilityAndCopyDependencies() //20261113-2 add
+{
+    HmiProject project = historyAlarmProject();
+    HmiProject result;
+    HmiProject target;
+    HmiProject sentinel;
+    Stage3DuplicateOptions options;
+    Stage3Clipboard clipboard;
+    QString error;
+    project.objects[0].alarmDisplay.visibility.visibilityEnabled = true; project.objects[0].alarmDisplay.visibility.wordEnabled = true; project.objects[0].alarmDisplay.visibility.dataType = 1; project.objects[0].alarmDisplay.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!project.validateModel(&error)); project.objects[0].alarmDisplay.visibility.wordAddress = QStringLiteral("LW4095"); QVERIFY(project.validateModel(&error)); project.objects[0].alarmDisplay.visibility.wordAddress = QStringLiteral("LW10"); options.columns = 2; options.increments = {{Stage3AddressField::VisibilityWord, 2, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().alarmDisplay.visibility.wordAddress, QStringLiteral("LW12")); QCOMPARE(result.objects.last().type, QStringLiteral("historyalarm")); QCOMPARE(result.configurationNodes.size(), 1); QVERIFY(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error)); sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error)); QCOMPARE(result.toJson(), sentinel.toJson()); target.languages = project.languages; QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.first().type, QStringLiteral("historyalarm")); QCOMPARE(result.configurationNodes.size(), 1); result.configurationNodes.clear(); QVERIFY(!result.validateModel(&error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyAlarmShellEntryPlacementEditAndUndo
+ * Description     : Exercise the distinct history action, warning title, shared dialog, placement, properties and undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyAlarmShellEntryPlacementEditAndUndo() //20261113-2 add
+{
+    MainWindow window;
+    HmiProject project = historyAlarmProject();
+    auto acceptHistory = []() { AlarmDisplayDialog *dialog = qobject_cast<AlarmDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { QCOMPARE(dialog->windowTitle(), QStringLiteral("历史报警显示器")); QCOMPARE(dialog->object().type, QStringLiteral("historyalarm")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmDisplayButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_histotyarlarm"))); QTimer::singleShot(0, &window, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { QCOMPARE(message->windowTitle(), QStringLiteral("历史报警显示器")); QCOMPARE(message->text(), QStringLiteral("位报警和条件报警都不存在")); message->accept(); } }); window.m_commands.value(QStringLiteral("action_histotyarlarm"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); project.objects.clear(); window.setProject(project, QString()); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_histotyarlarm"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptHistory); window.m_commands.value(QStringLiteral("action_histotyarlarm"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20,20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(340,180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(340,180))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("historyalarm")); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("历史报警显示器")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled()); QTimer::singleShot(0, &window, []() { AlarmDisplayDialog *dialog = qobject_cast<AlarmDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("AlarmDisplayRows"))->setValue(20); dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmDisplayButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("historyalarm")); QCOMPARE(window.currentEditorProject().objects.first().alarmDisplay.rows, 20); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().alarmDisplay.rows, 5); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 
 }
 

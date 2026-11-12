@@ -112,7 +112,7 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         if (object->dataGroup.rangeSource == 1) { addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->dataGroup.maximumAddress, PlcAddressRole::Word, DataGroupProperties::wordCount(object->dataGroup.dataType)}); }
         addConditionSlots(&object->dataGroup.visibility, false, &addressSlots);
     }
-    if (object->type == QStringLiteral("alarmdisplay")) { addConditionSlots(&object->alarmDisplay.visibility, false, &addressSlots); } //20261113-2 add
+    if ((object->type == QStringLiteral("alarmdisplay") || object->type == QStringLiteral("historyalarm"))) { addConditionSlots(&object->alarmDisplay.visibility, false, &addressSlots); } //20261113-2 add
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
@@ -619,7 +619,7 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
             if (!groups.contains(object.group)) { groups.insert(object.group, QUuid::createUuid().toString(QUuid::WithoutBraces)); }
             object.group = groups.value(object.group);
         }
-        if (object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("alarmdisplay")) //20261113-2 add: Copy global alarm definitions only into a compatible project and validate navigation identities.
+        if (object.type == QStringLiteral("alarmbar") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm"))) //20261113-2 add: Copy global alarm definitions only into a compatible project and validate navigation identities.
         {
             HmiConfigurationNode required;
             HmiConfigurationNode peer;

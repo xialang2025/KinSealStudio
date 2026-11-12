@@ -1,0 +1,31 @@
+{
+  "id": "C29",
+  "ordinal": 29,
+  "name": "历史报警显示",
+  "slug": "history-alarm",
+  "task": "S04-10",
+  "next": "C30",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/run.json",
+  "expectedPassed": 229,
+  "testRun": "docs/stage4-evidence/history-alarm/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/history-alarm/native/native-manifest.json",
+  "report": "docs/历史报警显示手册实现与验收.md",
+  "manual": "design_plan/历史报警显示功能与交互复刻手册.md",
+  "scope": "历史报警独立historyalarm类型及菜单，复用已实测一致的报警表格属性类；五共用颜色/7字号/1..20行、三列名按语言保存、仅显现权限与完整字跨度、全页报警前置/导航/复制/语言冲突保护、schema12独立类型保存、创建/取消/编辑/撤销、空白示意表格及原厂历史报警基线实物下载",
+  "unresolved": [
+    "Q-S04-C29-001",
+    "Q-S04-C29-002",
+    "Q-S04-C29-003",
+    "Q-S04-C29-004"
+  ],
+  "nativeSummary": "独立历史报警入口门槛已实测，标题历史报警显示器；默认与当前报警显示14个基本交互字段逐项一致，差异字典为空，仅支持复用编辑器，不证明设备数据来源相同。默认与双语言自定义源均保存/重开/编译；自定义五共用色绿/红/蓝/灰/紫、字号24/行20、ZH/EN三列名各自保存、日期时间关闭后字段禁用且文字保留均已在r5重开验证。",
+  "protocol": "历史报警默认字段14项与当前报警一致，但对象类型、原厂源和实物基线独立。两套源已保存/重开/编译，默认历史报警原厂基线实物下载完成，四清除/更新关闭，输入/待传SHA一致；未推断历史设备记录布局，独立生成继续实际拒绝，没有新增历史存储/查询/清除/导出或实屏/触控结论。",
+  "codeFiles": "src/alarm_display_dialog.cpp、alarm_registration_properties.cpp、project_model.cpp、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp",
+  "codeMarker": "//20261113-2",
+  "reviewFindings": [
+    "只读复核完整检查历史工厂类型到共享属性返回、JSON专有匹配/白名单/schema、全页前置/语言/复制和编辑/取消/撤销；共用UI没有合并当前和历史运行身份。",
+    "4项历史专属方法实际PASS，共用字段回归未省略，160+59+10=229/0/0。",
+    "原厂14字段对比/双语言保存重开/源编译与实际历史基线传输分别记录；r3/r4探针失败保留，历史记录引擎、E层和独立编码仍阻塞。"
+  ]
+}

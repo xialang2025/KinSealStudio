@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 23,
-  "blockedLayers": 89,
-  "active": "C29",
+  "editorSlicesDelivered": 24,
+  "blockedLayers": 93,
+  "active": "C30",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -600,14 +600,31 @@
     {
       "id": "C29",
       "name": "历史报警显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "历史报警独立historyalarm类型及菜单，复用已实测一致的报警表格属性类；五共用颜色/7字号/1..20行、三列名按语言保存、仅显现权限与完整字跨度、全页报警前置/导航/复制/语言冲突保护、schema12独立类型保存、创建/取消/编辑/撤销、空白示意表格及原厂历史报警基线实物下载",
+      "evidence": "history-alarm/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C29-001",
+        "Q-S04-C29-002",
+        "Q-S04-C29-003",
+        "Q-S04-C29-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/run.json"
     },
     {
       "id": "C30",
       "name": "历史数据显示器",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

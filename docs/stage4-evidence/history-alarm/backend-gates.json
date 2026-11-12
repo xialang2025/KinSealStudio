@@ -1,0 +1,69 @@
+{
+  "executableSha256": "618b0eb878fff9c226794c7923928017ba4d1aafd2b18889f55f01399a166cee",
+  "inputPath": "docs\\stage4-evidence\\history-alarm\\inputs\\history-alarm-only.ksp",
+  "inputSha256": "c1ba14e69f4c03d10418d1e6a2fd7fac6deab2e079c2dffdb2a056a536aeb110",
+  "calls": [
+    {
+      "label": "capabilities",
+      "exitCode": 0,
+      "stdout": "{\"activePageId\":\"page-1\",\"deviceCompile\":{\"offlineCompileRequired\":true,\"reason\":\"当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。\",\"status\":\"blocked\",\"usbAccessed\":false},\"limits\":[\"Eligibility does not establish all field semantics, original rendering or physical touch acceptance.\",\"Multi-page device records and active new configuration nodes remain unsupported.\",\"Object/language limits describe this Lite backend, not original firmware maxima.\"],\"modelPersistence\":{\"allowed\":true,\"format\":\"KSP-schema1-to9-and11-to12\",\"reason\":\"\"},\"nativeSource\":{\"actualExportRequired\":true,\"opaqueBodyEditable\":false,\"reason\":\"当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。\",\"status\":\"blocked\"},\"pageCount\":1,\"startupLanguage\":\"\",\"startupPageId\":\"page-1\",\"target\":{\"firmwareVersionConfirmed\":false,\"knownBackend\":\"AMT070W124-L800X480R-single-page\",\"model\":\"AMT070W124-L800X480R\",\"sourceVersion\":122}}\r\n",
+      "stderr": "",
+      "result": {
+        "activePageId": "page-1",
+        "deviceCompile": {
+          "offlineCompileRequired": true,
+          "reason": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+          "status": "blocked",
+          "usbAccessed": false
+        },
+        "limits": [
+          "Eligibility does not establish all field semantics, original rendering or physical touch acceptance.",
+          "Multi-page device records and active new configuration nodes remain unsupported.",
+          "Object/language limits describe this Lite backend, not original firmware maxima."
+        ],
+        "modelPersistence": {
+          "allowed": true,
+          "format": "KSP-schema1-to9-and11-to12",
+          "reason": ""
+        },
+        "nativeSource": {
+          "actualExportRequired": true,
+          "opaqueBodyEditable": false,
+          "reason": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+          "status": "blocked"
+        },
+        "pageCount": 1,
+        "startupLanguage": "",
+        "startupPageId": "page-1",
+        "target": {
+          "firmwareVersionConfirmed": false,
+          "knownBackend": "AMT070W124-L800X480R-single-page",
+          "model": "AMT070W124-L800X480R",
+          "sourceVersion": 122
+        }
+      }
+    },
+    {
+      "label": "compile",
+      "exitCode": 19,
+      "stdout": "{\"message\":\"当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。\",\"ok\":false}\r\n",
+      "stderr": "",
+      "result": {
+        "message": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+        "ok": false
+      }
+    },
+    {
+      "label": "export-source",
+      "exitCode": 20,
+      "stdout": "{\"message\":\"当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。\",\"ok\":false}\r\n",
+      "stderr": "",
+      "result": {
+        "message": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+        "ok": false
+      }
+    }
+  ],
+  "usbAccessed": false,
+  "sourceAndDeviceRefusalsRetained": true
+}
