@@ -1,0 +1,101 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_trendchart"
+  },
+  {
+    "op": "dump",
+    "label": "trend-basic-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "trend-basic-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "trend-display-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "trend-display-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 2
+  },
+  {
+    "op": "dump",
+    "label": "trend-access-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      400,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "trend-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "trend-default-r1"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "trend-reopened-r1"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

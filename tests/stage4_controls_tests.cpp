@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "trend_dialog.h" //20261112-1 add
 #include "chart_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
@@ -153,6 +154,12 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void trendNativeBoundsAndDataTypeLifetime(); //20261112-1 add
+    void trendIndependentChannelsAndRemovalReset();
+    void trendAxisHiddenFieldsAndAccessSpans();
+    void trendStrictPersistenceAndBackendGates();
+    void trendStaticRasterAndClipping();
+    void trendShellPlacementEditAndUndo();
     void chartDefaultsAndIndependentFormDrafts(); //20261112-1 add
     void chartTypeRangesAndNativeLinks();
     void chartAccessSpansAndAddressCopies();
@@ -3117,9 +3124,9 @@ void Stage4ControlTests::chartAccessSpansAndAddressCopies() //20261112-1 add
     Stage3DuplicateOptions options;
     ChartDialog dialog(object, project);
     QString error;
-    object.chart.bar.dataType = 1; object.chart.bar.address = QStringLiteral("LW65535"); QVERIFY(!object.chart.validateAddresses(project.connections, &error)); object.chart.bar.address = QStringLiteral("LW0"); object.chart.bar.dynamicRange = true; object.chart.bar.minimumAddress = QStringLiteral("LW20"); object.chart.bar.maximumAddress = QStringLiteral("LW24"); object.chart.meter.address = QStringLiteral("LB0"); QVERIFY(object.chart.validateAddresses(project.connections, &error)); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::DisplayMinimumWord, 3, 0}, {Stage3AddressField::DisplayMaximumWord, 5, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().chart.bar.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().chart.bar.minimumAddress, QStringLiteral("LW23")); QCOMPARE(result.objects.last().chart.meter.address, QStringLiteral("LB0"));
+    object.chart.bar.dataType = 1; object.chart.bar.address = QStringLiteral("LW4096"); QVERIFY(!object.chart.validateAddresses(project.connections, &error)); object.chart.bar.address = QStringLiteral("LW0"); object.chart.bar.dynamicRange = true; object.chart.bar.minimumAddress = QStringLiteral("LW20"); object.chart.bar.maximumAddress = QStringLiteral("LW24"); object.chart.meter.address = QStringLiteral("LB0"); QVERIFY(object.chart.validateAddresses(project.connections, &error)); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::DisplayMinimumWord, 3, 0}, {Stage3AddressField::DisplayMaximumWord, 5, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().chart.bar.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().chart.bar.minimumAddress, QStringLiteral("LW23")); QCOMPARE(result.objects.last().chart.meter.address, QStringLiteral("LB0"));
     dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QVERIFY(dialog.findChildren<HmiPermissionEditor *>().size() == 1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("ChartVisibleBitOn"))->isChecked()); dialog.findChild<QGroupBox *>(QStringLiteral("ChartVisible"))->setChecked(true); dialog.findChild<QGroupBox *>(QStringLiteral("ChartVisibleBit"))->setChecked(true); dialog.findChild<QRadioButton *>(QStringLiteral("ChartVisibleBitOff"))->click(); QVERIFY(dialog.object().chart.visibilityBitChosen); QVERIFY(!dialog.object().chart.visibility.bitState);
-    object.chart.visibility.visibilityEnabled = true; object.chart.visibility.wordEnabled = true; object.chart.visibility.dataType = 1; object.chart.visibility.wordAddress = QStringLiteral("LW65535"); QVERIFY(!object.chart.validateAddresses(project.connections, &error));
+    object.chart.visibility.visibilityEnabled = true; object.chart.visibility.wordEnabled = true; object.chart.visibility.dataType = 1; object.chart.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.chart.validateAddresses(project.connections, &error));
 }
 
 /******************************************************************************
@@ -3180,6 +3187,137 @@ void Stage4ControlTests::chartShellPlacementEditAndUndo() //20261112-1 add
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("graphicsitem"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptChart); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptChart); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(190, 150))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(190, 150))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(170, 130)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("图表")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().chart.bar.address, QStringLiteral("LW10"));
     QTimer::singleShot(0, &window, []() { ChartDialog *dialog = qobject_cast<ChartDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("ChartButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().chart.shape, 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().chart.shape, 0); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : trendObject
+ * Description     : Create a distinct sampling-control fixture with no generic carrier aliases.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject trendObject() //20261112-1 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("trend-object"); object.type = QStringLiteral("trend"); object.name = QStringLiteral("趋势图"); object.geometry = QRect(100, 100, 240, 160); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendNativeBoundsAndDataTypeLifetime
+ * Description     : Check signed-first type ordering, measured sampling limits and range retention across type changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendNativeBoundsAndDataTypeLifetime() //20261112-1 add
+{
+    TrendDialog dialog(trendObject(), HmiProject());
+    QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("TrendDataType"));
+    TrendProperties properties;
+    QString error;
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("TrendTabs"))->count(), 3); QCOMPARE(type->count(), 7); QCOMPARE(type->itemText(0), QStringLiteral("16位整数")); QCOMPARE(type->itemText(2), QStringLiteral("16位正整数")); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendSamplePoints"))->maximum(), 100); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendSampleTime"))->maximum(), 255); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendChannelCount"))->maximum(), 8);
+    for (index = 0; index < 7; ++index) { type->setCurrentIndex(index); QCOMPARE(dialog.object().trend.channels[0].maximum, QStringLiteral("1000")); QCOMPARE(dialog.object().trend.channels[0].minimum, QStringLiteral("0")); }
+    properties.sampleTime = 256; QVERIFY(!properties.validate(&error)); properties.sampleTime = 255; properties.samplePoints = 100; QVERIFY(properties.validate(&error)); properties.samplePoints = 0; QVERIFY(!properties.validate(&error)); properties.samplePoints = 60; properties.channels[0].maximum = QStringLiteral("nan"); QVERIFY(!properties.validate(&error));
+    type->setCurrentIndex(0);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("trend-channel.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendIndependentChannelsAndRemovalReset
+ * Description     : Keep completed edits independent, reset removed channels and reopen the native first-channel editor selection.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendIndependentChannelsAndRemovalReset() //20261112-1 add
+{
+    TrendDialog dialog(trendObject(), HmiProject());
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("TrendChannelCount"));
+    QComboBox *current = dialog.findChild<QComboBox *>(QStringLiteral("TrendCurrentChannel"));
+    HmiObject object;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); count->setValue(3); QCOMPARE(current->count(), 3); current->setCurrentIndex(2); dialog.findChild<QLineEdit *>(QStringLiteral("TrendChannelMinimum"))->setText(QStringLiteral("-10")); dialog.findChild<QLineEdit *>(QStringLiteral("TrendChannelMaximum"))->setText(QStringLiteral("2000")); dialog.findChild<QComboBox *>(QStringLiteral("TrendLineStyle"))->setCurrentIndex(2); current->setCurrentIndex(0); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("TrendChannelMinimum"))->text(), QStringLiteral("0")); current->setCurrentIndex(2); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("TrendChannelMaximum"))->text(), QStringLiteral("2000")); object = dialog.object();
+    { TrendDialog reopened(object, HmiProject()); QCOMPARE(reopened.object().trend.currentChannel, 0); QCOMPARE(reopened.object().trend.channels[2].minimum, QStringLiteral("-10")); QCOMPARE(reopened.object().trend.channels[2].lineStyle, 2); }
+    count->setValue(1); count->setValue(3); current->setCurrentIndex(2); QCOMPARE(dialog.object().trend.channels[2].minimum, QStringLiteral("0")); QCOMPARE(dialog.object().trend.channels[2].maximum, QStringLiteral("1000")); QCOMPARE(dialog.object().trend.channels[2].lineStyle, 0); QCOMPARE(dialog.object().trend.currentChannel, 2);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendAxisHiddenFieldsAndAccessSpans
+ * Description     : Preserve hidden axis values and independently increment trigger, clear and full read spans.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendAxisHiddenFieldsAndAccessSpans() //20261112-1 add
+{
+    TrendDialog dialog(trendObject(), HmiProject());
+    HmiObject object = trendObject();
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("TrendTabs"))->setCurrentIndex(1); dialog.findChild<QLineEdit *>(QStringLiteral("TrendYMinimum"))->setText(QStringLiteral("-20")); dialog.findChild<QLineEdit *>(QStringLiteral("TrendYMaximum"))->setText(QStringLiteral("5000")); dialog.findChild<QCheckBox *>(QStringLiteral("TrendYMarks"))->setChecked(false); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("TrendYMaximum"))->isVisible()); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("TrendTotalDigits"))->isVisible()); QVERIFY(dialog.findChild<QComboBox *>(QStringLiteral("TrendXFontSize"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("TrendYMarks"))->setChecked(true); QCOMPARE(dialog.object().trend.yMaximum, QStringLiteral("5000")); dialog.findChild<QCheckBox *>(QStringLiteral("TrendXTicks"))->setChecked(false); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("TrendXAxisColor"))->isVisible()); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendXMinor"))->minimum(), 1); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendYMinor"))->maximum(), 3); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("TrendTotalDigits"))->maximum(), 10); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1);
+    object.trend.dataType = 1; object.trend.channelCount = 8; object.trend.readAddress = QStringLiteral("LW4082"); QVERIFY(!object.trend.validateAddresses(project.connections, &error)); object.trend.readAddress = QStringLiteral("LW4081"); QVERIFY2(object.trend.validateAddresses(project.connections, &error), qPrintable(error)); object.trend.readAddress = QStringLiteral("LW0"); object.trend.triggerAddress = QStringLiteral("LB10"); object.trend.clearAddress = QStringLiteral("LB20"); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 16, 0}, {Stage3AddressField::TriggerBit, 2, 0}, {Stage3AddressField::ClearBit, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().trend.readAddress, QStringLiteral("LW16")); QCOMPARE(result.objects.last().trend.triggerAddress, QStringLiteral("LB12")); QCOMPARE(result.objects.last().trend.clearAddress, QStringLiteral("LB23"));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("trend-display.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendStrictPersistenceAndBackendGates
+ * Description     : Round-trip 23 families and strict nested axis/channel drafts while preserving refused backend outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendStrictPersistenceAndBackendGates() //20261112-1 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = trendObject();
+    TrendProperties parsed;
+    QJsonObject json;
+    QJsonObject nested;
+    QJsonArray channels;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.trend.channelCount = 3; object.trend.currentChannel = 2; object.trend.channels[2].minimum = QStringLiteral("-10"); object.trend.channels[2].maximum = QStringLiteral("2000"); object.trend.channels[2].lineStyle = 2; object.trend.channels[2].color = QStringLiteral("#0000ff"); object.trend.yAxis.marks = false; object.trend.yMaximum = QStringLiteral("5000");
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), trackObject(), chartObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 23); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(json, &only, &error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.trend.toJson(); json.insert(QStringLiteral("sampleTime"), 1.5); parsed.sampleTime = 9; QVERIFY(!TrendProperties::fromJson(json, &parsed, &error)); QCOMPARE(parsed.sampleTime, 9); json = object.trend.toJson(); channels = json.value(QStringLiteral("channels")).toArray(); channels.removeLast(); json.insert(QStringLiteral("channels"), channels); QVERIFY(!TrendProperties::fromJson(json, &parsed, &error)); nested = object.trend.xAxis.toJson(); nested.insert(QStringLiteral("major"), true); json = object.trend.toJson(); json.insert(QStringLiteral("xAxis"), nested); QVERIFY(!TrendProperties::fromJson(json, &parsed, &error)); json = object.trend.toJson(); json.insert(QStringLiteral("unknown"), false); QVERIFY(!TrendProperties::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("trend-mixed.ksp")), &error), qPrintable(error)); QVERIFY2(only.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("trend-only.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendStaticRasterAndClipping
+ * Description     : Verify configured fills, deterministic direction, independent curves and clipping without inventing acquisition.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendStaticRasterAndClipping() //20261112-1 add
+{
+    TrendProperties properties;
+    QImage image(240, 160, QImage::Format_ARGB32);
+    QImage forward;
+    QPainter painter;
+    image.fill(Qt::transparent); painter.begin(&image); paintTrend(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(235, 155).alpha(), 0); forward = image;
+    properties.rightToLeft = true; image.fill(Qt::transparent); painter.begin(&image); paintTrend(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QVERIFY(image != forward); properties.channelCount = 2; properties.channels[1].color = QStringLiteral("#0000ff"); properties.bottomColor = QStringLiteral("#00ff00"); image.fill(Qt::transparent); painter.begin(&image); paintTrend(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QVERIFY(image != forward); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trendShellPlacementEditAndUndo
+ * Description     : Use the real trend action through cancel, pending placement, compact read edits and one-transaction history.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trendShellPlacementEditAndUndo() //20261112-1 add
+{
+    MainWindow window;
+    auto acceptTrend = []() { TrendDialog *dialog = qobject_cast<TrendDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrendButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_trendchart"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("趋势图")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().trend.readAddress, QStringLiteral("LW10"));
+    QTimer::singleShot(0, &window, []() { TrendDialog *dialog = qobject_cast<TrendDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("TrendSampleTime"))->setValue(255); dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrendButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().trend.sampleTime, 255); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().trend.sampleTime, 1); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

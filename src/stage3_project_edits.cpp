@@ -90,6 +90,13 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         else { addressSlots.append({Stage3AddressField::Operation, &object->chart.donut.address, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.donut.dataType)}); }
         addConditionSlots(&object->chart.visibility, false, &addressSlots);
     }
+    if (object->type == QStringLiteral("trend")) //20261112-1 add: Sampling uses a shared full-span read carrier and independent trigger/clear bits.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->trend.readAddress, PlcAddressRole::Word, TrendProperties::wordCount(object->trend.dataType) * object->trend.channelCount});
+        addressSlots.append({Stage3AddressField::TriggerBit, &object->trend.triggerAddress, PlcAddressRole::Bit, 1U});
+        addressSlots.append({Stage3AddressField::ClearBit, &object->trend.clearAddress, PlcAddressRole::Bit, 1U});
+        addConditionSlots(&object->trend.visibility, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
@@ -830,7 +837,7 @@ bool validateIncrements(const QList<HmiObject> &objects, const QList<Stage3Addre
 
     Q_FOREACH (increment, increments)
     {
-        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::DisplayMaximumWord) ||
+        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::ClearBit) ||
             fields.contains(int(increment.field)))
         {
             return editError(error, QStringLiteral("递增规则包含未知或重复的地址角色。"));
@@ -1010,6 +1017,8 @@ Stage3DuplicateDialog::Stage3DuplicateDialog(const HmiProject &project, const QS
     m_addressField->addItem(QStringLiteral("输入上限地址"), int(Stage3AddressField::InputMaximumWord));
     m_addressField->addItem(QStringLiteral("显示下限地址"), int(Stage3AddressField::DisplayMinimumWord));
     m_addressField->addItem(QStringLiteral("显示上限地址"), int(Stage3AddressField::DisplayMaximumWord));
+    m_addressField->addItem(QStringLiteral("采样触发位地址"), int(Stage3AddressField::TriggerBit)); //20261112-1 add
+    m_addressField->addItem(QStringLiteral("采样清除位地址"), int(Stage3AddressField::ClearBit));
     m_columnAddressStep = new QSpinBox(m_advancedIncrementGroup);
     m_columnAddressStep->setObjectName(QStringLiteral("duplicateColumnAddressStepSpin"));
     m_columnAddressStep->setRange(-256, 256);

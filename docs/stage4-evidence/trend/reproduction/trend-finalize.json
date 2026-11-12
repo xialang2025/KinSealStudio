@@ -1,0 +1,30 @@
+{
+  "id": "C23",
+  "ordinal": 23,
+  "name": "趋势图",
+  "slug": "trend",
+  "task": "S04-09",
+  "next": "C24",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/trend/physical/trend-baseline-r1/run.json",
+  "expectedPassed": 190,
+  "testRun": "docs/stage4-evidence/trend/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/trend/native/native-manifest.json",
+  "report": "docs/趋势图手册实现与验收.md",
+  "manual": "design_plan/趋势图功能与交互复刻手册.md",
+  "scope": "独立TrendProperties/Dialog，通道/显示/仅显现权限三页、共用触发/读取/清除地址、签名优先7类型、采样1..100点与1..255秒、1..8通道独立范围/线型/颜色及删除重建复位、X/Y轴隐藏字段保留；23类混合/单类schema12、读取整段跨度、独立触发/清除复制角色、侧栏/创建/取消/撤销，固定PC示意曲线和原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C23-001",
+    "Q-S04-C23-002",
+    "Q-S04-C23-003",
+    "Q-S04-C23-004"
+  ],
+  "nativeSummary": "本轮原厂观察确认采样时间1..255、X/Y次分隔数1..3、Y总位数1..10；范围字段实际为LE_Min/LE_Max与Y_Min/Y_Max文本框。七类型切换不复位通道0/1000范围；第三通道编辑完成信号后-10/2000和线型2在切换及新原厂进程重开后保留；缩减再增加通道会重置被移除通道，属性窗重开回到第1通道。Y显示刻度标识关闭隐藏整组字号/最小/最大/总位数/小数位字段，X只隐藏字号行。只有一组读取基地址和数据类型，未观察到每通道独立地址/类型。",
+  "protocol": "原厂默认、Y刻度变体、三通道范围变体源与关键DAT均保留，具体SHA/总长见[专项报告](趋势图手册实现与验收.md)与[原厂清单](stage4-evidence/trend/native/native-manifest.json)。新进程重开证实第三通道-10/2000和线型2保存；未按跨进程多变量样本推断固件布局。原厂基线实物下载日志确认完成，四项清除/更新false，源和传输SHA一致且进程终止。来源retained_native_reference_source、Lite独立编码未通过，模型可保存而独立源/编译实际继续拒绝，见[门槛](stage4-evidence/trend/backend-gates.json)。没有逐字节USB应答、实屏读回或PLC触发/清除/缓存运行证据，相关层保持未验。",
+  "codeFiles": "src/trend_properties.*、trend_dialog.*、project_model.*、stage3_project_edits.*、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "reviewFindings": [
+    "只读复核覆盖通道寿命、类型改变不复位、缩减重置、轴隐藏草稿、构造期信号、完整读取跨度与独立位角色、schema12和未知编码拒绝；补极小绘图区保护。",
+    "首轮moc缓存只运行旧115项；第二轮120/1/0的地址测试使用错误边界，改为本地LW4081/4082覆盖16字跨度，并加强C22两字边界；最终六个趋势图方法全部PASS；控件121/0/0、源59/0/0、SDK宏10/0/0，共190/0/0。",
+    "调查清理在133项后遇共享编译临时消失而中止；构建退出0后重新SHA核验清剩余50项，不计3项自然消失；已分离临时根。原厂基线下载不替代独立编码或运行层。"
+  ]
+}

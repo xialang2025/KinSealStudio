@@ -6,6 +6,7 @@
 #include "image_display_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
 #include "chart_dialog.h" //20261112-1 add
+#include "trend_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -49,6 +50,8 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     }
     else if (type == QStringLiteral("chart")) //20261112-1 add
     { object.name = QStringLiteral("图表"); object.geometry = QRect(0, 0, 170, 130); dialog = new ChartDialog(object, currentEditorProject(), this); }
+    else if (type == QStringLiteral("trend")) //20261112-1 add
+    { object.name = QStringLiteral("趋势图"); object.geometry = QRect(0, 0, 200, 120); dialog = new TrendDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
         object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(0, 0, 200, 100); dialog = new MoveTrackDialog(object, currentEditorProject(), this);
@@ -112,6 +115,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     {
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
+        else if (type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -153,6 +157,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     if (!selected) { return; }
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
     else if (object.type == QStringLiteral("chart")) { dialog = new ChartDialog(object, currentEditorProject(), this); } //20261112-1 add
+    else if (object.type == QStringLiteral("trend")) { dialog = new TrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -170,6 +175,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     {
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
+        else if (object.type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
