@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 22,
-  "blockedLayers": 85,
-  "active": "C28",
+  "editorSlicesDelivered": 23,
+  "blockedLayers": 89,
+  "active": "C29",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -576,14 +576,31 @@
     {
       "id": "C28",
       "name": "报警显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立AlarmDisplayProperties/Dialog，两页和原厂标题/边框/文本/日期/时间分组；共用五颜色、宋体、7字号12..192与1..20行，只有消息/日期/时间三列名按语言保存，日期/时间开关联动禁用并保留列名；仅显现权限、schema12、全页报警前置/引用/依赖复制、语言事务、侧栏文本/地址禁用、创建/取消/编辑/撤销、空白示意表格和原厂基线实物下载；跨工程复制遇目标未启用的列名语言时整批拒绝，补齐工程语言后可粘贴",
+      "evidence": "alarm-display/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C28-001",
+        "Q-S04-C28-002",
+        "Q-S04-C28-003",
+        "Q-S04-C28-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/alarm-display/physical/alarm-display-baseline-r1/run.json"
     },
     {
       "id": "C29",
       "name": "历史报警显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

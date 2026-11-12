@@ -28,6 +28,7 @@
 #include "alarm_bar_properties.h" //20261113-2 add
 #include "alarm_registration_properties.h"
 #include "data_group_properties.h" //20261113-1 add
+#include "alarm_display_properties.h" //20261113-2 add
 #include "move_track_properties.h" //20261112-0 add
 #include "wheel_properties.h" //20261112-0 add
 #include "slider_properties.h" //20261112-0 add
@@ -70,6 +71,7 @@ struct HmiObject
     XyCurveProperties xyCurve; //20261113-1 add: Paired-coordinate sampling with two independent numeric axes.
     AlarmBarProperties alarmBar; //20261113-2 add: Alarm rows belong to global registration nodes.
     DataGroupProperties dataGroup; //20261113-1 add: One point buffer with independent sample and maximum source drafts.
+    AlarmDisplayProperties alarmDisplay; //20261113-2 add: Common table styling and independently localized column captions.
     MoveTrackProperties moveTrack; //20261112-0 add: Independent distance, graphic and constant/address drafts.
     WheelProperties wheel; //20261112-0 add: Independent numerical wheel and highlight-resource draft.
     SliderProperties slider; //20261112-0 add: Independent operation/range and access carriers.

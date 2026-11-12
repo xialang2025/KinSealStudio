@@ -1,0 +1,31 @@
+{
+  "id": "C28",
+  "ordinal": 28,
+  "name": "报警显示",
+  "slug": "alarm-display",
+  "task": "S04-10",
+  "next": "C29",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/alarm-display/physical/alarm-display-baseline-r1/run.json",
+  "expectedPassed": 225,
+  "testRun": "docs/stage4-evidence/alarm-display/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/alarm-display/native/native-manifest.json",
+  "report": "docs/报警显示手册实现与验收.md",
+  "manual": "design_plan/报警显示功能与交互复刻手册.md",
+  "scope": "独立AlarmDisplayProperties/Dialog，两页和原厂标题/边框/文本/日期/时间分组；共用五颜色、宋体、7字号12..192与1..20行，只有消息/日期/时间三列名按语言保存，日期/时间开关联动禁用并保留列名；仅显现权限、schema12、全页报警前置/引用/依赖复制、语言事务、侧栏文本/地址禁用、创建/取消/编辑/撤销、空白示意表格和原厂基线实物下载；跨工程复制遇目标未启用的列名语言时整批拒绝，补齐工程语言后可粘贴",
+  "unresolved": [
+    "Q-S04-C28-001",
+    "Q-S04-C28-002",
+    "Q-S04-C28-003",
+    "Q-S04-C28-004"
+  ],
+  "nativeSummary": "原厂空工程门槛已独立实测，标题报警显示器、提示“位报警和条件报警都不存在”；行数Qt范围1..20，默认5，字体仅宋体，字号完整为12/16/24/48/64/96/192。五颜色、字号、行数、日期时间开关跨语言共用；只有三个列名分语言保存。默认与双语言自定义变体均保存/编译/重开；五颜色绿/红/蓝/灰/紫、字号24/行20共用，两语言ZH/EN三个列名各自保留，两列关闭后字段禁用且文字仍保存。",
+  "protocol": "报警显示器空工程门槛和两套源的保存/重开/编译已核对；默认原厂基线实物下载完成，四清除/更新关闭、输入/待传SHA一致。三列名分语言，五颜色/字号/行数/列开关共用为原厂UI实测，不推导USB布局。Lite独立SM/设备编码继续真实拒绝；没有新增实屏/触控/PLC或分页确认结论。",
+  "codeFiles": "src/alarm_display_properties.*、alarm_display_dialog.*、alarm_registration_properties.cpp、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "codeMarker": "//20261113-2",
+  "reviewFindings": [
+    "只读复核覆盖三列名分语言与全局样式所有权、QSignalBlocker防串写、隐藏字段保留、严格JSON键/类型、全页前置和引用/复制；随后补齐通用文本拒绝。",
+    "六项新增方法实际PASS，156控件+59原厂源+10SDK宏=225/0/0；示意空白行不等于实际报警数据。",
+    "原厂绿色小预览与Lite配置背景示意图差异、旧0值崩溃观察与本轮minimum=1边界、r3/r4探针局限均明确分层记录。"
+  ]
+}

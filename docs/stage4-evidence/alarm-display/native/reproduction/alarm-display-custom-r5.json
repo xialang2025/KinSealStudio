@@ -1,0 +1,328 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "tree-double",
+    "entry": "数位地址报警"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sMessage",
+    "value": "ALM1"
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sMessage",
+    "value": "ALM2"
+  },
+  {
+    "op": "dump",
+    "label": "bit-registered-messages-r5"
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "label": "bit-registered-messages-r5"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "action",
+    "name": "action_arlamcontrol"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-bilingual-default-r5"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_msgedit",
+    "value": "ZH Message"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_dateedit",
+    "value": "ZH Date"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_timeedit",
+    "value": "ZH Time"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "fontSize",
+    "value": 3
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "m_rowspin",
+    "value": 20
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_datecheck"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-language0-edited-r5"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "alarm-language1-before-edit-r5"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_datecheck"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_msgedit",
+    "value": "EN Message"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_dateedit",
+    "value": "EN Date"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "m_timeedit",
+    "value": "EN Time"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "fontSize",
+    "value": 2
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 0
+  },
+  {
+    "op": "dump",
+    "label": "alarm-language0-returned-r5"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_tbackcolorbtn"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-title-color-dialog-r5"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4278222848
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_ttextcolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4294901760
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_fframcolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4278190335
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_fbackcolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4290822336
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_fontcolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4286578816
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-colors-language0-r5"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "alarm-colors-language1-r5"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_datecheck"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_timecheck"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-columns-disabled-r5"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      150,
+      120
+    ],
+    "to": [
+      470,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "alarm-display-custom.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "alarm-display-custom-r5"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-custom-reopened-r5"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "alarm-custom-English-reopened-r5"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

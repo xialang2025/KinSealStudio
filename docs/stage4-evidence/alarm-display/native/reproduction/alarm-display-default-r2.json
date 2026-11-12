@@ -1,0 +1,79 @@
+[
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_arlamcontrol"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-display-basic-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "alarm-display-basic-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "alarm-display-access-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      150,
+      120
+    ],
+    "to": [
+      470,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "alarm-display-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "alarm-display-default-r2"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-display-reopened-r2"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

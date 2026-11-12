@@ -249,7 +249,7 @@ bool validateAlarmRegistrations(const HmiProject &project, QString *error) //202
         if (!AlarmRegistrationProperties::fromJson(node.properties, &properties, error) || !properties.validateContext(project, error)) { return false; }
         if (families.contains(properties.family)) { return alarmError(error, QStringLiteral("同类报警登录只能配置一份。")); } families.insert(properties.family);
     }
-    Q_FOREACH (page, project.allPages()) { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("alarmbar") && !hasAlarmRegistrations(project)) { return alarmError(error, QStringLiteral("位报警和条件报警都不存在")); } } }
+    Q_FOREACH (page, project.allPages()) { Q_FOREACH (object, page.objects) { if ((object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("alarmdisplay")) && !hasAlarmRegistrations(project)) { return alarmError(error, QStringLiteral("位报警和条件报警都不存在")); } } }
     return true;
 }
 

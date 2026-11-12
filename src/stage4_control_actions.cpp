@@ -13,6 +13,7 @@
 #include "alarm_bar_dialog.h" //20261113-2 add
 #include "alarm_registration_dialog.h"
 #include "data_group_dialog.h" //20261113-1 add
+#include "alarm_display_dialog.h" //20261113-2 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -74,6 +75,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     }
     else if (type == QStringLiteral("datagroup")) //20261113-1 add
     { object.name = QStringLiteral("数据群组"); object.geometry = QRect(0, 0, 240, 160); dialog = new DataGroupDialog(object, currentEditorProject(), this); }
+    else if (type == QStringLiteral("alarmdisplay")) //20261113-2 add
+    {
+        if (!hasAlarmRegistrations(currentEditorProject())) { QMessageBox::warning(this, QStringLiteral("报警显示器"), QStringLiteral("位报警和条件报警都不存在")); return; }
+        object.name = QStringLiteral("报警显示器"); object.geometry = QRect(0, 0, 320, 160); dialog = new AlarmDisplayDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
         object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(0, 0, 200, 100); dialog = new MoveTrackDialog(object, currentEditorProject(), this);
@@ -142,6 +148,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
         else if (type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
+        else if (type == QStringLiteral("alarmdisplay")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -188,6 +195,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("xycurve")) { dialog = new XyCurveDialog(object, currentEditorProject(), this); } //20261113-1 add
     else if (object.type == QStringLiteral("alarmbar")) { dialog = new AlarmBarDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("datagroup")) { dialog = new DataGroupDialog(object, currentEditorProject(), this); } //20261113-1 add
+    else if (object.type == QStringLiteral("alarmdisplay")) { dialog = new AlarmDisplayDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -210,6 +218,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
         else if (object.type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
+        else if (object.type == QStringLiteral("alarmdisplay")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add

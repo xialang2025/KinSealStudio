@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-13",
+  "family": "alarm-display",
+  "records": [
+    {
+      "path": "native-probe-alarm-display-gate-r1.json",
+      "sha256": "603da9cee6ec20644a5003019a5b9c4885416ed0956047059a60d99462f0b056",
+      "rawSha256": "8daaf96019aaf9ea7f36d0b54639d20e7bb349419a8846390ae731945aab4d1e",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-alarm-display-gate-r1.json.gz"
+    },
+    {
+      "path": "native-probe-alarm-display-default-r2.json",
+      "sha256": "5dc69e97d037d3666798fb3134a0c065cfdc2b0fca5ee465e4b512510c07c61c",
+      "rawSha256": "3b310ffce27ae7bc9f8ea3dfe3507ae6e99f0b54bafe1cd788d731ff325e94f5",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-alarm-display-default-r2.json.gz"
+    },
+    {
+      "path": "native-probe-alarm-display-language-r3.json",
+      "sha256": "dacc6682ab76e4c568ab19eec06517efe5e7b1abe13ff68f5d181905ce6d3d33",
+      "rawSha256": "e8b6066804adaee46562259c4cc631372e4152b3494dba2a9ba3ef4775e0404f",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 101, 'status': 'error', 'error': 'Error: expected an integer'}\")",
+      "rawArchive": "raw\\native-probe-alarm-display-language-r3.json.gz"
+    },
+    {
+      "path": "native-probe-alarm-display-language-r4.json",
+      "sha256": "6388888025f33adff117bc2b67bb00504e8dfa02fb7c66c9c66e19e6874830d5",
+      "rawSha256": "f0deb725f77cb00cd2f8a4cf4e41d698a00d0aeea8797363f0c3cfe12ab26644",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-alarm-display-language-r4.json.gz"
+    },
+    {
+      "path": "native-probe-alarm-display-custom-r5.json",
+      "sha256": "e5a81b9bcacf707a5bff2ad18e8ad939ea878bca71881690bdf0cbb7c03865f0",
+      "rawSha256": "393cde0ef87de43d7ba4d54ab6dc86139f6ab97545176d50e8785a736c38bcb4",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-alarm-display-custom-r5.json.gz"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "alarm-display-default-r2",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled\\alarm-display-default-r2\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 100,
+          "sha256": "4e818da20108d48923c21a68a893e9982401ae576268859eb1fd829b6936b6b3",
+          "retainedPath": "compiled\\alarm-display-default-r2\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "6f9a5f51fd04215ed4b911324c38ae45cb6a7dfde96e611cffb412483a904f99",
+          "retainedPath": "compiled\\alarm-display-default-r2\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retainedPath": "compiled\\alarm-display-default-r2\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "9686cf1676b61050c1ddce870a73c2ca1e10d1c7c882a0d2369a576433ea550c",
+          "retainedPath": "compiled\\alarm-display-default-r2\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 1824,
+          "sha256": "69287c968f994b09d5e33b76938fc61f4845e7f900f73b2ae812faa8ce39a79c",
+          "retainedPath": "compiled\\alarm-display-default-r2\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retainedPath": "compiled\\alarm-display-default-r2\\Curve.dat"
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 6046,
+          "sha256": "183b821250b18450dd25e523eb52b3ef0049fa63068af9fa125dfb2b4fe7570e",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7920,
+          "sha256": "90e7c10092cc431967b313b08a3153a047f9726d1e70888645dc169015ae72be",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "24d40f5abdfe592c90d26a7a4204181de3026633083ead35d8969ac78df47b33",
+          "retainedPath": "compiled\\alarm-display-default-r2\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "6173bdb7acfc1b26a6965af906cc21d062864fe6f76f8c911d78671e468feaae",
+          "retainedPath": "compiled\\alarm-display-default-r2\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retainedPath": "compiled\\alarm-display-default-r2\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "9f509d52df5f4faa760ecb5c6574b00303c7b631c7bf9e184cfe9aab087e2301",
+          "retainedPath": "compiled\\alarm-display-default-r2\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1307,
+          "sha256": "d50d85b41bf4eac48837aa2f058f1238756a901af51d1ea994c7ce77fd9e0474",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "cfa08928de0d3ff30f57e25d17b1a6d243271b79eab54d8fb43e0f56b41996ee",
+          "omittedReproducible": true
+        }
+      ]
+    },
+    {
+      "label": "alarm-display-custom-r5",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 200,
+          "sha256": "e62185123d14d96c7fa8ccd4ccbb8035577ac6209531d8cac1b51525c1c23e3f",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "8eb06aca6b616fbbe79cfcedfffa4ea28a9a1bc88681ccc83a0685ab992a4fcd",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "0391ce2529afe4132afc4419b14e1e2142b5372d7708bd54841dac585253b7d4",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2400,
+          "sha256": "e9032c5644d8b1fb30bf30218776377fcdb6a8493d4d56e8572dc7793fd0a33a",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\Curve.dat"
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 7176,
+          "sha256": "d54d19f3d9d7526256bf7108a3cf07253224990e287b4e2795ede937c795f85a",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7971,
+          "sha256": "de1dc1d4ba8ea0917d524ffab566d7a1e41fdb5c4c3018a8512347806b6e7952",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "a7ad20c0c66ab871e62ad027ffa425a0fbff3529b6c0b1c8f9e3308eeaca6b4e",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "f30790fcb436ede9cb8fe5f4fdf0f4ebe6f58f5fa485ee0d467f72e149fe9ea3",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "bbfcce8feaa706f1881213a1b74599a385c496474ea8ee8da4d52ad71edb5e60",
+          "retainedPath": "compiled\\alarm-display-custom-r5\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1527,
+          "sha256": "5c55d152ec1663dca5b9e9cfaebb746639a38cd27ba7b3047047a6b1e24aad0d",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "f3f6a2cf17e743f7a82bb389355a2b9706f4d0434109d15756ad529ef6ba5c0f",
+          "omittedReproducible": true
+        }
+      ]
+    }
+  ],
+  "usbAccessed": false,
+  "systemInput": false,
+  "ownedProcessTerminated": true
+}
