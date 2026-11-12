@@ -207,3 +207,10 @@ X轴 (左列)                                Y轴 (右列)
 - 辅助原生调查脚本：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-message-xy-20261109\scripts\`（`mx_common.py` 私有桌面框架；`probe1_smoke.py` 页签枚举；`probe3_xy_fields.py` 通道/显示/权限逐字段探针，`KINSEAL_STAGE=` 分阶段；`probe4_canvas.py` 画布流程与校验弹窗，`xy badrange` 复现最小值>最大值）。证据与树 JSON 在同上级 `probe\` 目录。
 - exe 字符串证据：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-bitbutton-20261108\exe-strings-ascii.txt`（`btn_XYtrend`、`XYTrendDlg`、`XYTrendGenDlg`、`QXYTrendChartXYDlg`、`createXYtrend()`）及原 exe UTF-8/GBK 串转储（通道设置中文标签、七项数据类型、线型图标资源、校验正则与文案、`compile\Curve.dat`）。
 - 姊妹手册：《位按钮功能与交互复刻手册.md》《静态文本功能与交互复刻手册.md》《消息显示功能与交互复刻手册.md》（同目录）——地址输入窗口、“选择颜色”窗口、画布通用右键菜单与状态栏可复用其描述。
+
+
+## 2026-11-13 原生补证与阶段4编辑切片
+
+默认样本与多通道/坐标轴变体均在原厂保存、重开、编译成功。实测采样点1..100、时间1..255、通道1..8；X/Y主分隔3..10、次分隔1..3，总位数1..10、小数0..3，字号12/16/24/48。第三通道-10/2000与线型2在通道切换后保留，第一通道仍0/1000；X轴-100/4000、总位6/小数2与Y轴-20/5000保留至重开。关闭X格线时隐藏本列格线色；关闭X标识时隐藏本列整组字号、最小/最大、总位及小数；本控件没有实时趋势图的绘制方向控件。
+
+本轮编辑实现与分层验收见[专项报告](../docs/X-Y曲线手册实现与验收.md)。原手册历史未知项只按本轮已取得结果纠正；源/设备/现场范围保持独立，未宣称全控件通过。

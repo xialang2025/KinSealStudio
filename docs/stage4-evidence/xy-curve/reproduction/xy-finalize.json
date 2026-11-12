@@ -1,0 +1,30 @@
+{
+  "id": "C25",
+  "ordinal": 25,
+  "name": "X-Y曲线",
+  "slug": "xy-curve",
+  "task": "S04-09",
+  "next": "C26",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/run.json",
+  "expectedPassed": 205,
+  "testRun": "docs/stage4-evidence/xy-curve/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/xy-curve/native/native-manifest.json",
+  "report": "docs/X-Y曲线手册实现与验收.md",
+  "manual": "design_plan/X-Y曲线功能与交互复刻手册.md",
+  "scope": "独立XyCurveProperties/Dialog，通道/显示/仅显现权限三页、共用触发/读取/清除地址、有符号优先7类型、1..100采样点/1..255秒/1..8独立通道、两套数值轴范围/位数/颜色/隐藏草稿、完整X/Y成对读取跨度保护与独立位复制角色、25类及单类schema12、创建/取消/侧栏/撤销、固定PC坐标示意图及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C25-001",
+    "Q-S04-C25-002",
+    "Q-S04-C25-003",
+    "Q-S04-C25-004"
+  ],
+  "nativeSummary": "默认样本与多通道/坐标轴变体均在原厂保存、重开、编译成功。实测采样点1..100、时间1..255、通道1..8；X/Y主分隔3..10、次分隔1..3，总位数1..10、小数0..3，字号12/16/24/48。第三通道-10/2000与线型2在通道切换后保留，第一通道仍0/1000；X轴-100/4000、总位6/小数2与Y轴-20/5000保留至重开。关闭X格线时隐藏本列格线色；关闭X标识时隐藏本列整组字号、最小/最大、总位及小数；本控件没有实时趋势图的绘制方向控件。",
+  "protocol": "原厂X-Y默认与通道/轴变体保存、重开、编译成功；关键DAT与源SHA见专项报告/清单。成对地址跨度按2×类型字数×通道数保守保护，未认定固件排列或时序。默认原厂基线已实物下载，四项清除/更新false、输入/待传SHA一致且原厂日志完成；Lite独立SM/设备编译实际仍拒绝。没有新增逐字节USB、屏显/触控或PLC结论。",
+  "codeFiles": "src/xy_curve_properties.*、xy_curve_dialog.*、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "reviewFindings": [
+    "只读复核覆盖独立X/Y类型分流、两轴字段生命周期、完整成对坐标跨度、触发/清除位角色、严格25类JSON和原厂/独立输出门槛。",
+    "构建前纠正代码生成括号和专有属性引用，增强非默认X轴范围/位数往返；六项新增测试全部实际PASS，136+59+10=205/0/0。",
+    "保守成对地址保护不代表固件地址排序已恢复；原厂基线下载不替代Lite独立编码、显示或PLC验证。"
+  ]
+}

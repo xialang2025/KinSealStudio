@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "xy_curve_dialog.h" //20261113-1 add
 #include "history_trend_dialog.h" //20261112-1 add
 #include "data_collection_dialog.h"
 #include <QGroupBox>
@@ -158,6 +159,12 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void xyNativeBoundsAndDataTypeLifetime(); //20261113-1 add
+    void xyIndependentChannelsAndRemovalReset(); //20261113-1 add
+    void xyAxisHiddenFieldsAndAccessSpans(); //20261113-1 add
+    void xyStrictPersistenceAndBackendGates(); //20261113-1 add
+    void xyStaticRasterAndClipping(); //20261113-1 add
+    void xyShellPlacementEditAndUndo(); //20261113-1 add
     void collectionSharedTypeMemoryAndFullAddressSpan(); //20261112-1 add
     void collectionDialogItemsAndInactiveDrafts(); //20261112-1 add
     void historyIndependentCurvesAndStableNames(); //20261112-1 add
@@ -3521,6 +3528,140 @@ void Stage4ControlTests::historyShellGateCollectionPlacementAndUndo() //20261112
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_DatagroupDisplay"))); QVERIFY(window.m_commands.contains(QStringLiteral("action_datasamp"))); QTimer::singleShot(0, &window, closeWarning); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
     QTimer::singleShot(0, &window, []() { DataCollectionDialog *dialog = qobject_cast<DataCollectionDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QLineEdit *>(QStringLiteral("CollectionName"))->setText(QStringLiteral("ShellCollector")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("CollectionButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_datasamp"))->trigger(); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1); QVERIFY(!window.m_systemSettingsTree->findItems(QStringLiteral("ShellCollector"), Qt::MatchExactly | Qt::MatchRecursive).isEmpty());
     QTimer::singleShot(0, &window, acceptHistory); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty()); QTimer::singleShot(0, &window, acceptHistory); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("历史趋势图")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled()); QTimer::singleShot(0, &window, closeWarning); window.deleteDataCollection(window.currentEditorProject().configurationNodes.first().id); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : xyObject
+ * Description     : Create an independent paired-coordinate fixture without generic operation-address aliases.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiObject xyObject() //20261113-1 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("xy-object"); object.type = QStringLiteral("xycurve"); object.name = QStringLiteral("X-Y曲线"); object.geometry = QRect(100, 100, 240, 160); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyNativeBoundsAndDataTypeLifetime
+ * Description     : Check signed-first type ordering, measured sampling limits and range retention across type changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyNativeBoundsAndDataTypeLifetime() //20261113-1 add
+{
+    XyCurveDialog dialog(xyObject(), HmiProject());
+    QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("XyDataType"));
+    XyCurveProperties properties;
+    QString error;
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("XyTabs"))->count(), 3); QCOMPARE(type->count(), 7); QCOMPARE(type->itemText(0), QStringLiteral("16位整数")); QCOMPARE(type->itemText(2), QStringLiteral("16位正整数")); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XySamplePoints"))->maximum(), 100); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XySampleTime"))->maximum(), 255); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XyChannelCount"))->maximum(), 8);
+    for (index = 0; index < 7; ++index) { type->setCurrentIndex(index); QCOMPARE(dialog.object().xyCurve.channels[0].maximum, QStringLiteral("1000")); QCOMPARE(dialog.object().xyCurve.channels[0].minimum, QStringLiteral("0")); }
+    properties.sampleTime = 256; QVERIFY(!properties.validate(&error)); properties.sampleTime = 255; properties.samplePoints = 100; QVERIFY(properties.validate(&error)); properties.samplePoints = 0; QVERIFY(!properties.validate(&error)); properties.samplePoints = 60; properties.channels[0].maximum = QStringLiteral("nan"); QVERIFY(!properties.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("xy-channel.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyIndependentChannelsAndRemovalReset
+ * Description     : Keep completed edits independent, reset removed channels and reopen the native first-channel editor selection.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyIndependentChannelsAndRemovalReset() //20261113-1 add
+{
+    XyCurveDialog dialog(xyObject(), HmiProject());
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("XyChannelCount"));
+    QComboBox *current = dialog.findChild<QComboBox *>(QStringLiteral("XyCurrentChannel"));
+    HmiObject object;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); count->setValue(3); QCOMPARE(current->count(), 3); current->setCurrentIndex(2); dialog.findChild<QLineEdit *>(QStringLiteral("XyChannelMinimum"))->setText(QStringLiteral("-10")); dialog.findChild<QLineEdit *>(QStringLiteral("XyChannelMaximum"))->setText(QStringLiteral("2000")); dialog.findChild<QComboBox *>(QStringLiteral("XyLineStyle"))->setCurrentIndex(2); current->setCurrentIndex(0); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("XyChannelMinimum"))->text(), QStringLiteral("0")); current->setCurrentIndex(2); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("XyChannelMaximum"))->text(), QStringLiteral("2000")); object = dialog.object();
+    { XyCurveDialog reopened(object, HmiProject()); QCOMPARE(reopened.object().xyCurve.currentChannel, 0); QCOMPARE(reopened.object().xyCurve.channels[2].minimum, QStringLiteral("-10")); QCOMPARE(reopened.object().xyCurve.channels[2].lineStyle, 2); }
+    count->setValue(1); count->setValue(3); current->setCurrentIndex(2); QCOMPARE(dialog.object().xyCurve.channels[2].minimum, QStringLiteral("0")); QCOMPARE(dialog.object().xyCurve.channels[2].maximum, QStringLiteral("1000")); QCOMPARE(dialog.object().xyCurve.channels[2].lineStyle, 0); QCOMPARE(dialog.object().xyCurve.currentChannel, 2);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyAxisHiddenFieldsAndAccessSpans
+ * Description     : Preserve hidden axis values and independently increment trigger, clear and full read spans.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyAxisHiddenFieldsAndAccessSpans() //20261113-1 add
+{
+    XyCurveDialog dialog(xyObject(), HmiProject());
+    HmiObject object = xyObject();
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("XyTabs"))->setCurrentIndex(1); dialog.findChild<QLineEdit *>(QStringLiteral("XyYMinimum"))->setText(QStringLiteral("-20")); dialog.findChild<QLineEdit *>(QStringLiteral("XyYMaximum"))->setText(QStringLiteral("5000")); dialog.findChild<QCheckBox *>(QStringLiteral("XyYMarks"))->setChecked(false); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("XyYMaximum"))->isVisible()); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("XyYTotalDigits"))->isVisible()); QVERIFY(dialog.findChild<QComboBox *>(QStringLiteral("XyXFontSize"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("XyYMarks"))->setChecked(true); QCOMPARE(dialog.object().xyCurve.yMaximum, QStringLiteral("5000")); dialog.findChild<QCheckBox *>(QStringLiteral("XyXTicks"))->setChecked(false); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("XyXAxisColor"))->isVisible()); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XyXMinor"))->minimum(), 1); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XyYMinor"))->maximum(), 3); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("XyYTotalDigits"))->maximum(), 10); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1);
+    dialog.findChild<QLineEdit *>(QStringLiteral("XyXMinimum"))->setText(QStringLiteral("-100")); dialog.findChild<QLineEdit *>(QStringLiteral("XyXMaximum"))->setText(QStringLiteral("4000")); dialog.findChild<QSpinBox *>(QStringLiteral("XyXFractionalDigits"))->setValue(2); dialog.findChild<QCheckBox *>(QStringLiteral("XyXMarks"))->setChecked(false); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("XyXMaximum"))->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("XyYMaximum"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("XyXMarks"))->setChecked(true); QCOMPARE(dialog.object().xyCurve.xMaximum, QStringLiteral("4000")); dialog.findChild<QCheckBox *>(QStringLiteral("XyXGrid"))->setChecked(false); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("XyXGridColor"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("XyXGrid"))->setChecked(true);
+    object.xyCurve.dataType = 1; object.xyCurve.channelCount = 8; object.xyCurve.readAddress = QStringLiteral("LW4066"); QVERIFY(!object.xyCurve.validateAddresses(project.connections, &error)); object.xyCurve.readAddress = QStringLiteral("LW4065"); QVERIFY(object.xyCurve.validateAddresses(project.connections, &error)); object.xyCurve.readAddress = QStringLiteral("LW0"); object.xyCurve.triggerAddress = QStringLiteral("LB10"); object.xyCurve.clearAddress = QStringLiteral("LB20"); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 32, 0}, {Stage3AddressField::TriggerBit, 2, 0}, {Stage3AddressField::ClearBit, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().xyCurve.readAddress, QStringLiteral("LW32")); QCOMPARE(result.objects.last().xyCurve.triggerAddress, QStringLiteral("LB12")); QCOMPARE(result.objects.last().xyCurve.clearAddress, QStringLiteral("LB23"));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("xy-display.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyStrictPersistenceAndBackendGates
+ * Description     : Round-trip 25 families and strict nested axis/channel drafts while preserving refused backend outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyStrictPersistenceAndBackendGates() //20261113-1 add
+{
+    HmiProject project = historyProject();
+    HmiObject history = project.objects.first();
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = xyObject();
+    XyCurveProperties parsed;
+    QJsonObject json;
+    QJsonObject nested;
+    QJsonArray channels;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.xyCurve.xMinimum = QStringLiteral("-100"); object.xyCurve.xMaximum = QStringLiteral("4000"); object.xyCurve.xTotalDigits = 6; object.xyCurve.xFractionalDigits = 2;
+    object.xyCurve.channelCount = 3; object.xyCurve.currentChannel = 2; object.xyCurve.channels[2].minimum = QStringLiteral("-10"); object.xyCurve.channels[2].maximum = QStringLiteral("2000"); object.xyCurve.channels[2].lineStyle = 2; object.xyCurve.channels[2].color = QStringLiteral("#0000ff"); object.xyCurve.yAxis.marks = false; object.xyCurve.yMaximum = QStringLiteral("5000");
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), trackObject(), chartObject(), trendObject(), history, object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 25); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(json, &only, &error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY(!object.xyCurve.toJson().contains(QStringLiteral("rightToLeft")));
+    json = object.xyCurve.toJson(); json.insert(QStringLiteral("sampleTime"), 1.5); parsed.sampleTime = 9; QVERIFY(!XyCurveProperties::fromJson(json, &parsed, &error)); QCOMPARE(parsed.sampleTime, 9); json = object.xyCurve.toJson(); channels = json.value(QStringLiteral("channels")).toArray(); channels.removeLast(); json.insert(QStringLiteral("channels"), channels); QVERIFY(!XyCurveProperties::fromJson(json, &parsed, &error)); nested = object.xyCurve.xAxis.toJson(); nested.insert(QStringLiteral("major"), true); json = object.xyCurve.toJson(); json.insert(QStringLiteral("xAxis"), nested); QVERIFY(!XyCurveProperties::fromJson(json, &parsed, &error)); json = object.xyCurve.toJson(); json.insert(QStringLiteral("rightToLeft"), false); QVERIFY(!XyCurveProperties::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("xy-mixed.ksp")), &error), qPrintable(error)); QVERIFY2(only.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("xy-only.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyStaticRasterAndClipping
+ * Description     : Verify configured fills, independent numeric axis labels, independent curves and clipping without inventing acquisition.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyStaticRasterAndClipping() //20261113-1 add
+{
+    XyCurveProperties properties;
+    QImage image(240, 160, QImage::Format_ARGB32);
+    QImage forward;
+    QPainter painter;
+    image.fill(Qt::transparent); painter.begin(&image); paintXyCurve(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(235, 155).alpha(), 0); forward = image;
+    properties.xMaximum = QStringLiteral("4000"); properties.xFractionalDigits = 2; image.fill(Qt::transparent); painter.begin(&image); paintXyCurve(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QVERIFY(image != forward); properties.channelCount = 2; properties.channels[1].color = QStringLiteral("#0000ff"); properties.bottomColor = QStringLiteral("#00ff00"); image.fill(Qt::transparent); painter.begin(&image); paintXyCurve(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QVERIFY(image != forward); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::xyShellPlacementEditAndUndo
+ * Description     : Use the real X/Y action through cancel, pending placement, compact read edits and one-transaction history.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::xyShellPlacementEditAndUndo() //20261113-1 add
+{
+    MainWindow window;
+    auto acceptTrend = []() { XyCurveDialog *dialog = qobject_cast<XyCurveDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("XyButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_X_Y"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("X-Y曲线")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.readAddress, QStringLiteral("LW10"));
+    QTimer::singleShot(0, &window, []() { XyCurveDialog *dialog = qobject_cast<XyCurveDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("XySampleTime"))->setValue(255); dialog->findChild<QDialogButtonBox *>(QStringLiteral("XyButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.sampleTime, 255); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.sampleTime, 1); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

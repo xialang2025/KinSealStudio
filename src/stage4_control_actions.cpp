@@ -9,6 +9,7 @@
 #include "chart_dialog.h" //20261112-1 add
 #include "trend_dialog.h" //20261112-1 add
 #include "history_trend_dialog.h" //20261112-1 add
+#include "xy_curve_dialog.h" //20261113-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -61,6 +62,8 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         Q_FOREACH (collection, currentEditorProject().configurationNodes) { if (collection.kind == QStringLiteral("dataCollection") && collection.active && collection.implemented) { found = true; break; } }
         if (!found) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("尚未建立数据采集！")); return; }
         object.name = QStringLiteral("历史趋势图"); object.geometry = QRect(0, 0, 240, 160); dialog = new HistoryTrendDialog(object, currentEditorProject(), this); }
+    else if (type == QStringLiteral("xycurve")) //20261113-1 add
+    { object.name = QStringLiteral("X-Y曲线"); object.geometry = QRect(0, 0, 240, 160); dialog = new XyCurveDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
         object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(0, 0, 200, 100); dialog = new MoveTrackDialog(object, currentEditorProject(), this);
@@ -126,6 +129,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
+        else if (type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -169,6 +173,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("chart")) { dialog = new ChartDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("trend")) { dialog = new TrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("historytrend")) { dialog = new HistoryTrendDialog(object, currentEditorProject(), this); } //20261112-1 add
+    else if (object.type == QStringLiteral("xycurve")) { dialog = new XyCurveDialog(object, currentEditorProject(), this); } //20261113-1 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -188,6 +193,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
+        else if (object.type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add

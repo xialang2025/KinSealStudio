@@ -998,6 +998,8 @@ void MainWindow::applySelectedProperties() //20261107-6 add
     if (object.type == QStringLiteral("historytrend")) { object.address.clear(); object.text.clear(); } //20261112-1 add: A historical curve has no direct operation carrier.
     if (object.type == QStringLiteral("trend")) //20261112-1 add: Compact edits affect only the selected trend form monitor.
     { object.trend.readAddress = object.address.trimmed(); object.address.clear(); if (!object.trend.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("趋势图属性未提交"), controlError); return; } }
+    if (object.type == QStringLiteral("xycurve")) //20261113-1 add: Compact edits affect only the selected chart form monitor.
+    { object.xyCurve.readAddress = object.address.trimmed(); object.address.clear(); if (!object.xyCurve.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("X-Y曲线属性未提交"), controlError); return; } }
     if (object.type == QStringLiteral("track")) //20261112-0 add: Compact edits update only the typed operation carrier.
     { object.moveTrack.address = object.address.trimmed(); object.address.clear(); if (!object.moveTrack.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("移动轨迹属性未提交"), controlError); return; } }
     if (object.type == QStringLiteral("wheel")) //20261112-0 add: Compact edits only change the independent wheel operation carrier.
@@ -1468,7 +1470,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("screen") || object.type == QStringLiteral("multifunction"))) { m_addressEdit->setEnabled(false); } //20261112-0 change: MF commands cannot be represented by a single compact address field.
-    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend"))) { m_textEdit->setEnabled(false); } //20261112-0 add
+    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve"))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.
     if (selected && (object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
@@ -1498,6 +1500,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         m_addressEdit->setText(object.address);
         if (object.type == QStringLiteral("chart")) { m_addressEdit->setText(object.chart.address()); } //20261112-1 add
         if (object.type == QStringLiteral("trend")) { m_addressEdit->setText(object.trend.readAddress); } //20261112-1 add
+        if (object.type == QStringLiteral("xycurve")) { m_addressEdit->setText(object.xyCurve.readAddress); } //20261113-1 add
         if (object.type == QStringLiteral("track")) { m_addressEdit->setText(object.moveTrack.address); } //20261112-0 add
         if (object.type == QStringLiteral("wheel")) { m_addressEdit->setText(object.wheel.address); } //20261112-0 add
         if (object.type == QStringLiteral("slider")) { m_addressEdit->setText(object.slider.address); } //20261112-0 add

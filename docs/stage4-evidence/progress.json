@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 19,
-  "blockedLayers": 73,
-  "active": "C25",
+  "editorSlicesDelivered": 20,
+  "blockedLayers": 77,
+  "active": "C26",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -504,14 +504,31 @@
     {
       "id": "C25",
       "name": "X-Y曲线",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立XyCurveProperties/Dialog，通道/显示/仅显现权限三页、共用触发/读取/清除地址、有符号优先7类型、1..100采样点/1..255秒/1..8独立通道、两套数值轴范围/位数/颜色/隐藏草稿、完整X/Y成对读取跨度保护与独立位复制角色、25类及单类schema12、创建/取消/侧栏/撤销、固定PC坐标示意图及原厂基线实物下载",
+      "evidence": "xy-curve/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C25-001",
+        "Q-S04-C25-002",
+        "Q-S04-C25-003",
+        "Q-S04-C25-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/run.json"
     },
     {
       "id": "C26",
       "name": "数据群组",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

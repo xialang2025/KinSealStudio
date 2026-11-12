@@ -1,0 +1,69 @@
+{
+  "executableSha256": "6f777a5f8fc312e97ee4eec00eb235ab0e070be5839fe38478f0f7281d991442",
+  "inputPath": "docs\\stage4-evidence\\xy-curve\\inputs\\xy-only.ksp",
+  "inputSha256": "94a9660f38ec36f8640ff48afbaa6738f445b104e9d3de118c79505f4e9d0f9a",
+  "calls": [
+    {
+      "label": "capabilities",
+      "exitCode": 0,
+      "stdout": "{\"activePageId\":\"page-1\",\"deviceCompile\":{\"offlineCompileRequired\":true,\"reason\":\"所含对象类型尚未恢复原厂源或设备编码。\",\"status\":\"blocked\",\"usbAccessed\":false},\"limits\":[\"Eligibility does not establish all field semantics, original rendering or physical touch acceptance.\",\"Multi-page device records and active new configuration nodes remain unsupported.\",\"Object/language limits describe this Lite backend, not original firmware maxima.\"],\"modelPersistence\":{\"allowed\":true,\"format\":\"KSP-schema1-to9-and11-to12\",\"reason\":\"\"},\"nativeSource\":{\"actualExportRequired\":true,\"opaqueBodyEditable\":false,\"reason\":\"所含对象类型尚未恢复原厂源或设备编码。\",\"status\":\"blocked\"},\"pageCount\":1,\"startupLanguage\":\"\",\"startupPageId\":\"page-1\",\"target\":{\"firmwareVersionConfirmed\":false,\"knownBackend\":\"AMT070W124-L800X480R-single-page\",\"model\":\"AMT070W124-L800X480R\",\"sourceVersion\":122}}\r\n",
+      "stderr": "",
+      "result": {
+        "activePageId": "page-1",
+        "deviceCompile": {
+          "offlineCompileRequired": true,
+          "reason": "所含对象类型尚未恢复原厂源或设备编码。",
+          "status": "blocked",
+          "usbAccessed": false
+        },
+        "limits": [
+          "Eligibility does not establish all field semantics, original rendering or physical touch acceptance.",
+          "Multi-page device records and active new configuration nodes remain unsupported.",
+          "Object/language limits describe this Lite backend, not original firmware maxima."
+        ],
+        "modelPersistence": {
+          "allowed": true,
+          "format": "KSP-schema1-to9-and11-to12",
+          "reason": ""
+        },
+        "nativeSource": {
+          "actualExportRequired": true,
+          "opaqueBodyEditable": false,
+          "reason": "所含对象类型尚未恢复原厂源或设备编码。",
+          "status": "blocked"
+        },
+        "pageCount": 1,
+        "startupLanguage": "",
+        "startupPageId": "page-1",
+        "target": {
+          "firmwareVersionConfirmed": false,
+          "knownBackend": "AMT070W124-L800X480R-single-page",
+          "model": "AMT070W124-L800X480R",
+          "sourceVersion": 122
+        }
+      }
+    },
+    {
+      "label": "compile",
+      "exitCode": 19,
+      "stdout": "{\"message\":\"独立编译目前只支持目标机型的单个静态文本画面；已拒绝写屏。\",\"ok\":false}\r\n",
+      "stderr": "",
+      "result": {
+        "message": "独立编译目前只支持目标机型的单个静态文本画面；已拒绝写屏。",
+        "ok": false
+      }
+    },
+    {
+      "label": "export-source",
+      "exitCode": 20,
+      "stdout": "{\"message\":\"原生源保存尚不支持本次系统、通信、语言、图片库或宏配置编辑；已取消保存以保留原始元数据。\",\"ok\":false}\r\n",
+      "stderr": "",
+      "result": {
+        "message": "原生源保存尚不支持本次系统、通信、语言、图片库或宏配置编辑；已取消保存以保留原始元数据。",
+        "ok": false
+      }
+    }
+  ],
+  "usbAccessed": false,
+  "sourceAndDeviceRefusalsRetained": true
+}

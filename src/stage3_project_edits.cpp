@@ -98,6 +98,11 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         addressSlots.append({Stage3AddressField::ClearBit, &object->trend.clearAddress, PlcAddressRole::Bit, 1U});
         addConditionSlots(&object->trend.visibility, false, &addressSlots);
     }
+    if (object->type == QStringLiteral("xycurve")) //20261113-1 add: Guard paired X/Y coordinates and keep trigger/clear increments independent.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->xyCurve.readAddress, PlcAddressRole::Word, XyCurveProperties::wordCount(object->xyCurve.dataType) * u32(object->xyCurve.channelCount) * 2U});
+        addressSlots.append({Stage3AddressField::TriggerBit, &object->xyCurve.triggerAddress, PlcAddressRole::Bit, 1U}); addressSlots.append({Stage3AddressField::ClearBit, &object->xyCurve.clearAddress, PlcAddressRole::Bit, 1U}); addConditionSlots(&object->xyCurve.visibility, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
