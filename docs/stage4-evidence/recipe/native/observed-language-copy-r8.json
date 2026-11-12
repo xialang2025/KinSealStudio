@@ -1,0 +1,272 @@
+{
+  "tableHeaders": [
+    {
+      "label": "recipe-english-custom-r8",
+      "headers": {
+        "rows": [
+          "EnglishItem0",
+          "RWI:2",
+          "RWI:3",
+          "RWI:4"
+        ],
+        "columns": [
+          "EnglishRecipe0",
+          "RECIPE2"
+        ]
+      }
+    },
+    {
+      "label": "recipe-chinese-after-english-r8",
+      "headers": {
+        "rows": [
+          "EnglishItem0",
+          "RWI:2",
+          "RWI:3",
+          "RWI:4"
+        ],
+        "columns": [
+          "EnglishRecipe0",
+          "RECIPE2"
+        ]
+      }
+    },
+    {
+      "label": "recipe-after-copy-r8",
+      "headers": {
+        "rows": [
+          "EnglishItem0",
+          "RWI:2",
+          "RWI:3",
+          "RWI:4"
+        ],
+        "columns": [
+          "EnglishRecipe0",
+          "RECIPE2"
+        ]
+      }
+    }
+  ],
+  "tableStates": null,
+  "tables": null,
+  "validators": [
+    {
+      "label": "recipe-uint32-validator-r8",
+      "widget": {
+        "pointer": "0xe6b9af8",
+        "kind": "QLineEdit",
+        "objectName": "sRecipeData",
+        "text": "0",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "maxLength": "32767",
+        "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+        "acceptableInput": "true",
+        "readOnly": "false"
+      },
+      "validator": {
+        "pointer": "0x61ffc30",
+        "kind": "QRegExpValidator",
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 0
+      }
+    }
+  ],
+  "fields": {
+    "recipe-uint32-bounds-r8": [
+      {
+        "objectName": "sRRecipeAddr",
+        "text": "LW0",
+        "enabled": 0
+      },
+      {
+        "objectName": "sWRecipeAddr",
+        "text": "LW0",
+        "enabled": 0
+      },
+      {
+        "objectName": "sCurrRecAddrRange",
+        "text": "RWI2 - RWI8",
+        "enabled": 1
+      },
+      {
+        "objectName": "sRecMemAddrRange",
+        "text": "RW1 - RW16",
+        "enabled": 1
+      },
+      {
+        "objectName": "bRaddrSameWaddr",
+        "text": "读取地址与写入地址相同",
+        "enabled": 0,
+        "checked": "true"
+      },
+      {
+        "objectName": "bRRecipeFromPlc",
+        "text": "从PLC读取配方",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "bWRecipeToPlc",
+        "text": "写配方到PLC",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "nRecipeLen",
+        "text": "4",
+        "enabled": 1,
+        "minimum": "1",
+        "maximum": "99",
+        "value": "4"
+      }
+    ],
+    "recipe-read-same-r8": [
+      {
+        "objectName": "sRRecipeAddr",
+        "text": "LW0",
+        "enabled": 0
+      },
+      {
+        "objectName": "sWRecipeAddr",
+        "text": "LW0",
+        "enabled": 0
+      },
+      {
+        "objectName": "sCurrRecAddrRange",
+        "text": "RWI2 - RWI8",
+        "enabled": 1
+      },
+      {
+        "objectName": "sRecMemAddrRange",
+        "text": "RW1 - RW16",
+        "enabled": 1
+      },
+      {
+        "objectName": "bRaddrSameWaddr",
+        "text": "读取地址与写入地址相同",
+        "enabled": 1,
+        "checked": "true"
+      },
+      {
+        "objectName": "bRRecipeFromPlc",
+        "text": "从PLC读取配方",
+        "enabled": 1,
+        "checked": "true"
+      },
+      {
+        "objectName": "bWRecipeToPlc",
+        "text": "写配方到PLC",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "nRecipeLen",
+        "text": "4",
+        "enabled": 1,
+        "minimum": "1",
+        "maximum": "99",
+        "value": "4"
+      }
+    ],
+    "recipe-read-independent-r8": [
+      {
+        "objectName": "sRRecipeAddr",
+        "text": "LW0",
+        "enabled": 1
+      },
+      {
+        "objectName": "sWRecipeAddr",
+        "text": "LW0",
+        "enabled": 0
+      },
+      {
+        "objectName": "sCurrRecAddrRange",
+        "text": "RWI2 - RWI8",
+        "enabled": 1
+      },
+      {
+        "objectName": "sRecMemAddrRange",
+        "text": "RW1 - RW16",
+        "enabled": 1
+      },
+      {
+        "objectName": "bRaddrSameWaddr",
+        "text": "读取地址与写入地址相同",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "bRRecipeFromPlc",
+        "text": "从PLC读取配方",
+        "enabled": 1,
+        "checked": "true"
+      },
+      {
+        "objectName": "bWRecipeToPlc",
+        "text": "写配方到PLC",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "nRecipeLen",
+        "text": "4",
+        "enabled": 1,
+        "minimum": "1",
+        "maximum": "99",
+        "value": "4"
+      }
+    ],
+    "recipe-read-write-r8": [
+      {
+        "objectName": "sRRecipeAddr",
+        "text": "LW0",
+        "enabled": 1
+      },
+      {
+        "objectName": "sWRecipeAddr",
+        "text": "LW0",
+        "enabled": 1
+      },
+      {
+        "objectName": "sCurrRecAddrRange",
+        "text": "RWI2 - RWI8",
+        "enabled": 1
+      },
+      {
+        "objectName": "sRecMemAddrRange",
+        "text": "RW1 - RW16",
+        "enabled": 1
+      },
+      {
+        "objectName": "bRaddrSameWaddr",
+        "text": "读取地址与写入地址相同",
+        "enabled": 1,
+        "checked": "false"
+      },
+      {
+        "objectName": "bRRecipeFromPlc",
+        "text": "从PLC读取配方",
+        "enabled": 1,
+        "checked": "true"
+      },
+      {
+        "objectName": "bWRecipeToPlc",
+        "text": "写配方到PLC",
+        "enabled": 1,
+        "checked": "true"
+      },
+      {
+        "objectName": "nRecipeLen",
+        "text": "4",
+        "enabled": 1,
+        "minimum": "1",
+        "maximum": "99",
+        "value": "4"
+      }
+    ]
+  }
+}

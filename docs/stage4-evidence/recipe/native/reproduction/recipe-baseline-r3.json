@@ -1,0 +1,103 @@
+[
+  {
+    "op": "action",
+    "name": "action_rep"
+  },
+  {
+    "op": "text",
+    "kind": "QLineEdit",
+    "name": "sRecipeName",
+    "value": "C31One"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "recipe-config-data-r3"
+  },
+  {
+    "op": "screenshot",
+    "label": "recipe-config-data-r3"
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-config-data-r3"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "save",
+    "output": "recipe-configuration-only.sm"
+  },
+  {
+    "op": "action",
+    "name": "action_recipetable"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-display-basic-r3"
+  },
+  {
+    "op": "screenshot",
+    "label": "recipe-display-basic-r3"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "recipe-display-permissions-r3"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      80,
+      80
+    ],
+    "to": [
+      700,
+      380
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "recipe-default-wide.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "recipe-default-wide-r3"
+  }
+]

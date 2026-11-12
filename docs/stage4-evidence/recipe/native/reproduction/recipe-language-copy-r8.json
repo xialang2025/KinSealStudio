@@ -1,0 +1,201 @@
+[
+  {
+    "op": "action",
+    "name": "action_rep"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sRecipeName",
+    "value": "C31Survey"
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nRecipeTotalNum",
+    "value": 2
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "nDataType",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "recipe-uint32-bounds-r8"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "op": "validator",
+    "kind": "QLineEdit",
+    "name": "sRecipeData",
+    "label": "recipe-uint32-validator-r8"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sRowHeadName",
+    "value": "ChineseRecipe0"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sColumnHeadName",
+    "value": "ChineseItem0"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sRecipeData",
+    "value": "123"
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sRecipeData",
+    "value": "456"
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 1
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sRowHeadName",
+    "value": "EnglishRecipe0"
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sColumnHeadName",
+    "value": "EnglishItem0"
+  },
+  {
+    "op": "table-headers",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-english-custom-r8"
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 0
+  },
+  {
+    "op": "table-headers",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-chinese-after-english-r8"
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-before-copy-r8"
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nSourceId",
+    "value": 0
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nTargetId",
+    "value": 1
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "CopyButton"
+  },
+  {
+    "op": "table-headers",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-after-copy-r8"
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "RecipeDataTable",
+    "label": "recipe-after-copy-r8"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "bRRecipeFromPlc"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-read-same-r8"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "bRaddrSameWaddr"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-read-independent-r8"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "bWRecipeToPlc"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-read-write-r8"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "save",
+    "output": "recipe-copy-configuration.sm"
+  }
+]

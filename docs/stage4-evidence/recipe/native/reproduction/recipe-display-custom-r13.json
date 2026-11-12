@@ -1,0 +1,140 @@
+[
+  {
+    "op": "action",
+    "name": "action_recipetable"
+  },
+  {
+    "op": "group",
+    "kind": "QGroupBox",
+    "name": "groupBox_edit",
+    "value": true
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "ckx_useGridColor"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-grid-off-r13"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "ckx_keyboardCus"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "checkBox_useKeyPos"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-keyboard-position-r13"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "ckx_keyboardCus"
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "comboBox_fontSize",
+    "value": 3
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "comboBox_align",
+    "value": 2
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "group",
+    "kind": "QGroupBox",
+    "name": "groupBox_Notice",
+    "value": true
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "checkBox_NoteB"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-notice-bit-r13"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "checkBox_NoteW"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-notice-word-r13"
+  },
+  {
+    "op": "group",
+    "kind": "QGroupBox",
+    "name": "groupBox_Notice",
+    "value": false
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      80,
+      80
+    ],
+    "to": [
+      700,
+      380
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "recipe-custom.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "recipe-custom-r13"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "recipe-custom-reopened-r13"
+  },
+  {
+    "op": "screenshot",
+    "label": "recipe-custom-reopened-r13"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

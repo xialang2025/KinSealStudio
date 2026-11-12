@@ -653,6 +653,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
         else if (role == QStringLiteral("alarm-bit") || role == QStringLiteral("alarm-condition")) { configureAlarmRegistration(role == QStringLiteral("alarm-bit") ? 0 : 1); } //20261113-2 add
+        else if (role == QStringLiteral("recipe")) { configureRecipe(pageId); } //20261113-2 add
         else if (role == QStringLiteral("dataCollection")) { configureDataCollection(pageId); } //20261112-1 add
         else if (role == QStringLiteral("macros")) { showGlobalTool(3); }
         else if (role == QStringLiteral("unsupported")) {
@@ -668,6 +669,10 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         {
             int family = item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") ? 0 : 1;
             menu.addAction(QStringLiteral("配置"), this, [this, family]() { configureAlarmRegistration(family); }); menu.addAction(QStringLiteral("删除"), this, [this, family]() { deleteAlarmRegistration(family); }); menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position)); return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("recipe")) //20261113-2 add
+        {
+            id = item->data(0, Qt::UserRole + 1).toString(); if (id.isEmpty()) { menu.addAction(QStringLiteral("新增"), this, [this]() { configureRecipe(); }); } else { menu.addAction(QStringLiteral("编辑"), this, [this, id]() { configureRecipe(id); }); menu.addAction(QStringLiteral("删除"), this, [this, id]() { deleteRecipe(id); }); } menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position)); return;
         }
         if (item == nullptr || item->data(0, Qt::UserRole).toString() != QStringLiteral("dataCollection")) { return; }
         id = item->data(0, Qt::UserRole + 1).toString();
@@ -1011,6 +1016,7 @@ void MainWindow::applySelectedProperties() //20261107-6 add
     { object.dataGroup.readAddress = object.address.trimmed(); object.address.clear(); if (!object.dataGroup.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("数据群组属性未提交"), controlError); return; } }
     if ((object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm"))) { object.address.clear(); object.text.clear(); } //20261113-2 add
     if (object.type == QStringLiteral("historydata")) { object.address.clear(); object.text.clear(); } //20261113-2 add
+    if (object.type == QStringLiteral("recipe")) { object.address.clear(); object.text.clear(); } //20261113-2 add
     if (object.type == QStringLiteral("track")) //20261112-0 add: Compact edits update only the typed operation carrier.
     { object.moveTrack.address = object.address.trimmed(); object.address.clear(); if (!object.moveTrack.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("移动轨迹属性未提交"), controlError); return; } }
     if (object.type == QStringLiteral("wheel")) //20261112-0 add: Compact edits only change the independent wheel operation carrier.
@@ -1481,8 +1487,8 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("screen") || object.type == QStringLiteral("multifunction"))) { m_addressEdit->setEnabled(false); } //20261112-0 change: MF commands cannot be represented by a single compact address field.
-    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historydata") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.
-    if (selected && ((object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
+    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("recipe") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.
+    if (selected && ((object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) || object.type == QStringLiteral("recipe") || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
     m_widthSpin->setEnabled(selected);

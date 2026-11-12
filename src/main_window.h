@@ -62,6 +62,8 @@ private slots:
     void editStage4Control();
     void configureAlarmRegistration(int family); //20261113-2 add
     void deleteAlarmRegistration(int family);
+    void configureRecipe(const QString &id = QString()); //20261113-2 add
+    void deleteRecipe(const QString &id);
     void configureDataCollection(const QString &id = QString()); //20261112-1 add
     void deleteDataCollection(const QString &id);
     void configureLanguages();

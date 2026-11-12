@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
+#include "recipe_dialog.h" //20261113-2 add
 #include "data_collection_dialog.h" //20261112-1 add
 #include "message_display_dialog.h"
 #include "scale_dialog.h"
@@ -15,6 +16,7 @@
 #include "data_group_dialog.h" //20261113-1 add
 #include "alarm_display_dialog.h" //20261113-2 add
 #include "history_data_dialog.h" //20261113-2 add
+#include "recipe_display_dialog.h" //20261113-2 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -90,6 +92,14 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         if (!found) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("没有建立数据采集")); return; }
         object.name = QStringLiteral("历史数据显示器"); object.geometry = QRect(0, 0, 320, 180); dialog = new HistoryDataDialog(object, currentEditorProject(), this);
     }
+    else if (type == QStringLiteral("recipe")) //20261113-2 add: The actual native prerequisite is a real global recipe, not a placeholder tree node.
+    {
+        HmiConfigurationNode definition;
+        bool found = false;
+        Q_FOREACH (definition, currentEditorProject().configurationNodes) { if (definition.kind == QStringLiteral("recipe") && definition.active && definition.implemented) { found = true; break; } }
+        if (!found) { QMessageBox::warning(this, QStringLiteral("提示"), QStringLiteral("配方不存在，请先创建配方")); return; }
+        object.name = QStringLiteral("配方显示器"); object.geometry = QRect(0, 0, 320, 180); dialog = new RecipeDisplayDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
         object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(0, 0, 200, 100); dialog = new MoveTrackDialog(object, currentEditorProject(), this);
@@ -160,6 +170,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (type == QStringLiteral("alarmdisplay") || type == QStringLiteral("historyalarm")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("historydata")) { object = qobject_cast<HistoryDataDialog *>(dialog)->object(); } //20261113-2 add
+        else if (type == QStringLiteral("recipe")) { object = qobject_cast<RecipeDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -208,6 +219,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("datagroup")) { dialog = new DataGroupDialog(object, currentEditorProject(), this); } //20261113-1 add
     else if (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) { dialog = new AlarmDisplayDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("historydata")) { dialog = new HistoryDataDialog(object, currentEditorProject(), this); } //20261113-2 add
+    else if (object.type == QStringLiteral("recipe")) { dialog = new RecipeDisplayDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -232,6 +244,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("historydata")) { object = qobject_cast<HistoryDataDialog *>(dialog)->object(); } //20261113-2 add
+        else if (object.type == QStringLiteral("recipe")) { object = qobject_cast<RecipeDisplayDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -343,4 +356,43 @@ void MainWindow::deleteAlarmRegistration(int family) //20261113-2 add
     int index;
     for (index = 0; index < candidate.configurationNodes.size(); ++index) { if (candidate.configurationNodes[index].kind == QStringLiteral("alarm") && candidate.configurationNodes[index].active && candidate.configurationNodes[index].implemented && AlarmRegistrationProperties::fromJson(candidate.configurationNodes[index].properties, &properties) && properties.family == family) { candidate.configurationNodes.removeAt(index); if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("报警登录正在使用"), error); } return; } }
 
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::configureRecipe
+ * Description     : Commit one accepted recipe definition as a complete undoable project transaction.
+ * Input Parameters: id
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void MainWindow::configureRecipe(const QString &id) //20261113-2 add
+{
+    HmiProject candidate = currentEditorProject();
+    HmiConfigurationNode node;
+    HmiConfigurationNode peer;
+    RecipeDialog *dialog;
+    QString error;
+    int index;
+    int existing = -1;
+    if (!m_hasProject) { return; }
+    for (index = 0; index < candidate.configurationNodes.size(); ++index) { peer = candidate.configurationNodes[index]; if (!id.isEmpty() && peer.id == id && peer.kind == QStringLiteral("recipe")) { node = peer; existing = index; } if (id.isEmpty() && peer.kind == QStringLiteral("recipe") && peer.active && peer.implemented) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("已经达到最大配方数量，请删除后再新建。")); return; } }
+    if (!id.isEmpty() && existing < 0) { return; } if (id.isEmpty()) { node.kind = QStringLiteral("recipe"); }
+    dialog = new RecipeDialog(node, candidate, this); if (dialog->exec() != QDialog::Accepted) { delete dialog; return; }
+    if (existing < 0) { candidate.configurationNodes.append(dialog->node()); } else { candidate.configurationNodes[existing] = dialog->node(); } delete dialog;
+    if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("配方未提交"), error); }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::deleteRecipe
+ * Description     : Refuse removal while any active or inactive page consumes the stable recipe definition.
+ * Input Parameters: id
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void MainWindow::deleteRecipe(const QString &id) //20261113-2 add
+{
+    HmiProject candidate = currentEditorProject();
+    QString error;
+    int index;
+    for (index = 0; index < candidate.configurationNodes.size(); ++index) { if (candidate.configurationNodes[index].id == id && candidate.configurationNodes[index].kind == QStringLiteral("recipe")) { candidate.configurationNodes.removeAt(index); if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("配方正在使用"), error); } return; } }
 }

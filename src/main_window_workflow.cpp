@@ -439,7 +439,8 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     }
     Q_FOREACH (label, (QStringList{QStringLiteral("配方"), QStringLiteral("资料传输")}))
     {
-        item = new QTreeWidgetItem(settings, {label}); item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+        item = new QTreeWidgetItem(settings, {label}); item->setData(0, Qt::UserRole, label == QStringLiteral("配方") ? QStringLiteral("recipe") : QStringLiteral("unsupported")); //20261113-2 change
+        if (label == QStringLiteral("配方")) { Q_FOREACH (collection, m_project.configurationNodes) { if (collection.kind != QStringLiteral("recipe") || !collection.active || !collection.implemented) { continue; } collectionItem = new QTreeWidgetItem(item, {collection.name}); collectionItem->setData(0, Qt::UserRole, QStringLiteral("recipe")); collectionItem->setData(0, Qt::UserRole + 1, collection.id); } }
     }
     decorateNativeSystemTree(); //20261111-1 add
     m_systemSettingsTree->setEnabled(m_hasProject);

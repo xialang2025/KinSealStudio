@@ -1,0 +1,32 @@
+{
+  "id": "C31",
+  "ordinal": 31,
+  "name": "配方显示器",
+  "slug": "recipe",
+  "task": "S04-10",
+  "next": "G01",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/recipe/physical/recipe-baseline-r1/run.json",
+  "expectedPassed": 247,
+  "testRun": "docs/stage4-evidence/recipe/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/recipe/native/native-manifest.json",
+  "report": "docs/配方显示器手册实现与验收.md",
+  "manual": "design_plan/配方显示器功能与交互复刻手册.md",
+  "scope": "真实单份配方定义及最多200份数据列；16位长度1..200、32位1..99、五类型、公共名称/元素名称、可见尺寸与保留矩阵分离、零起点只复制数值、完整读写跨度及RW/RWI只读范围；原厂GBK CSV基线字节对等/严格原子导入导出；独立recipe显示类型、五色/四字号/三对齐、网格、编辑/自定义键盘/位置、显现和触控权限、互斥通知、稳定引用/全页删除/复制保护、临时画布表头、schema12和创建/取消/编辑/撤销及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C31-001",
+    "Q-S04-C31-002",
+    "Q-S04-C31-003",
+    "Q-S04-C31-004",
+    "Q-S04-C31-005"
+  ],
+  "nativeSummary": "已归档16轮原厂调查。未建配方提示配方不存在，请先创建配方；已有一份再添加提示已经达到最大配方数量，请删除后再新建。实际类型顺序为16位正整数/32位正整数/16位整数/32位整数/32位浮点数，32位长度上限实测99。名称和元素名称切换语言仍共用；复制编号从0开始，只复制数值，不复制表头。类型切换及长度/总数缩减后再放大保留已有数值；32位当前区范围RWI2起，重新展开的自动元素名按完整字跨度生成。编辑配方可稳定开启，自定义键盘空时原厂拒绝，X/Y均0..800；网格关闭隐藏颜色项，通知位/字互斥。默认和字号48/右对齐/编辑开启/网格关闭样例已保存编译并重开。",
+  "protocol": "原厂只允许一份配方定义，200列数据；32位长度上限实测99，配置名称/元素名共用，缩减再放大保留值，通知位/字互斥，编辑/自定义键盘空校验和双坐标0..800已恢复。原厂默认GBK CSV实际字节对等；默认配方显示器原厂源已实物下载，四清除/更新关闭，输入/待传SHA一致。独立SM/设备编码、显示/触控/PLC执行仍未验证，门槛继续实际拒绝。",
+  "codeFiles": "src/recipe_properties.*、recipe_csv.*、recipe_dialog.*、recipe_display_properties.*、recipe_display_dialog.*、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、main_window*、native_shell_ui.cpp、hmi_canvas.*、static_text_actions.cpp、CMakeLists.txt",
+  "codeMarker": "//20261113-2",
+  "reviewFindings": [
+    "完成只读复核后修复有限float32检查、地址边界测试、声明顺序、CSV错误提示和schema12活动配置门槛；源/设备白名单未扩大。",
+    "10项新增方法实际PASS，178+59+10=247/0/0；原厂GBK默认CSV逐字节一致、保留矩阵及真实菜单/树生命周期/全页引用/复制/撤销通过。",
+    "16轮原厂证据及其partial状态保留，原厂基线传输完成；PC表格明确为示意，未宣称设备运行、完整像素或全部CSV反向互通。"
+  ]
+}

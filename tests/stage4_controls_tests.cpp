@@ -12,6 +12,10 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "recipe_dialog.h" //20261113-2 add
+#include "recipe_display_dialog.h"
+#include "recipe_csv.h"
+#include <QGraphicsScene>
 #include "history_data_dialog.h" //20261113-2 add
 #include "alarm_display_dialog.h" //20261113-2 add
 #include "alarm_bar_dialog.h" //20261113-2 add
@@ -164,6 +168,16 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void recipeDefinitionNativeBoundsAndRetainedMatrix(); //20261113-2 add
+    void recipeDefinitionDialogTableCopyAndCommonNames(); //20261113-2 add
+    void recipeCsvExactNativeFixtureAndAtomicRefusals(); //20261113-2 add
+    void recipeDefinitionsSingleLimitAndAllPageReferences(); //20261113-2 add
+    void recipeDisplayNativeDefaultsAndKeyboardDrafts(); //20261113-2 add
+    void recipeDisplayNoticePermissionSpansAndCopies(); //20261113-2 add
+    void recipeStrictPersistenceAndBackendGates(); //20261113-2 add
+    void recipeClipboardDefinitionAndKeyboardConflicts(); //20261113-2 add
+    void recipeCanvasResolvedContextAndRasterClipping(); //20261113-2 add
+    void recipeShellDefinitionCreationPlacementEditAndUndo(); //20261113-2 add
     void historyDataMeasuredDefaultsAndZeroRows(); //20261113-2 add
     void historyDataAllColumnLanguageSynchronization(); //20261113-2 add
     void historyDataVisibleColumnGuard(); //20261113-2 add
@@ -4381,6 +4395,222 @@ void Stage4ControlTests::historyDataShellPlacementCollectionEditAndUndo() //2026
     auto acceptData = []() { HistoryDataDialog *dialog = qobject_cast<HistoryDataDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); };
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_historyrecord"))); QTimer::singleShot(0, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); QCOMPARE(message->text(), QStringLiteral("没有建立数据采集")); message->accept(); }); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); project.objects.clear(); window.setProject(project, QString()); QTimer::singleShot(0, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->reject(); }); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, acceptData); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20,20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(340,200))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(340,200))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("historydata")); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("历史数据显示器")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled());
     QTimer::singleShot(0, []() { HistoryDataDialog *dialog = qobject_cast<HistoryDataDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QSpinBox *>(QStringLiteral("HistoryDataRows"))->setValue(0); dialog->findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().historyData.rows, 0); QTimer::singleShot(0, []() { DataCollectionDialog *dialog = qobject_cast<DataCollectionDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QSpinBox *>(QStringLiteral("CollectionLength"))->setValue(2); QMetaObject::invokeMethod(dialog, "accept", Qt::DirectConnection); }); window.configureDataCollection(project.configurationNodes.first().id); QCOMPARE(window.currentEditorProject().objects.first().historyData.columns.size(), 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().historyData.columns.size(), 3); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().historyData.rows, 5); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+
+}
+
+/******************************************************************************
+ * Function Name   : recipeProject
+ * Description     : Create one actual recipe definition and display consumer with stable identities and common headers.
+ * Input Parameters: None
+ * Return Value    : Complete independent C31 editor project.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject recipeProject() //20261113-2 add
+{
+    HmiProject project;
+    HmiConfigurationNode node;
+    RecipeProperties properties;
+    HmiObject object;
+    project.languages = {QStringLiteral("中文"),QStringLiteral("English"),QStringLiteral("Deutsch")}; node.id = QStringLiteral("recipe-definition-1"); node.name = QStringLiteral("C31"); node.kind = QStringLiteral("recipe"); node.active = true; node.implemented = true; node.properties = properties.toJson(); project.configurationNodes = {node}; object.id = QStringLiteral("recipe-display-1"); object.name = QStringLiteral("配方显示器"); object.type = QStringLiteral("recipe"); object.geometry = QRect(40,100,620,250); object.recipeDisplay.recipeId = node.id; project.objects = {object}; return project;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeDefinitionNativeBoundsAndRetainedMatrix
+ * Description     : Check the observed five scalar types, full transfer spans and retained count/length/type drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeDefinitionNativeBoundsAndRetainedMatrix() //20261113-2 add
+{
+    RecipeProperties properties;
+    RecipeProperties parsed;
+    QString error;
+    QCOMPARE(properties.length, 4); QCOMPARE(properties.count, 1); QCOMPARE(properties.itemNames.first(), QStringLiteral("RWI:1")); QCOMPARE(properties.recipeNames.first(), QStringLiteral("RECIPE1")); QCOMPARE(RecipeProperties::dataTypes().size(), 5); QCOMPARE(RecipeProperties::maximumLength(0), 200); QCOMPARE(RecipeProperties::maximumLength(1), 99); properties.resizeTable(4, 2); properties.recipeNames[1] = QStringLiteral("Keep recipe"); properties.itemNames[0] = QStringLiteral("Keep item"); properties.values[1][1] = QStringLiteral("456"); properties.changeType(1); properties.resizeTable(1, 1); QCOMPARE(properties.values.size(), 4); QCOMPARE(properties.values[1][1], QStringLiteral("456")); properties.resizeTable(4, 2); QCOMPARE(properties.recipeNames[1], QStringLiteral("Keep recipe")); QCOMPARE(properties.itemNames[0], QStringLiteral("Keep item")); QCOMPARE(properties.itemNames[1], QStringLiteral("RWI:4")); QCOMPARE(properties.values[1][1], QStringLiteral("456")); QVERIFY2(RecipeProperties::fromJson(properties.toJson(), &parsed, &error), qPrintable(error)); QCOMPARE(parsed.toJson(), properties.toJson());
+    QVERIFY(RecipeProperties::validValue(QStringLiteral("4294967295"), 1)); QVERIFY(!RecipeProperties::validValue(QStringLiteral("4294967296"), 1)); QVERIFY(RecipeProperties::validValue(QStringLiteral("-2147483648"), 3)); QVERIFY(!RecipeProperties::validValue(QStringLiteral("-2147483649"), 3)); QVERIFY(RecipeProperties::validValue(QStringLiteral("-32768"), 2)); QVERIFY(!RecipeProperties::validValue(QStringLiteral("65536"), 0)); QVERIFY(RecipeProperties::validValue(QStringLiteral("3.25"), 4)); QVERIFY(!RecipeProperties::validValue(QStringLiteral("inf"), 4)); QVERIFY(!RecipeProperties::validValue(QStringLiteral("1e40"), 4)); properties.writeEnabled = true; properties.writeAddress = QStringLiteral("LW4089"); QVERIFY2(properties.validateAddresses({}, &error), qPrintable(error)); properties.writeAddress = QStringLiteral("LW4090"); QVERIFY(!properties.validateAddresses({}, &error)); properties.writeEnabled = false; properties.readEnabled = true; properties.sameReadWrite = true; QVERIFY(!properties.validateAddresses({}, &error)); properties.sameReadWrite = false; properties.readAddress = QStringLiteral("LW0"); QVERIFY(properties.validateAddresses({}, &error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeDefinitionDialogTableCopyAndCommonNames
+ * Description     : Use real selected-cell fields, value-only copy, common language headers and shrink/regrow UI paths.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeDefinitionDialogTableCopyAndCommonNames() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    RecipeDialog dialog(project.configurationNodes.first(), project);
+    QTableWidget *table = dialog.findChild<QTableWidget *>(QStringLiteral("RecipeValues"));
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("RecipeCount"));
+    QSpinBox *length = dialog.findChild<QSpinBox *>(QStringLiteral("RecipeLength"));
+    QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("RecipeType"));
+    RecipeProperties properties;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("RecipeDefinitionTabs"))->count(), 2); count->setValue(2); table->setCurrentCell(0,0); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeColumnName"))->setText(QStringLiteral("A")); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeItemName"))->setText(QStringLiteral("Item")); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeValue"))->setText(QStringLiteral("123")); table->setCurrentCell(1,0); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeValue"))->setText(QStringLiteral("456")); table->setCurrentCell(0,1); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeColumnName"))->setText(QStringLiteral("B")); dialog.findChild<QComboBox *>(QStringLiteral("RecipeLanguage"))->setCurrentText(QStringLiteral("English")); QCOMPARE(table->horizontalHeaderItem(0)->text(), QStringLiteral("A")); dialog.findChild<QSpinBox *>(QStringLiteral("RecipeCopyTarget"))->setValue(1); dialog.findChild<QPushButton *>(QStringLiteral("RecipeCopyValues"))->click(); QCOMPARE(table->item(0,1)->text(), QStringLiteral("123")); QCOMPARE(table->item(1,1)->text(), QStringLiteral("456")); QCOMPARE(table->horizontalHeaderItem(1)->text(), QStringLiteral("B")); type->setCurrentIndex(1); QCOMPARE(length->maximum(), 99); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("RecipeCurrent"))->text(), QStringLiteral("RWI2 - RWI8")); length->setValue(1); count->setValue(1); length->setValue(4); count->setValue(2); QVERIFY(RecipeProperties::fromJson(dialog.node().properties, &properties, &error)); QCOMPARE(properties.values[1][1], QStringLiteral("456")); QCOMPARE(properties.recipeNames[1], QStringLiteral("B")); QCOMPARE(properties.itemNames[1], QStringLiteral("RWI:4")); dialog.findChild<QCheckBox *>(QStringLiteral("RecipeRead"))->setChecked(true); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("RecipeReadAddress"))->isEnabled()); dialog.findChild<QCheckBox *>(QStringLiteral("RecipeSameAddress"))->setChecked(false); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("RecipeReadAddress"))->isEnabled()); dialog.findChild<QTabWidget *>(QStringLiteral("RecipeDefinitionTabs"))->setCurrentIndex(1); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("recipe-definition-data.png")))); } dialog.reject(); QCOMPARE(project.configurationNodes.first().name, QStringLiteral("C31"));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeCsvExactNativeFixtureAndAtomicRefusals
+ * Description     : Match an actual original CP936 export byte for byte and reject ambiguous, truncated, oversized and out-of-range exchanges atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeCsvExactNativeFixtureAndAtomicRefusals() //20261113-2 add
+{
+    QFile fixture(QFINDTESTDATA("../docs/stage4-evidence/recipe/native/C31Golden-native-r14.csv"));
+    RecipeProperties properties;
+    RecipeProperties parsed;
+    RecipeProperties sentinel;
+    QByteArray golden;
+    QByteArray encoded = QByteArrayLiteral("keep");
+    QByteArray malformed;
+    QString name = QStringLiteral("keep");
+    QString error;
+    QVERIFY(fixture.open(QIODevice::ReadOnly)); golden = fixture.readAll(); QVERIFY2(exportRecipeCsv(QStringLiteral("C31Golden"), properties, &encoded, &error), qPrintable(error)); QCOMPARE(encoded, golden); QVERIFY2(importRecipeCsv(golden, &name, &parsed, &error), qPrintable(error)); QCOMPARE(name, QStringLiteral("C31Golden")); QCOMPARE(parsed.toJson(), properties.toJson()); sentinel = parsed; malformed = golden; malformed.replace("RECIPE1,", "RECIPE1,bad,"); name = QStringLiteral("keep"); QVERIFY(!importRecipeCsv(malformed, &name, &parsed, &error)); QCOMPARE(name, QStringLiteral("keep")); QCOMPARE(parsed.toJson(), sentinel.toJson()); malformed = golden; malformed.chop(4); QVERIFY(!importRecipeCsv(malformed, &name, &parsed, &error)); malformed = golden; malformed.replace(QByteArrayLiteral("0,") + QByteArray::fromHex(QByteArrayLiteral("0d0a")), QByteArrayLiteral("65536,") + QByteArray::fromHex(QByteArrayLiteral("0d0a"))); QVERIFY(!importRecipeCsv(malformed, &name, &parsed, &error)); properties.recipeNames[0] = QStringLiteral("comma,name"); encoded = QByteArrayLiteral("keep"); QVERIFY(!exportRecipeCsv(QStringLiteral("C31Golden"), properties, &encoded, &error)); QCOMPARE(encoded, QByteArrayLiteral("keep")); properties.recipeNames[0] = QString::fromUtf8("😀"); QVERIFY(!exportRecipeCsv(QStringLiteral("C31Golden"), properties, &encoded, &error)); QCOMPARE(encoded, QByteArrayLiteral("keep")); properties = RecipeProperties(); properties.resizeTable(4,2); properties.values[1][1] = QStringLiteral("456"); properties.resizeTable(1,1); QVERIFY(exportRecipeCsv(QStringLiteral("Visible"), properties, &encoded, &error)); QVERIFY(importRecipeCsv(encoded, &name, &parsed, &error)); QCOMPARE(parsed.length, 1); QCOMPARE(parsed.count, 1); QCOMPARE(parsed.values.size(), 1);
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeDefinitionsSingleLimitAndAllPageReferences
+ * Description     : Reject a second definition, protect inactive consumers and active keyboard references, and retain common names over language changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeDefinitionsSingleLimitAndAllPageReferences() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    HmiProject candidate;
+    HmiPage page;
+    HmiPage keyboard;
+    HmiConfigurationNode second = project.configurationNodes.first();
+    QString error;
+    candidate = project; second.id = QStringLiteral("recipe-second"); second.name = QStringLiteral("Second"); candidate.configurationNodes.append(second); QVERIFY(!candidate.validateModel(&error)); QCOMPARE(error, QStringLiteral("已经达到最大配方数量，请删除后再新建。")); page.id = QStringLiteral("recipe-other-page"); page.name = QStringLiteral("Other"); page.objects = project.objects; page.objects[0].id = QStringLiteral("recipe-other-display"); QVERIFY(project.addPage(page, &error)); project.objects.clear(); candidate = project; candidate.configurationNodes.clear(); QVERIFY(!candidate.validateModel(&error)); project.configurationNodes[0].name = QStringLiteral("Renamed"); QVERIFY(project.validateModel(&error)); QVERIFY(project.setLanguages({QStringLiteral("English")}, &error)); QCOMPARE(project.inactivePages.first().objects.first().recipeDisplay.recipeId, project.configurationNodes.first().id); keyboard.id = QStringLiteral("recipe-keyboard"); keyboard.name = QStringLiteral("Key"); keyboard.kind = QStringLiteral("keyboard"); QVERIFY(project.addPage(keyboard, &error)); project.inactivePages[0].objects[0].recipeDisplay.editEnabled = true; project.inactivePages[0].objects[0].recipeDisplay.customKeyboard = true; project.inactivePages[0].objects[0].recipeDisplay.keyboardPageId = keyboard.id; QVERIFY(project.validateModel(&error)); candidate = project; QVERIFY(!candidate.removePage(keyboard.id, &error)); QCOMPARE(candidate.toJson(), project.toJson()); project.inactivePages[0].objects[0].recipeDisplay.editEnabled = false; QVERIFY(project.removePage(keyboard.id, &error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeDisplayNativeDefaultsAndKeyboardDrafts
+ * Description     : Verify measured two-page defaults and keyboard/grid visibility without exposing static-only fields or inventing preview tables.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeDisplayNativeDefaultsAndKeyboardDrafts() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    RecipeDisplayDialog dialog(project.objects.first(), project);
+    QGroupBox *edit = dialog.findChild<QGroupBox *>(QStringLiteral("RecipeDisplayEdit"));
+    QCheckBox *keyboard = dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayCustomKeyboard"));
+    QCheckBox *position = dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayKeyboardPosition"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("配方显示器")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("RecipeDisplayTabs"))->count(), 2); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("RecipeDisplayFontSize"))->count(), 4); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("RecipeDisplayAlignment"))->currentIndex(), 1); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 2); QVERIFY(!keyboard->isVisible()); edit->setChecked(true); QVERIFY(keyboard->isVisible()); keyboard->setChecked(true); QVERIFY(position->isVisible()); position->setChecked(true); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("RecipeDisplayKeyboardY"))->maximum(), 800); dialog.findChild<QSpinBox *>(QStringLiteral("RecipeDisplayKeyboardY"))->setValue(800); keyboard->setChecked(false); QVERIFY(!position->isVisible()); keyboard->setChecked(true); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("RecipeDisplayKeyboardY"))->value(), 800); dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayGrid"))->setChecked(false); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("RecipeDisplayColor4"))->isVisible()); QCOMPARE(dialog.object().recipeDisplay.gridColor, QStringLiteral("#000000")); QVERIFY(dialog.findChildren<QTableWidget *>().isEmpty()); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("recipe-display-basic.png")))); } dialog.reject(); QVERIFY(!project.objects.first().recipeDisplay.editEnabled);
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeDisplayNoticePermissionSpansAndCopies
+ * Description     : Keep notification exclusivity and disabled-selector normalization while validating and incrementing full touch/notice carriers.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeDisplayNoticePermissionSpansAndCopies() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    RecipeDisplayDialog dialog(project.objects.first(), project);
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.findChild<QGroupBox *>(QStringLiteral("RecipeDisplayNotice"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayNoticeBit"))->setChecked(true); dialog.findChild<QLineEdit *>(QStringLiteral("RecipeDisplayNoticeBitAddress"))->setText(QStringLiteral("LB10")); dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayNoticeWord"))->setChecked(true); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("RecipeDisplayNoticeBit"))->isChecked()); QCOMPARE(dialog.object().recipeDisplay.noticeBitAddress, QStringLiteral("LB10")); dialog.findChild<QGroupBox *>(QStringLiteral("RecipeDisplayNotice"))->setChecked(false); QVERIFY(!dialog.object().recipeDisplay.noticeWord); dialog.findChild<QGroupBox *>(QStringLiteral("RecipeDisplayNotice"))->setChecked(true); QVERIFY(dialog.object().recipeDisplay.noticeWord); project.objects[0] = dialog.object(); project.objects[0].recipeDisplay.noticeWordType = 1; project.objects[0].recipeDisplay.noticeWordAddress = QStringLiteral("LW4096"); QVERIFY(!project.validateModel(&error)); project.objects[0].recipeDisplay.noticeWordAddress = QStringLiteral("LW4095"); QVERIFY(project.validateModel(&error)); project.objects[0].recipeDisplay.noticeWordAddress = QStringLiteral("LW20"); project.objects[0].recipeDisplay.touch.visibilityEnabled = true; project.objects[0].recipeDisplay.touch.wordEnabled = true; project.objects[0].recipeDisplay.touch.dataType = 1; project.objects[0].recipeDisplay.touch.wordAddress = QStringLiteral("LW10"); options.columns = 2; options.increments = {{Stage3AddressField::TouchWord, 2, 0}, {Stage3AddressField::NoticeWord, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().recipeDisplay.touch.wordAddress, QStringLiteral("LW12")); QCOMPARE(result.objects.last().recipeDisplay.noticeWordAddress, QStringLiteral("LW23")); QCOMPARE(result.configurationNodes.size(), 1);
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeStrictPersistenceAndBackendGates
+ * Description     : Persist distinct recipe and complete cached definitions in schema12 while atomically rejecting malformed or unsupported source/device outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeStrictPersistenceAndBackendGates() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    HmiProject loaded;
+    HmiProject mixed = project;
+    HmiProject only = project;
+    RecipeProperties parsed;
+    RecipeDisplayProperties display = project.objects.first().recipeDisplay;
+    HmiObject object;
+    QJsonObject json;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    mixed.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(mixed.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), mixed.toJson()); QCOMPARE(loaded.objects.size(), 6); only.objects.clear(); QCOMPARE(only.toJson().value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(only.toJson(), &loaded, &error)); json = project.objects.first().toJson(); QVERIFY(json.contains(QStringLiteral("recipeDisplay"))); json.insert(QStringLiteral("type"), QStringLiteral("text")); QVERIFY(!HmiObject::fromJson(json, &object, &error)); json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &loaded, &error)); json = display.toJson(); json.insert(QStringLiteral("keyboardY"), 0.5); display.keyboardY = 777; QVERIFY(!RecipeDisplayProperties::fromJson(json, &display, &error)); QCOMPARE(display.keyboardY, 777); json = project.configurationNodes.first().properties; json.insert(QStringLiteral("extra"), true); QVERIFY(!RecipeProperties::fromJson(json, &parsed, &error)); QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("recipe-only.ksp")), &error)); QVERIFY(mixed.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("recipe-mixed.ksp")), &error)); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeClipboardDefinitionAndKeyboardConflicts
+ * Description     : Copy exact global definitions into empty projects and refuse different definitions or missing/incompatible active keyboard pages atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeClipboardDefinitionAndKeyboardConflicts() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    HmiProject target;
+    HmiProject result;
+    HmiProject sentinel;
+    HmiPage keyboard;
+    Stage3Clipboard clipboard;
+    QString error;
+    target.languages = project.languages; QVERIFY(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.configurationNodes.first().toJson(), project.configurationNodes.first().toJson()); target = project; target.configurationNodes[0].name = QStringLiteral("Conflict"); sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error)); QCOMPARE(result.toJson(), sentinel.toJson()); keyboard.id = QStringLiteral("recipe-keyboard"); keyboard.kind = QStringLiteral("keyboard"); keyboard.name = QStringLiteral("Recipe key"); QVERIFY(project.addPage(keyboard, &error)); project.objects[0].recipeDisplay.editEnabled = true; project.objects[0].recipeDisplay.customKeyboard = true; project.objects[0].recipeDisplay.keyboardPageId = keyboard.id; QVERIFY(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error)); target = HmiProject(); target.languages = project.languages; sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error)); QCOMPARE(result.toJson(), sentinel.toJson()); QVERIFY(target.addPage(keyboard, &error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.first().recipeDisplay.keyboardPageId, keyboard.id);
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeCanvasResolvedContextAndRasterClipping
+ * Description     : Resolve global names into transient canvas roles across rebuild and verify bounded blank-row rendering and insufficient-width handling.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeCanvasResolvedContextAndRasterClipping() //20261113-2 add
+{
+    HmiProject project = recipeProject();
+    ScreenCanvas canvas;
+    HmiControlItem *item = nullptr;
+    QGraphicsItem *graphics;
+    QImage wide(660,280,QImage::Format_ARGB32);
+    QImage narrow(260,220,QImage::Format_ARGB32);
+    QPainter painter;
+    QStringList titles;
+    canvas.setProject(project); Q_FOREACH (graphics, canvas.scene()->items()) { if (dynamic_cast<HmiControlItem *>(graphics) != nullptr) { item = dynamic_cast<HmiControlItem *>(graphics); break; } } QVERIFY(item != nullptr); titles = item->data(12).toStringList(); QCOMPARE(titles.size(), 6); QCOMPARE(titles[1], QStringLiteral("C31")); QCOMPARE(item->toHmiObject().toJson(), project.objects.first().toJson()); project.configurationNodes[0].name = QStringLiteral("Renamed"); canvas.setProject(project); item = nullptr; Q_FOREACH (graphics, canvas.scene()->items()) { if (dynamic_cast<HmiControlItem *>(graphics) != nullptr) { item = dynamic_cast<HmiControlItem *>(graphics); break; } } QVERIFY(item != nullptr); QCOMPARE(item->data(12).toStringList()[1], QStringLiteral("Renamed")); wide.fill(Qt::magenta); painter.begin(&wide); paintRecipeDisplay(&painter,QRectF(10,10,620,250),project.objects.first().recipeDisplay,titles,1); painter.end(); QCOMPARE(wide.pixelColor(0,0),QColor(Qt::magenta)); QCOMPARE(wide.pixelColor(20,20),QColor(QStringLiteral("#ff6666"))); narrow.fill(Qt::magenta); painter.begin(&narrow); paintRecipeDisplay(&painter,QRectF(10,10,230,180),project.objects.first().recipeDisplay,titles,1); painter.end(); QCOMPARE(narrow.pixelColor(0,0),QColor(Qt::magenta)); QCOMPARE(narrow.pixelColor(20,20),QColor(Qt::white));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::recipeShellDefinitionCreationPlacementEditAndUndo
+ * Description     : Exercise actual recipe creation, native single-definition guard, display placement, rename-driven canvas refresh, protected deletion and undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::recipeShellDefinitionCreationPlacementEditAndUndo() //20261113-2 add
+{
+    MainWindow window;
+    QString id;
+    QString objectId;
+    QJsonObject before;
+    auto acceptDisplay = []() { RecipeDisplayDialog *dialog = qobject_cast<RecipeDisplayDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QDialogButtonBox *>(QStringLiteral("RecipeDisplayButtons"))->button(QDialogButtonBox::Ok)->click(); };
+    window.setProject(HmiProject(),QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QTimer::singleShot(0,[]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); QCOMPARE(message->windowTitle(),QStringLiteral("提示")); QCOMPARE(message->text(),QStringLiteral("配方不存在，请先创建配方")); message->accept(); }); window.m_commands.value(QStringLiteral("action_recipetable"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0,[]() { RecipeDialog *dialog = qobject_cast<RecipeDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QLineEdit *>(QStringLiteral("RecipeName"))->setText(QStringLiteral("C31Shell")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("RecipeDefinitionButtons"))->button(QDialogButtonBox::Ok)->click(); }); window.m_commands.value(QStringLiteral("action_rep"))->trigger(); QCOMPARE(window.currentEditorProject().configurationNodes.size(),1); id = window.currentEditorProject().configurationNodes.first().id;
+    QTimer::singleShot(0,[]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); QCOMPARE(message->text(),QStringLiteral("已经达到最大配方数量，请删除后再新建。")); message->accept(); }); window.m_commands.value(QStringLiteral("action_rep"))->trigger(); QTimer::singleShot(0,acceptDisplay); window.m_commands.value(QStringLiteral("action_recipetable"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(20,20))); QTest::mouseMove(window.m_canvas->viewport(),window.m_canvas->mapFromScene(QPointF(640,200))); QTest::mouseRelease(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(640,200))); QCOMPARE(window.currentEditorProject().objects.first().type,QStringLiteral("recipe")); objectId = window.currentEditorProject().objects.first().id; QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(),QStringLiteral("配方显示器")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled()); QTimer::singleShot(0,[]() { RecipeDialog *dialog = qobject_cast<RecipeDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QLineEdit *>(QStringLiteral("RecipeName"))->setText(QStringLiteral("C31Renamed")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("RecipeDefinitionButtons"))->button(QDialogButtonBox::Ok)->click(); }); window.configureRecipe(id); QCOMPARE(window.currentEditorProject().configurationNodes.first().name,QStringLiteral("C31Renamed")); QCOMPARE(window.currentEditorProject().objects.first().id,objectId); before = window.currentEditorProject().toJson(); QTimer::singleShot(0,[]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); message->accept(); }); window.deleteRecipe(id); QCOMPARE(window.currentEditorProject().toJson(),before); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().configurationNodes.first().name,QStringLiteral("C31Shell")); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty());
 
 }
 QTEST_MAIN(Stage4ControlTests)

@@ -1,0 +1,309 @@
+{
+  "tableHeaders": [
+    {
+      "label": "recipe-config-initial-headers-r7",
+      "headers": {
+        "rows": [
+          "RWI:1",
+          "RWI:2",
+          "RWI:3"
+        ],
+        "columns": [
+          "RECIPE1",
+          "RECIPE2"
+        ]
+      }
+    },
+    {
+      "label": "recipe-config-english-r7",
+      "headers": {
+        "rows": [
+          "A0",
+          "A1",
+          "RWI:3"
+        ],
+        "columns": [
+          "R0",
+          "R1"
+        ]
+      }
+    },
+    {
+      "label": "recipe-config-custom-headers-r7",
+      "headers": {
+        "rows": [
+          "A0",
+          "EA1",
+          "RWI:3"
+        ],
+        "columns": [
+          "R0",
+          "ER1"
+        ]
+      }
+    }
+  ],
+  "tableStates": null,
+  "validators": [
+    {
+      "label": "recipe-uint16-validator-r7",
+      "widget": {
+        "pointer": "0x4560190",
+        "kind": "QLineEdit",
+        "objectName": "sRecipeData",
+        "text": "0",
+        "title": "",
+        "enabled": 1,
+        "visible": 1,
+        "maxLength": "32767",
+        "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+        "acceptableInput": "true",
+        "readOnly": "false"
+      },
+      "validator": {
+        "pointer": "0x4566740",
+        "kind": "QIntValidator",
+        "objectName": "",
+        "text": "",
+        "title": "",
+        "enabled": 0,
+        "visible": 0,
+        "bottom": "0",
+        "top": "65535"
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "recipe-config-cell-r7",
+      "windows": [
+        {
+          "title": "配方",
+          "widgets": [
+            {
+              "pointer": "0x45606d0",
+              "kind": "QLineEdit",
+              "objectName": "sColumnHeadName",
+              "text": "RWI:1",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            },
+            {
+              "pointer": "0x4560190",
+              "kind": "QLineEdit",
+              "objectName": "sRecipeData",
+              "text": "0",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            },
+            {
+              "pointer": "0x4560150",
+              "kind": "QLineEdit",
+              "objectName": "sRowHeadName",
+              "text": "RECIPE1",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "recipe-config-english-r7",
+      "windows": [
+        {
+          "title": "配方",
+          "widgets": [
+            {
+              "pointer": "0x45606d0",
+              "kind": "QLineEdit",
+              "objectName": "sColumnHeadName",
+              "text": "A1",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            },
+            {
+              "pointer": "0x4560190",
+              "kind": "QLineEdit",
+              "objectName": "sRecipeData",
+              "text": "456",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            },
+            {
+              "pointer": "0x4560150",
+              "kind": "QLineEdit",
+              "objectName": "sRowHeadName",
+              "text": "R1",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "maxLength": "32767",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "acceptableInput": "true",
+              "readOnly": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "recipe-custom-keyboard-empty-r7",
+      "windows": [
+        {
+          "title": "配方显示器",
+          "widgets": [
+            {
+              "pointer": "0x4562250",
+              "kind": "QGroupBox",
+              "objectName": "groupBox_edit",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "true",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            },
+            {
+              "pointer": "0x4562210",
+              "kind": "QCheckBox",
+              "objectName": "checkBox_useKeyPos",
+              "text": "自定义键盘位置",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "false",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            },
+            {
+              "pointer": "0x4562150",
+              "kind": "QComboBox",
+              "objectName": "cbx_keyboardCus",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "-1",
+              "count": "0",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "items": []
+            },
+            {
+              "pointer": "0x4562390",
+              "kind": "QCheckBox",
+              "objectName": "ckx_keyboardCus",
+              "text": "使用自定义键盘",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "true",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "recipe-custom-keyboard-rejection-r7",
+      "windows": [
+        {
+          "title": "配方显示器",
+          "widgets": [
+            {
+              "pointer": "0x16c24f8",
+              "kind": "QMessageBox",
+              "objectName": "",
+              "text": "自定义键盘不能为空",
+              "title": "配方显示器",
+              "enabled": 1,
+              "visible": 1,
+              "font": "Microsoft YaHei UI,9,-1,5,50,0,0,0,0,0"
+            }
+          ]
+        },
+        {
+          "title": "配方显示器",
+          "widgets": [
+            {
+              "pointer": "0x4562250",
+              "kind": "QGroupBox",
+              "objectName": "groupBox_edit",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "true",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            },
+            {
+              "pointer": "0x4562210",
+              "kind": "QCheckBox",
+              "objectName": "checkBox_useKeyPos",
+              "text": "自定义键盘位置",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "false",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            },
+            {
+              "pointer": "0x4562150",
+              "kind": "QComboBox",
+              "objectName": "cbx_keyboardCus",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "-1",
+              "count": "0",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "items": []
+            },
+            {
+              "pointer": "0x4562390",
+              "kind": "QCheckBox",
+              "objectName": "ckx_keyboardCus",
+              "text": "使用自定义键盘",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "checked": "true",
+              "checkable": "true",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+from pathlib import Path
+import json
+root=Path(__file__).resolve().parent;owner=root/'native-recipe'
+def text(name,value):return dict(op='text-edit',kind='QLineEdit',name=name,value=value)
+def table(row,col):return dict(op='table-click',kind='QTableWidget',name='RecipeDataTable',row=row,column=col)
+def state(label):return dict(op='table-state',kind='QTableWidget',name='RecipeDataTable',label=label)
+def heads(label):return dict(op='table-headers',kind='QTableWidget',name='RecipeDataTable',label=label)
+def spin(name,value):return dict(op='spin',kind='QSpinBox',name=name,value=value)
+steps=[dict(op='action',name='action_rep'),text('sRecipeName','C31Survey'),spin('nRecipeTotalNum',2),dict(op='combo-activate',kind='QComboBox',name='nDataType',value=1),dict(op='dump',label='recipe-uint32-bounds-r8'),dict(op='tab',kind='QTabWidget',name='tabWidget',value=1),table(0,0),dict(op='validator',kind='QLineEdit',name='sRecipeData',label='recipe-uint32-validator-r8'),text('sRowHeadName','ChineseRecipe0'),text('sColumnHeadName','ChineseItem0'),text('sRecipeData','123'),table(1,0),text('sRecipeData','456'),dict(op='combo-activate',kind='QComboBox',name='lanCombox',value=1),table(0,0),text('sRowHeadName','EnglishRecipe0'),text('sColumnHeadName','EnglishItem0'),heads('recipe-english-custom-r8'),dict(op='combo-activate',kind='QComboBox',name='lanCombox',value=0),heads('recipe-chinese-after-english-r8'),state('recipe-before-copy-r8'),spin('nSourceId',0),spin('nTargetId',1),dict(op='invoke',kind='QPushButton',name='CopyButton'),heads('recipe-after-copy-r8'),state('recipe-after-copy-r8'),dict(op='tab',kind='QTabWidget',name='tabWidget',value=0),dict(op='invoke',kind='QCheckBox',name='bRRecipeFromPlc'),dict(op='dump',label='recipe-read-same-r8'),dict(op='invoke',kind='QCheckBox',name='bRaddrSameWaddr'),dict(op='dump',label='recipe-read-independent-r8'),dict(op='invoke',kind='QCheckBox',name='bWRecipeToPlc'),dict(op='dump',label='recipe-read-write-r8'),dict(op='invoke',kind='QPushButton',text='确定'),dict(op='assert-main-only'),dict(op='save',output='recipe-copy-configuration.sm')]
+(owner/'recipe-language-copy-r8.json').write_text(json.dumps(steps,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+steps=[dict(op='tree-single',entry='C31One'),dict(op='dump',label='recipe-single-click-r9'),dict(op='editor-screenshot',label='recipe-editor-wide-r9')]
+(owner/'recipe-tree-r9.json').write_text(json.dumps(steps,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

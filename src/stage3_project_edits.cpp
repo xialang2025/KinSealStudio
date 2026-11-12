@@ -114,6 +114,12 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     }
     if ((object->type == QStringLiteral("alarmdisplay") || object->type == QStringLiteral("historyalarm"))) { addConditionSlots(&object->alarmDisplay.visibility, false, &addressSlots); } //20261113-2 add
     if (object->type == QStringLiteral("historydata")) { addConditionSlots(&object->historyData.visibility, false, &addressSlots); } //20261113-2 add
+    if (object->type == QStringLiteral("recipe")) //20261113-2 add: The recipe definition stays shared; duplicate only per-display permission and notification addresses.
+    {
+        addConditionSlots(&object->recipeDisplay.visibility, false, &addressSlots); addConditionSlots(&object->recipeDisplay.touch, true, &addressSlots);
+        if (object->recipeDisplay.notice && object->recipeDisplay.noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &object->recipeDisplay.noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (object->recipeDisplay.notice && object->recipeDisplay.noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &object->recipeDisplay.noticeWordAddress, PlcAddressRole::Word, object->recipeDisplay.noticeWordType == 0 || object->recipeDisplay.noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
@@ -642,6 +648,18 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
                 if (alarms.family == 0) { Q_FOREACH (row, alarms.rows) { if (!row.used) { continue; } Q_FOREACH (pageId, (QStringList{row.jumpPageId, row.backPageId})) { if (pageId.isEmpty()) { continue; } reference = HmiReference(); reference.id = QStringLiteral("alarm-navigation"); reference.targetKind = QStringLiteral("page"); reference.targetId = pageId; if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; } } } }
                 if (!reused) { candidate->configurationNodes.append(required); }
             }
+        }
+        if (object.type == QStringLiteral("recipe")) //20261113-2 add: Copy the exact required single recipe definition and active keyboard dependency atomically.
+        {
+            HmiConfigurationNode required;
+            HmiConfigurationNode peer;
+            bool found = false;
+            bool reused = false;
+            Q_FOREACH (peer, clipboard.source.configurationNodes) { if (peer.id == object.recipeDisplay.recipeId && peer.kind == QStringLiteral("recipe") && peer.active && peer.implemented) { required = peer; found = true; break; } }
+            if (!found) { return editError(error, QStringLiteral("剪贴板缺少配方定义。")); }
+            Q_FOREACH (peer, candidate->configurationNodes) { if (peer.id == required.id && peer.toJson() == required.toJson()) { reused = true; } else if (peer.id == required.id || (peer.kind == QStringLiteral("recipe") && peer.active && peer.implemented)) { return editError(error, QStringLiteral("目标工程已有不同的配方，粘贴已取消。")); } }
+            if (!reused) { candidate->configurationNodes.append(required); }
+            if (object.recipeDisplay.editEnabled && object.recipeDisplay.customKeyboard) { reference = HmiReference(); reference.id = QStringLiteral("recipe-keyboard"); reference.targetKind = QStringLiteral("page"); reference.targetId = object.recipeDisplay.keyboardPageId; if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; } object.recipeDisplay.keyboardPageId = reference.targetId; }
         }
         if (object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("historydata")) //20261113-2 change: Reuse the exact collection or copy it only into an empty target; never overwrite a conflicting collector.
         {

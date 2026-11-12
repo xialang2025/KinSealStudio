@@ -116,6 +116,10 @@ private:
     QStringList m_interactionSelection;
     QString m_arrangementReferenceId; //20261110-8 add: Optional explicit reference; empty keeps the observed native list-first/list-last policy.
 
+    QMap<QString, QStringList> m_recipeTitles; //20261113-2 add: Transient resolved context is never copied into HmiObject or KSP.
+    QMap<QString, int> m_recipeCounts;
+    HmiControlItem *makeControlItem(const HmiObject &object);
+    void bindRecipeContext(HmiControlItem *item);
     void rebuildPage(int width, int height, bool preserveItems);
     void publishSelection();
     void recordHistory();

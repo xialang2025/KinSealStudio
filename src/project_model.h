@@ -30,6 +30,7 @@
 #include "data_group_properties.h" //20261113-1 add
 #include "alarm_display_properties.h" //20261113-2 add
 #include "history_data_properties.h" //20261113-2 add
+#include "recipe_display_properties.h" //20261113-2 add
 #include "move_track_properties.h" //20261112-0 add
 #include "wheel_properties.h" //20261112-0 add
 #include "slider_properties.h" //20261112-0 add
@@ -73,7 +74,8 @@ struct HmiObject
     AlarmBarProperties alarmBar; //20261113-2 add: Alarm rows belong to global registration nodes.
     DataGroupProperties dataGroup; //20261113-1 add: One point buffer with independent sample and maximum source drafts.
     AlarmDisplayProperties alarmDisplay; //20261113-2 add: Common table styling and independently localized column captions.
-    HistoryDataProperties historyData; //20261113-2 add: Separate bar, meter and donut drafts.
+    HistoryDataProperties historyData; //20261113-2 change: Stable collection columns and localized historical-data captions.
+    RecipeDisplayProperties recipeDisplay; //20261113-2 add: Stable recipe/keyboard references and independent display permissions.
     MoveTrackProperties moveTrack; //20261112-0 add: Independent distance, graphic and constant/address drafts.
     WheelProperties wheel; //20261112-0 add: Independent numerical wheel and highlight-resource draft.
     SliderProperties slider; //20261112-0 add: Independent operation/range and access carriers.

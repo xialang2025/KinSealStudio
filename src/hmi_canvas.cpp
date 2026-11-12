@@ -8,6 +8,7 @@
 #include "data_group_dialog.h" //20261113-1 add
 #include "alarm_display_dialog.h" //20261113-2 add
 #include "history_data_dialog.h" //20261113-2 add
+#include "recipe_display_dialog.h" //20261113-2 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -129,6 +130,7 @@ void HmiControlItem::paint(QPainter *painter,
     else if (m_type == QStringLiteral("datagroup")) { paintDataGroup(painter, item_rect, m_record.dataGroup); } //20261113-1 add
     else if (m_type == QStringLiteral("alarmdisplay") || m_type == QStringLiteral("historyalarm")) { paintAlarmDisplay(painter, item_rect, m_record.alarmDisplay, data(10).toString()); } //20261113-2 add
     else if (m_type == QStringLiteral("historydata")) { paintHistoryData(painter, item_rect, m_record.historyData, data(10).toString()); } //20261113-2 add
+    else if (m_type == QStringLiteral("recipe")) { paintRecipeDisplay(painter, item_rect, m_record.recipeDisplay, data(12).toStringList(), data(13).toInt()); } //20261113-2 add
     else if (m_type == QStringLiteral("track")) { paintMoveTrack(painter, item_rect, m_record.moveTrack); } //20261112-0 add
     else if (m_type == QStringLiteral("wheel")) { paintWheel(painter, item_rect, m_record.wheel); } //20261112-0 add
     else if (m_type == QStringLiteral("slider")) { paintSlider(painter, item_rect, m_record.slider); } //20261112-0 add
@@ -284,7 +286,12 @@ ScreenCanvas::ScreenCanvas(QWidget *parent) //20261107-6 add
 void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
 {
     QList<HmiObject>::const_iterator object_iterator;
+    HmiConfigurationNode recipe;
+    RecipeProperties properties;
+    QStringList titles;
 
+    m_recipeTitles.clear(); m_recipeCounts.clear(); //20261113-2 add: Resolve live definitions once for this page rebuild.
+    Q_FOREACH (recipe, project.configurationNodes) { if (recipe.kind != QStringLiteral("recipe") || !recipe.active || !recipe.implemented || !RecipeProperties::fromJson(recipe.properties, &properties)) { continue; } titles = QStringList{QStringLiteral("序号"), recipe.name}; titles.append(properties.itemNames.mid(0, properties.length)); m_recipeTitles.insert(recipe.id, titles); m_recipeCounts.insert(recipe.id, properties.count); }
     cancelInteraction(); //20261110-8 add: A page replacement cannot retain partial geometry or a placement draft.
     m_arrangementReferenceId.clear(); //20261110-8 add: An explicit reference belongs only to the current page selection.
     m_pageWidth = project.pageWidth;
@@ -300,7 +307,7 @@ void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
     for (object_iterator = project.objects.constBegin();
          object_iterator != project.objects.constEnd(); ++object_iterator)
     {
-        m_scene->addItem(new HmiControlItem(*object_iterator));
+        m_scene->addItem(makeControlItem(*object_iterator));
     }
     publishSelection();
     setLanguage(project.activeLanguage);
@@ -443,7 +450,7 @@ void ScreenCanvas::addControl(const QString &type, const QPointF &position) //20
     placement.setY(qBound(0, placement.y(), qMax(0, m_pageHeight - geometry.height())));
     geometry.moveTopLeft(placement);
     object.geometry = geometry;
-    item = new HmiControlItem(object);
+    item = makeControlItem(object);
     item->setData(10, m_language); //20261108-14 add
     m_scene->clearSelection();
     m_scene->addItem(item);
@@ -475,7 +482,7 @@ void ScreenCanvas::updateSelectedObject(const HmiObject &object) //20261107-6 ad
     }
     if (control_item != nullptr && control_item->toHmiObject().toJson() != object.toJson()) //20261110-8 change: Applying unchanged properties is not an edit.
     {
-        control_item->setObject(object);
+        control_item->setObject(object); bindRecipeContext(control_item); //20261113-2 change
         control_item->update();
         publishSelection();
         emit documentChanged();
@@ -666,9 +673,9 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
         m_drawing = false; m_hasPending = false; m_pendingObject = HmiObject();
         if (object.type == QStringLiteral("slider")) { geometry = object.slider.constrainedGeometry(geometry); } //20261112-0 add: Native placement constrains perpendicular size.
         object.geometry = geometry; object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        object.name = (object.type == QStringLiteral("historydata") ? QStringLiteral("历史数据显示器%1") : object.type == QStringLiteral("historyalarm") ? QStringLiteral("历史报警显示器%1") : object.type == QStringLiteral("alarmdisplay") ? QStringLiteral("报警显示器%1") : object.type == QStringLiteral("alarmbar") ? QStringLiteral("动态报警条%1") : object.type == QStringLiteral("datagroup") ? QStringLiteral("数据群组%1") : object.type == QStringLiteral("xycurve") ? QStringLiteral("X-Y曲线%1") : object.type == QStringLiteral("historytrend") ? QStringLiteral("历史趋势图%1") : object.type == QStringLiteral("trend") ? QStringLiteral("趋势图%1") : object.type == QStringLiteral("chart") ? QStringLiteral("图表%1") : object.type == QStringLiteral("track") ? QStringLiteral("移动轨迹%1") : object.type == QStringLiteral("wheel") ? QStringLiteral("滚轮控件%1") : object.type == QStringLiteral("slider") ? QStringLiteral("滑动开关%1") : object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
+        object.name = (object.type == QStringLiteral("recipe") ? QStringLiteral("配方显示器%1") : object.type == QStringLiteral("historydata") ? QStringLiteral("历史数据显示器%1") : object.type == QStringLiteral("historyalarm") ? QStringLiteral("历史报警显示器%1") : object.type == QStringLiteral("alarmdisplay") ? QStringLiteral("报警显示器%1") : object.type == QStringLiteral("alarmbar") ? QStringLiteral("动态报警条%1") : object.type == QStringLiteral("datagroup") ? QStringLiteral("数据群组%1") : object.type == QStringLiteral("xycurve") ? QStringLiteral("X-Y曲线%1") : object.type == QStringLiteral("historytrend") ? QStringLiteral("历史趋势图%1") : object.type == QStringLiteral("trend") ? QStringLiteral("趋势图%1") : object.type == QStringLiteral("chart") ? QStringLiteral("图表%1") : object.type == QStringLiteral("track") ? QStringLiteral("移动轨迹%1") : object.type == QStringLiteral("wheel") ? QStringLiteral("滚轮控件%1") : object.type == QStringLiteral("slider") ? QStringLiteral("滑动开关%1") : object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
             object.hasWordButtonProperties ? QStringLiteral("字按钮%1") : object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") : QStringLiteral("静态文本%1")).arg(before.size() + 1);
-        object.layer = before.size() + 1; item = new HmiControlItem(object); item->setData(10, m_language);
+        object.layer = before.size() + 1; item = makeControlItem(object); item->setData(10, m_language);
         m_scene->clearSelection(); m_scene->addItem(item); item->setSelected(true);
         setActiveTool(QStringLiteral("select")); publishSelection();
         // All interaction flags are clear before the host publishes its deferred image/macro resources.
@@ -729,7 +736,7 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
 
     for (item_index = 0; item_index < previous_objects.size(); ++item_index)
     {
-        m_scene->addItem(new HmiControlItem(previous_objects.at(item_index)));
+        m_scene->addItem(makeControlItem(previous_objects.at(item_index)));
     }
 }
 
@@ -767,4 +774,30 @@ bool ScreenCanvas::publishDocumentChange(const QList<HmiObject> &before) //20261
     Q_FOREACH (object, objects()) { newRecords.append(object.toJson()); }
     if (oldRecords == newRecords) { return false; }
     emit documentChanged(); return true;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::bindRecipeContext
+ * Description     : Attach resolved headers and bounded illustrative row counts without modifying persistent object fields.
+ * Input Parameters: item
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void ScreenCanvas::bindRecipeContext(HmiControlItem *item) //20261113-2 add
+{
+    HmiObject object = item->toHmiObject();
+    item->setData(12, m_recipeTitles.value(object.recipeDisplay.recipeId)); item->setData(13, m_recipeCounts.value(object.recipeDisplay.recipeId));
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::makeControlItem
+ * Description     : Create every page/history/placement item through one transient recipe-context binder.
+ * Input Parameters: object
+ * Return Value    : New owned control item.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+HmiControlItem *ScreenCanvas::makeControlItem(const HmiObject &object) //20261113-2 add
+{
+    HmiControlItem *item = new HmiControlItem(object);
+    item->setData(10, m_language); bindRecipeContext(item); return item;
 }
