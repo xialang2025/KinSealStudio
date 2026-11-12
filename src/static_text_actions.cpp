@@ -13,13 +13,13 @@
 /******************************************************************************
  * Function Name   : MainWindow::applyControlDraft
  * Description     : Validate resource and object drafts together before replacing live editor state.
- * Input Parameters: object, macros, pictures, editing, error
+ * Input Parameters: object, macros, pictures, editing, error, animations
  * Return Value    : True after committing a complete valid draft; failure preserves the editor.
  * Date            : 2026.11.10
  ******************************************************************************/
 bool MainWindow::applyControlDraft(const HmiObject &object, const QMap<QString, QString> &macros,
                                   const QMap<QString, QByteArray> &pictures, bool editing,
-                                  QString *error) //20261110-5 add
+                                  QString *error, const QMap<QString, QByteArray> *animations) //20261112-0 change
 {
     HmiProject candidate;
     int index;
@@ -29,6 +29,7 @@ bool MainWindow::applyControlDraft(const HmiObject &object, const QMap<QString, 
     candidate.objects = m_canvas->objects();
     candidate.macros = macros;
     candidate.pictures = pictures;
+    if (animations != nullptr) { candidate.animations = *animations; } //20261112-0 add
     found = false;
     if (editing)
     {
@@ -56,12 +57,12 @@ bool MainWindow::applyControlDraft(const HmiObject &object, const QMap<QString, 
 /******************************************************************************
  * Function Name   : MainWindow::beginControlDraftPlacement
  * Description     : Hold accepted picture and macro drafts outside project history until a complete object rectangle exists.
- * Input Parameters: object, macros, pictures
+ * Input Parameters: object, macros, pictures, animations
  * Return Value    : None
  * Date            : 2026.11.10
  ******************************************************************************/
 void MainWindow::beginControlDraftPlacement(const HmiObject &object, const QMap<QString, QString> &macros,
-                                           const QMap<QString, QByteArray> &pictures) //20261110-8 add
+                                           const QMap<QString, QByteArray> &pictures, const QMap<QString, QByteArray> *animations) //20261112-0 change
 {
     m_canvas->beginControlPlacement(object);
     if (!m_canvas->hasPendingPlacement()) { //20261110-8 add: A rejected placement must never attach resources to a later unrelated edit.
@@ -73,6 +74,7 @@ void MainWindow::beginControlDraftPlacement(const HmiObject &object, const QMap<
     m_pendingControlResources = m_project;
     m_pendingControlResources.macros = macros;
     m_pendingControlResources.pictures = pictures;
+    if (animations != nullptr) { m_pendingControlResources.animations = *animations; } //20261112-0 add
     m_hasPendingControlResources = true;
 }
 
@@ -120,7 +122,7 @@ void MainWindow::editStaticText() //20261108-14 add
     StaticTextDialog *dialog;
 
     object = m_canvas->selectedObject(&selected);
-    if (selected && (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("image"))) { editStage4Control(); return; } //20261112-0 add
+    if (selected && (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("image") || object.type == QStringLiteral("gif"))) { editStage4Control(); return; } //20261112-0 add
     if (selected && object.type == QStringLiteral("switch")) //20261108-15 add: Every property entry dispatches by control type.
     {
         editBitButton(); return;

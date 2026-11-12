@@ -4,6 +4,9 @@
 #include "scale_dialog.h"
 #include "qr_code_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
+#include "gif_display_dialog.h" //20261112-0 add
+#include "animation_resources.h"
+#include <QImageReader>
 #include "stage3_resources.h"
 #include <QBuffer>
 #include <QListWidget>
@@ -68,6 +71,12 @@ private slots:
     void imageResourceBindingsAndCopyCollisions();
     void imagePersistenceLegacyAndBackendGates();
     void imageActualRasterAndPlacementTransaction();
+    void gifDefaultsGuardsAndIndependentPermissions();
+    void gifOriginalBytesFramesAndStrictPersistence();
+    void gifGalleryImportCancelAndResourceProtection();
+    void gifActualPlaybackPauseAndCanvasPoster();
+    void gifCrossProjectReferencesAndAddressIncrement();
+    void gifPlacementCancellationAndUndoAreAtomic();
 };
 
 /******************************************************************************
@@ -917,6 +926,225 @@ void Stage4ControlTests::imageActualRasterAndPlacementTransaction() //20261112-0
     QTimer::singleShot(0, &window, []() { ImageDisplayDialog *dialog = qobject_cast<ImageDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 1);
     QTimer::singleShot(0, &window, []() { ImageDisplayDialog *dialog = qobject_cast<ImageDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("ImageInterval"))->setValue(7); dialog->findChild<QDialogButtonBox *>(QStringLiteral("ImageButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 2); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 7);
     window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(1); window.restoreProjectHistory(1); QVERIFY(window.currentEditorProject().objects.first().hasImageDisplayProperties); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 7);
+}
+
+/******************************************************************************
+ * Function Name   : gifFixture
+ * Description     : Load the original retained native animation stimulus with its exact delays and loop bytes.
+ * Input Parameters: alternate
+ * Return Value    : Original GIF bytes.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static QByteArray gifFixture(bool alternate = false) //20261112-0 add
+{
+    QFile file(alternate ? QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-blue-yellow.gif") : QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif"));
+    if (!file.open(QIODevice::ReadOnly)) { return QByteArray(); } return file.readAll();
+}
+
+/******************************************************************************
+ * Function Name   : gifObject
+ * Description     : Build a valid independent GIF control rather than a static PNG appearance.
+ * Input Parameters: None
+ * Return Value    : Complete editor GIF object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject gifObject() //20261112-0 add
+{
+    HmiObject object;
+    object.type = QStringLiteral("gif"); object.id = QStringLiteral("gif-object"); object.name = QStringLiteral("GIF显示器"); object.geometry = QRect(20, 20, 120, 60);
+    object.gifDisplay.animation = QStringLiteral("red-green.gif"); object.gifDisplay.gifData = gifFixture(); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifDefaultsGuardsAndIndependentPermissions
+ * Description     : Exercise exact empty-resource messages, playback-bit linkage and independent visibility drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifDefaultsGuardsAndIndependentPermissions() //20261112-0 add
+{
+    HmiObject empty = gifObject();
+    GifDisplayDialog *dialog;
+    QStringList messages;
+    QTimer guard;
+    HmiPermissionEditor *visibility;
+    empty.gifDisplay.gifData.clear(); empty.gifDisplay.animation.clear(); dialog = new GifDisplayDialog(empty, HmiProject()); dialog->show(); QVERIFY(QTest::qWaitForWindowExposed(dialog));
+    QCOMPARE(dialog->findChild<QTabWidget *>(QStringLiteral("GifTabs"))->count(), 2); QVERIFY(!dialog->findChild<QCheckBox *>(QStringLiteral("GifBitControl"))->isChecked());
+    QCOMPARE(dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->text(), QStringLiteral("LB0")); QVERIFY(!dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->isEnabled());
+    QVERIFY(dialog->findChild<QRadioButton *>(QStringLiteral("GifState1"))->isChecked()); guard.setInterval(10);
+    connect(&guard, &QTimer::timeout, dialog, [&]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { messages.append(message->text()); message->accept(); } }); guard.start();
+    dialog->findChild<QPushButton *>(QStringLiteral("GifRun"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GifButtons"))->button(QDialogButtonBox::Ok)->click(); guard.stop();
+    QCOMPARE(messages, (QStringList{QStringLiteral("GIF数据为空，请重新选择。"), QStringLiteral("没有选择图片或图片已损坏！")})); QVERIFY(dialog->isVisible());
+    dialog->findChild<QCheckBox *>(QStringLiteral("GifBitControl"))->setChecked(true); QVERIFY(dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->isEnabled());
+    dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->setText(QStringLiteral("LB17")); dialog->findChild<QRadioButton *>(QStringLiteral("GifState0"))->click();
+    dialog->findChild<QCheckBox *>(QStringLiteral("GifBitControl"))->setChecked(false); QCOMPARE(dialog->object().gifDisplay.controlAddress, QStringLiteral("LB17")); QCOMPARE(dialog->object().gifDisplay.activeState, 0); QVERIFY(!dialog->object().gifDisplay.visibility.visibilityEnabled);
+    visibility = dialog->findChild<HmiPermissionEditor *>(QStringLiteral("GifVisibility")); QCOMPARE(dialog->findChildren<HmiPermissionEditor *>().size(), 1); visibility->setChecked(true);
+    dialog->findChild<QGroupBox *>(QStringLiteral("GifVisibilityWord"))->setChecked(true); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("GifVisibilityType"))->count(), 5); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("GifVisibilityComparison"))->count(), 6); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("GifVisibilityMinimum"))->count(), 8);
+    dialog->findChild<QComboBox *>(QStringLiteral("GifVisibilityType"))->setCurrentIndex(4); dialog->findChild<QLineEdit *>(QStringLiteral("GifVisibilityWordAddress"))->setText(QStringLiteral("LW10")); visibility->setChecked(false); QCOMPARE(dialog->object().gifDisplay.visibility.dataType, 4); QCOMPARE(dialog->object().gifDisplay.visibility.wordAddress, QStringLiteral("LW10"));
+    dialog->reject(); delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifOriginalBytesFramesAndStrictPersistence
+ * Description     : Verify raw bytes, frame order, delays and loop fields survive a ten-family mixed project and reject corrupt records atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifOriginalBytesFramesAndStrictPersistence() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject sentinel;
+    HmiObject object = gifObject();
+    HmiObject parsed = qrObject();
+    QBuffer buffer;
+    QImageReader reader;
+    QImage frame;
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    QVERIFY2(validateGifData(object.gifDisplay.gifData, &error), qPrintable(error)); buffer.setData(object.gifDisplay.gifData); buffer.open(QIODevice::ReadOnly); reader.setDevice(&buffer);
+    QCOMPARE(reader.imageCount(), 2); QCOMPARE(reader.loopCount(), 3); frame = reader.read(); QCOMPARE(frame.pixelColor(5, 5), QColor(255, 0, 0)); QCOMPARE(reader.nextImageDelay(), 110);
+    frame = reader.read(); QCOMPARE(frame.pixelColor(5, 5), QColor(0, 255, 0)); QCOMPARE(reader.nextImageDelay(), 270);
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), object}); project.animations.insert(object.gifDisplay.animation, object.gifDisplay.gifData);
+    QCOMPARE(project.toJson().value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson()); QCOMPARE(loaded.objects.size(), 10); QCOMPARE(loaded.animations, project.animations);
+    json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &sentinel, &error)); QVERIFY(sentinel.objects.isEmpty());
+    json = object.toJson(); props = json.value(QStringLiteral("gifDisplay")).toObject(); props.insert(QStringLiteral("activeState"), 0.5); json.insert(QStringLiteral("gifDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
+    props = object.gifDisplay.toJson(); props.insert(QStringLiteral("gifData"), QStringLiteral("!!!!")); json.insert(QStringLiteral("gifDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QVERIFY(!validateGifData(object.gifDisplay.gifData.chopped(8))); QVERIFY(!validateGifData(imagePng(Qt::red)));
+    project.objects = {object}; QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    project.objects = existingFiveObjects(); QVERIFY(!exportNativeProjectSource(project, &source, &error)); QVERIFY(error.contains(QStringLiteral("GIF"))); QCOMPARE(source, QByteArrayLiteral("keep"));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR"))
+    { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("gif-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifGalleryImportCancelAndResourceProtection
+ * Description     : Test actual file import atomicity, nested cancellation and resource remapping on inactive pages.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifGalleryImportCancelAndResourceProtection() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject renamed;
+    HmiProject replaced;
+    HmiProject result;
+    HmiPage page;
+    HmiObject object = gifObject();
+    AnimationGalleryDialog gallery(project, QString());
+    QString error;
+    QString path = QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif");
+    QTimer nested;
+    GifDisplayDialog *dialog;
+    QVERIFY2(gallery.importFiles({path}, &error), qPrintable(error)); QCOMPARE(gallery.draftProject().animations.first(), gifFixture()); QVERIFY(project.animations.isEmpty());
+    QVERIFY(!gallery.importFiles({path, QStringLiteral("does-not-exist.gif")}, &error)); QCOMPARE(gallery.draftProject().animations.size(), 1); gallery.reject(); QVERIFY(project.animations.isEmpty());
+    project.objects = {object}; project.animations.insert(object.gifDisplay.animation, object.gifDisplay.gifData); page.id = QStringLiteral("gif-page"); page.name = QStringLiteral("GIF第二页"); object.id = QStringLiteral("inactive-gif"); page.objects.append(object); QVERIFY2(project.addPage(page, &error), qPrintable(error));
+    QCOMPARE(animationUsage(project, QStringLiteral("red-green.gif")), 2); QVERIFY(!deleteAnimation(project, QStringLiteral("red-green.gif"), &result, &error));
+    QVERIFY2(renameAnimation(project, QStringLiteral("red-green.gif"), QStringLiteral("renamed.gif"), &renamed, &error), qPrintable(error)); QCOMPARE(renamed.inactivePages.first().objects.first().gifDisplay.animation, QStringLiteral("renamed.gif"));
+    QVERIFY2(replaceAnimation(renamed, QStringLiteral("renamed.gif"), gifFixture(true), &replaced, &error), qPrintable(error)); QCOMPARE(replaced.objects.first().gifDisplay.gifData, gifFixture(true)); QCOMPARE(project.objects.first().gifDisplay.gifData, gifFixture());
+    dialog = new GifDisplayDialog(project.objects.first(), project); nested.setInterval(10);
+    connect(&nested, &QTimer::timeout, dialog, [&]() { AnimationGalleryDialog *child = qobject_cast<AnimationGalleryDialog *>(QApplication::activeModalWidget()); if (child != nullptr) { child->reject(); } }); nested.start();
+    dialog->findChild<QPushButton *>(QStringLiteral("GifChoose"))->click(); nested.stop(); QCOMPARE(dialog->object().gifDisplay.toJson(), project.objects.first().gifDisplay.toJson()); dialog->reject(); delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifActualPlaybackPauseAndCanvasPoster
+ * Description     : Observe real frame changes, pause stability, resumed playback and clipped first-frame canvas pixels.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifActualPlaybackPauseAndCanvasPoster() //20261112-0 add
+{
+    GifDisplayDialog dialog(gifObject(), HmiProject());
+    QLabel *preview = dialog.findChild<QLabel *>(QStringLiteral("GifPreview"));
+    QPushButton *run = dialog.findChild<QPushButton *>(QStringLiteral("GifRun"));
+    QImage paused;
+    QImage raster(180, 100, QImage::Format_ARGB32);
+    QPainter painter;
+    QJsonObject before = dialog.object().toJson();
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(preview->pixmap().toImage().pixelColor(5, 5), QColor(255, 0, 0));
+    run->click(); QCOMPARE(run->text(), QStringLiteral("停止运行")); QTRY_COMPARE_WITH_TIMEOUT(preview->pixmap().toImage().pixelColor(5, 5), QColor(0, 255, 0), 1500);
+    run->click(); paused = preview->pixmap().toImage(); QTest::qWait(400); QCOMPARE(preview->pixmap().toImage(), paused); QCOMPARE(run->text(), QStringLiteral("运行测试"));
+    run->click(); QTRY_COMPARE_WITH_TIMEOUT(preview->pixmap().toImage().pixelColor(5, 5), QColor(255, 0, 0), 1500); run->click(); QCOMPARE(dialog.object().toJson(), before);
+    raster.fill(Qt::magenta); painter.begin(&raster); paintGifDisplay(&painter, QRectF(10, 10, 160, 60), gifObject().gifDisplay); painter.end(); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta)); QCOMPARE(raster.pixelColor(100, 30), QColor(255, 0, 0));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR"))
+    {
+        QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("gif-general.png"))));
+        dialog.findChild<QTabWidget *>(QStringLiteral("GifTabs"))->setCurrentIndex(1); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("gif-permissions.png"))));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifCrossProjectReferencesAndAddressIncrement
+ * Description     : Preserve exact bytes through collisions and explicit references while incrementing only active typed bit slots.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifCrossProjectReferencesAndAddressIncrement() //20261112-0 add
+{
+    HmiProject source;
+    HmiProject target;
+    HmiProject copied;
+    HmiObject object = gifObject();
+    HmiReference reference;
+    Stage3Clipboard clipboard;
+    Stage3DuplicateOptions options;
+    HmiProject duplicated;
+    QString error;
+    QString newPage;
+    object.gifDisplay.bitControl = true; object.gifDisplay.controlAddress = QStringLiteral("LB17"); object.gifDisplay.activeState = 0;
+    source.objects = {object}; source.animations.insert(object.gifDisplay.animation, object.gifDisplay.gifData);
+    reference.id = QStringLiteral("gif-resource-reference"); reference.ownerKind = QStringLiteral("object"); reference.ownerId = object.id; reference.field = QStringLiteral("animation"); reference.targetKind = QStringLiteral("animation"); reference.targetId = object.gifDisplay.animation; source.references.append(reference);
+    target.animations.insert(object.gifDisplay.animation, gifFixture(true)); QVERIFY2(captureStage3Selection(source, {object.id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(), &copied, nullptr, &error), qPrintable(error));
+    QCOMPARE(copied.objects.first().gifDisplay.gifData, gifFixture()); QCOMPARE(copied.animations.value(object.gifDisplay.animation), gifFixture(true)); QVERIFY(copied.objects.first().gifDisplay.animation.startsWith(QStringLiteral("red-green.gif~"))); QCOMPARE(copied.references.first().targetId, copied.objects.first().gifDisplay.animation);
+    QVERIFY2(copied.copyPage(copied.activePageId, QStringLiteral("复制GIF页"), &newPage, &error), qPrintable(error)); QCOMPARE(animationUsage(copied, copied.objects.first().gifDisplay.animation), 4);
+    options.columns = 2; options.increments.append({Stage3AddressField::MonitorBit, 1, 0}); QVERIFY2(duplicateStage3Selection(source, {object.id}, options, &duplicated, nullptr, &error), qPrintable(error)); QCOMPARE(duplicated.objects.last().gifDisplay.controlAddress, QStringLiteral("LB18")); QCOMPARE(duplicated.objects.first().gifDisplay.controlAddress, QStringLiteral("LB17"));
+    object.gifDisplay.controlAddress = QStringLiteral("LW0"); QVERIFY(!object.gifDisplay.validateAddresses(source.connections, &error)); object.gifDisplay.bitControl = false; QVERIFY2(object.gifDisplay.validateAddresses(source.connections, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::gifPlacementCancellationAndUndoAreAtomic
+ * Description     : Create through the real shell action, import in the child gallery and verify cancel, placement, edit and history resource atomicity.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::gifPlacementCancellationAndUndoAreAtomic() //20261112-0 add
+{
+    MainWindow window;
+    HmiProject project;
+    QTimer parentTimer;
+    QTimer childTimer;
+    bool configured = false;
+    bool childAccepted = false;
+    int history;
+    QString path = QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif");
+    window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    parentTimer.setInterval(15); childTimer.setInterval(15);
+    connect(&childTimer, &QTimer::timeout, &window, [&]() {
+        AnimationGalleryDialog *gallery = qobject_cast<AnimationGalleryDialog *>(QApplication::activeModalWidget());
+        QString error;
+        if (gallery == nullptr) { return; } QVERIFY2(gallery->importFiles({path}, &error), qPrintable(error)); childAccepted = true; childTimer.stop(); gallery->findChild<QDialogButtonBox *>(QStringLiteral("AnimationButtons"))->button(QDialogButtonBox::Ok)->click();
+    });
+    connect(&parentTimer, &QTimer::timeout, &window, [&]() {
+        GifDisplayDialog *dialog = qobject_cast<GifDisplayDialog *>(QApplication::activeModalWidget());
+        if (dialog == nullptr || configured) { return; } configured = true; parentTimer.stop(); dialog->findChild<QPushButton *>(QStringLiteral("GifChoose"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GifButtons"))->button(QDialogButtonBox::Ok)->click();
+    });
+    parentTimer.start(); childTimer.start(); window.m_commands.value(QStringLiteral("action_GIFoutput"))->trigger(); QVERIFY(configured); QVERIFY(childAccepted); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().animations.isEmpty());
+    QTest::keyClick(window.m_canvas, Qt::Key_Escape); QVERIFY(!window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(window.currentEditorProject().animations.isEmpty()); QCOMPARE(window.m_projectHistory.size(), history);
+    configured = false; childAccepted = false; parentTimer.start(); childTimer.start(); window.m_commands.value(QStringLiteral("action_GIFoutput"))->trigger(); QVERIFY(configured); QVERIFY(childAccepted);
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 120)));
+    QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.currentEditorProject().animations.size(), 1); QCOMPARE(window.currentEditorProject().objects.first().gifDisplay.gifData, gifFixture()); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { GifDisplayDialog *dialog = qobject_cast<GifDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("GifBitControl"))->setChecked(true); dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->setText(QStringLiteral("LB17")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GifButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().gifDisplay.controlAddress, QStringLiteral("LB17")); QCOMPARE(window.m_projectHistory.size(), history + 2);
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 2);
+    window.restoreProjectHistory(-1); QVERIFY(!window.currentEditorProject().objects.first().gifDisplay.bitControl); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(window.currentEditorProject().animations.isEmpty()); window.restoreProjectHistory(1); window.restoreProjectHistory(1); QCOMPARE(window.currentEditorProject().objects.first().gifDisplay.controlAddress, QStringLiteral("LB17"));
 }
 
 QTEST_MAIN(Stage4ControlTests)

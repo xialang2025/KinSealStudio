@@ -84,7 +84,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     result.insert(QStringLiteral("startupLanguage"), project.startupLanguage);
     model.insert(QStringLiteral("allowed"), modelAllowed);
     model.insert(QStringLiteral("reason"), modelError);
-    model.insert(QStringLiteral("format"), QStringLiteral("KSP-schema1-to9-and11")); //20261112-0 change
+    model.insert(QStringLiteral("format"), QStringLiteral("KSP-schema1-to9-and11-to12")); //20261112-0 change
     result.insert(QStringLiteral("modelPersistence"), model);
     native.insert(QStringLiteral("status"), backendAllowed && targetAllowed && nativeObjectsAllowed ? QStringLiteral("candidate") : QStringLiteral("blocked"));
     native.insert(QStringLiteral("reason"), !modelAllowed ? modelError : backendError);

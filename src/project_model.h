@@ -15,6 +15,7 @@
 #include "scale_properties.h" //20261112-0 add
 #include "qr_code_properties.h" //20261112-0 add
 #include "image_display_properties.h" //20261112-0 add
+#include "gif_display_properties.h" //20261112-0 add
 
 struct HmiObject
 {
@@ -39,6 +40,7 @@ struct HmiObject
     QrCodeProperties qrCode; //20261112-0 add: A QR monitor is independent of buttons and static text.
     bool hasImageDisplayProperties = false; //20261112-0 add: Legacy image placeholders stay loadable until configured.
     ImageDisplayProperties imageDisplay;
+    GifDisplayProperties gifDisplay; //20261112-0 add
     double layer = 1;
     QString group;
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.
@@ -102,6 +104,7 @@ struct HmiProject
     QString activeLanguage = QStringLiteral("中文");
     QMap<QString, QString> macros; //20261108-15 add: Sources are saved without claiming native macro compilation.
     QMap<QString, QByteArray> pictures;
+    QMap<QString, QByteArray> animations; //20261112-0 add: Exact GIF bytes, never PNG-normalized.
     QVector<PlcConnection> connections; //20261109-0 add: Stable connection IDs qualify external object addresses.
     QByteArray nativeSourceSnapshot; //20261109-0 add: Preserve bounded native metadata for verified source reserialization.
     QStringList nativeSourceWarnings; //20261109-0 add: Explain dormant native values preserved outside the editable model.

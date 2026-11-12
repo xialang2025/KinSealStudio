@@ -1849,17 +1849,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/picture/native/delivery.json"
+        "evidence": "../docs/stage4-evidence/gif/native/delivery.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次C09编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次C10编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "进入C10；保留本控件未决层"
+        "nextAction": "进入C11；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -1882,6 +1882,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T03:52:11.024977+00:00"
+        },
+        {
+          "executionId": "stage4-gif-20261112",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/picture/native/delivery.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次C09编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "进入C10；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T04:25:15.476688+00:00"
         }
       ]
     },
@@ -3317,6 +3337,14 @@
         "finalRun": "windows-final/run.json",
         "tempRedirectValidation": "windows-temp-validation/run.json"
       }
+    },
+    {
+      "id": "stage4-gif-20261112",
+      "productPassed": 32,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": false,
+      "completeControl": false
     }
   ],
   "executionEnvironmentLimits": [

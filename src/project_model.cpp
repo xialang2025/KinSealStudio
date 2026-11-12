@@ -252,6 +252,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("message")) { json.insert(QStringLiteral("messageDisplay"), messageDisplay.toJson()); } //20261112-0 add
     if (type == QStringLiteral("scale")) { json.insert(QStringLiteral("scale"), scale.toJson()); } //20261112-0 add
     if (type == QStringLiteral("qrcode")) { json.insert(QStringLiteral("qrCode"), qrCode.toJson()); } //20261112-0 add
+    if (type == QStringLiteral("gif")) { json.insert(QStringLiteral("gifDisplay"), gifDisplay.toJson()); } //20261112-0 add
     if (type == QStringLiteral("image") && hasImageDisplayProperties) { json.insert(QStringLiteral("imageDisplay"), imageDisplay.toJson()); } //20261112-0 add
     return json;
 }
@@ -289,7 +290,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -304,6 +305,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("gifDisplay")) //20261112-0 add
+        {
+            if (!item.value().isObject() || !GifDisplayProperties::fromJson(item.value().toObject(), &object->gifDisplay, error)) { return false; }
         }
         else if (key == QStringLiteral("imageDisplay")) //20261112-0 add
         {
@@ -342,6 +347,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     { return modelError(error, QStringLiteral("刻度类型与专有属性不匹配。")); }
     if ((object->type == QStringLiteral("qrcode")) != json.contains(QStringLiteral("qrCode"))) //20261112-0 add
     { return modelError(error, QStringLiteral("二维码类型与专有属性不匹配。")); }
+    if ((object->type == QStringLiteral("gif")) != json.contains(QStringLiteral("gifDisplay"))) //20261112-0 add
+    { return modelError(error, QStringLiteral("GIF类型与专有属性不匹配。")); }
     object->hasImageDisplayProperties = json.contains(QStringLiteral("imageDisplay")); //20261112-0 add
     if (object->hasImageDisplayProperties && object->type != QStringLiteral("image")) { return modelError(error, QStringLiteral("图片显示类型与专有属性不匹配。")); }
     object->name = json.value(QStringLiteral("name")).toString();
@@ -416,6 +423,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->type != QStringLiteral("image") &&
          object->type != QStringLiteral("message") && //20261112-0 add
          object->type != QStringLiteral("scale") && //20261112-0 add
+         object->type != QStringLiteral("gif") && //20261112-0 add
          object->type != QStringLiteral("qrcode") && //20261112-0 add
          object->type != QStringLiteral("text")))
     {
@@ -636,7 +644,7 @@ bool HmiReference::fromJson(const QJsonObject &json, HmiReference *reference, QS
     candidate.targetKind = json.value(QStringLiteral("targetKind")).toString(); candidate.targetId = json.value(QStringLiteral("targetId")).toString();
     if (!QStringList{QStringLiteral("project"), QStringLiteral("page"), QStringLiteral("object"), QStringLiteral("configuration")}.contains(candidate.ownerKind) ||
         !QStringList{QStringLiteral("page"), QStringLiteral("object"), QStringLiteral("configuration"), QStringLiteral("picture"),
-        QStringLiteral("macro"), QStringLiteral("connection")}.contains(candidate.targetKind))
+        QStringLiteral("macro"), QStringLiteral("animation"), QStringLiteral("connection")}.contains(candidate.targetKind))
     {
         return modelError(error, QStringLiteral("引用%1的所有者或目标类别未实现。").arg(candidate.id));
     }
@@ -658,6 +666,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     QJsonObject pageJson;
     QJsonObject macrosJson;
     QJsonObject picturesJson;
+    QJsonObject animationJson; //20261112-0 add
     QJsonObject macroIdsJson;
     QJsonArray pagesJson;
     QJsonArray objectsJson;
@@ -696,6 +705,14 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     Q_FOREACH (page, allPages())
     {
         Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.hasImageDisplayProperties) { schema = 11; stage1 = true; } }
+    }
+    if (!animations.isEmpty()) { schema = 12; stage1 = true; } //20261112-0 add
+    Q_FOREACH (page, allPages())
+    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("gif")) { schema = 12; stage1 = true; } } }
+    if (schema >= 12)
+    {
+        for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture) { animationJson.insert(picture.key(), QString::fromLatin1(picture.value().toBase64())); }
+        json.insert(QStringLiteral("animations"), animationJson);
     }
     resolution = {{QStringLiteral("width"), pageWidth}, {QStringLiteral("height"), pageHeight}};
     if (stage1)
@@ -784,7 +801,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
     }
     if (!exactInteger(json.value(QStringLiteral("schemaVersion")))) { return modelError(error, QStringLiteral("工程版本必须为整数。")); }
     schema = json.value(QStringLiteral("schemaVersion")).toInt();
-    if (schema < 1 || schema > 11) { return modelError(error, QStringLiteral("工程版本不受支持。")); } //20261112-0 change
+    if (schema < 1 || schema > 12) { return modelError(error, QStringLiteral("工程版本不受支持。")); } //20261112-0 change
     allowed = {QStringLiteral("format"), QStringLiteral("schemaVersion"), QStringLiteral("projectName"), QStringLiteral("targetModel"),
         QStringLiteral("resolution"), QStringLiteral("pages"), QStringLiteral("languages"), QStringLiteral("activeLanguage"),
         QStringLiteral("macros"), QStringLiteral("pictures"), QStringLiteral("connections"), QStringLiteral("nativeSourceSnapshot"),
@@ -794,6 +811,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         allowed.append({QStringLiteral("projectId"), QStringLiteral("activePageId"), QStringLiteral("startupPageId"), QStringLiteral("startupLanguage"),
             QStringLiteral("pageOrder"), QStringLiteral("configurationNodes"), QStringLiteral("references"), QStringLiteral("macroIds"), QStringLiteral("extensions")});
     }
+    if (schema >= 12) { allowed.append(QStringLiteral("animations")); } //20261112-0 add
     if (!knownKeys(json, allowed, QStringLiteral("project"), error)) { return false; }
     if ((schema < 3 && (json.contains(QStringLiteral("macros")) || json.contains(QStringLiteral("pictures")))) ||
         (schema < 4 && json.contains(QStringLiteral("connections"))) ||
@@ -886,6 +904,21 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         }
         loaded.pictures.insert(item.key(), decoded);
     }
+    if (schema >= 12) //20261112-0 add: Validate raw animation encoding before publishing the loaded project.
+    {
+        if (!json.value(QStringLiteral("animations")).isObject()) { return modelError(error, QStringLiteral("动画资源池缺失或类型错误。")); }
+        resources = json.value(QStringLiteral("animations")).toObject(); resourceBytes = 0;
+        if (resources.size() > 256) { return modelError(error, QStringLiteral("动画资源超过256项Lite保护上限。")); }
+        for (item = resources.constBegin(); item != resources.constEnd(); ++item)
+        {
+            text = item.value().toString(); encoded = text.toLatin1();
+            if (!item.value().isString() || encoded.size() > ((1024 * 1024 + 2) / 3) * 4 || QString::fromLatin1(encoded) != text)
+            { return modelError(error, QStringLiteral("动画编码字段无效或超限。")); }
+            decoded = QByteArray::fromBase64(encoded); resourceBytes += decoded.size();
+            if (decoded.toBase64() != encoded || resourceBytes > 32 * 1024 * 1024 || !validateGifData(decoded, error)) { return false; }
+            loaded.animations.insert(item.key(), decoded);
+        }
+    }
     if (json.contains(QStringLiteral("connections")))
     {
         if (!json.value(QStringLiteral("connections")).isArray() || json.value(QStringLiteral("connections")).toArray().size() > 2)
@@ -955,6 +988,8 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
             pageJson.insert(QStringLiteral("height"), resolution.value(QStringLiteral("height")));
         }
         if (!HmiPage::fromJson(pageJson, &page, error)) { return false; }
+        if (schema < 12) //20261112-0 add: A lower schema cannot conceal animation fields.
+        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay"))) { return modelError(error, QStringLiteral("GIF数据必须使用schema12。")); } } }
         if (parsedPageIds.contains(page.id)) { return modelError(error, QStringLiteral("页面稳定ID重复：%1。").arg(page.id)); }
         parsedPageIds.insert(page.id);
         if (page.id == loaded.activePageId) { assignActivePage(&loaded, page); activeFound = true; }
@@ -1217,6 +1252,15 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("工程图片内容或总大小无效。"));
         }
     }
+    pictureBytes = 0; //20261112-0 add: Animation bytes have a separate bounded resource budget.
+    if (animations.size() > 256) { return modelError(error, QStringLiteral("动画资源超过256项Lite保护上限。")); }
+    for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture)
+    {
+        pictureBytes += picture.value().size();
+        if (picture.key().trimmed().isEmpty() || picture.key().size() > 256 || pictureBytes > 32 * 1024 * 1024 || !validateGifData(picture.value(), error))
+        { return modelError(error, QStringLiteral("动画名称、内容或资源总量无效。")); }
+        entities[QStringLiteral("animation")].insert(picture.key());
+    }
     entities.insert(QStringLiteral("project"), QSet<QString>{projectId}); entities.insert(QStringLiteral("page"), pageIds);
     entities.insert(QStringLiteral("object"), objectIds); entities.insert(QStringLiteral("configuration"), nodeIds);
     entities.insert(QStringLiteral("macro"), macroStableIds);
@@ -1251,6 +1295,8 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
 bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 add
 {
     if (!validateModel(error)) { return false; }
+    if (!animations.isEmpty()) //20261112-0 add: Unreferenced GIF resources also need a recovered native resource format.
+    { return modelError(error, QStringLiteral("工程包含尚未恢复原厂源/设备格式的GIF动画资源。")); }
     if (pageCount() != 1 || activePageKind != QStringLiteral("normal") || startupPageId != activePageId ||
         pageWidth != 800 || pageHeight != 480 || !configurationNodes.isEmpty() || !references.isEmpty())
     {
@@ -1563,6 +1609,8 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
     Q_FOREACH (page, allPages()) { allObjects.append(page.objects); } //20261110-5 change
     Q_FOREACH (object, allObjects)
     {
+        if (object.type == QStringLiteral("gif") && (object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasImageDisplayProperties || !object.address.isEmpty() ||
+            !object.gifDisplay.validate(error) || !object.gifDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.hasImageDisplayProperties && (object.type != QStringLiteral("image") || object.hasBitButtonProperties || !object.imageDisplay.validate(error) || !object.imageDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("message") && !object.messageDisplay.validateAddresses(connections, error)) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("qrcode") && (!object.qrCode.validate(error) || !object.qrCode.validateAddresses(connections, error))) { return false; } //20261112-0 add
@@ -1596,7 +1644,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
             if (error != nullptr && error->isEmpty()) { *error = QStringLiteral("功能按钮必须使用单态开关外观、有效功能类型和工程语言，宏指令与原生版本一样禁用。"); }
             return false;
         }
-        if (!object.hasLampProperties && !object.hasFunctionButtonProperties && !object.hasImageDisplayProperties) //20261112-0 change: Typed image monitors validate their actual bit/word role separately.
+        if (!object.hasLampProperties && !object.hasFunctionButtonProperties && !object.hasImageDisplayProperties && object.type != QStringLiteral("gif")) //20261112-0 change: Typed image monitors validate their actual bit/word role separately.
         {
             addresses.append(qMakePair(object.address, object.type == QStringLiteral("switch") && !object.hasWordButtonProperties ?
                                         PlcAddressRole::Bit : PlcAddressRole::Word));

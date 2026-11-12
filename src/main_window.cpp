@@ -913,6 +913,7 @@ void MainWindow::addSelectedControl() //20261110-5 change
     if (completedPlacement) { //20261110-8 add
         candidate.macros = m_pendingControlResources.macros;
         candidate.pictures = m_pendingControlResources.pictures;
+        candidate.animations = m_pendingControlResources.animations; //20261112-0 add
     }
     if (!candidate.validateModel(&error))
     {
@@ -1416,7 +1417,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_nameEdit->setEnabled(selected);
     m_textEdit->setEnabled(selected);
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
-    if (selected && (object.type == QStringLiteral("scale") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
+    if (selected && (object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
     m_widthSpin->setEnabled(selected);

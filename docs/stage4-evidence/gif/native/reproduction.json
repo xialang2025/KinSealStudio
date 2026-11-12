@@ -1,0 +1,558 @@
+{
+  "date": "2026-11-12",
+  "scenarios": [
+    {
+      "name": "cancel-scenario.json",
+      "actions": [
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "IfBitControl",
+          "op": "invoke"
+        },
+        {
+          "op": "text",
+          "name": "ControlBit",
+          "value": "LB17"
+        },
+        {
+          "name": "available_0",
+          "op": "invoke"
+        },
+        {
+          "label": "bit-control-draft",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-after-main-cancel.sm",
+          "op": "save"
+        },
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "m_pathbtn",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-blue-yellow.gif",
+          "op": "arm-file"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-blue-yellow.gif",
+          "op": "native-file"
+        },
+        {
+          "label": "replacement-import-before-cancel",
+          "op": "dump"
+        },
+        {
+          "op": "invoke",
+          "kind": "QPushButton",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "label": "gif-after-gallery-cancel",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-after-gallery-cancel.sm",
+          "op": "save"
+        },
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "IfBitControl",
+          "op": "invoke"
+        },
+        {
+          "op": "text",
+          "name": "ControlBit",
+          "value": "LB17"
+        },
+        {
+          "name": "available_0",
+          "op": "invoke"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-bit-LB17-state0.sm",
+          "op": "save"
+        },
+        {
+          "label": "gif-bit-LB17-state0",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "cancel2-scenario.json",
+      "actions": [
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "IfBitControl",
+          "op": "invoke"
+        },
+        {
+          "op": "text",
+          "name": "ControlBit",
+          "value": "LB17"
+        },
+        {
+          "name": "available_0",
+          "op": "invoke"
+        },
+        {
+          "label": "bit-control-draft",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-after-main-cancel.sm",
+          "op": "copy-source"
+        },
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "m_pathbtn",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-blue-yellow.gif",
+          "op": "arm-file"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-blue-yellow.gif",
+          "op": "native-file"
+        },
+        {
+          "label": "replacement-import-before-cancel",
+          "op": "dump"
+        },
+        {
+          "op": "invoke",
+          "kind": "QPushButton",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "label": "gif-after-gallery-cancel",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-after-gallery-cancel.sm",
+          "op": "copy-source"
+        },
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "name": "IfBitControl",
+          "op": "invoke"
+        },
+        {
+          "op": "text",
+          "name": "ControlBit",
+          "value": "LB17"
+        },
+        {
+          "name": "available_0",
+          "op": "invoke"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "gif-bit-LB17-state0.sm",
+          "op": "save"
+        },
+        {
+          "label": "gif-bit-LB17-state0",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "file-dialog-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_GIFoutput"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.4
+        },
+        {
+          "op": "invoke",
+          "name": "m_pathbtn"
+        },
+        {
+          "op": "invoke",
+          "name": "pbtn_add"
+        },
+        {
+          "op": "wait",
+          "seconds": 1
+        },
+        {
+          "op": "dump",
+          "label": "file-dialog-observed"
+        }
+      ]
+    },
+    {
+      "name": "gallery-scenario.json",
+      "actions": [
+        {
+          "name": "action_GIFoutput",
+          "op": "action"
+        },
+        {
+          "seconds": 0.5,
+          "op": "wait"
+        },
+        {
+          "label": "gif-default",
+          "op": "dump"
+        },
+        {
+          "name": "m_pathbtn",
+          "op": "invoke"
+        },
+        {
+          "label": "gallery-default",
+          "op": "dump"
+        }
+      ]
+    },
+    {
+      "name": "guards-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_GIFoutput"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.4
+        },
+        {
+          "op": "invoke",
+          "name": "m_runstopbtn"
+        },
+        {
+          "op": "dump",
+          "label": "no-gif-run-rejected"
+        },
+        {
+          "kind": "QPushButton",
+          "name": "",
+          "text": "确定",
+          "op": "invoke"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "dump",
+          "label": "no-gif-confirm-rejected"
+        },
+        {
+          "kind": "QPushButton",
+          "name": "",
+          "text": "确定",
+          "op": "invoke"
+        },
+        {
+          "op": "invoke",
+          "name": "IfBitControl"
+        },
+        {
+          "op": "dump",
+          "label": "bit-control-enabled"
+        },
+        {
+          "op": "invoke",
+          "name": "available_0"
+        },
+        {
+          "op": "dump",
+          "label": "bit-control-state0"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "load-scenario.json",
+      "actions": [
+        {
+          "name": "action_GIFoutput",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "name": "m_pathbtn",
+          "op": "invoke"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-red-green.gif",
+          "op": "native-file"
+        },
+        {
+          "label": "gallery-after-add",
+          "op": "dump"
+        },
+        {
+          "label": "gallery-after-add",
+          "op": "read-tables"
+        },
+        {
+          "text": "确定",
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "label": "gif-after-select",
+          "op": "dump"
+        },
+        {
+          "name": "m_runstopbtn",
+          "op": "invoke"
+        },
+        {
+          "seconds": 0.15,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-1",
+          "op": "screenshot"
+        },
+        {
+          "seconds": 0.17,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-2",
+          "op": "screenshot"
+        },
+        {
+          "seconds": 0.15,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-3",
+          "op": "screenshot"
+        },
+        {
+          "name": "m_runstopbtn",
+          "op": "invoke"
+        },
+        {
+          "label": "gif-after-stop",
+          "op": "dump"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "to": [
+            360,
+            220
+          ],
+          "op": "scene-drag",
+          "from": [
+            160,
+            120
+          ]
+        },
+        {
+          "output": "gif-default.sm",
+          "op": "save"
+        },
+        {
+          "label": "gif-default",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "load2-scenario.json",
+      "actions": [
+        {
+          "name": "action_GIFoutput",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "name": "m_pathbtn",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-red-green.gif",
+          "op": "arm-file"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\gif\\native\\probe-red-green.gif",
+          "op": "native-file"
+        },
+        {
+          "label": "gallery-after-add",
+          "op": "dump"
+        },
+        {
+          "label": "gallery-after-add",
+          "op": "read-tables"
+        },
+        {
+          "text": "确定",
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "label": "gif-after-select",
+          "op": "dump"
+        },
+        {
+          "name": "m_runstopbtn",
+          "op": "invoke"
+        },
+        {
+          "seconds": 0.15,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-1",
+          "op": "screenshot"
+        },
+        {
+          "seconds": 0.17,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-2",
+          "op": "screenshot"
+        },
+        {
+          "seconds": 0.15,
+          "op": "wait"
+        },
+        {
+          "label": "gif-playing-3",
+          "op": "screenshot"
+        },
+        {
+          "name": "m_runstopbtn",
+          "op": "invoke"
+        },
+        {
+          "label": "gif-after-stop",
+          "op": "dump"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "to": [
+            360,
+            220
+          ],
+          "op": "scene-drag",
+          "from": [
+            160,
+            120
+          ]
+        },
+        {
+          "output": "gif-default.sm",
+          "op": "save"
+        },
+        {
+          "label": "gif-default",
+          "op": "native-compile"
+        }
+      ]
+    }
+  ],
+  "python": "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "probePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\gif\\probe.py",
+  "probeSha256": "5a1ded54ef3fa07c87c8fc659087d0a6bcdbf4a5d2059de81e5ce0847195ec34",
+  "preparationPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\prepare.py",
+  "preparationSha256": "4edfa5de19b4a43272b77dac45d689c5cabb3db629286ba323df92afadb5e8b9",
+  "isolation": "Separate private desktop and runtime, copied source, task-specific temp. Qt operations dispatched on native GUI thread; window-owned PostMessage and PrintWindow only; no real mouse/keyboard, desktop switch, focus activation, USB, or PLC access.",
+  "nativeCompile": "Actual native compiler phase via action_USBdownload; verified new SysPara mtime and success log, copied WORK/compile; no transfer button invoked.",
+  "patch": "Private task executable only: offset0x7c4 5589e5→b001c3; original installation unchanged.",
+  "knownAutomationIssues": [
+    "Table selection must use viewport click to activate native binding; setCurrentCell alone does not.",
+    "Importing into an existing gallery does not necessarily select the new image; verify lineEdit_des and explicitly click correct cell.",
+    "Source checkpoints after cancellation are copied unchanged working sources, not newly saved native projects.",
+    "Retained failed probe runs are automation failures; they do not establish unsupported native features."
+  ]
+}

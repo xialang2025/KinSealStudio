@@ -186,3 +186,10 @@ V5.1 基本页**没有**：播放速度、循环次数、透明色、音量等�
 - 辅助原生调查脚本：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-gif-picture-20261109\scripts\`（`kgp_common.py`、`probe_gif_smoke.py`、`probe_gif_fields2.py`、`probe_gif_gifload.py`、`probe_gif_canvas2.py` 等；全部运行于固定名私有桌面，未触碰用户真实桌面，未向触摸屏下载）。
 - exe 字符串证据：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-bitbutton-20261108\exe-strings-ascii.txt`（`btn_gif`、`QStaticPictureDlg`、`Run Testing`/`Stop Runing`、GIF 校验文案、`ProjectGraphDlg`/`ProPicLib.klib` 簇）。
 - 姊妹手册：《图片显示功能与交互复刻手册.md》（同目录，共用工程图库/系统图库/地址输入/SecurityWidget）；《位按钮功能与交互复刻手册.md》《静态文本功能与交互复刻手册.md》——地址输入窗口与画布通用菜单可直接复用其描述。
+
+
+## 2026-11-12 原生补证与阶段4编辑切片
+
+原厂默认不受位控制、LB0、有效状态1，播放位与显现独立；空图试播提示GIF数据为空，请重新选择。，空图确定提示没有选择图片或图片已损坏！。已观察真实红绿换帧；无速度/循环/透明色UI。
+
+本轮编辑实现与分层验收见[专项报告](../docs/GIF显示手册实现与验收.md)。原手册历史未知项只按本轮已取得结果纠正；源/设备/现场范围保持独立，未宣称全控件通过。

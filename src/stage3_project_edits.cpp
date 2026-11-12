@@ -1,4 +1,5 @@
 #include "stage3_project_edits.h"
+#include "animation_resources.h" //20261112-0 add
 #include "plc_native_catalog.h"
 
 #include <QComboBox>
@@ -74,6 +75,11 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
 
+    if (object->type == QStringLiteral("gif")) //20261112-0 add: Playback gating and visibility use independent typed address slots.
+    {
+        if (object->gifDisplay.bitControl) { addressSlots.append({Stage3AddressField::MonitorBit, &object->gifDisplay.controlAddress, PlcAddressRole::Bit, 1U}); }
+        addConditionSlots(&object->gifDisplay.visibility, false, &addressSlots);
+    }
     if (object->hasImageDisplayProperties) //20261112-0 add: Static/time variants retain inactive address drafts.
     {
         if (object->imageDisplay.conditionEnabled && object->imageDisplay.condition != 0)
@@ -274,6 +280,12 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
     int index;
     QString resolved;
 
+    if (object->type == QStringLiteral("gif")) //20261112-0 add: Cross-project paste binds original animation bytes independently of PNG states.
+    {
+        if (!mergeAnimation(candidate, object->gifDisplay.animation, object->gifDisplay.gifData, &resolved, error)) { return false; }
+        object->gifDisplay.animation = resolved;
+    }
+
     if (object->hasImageDisplayProperties) //20261112-0 add: Remap exact-content picture bindings before cloning image states.
     {
         for (index = 0; index < object->imageDisplay.states.size(); ++index)
@@ -381,6 +393,11 @@ bool mergeReferenceTarget(const HmiProject &source, const HmiProject &target, Hm
 
     key = reference->targetKind + QLatin1Char('/') + reference->targetId;
     if (mappedIds->contains(key)) { reference->targetId = mappedIds->value(key); return true; }
+    if (reference->targetKind == QStringLiteral("animation")) //20261112-0 add
+    {
+        if (!source.animations.contains(reference->targetId) || !mergeAnimation(candidate, reference->targetId, source.animations.value(reference->targetId), &name, error)) { return false; }
+        mappedIds->insert(key, name); reference->targetId = name; return true;
+    }
     if (reference->targetKind == QStringLiteral("picture"))
     {
         if (!source.pictures.contains(reference->targetId) ||

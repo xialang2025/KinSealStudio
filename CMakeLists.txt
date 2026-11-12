@@ -75,6 +75,12 @@ qt_add_executable(KinSealStudioLite WIN32
     src/qr_code_properties.cpp
     src/qr_code_dialog.h
     src/qr_code_dialog.cpp
+    src/gif_display_properties.h #20261112-0 add: Keep original animations independent of normalized pictures.
+    src/gif_display_properties.cpp
+    src/gif_display_dialog.h
+    src/gif_display_dialog.cpp
+    src/animation_resources.h
+    src/animation_resources.cpp
     src/image_display_properties.h #20261112-0 add
     src/image_display_properties.cpp
     src/image_display_dialog.h

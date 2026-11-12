@@ -1,0 +1,22 @@
+{
+  "mode": "read_only_review_before_repairs",
+  "findings": [
+    {
+      "id": "GIF-REV-01",
+      "description": "Idle raw GIF pool also needs a recovered native resource format before export.",
+      "resolution": "The single-page backend now rejects any nonempty animation pool; a dedicated assertion covers output preservation."
+    },
+    {
+      "id": "GIF-REV-02",
+      "description": "First screenshot used English standard buttons and full-width groups rather than native Chinese captions and bounded fields.",
+      "resolution": "Chinese captions, bounded groups and preview frame applied; screenshots inspected, no pixel-equality claim."
+    }
+  ],
+  "remaining": [
+    "Complete native source/device layout",
+    "GIF-specific permission tolerance, resource IDs/description/export semantics",
+    "Transparent/disposal and physical-panel timing/gating"
+  ],
+  "finalRun": "windows-final/run.json",
+  "mutationsDuringReview": false
+}

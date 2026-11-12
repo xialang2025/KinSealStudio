@@ -1,0 +1,37 @@
+{
+  "control": "C10GIF",
+  "facts": [
+    {
+      "fact": "Bit control defaults off; addressLB0 and active-state selectors disabled; state1 selected.",
+      "evidence": "native-probe-gallery-r1.json/gif-default"
+    },
+    {
+      "fact": "Enabling bit control enablesLB address and0/1 state choice; LB17 with active state0 native save/compile succeeded.",
+      "evidence": "native-probe-cancel-r2.json/bit-control-draft; gif-bit-LB17-state0.sm; compiled/gif-bit-LB17-state0"
+    },
+    {
+      "fact": "No-image Run and Confirm are rejected with GIF数据为空，请重新选择。 and 没有选择图片或图片已损坏！; main stays open.",
+      "evidence": "native-probe-guards-r1.json/no-gif-run-rejected,no-gif-confirm-rejected; later HWND failure retained"
+    },
+    {
+      "fact": "Real32x24 two-frame GIF was imported by native gallery/native file picker. Run toggles Stop and distinct red then green frames were captured.",
+      "evidence": "native-probe-load-r2.json; gif-playing-1.png,gif-playing-3.png; animation-observation.json"
+    },
+    {
+      "fact": "Main draft cancel and replacement gallery cancel leave source bytes unchanged and restore bit-control defaults.",
+      "evidence": "native-probe-cancel-r2.json; cancellation-source-comparison.json"
+    },
+    {
+      "fact": "Native default/bit variant source saves and offline compiles succeed: type34, ControlPara640B, ControlPixel384B, PicLenPara2424B.",
+      "evidence": "native-probe-load-r2.json,native-probe-cancel-r2.json; compiled/*"
+    }
+  ],
+  "limitations": [
+    "Full .sm GIF body and device frame/resource encoding remain unresolved.",
+    "Exact110/270ms delay fidelity, loop3 completion, disposal, transparency and real-device bit gating are not verified.",
+    "Native screenshot shows the32x24 fixture as a100x100 rectangle. Do not infer aspect-preserving scaling from this evidence.",
+    "Replacement GIF was imported then cancelled; it was not selected/committed. This does not validate general resource replacement/deletion semantics.",
+    "No speed/loop/transparency UI was observed; do not add guessed native options."
+  ],
+  "scope": "Native W1 host evidence; no W2 physical panel runtime or source/device codec compatibility claimed."
+}

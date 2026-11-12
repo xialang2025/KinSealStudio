@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 4,
-  "blockedLayers": 12,
-  "active": "C10",
+  "editorSlicesDelivered": 5,
+  "blockedLayers": 16,
+  "active": "C11",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -134,14 +134,30 @@
     {
       "id": "C10",
       "name": "GIF显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "GIF两页、独立播放位和显现权限、原始GIF资源池、工程图库子事务、真实换帧/暂停/继续、首帧画布、全页资源保护与重名复制、schema12和10类混合KSP、创建编辑取消及撤销重做",
+      "evidence": "gif/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C10-001",
+        "Q-S04-C10-002",
+        "Q-S04-C10-003",
+        "Q-S04-C10-004"
+      ]
     },
     {
       "id": "C11",
       "name": "数值显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

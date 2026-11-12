@@ -120,9 +120,9 @@ private:
     void rebuildProjectTree();
     bool applyControlDraft(const HmiObject &object, const QMap<QString, QString> &macros,
                            const QMap<QString, QByteArray> &pictures, bool editing,
-                           QString *error); //20261110-5 add
+                           QString *error, const QMap<QString, QByteArray> *animations = nullptr); //20261112-0 change
     void beginControlDraftPlacement(const HmiObject &object, const QMap<QString, QString> &macros,
-                                    const QMap<QString, QByteArray> &pictures); //20261110-8 add
+                                    const QMap<QString, QByteArray> &pictures, const QMap<QString, QByteArray> *animations = nullptr); //20261112-0 change
     void setProject(const HmiProject &project, const QString &path);
     void setDirty(bool dirty);
     bool confirmDiscardChanges();
