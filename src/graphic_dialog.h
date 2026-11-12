@@ -30,6 +30,8 @@ private:
     QPushButton *m_foreground = nullptr;
     QPushButton *m_background = nullptr;
     QComboBox *m_pattern = nullptr;
+    QSpinBox *m_radiusX = nullptr; //20261113-2 add: Independent native radius drafts exist only for roundrect.
+    QSpinBox *m_radiusY = nullptr;
     void refreshPreview();
 };
 

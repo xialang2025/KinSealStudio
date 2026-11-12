@@ -1,0 +1,51 @@
+{
+  "id": "G05",
+  "ordinal": 35,
+  "name": "圆角矩形",
+  "slug": "roundrect",
+  "task": "S04-11",
+  "next": "G04",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/roundrect/physical/roundrect-baseline-r1/run.json",
+  "source": "roundrect-default.sm",
+  "expectedPassed": 269,
+  "nativeManifest": "../docs/stage4-evidence/roundrect/native/retained-manifest.json",
+  "report": "docs/圆角矩形图形实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立roundrect类型与圆角真实路径、X/Y独立0..99半径草稿和默认10；原厂命名半径/线型/线宽/三色/13填充/透明度字段，直接拖框、八柄缩放/四象限/取消/撤销、9类混合KSP及严格家族字段隔离、源和设备门槛保护",
+  "nativeSummary": "原厂action_RoundedRect直接拖框创建，标题圆角矩形。m_XR/m_YR独立0..99默认10，m_LineType六项实线index1、m_LineWidth 1..9默认1；前黑/背白/边框黑、13填充默认纯色、Alpha0..255默认255。0/99、99/0及99/30变体已真实观察，默认和自定义样式源已保存编译；默认200x100框角点栅格支持绝对10/10局部几何，极端半径裁剪/单位泛化仍保留未决。静态图烘入SheetPixel，没有ControlPara/ControlPixel。",
+  "protocol": "G05圆角矩形保留默认原厂源SHA 8846ae61ad43d67c82c8242d25da49a8970290f3acaef42ec91e9aebee71fc0e；半径双字段范围0..99、缺省10。原厂静态烘入SheetPixel，完整SM body和独立设备合成未恢复，正式源/设备继续拒绝。默认ROI对照37像素差异不升级为完全一致；USB按§73的新生命周期条件执行。",
+  "renderLimit": "本地真实圆角采用绝对半径并保持存储草稿，不随缩放改写半径。默认200x100、10/10的221x121指定ROI实际37像素差异；默认边缘、所有渐变、粗线、Alpha和极限半径裁剪不宣称逐像素原厂一致。超出半框的Qt本地裁剪是明确实现限制，不冒称已经证实原厂所有边界行为。",
+  "methods": [
+    "roundrectNativeFieldsAndTypedDrafts",
+    "roundrectStrictPersistenceMixedCopyAndNativeRefusal",
+    "roundrectFourQuadrantsEightHandleResizeAndCancellation",
+    "roundrectDefaultRasterAndIndependentFillPatterns",
+    "roundrectNativeMenuDoubleClickDraftAndUndo",
+    "roundrectRadiusDraftBoundsAndFamilyIsolation"
+  ],
+  "reviewFindings": [
+    "只读复核独立类型、原厂入口/窗口字段名、半径0..99默认10、取消/复制/缩放/混合9类型和家族JSON隔离；其他图形不保存圆角字段。",
+    "半径非法值、负值、小数均原子拒绝；源/设备未知门槛保持。实际默认ROI37差异像素已记录，不隐藏为零。",
+    "269项实际Windows私有桌面回归通过；全部环境使用独占Z临时路径，原厂实物另按新生命周期核验。",
+    "实际比较原厂和Lite窗口截图，发现半径分组位置、输入/预览底色及行距差异后已修正；半径回到右侧透明度下方，最终控件目标重跑200/0/0，完整汇总269/0/0。未宣称字体/样式图标等全部UI像素零差异。"
+  ],
+  "unresolved": [
+    "Q-S04-G05-001",
+    "Q-S04-G05-002",
+    "Q-S04-G05-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G05-001：完整原厂SM body和独立静态背景设备编码仍未恢复，正式输出继续拒绝。",
+    "Q-S04-G05-002：默认曲边仍有37像素差异；半径超半框时的原厂裁剪、缩放及所有变体精确像素未穷尽验证。",
+    "Q-S04-G05-003：基线USB与屏显/触控分开，完整运行显示和动态背景刷新仍待现场专项验证。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| m_XR / m_YR | graphic.radiusX / radiusY | 独立0..99，10/10 |\n| m_LineType / m_LineWidth | graphic.lineStyle / lineWidth | 六项/1..9，实线/1 |\n| m_LineColorBtn / m_FrontColorBtn / m_BackColorBtn | graphic.lineColor / foreground / background | 黑/黑/白 |\n| m_Pattern / m_Alpha | graphic.fillStyle / alpha | 13项/0..255，纯色/255 |",
+  "codeFiles": "src/graphic_properties.cpp、graphic_dialog.h/.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-2",
+  "recipes": [
+    "add_roundrect_tests.py",
+    "add_rect_tests.py"
+  ],
+  "testRun": "docs/stage4-evidence/roundrect/windows-final/run.json"
+}

@@ -1,0 +1,18 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核独立类型、原厂入口/窗口字段名、半径0..99默认10、取消/复制/缩放/混合9类型和家族JSON隔离；其他图形不保存圆角字段。",
+    "半径非法值、负值、小数均原子拒绝；源/设备未知门槛保持。实际默认ROI37差异像素已记录，不隐藏为零。",
+    "269项实际Windows私有桌面回归通过；全部环境使用独占Z临时路径，原厂实物另按新生命周期核验。",
+    "实际比较原厂和Lite窗口截图，发现半径分组位置、输入/预览底色及行距差异后已修正；半径回到右侧透明度下方，最终控件目标重跑200/0/0，完整汇总269/0/0。未宣称字体/样式图标等全部UI像素零差异。"
+  ],
+  "finalRun": "docs/stage4-evidence/roundrect/windows-final/run.json",
+  "tests": {
+    "passed": 269,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

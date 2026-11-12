@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse");
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect"); //20261113-2 change
 }
 
 /******************************************************************************
@@ -56,6 +56,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("line")) { return QStringLiteral("直线"); }
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
+    if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
     return QString();
 }
 
@@ -82,6 +83,10 @@ QJsonObject GraphicProperties::toJson(const QString &type) const //20261113-2 ch
     else
     {
         json.insert(QStringLiteral("fillStyle"), fillStyle); json.insert(QStringLiteral("foreground"), foreground.name(QColor::HexArgb)); json.insert(QStringLiteral("background"), background.name(QColor::HexArgb));
+        if (type == QStringLiteral("roundrect")) //20261113-2 add: Radius drafts belong only to rounded rectangles.
+        {
+            json.insert(QStringLiteral("radiusX"), radiusX); json.insert(QStringLiteral("radiusY"), radiusY);
+        }
     }
     return json;
 }
@@ -129,6 +134,10 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
         }
     }
     else { candidate.fillStyle = json.value(QStringLiteral("fillStyle")).toInt(); candidate.foreground = QColor(json.value(QStringLiteral("foreground")).toString()); candidate.background = QColor(json.value(QStringLiteral("background")).toString()); }
+    if (type == QStringLiteral("roundrect")) //20261113-2 add: Preserve both independent radius values across resize.
+    {
+        candidate.radiusX = json.value(QStringLiteral("radiusX")).toInt(); candidate.radiusY = json.value(QStringLiteral("radiusY")).toInt();
+    }
     if (!candidate.validate(type, error)) { return false; }
     *output = candidate;
     return true;
@@ -150,6 +159,7 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
     if (!graphicUsesVertices(type))
     {
         if (fillStyle < 0 || fillStyle > 12 || !foreground.isValid() || !background.isValid() || foreground.alpha() != 255 || background.alpha() != 255 || endArrow != 0 || endCap != 0) { return graphicError(error, QStringLiteral("封闭图形填充样式或颜色无效。")); }
+        if (type == QStringLiteral("roundrect") && (radiusX < 0 || radiusX > 99 || radiusY < 0 || radiusY > 99)) { return graphicError(error, QStringLiteral("圆角X/Y半径必须为0到99。")); } //20261113-2 add
         return true;
     }
     if (points.size() != 2 || points.first() == points.last()) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
@@ -191,6 +201,7 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
 
     if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
     if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
+    if (type == QStringLiteral("roundrect")) { path.addRoundedRect(rect, properties.radiusX, properties.radiusY, Qt::AbsoluteSize); return path; } //20261113-2 add: Default native raster indicates equal absolute radii on a non-square box; extreme clipping remains a local rule.
     if (vertices.size() != 2) { return path; }
     path.moveTo(vertices[0]); path.lineTo(vertices[1]);
     return path;

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 29,
-  "blockedLayers": 111,
-  "active": "G05",
+  "editorSlicesDelivered": 30,
+  "blockedLayers": 114,
+  "active": "G04",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -791,16 +791,33 @@
     {
       "id": "G04",
       "name": "折线",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
     {
       "id": "G05",
       "name": "圆角矩形",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立roundrect类型与圆角真实路径、X/Y独立0..99半径草稿和默认10；原厂命名半径/线型/线宽/三色/13填充/透明度字段，直接拖框、八柄缩放/四象限/取消/撤销、9类混合KSP及严格家族字段隔离、源和设备门槛保护",
+      "evidence": "roundrect/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G05-001",
+        "Q-S04-G05-002",
+        "Q-S04-G05-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/roundrect/physical/roundrect-baseline-r1/run.json",
+      "report": "docs/圆角矩形图形实现与验收.md"
     },
     {
       "id": "G06",
@@ -903,8 +920,8 @@
     "legacyResult": "marker B requested, marker A remained",
     "fixedResult": "marker B displayed; explicit user confirmation",
     "regressionTests": 18,
-    "activeControl": "G05",
-    "processedIncludingExisting": 34,
+    "activeControl": "G04",
+    "processedIncludingExisting": 35,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": false
   },
