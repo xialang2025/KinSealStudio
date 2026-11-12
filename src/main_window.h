@@ -60,6 +60,8 @@ private slots:
     void editStaticText();
     void createStage4Control(const QString &type); //20261112-0 add
     void editStage4Control();
+    void configureDataCollection(const QString &id = QString()); //20261112-1 add
+    void deleteDataCollection(const QString &id);
     void configureLanguages();
     void configureConnections(); //20261109-0 add
     void configureMacroSdk(); //20261109-0 add

@@ -374,6 +374,8 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     QTreeWidgetItem *item;
     QTreeWidgetItem *parent;
     HmiPage page;
+    HmiConfigurationNode collection; //20261112-1 add
+    QTreeWidgetItem *collectionItem;
     PlcConnection connection;
     QString label;
     int number;
@@ -419,7 +421,12 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
                       label == QStringLiteral("语言设置") ? QStringLiteral("languages") : QStringLiteral("unsupported"));
     }
     item = new QTreeWidgetItem(settings, {QStringLiteral("数据采集")});
-    item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+    item->setData(0, Qt::UserRole, QStringLiteral("dataCollection")); //20261112-1 change
+    Q_FOREACH (collection, m_project.configurationNodes)
+    {
+        if (collection.kind != QStringLiteral("dataCollection")) { continue; }
+        collectionItem = new QTreeWidgetItem(item, {collection.name}); collectionItem->setData(0, Qt::UserRole, QStringLiteral("dataCollection")); collectionItem->setData(0, Qt::UserRole + 1, collection.id);
+    }
     parent = new QTreeWidgetItem(settings, {QStringLiteral("报警登录")});
     Q_FOREACH (label, (QStringList{QStringLiteral("数位地址报警"), QStringLiteral("条件报警")}))
     {

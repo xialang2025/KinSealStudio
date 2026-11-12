@@ -2,6 +2,7 @@
 #include "static_text_renderer.h" //20261108-14 add
 #include "chart_dialog.h" //20261112-1 add
 #include "trend_dialog.h" //20261112-1 add
+#include "history_trend_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -117,6 +118,7 @@ void HmiControlItem::paint(QPainter *painter,
     if (m_type == QStringLiteral("gif")) { paintGifDisplay(painter, item_rect, m_record.gifDisplay); } //20261112-0 add
     else if (m_type == QStringLiteral("chart")) { paintChart(painter, item_rect, m_record.chart); } //20261112-1 add
     else if (m_type == QStringLiteral("trend")) { paintTrend(painter, item_rect, m_record.trend); } //20261112-1 add
+    else if (m_type == QStringLiteral("historytrend")) { paintHistoryTrend(painter, item_rect, m_record.historyTrend); } //20261112-1 add
     else if (m_type == QStringLiteral("track")) { paintMoveTrack(painter, item_rect, m_record.moveTrack); } //20261112-0 add
     else if (m_type == QStringLiteral("wheel")) { paintWheel(painter, item_rect, m_record.wheel); } //20261112-0 add
     else if (m_type == QStringLiteral("slider")) { paintSlider(painter, item_rect, m_record.slider); } //20261112-0 add
@@ -654,7 +656,7 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
         m_drawing = false; m_hasPending = false; m_pendingObject = HmiObject();
         if (object.type == QStringLiteral("slider")) { geometry = object.slider.constrainedGeometry(geometry); } //20261112-0 add: Native placement constrains perpendicular size.
         object.geometry = geometry; object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        object.name = (object.type == QStringLiteral("trend") ? QStringLiteral("趋势图%1") : object.type == QStringLiteral("chart") ? QStringLiteral("图表%1") : object.type == QStringLiteral("track") ? QStringLiteral("移动轨迹%1") : object.type == QStringLiteral("wheel") ? QStringLiteral("滚轮控件%1") : object.type == QStringLiteral("slider") ? QStringLiteral("滑动开关%1") : object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
+        object.name = (object.type == QStringLiteral("historytrend") ? QStringLiteral("历史趋势图%1") : object.type == QStringLiteral("trend") ? QStringLiteral("趋势图%1") : object.type == QStringLiteral("chart") ? QStringLiteral("图表%1") : object.type == QStringLiteral("track") ? QStringLiteral("移动轨迹%1") : object.type == QStringLiteral("wheel") ? QStringLiteral("滚轮控件%1") : object.type == QStringLiteral("slider") ? QStringLiteral("滑动开关%1") : object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
             object.hasWordButtonProperties ? QStringLiteral("字按钮%1") : object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") : QStringLiteral("静态文本%1")).arg(before.size() + 1);
         object.layer = before.size() + 1; item = new HmiControlItem(object); item->setData(10, m_language);
         m_scene->clearSelection(); m_scene->addItem(item); item->setSelected(true);

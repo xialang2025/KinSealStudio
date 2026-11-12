@@ -1,0 +1,114 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_datasamp"
+  },
+  {
+    "op": "text",
+    "name": "sHisdatalogName",
+    "kind": "QLineEdit",
+    "value": "C24Default"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "save",
+    "output": "history-collection-only.sm"
+  },
+  {
+    "op": "action",
+    "name": "action_DatagroupDisplay"
+  },
+  {
+    "op": "dump",
+    "label": "history-basic-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "history-basic-r2"
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "kind": "QTabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "history-axes-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "history-axes-r2"
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "kind": "QTabWidget",
+    "value": 2
+  },
+  {
+    "op": "dump",
+    "label": "history-access-r2"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      400,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "history-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-default-r2"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "history-reopened-r2"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

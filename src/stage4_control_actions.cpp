@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
+#include "data_collection_dialog.h" //20261112-1 add
 #include "message_display_dialog.h"
 #include "scale_dialog.h"
 #include "qr_code_dialog.h" //20261112-0 add
@@ -7,6 +8,7 @@
 #include "gif_display_dialog.h" //20261112-0 add
 #include "chart_dialog.h" //20261112-1 add
 #include "trend_dialog.h" //20261112-1 add
+#include "history_trend_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -52,6 +54,13 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     { object.name = QStringLiteral("图表"); object.geometry = QRect(0, 0, 170, 130); dialog = new ChartDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("trend")) //20261112-1 add
     { object.name = QStringLiteral("趋势图"); object.geometry = QRect(0, 0, 200, 120); dialog = new TrendDialog(object, currentEditorProject(), this); }
+    else if (type == QStringLiteral("historytrend")) //20261112-1 add
+    {
+        HmiConfigurationNode collection;
+        bool found = false;
+        Q_FOREACH (collection, currentEditorProject().configurationNodes) { if (collection.kind == QStringLiteral("dataCollection") && collection.active && collection.implemented) { found = true; break; } }
+        if (!found) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("尚未建立数据采集！")); return; }
+        object.name = QStringLiteral("历史趋势图"); object.geometry = QRect(0, 0, 240, 160); dialog = new HistoryTrendDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
         object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(0, 0, 200, 100); dialog = new MoveTrackDialog(object, currentEditorProject(), this);
@@ -116,6 +125,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
+        else if (type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -158,6 +168,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
     else if (object.type == QStringLiteral("chart")) { dialog = new ChartDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("trend")) { dialog = new TrendDialog(object, currentEditorProject(), this); } //20261112-1 add
+    else if (object.type == QStringLiteral("historytrend")) { dialog = new HistoryTrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -176,6 +187,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
+        else if (object.type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -191,4 +203,61 @@ void MainWindow::editStage4Control() //20261112-0 add
         if (!applyControlDraft(object, controlMacros, pictures, true, &error, &animations)) { QMessageBox::warning(this, QStringLiteral("控件修改未提交"), error); } //20261112-0 change
     }
     delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::configureDataCollection
+ * Description     : Commit an accepted collection definition as one undoable project transaction.
+ * Input Parameters: id
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void MainWindow::configureDataCollection(const QString &id) //20261112-1 add
+{
+    HmiProject candidate = currentEditorProject();
+    HmiConfigurationNode node;
+    HmiConfigurationNode peer;
+    QString error;
+    int index;
+    int existing = -1;
+    DataCollectionDialog *dialog;
+    if (!m_hasProject) { return; }
+    for (index = 0; index < candidate.configurationNodes.size(); ++index)
+    {
+        peer = candidate.configurationNodes[index];
+        if (!id.isEmpty() && peer.id == id && peer.kind == QStringLiteral("dataCollection")) { node = peer; existing = index; }
+        if (id.isEmpty() && peer.kind == QStringLiteral("dataCollection") && peer.active && peer.implemented) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("已经达到最大数据采集数量，请删除后再新建。")); return; }
+    }
+    if (!id.isEmpty() && existing < 0) { return; }
+    if (id.isEmpty()) { node.kind = QStringLiteral("dataCollection"); node.name = QStringLiteral("数据采集1"); }
+    dialog = new DataCollectionDialog(node, candidate, this);
+    if (dialog->exec() != QDialog::Accepted) { delete dialog; return; }
+    if (existing < 0) { candidate.configurationNodes.append(dialog->node()); } else { candidate.configurationNodes[existing] = dialog->node(); }
+    delete dialog;
+    if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("数据采集未提交"), error); }
+
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::deleteDataCollection
+ * Description     : Refuse referenced collector removal through the whole-project validator before publishing.
+ * Input Parameters: id
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void MainWindow::deleteDataCollection(const QString &id) //20261112-1 add
+{
+    HmiProject candidate = currentEditorProject();
+    QString error;
+    int index;
+    for (index = 0; index < candidate.configurationNodes.size(); ++index)
+    {
+        if (candidate.configurationNodes[index].id == id && candidate.configurationNodes[index].kind == QStringLiteral("dataCollection"))
+        {
+            candidate.configurationNodes.removeAt(index);
+            if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("数据采集正在使用"), error); }
+            return;
+        }
+    }
+
 }

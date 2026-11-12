@@ -90,6 +90,7 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         else { addressSlots.append({Stage3AddressField::Operation, &object->chart.donut.address, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.donut.dataType)}); }
         addConditionSlots(&object->chart.visibility, false, &addressSlots);
     }
+    if (object->type == QStringLiteral("historytrend")) { addConditionSlots(&object->historyTrend.visibility, false, &addressSlots); } //20261112-1 add
     if (object->type == QStringLiteral("trend")) //20261112-1 add: Sampling uses a shared full-span read carrier and independent trigger/clear bits.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->trend.readAddress, PlcAddressRole::Word, TrendProperties::wordCount(object->trend.dataType) * object->trend.channelCount});
@@ -602,6 +603,21 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         {
             if (!groups.contains(object.group)) { groups.insert(object.group, QUuid::createUuid().toString(QUuid::WithoutBraces)); }
             object.group = groups.value(object.group);
+        }
+        if (object.type == QStringLiteral("historytrend")) //20261112-1 add: Reuse the exact collection or copy it only into an empty target; never overwrite a conflicting collector.
+        {
+            HmiConfigurationNode required;
+            HmiConfigurationNode peer;
+            bool found = false;
+            bool reused = false;
+            Q_FOREACH (peer, clipboard.source.configurationNodes) { if (peer.id == object.historyTrend.collectionId && peer.kind == QStringLiteral("dataCollection") && peer.active && peer.implemented) { required = peer; found = true; break; } }
+            if (!found) { return editError(error, QStringLiteral("剪贴板缺少历史趋势图的数据采集定义。")); }
+            Q_FOREACH (peer, candidate->configurationNodes)
+            {
+                if (peer.id == required.id && peer.toJson() == required.toJson()) { reused = true; }
+                else if (peer.id == required.id || (peer.kind == QStringLiteral("dataCollection") && peer.active && peer.implemented)) { return editError(error, QStringLiteral("目标工程已有不同的数据采集，粘贴已取消。")); }
+            }
+            if (!reused) { candidate->configurationNodes.append(required); }
         }
         if (object.type == QStringLiteral("slider") && !object.slider.macroName.isEmpty() && clipboard.source.macros.contains(object.slider.macroName)) { if (!mergeMacro(clipboard.source, candidate, object.slider.macroName, &mappedIds, error)) { return false; } } //20261112-0 add
         if (object.type == QStringLiteral("dropdown") && !object.dropdown.macroName.isEmpty() && clipboard.source.macros.contains(object.dropdown.macroName)) { if (!mergeMacro(clipboard.source, candidate, object.dropdown.macroName, &mappedIds, error)) { return false; } } //20261112-0 add

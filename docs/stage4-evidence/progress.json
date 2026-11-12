@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 18,
-  "blockedLayers": 69,
-  "active": "C24",
+  "editorSlicesDelivered": 19,
+  "blockedLayers": 73,
+  "active": "C25",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -480,14 +480,31 @@
     {
       "id": "C24",
       "name": "历史趋势图",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立数据采集定义与历史趋势图编辑器；单采集组、共用5数据类型、固定LH项目/稳定ID、完整地址跨度和内存计算、取样/通知与缩放草稿；历史三页、1..min(8,项目数)条独立来源/范围/线型/颜色、X时间轴与Y刻度组、跨页引用保护、同工程复用和跨工程采集冲突拒绝、树新增/编辑/删除与撤销、24类schema12、固定PC示意图及原厂基线实物下载",
+      "evidence": "history-trend/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C24-001",
+        "Q-S04-C24-002",
+        "Q-S04-C24-003",
+        "Q-S04-C24-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/history-trend/physical/history-baseline-r1/run.json"
     },
     {
       "id": "C25",
       "name": "X-Y曲线",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

@@ -12,6 +12,10 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "history_trend_dialog.h" //20261112-1 add
+#include "data_collection_dialog.h"
+#include <QGroupBox>
+#include <QTreeWidget>
 #include "trend_dialog.h" //20261112-1 add
 #include "chart_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
@@ -154,6 +158,15 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void collectionSharedTypeMemoryAndFullAddressSpan(); //20261112-1 add
+    void collectionDialogItemsAndInactiveDrafts(); //20261112-1 add
+    void historyIndependentCurvesAndStableNames(); //20261112-1 add
+    void historyCheckableAxesAndTimeBounds(); //20261112-1 add
+    void historyReferenceLifetimeAndSingleCollectorLimit(); //20261112-1 add
+    void historyCrossProjectPasteAndVisibilityRoles(); //20261112-1 add
+    void historyStrictPersistenceAndBackendGates(); //20261112-1 add
+    void historyStaticRasterAndTimeFormatClipping(); //20261112-1 add
+    void historyShellGateCollectionPlacementAndUndo(); //20261112-1 add
     void trendNativeBoundsAndDataTypeLifetime(); //20261112-1 add
     void trendIndependentChannelsAndRemovalReset();
     void trendAxisHiddenFieldsAndAccessSpans();
@@ -3318,6 +3331,196 @@ void Stage4ControlTests::trendShellPlacementEditAndUndo() //20261112-1 add
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_trendchart"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_trendchart"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("趋势图")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().trend.readAddress, QStringLiteral("LW10"));
     QTimer::singleShot(0, &window, []() { TrendDialog *dialog = qobject_cast<TrendDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("TrendSampleTime"))->setValue(255); dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrendButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().trend.sampleTime, 255); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().trend.sampleTime, 1); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : historyProject
+ * Description     : Create one actual collector with three named cache items and one independently bound history object.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiProject historyProject() //20261112-1 add
+{
+    HmiProject project;
+    DataCollectionProperties properties;
+    HmiConfigurationNode collection;
+    HmiObject object;
+    int index;
+    properties.sampleLength = 3; properties.items.clear(); for (index = 0; index < 3; ++index) { properties.items.append(DataCollectionProperties::createItem(index)); properties.items[index].name = QStringList{QStringLiteral("First"), QStringLiteral("Second"), QStringLiteral("Third")}.at(index); }
+    collection.id = QStringLiteral("history-collection"); collection.name = QStringLiteral("C24"); collection.kind = QStringLiteral("dataCollection"); collection.implemented = true; collection.active = true; collection.properties = properties.toJson(); project.configurationNodes = {collection};
+    object.id = QStringLiteral("history-object"); object.name = QStringLiteral("历史趋势图"); object.type = QStringLiteral("historytrend"); object.geometry = QRect(100, 100, 240, 160); object.historyTrend.collectionId = collection.id; object.historyTrend.curveCount = 3; for (index = 0; index < 8; ++index) { object.historyTrend.curves[index].sourceItemId = properties.items.first().id; } project.objects = {object}; return project;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::collectionSharedTypeMemoryAndFullAddressSpan
+ * Description     : Check the measured common type, memory formula, strict byte cap and full active PLC carrier spans.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::collectionSharedTypeMemoryAndFullAddressSpan() //20261112-1 add
+{
+    DataCollectionProperties properties;
+    QString error;
+    int index;
+    QCOMPARE(DataCollectionProperties::dataTypes().size(), 5); QCOMPARE(DataCollectionProperties::displayTypes().size(), 3);
+    properties.sampleLength = 3; properties.sampleCount = 1000; properties.items.clear(); for (index = 0; index < 3; ++index) { properties.items.append(DataCollectionProperties::createItem(index)); } QCOMPARE(properties.memoryBytes(), 26000U); QVERIFY(properties.validate(&error)); properties.dataType = 1; QCOMPARE(properties.memoryBytes(), 32000U); QCOMPARE(properties.wordCount(), 2U);
+    properties.sampleLength = 32; properties.items.clear(); for (index = 0; index < 32; ++index) { properties.items.append(DataCollectionProperties::createItem(index)); } properties.dataType = 0; properties.sampleCount = 768; QCOMPARE(properties.memoryBytes(), 63U * 1024U); QVERIFY(properties.validate(&error)); properties.sampleCount = 769; QVERIFY(!properties.validate(&error)); properties.sampleCount = 1; properties.dataType = 1; properties.readAddress = QStringLiteral("LW4033"); QVERIFY(properties.validateAddresses({}, &error)); properties.readAddress = QStringLiteral("LW4034"); QVERIFY(!properties.validateAddresses({}, &error)); properties.readAddress = QStringLiteral("LW0"); properties.triggerAddress = QStringLiteral("invalid"); properties.noticeAddress = QStringLiteral("invalid"); QVERIFY(properties.validateAddresses({}, &error)); properties.samplingMode = 1; QVERIFY(!properties.validateAddresses({}, &error)); properties.samplingMode = 0; properties.notice = true; QVERIFY(!properties.validateAddresses({}, &error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::collectionDialogItemsAndInactiveDrafts
+ * Description     : Keep item names and scaling independent while changing the collection-wide type and fixed LH row.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::collectionDialogItemsAndInactiveDrafts() //20261112-1 add
+{
+    HmiProject project;
+    HmiConfigurationNode node;
+    DataCollectionDialog dialog(node, project);
+    DataCollectionProperties parsed;
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("CollectionTabs"));
+    QTableWidget *items = dialog.findChild<QTableWidget *>(QStringLiteral("CollectionItems"));
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(tabs->count(), 2); dialog.findChild<QLineEdit *>(QStringLiteral("CollectionName"))->setText(QStringLiteral("Collector")); dialog.findChild<QSpinBox *>(QStringLiteral("CollectionLength"))->setValue(3); QCOMPARE(items->rowCount(), 3); tabs->setCurrentIndex(1); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("CollectionCacheAddress"))->isReadOnly()); dialog.findChild<QLineEdit *>(QStringLiteral("CollectionItemName"))->setText(QStringLiteral("Alpha")); dialog.findChild<QComboBox *>(QStringLiteral("CollectionDataType"))->setCurrentIndex(1); items->setCurrentCell(1, 0); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("CollectionCacheAddress"))->text(), QStringLiteral("LH1")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("CollectionDataType"))->currentIndex(), 1); dialog.findChild<QLineEdit *>(QStringLiteral("CollectionItemName"))->setText(QStringLiteral("Beta")); dialog.findChild<QCheckBox *>(QStringLiteral("CollectionItemScaled"))->setChecked(true); QVERIFY(!DataCollectionProperties::fromJson(dialog.node().properties, &parsed, &error)); dialog.findChild<QLineEdit *>(QStringLiteral("CollectionItemGain"))->setText(QStringLiteral("2.5")); dialog.findChild<QLineEdit *>(QStringLiteral("CollectionItemOffset"))->setText(QStringLiteral("-4")); items->setCurrentCell(0, 0); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("CollectionItemName"))->text(), QStringLiteral("Alpha")); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("CollectionItemScaled"))->isChecked()); QVERIFY(DataCollectionProperties::fromJson(dialog.node().properties, &parsed, &error)); QCOMPARE(parsed.items[1].gain, QStringLiteral("2.5")); QVERIFY(node.properties.isEmpty());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("collection-items.png")))); tabs->setCurrentIndex(0); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("collection-general.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyIndependentCurvesAndStableNames
+ * Description     : Bind every default curve to the first item and retain independent source, range and style across renames.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyIndependentCurvesAndStableNames() //20261112-1 add
+{
+    HmiProject project = historyProject();
+    HmiObject object = project.objects.first();
+    HistoryTrendDialog dialog(object, project);
+    QComboBox *current = dialog.findChild<QComboBox *>(QStringLiteral("HistoryCurrentCurve"));
+    QComboBox *source = dialog.findChild<QComboBox *>(QStringLiteral("HistorySource"));
+    HistoryTrendDialog *reopened;
+    DataCollectionProperties collection;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("HistoryTabs"))->count(), 3); QCOMPARE(source->currentText(), QStringLiteral("First")); current->setCurrentIndex(2); QCOMPARE(source->currentText(), QStringLiteral("First")); source->setCurrentIndex(2); dialog.findChild<QLineEdit *>(QStringLiteral("HistoryCurveMinimum"))->setText(QStringLiteral("7")); dialog.findChild<QLineEdit *>(QStringLiteral("HistoryCurveMaximum"))->setText(QStringLiteral("900")); dialog.findChild<QComboBox *>(QStringLiteral("HistoryLineStyle"))->setCurrentIndex(2); current->setCurrentIndex(0); QCOMPARE(source->currentText(), QStringLiteral("First")); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("HistoryCurveMinimum"))->text(), QStringLiteral("0")); object = dialog.object(); QCOMPARE(object.historyTrend.curves[2].maximum, QStringLiteral("900"));
+    QVERIFY(DataCollectionProperties::fromJson(project.configurationNodes.first().properties, &collection, &error)); collection.items[2].name = QStringLiteral("Renamed"); project.configurationNodes[0].properties = collection.toJson(); project.objects[0] = object; QVERIFY(project.validateModel(&error)); reopened = new HistoryTrendDialog(object, project); QCOMPARE(reopened->object().historyTrend.currentCurve, 0); reopened->findChild<QComboBox *>(QStringLiteral("HistoryCurrentCurve"))->setCurrentIndex(2); QCOMPARE(reopened->findChild<QComboBox *>(QStringLiteral("HistorySource"))->currentText(), QStringLiteral("Renamed")); QCOMPARE(reopened->object().historyTrend.curves[2].minimum, QStringLiteral("7")); delete reopened;
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-general.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyCheckableAxesAndTimeBounds
+ * Description     : Measure the distinct history mark groups and retained Y limits and enforce the observed 48:59:59 upper fields.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyCheckableAxesAndTimeBounds() //20261112-1 add
+{
+    HmiProject project = historyProject();
+    HistoryTrendDialog dialog(project.objects.first(), project);
+    HistoryTrendProperties properties = project.objects.first().historyTrend;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("HistoryTabs"))->setCurrentIndex(1); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("HistoryHours"))->maximum(), 48); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("HistoryMinutes"))->maximum(), 59); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("HistorySeconds"))->maximum(), 59); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("HistoryTimeFormat"))->count(), 2); dialog.findChild<QLineEdit *>(QStringLiteral("HistoryYMaximum"))->setText(QStringLiteral("5000")); dialog.findChild<QGroupBox *>(QStringLiteral("HistoryYMarks"))->setChecked(false); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("HistoryTotalDigits"))->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("HistoryYMaximum"))->isVisible()); QCOMPARE(dialog.object().historyTrend.yMaximum, QStringLiteral("5000")); dialog.findChild<QGroupBox *>(QStringLiteral("HistoryXMarks"))->setChecked(false); QVERIFY(!dialog.findChild<QComboBox *>(QStringLiteral("HistoryTimeFormat"))->isVisible()); QVERIFY(dialog.findChild<QSpinBox *>(QStringLiteral("HistoryHours"))->isVisible()); dialog.findChild<QGroupBox *>(QStringLiteral("HistoryYMarks"))->setChecked(true); dialog.findChild<QGroupBox *>(QStringLiteral("HistoryXMarks"))->setChecked(true); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1); properties.hours = 48; properties.minutes = 59; properties.seconds = 59; QVERIFY(properties.validate(&error)); properties.hours = 49; QVERIFY(!properties.validate(&error)); properties.hours = 0; properties.minutes = 0; properties.seconds = 0; QVERIFY(!properties.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-axes.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyReferenceLifetimeAndSingleCollectorLimit
+ * Description     : Protect cross-page source identities, item-count limits and the measured one-collector target.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyReferenceLifetimeAndSingleCollectorLimit() //20261112-1 add
+{
+    HmiProject project = historyProject();
+    HmiProject candidate;
+    HmiPage page;
+    HmiConfigurationNode second = project.configurationNodes.first();
+    DataCollectionProperties collection;
+    QString error;
+    QVERIFY(DataCollectionProperties::fromJson(second.properties, &collection, &error)); project.objects[0].historyTrend.curves[2].sourceItemId = collection.items[2].id; page.id = QStringLiteral("history-page-2"); page.name = QStringLiteral("History2"); page.objects = project.objects; page.objects[0].id = QStringLiteral("history-object-2"); QVERIFY(project.addPage(page, &error)); project.objects.clear(); QVERIFY(project.validateModel(&error)); candidate = project; candidate.configurationNodes.clear(); QVERIFY(!candidate.validateModel(&error)); candidate = project; collection.items.removeLast(); collection.sampleLength = 2; candidate.configurationNodes[0].properties = collection.toJson(); QVERIFY(!candidate.validateModel(&error)); candidate = project; second.id = QStringLiteral("other-collector"); candidate.configurationNodes.append(second); QVERIFY(!candidate.validateModel(&error));
+    { DataCollectionDialog dialog(project.configurationNodes.first(), project); QTimer::singleShot(0, []() { QMessageBox *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (warning != nullptr) { warning->accept(); } }); dialog.findChild<QSpinBox *>(QStringLiteral("CollectionLength"))->setValue(2); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("CollectionLength"))->value(), 3); QCOMPARE(dialog.node().properties, project.configurationNodes.first().properties); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyCrossProjectPasteAndVisibilityRoles
+ * Description     : Copy required definitions into an empty project, reuse identical definitions and refuse target conflicts atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyCrossProjectPasteAndVisibilityRoles() //20261112-1 add
+{
+    HmiProject source = historyProject();
+    HmiProject target;
+    HmiProject result;
+    HmiProject sentinel;
+    Stage3Clipboard clipboard;
+    Stage3DuplicateOptions options;
+    QString error;
+    source.objects[0].historyTrend.visibility.visibilityEnabled = true; source.objects[0].historyTrend.visibility.bitEnabled = true; source.objects[0].historyTrend.visibilityBitChosen = true; source.objects[0].historyTrend.visibility.bitAddress = QStringLiteral("LB10"); QVERIFY(captureStage3Selection(source, {source.objects.first().id}, &clipboard, &error)); target.objects.clear(); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(0, 0), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.configurationNodes.first().toJson(), source.configurationNodes.first().toJson()); QCOMPARE(result.objects.first().historyTrend.collectionId, source.configurationNodes.first().id); QVERIFY(result.validateModel(&error)); target = source; target.configurationNodes[0].name = QStringLiteral("Conflict"); sentinel = source; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(0, 0), &sentinel, nullptr, &error)); QCOMPARE(sentinel.toJson(), source.toJson()); options.columns = 2; options.increments = {{Stage3AddressField::VisibilityBit, 2, 0}}; QVERIFY(duplicateStage3Selection(source, {source.objects.first().id}, options, &result, nullptr, &error)); QCOMPARE(result.configurationNodes.size(), 1); QCOMPARE(result.objects.last().historyTrend.visibility.bitAddress, QStringLiteral("LB12"));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyStrictPersistenceAndBackendGates
+ * Description     : Round-trip 24 families plus a standalone collector and reject malformed nested source or device records.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyStrictPersistenceAndBackendGates() //20261112-1 add
+{
+    HmiProject project = historyProject();
+    HmiProject loaded;
+    HmiProject only = project;
+    DataCollectionProperties collection;
+    HistoryTrendProperties properties = project.objects.first().historyTrend;
+    QJsonObject json;
+    QJsonArray curves;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), trackObject(), chartObject(), trendObject(), only.objects.first()}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 24); QCOMPARE(loaded.toJson(), project.toJson()); json = only.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &loaded, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = properties.toJson(); json.insert(QStringLiteral("hours"), 1.5); properties.hours = 9; QVERIFY(!HistoryTrendProperties::fromJson(json, &properties, &error)); QCOMPARE(properties.hours, 9); json = only.objects.first().historyTrend.toJson(); curves = json.value(QStringLiteral("curves")).toArray(); curves.removeLast(); json.insert(QStringLiteral("curves"), curves); QVERIFY(!HistoryTrendProperties::fromJson(json, &properties, &error)); json = only.configurationNodes.first().properties; json.insert(QStringLiteral("sampleLength"), true); QVERIFY(!DataCollectionProperties::fromJson(json, &collection, &error)); json = only.configurationNodes.first().properties; json.insert(QStringLiteral("unknown"), false); QVERIFY(!DataCollectionProperties::fromJson(json, &collection, &error)); loaded = only; loaded.objects.clear(); QCOMPARE(loaded.toJson().value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(loaded.toJson(), &loaded, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-mixed.ksp")), &error)); QVERIFY(only.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-only.ksp")), &error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyStaticRasterAndTimeFormatClipping
+ * Description     : Keep the fixed editor illustration clipped and make explicit time-format and per-curve colors visible.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyStaticRasterAndTimeFormatClipping() //20261112-1 add
+{
+    HistoryTrendProperties properties = historyProject().objects.first().historyTrend;
+    QImage image(240, 160, QImage::Format_ARGB32);
+    QImage first;
+    QPainter painter;
+    image.fill(Qt::transparent); painter.begin(&image); paintHistoryTrend(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(235, 155).alpha(), 0); first = image; properties.timeFormat = 1; properties.curves[1].color = QStringLiteral("#0000ff"); image.fill(Qt::transparent); painter.begin(&image); paintHistoryTrend(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QVERIFY(image != first); painter.begin(&image); paintHistoryTrend(&painter, QRectF(1, 1, 1, 1), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyShellGateCollectionPlacementAndUndo
+ * Description     : Exercise actual no-collection warning, collector action, accepted placement, tree identity and one-step undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::historyShellGateCollectionPlacementAndUndo() //20261112-1 add
+{
+    MainWindow window;
+    auto closeWarning = []() { QMessageBox *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (warning != nullptr) { warning->accept(); } };
+    auto acceptHistory = []() { HistoryTrendDialog *dialog = qobject_cast<HistoryTrendDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("HistoryButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_DatagroupDisplay"))); QVERIFY(window.m_commands.contains(QStringLiteral("action_datasamp"))); QTimer::singleShot(0, &window, closeWarning); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, []() { DataCollectionDialog *dialog = qobject_cast<DataCollectionDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QLineEdit *>(QStringLiteral("CollectionName"))->setText(QStringLiteral("ShellCollector")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("CollectionButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_datasamp"))->trigger(); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1); QVERIFY(!window.m_systemSettingsTree->findItems(QStringLiteral("ShellCollector"), Qt::MatchExactly | Qt::MatchRecursive).isEmpty());
+    QTimer::singleShot(0, &window, acceptHistory); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty()); QTimer::singleShot(0, &window, acceptHistory); window.m_commands.value(QStringLiteral("action_DatagroupDisplay"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("历史趋势图")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled()); QTimer::singleShot(0, &window, closeWarning); window.deleteDataCollection(window.currentEditorProject().configurationNodes.first().id); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

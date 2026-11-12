@@ -1,0 +1,18 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核覆盖构造期信号、共享类型与整段字跨度、采集单组上限、跨页稳定项目引用、复制复用/冲突与删除保护、仅采集schema12和后台输出拒绝。",
+    "首轮构建发现画布错误传入ChartProperties，另在只读复核修正新测试QPoint粘贴接口；修正后完整重建，最终9项新增用例全部PASS，130+59+10=199/0/0。",
+    "固定PC曲线不代表历史采样或文件读取；实物下载仅原厂基线，显示/触控/PLC不据日志宣称通过。",
+    "只读复核还发现仅含数据采集的schema12容器需在输出容器之前定版；已提前设置schema并最终重建，九项新测试包含仅采集往返通过。"
+  ],
+  "finalRun": "docs/stage4-evidence/history-trend/windows-final/run.json",
+  "tests": {
+    "passed": 199,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

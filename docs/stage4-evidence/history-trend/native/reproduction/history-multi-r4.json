@@ -1,0 +1,281 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_datasamp"
+  },
+  {
+    "op": "text",
+    "name": "sHisdatalogName",
+    "kind": "QLineEdit",
+    "value": "C24Multi"
+  },
+  {
+    "op": "spin",
+    "name": "nSampleLen",
+    "kind": "QSpinBox",
+    "value": 3
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "kind": "QTabWidget",
+    "value": 1
+  },
+  {
+    "op": "table-click",
+    "name": "HisdatalogDataTable",
+    "kind": "QTableWidget",
+    "row": 0,
+    "column": 0
+  },
+  {
+    "op": "text",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "value": "First"
+  },
+  {
+    "op": "invoke",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "slot": "editingFinished"
+  },
+  {
+    "op": "table-click",
+    "name": "HisdatalogDataTable",
+    "kind": "QTableWidget",
+    "row": 1,
+    "column": 0
+  },
+  {
+    "op": "text",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "value": "Second"
+  },
+  {
+    "op": "invoke",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "slot": "editingFinished"
+  },
+  {
+    "op": "table-click",
+    "name": "HisdatalogDataTable",
+    "kind": "QTableWidget",
+    "row": 2,
+    "column": 0
+  },
+  {
+    "op": "text",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "value": "Third"
+  },
+  {
+    "op": "invoke",
+    "name": "sAddrName",
+    "kind": "QLineEdit",
+    "slot": "editingFinished"
+  },
+  {
+    "op": "dump",
+    "label": "collection-three-named-r4"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "save",
+    "output": "history-multi-collection.sm"
+  },
+  {
+    "op": "action",
+    "name": "action_DatagroupDisplay"
+  },
+  {
+    "op": "dump",
+    "label": "history-three-sources-r4"
+  },
+  {
+    "op": "combo",
+    "name": "NumberofCurve",
+    "kind": "QComboBox",
+    "value": 2
+  },
+  {
+    "op": "combo",
+    "name": "CB_CurrentValue",
+    "kind": "QComboBox",
+    "value": 2
+  },
+  {
+    "op": "combo",
+    "name": "CB_DataSource",
+    "kind": "QComboBox",
+    "value": 2
+  },
+  {
+    "op": "combo",
+    "name": "CB_lineStyle",
+    "kind": "QComboBox",
+    "value": 2
+  },
+  {
+    "op": "text",
+    "name": "LE_Min",
+    "kind": "QLineEdit",
+    "value": "7"
+  },
+  {
+    "op": "invoke",
+    "name": "LE_Min",
+    "kind": "QLineEdit",
+    "slot": "editingFinished"
+  },
+  {
+    "op": "text",
+    "name": "LE_Max",
+    "kind": "QLineEdit",
+    "value": "900"
+  },
+  {
+    "op": "invoke",
+    "name": "LE_Max",
+    "kind": "QLineEdit",
+    "slot": "editingFinished"
+  },
+  {
+    "op": "dump",
+    "label": "history-curve3-range-r4"
+  },
+  {
+    "op": "combo",
+    "name": "CB_CurrentValue",
+    "kind": "QComboBox",
+    "value": 0
+  },
+  {
+    "op": "dump",
+    "label": "history-curve1-range-r4"
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "kind": "QTabWidget",
+    "value": 1
+  },
+  {
+    "op": "group",
+    "name": "groupBox_X_DisplayTime",
+    "kind": "QGroupBox",
+    "value": false
+  },
+  {
+    "op": "dump",
+    "label": "history-time-off-r4"
+  },
+  {
+    "op": "group",
+    "name": "groupBox_X_DisplayTime",
+    "kind": "QGroupBox",
+    "value": true
+  },
+  {
+    "op": "group",
+    "name": "groupBox_Y_DisplayMarks",
+    "kind": "QGroupBox",
+    "value": false
+  },
+  {
+    "op": "dump",
+    "label": "history-marks-off-r4"
+  },
+  {
+    "op": "group",
+    "name": "groupBox_Y_DisplayMarks",
+    "kind": "QGroupBox",
+    "value": true
+  },
+  {
+    "op": "spin",
+    "name": "X_Hour",
+    "kind": "QSpinBox",
+    "value": 2
+  },
+  {
+    "op": "spin",
+    "name": "X_Minute",
+    "kind": "QSpinBox",
+    "value": 3
+  },
+  {
+    "op": "spin",
+    "name": "X_Second",
+    "kind": "QSpinBox",
+    "value": 4
+  },
+  {
+    "op": "dump",
+    "label": "history-time-custom-r4"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      400,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "history-multi.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-default-r4"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "history-reopened-r4"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

@@ -23,6 +23,7 @@
 #include "multi_state_button_properties.h"
 #include "chart_properties.h" //20261112-1 add
 #include "trend_properties.h" //20261112-1 add
+#include "history_trend_properties.h" //20261112-1 add
 #include "move_track_properties.h" //20261112-0 add
 #include "wheel_properties.h" //20261112-0 add
 #include "slider_properties.h" //20261112-0 add
@@ -61,6 +62,7 @@ struct HmiObject
     ScreenButtonProperties screenButton; //20261112-0 add: Navigation targets are stable identities rather than switch addresses.
     ChartProperties chart; //20261112-1 add: Separate bar, meter and donut drafts.
     TrendProperties trend; //20261112-1 add: Separate bar, meter and donut drafts.
+    HistoryTrendProperties historyTrend; //20261112-1 add: Stable collection and item references for historical display.
     MoveTrackProperties moveTrack; //20261112-0 add: Independent distance, graphic and constant/address drafts.
     WheelProperties wheel; //20261112-0 add: Independent numerical wheel and highlight-resource draft.
     SliderProperties slider; //20261112-0 add: Independent operation/range and access carriers.

@@ -1,0 +1,30 @@
+{
+  "id": "C24",
+  "ordinal": 24,
+  "name": "历史趋势图",
+  "slug": "history-trend",
+  "task": "S04-09",
+  "next": "C25",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/history-trend/physical/history-baseline-r1/run.json",
+  "expectedPassed": 199,
+  "testRun": "docs/stage4-evidence/history-trend/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/history-trend/native/native-manifest.json",
+  "report": "docs/历史趋势图手册实现与验收.md",
+  "manual": "design_plan/历史趋势图功能与交互复刻手册.md",
+  "scope": "独立数据采集定义与历史趋势图编辑器；单采集组、共用5数据类型、固定LH项目/稳定ID、完整地址跨度和内存计算、取样/通知与缩放草稿；历史三页、1..min(8,项目数)条独立来源/范围/线型/颜色、X时间轴与Y刻度组、跨页引用保护、同工程复用和跨工程采集冲突拒绝、树新增/编辑/删除与撤销、24类schema12、固定PC示意图及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C24-001",
+    "Q-S04-C24-002",
+    "Q-S04-C24-003",
+    "Q-S04-C24-004"
+  ],
+  "nativeSummary": "原厂确认无采集时提示“尚未建立数据采集！”，当前测试机型第二组采集被“已经达到最大数据采集数量，请删除后再新建。”拒绝。采集U16/U32/I16/I32/F32是整组共用类型；LH序号只读；3项×1000点U16占25 kbyte、U32占31 kbyte，公式为(20+取样长度×类型字节数)×取样总数。项目名称需真实textEdited信号后更新数据源；First/Second/Third命名样本在r7保存、重开并编译成功。曲线数默认min(8,项目数)，所有曲线默认来源均为第一个项目；曲线范围独立。X小时0..48、分秒0..59，关闭时间/刻度组只隐藏组内字段，Y最小/最大仍可见。",
+  "protocol": "历史曲线通过稳定采集/项目ID绑定；原厂默认、三项目及命名项目源/编译均已保留，来源SHA和关键DAT清单见专项报告。已执行原厂默认历史图实物下载，四项清除/更新关闭，输入/待传SHA一致。未依据跨进程多变量样本猜测Collect.dat、Curve.dat或固件布局；Lite保存schema12而独立SM/设备编译继续拒绝。当前无历史文件读取、PLC采样和逐字节USB应答结论。",
+  "codeFiles": "src/data_collection_properties.*、data_collection_dialog.*、history_trend_properties.*、history_trend_dialog.*、project_model.*、main_window.*、main_window_workflow.cpp、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "reviewFindings": [
+    "只读复核覆盖构造期信号、共享类型与整段字跨度、采集单组上限、跨页稳定项目引用、复制复用/冲突与删除保护、仅采集schema12和后台输出拒绝。",
+    "新测试的粘贴接口参数编译错误修复后重建，最终确认9项新增用例全部PASS；130+59+10=199/0/0。",
+    "固定PC曲线不代表历史采样或文件读取；实物下载仅原厂基线，显示/触控/PLC不据日志宣称通过。"
+  ]
+}
