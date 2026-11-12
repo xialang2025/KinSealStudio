@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 14,
-  "queued": 1,
+  "newNativeReferenceCompleted": 15,
+  "queued": 0,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -1302,7 +1302,7 @@
       "id": "C19",
       "name": "滑动开关",
       "family": "slider",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C19-product.ksp",
         "sha256": "bffc4938e1cbd22bec3b15476f929e78ce7d09119ae50b7ebc88bad94decbd61",
@@ -1383,7 +1383,16 @@
         "bytes": 4371
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/slider/physical/slider-native-baseline-r1/run.json",
+        "sourceSha256": "6a6308c51f76e842aa5c4b0223e568bd524c4482c65c867e294972d5a9e53f9b",
+        "completedAtUtc": "2026-11-12T11:32:09.606492+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80653179.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C20",
@@ -1394,7 +1403,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C19",
+  "next": null,
   "complete": false,
-  "referenceBackfillComplete": false
+  "referenceBackfillComplete": true
 }
