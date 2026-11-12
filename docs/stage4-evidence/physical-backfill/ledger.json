@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 7,
-  "queued": 8,
+  "newNativeReferenceCompleted": 8,
+  "queued": 7,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -630,7 +630,7 @@
       "id": "C12",
       "name": "ASCII显示",
       "family": "ascii",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C12-product.ksp",
         "sha256": "a8146436c2976a43188b9493e403c269e55cfb07d345020f6b9118f9a157bb97",
@@ -711,7 +711,16 @@
         "bytes": 3982
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/ascii/physical/ascii-native-baseline-r1/run.json",
+        "sourceSha256": "7a50b0774195970418a344cde4204954206265deabad600afb76314a2be94673",
+        "completedAtUtc": "2026-11-12T11:27:05.645110+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80641112.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C13",
@@ -1331,7 +1340,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C12",
+  "next": "C13",
   "complete": false,
   "referenceBackfillComplete": false
 }
