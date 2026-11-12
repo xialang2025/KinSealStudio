@@ -19,6 +19,7 @@
 #include "number_display_properties.h" //20261112-0 add
 #include "ascii_display_properties.h" //20261112-0 add
 #include "time_display_properties.h" //20261112-0 add
+#include "screen_button_properties.h" //20261112-0 add
 
 struct HmiObject
 {
@@ -48,6 +49,7 @@ struct HmiObject
     NumberDisplayProperties numberDisplay;
     AsciiDisplayProperties asciiDisplay; //20261112-0 add: ASCII options remain distinct from numeric enum/range semantics.
     TimeDisplayProperties timeDisplay; //20261112-0 add: System clock formatting has no PLC monitor carrier.
+    ScreenButtonProperties screenButton; //20261112-0 add: Navigation targets are stable identities rather than switch addresses.
     double layer = 1;
     QString group;
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.

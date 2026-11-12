@@ -175,6 +175,10 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("number")); }); //20261112-0 change: Configure before beginning rectangle placement.
             }
+            else if (id == QStringLiteral("action_screenbutton")) //20261112-0 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("screen")); });
+            }
             else if (id == QStringLiteral("action_timeDisplay")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("time")); });

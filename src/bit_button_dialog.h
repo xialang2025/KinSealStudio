@@ -14,6 +14,7 @@ class QRadioButton; //20261109-0 add
 class QSpinBox;
 class HmiPermissionEditor;
 class BitButtonPreview;
+class QLabel;
 
 //20261108-15 add: Edit a detached project/object draft and publish only after acceptance.
 class BitButtonDialog : public QDialog
@@ -107,6 +108,16 @@ private:
     QButtonGroup *m_functionKeys = nullptr;
     QLineEdit *m_functionKeyboardText = nullptr;
     QCheckBox *m_functionPressedEffect = nullptr;
+    QComboBox *m_screenAction = nullptr; //20261112-0 add
+    QComboBox *m_screenTarget = nullptr;
+    QLabel *m_screenTargetLabel = nullptr;
+    QGroupBox *m_screenChangeLevel = nullptr;
+    QComboBox *m_screenNewLevel = nullptr;
+    QCheckBox *m_screenRequireLogin = nullptr;
+    QWidget *m_screenTargetRow = nullptr;
+    int m_screenActionDraft = 0;
+    QWidget *createScreenGeneral();
+    void refreshScreenTarget();
 
     void storeState();
     void loadState();

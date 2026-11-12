@@ -968,7 +968,13 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.staticText.languageTexts.insert(m_project.activeLanguage, object.text);
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
-    object.address = m_addressEdit->text();
+    if (object.type == QStringLiteral("screen")) //20261112-0 add: Compact text edits the real OFF state; page targets are never numeric addresses.
+    {
+        if (object.screenButton.common.states[0].sameLanguage) { object.screenButton.common.states[0].sharedText = object.text; }
+        else { object.screenButton.common.states[0].text.languageTexts.insert(m_project.activeLanguage, object.text); }
+        object.text = bitButtonContent(object.screenButton.common.states[0], m_project.languages.first());
+    }
+    object.address = object.type == QStringLiteral("screen") ? QString() : m_addressEdit->text();
     if (object.type == QStringLiteral("ascii")) //20261112-0 add: ASCII monitor editing validates a base carrier without assuming a recovered string span.
     {
         object.asciiDisplay.common.monitorAddress = object.address.trimmed();
@@ -1428,6 +1434,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_textEdit->setEnabled(selected);
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
+    if (selected && object.type == QStringLiteral("screen")) { m_addressEdit->setEnabled(false); } //20261112-0 add
     if (selected && object.type == QStringLiteral("ascii")) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
@@ -1450,6 +1457,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         {
             m_textEdit->setPlainText(bitButtonContent(object.bitButton.states[0], m_project.activeLanguage));
         }
+        if (object.type == QStringLiteral("screen")) { m_textEdit->setPlainText(bitButtonContent(object.screenButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add: A compact edit must read the same language that it will update.
         if (object.type == QStringLiteral("qrcode")) { m_textEdit->setPlainText(object.qrCode.description); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_textEdit->setPlainText(object.messageDisplay.text(0, m_project.activeLanguage)); } //20261112-0 add
         m_addressEdit->setText(object.address);

@@ -1,0 +1,339 @@
+{
+  "date": "2026-11-12",
+  "family": "screen-button",
+  "scope": "原厂自有私有桌面：Qt getter、属性变化、最小源及离线编译；未执行USB传输、PLC通信、系统键鼠或前置/切换桌面。",
+  "sourceIdentity": {
+    "originalExeSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+    "privateRuntimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+    "privatePatch": {
+      "offset": "0x7c4",
+      "before": "5589e5",
+      "after": "b001c3"
+    },
+    "note": "仅自有运行副本补丁；安装原件未写入。"
+  },
+  "runtimeTerminationVerifiedInEachRun": true,
+  "records": [
+    {
+      "path": "native-probe-screen-button-contract-r1.json",
+      "run": "screen-button-contract-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 587964,
+      "sha256": "ea888b74d4f78406fb7e4b82655e0f5f98ce0877ddffd9bad1005dac1eb0e110",
+      "rawRecordSha256": "be8c08ae5726b9e63647e627fbe5126962aca72fa96ebd80ed5ef8ca89cd0cfe"
+    },
+    {
+      "path": "native-probe-screen-button-default-r1.json",
+      "run": "screen-button-default-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 122330,
+      "sha256": "8405d001010c206159b0cea779d671af1217807af9a075f98d45ff7e246c3fec",
+      "rawRecordSha256": "cbf75b4bca91fcc49763fe77ec17284add8111dd45712cfff2934335a9ca6740"
+    }
+  ],
+  "removedTransientRecords": [
+    {
+      "path": "native-probe-checkpoint.json",
+      "bytes": 4804044,
+      "sha256": "f92fd45074217c8368ef099ac4ec3ff6b40b554a4bbc7e985b4aa2f226c4c90a",
+      "reason": "主记录或最终具名记录的重复中间副本。"
+    },
+    {
+      "path": "native-probe.json",
+      "bytes": 4804545,
+      "sha256": "be8c08ae5726b9e63647e627fbe5126962aca72fa96ebd80ed5ef8ca89cd0cfe",
+      "reason": "主记录或最终具名记录的重复中间副本。"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "screen-button-default-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/screen-button-default-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "573eb6fcb13c4eedfee3e754e8dd2f7dba2d1bf59b617ff5d517b6696288845b",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "66876a79e36883f368c6b85a75982fd18d5b8b7470c96ca687f4fcaba0061469",
+          "retainedPath": "compiled/screen-button-default-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 6272,
+          "sha256": "9b15252a9af81921de732b4925fd84fe901963d0e7c692c3a07ffbcfe5c96f19",
+          "retainedPath": "compiled/screen-button-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 4201,
+          "sha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150",
+          "omittedReproducible": true,
+          "identicalRetainedSource": [
+            "screen-button-default.sm"
+          ]
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 11974,
+          "sha256": "a76b610931d76732eb9164c6235557efdc2852143d3b435dffbbcb566396ca96",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "d234d147ec2a49e831b7b68b50e5bc9a8a741e7c460989c68bd5b7e19a53432b",
+          "retainedPath": "compiled/screen-button-default-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/screen-button-default-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retainedPath": "compiled/screen-button-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "edc51484a6ba273b0f19dda03a83ab18e8cfec351e75d2b1a2eaaeea3dabe8df",
+          "retainedPath": "compiled/screen-button-default-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1139,
+          "sha256": "f6eb2bfe0b65a26adfc441f83fd7ac429e77536f0e60d68cf49becfcbeb89a69",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "33803518154243fdb2967268ffdf51b6e25a8d36557e7caaa334ccf0b4ea4c6d",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "保留契约相关dat及任何新增专有dat；重复像素引用首次保留文件；其余可再生成文件仅登记原始哈希。"
+    }
+  ],
+  "sources": [
+    {
+      "path": "screen-button-default.sm",
+      "bytes": 4201,
+      "sha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "screen-button-default-r1.png",
+      "bytes": 18725,
+      "sha256": "6707782b9c3395138b268f373cfc415fe6822daa5f8dd6625c14c810158a2d31"
+    }
+  ],
+  "observations": {
+    "operationOrder": [
+      "跳转到指定画面",
+      "返回上一个画面",
+      "打开窗口",
+      "关闭窗口"
+    ],
+    "targetRow": {
+      "initialJump": "画面名称：，列表为画面1。",
+      "return": "目标标签和下拉框均隐藏。",
+      "openWindow": "窗口名称：，空白工程没有窗口，目标下拉框为空。",
+      "closeWindow": "目标标签和下拉框均隐藏。",
+      "jumpAfterOpenWindow": "目标列表回到画面1，但label_4残留窗口名称：。这是本轮原厂实测状态，不推定为设计目标。"
+    },
+    "changeUserLevelDefault": true,
+    "requireLoginOnInsufficientLevelDefault": true,
+    "macroGroupEnabledInDefaultAmtProject": false,
+    "visibilityAndTouchBit1DefaultChecked": true,
+    "visibilityBitEnabled": "开启GroupV和groupBox_ShowByBit后显现位1保持选中。",
+    "unknown": [
+      "真实屏端跳转、返回、窗口和登录运行语义",
+      "非默认工程中宏和指示灯可用条件",
+      "完整typed源字段及设备编译语义"
+    ]
+  },
+  "scripts": [
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/audit_evidence.py",
+      "bytes": 3869,
+      "sha256": "13c89750141f3423f128c99ff4d5fc11e61d2fdfa0d8da47bc35c8eba5ab4923"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/base-probe.py",
+      "bytes": 52050,
+      "sha256": "363f02ea2886743258788d36491ece0ea5cec9bd33180b037d895d36222d93e6"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/cleanup-owned-files.ps1",
+      "bytes": 4110,
+      "sha256": "5408cfac592054140a534e6e6fa41d6b5c46ac29c9b5e6f8a22ff364f74092f0"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/dropdown-default.json",
+      "bytes": 628,
+      "sha256": "c42d6f4bcce1887b0cdb316b190146bcfd3c93185d34062dcfba916422569087"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/dropdown-permission.json",
+      "bytes": 534,
+      "sha256": "da2b0734afe69f20bb8e1b362cd285f845a1243634dbe00406fdd106e81962dc"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/dropdown_probe.py",
+      "bytes": 51987,
+      "sha256": "faa9e694f914d445864be8f93c9df05995617ed5814977b1872b4c9f3d5f9925"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/finalize_evidence.py",
+      "bytes": 10280,
+      "sha256": "4581937e6d01aef35bafc71a913f39dea3c9cfe0bb6b587912d2668eff505cc2"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-function-button-default.json",
+      "bytes": 690,
+      "sha256": "6aea213c56a913eac400dbda509483138d410cfb62ed66f677f1f44dc55b43b6"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-function-button-permission.json",
+      "bytes": 570,
+      "sha256": "f5a0db498934a5b423a7a5a53280219b5f0716845ec0ba9bd94e7d8aa41a5ffa"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-function-button_probe.py",
+      "bytes": 52063,
+      "sha256": "baa4fa8bec676ba08c4f6b1e3d6af0c89724a0ead27d88c7f4ee807aeef25075"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-state-button-default.json",
+      "bytes": 677,
+      "sha256": "5d7fb387f7400a6c0f93c3dbe71ab859b331dbd1dc654a39367c1ea3e553df58"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-state-button-lifetime-r2.json",
+      "bytes": 1973,
+      "sha256": "6dc792bf1d79ccafeb7ad5e321a73c8a3d843f47f0db3b597b3238513bbaea2b"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-state-button-lifetime-r3.json",
+      "bytes": 2008,
+      "sha256": "9cc00f934dacdc0442dd6f2dbef3e9e8709bc68de557032239189c9d3c368b79"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-state-button-lifetime.json",
+      "bytes": 2258,
+      "sha256": "c8bd9ce06abc20702392790c8a60842d263c84f2398a380b75a9073ac13249bd"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/multi-state-button_probe.py",
+      "bytes": 52292,
+      "sha256": "cf224ef579f656023ca3aa4abdf62f60cdc194ee481923e3db75c5aa0fcd9024"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/prepare_probe.py",
+      "bytes": 3184,
+      "sha256": "1447923c9f7717ae321dc8f0e8f72c9ee1c757e0e46c2c94d391f896949497ab"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/scenarios.py",
+      "bytes": 2813,
+      "sha256": "b6ed7ba7a58693ca9bc7d74e58a4cfa298d43ecdb77f3419995b1c3efbf815cc"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/screen-button-contract.json",
+      "bytes": 1098,
+      "sha256": "5062fbc8e6456c637cfe601d51cc61384994cdb2350faba832a7a6b8dc2d8bcc"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/screen-button-default.json",
+      "bytes": 657,
+      "sha256": "7f03968be62350745c7827ca0ee02cb9bc82431be65fe19d1102a38eb06d7d19"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/screen-button_probe.py",
+      "bytes": 52016,
+      "sha256": "157495ff63a63cf906c1bacf284f5e5dc17877a3d908f99ed7fb3b7f13211723"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-buttons/validate-cleanup.py",
+      "bytes": 1867,
+      "sha256": "86450ff44528da8da1df1e1858331b61435ff1ca41de7455fd4803e4d0fc348b"
+    }
+  ],
+  "cleanup": {
+    "path": ".scratch/kinseal-stage4-20261112/native-buttons/cleanup.json",
+    "sha256": "4cc93f078d5b65a06934e6b49637c0b4083c570b92507ee4597a866d2b11c7e7",
+    "result": {
+      "filesRemoved": 244,
+      "logicalBytesRemoved": 284053341.0,
+      "unknownRetained": [],
+      "remainingRuntimeDirectories": []
+    },
+    "note": "脚本首次检查把云占位tag和自有exe硬链接当作未知链接而停止；确认无路径跳转后逐文件删除成功。没有自动审批拒绝。"
+  },
+  "cleanupValidation": {
+    "path": ".scratch/kinseal-stage4-20261112/native-buttons/cleanup-validation.json",
+    "sha256": "7e621efcdfbe06a2de574ecf88fbbb2024be76ae246a7ee35e21d059fa48ae43",
+    "result": {
+      "scope": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-buttons",
+      "checkedNodes": 312,
+      "reparseTagCounts": {
+        "0x0": 312
+      },
+      "allowedCloudTag": "0x9000601a",
+      "cloudTagIsNameSurrogate": false,
+      "note": "所有目标解析后仍在具名family内；拒绝symlink及未知reparse tag。已观察云占位tag不带NameSurrogate跳转标志。"
+    }
+  },
+  "integrityAudit": {
+    "checkedContentHashes": 13,
+    "result": "passed",
+    "notes": "校验全部源、截图、保留JSON、各运行输入和每个保留/共享dat；源安装原件SHA由各运行绑定。"
+  }
+}

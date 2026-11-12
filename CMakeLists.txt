@@ -81,6 +81,9 @@ qt_add_executable(KinSealStudioLite WIN32
     src/ascii_display_properties.cpp
     src/time_display_properties.h #20261112-0 add
     src/time_display_properties.cpp
+    src/screen_button_properties.h #20261112-0 add
+    src/screen_button_properties.cpp
+    src/screen_button_dialog.cpp
     src/number_display_properties.cpp
     src/number_display_dialog.h
     src/number_display_dialog.cpp

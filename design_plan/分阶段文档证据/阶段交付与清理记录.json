@@ -1992,22 +1992,44 @@
       "taskId": "S04-05",
       "document": "05_阶段4_控件逐项复刻.md",
       "heading": "S04-05 4D：画面按钮、多态按钮",
-      "documentation": "generated_and_checked",
+      "documentation": "updated_per_control",
       "investigation": {
-        "state": "not_revalidated_in_this_run",
-        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+        "state": "native_ui_and_minimal_compile_captured",
+        "evidence": "../docs/stage4-evidence/screen-button/native/native-manifest.json"
       },
       "implementation": {
-        "state": "not_assessed_this_run",
-        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+        "state": "partial_editor_and_KSP_slices",
+        "scope": "本次C14编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "heading": "S04-05 4D：画面按钮、多态按钮",
-        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
-      }
+        "nextAction": "进入C15；保留本控件未决层"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage4-screen-button-20261112",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "heading": "S04-05 4D：画面按钮、多态按钮",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T06:41:56.440981+00:00"
+        }
+      ]
     },
     {
       "taskId": "S04-06",
@@ -3427,6 +3449,14 @@
     {
       "id": "stage4-time-20261112",
       "productPassed": 53,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": false,
+      "completeControl": false
+    },
+    {
+      "id": "stage4-screen-button-20261112",
+      "productPassed": 60,
       "productFailed": 0,
       "productSkipped": 0,
       "usbAccessed": false,

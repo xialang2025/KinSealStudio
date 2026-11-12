@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 8,
-  "blockedLayers": 29,
-  "active": "C14",
+  "editorSlicesDelivered": 9,
+  "blockedLayers": 33,
+  "active": "C15",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -227,14 +227,30 @@
     {
       "id": "C14",
       "name": "画面按钮",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立画面按钮记录与四页、4操作及稳定画面/窗口目标、等级和登录选项、双态外观与双语侧栏、独立监控/权限/通知、页面改名删除与自引用复制、资源和跨工程依赖、screen-only schema12及14类混合工程、创建编辑撤销",
+      "evidence": "screen-button/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C14-001",
+        "Q-S04-C14-002",
+        "Q-S04-C14-003",
+        "Q-S04-C14-004"
+      ]
     },
     {
       "id": "C15",
       "name": "多态按钮",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

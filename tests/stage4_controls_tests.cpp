@@ -7,6 +7,8 @@
 #include "gif_display_dialog.h" //20261112-0 add
 #include "animation_resources.h"
 #include "number_display_dialog.h" //20261112-0 add
+#include "bit_button_dialog.h" //20261112-0 add
+#include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
 #include <QBuffer>
@@ -99,6 +101,13 @@ private slots:
     void timeResourcesVisibilityAndNoMonitorCarrier();
     void timeRasterClippingAndFormatSamples();
     void timeShellPlacementConversionAndUndo();
+    void screenDefaultsOperationsAndStableTargets();
+    void screenMonitorAppearanceAndPermissions();
+    void screenStrictMixedPersistenceAndBackendGates();
+    void screenPageLifecycleAndClipboardDependencies();
+    void screenResourcesAndRealAddressRoles();
+    void screenShellCreationCancellationAndUndo();
+    void screenLanguageCompactProperties();
 };
 
 /******************************************************************************
@@ -1692,6 +1701,167 @@ void Stage4ControlTests::timeShellPlacementConversionAndUndo() //20261112-0 add
     QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("Number_timeShowWeek"))->setChecked(true); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_timeDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
     QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(210, 100))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(210, 100))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("time")); QVERIFY(window.currentEditorProject().objects.first().timeDisplay.showWeek); QVERIFY(!window.m_addressEdit->isEnabled()); QCOMPARE(window.m_projectHistory.size(), history + 1);
     QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); QCOMPARE(window.m_projectHistory.size(), history + 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("time")); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : screenObject
+ * Description     : Create an independent navigation control with a stable normal-page target.
+ * Input Parameters: project
+ * Return Value    : Default screen button without ordinary switch properties.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject screenObject(const HmiProject &project) //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("screen-object"); object.type = QStringLiteral("screen"); object.name = QStringLiteral("画面按钮"); object.geometry = QRect(600, 300, 120, 60); object.text = QStringLiteral("OFF"); object.screenButton.screenPageId = project.activePageId; return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenDefaultsOperationsAndStableTargets
+ * Description     : Verify native four-page defaults, target filtering, operation row visibility and independent dormant IDs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenDefaultsOperationsAndStableTargets() //20261112-0 add
+{
+    HmiProject project;
+    HmiPage page;
+    QString error;
+    page.id = QStringLiteral("window-target"); page.name = QStringLiteral("窗口甲"); page.kind = QStringLiteral("window"); QVERIFY2(project.addPage(page, &error), qPrintable(error));
+    BitButtonDialog dialog(screenObject(project), project);
+    QComboBox *action = dialog.findChild<QComboBox *>(QStringLiteral("ScreenAction"));
+    QComboBox *target = dialog.findChild<QComboBox *>(QStringLiteral("ScreenTarget"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("画面按钮")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("BitButtonTabs"))->count(), 4); QCOMPARE(action->count(), 4); QCOMPARE(target->currentData().toString(), project.activePageId); QVERIFY(dialog.findChild<QGroupBox *>(QStringLiteral("ScreenChangeLevel"))->isChecked()); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("ScreenRequireLogin"))->isChecked()); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("ScreenNewLevel"))->count(), 8); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("BitMacro"))->isEnabled()); QVERIFY(!dialog.object().hasBitButtonProperties); QVERIFY(dialog.object().address.isEmpty());
+    action->setCurrentIndex(1); QVERIFY(!target->isVisible()); action->setCurrentIndex(2); QCOMPARE(target->count(), 1); QCOMPARE(target->currentData().toString(), page.id); action->setCurrentIndex(3); QVERIFY(!target->isVisible()); action->setCurrentIndex(0); QCOMPARE(target->currentData().toString(), project.activePageId); QCOMPARE(dialog.findChild<QLabel *>(QStringLiteral("ScreenTargetLabel"))->text(), QStringLiteral("窗口名称:")); action->setCurrentIndex(2); QCOMPARE(dialog.object().screenButton.windowPageId, page.id);
+    dialog.findChild<QGroupBox *>(QStringLiteral("ScreenChangeLevel"))->setChecked(false); QVERIFY(!dialog.findChild<QComboBox *>(QStringLiteral("ScreenNewLevel"))->isEnabled());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("screen-general.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenMonitorAppearanceAndPermissions
+ * Description     : Verify screen-specific monitoring defaults, both visual drafts and notification visibility without claiming runtime navigation.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenMonitorAppearanceAndPermissions() //20261112-0 add
+{
+    HmiProject project;
+    BitButtonDialog dialog(screenObject(project), project);
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("BitButtonTabs"));
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); tabs->setCurrentIndex(1); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("BitIndicator"))->isChecked()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("BitMonitorSame"))->isChecked()); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitMonitorIndex"))->value(), 0); dialog.findChild<QCheckBox *>(QStringLiteral("BitIndicator"))->setChecked(true); dialog.findChild<QComboBox *>(QStringLiteral("BitMonitorType"))->setCurrentIndex(1); dialog.findChild<QLineEdit *>(QStringLiteral("BitMonitorAddress"))->setText(QStringLiteral("LW12")); QCOMPARE(dialog.object().screenButton.common.monitorWordAddress, QStringLiteral("LW12")); QVERIFY2(dialog.object().screenButton.validateAddresses({}, &error), qPrintable(error));
+    tabs->setCurrentIndex(2); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("BitFlash"))->isEnabled()); QCOMPARE(dialog.object().screenButton.common.states[0].background, QColor(QStringLiteral("#f0f0f0"))); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("BitOpacity"))->isEnabled()); dialog.findChild<QPlainTextEdit *>(QStringLiteral("BitText"))->setPlainText(QStringLiteral("页面OFF")); dialog.findChild<QSpinBox *>(QStringLiteral("BitState"))->setValue(1); dialog.findChild<QPlainTextEdit *>(QStringLiteral("BitText"))->setPlainText(QStringLiteral("页面ON")); dialog.findChild<QSpinBox *>(QStringLiteral("BitState"))->setValue(0); QCOMPARE(dialog.findChild<QPlainTextEdit *>(QStringLiteral("BitText"))->toPlainText(), QStringLiteral("页面OFF")); QCOMPARE(bitButtonContent(dialog.object().screenButton.common.states[1], QStringLiteral("中文")), QStringLiteral("页面ON"));
+    tabs->setCurrentIndex(3); dialog.findChild<QGroupBox *>(QStringLiteral("BitNotice"))->setChecked(true); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("BitNoticeBit"))->isEnabled()); dialog.findChild<QCheckBox *>(QStringLiteral("BitNoticeBit"))->setChecked(true); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("BitNoticeBitAddress"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("BitNoticeWord"))->setChecked(true); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("BitNoticeBit"))->isChecked()); QVERIFY(dialog.object().screenButton.common.noticeWord); QVERIFY2(dialog.object().screenButton.validate(&error), qPrintable(error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("screen-permissions.png")))); tabs->setCurrentIndex(2); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("screen-appearance.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenStrictMixedPersistenceAndBackendGates
+ * Description     : Prove screen-only and fourteen-family persistence while keeping unknown native outputs closed atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = screenObject(project);
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 14); QCOMPARE(loaded.toJson(), project.toJson());
+    only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.screenButton.toJson(); props.insert(QStringLiteral("action"), 1.5); json.insert(QStringLiteral("screenButton"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); json = object.toJson(); json.remove(QStringLiteral("screenButton")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    object.screenButton.common.indicator = true; object.screenButton.common.monitorSame = true; QVERIFY(!object.screenButton.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("screen-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenPageLifecycleAndClipboardDependencies
+ * Description     : Protect active targets on rename/delete, remap self-navigation on page copy and reject missing external dependencies.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenPageLifecycleAndClipboardDependencies() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject before;
+    HmiProject result;
+    HmiProject target;
+    HmiPage page;
+    Stage3Clipboard clipboard;
+    QString copyId;
+    QString error;
+    page.id = QStringLiteral("normal-target"); page.name = QStringLiteral("画面乙"); QVERIFY2(project.addPage(page, &error), qPrintable(error)); project.objects = {screenObject(project)}; project.objects[0].screenButton.screenPageId = page.id; QVERIFY2(project.validateModel(&error), qPrintable(error)); QVERIFY2(project.renamePage(page.id, QStringLiteral("已改名"), &error), qPrintable(error)); QCOMPARE(project.objects.first().screenButton.screenPageId, page.id); before = project; QVERIFY(!project.removePage(page.id, &error)); QCOMPARE(project.toJson(), before.toJson());
+    QVERIFY2(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error), qPrintable(error)); result = target; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(1, 1), &result, nullptr, &error)); QCOMPARE(result.toJson(), target.toJson());
+    project.objects[0].screenButton.screenPageId = project.activePageId; QVERIFY2(project.copyPage(project.activePageId, QStringLiteral("复制自跳转"), &copyId, &error), qPrintable(error)); QCOMPARE(project.inactivePages.last().objects.first().screenButton.screenPageId, copyId);
+    project.objects[0].screenButton.action = 1; QVERIFY2(project.removePage(page.id, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenResourcesAndRealAddressRoles
+ * Description     : Protect both state images across pages and apply only screen monitoring/permission/notice increments.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenResourcesAndRealAddressRoles() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject result;
+    HmiPage page;
+    HmiObject object = screenObject(project);
+    Stage3DuplicateOptions options;
+    QString error;
+    object.screenButton.common.indicator = true; object.screenButton.common.monitorBitAddress = QStringLiteral("LB10"); object.screenButton.common.notice = true; object.screenButton.common.noticeWord = true; object.screenButton.common.noticeWordAddress = QStringLiteral("LW20"); object.screenButton.common.states[1].picture = QStringLiteral("screen.png"); object.screenButton.common.states[1].picturePng = imagePng(Qt::green); project.pictures.insert(QStringLiteral("screen.png"), imagePng(Qt::green)); project.objects = {object}; page.id = QStringLiteral("screen-inactive"); page.name = QStringLiteral("画面按钮副页"); object.id = QStringLiteral("screen-other"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(project, QStringLiteral("screen.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(project, QStringLiteral("screen.png"), &result, &error)); QVERIFY2(renameStage3Picture(project, QStringLiteral("screen.png"), QStringLiteral("screen-renamed.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().screenButton.common.states[1].picture, QStringLiteral("screen-renamed.png"));
+    options.columns = 2; options.increments = {{Stage3AddressField::MonitorBit, 2, 0}, {Stage3AddressField::NoticeWord, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().screenButton.common.monitorBitAddress, QStringLiteral("LB12")); QCOMPARE(result.objects.last().screenButton.common.noticeWordAddress, QStringLiteral("LW23")); QVERIFY(result.objects.last().address.isEmpty());
+    options.increments = {{Stage3AddressField::Operation, 2, 0}}; result = project; QVERIFY(!duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error)); QCOMPARE(result.toJson(), project.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenShellCreationCancellationAndUndo
+ * Description     : Exercise actual screen-button creation, cancellation, stable-target editing and whole-project undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenShellCreationCancellationAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    int history;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_screenbutton"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QCOMPARE(window.m_projectHistory.size(), history);
+    QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_screenbutton"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("screen")); QVERIFY(!window.currentEditorProject().objects.first().hasBitButtonProperties); QVERIFY(!window.m_addressEdit->isEnabled()); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QComboBox *>(QStringLiteral("ScreenAction"))->setCurrentIndex(1); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().screenButton.action, 1); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().screenButton.action, 0); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::screenLanguageCompactProperties
+ * Description     : Prevent a name or geometry edit in English from overwriting its translated screen-button label with Chinese.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::screenLanguageCompactProperties() //20261112-0 add
+{
+    HmiProject project;
+    HmiObject object = screenObject(project);
+    MainWindow window;
+    QString error;
+    project.languages = {QStringLiteral("中文"), QStringLiteral("English")}; project.activeLanguage = QStringLiteral("English"); object.text = QStringLiteral("中文"); object.screenButton.common.states[0].text.languageTexts = {{QStringLiteral("中文"), QStringLiteral("中文")}, {QStringLiteral("English"), QStringLiteral("English")}}; object.screenButton.common.macroName = QStringLiteral("dormant macro"); object.screenButton.common.pressTime = 0; project.objects = {object};
+    QVERIFY2(HmiProject::fromJson(project.toJson(), &project, &error), qPrintable(error)); window.setProject(project, QString()); window.m_canvas->selectObject(object.id); QCOMPARE(window.m_textEdit->toPlainText(), QStringLiteral("English")); window.m_nameEdit->setText(QStringLiteral("重命名")); window.applySelectedProperties(); QCOMPARE(bitButtonContent(window.currentEditorProject().objects.first().screenButton.common.states[0], QStringLiteral("English")), QStringLiteral("English"));
+    window.m_textEdit->setPlainText(QStringLiteral("English edited")); window.applySelectedProperties(); object = window.currentEditorProject().objects.first(); QCOMPARE(bitButtonContent(object.screenButton.common.states[0], QStringLiteral("中文")), QStringLiteral("中文")); QCOMPARE(bitButtonContent(object.screenButton.common.states[0], QStringLiteral("English")), QStringLiteral("English edited"));
+    BitButtonDialog dialog(object, project);
+    QCOMPARE(dialog.object().screenButton.common.macroName, QStringLiteral("dormant macro")); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->minimum(), 0); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->maximum(), 255); QCOMPARE(dialog.object().screenButton.common.pressTime, 0); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitSize"))->maximum(), 128); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("BitBackground"))->isEnabled());
 }
 
 QTEST_MAIN(Stage4ControlTests)

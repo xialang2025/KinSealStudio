@@ -75,6 +75,15 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
     NumberDisplayProperties *ascii;
+    BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("screen")) //20261112-0 add: Navigation is not an operating PLC address.
+    {
+        screen = &object->screenButton.common;
+        if (screen->indicator) { addressSlots.append({screen->monitorType == 0 ? Stage3AddressField::MonitorBit : Stage3AddressField::MonitorWord, screen->monitorType == 0 ? &screen->monitorBitAddress : &screen->monitorWordAddress, screen->monitorType == 0 ? PlcAddressRole::Bit : PlcAddressRole::Word, 1U}); }
+        addConditionSlots(&screen->visibility, false, &addressSlots); addConditionSlots(&screen->touch, true, &addressSlots);
+        if (screen->notice && screen->noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &screen->noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (screen->notice && screen->noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &screen->noticeWordAddress, PlcAddressRole::Word, screen->noticeWordType == 0 || screen->noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("time")) { addConditionSlots(&object->timeDisplay.visibility, false, &addressSlots); } //20261112-0 add: RTC exposes only visibility carriers.
     if (object->type == QStringLiteral("ascii")) //20261112-0 add: Keep ASCII base carriers separate from unknown string spans and inactive numeric ranges.
     {
@@ -310,6 +319,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->type == QStringLiteral("screen")) //20261112-0 add
+    {
+        for (index = 0; index < 2; ++index)
+        { if (!object->screenButton.common.states[index].picturePng.isEmpty()) { if (!mergePicture(candidate, object->screenButton.common.states[index].picture, object->screenButton.common.states[index].picturePng, &resolved, error)) { return false; } object->screenButton.common.states[index].picture = resolved; } }
+    }
     if (object->type == QStringLiteral("time") && !object->timeDisplay.appearance.picturePng.isEmpty()) //20261112-0 add
     {
         if (!mergePicture(candidate, object->timeDisplay.appearance.picture, object->timeDisplay.appearance.picturePng, &resolved, error)) { return false; }
@@ -508,6 +522,12 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         if (object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty() && clipboard.source.macros.contains(object.bitButton.macroName))
         {
             if (!mergeMacro(clipboard.source, candidate, object.bitButton.macroName, &mappedIds, error)) { return false; }
+        }
+        if (object.type == QStringLiteral("screen") && !object.screenButton.activeTarget().isEmpty()) //20261112-0 add
+        {
+            reference = HmiReference(); reference.id = QStringLiteral("screen-navigation"); reference.targetKind = QStringLiteral("page"); reference.targetId = object.screenButton.activeTarget();
+            if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; }
+            if (object.screenButton.action == 0) { object.screenButton.screenPageId = reference.targetId; } else { object.screenButton.windowPageId = reference.targetId; }
         }
         if ((object.hasNumberDisplayProperties && object.numberDisplay.allowInput && object.numberDisplay.customKeyboard) ||
             (object.type == QStringLiteral("ascii") && object.asciiDisplay.common.allowInput && object.asciiDisplay.common.customKeyboard)) //20261112-0 change: A keyboard ID cannot silently bind to a different target document's page.
