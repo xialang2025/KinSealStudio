@@ -1,0 +1,87 @@
+{
+  "id": "C10",
+  "name": "GIF显示",
+  "family": "gif",
+  "status": "queued_native_reference_download_independent_encoder_blocked",
+  "productInput": {
+    "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C10-product.ksp",
+    "sha256": "3e797cb1d790411afdc8ff47d84bb73ec40606e193e4d6d6ef4649325f829123",
+    "originalMixedSample": "samples\\stage4\\gif-display.ksp",
+    "isolatedType": "gif",
+    "selectedObjectId": "gif-object",
+    "originalSameTypeVariantCount": 1
+  },
+  "independentProductGate": {
+    "executableSha256": "82e9e88001ffd58897a3b2376db77563e5533ec1fe313cea5523e0e4eaf82e05",
+    "calls": [
+      {
+        "label": "capabilities",
+        "exitCode": 0,
+        "result": {
+          "activePageId": "page-1",
+          "deviceCompile": {
+            "offlineCompileRequired": true,
+            "reason": "工程包含尚未恢复原厂源/设备格式的GIF动画资源。",
+            "status": "blocked",
+            "usbAccessed": false
+          },
+          "limits": [
+            "Eligibility does not establish all field semantics, original rendering or physical touch acceptance.",
+            "Multi-page device records and active new configuration nodes remain unsupported.",
+            "Object/language limits describe this Lite backend, not original firmware maxima."
+          ],
+          "modelPersistence": {
+            "allowed": true,
+            "format": "KSP-schema1-to9-and11-to12",
+            "reason": ""
+          },
+          "nativeSource": {
+            "actualExportRequired": true,
+            "opaqueBodyEditable": false,
+            "reason": "工程包含尚未恢复原厂源/设备格式的GIF动画资源。",
+            "status": "blocked"
+          },
+          "pageCount": 1,
+          "startupLanguage": "",
+          "startupPageId": "page-1",
+          "target": {
+            "firmwareVersionConfirmed": false,
+            "knownBackend": "AMT070W124-L800X480R-single-page",
+            "model": "AMT070W124-L800X480R",
+            "sourceVersion": 122
+          }
+        },
+        "stdout": "{\"activePageId\":\"page-1\",\"deviceCompile\":{\"offlineCompileRequired\":true,\"reason\":\"工程包含尚未恢复原厂源/设备格式的GIF动画资源。\",\"status\":\"blocked\",\"usbAccessed\":false},\"limits\":[\"Eligibility does not establish all field semantics, original rendering or physical touch acceptance.\",\"Multi-page device records and active new configuration nodes remain unsupported.\",\"Object/language limits describe this Lite backend, not original firmware maxima.\"],\"modelPersistence\":{\"allowed\":true,\"format\":\"KSP-schema1-to9-and11-to12\",\"reason\":\"\"},\"nativeSource\":{\"actualExportRequired\":true,\"opaqueBodyEditable\":false,\"reason\":\"工程包含尚未恢复原厂源/设备格式的GIF动画资源。\",\"status\":\"blocked\"},\"pageCount\":1,\"startupLanguage\":\"\",\"startupPageId\":\"page-1\",\"target\":{\"firmwareVersionConfirmed\":false,\"knownBackend\":\"AMT070W124-L800X480R-single-page\",\"model\":\"AMT070W124-L800X480R\",\"sourceVersion\":122}}\r\n",
+        "stderr": ""
+      },
+      {
+        "label": "compile",
+        "exitCode": 19,
+        "result": {
+          "message": "工程包含尚未恢复原厂源/设备格式的GIF动画资源。",
+          "ok": false
+        },
+        "stdout": "{\"message\":\"工程包含尚未恢复原厂源/设备格式的GIF动画资源。\",\"ok\":false}\r\n",
+        "stderr": ""
+      },
+      {
+        "label": "export-source",
+        "exitCode": 20,
+        "result": {
+          "message": "工程包含尚未恢复原厂源/设备格式的GIF动画资源。",
+          "ok": false
+        },
+        "stdout": "{\"message\":\"工程包含尚未恢复原厂源/设备格式的GIF动画资源。\",\"ok\":false}\r\n",
+        "stderr": ""
+      }
+    ],
+    "usbAccessed": false
+  },
+  "nativeReferenceInput": {
+    "path": "docs\\stage4-evidence\\gif\\native\\gif-default.sm",
+    "sha256": "5b45d5db6e9d134951f585592bce338b53c37ed9c004c5712cba89932b3127da",
+    "bytes": 4001
+  },
+  "referenceAndProductSettingsNotDeclaredEquivalent": true,
+  "nativeDownload": null
+}
