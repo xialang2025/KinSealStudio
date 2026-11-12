@@ -175,6 +175,10 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("number")); }); //20261112-0 change: Configure before beginning rectangle placement.
             }
+            else if (id == QStringLiteral("action_droplist")) //20261112-0 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("dropdown")); });
+            }
             else if (id == QStringLiteral("action_MFbtn")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("multifunction")); });
@@ -549,7 +553,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (state != nullptr)
     {
         blocked = state->blockSignals(true);
-        count = !selected || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.type == QStringLiteral("multifunction") ? (object.multiFunctionButton.pressedEffect ? 2 : 1) : object.type == QStringLiteral("multistate") ? object.multiStateButton.stateCount : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
+        count = !selected || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.type == QStringLiteral("multifunction") ? (object.multiFunctionButton.pressedEffect ? 2 : 1) : object.type == QStringLiteral("multistate") ? object.multiStateButton.stateCount : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
         state->clear();
         for (index = 0; index < count; ++index) { state->addItem(QString::number(index)); }
         state->setEnabled(m_hasProject && count > 1);
@@ -561,7 +565,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (typeLabel != nullptr)
     {
         typeLabel->setText(!selected ? QString() : object.type == QStringLiteral("text") ? QStringLiteral("静态文本") :
-                           object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器") : object.type == QStringLiteral("lamp") ? QStringLiteral("指示灯") : object.type == QStringLiteral("image") ? QStringLiteral("图片显示器") : //20261112-0 change
+                           object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器") : object.type == QStringLiteral("lamp") ? QStringLiteral("指示灯") : object.type == QStringLiteral("image") ? QStringLiteral("图片显示器") : //20261112-0 change
                            (object.type == QStringLiteral("time") || object.type == QStringLiteral("number") || object.type == QStringLiteral("ascii")) ? QStringLiteral("数值显示器") : QStringLiteral("开关"));
     }
     values.insert(QStringLiteral("NativeControlCount"), m_hasProject ? QString::number(m_canvas->objects().size()) : QString());

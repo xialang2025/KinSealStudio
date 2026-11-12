@@ -90,6 +90,10 @@ qt_add_executable(KinSealStudioLite WIN32
     src/multi_function_button_properties.h #20261112-0 add
     src/multi_function_button_properties.cpp
     src/multi_function_button_dialog.cpp
+    src/dropdown_properties.h #20261112-0 add
+    src/dropdown_properties.cpp
+    src/dropdown_dialog.h
+    src/dropdown_dialog.cpp
     src/number_display_properties.cpp
     src/number_display_dialog.h
     src/number_display_dialog.cpp
@@ -326,6 +330,11 @@ endforeach()
 
 #20261109-6 add: Every independent project-model target must resolve word-property serialization.
 foreach(KINSEAL_WORD_MODEL_TARGET KinSealDeviceMacroTests KinSealNativeSourceTests)
+    #20261112-0 add: Standalone model consumers must link every typed model now embedded in HmiObject.
+    target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE
+        src/gif_display_properties.cpp src/number_display_properties.cpp src/ascii_display_properties.cpp
+        src/time_display_properties.cpp src/screen_button_properties.cpp src/multi_state_button_properties.cpp
+        src/multi_function_button_properties.cpp src/dropdown_properties.cpp)
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/message_display_properties.cpp src/message_display_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/scale_properties.cpp src/scale_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/qr_code_properties.cpp src/qr_code_properties.h) #20261112-0 add

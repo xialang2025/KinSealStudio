@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 11,
-  "blockedLayers": 41,
-  "active": "C17",
+  "editorSlicesDelivered": 12,
+  "blockedLayers": 45,
+  "active": "C18",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -296,14 +296,30 @@
     {
       "id": "C17",
       "name": "下拉框",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立下拉框三页与2..15行表格、字号8..40及三对齐两方向七类型、就地编辑与颜色事务、权限初始空选及通知、完整操作/条件/通知跨度、宏子编辑与挂起放置取消/撤销、跨页宏改名及复制冲突保护、17类混合与仅下拉框schema12、真实工具箱和侧栏地址编辑",
+      "evidence": "dropdown/windows-r3/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C17-001",
+        "Q-S04-C17-002",
+        "Q-S04-C17-003",
+        "Q-S04-C17-004"
+      ]
     },
     {
       "id": "C18",
       "name": "流动块",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

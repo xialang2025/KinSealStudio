@@ -79,6 +79,13 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("dropdown")) //20261112-0 add: The selector owns one full-width operation carrier and independent notification roles.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->dropdown.address, PlcAddressRole::Word, u32(object->dropdown.transferWordCount())});
+        addConditionSlots(&object->dropdown.visibility, false, &addressSlots); addConditionSlots(&object->dropdown.touch, true, &addressSlots);
+        if (object->dropdown.notice && object->dropdown.noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &object->dropdown.noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (object->dropdown.notice && object->dropdown.noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &object->dropdown.noticeWordAddress, PlcAddressRole::Word, object->dropdown.noticeWordType == 0 || object->dropdown.noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("multifunction")) //20261112-0 add: Apply operation increments to each independent bit/word command.
     {
         screen = &object->multiFunctionButton.common;
@@ -548,6 +555,7 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
             if (!groups.contains(object.group)) { groups.insert(object.group, QUuid::createUuid().toString(QUuid::WithoutBraces)); }
             object.group = groups.value(object.group);
         }
+        if (object.type == QStringLiteral("dropdown") && !object.dropdown.macroName.isEmpty() && clipboard.source.macros.contains(object.dropdown.macroName)) { if (!mergeMacro(clipboard.source, candidate, object.dropdown.macroName, &mappedIds, error)) { return false; } } //20261112-0 add
         if (object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty() && clipboard.source.macros.contains(object.bitButton.macroName))
         {
             if (!mergeMacro(clipboard.source, candidate, object.bitButton.macroName, &mappedIds, error)) { return false; }

@@ -8,6 +8,7 @@
 #include "animation_resources.h"
 #include "number_display_dialog.h" //20261112-0 add
 #include "bit_button_dialog.h" //20261112-0 add
+#include "dropdown_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
@@ -20,6 +21,7 @@
 #include "stage3_project_edits.h"
 #include <QAction>
 #include <QComboBox>
+#include <QColorDialog> //20261112-0 add
 #include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QDir>
@@ -124,6 +126,13 @@ private slots:
     void mfNavigationLifecycleAndClipboard();
     void mfResourcesAndAddressIncrements();
     void mfShellPlacementEditCompactAndUndo();
+    void dropdownDefaultsCountsAndRowLifetime(); //20261112-0 add
+    void dropdownTableInlineEditingAndColorTransaction();
+    void dropdownTypesPermissionsAndFullCarriers();
+    void dropdownMacroDraftLifecycleAndClipboard();
+    void dropdownStrictMixedPersistenceAndBackendGates();
+    void dropdownActualFaceAndDirectionRaster();
+    void dropdownShellMacroPlacementCompactAndUndo();
 };
 
 /******************************************************************************
@@ -2250,6 +2259,169 @@ void Stage4ControlTests::mfShellPlacementEditCompactAndUndo() //20261112-0 add
     QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("MfPressedEffect"))->setChecked(true); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_MFbtn"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("multifunction")); QCOMPARE(window.findChild<QComboBox *>(QStringLiteral("NativeStatePreview"))->count(), 2); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("多功能按钮")); QVERIFY(!window.m_addressEdit->isEnabled()); QCOMPARE(window.m_projectHistory.size(), history + 1);
     window.m_textEdit->setPlainText(QStringLiteral("MF English")); window.applySelectedProperties(); QCOMPARE(bitButtonContent(window.currentEditorProject().objects.first().multiFunctionButton.common.states[0], QStringLiteral("English")), QStringLiteral("MF English")); QCOMPARE(bitButtonContent(window.currentEditorProject().objects.first().multiFunctionButton.common.states[0], QStringLiteral("中文")), QString());
     QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QPushButton *>(QStringLiteral("MfAddWord"))->click(); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().multiFunctionButton.commands.size(), 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().multiFunctionButton.commands.size(), 1); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : dropdownObject
+ * Description     : Provide a dropdown fixture with independent rows and no generic button address or flags.
+ * Input Parameters: None
+ * Return Value    : Typed default dropdown object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject dropdownObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("dropdown-object"); object.type = QStringLiteral("dropdown"); object.name = QStringLiteral("下拉框"); object.geometry = QRect(450, 350, 160, 80); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownDefaultsCountsAndRowLifetime
+ * Description     : Check observed bounds and menu order, surviving row drafts, fresh regrowth and cancel isolation.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownDefaultsCountsAndRowLifetime() //20261112-0 add
+{
+    HmiObject original = dropdownObject();
+    DropdownDialog dialog(original, HmiProject());
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("DropdownCount"));
+    QTableWidget *table = dialog.findChild<QTableWidget *>(QStringLiteral("DropdownTable"));
+    QSpinBox *font = dialog.findChild<QSpinBox *>(QStringLiteral("DropdownFontSize"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("下拉框")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("DropdownTabs"))->count(), 3); QCOMPARE(count->minimum(), 2); QCOMPARE(count->maximum(), 15); QCOMPARE(count->value(), 2); QCOMPARE(font->minimum(), 8); QCOMPARE(font->maximum(), 40); QCOMPARE(font->value(), 16); QCOMPARE(dialog.object().dropdown.background, QStringLiteral("#646464")); QCOMPARE(dialog.object().dropdown.textColor, QStringLiteral("#ffffff")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("DropdownAlignment"))->currentIndex(), 2); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("DropdownDirection"))->itemText(1), QStringLiteral("向上")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("DropdownDataType"))->count(), 7); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("DropdownDataType"))->itemText(0), QStringLiteral("16位正整数"));
+    QCOMPARE(table->item(1, 2)->text(), QStringLiteral("state_1")); QVERIFY(!(table->item(0, 0)->flags() & Qt::ItemIsEditable)); table->item(0, 2)->setText(QStringLiteral("保留的第一行")); count->setValue(15); QCOMPARE(table->rowCount(), 15); QCOMPARE(table->item(14, 1)->text(), QStringLiteral("14")); table->item(14, 2)->setText(QStringLiteral("删除的尾行")); count->setValue(2); count->setValue(15); QCOMPARE(table->item(0, 2)->text(), QStringLiteral("保留的第一行")); QCOMPARE(table->item(14, 2)->text(), QStringLiteral("state_14"));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-general.png")))); } dialog.reject(); QCOMPARE(original.dropdown.entries.size(), 2); QCOMPARE(original.dropdown.entries.first().label, QStringLiteral("state_0"));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownTableInlineEditingAndColorTransaction
+ * Description     : Exercise a real table delegate, Enter commit without premature acceptance, and accepted/cancelled colors.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownTableInlineEditingAndColorTransaction() //20261112-0 add
+{
+    DropdownDialog dialog(dropdownObject(), HmiProject());
+    QTableWidget *table = dialog.findChild<QTableWidget *>(QStringLiteral("DropdownTable"));
+    QLineEdit *editor;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("DropdownTabs"))->setCurrentIndex(1); table->setCurrentCell(0, 2); table->editItem(table->item(0, 2)); editor = table->findChild<QLineEdit *>(); QVERIFY(editor != nullptr); editor->selectAll(); QTest::keyClicks(editor, QStringLiteral("Edited A")); QCOMPARE(editor->text(), QStringLiteral("Edited A")); QTest::keyClick(editor, Qt::Key_Return); QTRY_COMPARE(dialog.object().dropdown.entries.first().label, QStringLiteral("Edited A")); QVERIFY(dialog.isVisible()); //20261112-0 change: Qt queues delegate commit after the Enter key event.
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-list.png")))); }
+    dialog.findChild<QTabWidget *>(QStringLiteral("DropdownTabs"))->setCurrentIndex(0); QTimer::singleShot(0, &dialog, []() { QDialog *color = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (color != nullptr) { color->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("DropdownBackground"))->click(); QCOMPARE(dialog.object().dropdown.background, QStringLiteral("#646464"));
+    QTimer::singleShot(0, &dialog, []() { QColorDialog *color = qobject_cast<QColorDialog *>(QApplication::activeModalWidget()); if (color != nullptr) { color->setCurrentColor(QColor(Qt::red)); color->accept(); } }); dialog.findChild<QPushButton *>(QStringLiteral("DropdownBackground"))->click(); QCOMPARE(dialog.object().dropdown.background, QStringLiteral("#ff0000"));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownTypesPermissionsAndFullCarriers
+ * Description     : Validate signed and unsigned rows, unchosen/selected permissions, notification exclusivity and complete word spans.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownTypesPermissionsAndFullCarriers() //20261112-0 add
+{
+    HmiObject object = dropdownObject();
+    DropdownDialog dialog(object, HmiProject());
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("DropdownTabs"))->setCurrentIndex(2); QVERIFY(dialog.findChild<QGroupBox *>(QStringLiteral("DropdownNotice"))->isVisible()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("DropdownNoticeBit"))->isEnabled()); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("DropdownVisibilityBitOn"))->isChecked()); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("DropdownTouchBitOff"))->isChecked()); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("BitPressEnabled")) == nullptr); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("DropdownTouchMinimum"))->currentIndex(), 1);
+    dialog.findChild<QGroupBox *>(QStringLiteral("DropdownVisibility"))->setChecked(true); dialog.findChild<QGroupBox *>(QStringLiteral("DropdownVisibilityBit"))->setChecked(true); QVERIFY(dialog.findChild<QRadioButton *>(QStringLiteral("DropdownVisibilityBitOn"))->isChecked()); dialog.findChild<QRadioButton *>(QStringLiteral("DropdownVisibilityBitOff"))->click(); object = dialog.object(); QVERIFY(object.dropdown.visibilityBitChosen); QVERIFY(!object.dropdown.visibility.bitState);
+    dialog.findChild<QGroupBox *>(QStringLiteral("DropdownNotice"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("DropdownNoticeBit"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("DropdownNoticeWord"))->setChecked(true); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("DropdownNoticeBit"))->isChecked()); dialog.findChild<QComboBox *>(QStringLiteral("DropdownNoticeWordType"))->setCurrentIndex(1); dialog.findChild<QLineEdit *>(QStringLiteral("DropdownNoticeWordAddress"))->setText(QStringLiteral("LW4096")); QVERIFY(!dialog.object().dropdown.validateAddresses({}, &error));
+    object = dropdownObject(); object.dropdown.entries[0].value = QStringLiteral("-32768"); object.dropdown.dataType = 2; QVERIFY2(object.dropdown.validate(&error), qPrintable(error)); object.dropdown.dataType = 0; QVERIFY(!object.dropdown.validate(&error)); object.dropdown.entries[0].value = QStringLiteral("65535"); QVERIFY2(object.dropdown.validate(&error), qPrintable(error)); object.dropdown.address = QStringLiteral("LW4096"); object.dropdown.dataType = 1; QVERIFY(!object.dropdown.validateAddresses({}, &error)); object.dropdown.dataType = 0; QVERIFY2(object.dropdown.validateAddresses({}, &error), qPrintable(error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-permissions.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownMacroDraftLifecycleAndClipboard
+ * Description     : Keep child saves local, protect cross-page macro identity and reject clipboard source collisions atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownMacroDraftLifecycleAndClipboard() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject target;
+    HmiProject result;
+    HmiPage page;
+    HmiObject object = dropdownObject();
+    DropdownDialog dialog(object, project);
+    Stage3Clipboard clipboard;
+    QString error;
+    dialog.findChild<QGroupBox *>(QStringLiteral("DropdownMacro"))->setChecked(true); QVERIFY(dialog.findChild<QPushButton *>(QStringLiteral("DropdownWriteMacro"))->isEnabled());
+    QTimer::singleShot(0, &dialog, []() { QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (editor != nullptr) { editor->findChild<QLineEdit *>(QStringLiteral("MacroName"))->setText(QStringLiteral("DropdownMacroA")); editor->findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"))->setPlainText(QStringLiteral("void Macro_Entry() {}")); editor->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Save)->click(); } }); dialog.findChild<QPushButton *>(QStringLiteral("DropdownWriteMacro"))->click(); QVERIFY(dialog.macros().contains(QStringLiteral("DropdownMacroA"))); QVERIFY(project.macros.isEmpty());
+    object = dialog.object(); project.macros = dialog.macros(); project.objects = {object}; page.id = QStringLiteral("dropdown-other-page"); page.name = QStringLiteral("下拉框副页"); object.id = QStringLiteral("dropdown-other"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); QVERIFY2(project.renameMacro(QStringLiteral("DropdownMacroA"), QStringLiteral("DropdownMacroB"), &error), qPrintable(error)); QCOMPARE(project.objects.first().dropdown.macroName, QStringLiteral("DropdownMacroB")); QCOMPARE(project.inactivePages.first().objects.first().dropdown.macroName, QStringLiteral("DropdownMacroB")); result = project; result.macros.clear(); result.macroIds.clear(); QVERIFY(!result.validateModel(&error));
+    QVERIFY2(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(1, 1), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.macros.value(QStringLiteral("DropdownMacroB")), QStringLiteral("void Macro_Entry() {}")); target.macros.insert(QStringLiteral("DropdownMacroB"), QStringLiteral("different")); result = target; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(1, 1), &result, nullptr, &error)); QCOMPARE(result.toJson(), target.toJson()); dialog.reject(); QVERIFY(object.dropdown.macroEnabled);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip seventeen control families and reject malformed rows/schema and unrecovered native outputs without data loss.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = dropdownObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.dropdown.setCount(15); object.dropdown.entries[14].label = QStringLiteral("中文项目14"); project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 17); QCOMPARE(loaded.toJson(), project.toJson());
+    only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.dropdown.toJson(); props.insert(QStringLiteral("entries"), QJsonArray{QJsonObject{{QStringLiteral("value"), 1}, {QStringLiteral("label"), QStringLiteral("bad")}}}); json.insert(QStringLiteral("dropdown"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props = object.dropdown.toJson(); props.insert(QStringLiteral("fontSize"), 16.5); json.insert(QStringLiteral("dropdown"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownActualFaceAndDirectionRaster
+ * Description     : Check bounded actual pixels, the native blank editor face and directional arrow geometry without a simulated PLC selection.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownActualFaceAndDirectionRaster() //20261112-0 add
+{
+    DropdownProperties properties;
+    QImage down(180, 100, QImage::Format_ARGB32);
+    QImage up(180, 100, QImage::Format_ARGB32);
+    QPainter painter;
+    down.fill(Qt::transparent); up.fill(Qt::transparent); painter.begin(&down); paintDropdown(&painter, QRectF(10, 10, 160, 80), properties); painter.end(); properties.direction = 1; painter.begin(&up); paintDropdown(&painter, QRectF(10, 10, 160, 80), properties); painter.end(); QCOMPARE(down.pixelColor(25, 50), QColor(QStringLiteral("#646464"))); QCOMPARE(down.pixelColor(160, 75), QColor(QStringLiteral("#c0c0c0"))); QCOMPARE(down.pixelColor(139, 20), QColor(Qt::black)); QCOMPARE(up.pixelColor(139, 20), QColor(QStringLiteral("#c0c0c0"))); QCOMPARE(up.pixelColor(139, 47), QColor(Qt::black)); QCOMPARE(down.pixelColor(5, 5).alpha(), 0);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(down.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-down.png")))); QVERIFY(up.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("dropdown-up.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::dropdownShellMacroPlacementCompactAndUndo
+ * Description     : Keep accepted macro resources pending until placement completes, then test compact addresses, edits and undo as whole transactions.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::dropdownShellMacroPlacementCompactAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    HmiProject project;
+    HmiObject object;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    auto acceptWithNewMacro = []() {
+        DropdownDialog *dialog = qobject_cast<DropdownDialog *>(QApplication::activeModalWidget());
+        if (dialog == nullptr) { return; }
+        dialog->findChild<QGroupBox *>(QStringLiteral("DropdownMacro"))->setChecked(true);
+        QTimer::singleShot(0, dialog, []() { QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (editor != nullptr) { editor->findChild<QLineEdit *>(QStringLiteral("MacroName"))->setText(QStringLiteral("PendingDropdownMacro")); editor->findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"))->setPlainText(QStringLiteral("void Macro_Entry() {}")); editor->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Save)->click(); } });
+        dialog->findChild<QPushButton *>(QStringLiteral("DropdownWriteMacro"))->click(); dialog->findChild<QLineEdit *>(QStringLiteral("DropdownAddress"))->setText(QStringLiteral("LW10")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("DropdownButtons"))->button(QDialogButtonBox::Ok)->click();
+    };
+    project.macros.insert(QStringLiteral("ExistingDropdownMacro"), QStringLiteral("void Macro_Entry() {}")); window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_droplist")));
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_droplist"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, acceptWithNewMacro); window.m_commands.value(QStringLiteral("action_droplist"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro"))); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(!window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro")));
+    QTimer::singleShot(0, &window, acceptWithNewMacro); window.m_commands.value(QStringLiteral("action_droplist"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QVERIFY(window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro"))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("下拉框")); QVERIFY(!window.m_textEdit->isEnabled()); QCOMPARE(window.m_addressEdit->text(), QStringLiteral("LW10")); window.m_addressEdit->setText(QStringLiteral("LW12")); window.applySelectedProperties(); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty()); QCOMPARE(window.currentEditorProject().objects.first().dropdown.address, QStringLiteral("LW12"));
+    QTimer::singleShot(0, &window, []() { DropdownDialog *dialog = qobject_cast<DropdownDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("DropdownCount"))->setValue(7); dialog->findChild<QDialogButtonBox *>(QStringLiteral("DropdownButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().dropdown.entries.size(), 7); options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}}; QVERIFY2(duplicateStage3Selection(window.currentEditorProject(), {window.currentEditorProject().objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().dropdown.address, QStringLiteral("LW14")); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().dropdown.entries.size(), 2); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingDropdownMacro")));
 }
 
 QTEST_MAIN(Stage4ControlTests)
