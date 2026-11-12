@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 5,
-  "queued": 10,
+  "newNativeReferenceCompleted": 6,
+  "queued": 9,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -438,7 +438,7 @@
       "id": "C10",
       "name": "GIF显示",
       "family": "gif",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C10-product.ksp",
         "sha256": "3e797cb1d790411afdc8ff47d84bb73ec40606e193e4d6d6ef4649325f829123",
@@ -519,7 +519,16 @@
         "bytes": 4001
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/gif/physical/gif-native-baseline-r1/run.json",
+        "sourceSha256": "5b45d5db6e9d134951f585592bce338b53c37ed9c004c5712cba89932b3127da",
+        "completedAtUtc": "2026-11-12T11:25:19.798123+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80616842.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C11",
@@ -1313,7 +1322,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C10",
+  "next": "C11",
   "complete": false,
   "referenceBackfillComplete": false
 }
