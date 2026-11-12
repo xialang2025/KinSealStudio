@@ -783,7 +783,8 @@
     "totalBackfill": 14,
     "next": null,
     "referenceBackfillComplete": true,
-    "audit": "docs/stage4-evidence/physical-backfill/completion-audit.json"
+    "audit": "docs/stage4-evidence/physical-backfill/completion-audit.json",
+    "lifecycleScope": "Historical 14 UI-completion runs retained; commit/reset lifecycle requires fresh audit. No new E claims."
   },
   "latestDelivery": {
     "evidence": "docs/stage4-evidence/delivery-C26/package-manifest.json",
@@ -794,5 +795,16 @@
     "total": 41,
     "completeStage4": false,
     "mainUnacceptedStage3Failures": 2
+  },
+  "screenWidthDiagnosis": {
+    "status": "confirmed_and_fixed_on_same_source_physical_comparison",
+    "report": "docs/实屏宽度提示与下载生命周期排查.md",
+    "legacyResult": "marker B requested, marker A remained",
+    "fixedResult": "marker B displayed; explicit user confirmation",
+    "regressionTests": 18,
+    "activeControl": "G06",
+    "processedIncludingExisting": 33,
+    "total": 41,
+    "olderUiOnlyReferenceRunsRequireLifecycleAudit": true
   }
 }

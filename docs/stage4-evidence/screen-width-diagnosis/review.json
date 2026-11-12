@@ -1,0 +1,22 @@
+{
+  "checkedAtUtc": "2026-11-12T23:05:23.340708+00:00",
+  "mode": "read_only_review",
+  "checks": [
+    "Python generation syntax",
+    "observed request/response pairing and 24-byte identification fragments",
+    "per-transfer cursor and small raw capture",
+    "clear/update options disabled and raw 000000",
+    "legacy B interrupted reset read rejected",
+    "commit/reset/read/close/termination sequence",
+    "source and SheetPixel identity across B runs",
+    "compressed evidence SHA verified",
+    "G06 and user Stage3 changes excluded"
+  ],
+  "verifiedArchives": 9,
+  "blockingFindings": [],
+  "limitations": [
+    "Only marker A/B display confirmed, not other controls or touch/PLC",
+    "Legacy UI-only completion runs require fresh lifecycle audit",
+    "G06 test fixture missing; editor slice remains uncommitted"
+  ]
+}

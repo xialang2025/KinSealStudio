@@ -1,0 +1,32 @@
+
+                if command.get('download'):
+                    if not args.download:
+                        raise RuntimeError('Hardware transfer requires the explicit --download switch')
+                    result['usbOrPlc'] = True
+                    started = time.time()
+                    radio = widget({'name':'radioUSB','kind':'QRadioButton'})
+                    op({'op':'invoke','hwnd':radio['hwnd'],'slot':'click'})
+                    button = widget({'name':'m_downloadbtn','kind':'QPushButton'})
+                    op({'op':'invoke','hwnd':button['hwnd'],'slot':'click'})
+                    deadline = time.time()+60
+                    hardware = {'startedEpoch':started,'sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+                                'downloadButtonInvoked':True,'completed':False,'polls':[],
+                                'screenDisplayConfirmed':False,'screenTouchConfirmed':False}
+                    result['nativeHardware'] = hardware
+                    while time.time() < deadline:
+                        time.sleep(.5)
+                        current_tables = [op({'op':'table-read','hwnd':w['hwnd']}) for w in tables]
+                        normalized = [[[(cell.encode('latin1').decode('gbk') if cell and all(ord(c)<256 for c in cell) else cell)
+                            for cell in row] for row in table] for table in current_tables]
+                        text = str(normalized)
+                        hardware['polls'].append({'epoch':time.time(),'tables':normalized})
+                        if any(word in text for word in ('下载成功','下载完成','传输完成')):
+                            hardware['completed'] = True
+                            break
+                        if any(word in text for word in ('下载失败','传输失败','连接失败','未找到设备')):
+                            hardware['failure'] = text
+                            break
+                    hardware['completedEpoch'] = time.time()
+                    dump('native-usb-final-state')
+                    if not hardware['completed']:
+                        raise RuntimeError('Original USB completion not confirmed: '+str(hardware['polls'][-1:]))
