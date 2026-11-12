@@ -21,6 +21,7 @@
 #include "time_display_properties.h" //20261112-0 add
 #include "screen_button_properties.h" //20261112-0 add
 #include "multi_state_button_properties.h"
+#include "chart_properties.h" //20261112-1 add
 #include "move_track_properties.h" //20261112-0 add
 #include "wheel_properties.h" //20261112-0 add
 #include "slider_properties.h" //20261112-0 add
@@ -57,6 +58,7 @@ struct HmiObject
     AsciiDisplayProperties asciiDisplay; //20261112-0 add: ASCII options remain distinct from numeric enum/range semantics.
     TimeDisplayProperties timeDisplay; //20261112-0 add: System clock formatting has no PLC monitor carrier.
     ScreenButtonProperties screenButton; //20261112-0 add: Navigation targets are stable identities rather than switch addresses.
+    ChartProperties chart; //20261112-1 add: Separate bar, meter and donut drafts.
     MoveTrackProperties moveTrack; //20261112-0 add: Independent distance, graphic and constant/address drafts.
     WheelProperties wheel; //20261112-0 add: Independent numerical wheel and highlight-resource draft.
     SliderProperties slider; //20261112-0 add: Independent operation/range and access carriers.

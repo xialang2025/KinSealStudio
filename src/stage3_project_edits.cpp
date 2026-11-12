@@ -79,6 +79,17 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("chart")) //20261112-1 add: Increment only the active monitor and dynamic source carriers.
+    {
+        if (object->chart.shape == 0)
+        {
+            addressSlots.append({Stage3AddressField::Operation, &object->chart.bar.address, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.bar.dataType)});
+            if (object->chart.bar.dynamicRange) { addressSlots.append({Stage3AddressField::DisplayMinimumWord, &object->chart.bar.minimumAddress, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.bar.dataType)}); addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->chart.bar.maximumAddress, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.bar.dataType)}); }
+        }
+        else if (object->chart.shape == 1) { addressSlots.append({Stage3AddressField::Operation, &object->chart.meter.address, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.meter.dataType)}); }
+        else { addressSlots.append({Stage3AddressField::Operation, &object->chart.donut.address, PlcAddressRole::Word, ChartProperties::wordCount(object->chart.donut.dataType)}); }
+        addConditionSlots(&object->chart.visibility, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});

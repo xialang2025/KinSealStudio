@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "chart_dialog.h" //20261112-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
@@ -152,6 +153,12 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void chartDefaultsAndIndependentFormDrafts(); //20261112-1 add
+    void chartTypeRangesAndNativeLinks();
+    void chartAccessSpansAndAddressCopies();
+    void chartStrictPersistenceAndBackendGates();
+    void chartStaticRasterAndClipping();
+    void chartShellPlacementEditAndUndo();
     void trackDefaultsAndRangeDraftLifetime(); //20261112-0 add
     void trackPermissionsNotificationsAndAddressCopies();
     void trackResourceTransactionsAndCopyConflicts();
@@ -3040,6 +3047,139 @@ void Stage4ControlTests::trackShellPlacementEditAndUndo() //20261112-0 add
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_moveTrack"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrack); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptTrack); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 100)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("移动轨迹")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.address, QStringLiteral("LW10"));
     QTimer::singleShot(0, &window, []() { MoveTrackDialog *dialog = qobject_cast<MoveTrackDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("TrackDistance"))->setValue(900); dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrackButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.distance, 900); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.distance, 100); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : chartObject
+ * Description     : Create an isolated typed chart fixture without legacy generic address fields.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject chartObject() //20261112-1 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("chart-object"); object.type = QStringLiteral("chart"); object.name = QStringLiteral("图表"); object.geometry = QRect(100, 100, 170, 130); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartDefaultsAndIndependentFormDrafts
+ * Description     : Keep all three forms and inactive field drafts across repeated shape and tab changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartDefaultsAndIndependentFormDrafts() //20261112-1 add
+{
+    ChartDialog dialog(chartObject(), HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("ChartTabs"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.object().chart.bar.dataType, 2); QCOMPARE(dialog.object().chart.meter.dataType, 2); QCOMPARE(dialog.object().chart.donut.dataType, 0); QCOMPARE(dialog.object().chart.meter.shape, 1); QCOMPARE(tabs->count(), 3);
+    dialog.findChild<QLineEdit *>(QStringLiteral("ChartBarMinimum"))->setText(QStringLiteral("7")); dialog.findChild<QLineEdit *>(QStringLiteral("ChartSourceMaximum"))->setText(QStringLiteral("88")); dialog.findChild<QComboBox *>(QStringLiteral("ChartRangeType"))->setCurrentIndex(1); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("ChartSourceMaximum"))->isEnabled()); dialog.findChild<QLineEdit *>(QStringLiteral("ChartMinimumAddress"))->setText(QStringLiteral("LW20"));
+    dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape1"))->click(); dialog.findChild<QLineEdit *>(QStringLiteral("ChartMeterAddress"))->setText(QStringLiteral("LW10")); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); QVERIFY(!tabs->isTabVisible(1)); dialog.findChild<QRadioButton *>(QStringLiteral("ChartArc"))->click(); dialog.findChild<QLineEdit *>(QStringLiteral("ChartSpanAngle"))->setText(QStringLiteral("270")); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape0"))->click(); QVERIFY(tabs->isTabVisible(1)); QCOMPARE(dialog.object().chart.bar.minimum, QStringLiteral("7")); QCOMPARE(dialog.object().chart.bar.sourceMaximum, QStringLiteral("88")); QCOMPARE(dialog.object().chart.bar.minimumAddress, QStringLiteral("LW20")); QCOMPARE(dialog.object().chart.meter.address, QStringLiteral("LW10")); QCOMPARE(dialog.object().chart.donut.spanAngle, QStringLiteral("270"));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-bar-basic.png")))); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape1"))->click(); tabs->setCurrentIndex(1); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-meter-appearance.png")))); tabs->setCurrentIndex(0); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-donut-basic.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartTypeRangesAndNativeLinks
+ * Description     : Exercise every native range reset, bipolar midpoint, pattern and subscale dependency.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartTypeRangesAndNativeLinks() //20261112-1 add
+{
+    ChartDialog dialog(chartObject(), HmiProject());
+    QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("ChartBarDataType"));
+    QComboBox *pattern = dialog.findChild<QComboBox *>(QStringLiteral("ChartPattern"));
+    QCheckBox *bipolar = dialog.findChild<QCheckBox *>(QStringLiteral("ChartTwoPoles"));
+    QString error;
+    ChartProperties properties;
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+    for (index = 0; index < 7; ++index) { type->setCurrentIndex(index); QCOMPARE(dialog.object().chart.bar.minimum, ChartProperties::typeRange(index).first); QCOMPARE(dialog.object().chart.bar.sourceMaximum, ChartProperties::typeRange(index).second); QVERIFY(!bipolar->isChecked()); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("ChartBarAddress"))->property("chartWords").toInt(), int(ChartProperties::wordCount(index))); }
+    type->setCurrentIndex(0); bipolar->click(); QCOMPARE(dialog.object().chart.bar.midpoint, QStringLiteral("32767")); QCOMPARE(pattern->count(), 13); pattern->setCurrentIndex(2); QVERIFY(dialog.findChild<QPushButton *>(QStringLiteral("ChartPatternColor"))->isEnabled()); pattern->setCurrentIndex(1); QVERIFY(dialog.findChild<QPushButton *>(QStringLiteral("ChartPatternColor"))->isEnabled());
+    dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape1"))->click(); dialog.findChild<QCheckBox *>(QStringLiteral("ChartShowSubScale"))->setChecked(false); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("ChartSubDivisions"))->isEnabled()); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("ChartMainDivisions"))->minimum(), 2); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("ChartMainDivisions"))->maximum(), 20); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("ChartSubDivisions"))->maximum(), 5); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("ChartFontSize"))->minimum(), 5); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("ChartFillWidth"))->count(), 32);
+    properties.bar.minimum = QStringLiteral("200"); QVERIFY(!properties.validate(&error)); QCOMPARE(error, QStringLiteral("显示范围最大值小于最小值")); properties.bar.minimum = QStringLiteral("0"); properties.bar.maximum = QStringLiteral("0"); QVERIFY(properties.validate(&error)); properties.bar.twoPoles = true; properties.bar.midpoint = QStringLiteral("101"); QVERIFY(!properties.validate(&error)); properties.bar.midpoint = QStringLiteral("nan"); QVERIFY(!properties.validate(&error)); properties.bar.twoPoles = false; properties.bar.dataType = 0; properties.bar.maximum = QStringLiteral("65536"); QVERIFY(!properties.validate(&error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartAccessSpansAndAddressCopies
+ * Description     : Validate full active register widths and independent display permissions without touching inactive form addresses.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartAccessSpansAndAddressCopies() //20261112-1 add
+{
+    HmiObject object = chartObject();
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    ChartDialog dialog(object, project);
+    QString error;
+    object.chart.bar.dataType = 1; object.chart.bar.address = QStringLiteral("LW65535"); QVERIFY(!object.chart.validateAddresses(project.connections, &error)); object.chart.bar.address = QStringLiteral("LW0"); object.chart.bar.dynamicRange = true; object.chart.bar.minimumAddress = QStringLiteral("LW20"); object.chart.bar.maximumAddress = QStringLiteral("LW24"); object.chart.meter.address = QStringLiteral("LB0"); QVERIFY(object.chart.validateAddresses(project.connections, &error)); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::DisplayMinimumWord, 3, 0}, {Stage3AddressField::DisplayMaximumWord, 5, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().chart.bar.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().chart.bar.minimumAddress, QStringLiteral("LW23")); QCOMPARE(result.objects.last().chart.meter.address, QStringLiteral("LB0"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QVERIFY(dialog.findChildren<HmiPermissionEditor *>().size() == 1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("ChartVisibleBitOn"))->isChecked()); dialog.findChild<QGroupBox *>(QStringLiteral("ChartVisible"))->setChecked(true); dialog.findChild<QGroupBox *>(QStringLiteral("ChartVisibleBit"))->setChecked(true); dialog.findChild<QRadioButton *>(QStringLiteral("ChartVisibleBitOff"))->click(); QVERIFY(dialog.object().chart.visibilityBitChosen); QVERIFY(!dialog.object().chart.visibility.bitState);
+    object.chart.visibility.visibilityEnabled = true; object.chart.visibility.wordEnabled = true; object.chart.visibility.dataType = 1; object.chart.visibility.wordAddress = QStringLiteral("LW65535"); QVERIFY(!object.chart.validateAddresses(project.connections, &error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartStrictPersistenceAndBackendGates
+ * Description     : Round-trip mixed and standalone charts while rejecting malformed drafts and unsupported source/device output atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartStrictPersistenceAndBackendGates() //20261112-1 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = chartObject();
+    ChartProperties parsed;
+    QJsonObject json;
+    QJsonObject form;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.chart.shape = 2; object.chart.bar.minimum = QStringLiteral("7"); object.chart.meter.address = QStringLiteral("LW20"); object.chart.donut.arc = true; object.chart.donut.spanAngle = QStringLiteral("270");
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), trackObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 22); QCOMPARE(loaded.toJson(), project.toJson());
+    only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(json, &only, &error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.chart.toJson(); json.insert(QStringLiteral("shape"), .5); parsed.shape = 1; QVERIFY(!ChartProperties::fromJson(json, &parsed, &error)); QCOMPARE(parsed.shape, 1); json = object.chart.toJson(); form = json.value(QStringLiteral("donut")).toObject(); form.remove(QStringLiteral("radius")); json.insert(QStringLiteral("donut"), form); QVERIFY(!ChartProperties::fromJson(json, &parsed, &error)); form = object.chart.meter.toJson(); form.insert(QStringLiteral("mainDivisions"), 4.5); json = object.chart.toJson(); json.insert(QStringLiteral("meter"), form); QVERIFY(!ChartProperties::fromJson(json, &parsed, &error)); json = object.chart.toJson(); json.insert(QStringLiteral("unknown"), false); QVERIFY(!ChartProperties::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-mixed.ksp")), &error), qPrintable(error)); QVERIFY2(only.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-only.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartStaticRasterAndClipping
+ * Description     : Check real clipped bar pixels, meter transparency and invisible donut rendering on the shared painter.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartStaticRasterAndClipping() //20261112-1 add
+{
+    ChartProperties properties;
+    QImage image(120, 90, QImage::Format_ARGB32);
+    QImage meter;
+    QPainter painter;
+    image.fill(Qt::transparent); painter.begin(&image); paintChart(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QCOMPARE(image.pixelColor(50, 20), QColor(Qt::yellow)); QCOMPARE(image.pixelColor(50, 60), QColor(Qt::red)); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+    properties.shape = 1; image.fill(Qt::transparent); painter.begin(&image); paintChart(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); meter = image; properties.meter.transparent = true; image.fill(Qt::transparent); painter.begin(&image); paintChart(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QVERIFY(image != meter); QCOMPARE(image.pixelColor(115, 50).alpha(), 0);
+    properties.shape = 2; properties.donut.lineType = 0; image.fill(Qt::transparent); painter.begin(&image); paintChart(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QCOMPARE(image.pixelColor(60, 10).alpha(), 0); properties.donut.lineType = 1; properties.donut.opacity = 0; image.fill(Qt::transparent); painter.begin(&image); paintChart(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QCOMPARE(image.pixelColor(60, 10).alpha(), 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartShellPlacementEditAndUndo
+ * Description     : Exercise the verified graphicsitem command, cancellation, geometry, compact address and property history.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::chartShellPlacementEditAndUndo() //20261112-1 add
+{
+    MainWindow window;
+    auto acceptChart = []() { ChartDialog *dialog = qobject_cast<ChartDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("ChartButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("graphicsitem"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptChart); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptChart); window.m_commands.value(QStringLiteral("graphicsitem"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(190, 150))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(190, 150))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(170, 130)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("图表")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().chart.bar.address, QStringLiteral("LW10"));
+    QTimer::singleShot(0, &window, []() { ChartDialog *dialog = qobject_cast<ChartDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("ChartButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().chart.shape, 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().chart.shape, 0); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

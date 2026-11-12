@@ -110,6 +110,10 @@ qt_add_executable(KinSealStudioLite WIN32
     src/move_track_properties.cpp
     src/move_track_dialog.h
     src/move_track_dialog.cpp
+    src/chart_properties.h #20261112-1 add
+    src/chart_properties.cpp
+    src/chart_dialog.h
+    src/chart_dialog.cpp
     src/number_display_properties.cpp
     src/number_display_dialog.h
     src/number_display_dialog.cpp
@@ -350,7 +354,7 @@ foreach(KINSEAL_WORD_MODEL_TARGET KinSealDeviceMacroTests KinSealNativeSourceTes
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE
         src/gif_display_properties.cpp src/number_display_properties.cpp src/ascii_display_properties.cpp
         src/time_display_properties.cpp src/screen_button_properties.cpp src/multi_state_button_properties.cpp
-        src/multi_function_button_properties.cpp src/dropdown_properties.cpp src/flow_block_properties.cpp src/slider_properties.cpp src/wheel_properties.cpp src/move_track_properties.cpp)
+        src/multi_function_button_properties.cpp src/dropdown_properties.cpp src/flow_block_properties.cpp src/slider_properties.cpp src/wheel_properties.cpp src/move_track_properties.cpp src/chart_properties.cpp)
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/message_display_properties.cpp src/message_display_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/scale_properties.cpp src/scale_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/qr_code_properties.cpp src/qr_code_properties.h) #20261112-0 add

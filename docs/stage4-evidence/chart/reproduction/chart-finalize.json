@@ -1,0 +1,30 @@
+{
+  "id": "C22",
+  "ordinal": 22,
+  "name": "图表",
+  "slug": "chart",
+  "task": "S04-08",
+  "next": "C23",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/chart/physical/chart-bar-baseline-r1/run.json",
+  "expectedPassed": 184,
+  "testRun": "docs/stage4-evidence/chart/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/chart/native/native-manifest.json",
+  "report": "docs/图表手册实现与验收.md",
+  "manual": "design_plan/图表功能与交互复刻手册.md",
+  "scope": "独立ChartProperties/Dialog，柱状图/仪表/圆环三套草稿、基本/外形/仅显现权限页；7数据类型及柱状范围复位、两极柱中点、常量/地址草稿、13图案、32线宽、仪表刻度实测边界与圆环/圆弧字段切换；22类混合/单类schema12、活动地址全跨度及复制、侧栏/创建/取消/撤销，静态PC预览和三形态原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C22-001",
+    "Q-S04-C22-002",
+    "Q-S04-C22-003",
+    "Q-S04-C22-004"
+  ],
+  "nativeSummary": "本轮实测入口graphicsitem与btn_metre（QPushButton），旧action_chart未在当前菜单找到；柱状/仪表默认I16、圆环U16。柱状7类型满范围及中点复位、13图案完整列表、圆环两处线宽1..32已枚举；仪表形状实际顺序半圆向上/全圆向上/全圆向下/四分之三圆向上，默认第二项；主刻度2..20、次刻度2..5、字号5..100；显示和源范围字段实际为QLineEdit。三份单根原源保存、重开、原厂编译和独立物理下载完成，未核验新版生成。",
+  "protocol": "三形态单根原厂源、编译关键DAT及三份实际下载见[汇总](stage4-evidence/chart/hardware-summary.json)，源SHA和字节表见[专项报告](图表手册实现与验收.md)。四项清除/底层更新均false，源SHA一致，DownLoadDlg/m_table确认完成，进程终止。没有按跨形态或跨进程多变量差异推断记录布局；来源retained_native_reference_source，Lite独立源/设备编码与下载仍阻塞。实际模型能力和拒绝测试见[门槛](stage4-evidence/chart/backend-gates.json)。未抓逐字节USB应答或设备读回，屏显/PLC与权限语义保持未验。",
+  "codeFiles": "src/chart_properties.*、chart_dialog.*、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "reviewFindings": [
+    "只读复核后修正图案色启用推测、活动动态源中点格式及地址选择器全跨度；确认三草稿结构、类型绑定、schema12和未知源/设备拒绝。",
+    "首次114/1/0保留，重新构建后115/0/0；布局和默认预览调整及非活动非默认草稿往返强化后，最终115/0/0，源59/0/0、SDK宏10/0/0，汇总184/0/0。",
+    "三种原厂基线实物下载成功不代表Lite独立编码、动态渲染或设备现场通过；精确绘制及源码格式未决明确记录。"
+  ]
+}

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 16,
-  "blockedLayers": 61,
-  "active": "C22",
+  "editorSlicesDelivered": 17,
+  "blockedLayers": 65,
+  "active": "C23",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -427,14 +427,36 @@
     {
       "id": "C22",
       "name": "图表",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立ChartProperties/Dialog，柱状图/仪表/圆环三套草稿、基本/外形/仅显现权限页；7数据类型及柱状范围复位、两极柱中点、常量/地址草稿、13图案、32线宽、仪表刻度实测边界与圆环/圆弧字段切换；22类混合/单类schema12、活动地址全跨度及复制、侧栏/创建/取消/撤销，静态PC预览和三形态原厂基线实物下载",
+      "evidence": "chart/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C22-001",
+        "Q-S04-C22-002",
+        "Q-S04-C22-003",
+        "Q-S04-C22-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/chart/physical/chart-bar-baseline-r1/run.json",
+      "hardwareEvidenceAdditional": [
+        "docs/stage4-evidence/chart/physical/chart-meter-baseline-r1/run.json",
+        "docs/stage4-evidence/chart/physical/chart-donut-baseline-r1/run.json"
+      ],
+      "hardwareBaselinesCompleted": 3
     },
     {
       "id": "C23",
       "name": "趋势图",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
