@@ -103,6 +103,7 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         addressSlots.append({Stage3AddressField::Operation, &object->xyCurve.readAddress, PlcAddressRole::Word, XyCurveProperties::wordCount(object->xyCurve.dataType) * u32(object->xyCurve.channelCount) * 2U});
         addressSlots.append({Stage3AddressField::TriggerBit, &object->xyCurve.triggerAddress, PlcAddressRole::Bit, 1U}); addressSlots.append({Stage3AddressField::ClearBit, &object->xyCurve.clearAddress, PlcAddressRole::Bit, 1U}); addConditionSlots(&object->xyCurve.visibility, false, &addressSlots);
     }
+    if (object->type == QStringLiteral("alarmbar")) { addConditionSlots(&object->alarmBar.visibility, false, &addressSlots); } //20261113-2 add
     if (object->type == QStringLiteral("datagroup")) //20261113-1 add: A group owns one full point buffer and independent active sample/maximum words.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->dataGroup.readAddress, PlcAddressRole::Word, object->dataGroup.readWordSpan()});
@@ -616,6 +617,29 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         {
             if (!groups.contains(object.group)) { groups.insert(object.group, QUuid::createUuid().toString(QUuid::WithoutBraces)); }
             object.group = groups.value(object.group);
+        }
+        if (object.type == QStringLiteral("alarmbar")) //20261113-2 add: Copy global alarm definitions only into a compatible project and validate navigation identities.
+        {
+            HmiConfigurationNode required;
+            HmiConfigurationNode peer;
+            AlarmRegistrationProperties alarms;
+            AlarmRegistrationProperties peerAlarms;
+            AlarmRegistrationRow row;
+            QString pageId;
+            bool reused;
+            Q_FOREACH (required, clipboard.source.configurationNodes)
+            {
+                if (required.kind != QStringLiteral("alarm") || !required.active || !required.implemented) { continue; }
+                if (!AlarmRegistrationProperties::fromJson(required.properties, &alarms, error)) { return false; }
+                reused = false;
+                Q_FOREACH (peer, candidate->configurationNodes)
+                {
+                    if (peer.id == required.id && peer.toJson() == required.toJson()) { reused = true; }
+                    else if (peer.id == required.id || (peer.kind == QStringLiteral("alarm") && peer.active && peer.implemented && AlarmRegistrationProperties::fromJson(peer.properties, &peerAlarms) && peerAlarms.family == alarms.family)) { return editError(error, QStringLiteral("目标工程已有不同的报警登录，粘贴已取消。")); }
+                }
+                if (alarms.family == 0) { Q_FOREACH (row, alarms.rows) { if (!row.used) { continue; } Q_FOREACH (pageId, (QStringList{row.jumpPageId, row.backPageId})) { if (pageId.isEmpty()) { continue; } reference = HmiReference(); reference.id = QStringLiteral("alarm-navigation"); reference.targetKind = QStringLiteral("page"); reference.targetId = pageId; if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; } } } }
+                if (!reused) { candidate->configurationNodes.append(required); }
+            }
         }
         if (object.type == QStringLiteral("historytrend")) //20261112-1 add: Reuse the exact collection or copy it only into an empty target; never overwrite a conflicting collector.
         {

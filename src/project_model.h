@@ -25,6 +25,8 @@
 #include "trend_properties.h" //20261112-1 add
 #include "history_trend_properties.h" //20261112-1 add
 #include "xy_curve_properties.h" //20261113-1 add
+#include "alarm_bar_properties.h" //20261113-2 add
+#include "alarm_registration_properties.h"
 #include "data_group_properties.h" //20261113-1 add
 #include "move_track_properties.h" //20261112-0 add
 #include "wheel_properties.h" //20261112-0 add
@@ -66,6 +68,7 @@ struct HmiObject
     TrendProperties trend; //20261112-1 add: Separate bar, meter and donut drafts.
     HistoryTrendProperties historyTrend; //20261112-1 add: Stable collection and item references for historical display.
     XyCurveProperties xyCurve; //20261113-1 add: Paired-coordinate sampling with two independent numeric axes.
+    AlarmBarProperties alarmBar; //20261113-2 add: Alarm rows belong to global registration nodes.
     DataGroupProperties dataGroup; //20261113-1 add: One point buffer with independent sample and maximum source drafts.
     MoveTrackProperties moveTrack; //20261112-0 add: Independent distance, graphic and constant/address drafts.
     WheelProperties wheel; //20261112-0 add: Independent numerical wheel and highlight-resource draft.

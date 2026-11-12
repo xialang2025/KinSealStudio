@@ -10,6 +10,8 @@
 #include "trend_dialog.h" //20261112-1 add
 #include "history_trend_dialog.h" //20261112-1 add
 #include "xy_curve_dialog.h" //20261113-1 add
+#include "alarm_bar_dialog.h" //20261113-2 add
+#include "alarm_registration_dialog.h"
 #include "data_group_dialog.h" //20261113-1 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
@@ -65,6 +67,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = QStringLiteral("历史趋势图"); object.geometry = QRect(0, 0, 240, 160); dialog = new HistoryTrendDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("xycurve")) //20261113-1 add
     { object.name = QStringLiteral("X-Y曲线"); object.geometry = QRect(0, 0, 240, 160); dialog = new XyCurveDialog(object, currentEditorProject(), this); }
+    else if (type == QStringLiteral("alarmbar")) //20261113-2 add
+    {
+        if (!hasAlarmRegistrations(currentEditorProject())) { QMessageBox::warning(this, QStringLiteral("动态报警条"), QStringLiteral("位报警和条件报警都不存在")); return; }
+        object.name = QStringLiteral("动态报警条"); object.geometry = QRect(0, 0, 320, 60); dialog = new AlarmBarDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("datagroup")) //20261113-1 add
     { object.name = QStringLiteral("数据群组"); object.geometry = QRect(0, 0, 240, 160); dialog = new DataGroupDialog(object, currentEditorProject(), this); }
     else if (type == QStringLiteral("track")) //20261112-0 add
@@ -133,6 +140,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
+        else if (type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
@@ -178,6 +186,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("trend")) { dialog = new TrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("historytrend")) { dialog = new HistoryTrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("xycurve")) { dialog = new XyCurveDialog(object, currentEditorProject(), this); } //20261113-1 add
+    else if (object.type == QStringLiteral("alarmbar")) { dialog = new AlarmBarDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("datagroup")) { dialog = new DataGroupDialog(object, currentEditorProject(), this); } //20261113-1 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -199,6 +208,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("xycurve")) { object = qobject_cast<XyCurveDialog *>(dialog)->object(); } //20261113-1 add
+        else if (object.type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
@@ -271,5 +281,44 @@ void MainWindow::deleteDataCollection(const QString &id) //20261112-1 add
             return;
         }
     }
+
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::configureAlarmRegistration
+ * Description     : Publish a complete global registration draft through one validated undoable project transaction.
+ * Input Parameters: family
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void MainWindow::configureAlarmRegistration(int family) //20261113-2 add
+{
+    HmiProject candidate = currentEditorProject();
+    HmiConfigurationNode node;
+    AlarmRegistrationProperties properties;
+    AlarmRegistrationDialog *dialog;
+    QString error;
+    int existing = -1;
+    int index;
+    if (!m_hasProject || family < 0 || family > 1) { return; }
+    for (index = 0; index < candidate.configurationNodes.size(); ++index) { if (candidate.configurationNodes[index].kind == QStringLiteral("alarm") && candidate.configurationNodes[index].active && candidate.configurationNodes[index].implemented && AlarmRegistrationProperties::fromJson(candidate.configurationNodes[index].properties, &properties) && properties.family == family) { node = candidate.configurationNodes[index]; existing = index; break; } }
+    dialog = new AlarmRegistrationDialog(node, candidate, family, this); if (dialog->exec() != QDialog::Accepted) { delete dialog; return; } if (existing < 0) { candidate.configurationNodes.append(dialog->node()); } else { candidate.configurationNodes[existing] = dialog->node(); } delete dialog; if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("报警登录未提交"), error); }
+
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::deleteAlarmRegistration
+ * Description     : Refuse clearing the last required registration or a referenced page by validating every page before publish.
+ * Input Parameters: family
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void MainWindow::deleteAlarmRegistration(int family) //20261113-2 add
+{
+    HmiProject candidate = currentEditorProject();
+    AlarmRegistrationProperties properties;
+    QString error;
+    int index;
+    for (index = 0; index < candidate.configurationNodes.size(); ++index) { if (candidate.configurationNodes[index].kind == QStringLiteral("alarm") && candidate.configurationNodes[index].active && candidate.configurationNodes[index].implemented && AlarmRegistrationProperties::fromJson(candidate.configurationNodes[index].properties, &properties) && properties.family == family) { candidate.configurationNodes.removeAt(index); if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("报警登录正在使用"), error); } return; } }
 
 }

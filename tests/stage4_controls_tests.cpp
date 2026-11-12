@@ -12,6 +12,8 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "alarm_bar_dialog.h" //20261113-2 add
+#include "alarm_registration_dialog.h"
 #include "data_group_dialog.h" //20261113-1 add
 #include "xy_curve_dialog.h" //20261113-1 add
 #include "history_trend_dialog.h" //20261112-1 add
@@ -160,6 +162,14 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void alarmDefinitionsModesBoundsAndStrictRows(); //20261113-2 add
+    void alarmRegistrationRowsLanguagesAndCommonType(); //20261113-2 add
+    void alarmPrerequisitesNavigationAndLanguageTransactions(); //20261113-2 add
+    void alarmBarDialogFieldsPermissionsAndCancel(); //20261113-2 add
+    void alarmStrictProjectPersistenceAndBackendGates(); //20261113-2 add
+    void alarmClipboardDefinitionsAndIndependentVisibility(); //20261113-2 add
+    void alarmStaticSamplePatternsAndClipping(); //20261113-2 add
+    void alarmShellGateRegistrationPlacementAndUndo(); //20261113-2 add
     void groupNativeDefaultsAndSingleChannelLimits(); //20261113-1 add
     void groupSampleAndMaximumDraftLifetime(); //20261113-1 add
     void groupPointBufferAndIndependentAddressRoles(); //20261113-1 add
@@ -3794,6 +3804,167 @@ void Stage4ControlTests::groupShellPlacementEditAndUndo() //20261113-1 add
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_dataGroup"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptGroup); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptGroup); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("数据群组")); QVERIFY(!window.m_textEdit->isEnabled()); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.readAddress, QStringLiteral("LW10"));
     QTimer::singleShot(0, &window, []() { DataGroupDialog *dialog = qobject_cast<DataGroupDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->setValue(800); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GroupButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.samplePoints, 800); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.samplePoints, 100); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : alarmProject
+ * Description     : Provide a typed alarm display and its two real multilingual definition rows.
+ * Input Parameters: None
+ * Return Value    : Complete C27 editor project.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject alarmProject() //20261113-2 add
+{
+    HmiProject project;
+    HmiObject object;
+    HmiConfigurationNode node;
+    AlarmRegistrationProperties properties;
+    object.id = QStringLiteral("alarmbar-1"); object.type = QStringLiteral("alarmbar"); object.name = QStringLiteral("动态报警条"); object.geometry = QRect(20, 20, 320, 60); properties.resizeRows(2, project.languages); properties.rows[0].messages[QStringLiteral("中文")] = QStringLiteral("ALM1"); node.id = QStringLiteral("alarm-bit"); node.kind = QStringLiteral("alarm"); node.name = QStringLiteral("数位地址报警"); node.active = true; node.implemented = true; node.properties = properties.toJson(); project.configurationNodes.append(node); project.objects = {object}; return project;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmDefinitionsModesBoundsAndStrictRows
+ * Description     : Cover all three bit families and four-level unsigned-first condition definitions with exact JSON atomicity.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmDefinitionsModesBoundsAndStrictRows() //20261113-2 add
+{
+    AlarmRegistrationProperties properties;
+    AlarmRegistrationProperties loaded;
+    QJsonObject json;
+    QString error;
+    properties.resizeRows(511, {QStringLiteral("中文")}); QCOMPARE(properties.rows.size(), 511); QCOMPARE(properties.readSpan(), 511U); QVERIFY(properties.rows.first().used); properties.bitType = 1; QCOMPARE(properties.readSpan(), 32U); properties.bitType = 2; QCOMPARE(properties.readSpan(), 1U); properties.count = 512; QVERIFY(!properties.validate(&error)); properties.count = 511; QVERIFY(properties.validate(&error)); properties.family = 1; properties.resizeRows(31, {QStringLiteral("中文")}); QCOMPARE(properties.rows.size(), 124); QCOMPARE(AlarmRegistrationProperties::dataTypes().at(0), QStringLiteral("16位正整数")); properties.dataType = 3; QCOMPARE(properties.readSpan(), 62U); properties.rows[0].limit = QStringLiteral("-123"); QVERIFY(properties.validate(&error)); json = properties.toJson(); QVERIFY(AlarmRegistrationProperties::fromJson(json, &loaded, &error)); QCOMPARE(loaded.toJson(), json); json.insert(QStringLiteral("dataType"), 1.5); QVERIFY(!AlarmRegistrationProperties::fromJson(json, &loaded, &error)); QCOMPARE(loaded.toJson(), properties.toJson()); json = properties.toJson(); json.insert(QStringLiteral("extra"), true); QVERIFY(!AlarmRegistrationProperties::fromJson(json, &loaded, &error)); properties.rows[0].limit = QStringLiteral("nan"); QVERIFY(!properties.validate(&error)); properties.rows[0].used = false; QVERIFY(properties.validate(&error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmRegistrationRowsLanguagesAndCommonType
+ * Description     : Verify selected-row language isolation, used flags and common condition type without premature project writes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmRegistrationRowsLanguagesAndCommonType() //20261113-2 add
+{
+    HmiProject project;
+    HmiConfigurationNode node;
+    AlarmRegistrationProperties properties;
+    QString error;
+    project.languages = {QStringLiteral("中文"), QStringLiteral("English")}; AlarmRegistrationDialog dialog(node, project, 1); dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QComboBox *>(QStringLiteral("AlarmRegistrationCount"))->setCurrentIndex(2); QCOMPARE(dialog.findChild<QTableWidget *>(QStringLiteral("AlarmRegistrationTable"))->rowCount(), 8); dialog.findChild<QComboBox *>(QStringLiteral("AlarmConditionDataType"))->setCurrentIndex(3); dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage"))->setText(QStringLiteral("LOW")); QVERIFY(QMetaObject::invokeMethod(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage")), "textEdited", Q_ARG(QString, QStringLiteral("LOW")))); dialog.findChild<QLineEdit *>(QStringLiteral("AlarmConditionLimit"))->setText(QStringLiteral("-123")); QVERIFY(QMetaObject::invokeMethod(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmConditionLimit")), "textEdited", Q_ARG(QString, QStringLiteral("-123")))); dialog.findChild<QTableWidget *>(QStringLiteral("AlarmRegistrationTable"))->setCurrentCell(4, 1); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmRowAddress"))->text(), QStringLiteral("LW2")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("AlarmConditionDataType"))->currentIndex(), 3); dialog.findChild<QTableWidget *>(QStringLiteral("AlarmRegistrationTable"))->setCurrentCell(0, 1); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage"))->text(), QStringLiteral("LOW")); dialog.findChild<QComboBox *>(QStringLiteral("AlarmLanguage"))->setCurrentText(QStringLiteral("English")); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage"))->text().isEmpty()); dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage"))->setText(QStringLiteral("LOW EN")); QVERIFY(QMetaObject::invokeMethod(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmMessage")), "textEdited", Q_ARG(QString, QStringLiteral("LOW EN")))); dialog.findChild<QTableWidget *>(QStringLiteral("AlarmRegistrationTable"))->item(1, 0)->setCheckState(Qt::Unchecked); QVERIFY(AlarmRegistrationProperties::fromJson(dialog.node().properties, &properties, &error)); QCOMPARE(properties.rows[0].messages.value(QStringLiteral("中文")), QStringLiteral("LOW")); QCOMPARE(properties.rows[0].messages.value(QStringLiteral("English")), QStringLiteral("LOW EN")); QCOMPARE(properties.rows[0].limit, QStringLiteral("-123")); QVERIFY(!properties.rows[1].used); QVERIFY(project.configurationNodes.isEmpty()); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("alarm-condition.png")))); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmPrerequisitesNavigationAndLanguageTransactions
+ * Description     : Protect all-page alarm consumers, active navigation, full address spans and language changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmPrerequisitesNavigationAndLanguageTransactions() //20261113-2 add
+{
+    HmiProject project = alarmProject();
+    HmiProject sentinel;
+    HmiPage page;
+    AlarmRegistrationProperties definitions;
+    QString error;
+    QVERIFY(project.validateModel(&error)); QVERIFY(AlarmRegistrationProperties::fromJson(project.configurationNodes.first().properties, &definitions, &error)); definitions.readAddress = QStringLiteral("LB4096"); QVERIFY(!definitions.validateContext(project, &error)); definitions.bitType = 1; definitions.readAddress = QStringLiteral("LW4096"); QVERIFY(definitions.validateContext(project, &error)); definitions.family = 1; definitions.dataType = 3; definitions.resizeRows(2, project.languages); QVERIFY(!definitions.validateContext(project, &error)); definitions.readAddress = QStringLiteral("LW4093"); QVERIFY(definitions.validateContext(project, &error));
+    page.width = 800; page.height = 480; page.id = QStringLiteral("alarm-target"); page.kind = QStringLiteral("normal"); page.name = QStringLiteral("报警目标"); QVERIFY(project.addPage(page, &error)); QVERIFY(AlarmRegistrationProperties::fromJson(project.configurationNodes.first().properties, &definitions, &error)); definitions.rows[0].jumpPageId = page.id; project.configurationNodes[0].properties = definitions.toJson(); QVERIFY(project.validateModel(&error)); sentinel = project; QVERIFY(!project.removePage(page.id, &error)); QCOMPARE(project.toJson(), sentinel.toJson()); definitions.rows[0].used = false; project.configurationNodes[0].properties = definitions.toJson(); QVERIFY(project.removePage(page.id, &error));
+    QVERIFY(project.setLanguages({QStringLiteral("中文"), QStringLiteral("English")}, &error)); QVERIFY(AlarmRegistrationProperties::fromJson(project.configurationNodes.first().properties, &definitions, &error)); QVERIFY(definitions.rows[0].messages.contains(QStringLiteral("English"))); project.configurationNodes.clear(); QVERIFY(!project.validateModel(&error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmBarDialogFieldsPermissionsAndCancel
+ * Description     : Exercise measured speed and patterns, independent radio groups, display-only permissions and draft cancellation.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmBarDialogFieldsPermissionsAndCancel() //20261113-2 add
+{
+    HmiProject project = alarmProject();
+    HmiObject original = project.objects.first();
+    AlarmBarDialog dialog(original, project);
+    QSpinBox *speed = dialog.findChild<QSpinBox *>(QStringLiteral("AlarmSpeed"));
+    QComboBox *pattern = dialog.findChild<QComboBox *>(QStringLiteral("AlarmPattern"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(speed->minimum(), 0); QCOMPARE(speed->maximum(), 30); speed->setValue(99); QCOMPARE(speed->value(), 30); QCOMPARE(pattern->count(), 13); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("AlarmFontSize"))->count(), 5); dialog.findChild<QRadioButton *>(QStringLiteral("AlarmRight"))->setChecked(true); dialog.findChild<QRadioButton *>(QStringLiteral("AlarmReverseTime"))->setChecked(true); QCOMPARE(dialog.object().alarmBar.direction, 1); QCOMPARE(dialog.object().alarmBar.sortOrder, 1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("AlarmLeft"))->isChecked()); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("AlarmVisibleBitAddress")) != nullptr); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("alarm-basic.png")))); } dialog.reject(); QCOMPARE(project.objects.first().toJson(), original.toJson());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmStrictProjectPersistenceAndBackendGates
+ * Description     : Round-trip registration-only and mixed typed files while preserving source/device refusal and sentinel outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmStrictProjectPersistenceAndBackendGates() //20261113-2 add
+{
+    HmiProject project = alarmProject();
+    HmiProject loaded;
+    HmiProject mixed = historyProject();
+    QJsonObject json;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    QVERIFY(HmiProject::fromJson(project.toJson(), &loaded, &error)); QCOMPARE(loaded.toJson(), project.toJson()); json = project.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); project.objects.clear(); QCOMPARE(project.toJson().value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(project.toJson(), &loaded, &error)); project = alarmProject(); mixed.configurationNodes.append(project.configurationNodes.first()); mixed.objects.append(project.objects.first()); QVERIFY2(HmiProject::fromJson(mixed.toJson(), &loaded, &error), qPrintable(error)); QVERIFY(!describeProjectCapabilities(project).value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString().contains(QStringLiteral("candidate"))); QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")}); json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &loaded, &error)); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("alarm-only.ksp")), &error)); QVERIFY(mixed.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("alarm-mixed.ksp")), &error)); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmClipboardDefinitionsAndIndependentVisibility
+ * Description     : Keep global definitions shared on duplicate, merge exact dependencies on paste and reject conflicts atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmClipboardDefinitionsAndIndependentVisibility() //20261113-2 add
+{
+    HmiProject project = alarmProject();
+    HmiProject result;
+    HmiProject target;
+    HmiProject sentinel;
+    Stage3DuplicateOptions options;
+    Stage3Clipboard clipboard;
+    AlarmRegistrationProperties definitions;
+    QString error;
+    project.objects[0].alarmBar.visibility.visibilityEnabled = true; project.objects[0].alarmBar.visibility.bitEnabled = true; project.objects[0].alarmBar.visibility.bitAddress = QStringLiteral("LB10"); project.objects[0].alarmBar.visibilityBitChosen = true; options.columns = 2; options.increments = {{Stage3AddressField::VisibilityBit, 2, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().alarmBar.visibility.bitAddress, QStringLiteral("LB12")); QCOMPARE(result.configurationNodes.size(), 1); QVERIFY(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10, 10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.configurationNodes.size(), 1); QVERIFY(result.validateModel(&error)); target = alarmProject(); target.objects.clear(); QVERIFY(AlarmRegistrationProperties::fromJson(target.configurationNodes.first().properties, &definitions, &error)); definitions.rows[0].messages[QStringLiteral("中文")] = QStringLiteral("different"); target.configurationNodes[0].properties = definitions.toJson(); sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10, 10), &sentinel, nullptr, &error)); QCOMPARE(sentinel.toJson(), result.toJson());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmStaticSamplePatternsAndClipping
+ * Description     : Verify every fill and all font sizes remain inside the supplied canvas rectangle without runtime alarm input.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmStaticSamplePatternsAndClipping() //20261113-2 add
+{
+    AlarmBarProperties properties;
+    QImage image(160, 100, QImage::Format_ARGB32);
+    QPainter painter;
+    int pattern;
+    for (pattern = 0; pattern < 13; ++pattern) { image.fill(Qt::magenta); properties.pattern = pattern; properties.fontSize = 64; painter.begin(&image); paintAlarmBar(&painter, QRectF(20, 20, 120, 60), properties); painter.end(); QCOMPARE(image.pixelColor(1, 1), QColor(Qt::magenta)); QCOMPARE(image.pixelColor(159, 99), QColor(Qt::magenta)); QVERIFY(image.pixelColor(20, 20) != QColor(Qt::magenta)); } properties.speed = -1; QVERIFY(!properties.validate()); properties.speed = 0; properties.fontSize = 15; QVERIFY(!properties.validate());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::alarmShellGateRegistrationPlacementAndUndo
+ * Description     : Verify the actual shell gate, configuration transaction, placement, compact fields and undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::alarmShellGateRegistrationPlacementAndUndo() //20261113-2 add
+{
+    MainWindow window;
+    auto acceptAlarm = []() { AlarmBarDialog *dialog = qobject_cast<AlarmBarDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_dynamicarlarm"))); QTimer::singleShot(0, &window, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { QCOMPARE(message->text(), QStringLiteral("位报警和条件报警都不存在")); message->accept(); } }); window.m_commands.value(QStringLiteral("action_dynamicarlarm"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, []() { AlarmRegistrationDialog *dialog = qobject_cast<AlarmRegistrationDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QComboBox *>(QStringLiteral("AlarmRegistrationCount"))->setCurrentIndex(2); dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmRegistrationButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.configureAlarmRegistration(0); QCOMPARE(window.currentEditorProject().configurationNodes.size(), 1); QVERIFY(hasAlarmRegistrations(window.currentEditorProject())); QTimer::singleShot(0, &window, acceptAlarm); window.m_commands.value(QStringLiteral("action_dynamicarlarm"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(340, 80))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(340, 80))); QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(320, 60)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("动态报警条")); QVERIFY(!window.m_textEdit->isEnabled()); QVERIFY(!window.m_addressEdit->isEnabled()); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty());
+
 }
 
 QTEST_MAIN(Stage4ControlTests)

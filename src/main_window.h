@@ -60,6 +60,8 @@ private slots:
     void editStaticText();
     void createStage4Control(const QString &type); //20261112-0 add
     void editStage4Control();
+    void configureAlarmRegistration(int family); //20261113-2 add
+    void deleteAlarmRegistration(int family);
     void configureDataCollection(const QString &id = QString()); //20261112-1 add
     void deleteDataCollection(const QString &id);
     void configureLanguages();

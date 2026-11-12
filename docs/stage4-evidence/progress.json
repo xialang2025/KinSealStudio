@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 21,
-  "blockedLayers": 81,
-  "active": "C27",
+  "editorSlicesDelivered": 22,
+  "blockedLayers": 85,
+  "active": "C28",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -552,14 +552,31 @@
     {
       "id": "C27",
       "name": "动态报警条",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立报警登录定义与动态报警条两页属性；三种数位报警类型、0..511条、条件报警0..31组×四级、1..3600秒、无符号优先7类型、逐行使用/阈值/多语言消息与普通画面跳转/跳回；13填充样式、0..30速度、两组独立方向/排序、五字号、仅显现权限；schema12、全页前置与导航保护、依赖复制冲突拒绝、语言事务、树编辑/删除、创建/取消/撤销、固定Sample Message预览及原厂基线实物下载",
+      "evidence": "alarm-bar/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C27-001",
+        "Q-S04-C27-002",
+        "Q-S04-C27-003",
+        "Q-S04-C27-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/alarm-bar/physical/alarm-baseline-r1/run.json"
     },
     {
       "id": "C28",
       "name": "报警显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

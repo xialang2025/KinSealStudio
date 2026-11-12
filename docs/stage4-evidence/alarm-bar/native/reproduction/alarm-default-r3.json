@@ -1,0 +1,278 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "tree-double",
+    "entry": "条件报警"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "CondAlarmTable",
+    "label": "condition-two-registers-r3"
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "CondAlarmTable",
+    "row": 0,
+    "column": 1
+  },
+  {
+    "op": "dump",
+    "label": "condition-row0-r3"
+  },
+  {
+    "op": "screenshot",
+    "label": "condition-two-registers-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 31
+  },
+  {
+    "op": "dump",
+    "label": "condition-size31-r3"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  },
+  {
+    "op": "tree-double",
+    "entry": "数位地址报警"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nAlarmType",
+    "value": 0
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 511
+  },
+  {
+    "op": "dump",
+    "label": "bit-mode-0-max-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "label": "bit-mode-0-two-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nAlarmType",
+    "value": 1
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 511
+  },
+  {
+    "op": "dump",
+    "label": "bit-mode-1-max-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "label": "bit-mode-1-two-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nAlarmType",
+    "value": 2
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 511
+  },
+  {
+    "op": "dump",
+    "label": "bit-mode-2-max-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "label": "bit-mode-2-two-r3"
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nAlarmType",
+    "value": 0
+  },
+  {
+    "op": "combo",
+    "kind": "QComboBox",
+    "name": "nReadLen",
+    "value": 2
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "row": 0,
+    "column": 2
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sMessage",
+    "value": "ALM1"
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "row": 1,
+    "column": 2
+  },
+  {
+    "op": "text-edit",
+    "kind": "QLineEdit",
+    "name": "sMessage",
+    "value": "ALM2"
+  },
+  {
+    "op": "dump",
+    "label": "bit-registered-messages-r3"
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "BitAlarmTable",
+    "label": "bit-registered-messages-r3"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "save",
+    "output": "alarm-bit-registration.sm"
+  },
+  {
+    "op": "action",
+    "name": "action_dynamicarlarm"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-basic-r3"
+  },
+  {
+    "op": "screenshot",
+    "label": "alarm-basic-r3"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "alarm-access-r3"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      480,
+      180
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "alarm-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "alarm-default-r3"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "alarm-reopened-r3"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

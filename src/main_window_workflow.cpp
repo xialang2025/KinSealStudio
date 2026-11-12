@@ -430,7 +430,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     parent = new QTreeWidgetItem(settings, {QStringLiteral("报警登录")});
     Q_FOREACH (label, (QStringList{QStringLiteral("数位地址报警"), QStringLiteral("条件报警")}))
     {
-        item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, QStringLiteral("unsupported"));
+        item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, label == QStringLiteral("数位地址报警") ? QStringLiteral("alarm-bit") : QStringLiteral("alarm-condition")); //20261113-2 change
     }
     parent = new QTreeWidgetItem(settings, {QStringLiteral("宏指令")});
     Q_FOREACH (label, (QStringList{QStringLiteral("全局宏"), QStringLiteral("初始化宏"), QStringLiteral("宏指令编辑器")}))

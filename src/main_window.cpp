@@ -652,6 +652,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
+        else if (role == QStringLiteral("alarm-bit") || role == QStringLiteral("alarm-condition")) { configureAlarmRegistration(role == QStringLiteral("alarm-bit") ? 0 : 1); } //20261113-2 add
         else if (role == QStringLiteral("dataCollection")) { configureDataCollection(pageId); } //20261112-1 add
         else if (role == QStringLiteral("macros")) { showGlobalTool(3); }
         else if (role == QStringLiteral("unsupported")) {
@@ -663,6 +664,11 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         QTreeWidgetItem *item = m_systemSettingsTree->itemAt(position);
         QString id;
         QMenu menu(this);
+        if (item != nullptr && (item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") || item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-condition"))) //20261113-2 add
+        {
+            int family = item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") ? 0 : 1;
+            menu.addAction(QStringLiteral("配置"), this, [this, family]() { configureAlarmRegistration(family); }); menu.addAction(QStringLiteral("删除"), this, [this, family]() { deleteAlarmRegistration(family); }); menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position)); return;
+        }
         if (item == nullptr || item->data(0, Qt::UserRole).toString() != QStringLiteral("dataCollection")) { return; }
         id = item->data(0, Qt::UserRole + 1).toString();
         if (id.isEmpty()) { menu.addAction(QStringLiteral("新增"), this, [this]() { configureDataCollection(); }); }
@@ -995,6 +1001,7 @@ void MainWindow::applySelectedProperties() //20261107-6 add
     { object.multiStateButton.monitorAddress = object.address.trimmed(); if (object.multiStateButton.sameAddress) { object.multiStateButton.writeAddress = object.multiStateButton.monitorAddress; } object.address.clear(); if (!object.multiStateButton.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("多态按钮属性未提交"), controlError); return; } }
     if (object.type == QStringLiteral("chart")) //20261112-1 add: Compact edits affect only the selected chart form monitor.
     { object.chart.setAddress(object.address.trimmed()); object.address.clear(); if (!object.chart.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("图表属性未提交"), controlError); return; } }
+    if (object.type == QStringLiteral("alarmbar")) { object.address.clear(); object.text.clear(); } //20261113-2 add
     if (object.type == QStringLiteral("historytrend")) { object.address.clear(); object.text.clear(); } //20261112-1 add: A historical curve has no direct operation carrier.
     if (object.type == QStringLiteral("trend")) //20261112-1 add: Compact edits affect only the selected trend form monitor.
     { object.trend.readAddress = object.address.trimmed(); object.address.clear(); if (!object.trend.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("趋势图属性未提交"), controlError); return; } }
@@ -1472,8 +1479,8 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("screen") || object.type == QStringLiteral("multifunction"))) { m_addressEdit->setEnabled(false); } //20261112-0 change: MF commands cannot be represented by a single compact address field.
-    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup"))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.
-    if (selected && (object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
+    if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("alarmbar"))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.
+    if (selected && (object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
     m_widthSpin->setEnabled(selected);

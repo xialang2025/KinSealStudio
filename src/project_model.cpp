@@ -258,6 +258,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("trend")) { json.insert(QStringLiteral("trend"), trend.toJson()); } //20261112-1 add
     if (type == QStringLiteral("historytrend")) { json.insert(QStringLiteral("historytrend"), historyTrend.toJson()); } //20261112-1 add
     if (type == QStringLiteral("xycurve")) { json.insert(QStringLiteral("xycurve"), xyCurve.toJson()); } //20261113-1 add
+    if (type == QStringLiteral("alarmbar")) { json.insert(QStringLiteral("alarmBar"), alarmBar.toJson()); } //20261113-2 add
     if (type == QStringLiteral("datagroup")) { json.insert(QStringLiteral("datagroup"), dataGroup.toJson()); } //20261113-1 add
     if (type == QStringLiteral("track")) { json.insert(QStringLiteral("moveTrack"), moveTrack.toJson()); } //20261112-0 add
     if (type == QStringLiteral("wheel")) { json.insert(QStringLiteral("wheel"), wheel.toJson()); } //20261112-0 add
@@ -306,7 +307,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("multiFunctionButton"), QStringLiteral("dropdown"), QStringLiteral("flowBlock"), QStringLiteral("slider"), QStringLiteral("wheel"), QStringLiteral("moveTrack"), QStringLiteral("chart"), QStringLiteral("trend"), QStringLiteral("historytrend"), QStringLiteral("xycurve"), QStringLiteral("datagroup"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("multiFunctionButton"), QStringLiteral("dropdown"), QStringLiteral("flowBlock"), QStringLiteral("slider"), QStringLiteral("wheel"), QStringLiteral("moveTrack"), QStringLiteral("chart"), QStringLiteral("trend"), QStringLiteral("historytrend"), QStringLiteral("xycurve"), QStringLiteral("datagroup"), QStringLiteral("alarmBar"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -337,6 +338,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("xycurve")) //20261113-1 add
         {
             if (!item.value().isObject() || !XyCurveProperties::fromJson(item.value().toObject(), &object->xyCurve, error)) { return false; }
+        }
+        else if (key == QStringLiteral("alarmBar")) //20261113-2 add
+        {
+            if (!item.value().isObject() || !AlarmBarProperties::fromJson(item.value().toObject(), &object->alarmBar, error)) { return false; }
         }
         else if (key == QStringLiteral("datagroup")) //20261113-1 add
         {
@@ -436,6 +441,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     if ((object->type == QStringLiteral("trend")) != json.contains(QStringLiteral("trend"))) { return modelError(error, QStringLiteral("趋势图类型与专有属性不匹配。")); } //20261112-1 add
     if ((object->type == QStringLiteral("historytrend")) != json.contains(QStringLiteral("historytrend"))) { return modelError(error, QStringLiteral("历史趋势图类型与专有属性不匹配。")); } //20261112-1 add
     if ((object->type == QStringLiteral("xycurve")) != json.contains(QStringLiteral("xycurve"))) { return modelError(error, QStringLiteral("X-Y曲线类型与专有属性不匹配。")); } //20261113-1 add
+    if ((object->type == QStringLiteral("alarmbar")) != json.contains(QStringLiteral("alarmBar"))) { return modelError(error, QStringLiteral("动态报警条类型与专有属性不匹配。")); } //20261113-2 add
     if ((object->type == QStringLiteral("datagroup")) != json.contains(QStringLiteral("datagroup"))) { return modelError(error, QStringLiteral("数据群组类型与专有属性不匹配。")); } //20261113-1 add
     if ((object->type == QStringLiteral("track")) != json.contains(QStringLiteral("moveTrack"))) { return modelError(error, QStringLiteral("移动轨迹类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("wheel")) != json.contains(QStringLiteral("wheel"))) { return modelError(error, QStringLiteral("滚轮类型与专有属性不匹配。")); } //20261112-0 add
@@ -521,6 +527,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->type != QStringLiteral("trend") && //20261112-1 add
          object->type != QStringLiteral("historytrend") && //20261112-1 add
          object->type != QStringLiteral("xycurve") && //20261113-1 add
+         object->type != QStringLiteral("alarmbar") && //20261113-2 add
          object->type != QStringLiteral("datagroup") && //20261113-1 add
          object->type != QStringLiteral("track") && //20261112-0 add
          object->type != QStringLiteral("wheel") && //20261112-0 add
@@ -696,6 +703,11 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
     candidate.kind = json.value(QStringLiteral("kind")).toString(); candidate.ownerPageId = json.value(QStringLiteral("ownerPageId")).toString();
     candidate.implemented = json.value(QStringLiteral("implemented")).toBool(); candidate.active = json.value(QStringLiteral("active")).toBool();
     candidate.properties = json.value(QStringLiteral("properties")).toObject(); candidate.extensions = json.value(QStringLiteral("extensions")).toObject();
+    if (candidate.kind == QStringLiteral("alarm") && candidate.implemented && candidate.active && candidate.ownerPageId.isEmpty()) //20261113-2 add
+    {
+        AlarmRegistrationProperties properties;
+        if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() || candidate.name.size() > 48 || !AlarmRegistrationProperties::fromJson(candidate.properties, &properties, error) || !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error)) { return false; } *node = candidate; return true;
+    }
     if (candidate.kind == QStringLiteral("dataCollection") && candidate.implemented && candidate.active && candidate.ownerPageId.isEmpty()) //20261112-1 add
     {
         DataCollectionProperties properties;
@@ -824,10 +836,10 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     {
         Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.hasImageDisplayProperties) { schema = 11; stage1 = true; } }
     }
-    Q_FOREACH (node, configurationNodes) { if (node.kind == QStringLiteral("dataCollection") && node.implemented && node.active) { schema = 12; stage1 = true; } } //20261112-1 add: Collector-only files must emit every required schema12 container.
+    Q_FOREACH (node, configurationNodes) { if ((node.kind == QStringLiteral("dataCollection") || node.kind == QStringLiteral("alarm")) && node.implemented && node.active) { schema = 12; stage1 = true; } } //20261112-1 add: Collector-only files must emit every required schema12 container.
     if (!animations.isEmpty()) { schema = 12; stage1 = true; } //20261112-0 add
     Q_FOREACH (page, allPages())
-    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("track") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
+    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("track") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
     if (schema >= 12)
     {
         for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture) { animationJson.insert(picture.key(), QString::fromLatin1(picture.value().toBase64())); }
@@ -1074,6 +1086,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         }
         Q_FOREACH (value, json.value(QStringLiteral("configurationNodes")).toArray())
         {
+            if (schema < 12 && value.toObject().value(QStringLiteral("kind")).toString() == QStringLiteral("alarm") && (value.toObject().value(QStringLiteral("active")).toBool() || value.toObject().value(QStringLiteral("implemented")).toBool())) { return modelError(error, QStringLiteral("报警登录专有数据必须使用schema12。")); } //20261113-2 add
             if (!value.isObject() || !HmiConfigurationNode::fromJson(value.toObject(), &node, error)) { return false; }
             loaded.configurationNodes.append(node);
         }
@@ -1108,7 +1121,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         }
         if (!HmiPage::fromJson(pageJson, &page, error)) { return false; }
         if (schema < 12) //20261112-0 change: A lower schema cannot conceal newly typed numeric or animation fields.
-        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton")) || value.toObject().contains(QStringLiteral("multiFunctionButton")) || value.toObject().contains(QStringLiteral("dropdown")) || value.toObject().contains(QStringLiteral("flowBlock")) || value.toObject().contains(QStringLiteral("slider")) || value.toObject().contains(QStringLiteral("wheel")) || value.toObject().contains(QStringLiteral("moveTrack")) || value.toObject().contains(QStringLiteral("chart")) || value.toObject().contains(QStringLiteral("trend")) || value.toObject().contains(QStringLiteral("historytrend")) || value.toObject().contains(QStringLiteral("xycurve")) || value.toObject().contains(QStringLiteral("datagroup"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
+        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton")) || value.toObject().contains(QStringLiteral("multiFunctionButton")) || value.toObject().contains(QStringLiteral("dropdown")) || value.toObject().contains(QStringLiteral("flowBlock")) || value.toObject().contains(QStringLiteral("slider")) || value.toObject().contains(QStringLiteral("wheel")) || value.toObject().contains(QStringLiteral("moveTrack")) || value.toObject().contains(QStringLiteral("chart")) || value.toObject().contains(QStringLiteral("trend")) || value.toObject().contains(QStringLiteral("historytrend")) || value.toObject().contains(QStringLiteral("xycurve")) || value.toObject().contains(QStringLiteral("datagroup")) || value.toObject().contains(QStringLiteral("alarmBar"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
         if (parsedPageIds.contains(page.id)) { return modelError(error, QStringLiteral("页面稳定ID重复：%1。").arg(page.id)); }
         parsedPageIds.insert(page.id);
         if (page.id == loaded.activePageId) { assignActivePage(&loaded, page); activeFound = true; }
@@ -1384,6 +1397,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             }
         }
     }
+    if (!validateAlarmRegistrations(*this, error)) { return false; } //20261113-2 add: Resolve global alarms and all-page consumers before publishing any edit.
     if (hasSystemSettings && !readStage2SystemSettings(*this, &systemSettings, error)) { return false; } //20261110-7 add
     if (macros.size() > 128 || pictures.size() > 256) { return modelError(error, QStringLiteral("宏或图库数量超过Lite保护上限。")); }
     macroUnits = 0;
@@ -1746,6 +1760,21 @@ bool HmiProject::setLanguages(const QStringList &newLanguages, QString *error) /
         if (pages.at(pageIndex).id == candidate.activePageId) { assignActivePage(&candidate, pages.at(pageIndex)); }
         else { candidate.inactivePages.append(pages.at(pageIndex)); }
     }
+    //20261113-2 add: Keep each alarm row aligned with the accepted project language transaction.
+    {
+        AlarmRegistrationProperties alarms;
+        QMap<QString, QString> messages;
+        QString language;
+        int nodeIndex;
+        int rowIndex;
+        for (nodeIndex = 0; nodeIndex < candidate.configurationNodes.size(); ++nodeIndex)
+        {
+            if (candidate.configurationNodes[nodeIndex].kind != QStringLiteral("alarm") || !candidate.configurationNodes[nodeIndex].active || !candidate.configurationNodes[nodeIndex].implemented) { continue; }
+            if (!AlarmRegistrationProperties::fromJson(candidate.configurationNodes[nodeIndex].properties, &alarms, error)) { return false; }
+            for (rowIndex = 0; rowIndex < alarms.rows.size(); ++rowIndex) { messages.clear(); Q_FOREACH (language, newLanguages) { messages.insert(language, alarms.rows[rowIndex].messages.value(language)); } alarms.rows[rowIndex].messages = messages; }
+            candidate.configurationNodes[nodeIndex].properties = alarms.toJson();
+        }
+    }
     candidate.languages = newLanguages;
     if (!newLanguages.contains(candidate.activeLanguage)) { candidate.activeLanguage = newLanguages.value(0); }
     if (!candidate.validateModel(error)) { return false; }
@@ -1787,6 +1816,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
         if (object.type == QStringLiteral("trend") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.trend.validate(error) || !object.trend.validateAddresses(connections, error))) { return false; } //20261112-1 add
         if (object.type == QStringLiteral("historytrend") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.historyTrend.validate(error) || !object.historyTrend.validateAddresses(connections, error))) { return false; } //20261112-1 add
         if (object.type == QStringLiteral("xycurve") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.xyCurve.validate(error) || !object.xyCurve.validateAddresses(connections, error))) { return false; } //20261113-1 add
+        if (object.type == QStringLiteral("alarmbar") && (!object.address.isEmpty() || !object.text.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.alarmBar.validate(error) || !object.alarmBar.validateAddresses(connections, error))) { return false; } //20261113-2 add
         if (object.type == QStringLiteral("datagroup") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.dataGroup.validate(error) || !object.dataGroup.validateAddresses(connections, error))) { return false; } //20261113-1 add
         if (object.type == QStringLiteral("track") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.moveTrack.validate(error) || !object.moveTrack.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("wheel") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.wheel.validate(error) || !object.wheel.validateAddresses(connections, error))) { return false; } //20261112-0 add

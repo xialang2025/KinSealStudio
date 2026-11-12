@@ -1,0 +1,31 @@
+{
+  "id": "C27",
+  "ordinal": 27,
+  "name": "动态报警条",
+  "slug": "alarm-bar",
+  "task": "S04-10",
+  "next": "C28",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/alarm-bar/physical/alarm-baseline-r1/run.json",
+  "expectedPassed": 219,
+  "testRun": "docs/stage4-evidence/alarm-bar/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/alarm-bar/native/native-manifest.json",
+  "report": "docs/动态报警条手册实现与验收.md",
+  "manual": "design_plan/动态报警条功能与交互复刻手册.md",
+  "scope": "独立报警登录定义与动态报警条两页属性；三种数位报警类型、0..511条、条件报警0..31组×四级、1..3600秒、无符号优先7类型、逐行使用/阈值/多语言消息与普通画面跳转/跳回；13填充样式、0..30速度、两组独立方向/排序、五字号、仅显现权限；schema12、全页前置与导航保护、依赖复制冲突拒绝、语言事务、树编辑/删除、创建/取消/撤销、固定Sample Message预览及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C27-001",
+    "Q-S04-C27-002",
+    "Q-S04-C27-003",
+    "Q-S04-C27-004"
+  ],
+  "nativeSummary": "原厂补证确认：动态报警条没有报警登录时提示“位报警和条件报警都不存在”；Speed实为0..30，默认3；样式13项，边框默认#e0e0e0、背景#c0c0c0。数位报警条数0..511（最大511行），三种类型分别使用位/字地址，切换先弹“是否更改当前报警类型”；条件大小0..31，每组生成低低/低/高/高高四行，默认全部使用，数据类型整组共用且无符号优先，32位第二组地址LW2。条件-123阈值和消息保存重开保留。r3/r5同步类型切换等待确认而超时已保留为失败证据，r7/r8通过排队调用和明确确认完成补证。r6的条件报警部分已保存、编译并重开；整轮末尾数位报警树未成功打开，因此该轮整体仍按partial-or-error保留，未改写成全流程成功。",
+  "protocol": "报警登录与报警条按独立编辑模型保存；原厂位报警基线及条件阈值变体已保存/重开/编译。默认报警条原厂基线实物下载完成，四清除/更新关闭，输入/待传SHA一致；独立SM和设备布局仍未恢复，实际CLI继续拒绝。0..511报警条、0..31条件组×4行、整组类型与Speed0..30是本轮原厂UI观察，未据此推断USB包格式或固件运行。",
+  "codeFiles": "src/alarm_bar_properties.*、alarm_bar_dialog.*、alarm_registration_properties.*、alarm_registration_dialog.*、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.*、main_window_workflow.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "codeMarker": "//20261113-2",
+  "reviewFindings": [
+    "只读检查先发现测试API名称、页面尺寸、schemaVersion名称和报警配置单独文件降级保护；修正明确问题后进行实际构建与测试。",
+    "全页前置和导航引用、依赖复制冲突、行/语言隔离、类型共用、活动地址跨度、旧字段拒绝与输出不可变性均有实际测试。",
+    "219/0/0来自150控件+59源+10SDK宏；实物日志仅支持原厂基线传输，独立编码、实屏和PLC结论保持分层。"
+  ]
+}
