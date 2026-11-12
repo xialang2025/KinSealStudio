@@ -79,14 +79,15 @@
         "P_SM": "blocked",
         "R_PC": "slice",
         "C": "blocked",
-        "T": "not_run",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
         "E": "unobserved"
       },
       "unresolved": [
         "Q-S04-C07-001",
         "Q-S04-C07-002",
         "Q-S04-C07-003"
-      ]
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/scale/physical/scale-native-baseline-r1/run.json"
     },
     {
       "id": "C08",
@@ -540,9 +541,9 @@
     "beforeNextControl": "C21",
     "authorization": "2026-11-12 user physical download requirement",
     "independentEncoderAndNativeReferenceMustRemainDistinct": true,
-    "nativeReferenceCompleted": 1,
+    "nativeReferenceCompleted": 2,
     "totalBackfill": 14,
-    "next": "C07",
+    "next": "C08",
     "referenceBackfillComplete": false
   }
 }

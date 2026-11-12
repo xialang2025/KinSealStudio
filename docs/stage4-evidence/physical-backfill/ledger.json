@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 2,
-  "queued": 13,
+  "newNativeReferenceCompleted": 3,
+  "queued": 12,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -150,7 +150,7 @@
       "id": "C07",
       "name": "刻度",
       "family": "scale",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C07-product.ksp",
         "sha256": "3b2232f234f33ce8642a78e95fb50d8b1082b21a2de5f124015dbe7df23892d6",
@@ -231,7 +231,16 @@
         "bytes": 5402
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/scale/physical/scale-native-baseline-r1/run.json",
+        "sourceSha256": "1502f0404df7133cfd71b6a4b847f9815ae17323bb355fdaf4bd96635f61c2d4",
+        "completedAtUtc": "2026-11-12T11:16:43.023861+00:00",
+        "cleanup": {
+          "deletedFiles": 44,
+          "logicalBytes": 80638371.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C08",
@@ -1286,7 +1295,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C07",
+  "next": "C08",
   "complete": false,
   "referenceBackfillComplete": false
 }
