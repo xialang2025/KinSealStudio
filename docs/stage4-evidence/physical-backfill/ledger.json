@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 10,
-  "queued": 5,
+  "newNativeReferenceCompleted": 11,
+  "queued": 4,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -918,7 +918,7 @@
       "id": "C15",
       "name": "多态按钮",
       "family": "multi-state-button",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C15-product.ksp",
         "sha256": "90ace43d01db2f4138f1b0e1f3ceb321851be0388cfc67d2d15e5a9c75ee52bd",
@@ -999,7 +999,16 @@
         "bytes": 4526
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/multi-state-button/physical/multi-state-button-native-baseline-r1/run.json",
+        "sourceSha256": "14b52a06c8a58c915d735a6c05848ac0b09b264c073f58560de222736bd588ab",
+        "completedAtUtc": "2026-11-12T11:29:09.568164+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80652641.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C16",
@@ -1358,7 +1367,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C15",
+  "next": "C16",
   "complete": false,
   "referenceBackfillComplete": false
 }
