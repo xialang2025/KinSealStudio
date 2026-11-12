@@ -254,6 +254,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("qrcode")) { json.insert(QStringLiteral("qrCode"), qrCode.toJson()); } //20261112-0 add
     if (type == QStringLiteral("gif")) { json.insert(QStringLiteral("gifDisplay"), gifDisplay.toJson()); } //20261112-0 add
     if (type == QStringLiteral("number") && hasNumberDisplayProperties) { json.insert(QStringLiteral("numberDisplay"), numberDisplay.toJson()); } //20261112-0 add
+    if (type == QStringLiteral("multifunction")) { json.insert(QStringLiteral("multiFunctionButton"), multiFunctionButton.toJson()); } //20261112-0 add
     if (type == QStringLiteral("multistate")) { json.insert(QStringLiteral("multiStateButton"), multiStateButton.toJson()); } //20261112-0 add
     if (type == QStringLiteral("screen")) { json.insert(QStringLiteral("screenButton"), screenButton.toJson()); } //20261112-0 add
     if (type == QStringLiteral("time")) { json.insert(QStringLiteral("timeDisplay"), timeDisplay.toJson()); } //20261112-0 add
@@ -295,7 +296,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("multiFunctionButton"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -310,6 +311,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("multiFunctionButton")) //20261112-0 add
+        {
+            if (!item.value().isObject() || !MultiFunctionButtonProperties::fromJson(item.value().toObject(), &object->multiFunctionButton, error)) { return false; }
         }
         else if (key == QStringLiteral("multiStateButton")) //20261112-0 add
         {
@@ -377,6 +382,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     object->hasImageDisplayProperties = json.contains(QStringLiteral("imageDisplay")); //20261112-0 add
     object->hasNumberDisplayProperties = json.contains(QStringLiteral("numberDisplay")); //20261112-0 add
     if (object->hasNumberDisplayProperties && object->type != QStringLiteral("number")) { return modelError(error, QStringLiteral("数值类型与专有属性不匹配。")); }
+    if ((object->type == QStringLiteral("multifunction")) != json.contains(QStringLiteral("multiFunctionButton"))) { return modelError(error, QStringLiteral("多功能按钮类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("multistate")) != json.contains(QStringLiteral("multiStateButton"))) { return modelError(error, QStringLiteral("多态按钮类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("screen")) != json.contains(QStringLiteral("screenButton"))) { return modelError(error, QStringLiteral("画面按钮类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("time")) != json.contains(QStringLiteral("timeDisplay")) || (object->type == QStringLiteral("time") && !json.value(QStringLiteral("address")).toString().isEmpty())) { return modelError(error, QStringLiteral("时间类型、专有属性或空RTC载体不匹配。")); } //20261112-0 add
@@ -451,6 +457,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->bitButton.pressTime > 255 || object->bitButton.states[0].text.fontSize > 128)) ||
         (object->type != QStringLiteral("switch") &&
          object->type != QStringLiteral("number") &&
+         object->type != QStringLiteral("multifunction") && //20261112-0 add
          object->type != QStringLiteral("multistate") && //20261112-0 add
          object->type != QStringLiteral("screen") && //20261112-0 add
          object->type != QStringLiteral("time") && //20261112-0 add
@@ -743,7 +750,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     }
     if (!animations.isEmpty()) { schema = 12; stage1 = true; } //20261112-0 add
     Q_FOREACH (page, allPages())
-    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
+    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
     if (schema >= 12)
     {
         for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture) { animationJson.insert(picture.key(), QString::fromLatin1(picture.value().toBase64())); }
@@ -1024,7 +1031,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         }
         if (!HmiPage::fromJson(pageJson, &page, error)) { return false; }
         if (schema < 12) //20261112-0 change: A lower schema cannot conceal newly typed numeric or animation fields.
-        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
+        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton")) || value.toObject().contains(QStringLiteral("multiFunctionButton"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
         if (parsedPageIds.contains(page.id)) { return modelError(error, QStringLiteral("页面稳定ID重复：%1。").arg(page.id)); }
         parsedPageIds.insert(page.id);
         if (page.id == loaded.activePageId) { assignActivePage(&loaded, page); activeFound = true; }
@@ -1230,6 +1237,14 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             if (object.hasBitButtonProperties && object.bitButton.macroEnabled && !macros.contains(object.bitButton.macroName))
             {
                 return modelError(error, QStringLiteral("控件%1引用了不存在的宏%2。").arg(object.id, object.bitButton.macroName));
+            }
+            if (object.type == QStringLiteral("multifunction")) //20261112-0 add: Every command carries its own stable navigation dependency.
+            {
+                MultiFunctionCommand command;
+                Q_FOREACH (command, object.multiFunctionButton.commands)
+                {
+                    if (command.kind == 1 && (command.operation == 0 || command.operation == 2) && (!navigationPageKinds.contains(command.activeTarget()) || navigationPageKinds.value(command.activeTarget()) != (command.operation == 0 ? QStringLiteral("normal") : QStringLiteral("window")))) { return modelError(error, QStringLiteral("多功能按钮命令目标缺失或页面类型不匹配。")); }
+                }
             }
             if (object.type == QStringLiteral("screen") && (!object.screenButton.activeTarget().isEmpty() || object.screenButton.action == 0 || object.screenButton.action == 2)) //20261112-0 add
             {
@@ -1449,6 +1464,11 @@ bool HmiProject::copyPage(const QString &id, const QString &newName, QString *ne
     {
         key = copy.objects.at(index).id; copy.objects[index].id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         ids.insert(QStringLiteral("object/") + key, copy.objects.at(index).id);
+        if (copy.objects[index].type == QStringLiteral("multifunction")) //20261112-0 add: Remap all self-navigation command drafts on page copy.
+        {
+            for (MultiFunctionCommand &command : copy.objects[index].multiFunctionButton.commands)
+            { if (command.screenPageId == id) { command.screenPageId = copy.id; } if (command.windowPageId == id) { command.windowPageId = copy.id; } }
+        }
         if (copy.objects[index].type == QStringLiteral("screen")) //20261112-0 add: Self-navigation follows the duplicated page identity.
         { if (copy.objects[index].screenButton.screenPageId == id) { copy.objects[index].screenButton.screenPageId = copy.id; } if (copy.objects[index].screenButton.windowPageId == id) { copy.objects[index].screenButton.windowPageId = copy.id; } }
         key = copy.objects.at(index).group;
@@ -1661,6 +1681,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
         if (object.type == QStringLiteral("gif") && (object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasImageDisplayProperties || !object.address.isEmpty() ||
             !object.gifDisplay.validate(error) || !object.gifDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.hasNumberDisplayProperties && (object.type != QStringLiteral("number") || object.hasBitButtonProperties || object.hasStaticTextProperties || !object.numberDisplay.validate(error) || !object.numberDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add
+        if (object.type == QStringLiteral("multifunction") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.multiFunctionButton.validate(error) || !object.multiFunctionButton.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("multistate") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.multiStateButton.validate(error) || !object.multiStateButton.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("screen") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.screenButton.validate(error) || !object.screenButton.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("time") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.timeDisplay.validate(error) || !object.timeDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add

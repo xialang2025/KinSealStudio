@@ -968,6 +968,8 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.staticText.languageTexts.insert(m_project.activeLanguage, object.text);
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
+    if (object.type == QStringLiteral("multifunction")) //20261112-0 add: Keep the compact text field on the active language of the independent MF appearance.
+    { if (object.multiFunctionButton.common.states[0].sameLanguage) { object.multiFunctionButton.common.states[0].sharedText = object.text; } else { object.multiFunctionButton.common.states[0].text.languageTexts.insert(m_project.activeLanguage, object.text); } object.text = bitButtonContent(object.multiFunctionButton.common.states[0], m_project.languages.first()); }
     if (object.type == QStringLiteral("multistate")) //20261112-0 add: Preserve per-language OFF text in the independent multi-state record.
     { if (object.multiStateButton.common.states[0].sameLanguage) { object.multiStateButton.common.states[0].sharedText = object.text; } else { object.multiStateButton.common.states[0].text.languageTexts.insert(m_project.activeLanguage, object.text); } object.text = bitButtonContent(object.multiStateButton.common.states[0], m_project.languages.first()); }
     if (object.type == QStringLiteral("screen")) //20261112-0 add: Compact text edits the real OFF state; page targets are never numeric addresses.
@@ -1438,7 +1440,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_textEdit->setEnabled(selected);
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
-    if (selected && object.type == QStringLiteral("screen")) { m_addressEdit->setEnabled(false); } //20261112-0 add
+    if (selected && (object.type == QStringLiteral("screen") || object.type == QStringLiteral("multifunction"))) { m_addressEdit->setEnabled(false); } //20261112-0 change: MF commands cannot be represented by a single compact address field.
     if (selected && object.type == QStringLiteral("ascii")) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("time") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
@@ -1461,6 +1463,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         {
             m_textEdit->setPlainText(bitButtonContent(object.bitButton.states[0], m_project.activeLanguage));
         }
+        if (object.type == QStringLiteral("multifunction")) { m_textEdit->setPlainText(bitButtonContent(object.multiFunctionButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add
         if (object.type == QStringLiteral("multistate")) { m_textEdit->setPlainText(bitButtonContent(object.multiStateButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add
         if (object.type == QStringLiteral("screen")) { m_textEdit->setPlainText(bitButtonContent(object.screenButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add: A compact edit must read the same language that it will update.
         if (object.type == QStringLiteral("qrcode")) { m_textEdit->setPlainText(object.qrCode.description); } //20261112-0 add

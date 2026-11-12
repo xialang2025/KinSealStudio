@@ -91,14 +91,15 @@ BitButtonDialog::BitButtonDialog(const HmiObject &object, const HmiProject &proj
     }
     setProperty("plcConnections", connectionsJson.toVariantList());
 
+    if (m_working.type == QStringLiteral("multifunction")) { m_working.bitButton = m_working.multiFunctionButton.common; } //20261112-0 add
     if (m_working.type == QStringLiteral("multistate")) { m_working.bitButton = m_working.multiStateButton.common; } //20261112-0 add
     if (m_working.type == QStringLiteral("screen")) { m_working.bitButton = m_working.screenButton.common; } //20261112-0 add: Adapt only the shared editor, retaining the independent screen record.
-    setWindowTitle(m_working.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮") : m_working.type == QStringLiteral("screen") ? QStringLiteral("画面按钮") : m_working.hasFunctionButtonProperties ? QStringLiteral("功能按钮") : //20261110-0 change
+    setWindowTitle(m_working.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮") : m_working.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮") : m_working.type == QStringLiteral("screen") ? QStringLiteral("画面按钮") : m_working.hasFunctionButtonProperties ? QStringLiteral("功能按钮") : //20261110-0 change
                    m_working.hasLampProperties ? QStringLiteral("位指示灯") :
                    m_working.hasWordButtonProperties ? QStringLiteral("字按钮") : QStringLiteral("位按钮")); //20261109-8 change
     setObjectName(QStringLiteral("BitButtonDialog")); resize(820, 578);
-    m_working.type = object.type == QStringLiteral("multistate") ? QStringLiteral("multistate") : object.type == QStringLiteral("screen") ? QStringLiteral("screen") : QStringLiteral("switch"); m_working.hasBitButtonProperties = true; //20261112-0 change
-    if (m_working.address.isEmpty() && !m_working.hasLampProperties && !m_working.hasFunctionButtonProperties && m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate")) { m_working.address = m_working.hasWordButtonProperties ? QStringLiteral("LW0") : QStringLiteral("LB0"); } //20261110-0 change
+    m_working.type = object.type == QStringLiteral("multifunction") ? QStringLiteral("multifunction") : object.type == QStringLiteral("multistate") ? QStringLiteral("multistate") : object.type == QStringLiteral("screen") ? QStringLiteral("screen") : QStringLiteral("switch"); m_working.hasBitButtonProperties = true; //20261112-0 change
+    if (m_working.address.isEmpty() && !m_working.hasLampProperties && !m_working.hasFunctionButtonProperties && m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate") && m_working.type != QStringLiteral("multifunction")) { m_working.address = m_working.hasWordButtonProperties ? QStringLiteral("LW0") : QStringLiteral("LB0"); } //20261110-0 change
     if (m_working.hasWordButtonProperties || m_working.hasFunctionButtonProperties) //20261110-0 change: Address-free system functions never create read monitors.
     {
         m_working.bitButton.indicator = false;
@@ -109,8 +110,8 @@ BitButtonDialog::BitButtonDialog(const HmiObject &object, const HmiProject &proj
     if (!m_project.languages.contains(m_language)) { m_language = m_project.languages.first(); }
     layout = new QGridLayout(this); layout->setContentsMargins(10, 10, 10, 10);
     tabs = new QTabWidget(this); tabs->setObjectName(QStringLiteral("BitButtonTabs"));
-    tabs->addTab(createGeneral(), QStringLiteral("通用设置"));
-    tabs->addTab(createMonitor(), QStringLiteral("指示灯设置"));
+    tabs->addTab(createGeneral(), m_working.type == QStringLiteral("multifunction") ? QStringLiteral("基本设置") : QStringLiteral("通用设置")); //20261112-0 change
+    if (m_working.type != QStringLiteral("multifunction")) { tabs->addTab(createMonitor(), QStringLiteral("指示灯设置")); }
     tabs->addTab(createAppearance(), QStringLiteral("外观设置"));
     tabs->addTab(createPermissions(), QStringLiteral("权限设置"));
     if (m_working.type == QStringLiteral("screen")) { m_flash->setEnabled(false); } //20261112-0 add: Native screen text flashing remains unavailable in this slice.
@@ -181,6 +182,7 @@ QWidget *BitButtonDialog::createGeneral() //20261108-15 add
     QPushButton *write;
     int index;
 
+    if (m_working.type == QStringLiteral("multifunction")) { return createMfGeneral(); } //20261112-0 add
     if (m_working.type == QStringLiteral("multistate")) { return createMultiGeneral(); } //20261112-0 add
     if (m_working.type == QStringLiteral("screen")) { return createScreenGeneral(); } //20261112-0 add
     if (m_working.hasFunctionButtonProperties) { return createFunctionGeneral(); } //20261110-0 add
@@ -706,6 +708,11 @@ QWidget *BitButtonDialog::createAppearance() //20261108-15 add
         m_stateSpin->setRange(0, 0); m_stateSpin->setEnabled(false);
         layout->addWidget(m_functionPressedEffect, 1, 2);
     }
+    if (m_working.type == QStringLiteral("multifunction")) //20261112-0 add
+    {
+        m_mfPressedEffect = new QCheckBox(QStringLiteral("按下效果"), page); m_mfPressedEffect->setObjectName(QStringLiteral("MfPressedEffect")); m_mfPressedEffect->setChecked(m_working.multiFunctionButton.pressedEffect); layout->addWidget(m_mfPressedEffect, 1, 2);
+        connect(m_mfPressedEffect, &QCheckBox::toggled, this, [this]() { refreshMfAppearance(); });
+    }
     text = new QGroupBox(QStringLiteral("文本属性"), page); textLayout = new QGridLayout(text);
     m_text = new QPlainTextEdit(text); m_text->setFixedHeight(112); m_text->setObjectName(QStringLiteral("BitText"));
     textLayout->addWidget(m_text, 0, 0, 1, 6);
@@ -717,7 +724,7 @@ QWidget *BitButtonDialog::createAppearance() //20261108-15 add
     m_bold->setFixedWidth(32); m_italic->setFixedWidth(32); m_underline->setFixedWidth(32);
     textLayout->addWidget(m_bold, 1, 0); textLayout->addWidget(m_italic, 1, 1); textLayout->addWidget(m_underline, 1, 2);
     m_font = new QFontComboBox(text); m_font->setMinimumContentsLength(6); m_font->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon); m_font->setObjectName(QStringLiteral("BitFont"));
-    m_size = new QSpinBox(text); m_size->setRange(1, (m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 128 : 4096); m_size->setObjectName(QStringLiteral("BitSize")); //20261110-0 change: Match the native function caption editor's bounds.
+    m_size = new QSpinBox(text); m_size->setRange(1, (m_working.type == QStringLiteral("multifunction") || m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 128 : 4096); m_size->setObjectName(QStringLiteral("BitSize")); //20261110-0 change: Match the native function caption editor's bounds.
     m_alignment = new QComboBox(text); m_alignment->addItems({QStringLiteral("居中"), QStringLiteral("左对齐"), QStringLiteral("右对齐")}); m_alignment->setObjectName(QStringLiteral("BitAlignment"));
     m_textColor = new QPushButton(text); m_textColor->setMinimumHeight(24); m_textColor->setObjectName(QStringLiteral("BitTextColor"));
     textLayout->addWidget(new QLabel(QStringLiteral("字体:"), text), 2, 0); textLayout->addWidget(m_font, 2, 1, 1, 2);
@@ -767,6 +774,7 @@ QWidget *BitButtonDialog::createAppearance() //20261108-15 add
         BitButtonState *extraState; //20261109-8 add
         int index;
         if (m_loading) { return; }
+        if (m_working.type == QStringLiteral("multifunction")) { appearance(m_state).effect3d = enabled; refresh(); return; } //20261112-0 add
         if (m_working.type == QStringLiteral("multistate")) { appearance(m_state).effect3d = enabled; refresh(); return; } //20261112-0 add: Multi-state editor appearances keep independent draft flags.
         m_working.bitButton.states[0].effect3d = enabled; m_working.bitButton.states[1].effect3d = enabled; refresh();
         if (m_working.hasLampProperties)
@@ -781,6 +789,7 @@ QWidget *BitButtonDialog::createAppearance() //20261108-15 add
         BitButtonState *extraState; //20261109-8 add
         int index;
         if (m_loading) { return; }
+        if (m_working.type == QStringLiteral("multifunction")) { appearance(m_state).transparent = enabled; refresh(); return; } //20261112-0 add
         if (m_working.type == QStringLiteral("multistate")) { appearance(m_state).transparent = enabled; refresh(); return; } //20261112-0 add
         m_working.bitButton.states[0].transparent = enabled; m_working.bitButton.states[1].transparent = enabled; refresh();
         if (m_working.hasLampProperties)
@@ -894,6 +903,8 @@ QWidget *BitButtonDialog::createPermissions() //20261108-15 add
     page = new QWidget(this); layout = new QGridLayout(page);
     m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("BitVisibility"), m_working.bitButton.visibility, false, page);
     m_touch = new HmiPermissionEditor(QStringLiteral("触控有效"), QStringLiteral("BitTouch"), m_working.bitButton.touch, true, page);
+    if (m_working.type == QStringLiteral("multifunction")) //20261112-0 add: Keep the measured initially empty bit radios independent of their dormant value.
+    { m_visibility->configureUnchosenBitState(m_working.multiFunctionButton.visibilityBitChosen); m_touch->configureUnchosenBitState(m_working.multiFunctionButton.touchBitChosen); }
     layout->addWidget(m_visibility, 0, 0); layout->addWidget(m_touch, 0, 1);
     m_notice = new QGroupBox(QStringLiteral("通知"), page); m_notice->setCheckable(true); m_notice->setChecked(m_working.bitButton.notice); m_notice->setObjectName(QStringLiteral("BitNotice"));
     noticeLayout = new QGridLayout(m_notice); //20261109-0 change: Native notification fields are available after enabling their parent group.
@@ -963,9 +974,10 @@ QWidget *BitButtonDialog::createPermissions() //20261108-15 add
     layout->addWidget(m_notice, 1, 0, 1, 2);
     m_press = new QCheckBox(QStringLiteral("按压时间"), page); m_press->setChecked(m_working.bitButton.pressTimeEnabled); m_press->setObjectName(QStringLiteral("BitPressEnabled"));
     m_pressValues = new QWidget(page); pressLayout = new QHBoxLayout(m_pressValues); pressLayout->setContentsMargins(0, 0, 0, 0);
-    m_pressTime = new QSpinBox(m_pressValues); m_pressTime->setRange((m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 0 : 1, (m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 255 : 65535); m_pressTime->setValue(m_working.bitButton.pressTime); m_pressTime->setObjectName(QStringLiteral("BitPressTime")); //20261110-0 change: Native function hold time is an unsigned byte, including zero.
+    m_pressTime = new QSpinBox(m_pressValues); m_pressTime->setRange((m_working.type == QStringLiteral("multifunction") || m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 0 : 1, (m_working.type == QStringLiteral("multifunction") || m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("screen") || m_working.type == QStringLiteral("multistate")) ? 255 : 65535); m_pressTime->setValue(m_working.bitButton.pressTime); m_pressTime->setObjectName(QStringLiteral("BitPressTime")); //20261110-0 change: Native function hold time is an unsigned byte, including zero.
     pressLayout->addWidget(m_pressTime); pressLayout->addWidget(new QLabel(QStringLiteral("x100毫秒"), m_pressValues));
     layout->addWidget(m_press, 2, 0); layout->addWidget(m_pressValues, 2, 1); layout->setRowStretch(3, 1);
+    if (m_working.type == QStringLiteral("multifunction")) { m_notice->hide(); } //20261112-0 add: Native MF has no notification group.
     m_pressValues->setVisible(m_press->isChecked()); connect(m_press, &QCheckBox::toggled, m_pressValues, &QWidget::setVisible);
     if (m_working.hasLampProperties) //20261109-8 add: Display-only controls have no touch or hold-time column.
     {
@@ -1059,6 +1071,8 @@ void BitButtonDialog::refresh() //20261108-15 add
     }
     if (m_working.type == QStringLiteral("screen")) { m_background->setEnabled(!state.useImage); m_opacity->setEnabled(m_transparent->isChecked()); } //20261112-0 add: Screen opacity follows its native transparency toggle.
     if (m_working.type == QStringLiteral("multistate")) { m_background->setEnabled(!state.useImage); m_opacity->setEnabled(!state.useImage); } //20261112-0 add: The native C15 no-image record enables fill and alpha even with transparency unchecked.
+    if (m_working.type == QStringLiteral("multifunction")) //20261112-0 add: No-image fill uses the declared shared editor behavior; its exact native cache lifetime remains open.
+    { m_background->setEnabled(!state.useImage); m_opacity->setEnabled(m_transparent->isChecked()); refreshMfAppearance(); }
     m_preview->state = state; m_preview->language = m_language; m_preview->update();
 }
 
@@ -1074,7 +1088,7 @@ void BitButtonDialog::refreshMonitor() //20261108-15 add
     bool independent;
     bool loading;
     if (m_working.hasLampProperties) { refreshLampMonitor(); return; } //20261109-8 add
-    if (m_working.hasWordButtonProperties || m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("multistate")) { return; } //20261110-0 change
+    if (m_working.hasWordButtonProperties || m_working.hasFunctionButtonProperties || m_working.type == QStringLiteral("multistate") || m_working.type == QStringLiteral("multifunction")) { return; } //20261110-0 change
     loading = m_loading; m_loading = true;
     m_monitor->setEnabled(m_indicator->isChecked());
     independent = !m_monitorSame->isChecked();
@@ -1098,7 +1112,7 @@ HmiObject BitButtonDialog::object() //20261108-15 add
     BitButtonProperties *properties;
     HmiObject result; //20261112-0 add
     storeState(); properties = &m_working.bitButton;
-    if (!m_working.hasLampProperties && !m_working.hasFunctionButtonProperties && m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate")) { m_working.address = m_address->text().trimmed(); } //20261110-0 change: System functions have no operation address.
+    if (!m_working.hasLampProperties && !m_working.hasFunctionButtonProperties && m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate") && m_working.type != QStringLiteral("multifunction")) { m_working.address = m_address->text().trimmed(); } //20261110-0 change: System functions have no operation address.
     if (m_working.hasFunctionButtonProperties) //20261110-0 add: Collect system-function fields independently of bit/word operations.
     {
         m_working.functionButton.function = m_function->currentIndex();
@@ -1128,14 +1142,14 @@ HmiObject BitButtonDialog::object() //20261108-15 add
         m_working.wordButton.decimalDigits = m_wordDecimalDigits->value(); m_working.wordButton.pressedEffect = m_wordPressedEffect->isChecked();
         properties->indicator = false; properties->dualMonitor = false;
     }
-    else if (m_working.type == QStringLiteral("multistate")) { properties->indicator = false; properties->dualMonitor = false; } //20261112-0 add
+    else if (m_working.type == QStringLiteral("multistate") || m_working.type == QStringLiteral("multifunction")) { properties->indicator = false; properties->dualMonitor = false; } //20261112-0 add
     else
     {
         properties->operation = m_operation->currentIndex();
         properties->indicator = m_indicator->isChecked(); properties->dualMonitor = m_monitor->isChecked();
         properties->monitorSame = m_monitorSame->isChecked(); properties->bitIndex = m_bitIndex->value();
     }
-    if (m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate")) { properties->macroEnabled = m_macro->isChecked(); properties->macroName = m_macroList->currentText(); } //20261112-0 change: Preserve the disabled screen macro-name draft.
+    if (m_working.type != QStringLiteral("screen") && m_working.type != QStringLiteral("multistate") && m_working.type != QStringLiteral("multifunction")) { properties->macroEnabled = m_macro->isChecked(); properties->macroName = m_macroList->currentText(); } //20261112-0 change: Preserve the disabled screen macro-name draft.
     properties->visibility = m_visibility->properties(); properties->touch = m_touch->properties();
     properties->notice = m_notice->isChecked(); properties->noticeBit = m_noticeBit->isChecked(); properties->noticeWord = m_noticeWord->isChecked();
     properties->noticeBitAddress = m_noticeBitAddress->text(); properties->noticeBitValue = m_noticeBitOn->isChecked(); //20261109-0 add
@@ -1147,6 +1161,10 @@ HmiObject BitButtonDialog::object() //20261108-15 add
         properties->pressTimeEnabled = false;
     }
     m_working.text = bitButtonContent(properties->states[0], m_project.languages.first());
+    if (m_working.type == QStringLiteral("multifunction")) //20261112-0 add: The internal artwork adapter never escapes as an active ordinary switch.
+    {
+        storeMfCommand(); result = m_working; result.hasBitButtonProperties = false; result.address.clear(); result.multiFunctionButton.common = *properties; result.multiFunctionButton.pressedEffect = m_mfPressedEffect->isChecked(); result.multiFunctionButton.visibilityBitChosen = m_visibility->bitStateChosen(); result.multiFunctionButton.touchBitChosen = m_touch->bitStateChosen(); return result;
+    }
     if (m_working.type == QStringLiteral("multistate")) //20261112-0 add: Extra states and monitor/write roles remain independent of both Switch and Lamp native records.
     {
         result = m_working; result.hasBitButtonProperties = false; result.address.clear(); result.multiStateButton.common = *properties; result.multiStateButton.dataType = m_multiDataType->currentIndex(); result.multiStateButton.monitorAddress = m_multiMonitor->text(); result.multiStateButton.writeAddress = m_multiWrite->text(); result.multiStateButton.sameAddress = m_multiSame->isChecked(); result.multiStateButton.action = m_multiActions->checkedId(); return result;
@@ -1605,13 +1623,13 @@ void BitButtonDialog::accept() //20261108-15 add
     QString monitorAddress; //20261109-8 add
 
     draft = object();
-    if (draft.type == QStringLiteral("screen") || draft.type == QStringLiteral("multistate")) //20261112-0 change: Validate the complete project so stable targets and every active shared carrier are checked before accepting.
+    if (draft.type == QStringLiteral("screen") || draft.type == QStringLiteral("multistate") || draft.type == QStringLiteral("multifunction")) //20261112-0 change: Validate the complete project so stable targets and every active shared carrier are checked before accepting.
     {
         candidate = m_project; replaced = false;
         if (draft.id.isEmpty()) { draft.id = QUuid::createUuid().toString(QUuid::WithoutBraces); }
         for (index = 0; index < candidate.objects.size(); ++index) { if (candidate.objects.at(index).id == draft.id) { candidate.objects[index] = draft; replaced = true; break; } }
         if (!replaced) { candidate.objects.append(draft); }
-        if (!candidate.validateModel(&error)) { QMessageBox::warning(this, draft.type == QStringLiteral("screen") ? QStringLiteral("画面按钮属性无效") : QStringLiteral("多态按钮属性无效"), error); return; }
+        if (!candidate.validateModel(&error)) { QMessageBox::warning(this, draft.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮属性无效") : draft.type == QStringLiteral("screen") ? QStringLiteral("画面按钮属性无效") : QStringLiteral("多态按钮属性无效"), error); return; }
         QDialog::accept(); return;
     }
     if (draft.hasLampProperties && draft.lamp.monitorMode == 0) //20261109-8 add: Native acceptance resolves the unchecked draft to multi-state monitoring.

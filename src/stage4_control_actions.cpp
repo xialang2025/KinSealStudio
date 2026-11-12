@@ -40,6 +40,10 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = QStringLiteral("数值显示器"); object.geometry = QRect(0, 0, 120, 60); object.address = QStringLiteral("LW0"); object.hasNumberDisplayProperties = true;
         dialog = new NumberDisplayDialog(object, currentEditorProject(), this);
     }
+    else if (type == QStringLiteral("multifunction")) //20261112-0 add
+    {
+        object.name = QStringLiteral("多功能按钮"); object.geometry = QRect(0, 0, 160, 80); dialog = new BitButtonDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("multistate")) //20261112-0 add
     {
         object.name = QStringLiteral("多态按钮"); object.geometry = QRect(0, 0, 120, 60); dialog = new BitButtonDialog(object, currentEditorProject(), this);
@@ -78,7 +82,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     if (dialog->exec() == QDialog::Accepted)
     {
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
-        else if (type == QStringLiteral("multistate") || type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }
+        else if (type == QStringLiteral("multifunction") || type == QStringLiteral("multistate") || type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
@@ -112,7 +116,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     object = m_canvas->selectedObject(&selected);
     if (!selected) { return; }
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
-    else if (object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { dialog = new BitButtonDialog(object, currentEditorProject(), this); } //20261112-0 add
+    else if (object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { dialog = new BitButtonDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("qrcode")) { dialog = new QrCodeDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("gif")) { dialog = new GifDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("number")) { dialog = new NumberDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -123,7 +127,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     if (dialog->exec() == QDialog::Accepted)
     {
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
-        else if (object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }
+        else if (object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }

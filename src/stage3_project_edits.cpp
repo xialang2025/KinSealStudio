@@ -75,8 +75,17 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
     NumberDisplayProperties *ascii;
+    MultiFunctionCommand *mfCommand; //20261112-0 add
+    int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("multifunction")) //20261112-0 add: Apply operation increments to each independent bit/word command.
+    {
+        screen = &object->multiFunctionButton.common;
+        for (index = 0; index < object->multiFunctionButton.commands.size(); ++index)
+        { mfCommand = &object->multiFunctionButton.commands[index]; if (mfCommand->kind != 1) { addressSlots.append({Stage3AddressField::Operation, &mfCommand->address, mfCommand->kind == 0 ? PlcAddressRole::Bit : PlcAddressRole::Word, mfCommand->kind == 0 ? 1U : u32(mfCommand->transferWordCount())}); } }
+        addConditionSlots(&screen->visibility, false, &addressSlots); addConditionSlots(&screen->touch, true, &addressSlots);
+    }
     if (object->type == QStringLiteral("multistate")) //20261112-0 add: Monitor and input are distinct unsigned-word roles.
     {
         multi = &object->multiStateButton; screen = &multi->common;
@@ -329,6 +338,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->type == QStringLiteral("multifunction")) //20261112-0 add
+    {
+        for (index = 0; index < 2; ++index)
+        { if (!object->multiFunctionButton.common.states[index].picturePng.isEmpty()) { if (!mergePicture(candidate, object->multiFunctionButton.common.states[index].picture, object->multiFunctionButton.common.states[index].picturePng, &resolved, error)) { return false; } object->multiFunctionButton.common.states[index].picture = resolved; } }
+    }
     if (object->type == QStringLiteral("multistate")) //20261112-0 add
     {
         for (index = 0; index < object->multiStateButton.stateCount; ++index)
@@ -537,6 +551,16 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         if (object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty() && clipboard.source.macros.contains(object.bitButton.macroName))
         {
             if (!mergeMacro(clipboard.source, candidate, object.bitButton.macroName, &mappedIds, error)) { return false; }
+        }
+        if (object.type == QStringLiteral("multifunction")) //20261112-0 add: Cross-document paste requires exact dependency identity/content for every navigation command.
+        {
+            for (MultiFunctionCommand &command : object.multiFunctionButton.commands)
+            {
+                if (command.activeTarget().isEmpty()) { continue; }
+                reference = HmiReference(); reference.id = QStringLiteral("mf-navigation"); reference.targetKind = QStringLiteral("page"); reference.targetId = command.activeTarget();
+                if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; }
+                if (command.operation == 0) { command.screenPageId = reference.targetId; } else { command.windowPageId = reference.targetId; }
+            }
         }
         if (object.type == QStringLiteral("screen") && !object.screenButton.activeTarget().isEmpty()) //20261112-0 add
         {

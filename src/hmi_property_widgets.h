@@ -17,11 +17,14 @@ public:
     explicit HmiPermissionEditor(const QString &title, const QString &prefix,
                                  const StaticTextProperties &properties, bool touch, QWidget *parent);
     StaticTextProperties properties() const;
+    void configureUnchosenBitState(bool chosen); //20261112-0 add
+    bool bitStateChosen() const;
 private:
     StaticTextProperties m_original;
     QGroupBox *m_bit;
     QLineEdit *m_bitAddress;
     QRadioButton *m_on;
+    QRadioButton *m_off; //20261112-0 add
     QGroupBox *m_level;
     QComboBox *m_minimum;
     QGroupBox *m_word;

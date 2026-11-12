@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 10,
-  "blockedLayers": 37,
-  "active": "C16",
+  "editorSlicesDelivered": 11,
+  "blockedLayers": 41,
+  "active": "C17",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -273,14 +273,30 @@
     {
       "id": "C16",
       "name": "多功能按钮",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立MF有序命令模型与三页、最多7条线圈/字/画面命令、字类型显式映射和完整跨度、按下单双态外观、权限初始未选状态、稳定页面依赖与全页隐藏资源保护、逐命令地址递增、16类混合及仅MF schema12保存、工具箱拖框编辑与双语侧栏撤销",
+      "evidence": "multi-function-button/windows-r2/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C16-001",
+        "Q-S04-C16-002",
+        "Q-S04-C16-003",
+        "Q-S04-C16-004"
+      ]
     },
     {
       "id": "C17",
       "name": "下拉框",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

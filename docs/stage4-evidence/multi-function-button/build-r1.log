@@ -1,0 +1,20 @@
+[0/1] Re-running CMake...
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (10.2s)
+-- Generating done (5.3s)
+-- Build files have been written to: Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/build
+[1/101] Automatic MOC and UIC for target KinSealStudioLite
+[2/101] Automatic MOC and UIC for target KinSealStage4ControlTests
+[3/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/KinSealStudioLite_autogen/mocs_compilation.cpp.obj
+[4/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/main.cpp.obj
+[5/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/stage3_project_edits.cpp.obj
+FAILED: CMakeFiles/KinSealStudioLite.dir/src/stage3_project_edits.cpp.obj 
+G:\01_Professional\QT6\Installed\Tools\mingw1310_64\bin\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII -DQT_NO_DEBUG -DQT_SVG_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 -IZ:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/build/KinSealStudioLite_autogen/include -IZ:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/third_party/lzokay -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/include/QtCore -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/include -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/mkspecs/win32-g++ -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/include/QtWidgets -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/include/QtGui -isystem G:/01_Professional/QT6/Installed/6.12.0/mingw_64/include/QtSvg -O3 -DNDEBUG -std=gnu++17 -Wall -Wextra -Wpedantic -MD -MT CMakeFiles/KinSealStudioLite.dir/src/stage3_project_edits.cpp.obj -MF CMakeFiles\KinSealStudioLite.dir\src\stage3_project_edits.cpp.obj.d -o CMakeFiles/KinSealStudioLite.dir/src/stage3_project_edits.cpp.obj -c Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/stage3_project_edits.cpp
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/stage3_project_edits.cpp: In function 'QList<{anonymous}::AddressSlot> {anonymous}::activeSlots(HmiObject*)':
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/stage3_project_edits.cpp:84:14: error: 'index' was not declared in this scope
+   84 |         for (index = 0; index < object->multiFunctionButton.commands.size(); ++index)
+      |              ^~~~~
+[6/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/main_window_workflow.cpp.obj
+[7/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/main_window.cpp.obj
+[8/101] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/native_shell_ui.cpp.obj
+ninja: build stopped: subcommand failed.

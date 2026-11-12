@@ -3,6 +3,7 @@
 #include "project_model.h"
 #include <QDialog>
 class QCheckBox;
+class QListWidget; //20261112-0 add
 class QButtonGroup; //20261110-0 add
 class QComboBox;
 class QFontComboBox;
@@ -128,6 +129,30 @@ private:
     QWidget *createMultiGeneral();
     void refreshMultiAddresses();
     void resizeMultiStates(int count);
+
+    QListWidget *m_mfList = nullptr; //20261112-0 add
+    QGroupBox *m_mfBitGroup = nullptr;
+    QGroupBox *m_mfWordGroup = nullptr;
+    QGroupBox *m_mfScreenGroup = nullptr;
+    QLineEdit *m_mfBitAddress = nullptr;
+    QLineEdit *m_mfWordAddress = nullptr;
+    QLineEdit *m_mfValue = nullptr;
+    QComboBox *m_mfBitOperation = nullptr;
+    QComboBox *m_mfWordOperation = nullptr;
+    QComboBox *m_mfDataType = nullptr;
+    QComboBox *m_mfScreenOperation = nullptr;
+    QComboBox *m_mfTarget = nullptr;
+    QWidget *m_mfValueRow = nullptr;
+    QCheckBox *m_mfPressedEffect = nullptr;
+    int m_mfIndex = -1;
+    int m_mfScreenDraft = 0;
+    bool m_mfLoading = false;
+    QWidget *createMfGeneral();
+    void storeMfCommand();
+    void loadMfCommand(int index);
+    void addMfCommand(int kind);
+    void refreshMfTarget();
+    void refreshMfAppearance();
 
     void storeState();
     void loadState();

@@ -43,6 +43,7 @@ HmiPermissionEditor::HmiPermissionEditor(const QString &title, const QString &pr
     bitPicker = new QPushButton(QStringLiteral("…"), m_bit); bitPicker->setFixedWidth(28);
     bitPicker->setObjectName(prefix + QStringLiteral("BitPicker"));
     m_on = new QRadioButton(QStringLiteral("1"), m_bit); off = new QRadioButton(QStringLiteral("0"), m_bit);
+    m_off = off; m_on->setObjectName(prefix + QStringLiteral("BitOn")); m_off->setObjectName(prefix + QStringLiteral("BitOff")); //20261112-0 add
     m_on->setChecked(properties.bitState); off->setChecked(!properties.bitState);
     bitLayout->addWidget(new QLabel(QStringLiteral("地址:"), m_bit), 0, 0);
     bitLayout->addWidget(m_bitAddress, 0, 1); bitLayout->addWidget(bitPicker, 0, 2);
@@ -95,7 +96,7 @@ StaticTextProperties HmiPermissionEditor::properties() const //20261108-15 add
 {
     StaticTextProperties result = m_original;
     result.visibilityEnabled = isChecked(); result.bitEnabled = m_bit->isChecked();
-    result.bitAddress = m_bitAddress->text().trimmed(); result.bitState = m_on->isChecked();
+    result.bitAddress = m_bitAddress->text().trimmed(); result.bitState = bitStateChosen() ? m_on->isChecked() : m_original.bitState; //20261112-0 change: An unchosen disabled MF radio does not silently become zero.
     result.levelEnabled = m_level->isChecked(); result.minimumLevel = m_minimum->currentIndex() + 1;
     result.wordEnabled = m_word->isChecked(); result.dataType = m_type->currentIndex();
     result.wordAddress = m_wordAddress->text().trimmed(); result.comparison = m_comparison->currentIndex();
@@ -225,4 +226,33 @@ void editHmiAddress(QWidget *parent, QLineEdit *field, bool bit, int transferCou
         dialog.accept();
     });
     dialog.exec();
+}
+
+/******************************************************************************
+ * Function Name   : HmiPermissionEditor::configureUnchosenBitState
+ * Description     : Opt MF into the observed initially empty radios without changing legacy permission defaults.
+ * Input Parameters: chosen
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void HmiPermissionEditor::configureUnchosenBitState(bool chosen) //20261112-0 add
+{
+    if (!chosen)
+    {
+        m_on->setAutoExclusive(false); m_off->setAutoExclusive(false); m_on->setChecked(false); m_off->setChecked(false);
+        m_on->setAutoExclusive(true); m_off->setAutoExclusive(true);
+    }
+    connect(m_bit, &QGroupBox::toggled, this, [this](bool enabled) { if (enabled && !bitStateChosen()) { m_on->setChecked(true); } });
+}
+
+/******************************************************************************
+ * Function Name   : HmiPermissionEditor::bitStateChosen
+ * Description     : Preserve a third, unselected UI state independently of the stored bit value.
+ * Input Parameters: None
+ * Return Value    : True if either radio has been selected.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+bool HmiPermissionEditor::bitStateChosen() const //20261112-0 add
+{
+    return m_on->isChecked() || m_off->isChecked();
 }

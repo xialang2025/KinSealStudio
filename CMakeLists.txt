@@ -87,6 +87,9 @@ qt_add_executable(KinSealStudioLite WIN32
     src/multi_state_button_properties.h #20261112-0 add
     src/multi_state_button_properties.cpp
     src/multi_state_button_dialog.cpp
+    src/multi_function_button_properties.h #20261112-0 add
+    src/multi_function_button_properties.cpp
+    src/multi_function_button_dialog.cpp
     src/number_display_properties.cpp
     src/number_display_dialog.h
     src/number_display_dialog.cpp
