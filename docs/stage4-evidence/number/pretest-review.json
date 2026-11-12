@@ -1,0 +1,39 @@
+{
+  "mode": "read_only_review_before_repairs",
+  "findings": [
+    {
+      "id": "NUMBER-REV-01",
+      "description": "Typed numeric records also require an explicit schema12 floor.",
+      "resolution": "Added strict project-version guard and a downgrade regression."
+    },
+    {
+      "id": "NUMBER-REV-02",
+      "description": "Typed numeric names/state count, 1/0 notification radios and dormant missing keyboard IDs needed independent editor handling.",
+      "resolution": "Added native-name dispatch, no simulated two-state menu, radio pair, and missing disabled reference retention."
+    },
+    {
+      "id": "NUMBER-REV-03",
+      "description": "The initial final workflow assertion edited compact properties after document undo had cleared selection.",
+      "resolution": "Corrected the test to reselect the actual object; production address-update logic was already correct."
+    }
+  ],
+  "firstRun": "windows-r1/run.json",
+  "firstResult": {
+    "passed": 39,
+    "failed": 1,
+    "skipped": 0
+  },
+  "finalRun": "windows-final/run.json",
+  "finalResult": {
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0
+  },
+  "mutationsDuringReview": false,
+  "nativePixelEqualityClaimed": false,
+  "remaining": [
+    "native source/device layouts",
+    "VP semantics and runtime formatting/scaling/notifications",
+    "family switching resumed by C12/C13 and remaining native UI semantics"
+  ]
+}

@@ -5,6 +5,7 @@
 #include "scale_dialog.h" //20261112-0 add
 #include "qr_code_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
+#include "number_display_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
 
 #include <QBrush>
@@ -140,6 +141,7 @@ void HmiControlItem::paint(QPainter *painter,
         painter->drawText(item_rect, Qt::AlignCenter, m_text);
         }
     }
+    else if (m_type == QStringLiteral("number") && m_record.hasNumberDisplayProperties) { paintNumberDisplay(painter, item_rect, m_record.numberDisplay); } //20261112-0 add
     else if (m_type == QStringLiteral("number"))
     {
         painter->setBrush(QColor(255, 255, 255));
@@ -632,7 +634,7 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
         delete m_draftRect; m_draftRect = nullptr;
         m_drawing = false; m_hasPending = false; m_pendingObject = HmiObject();
         object.geometry = geometry; object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        object.name = (object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
+        object.name = (object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
             object.hasWordButtonProperties ? QStringLiteral("字按钮%1") : object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") : QStringLiteral("静态文本%1")).arg(before.size() + 1);
         object.layer = before.size() + 1; item = new HmiControlItem(object); item->setData(10, m_language);
         m_scene->clearSelection(); m_scene->addItem(item); item->setSelected(true);

@@ -5,6 +5,7 @@
 #include "qr_code_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
+#include "number_display_dialog.h" //20261112-0 add
 #include <QMessageBox>
 #include <QStatusBar>
 
@@ -33,6 +34,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = QStringLiteral("二维码"); object.address = QStringLiteral("LW0"); object.geometry = QRect(0, 0, 160, 110);
         dialog = new QrCodeDialog(object, currentEditorProject(), this);
     }
+    else if (type == QStringLiteral("number")) //20261112-0 add
+    {
+        object.name = QStringLiteral("数值显示器"); object.geometry = QRect(0, 0, 120, 60); object.address = QStringLiteral("LW0"); object.hasNumberDisplayProperties = true;
+        dialog = new NumberDisplayDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("gif")) //20261112-0 add
     {
         object.name = QStringLiteral("GIF显示器"); object.geometry = QRect(0, 0, 100, 100);
@@ -54,6 +60,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
+        else if (type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
         if (!applyControlDraft(object, m_project.macros, pictures, false, &error, &animations)) //20261112-0 change
@@ -85,6 +92,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
     else if (object.type == QStringLiteral("qrcode")) { dialog = new QrCodeDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("gif")) { dialog = new GifDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
+    else if (object.type == QStringLiteral("number")) { dialog = new NumberDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("image")) { dialog = new ImageDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("scale")) { dialog = new ScaleDialog(object, this); }
     else { return; }
@@ -93,6 +101,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
+        else if (object.type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
         if (!applyControlDraft(object, m_project.macros, pictures, true, &error, &animations)) { QMessageBox::warning(this, QStringLiteral("控件修改未提交"), error); } //20261112-0 change

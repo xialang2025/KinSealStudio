@@ -16,6 +16,7 @@
 #include "qr_code_properties.h" //20261112-0 add
 #include "image_display_properties.h" //20261112-0 add
 #include "gif_display_properties.h" //20261112-0 add
+#include "number_display_properties.h" //20261112-0 add
 
 struct HmiObject
 {
@@ -41,6 +42,8 @@ struct HmiObject
     bool hasImageDisplayProperties = false; //20261112-0 add: Legacy image placeholders stay loadable until configured.
     ImageDisplayProperties imageDisplay;
     GifDisplayProperties gifDisplay; //20261112-0 add
+    bool hasNumberDisplayProperties = false; //20261112-0 add: Preserve old number placeholders until configured.
+    NumberDisplayProperties numberDisplay;
     double layer = 1;
     QString group;
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.

@@ -6,6 +6,7 @@
 #include "image_display_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
 #include "animation_resources.h"
+#include "number_display_dialog.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
 #include <QBuffer>
@@ -77,6 +78,14 @@ private slots:
     void gifActualPlaybackPauseAndCanvasPoster();
     void gifCrossProjectReferencesAndAddressIncrement();
     void gifPlacementCancellationAndUndoAreAtomic();
+    void numberNativeDefaultsAndInputLinkage();
+    void numberAllDataTypeTransitions();
+    void numberRangesAndActiveAddressSpans();
+    void numberPermissionNotificationAndKeyboardLifecycle();
+    void numberStrictPersistenceLegacyAndBackendGates();
+    void numberPicturesCopiesAndAddressRoles();
+    void numberActualRasterAndHiddenAppearanceDrafts();
+    void numberShellPlacementEditAndUndo();
 };
 
 /******************************************************************************
@@ -1145,6 +1154,211 @@ void Stage4ControlTests::gifPlacementCancellationAndUndoAreAtomic() //20261112-0
     QTimer::singleShot(0, &window, []() { GifDisplayDialog *dialog = qobject_cast<GifDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("GifBitControl"))->setChecked(true); dialog->findChild<QLineEdit *>(QStringLiteral("GifControlAddress"))->setText(QStringLiteral("LB17")); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GifButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().gifDisplay.controlAddress, QStringLiteral("LB17")); QCOMPARE(window.m_projectHistory.size(), history + 2);
     QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 2);
     window.restoreProjectHistory(-1); QVERIFY(!window.currentEditorProject().objects.first().gifDisplay.bitControl); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(window.currentEditorProject().animations.isEmpty()); window.restoreProjectHistory(1); window.restoreProjectHistory(1); QCOMPARE(window.currentEditorProject().objects.first().gifDisplay.controlAddress, QStringLiteral("LB17"));
+}
+
+/******************************************************************************
+ * Function Name   : numberObject
+ * Description     : Build a typed numeric object distinct from the legacy number placeholder and switch family.
+ * Input Parameters: None
+ * Return Value    : Default numeric editor object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject numberObject() //20261112-0 add
+{
+    HmiObject object;
+    object.type = QStringLiteral("number"); object.id = QStringLiteral("number-object"); object.name = QStringLiteral("数值显示器"); object.geometry = QRect(40, 100, 180, 80); object.address = QStringLiteral("LW0"); object.hasNumberDisplayProperties = true; return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberNativeDefaultsAndInputLinkage
+ * Description     : Check the corrected native defaults and input/monitor/offset draft enablement through real widgets.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberNativeDefaultsAndInputLinkage() //20261112-0 add
+{
+    NumberDisplayDialog dialog(numberObject(), HmiProject());
+    QLineEdit *monitor = dialog.findChild<QLineEdit *>(QStringLiteral("Number_monitorAddress"));
+    QLineEdit *input = dialog.findChild<QLineEdit *>(QStringLiteral("Number_inputAddress"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("数值输入")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->count(), 4);
+    QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("Number_dataType"))->count(), 14); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("Number_displayAddress"))->isChecked()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_macroEnabled"))->isEnabled());
+    QCOMPARE(dialog.object().numberDisplay.backgroundColor, QStringLiteral("#a0a0ff")); QVERIFY(!input->isEnabled()); monitor->setText(QStringLiteral("LW17")); QCOMPARE(input->text(), QStringLiteral("LW17"));
+    dialog.findChild<QCheckBox *>(QStringLiteral("Number_sameMonitor"))->setChecked(false); QVERIFY(input->isEnabled()); input->setText(QStringLiteral("LW25")); dialog.findChild<QCheckBox *>(QStringLiteral("Number_sameMonitor"))->setChecked(true); QCOMPARE(input->text(), QStringLiteral("LW17")); QCOMPARE(dialog.object().numberDisplay.inputAddress, QStringLiteral("LW25"));
+    dialog.findChild<QCheckBox *>(QStringLiteral("Number_sameMonitor"))->setChecked(false); QCOMPARE(input->text(), QStringLiteral("LW25")); dialog.findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->setChecked(false); QCOMPARE(dialog.windowTitle(), QStringLiteral("数值显示")); QVERIFY(!input->isEnabled()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_password"))->isEnabled());
+    dialog.findChild<QCheckBox *>(QStringLiteral("Number_offsetEnabled"))->setChecked(true); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("Number_offsetAddress"))->isVisible());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("number-basic.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberAllDataTypeTransitions
+ * Description     : Compare every measured transition, including stale VP drafts and differing 32-bit octal input/display ceilings.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberAllDataTypeTransitions() //20261112-0 add
+{
+    NumberDisplayDialog dialog(numberObject(), HmiProject());
+    QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("Number_dataType"));
+    QSpinBox *digits = dialog.findChild<QSpinBox *>(QStringLiteral("Number_totalDigits"));
+    QSpinBox *decimals = dialog.findChild<QSpinBox *>(QStringLiteral("Number_decimalDigits"));
+    QFile file(QFINDTESTDATA("../docs/stage4-evidence/number/native/findings.json"));
+    QJsonArray matrix;
+    QJsonValue value;
+    QJsonObject row;
+    int index;
+    QVERIFY(file.open(QIODevice::ReadOnly)); matrix = QJsonDocument::fromJson(file.readAll()).object().value(QStringLiteral("dataTypeTransitionObservations")).toArray(); QCOMPARE(matrix.size(), 14);
+    Q_FOREACH (value, matrix)
+    {
+        row = value.toObject(); index = row.value(QStringLiteral("uiIndex")).toInt(); type->setCurrentIndex(index); QCOMPARE(type->currentText(), row.value(QStringLiteral("label")).toString());
+        QCOMPARE(dialog.object().numberDisplay.inputMinimum, row.value(QStringLiteral("inputMinimumText")).toString()); QCOMPARE(dialog.object().numberDisplay.inputMaximum, row.value(QStringLiteral("inputMaximumText")).toString());
+        QCOMPARE(digits->maximum(), row.value(QStringLiteral("totalDigits")).toObject().value(QStringLiteral("maximum")).toString().toInt()); QCOMPARE(digits->value(), row.value(QStringLiteral("totalDigits")).toObject().value(QStringLiteral("value")).toString().toInt());
+        QCOMPARE(decimals->isEnabled(), row.value(QStringLiteral("decimalDigits")).toObject().value(QStringLiteral("enabled")).toInt() == 1);
+    }
+    type->setCurrentIndex(9); QCOMPARE(dialog.object().numberDisplay.inputMaximum, QStringLiteral("17777777777")); QCOMPARE(dialog.object().numberDisplay.displayMaximum, QStringLiteral("37777777777"));
+    QCOMPARE(decimals->maximum(), 99); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("Number_fontSize"))->count(), 8); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("Number_font"))->count(), 3);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberRangesAndActiveAddressSpans
+ * Description     : Validate signed/unsigned/BCD/radix/float ranges and active 32-bit carriers without rejecting disabled address drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberRangesAndActiveAddressSpans() //20261112-0 add
+{
+    NumberDisplayProperties properties;
+    QString error;
+    int index;
+    for (index = 0; index < 12; ++index) { properties.changeDataType(index); QVERIFY2(properties.validate(&error), qPrintable(error)); }
+    properties.changeDataType(6); properties.inputMaximum = QStringLiteral("4294967296"); QVERIFY(!properties.validate(&error)); properties.inputMaximum = QStringLiteral("4294967295"); properties.monitorAddress = QStringLiteral("LW4096"); QVERIFY(!properties.validateAddresses({}, &error));
+    properties.changeDataType(1); QVERIFY2(properties.validateAddresses({}, &error), qPrintable(error)); properties.sameMonitor = false; properties.inputAddress = QStringLiteral("invalid"); QVERIFY(!properties.validateAddresses({}, &error)); properties.allowInput = false; QVERIFY2(properties.validateAddresses({}, &error), qPrintable(error));
+    properties.scaling = true; properties.gain = QStringLiteral("0"); QVERIFY(!properties.validate(&error)); properties.gain = QStringLiteral("2.5"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.offsetEnabled = true; properties.offsetAddress = QStringLiteral("LB0"); QVERIFY(!properties.validateAddresses({}, &error));
+    properties.offsetEnabled = false; properties.displayRange = true; properties.displayMinimum = QStringLiteral("20"); properties.displayMaximum = QStringLiteral("10"); QVERIFY(!properties.validate(&error)); properties.displayRange = false; QVERIFY2(properties.validate(&error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberPermissionNotificationAndKeyboardLifecycle
+ * Description     : Check permission levels, active notifications and stable keyboard references through page rename/delete and cross-project copy.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberPermissionNotificationAndKeyboardLifecycle() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject copied;
+    HmiPage keyboard;
+    HmiObject object = numberObject();
+    Stage3Clipboard clipboard;
+    NumberDisplayDialog *dialog;
+    QString error;
+    keyboard.id = QStringLiteral("number-keyboard"); keyboard.name = QStringLiteral("数字键盘"); keyboard.kind = QStringLiteral("keyboard"); keyboard.width = 300; keyboard.height = 200; QVERIFY2(project.addPage(keyboard, &error), qPrintable(error));
+    dialog = new NumberDisplayDialog(object, project); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("NumberVisibilityMinimum"))->currentText(), QStringLiteral("1")); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("NumberTouchMinimum"))->currentText(), QStringLiteral("2"));
+    dialog->findChild<QGroupBox *>(QStringLiteral("Number_notice"))->setChecked(true); QVERIFY(dialog->findChild<QCheckBox *>(QStringLiteral("Number_noticeBit"))->isEnabled()); dialog->findChild<QCheckBox *>(QStringLiteral("Number_noticeBit"))->setChecked(true); dialog->findChild<QCheckBox *>(QStringLiteral("Number_noticeWord"))->setChecked(true); QVERIFY(!dialog->findChild<QCheckBox *>(QStringLiteral("Number_noticeBit"))->isChecked());
+    dialog->findChild<QCheckBox *>(QStringLiteral("Number_customKeyboard"))->setChecked(true); dialog->findChild<QComboBox *>(QStringLiteral("Number_keyboardPageId"))->setCurrentIndex(0); object = dialog->object(); delete dialog;
+    project.objects = {object}; QVERIFY2(project.validateModel(&error), qPrintable(error)); QVERIFY2(project.renamePage(keyboard.id, QStringLiteral("重命名键盘"), &error), qPrintable(error)); QCOMPARE(project.objects.first().numberDisplay.keyboardPageId, keyboard.id); QVERIFY(!project.removePage(keyboard.id, &error));
+    QVERIFY2(captureStage3Selection(project, {object.id}, &clipboard, &error), qPrintable(error)); QVERIFY(!pasteStage3Selection(HmiProject(), clipboard, QPoint(), &copied, nullptr, &error)); QVERIFY(copied.objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberStrictPersistenceLegacyAndBackendGates
+ * Description     : Preserve all eleven mixed control families and numeric drafts while rejecting malformed fields and unrecovered native output.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberStrictPersistenceLegacyAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiObject object = numberObject();
+    HmiObject parsed = qrObject();
+    HmiObject legacy;
+    QJsonObject json;
+    QJsonObject properties;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.numberDisplay.inputAddress = QStringLiteral("LW25"); object.numberDisplay.decimalDigits = 7; object.numberDisplay.customText = QStringLiteral("草稿123");
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 11); QCOMPARE(loaded.toJson(), project.toJson());
+    json = object.toJson(); properties = json.value(QStringLiteral("numberDisplay")).toObject(); properties.insert(QStringLiteral("dataType"), 8.5); json.insert(QStringLiteral("numberDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
+    properties = object.numberDisplay.toJson(); properties.remove(QStringLiteral("inputMaximum")); json.insert(QStringLiteral("numberDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); legacy = object; legacy.hasNumberDisplayProperties = false; QVERIFY2(HmiObject::fromJson(legacy.toJson(), &parsed, &error), qPrintable(error)); QVERIFY(!parsed.hasNumberDisplayProperties);
+    project.objects = {numberObject()}; QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &project, &error)); QCOMPARE(project.objects.first().type, QStringLiteral("number"));
+    object.numberDisplay.keyboardPageId = QStringLiteral("disabled-missing-keyboard");
+    { NumberDisplayDialog dormant(object, HmiProject()); QCOMPARE(dormant.object().numberDisplay.keyboardPageId, object.numberDisplay.keyboardPageId); }
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("number-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberPicturesCopiesAndAddressRoles
+ * Description     : Protect numeric artwork on inactive pages and preserve independent monitor/input/range address increments.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberPicturesCopiesAndAddressRoles() //20261112-0 add
+{
+    HmiProject source;
+    HmiProject result;
+    HmiProject target;
+    HmiPage page;
+    HmiObject object = numberObject();
+    Stage3Clipboard clipboard;
+    Stage3DuplicateOptions options;
+    QString error;
+    object.numberDisplay.appearance = {QStringLiteral("number.png"), imagePng(Qt::green)}; object.numberDisplay.sameMonitor = false; object.numberDisplay.inputAddress = QStringLiteral("LW25"); object.numberDisplay.inputRangeSource = 1; object.numberDisplay.inputMinimumAddress = QStringLiteral("LW30"); source.objects = {object}; source.pictures.insert(QStringLiteral("number.png"), imagePng(Qt::green));
+    page.id = QStringLiteral("number-second-page"); page.name = QStringLiteral("数值第二页"); object.id = QStringLiteral("inactive-number"); page.objects.append(object); QVERIFY2(source.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(source, QStringLiteral("number.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(source, QStringLiteral("number.png"), &result, &error));
+    QVERIFY2(renameStage3Picture(source, QStringLiteral("number.png"), QStringLiteral("renamed-number.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().numberDisplay.appearance.picture, QStringLiteral("renamed-number.png"));
+    options.columns = 2; options.increments = {{Stage3AddressField::MonitorWord, 2, 0}, {Stage3AddressField::Operation, 3, 0}, {Stage3AddressField::InputMinimumWord, 4, 0}}; QVERIFY2(duplicateStage3Selection(source, {source.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().numberDisplay.monitorAddress, QStringLiteral("LW2")); QCOMPARE(result.objects.last().numberDisplay.inputAddress, QStringLiteral("LW28")); QCOMPARE(result.objects.last().numberDisplay.inputMinimumAddress, QStringLiteral("LW34"));
+    target.pictures.insert(QStringLiteral("number.png"), imagePng(Qt::red)); QVERIFY2(captureStage3Selection(source, {source.objects.first().id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(), &result, nullptr, &error), qPrintable(error)); QVERIFY(result.objects.first().numberDisplay.appearance.picture.startsWith(QStringLiteral("number.png~"))); QCOMPARE(result.objects.first().numberDisplay.appearance.picturePng, imagePng(Qt::green));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberActualRasterAndHiddenAppearanceDrafts
+ * Description     : Verify the measured background sample, clipping and actual font/password/custom rendering without claiming firmware pixels.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberActualRasterAndHiddenAppearanceDrafts() //20261112-0 add
+{
+    NumberDisplayDialog dialog(numberObject(), HmiProject());
+    QImage raster(200, 120, QImage::Format_ARGB32);
+    QPainter painter;
+    NumberDisplayProperties properties;
+    QImage before;
+    raster.fill(Qt::magenta); painter.begin(&raster); paintNumberDisplay(&painter, QRectF(10, 10, 180, 100), properties); painter.end(); QCOMPARE(raster.pixelColor(12, 12), QColor(QStringLiteral("#a0a0ff"))); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta)); before = raster;
+    properties.password = true; painter.begin(&raster); paintNumberDisplay(&painter, QRectF(10, 10, 180, 100), properties); painter.end(); QVERIFY(raster != before);
+    dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->setCurrentIndex(1); dialog.findChild<QCheckBox *>(QStringLiteral("Number_customDisplay"))->setChecked(true); dialog.findChild<QLineEdit *>(QStringLiteral("Number_customText"))->setText(QStringLiteral("12345")); dialog.findChild<QCheckBox *>(QStringLiteral("Number_customDisplay"))->setChecked(false); QCOMPARE(dialog.object().numberDisplay.customText, QStringLiteral("12345"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR"))
+    {
+        QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("number-display.png")))); dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->setCurrentIndex(2); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("number-permissions.png")))); dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->setCurrentIndex(3); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("number-other.png"))));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::numberShellPlacementEditAndUndo
+ * Description     : Execute the real native-shell action, create/edit/cancel and undo, including the compact typed monitor editor.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::numberShellPlacementEditAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    int history;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_dataDisplay"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_dataDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 120))); QCOMPARE(window.currentEditorProject().objects.size(), 1); QVERIFY(window.currentEditorProject().objects.first().hasNumberDisplayProperties); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->setChecked(false); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QVERIFY(!window.currentEditorProject().objects.first().numberDisplay.allowInput); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.first().numberDisplay.allowInput);
+    window.m_canvas->selectObject(window.currentEditorProject().objects.first().id); QVERIFY(window.m_addressEdit->isEnabled()); //20261112-0 change: Restoring document history clears selection; explicitly select the object before editing its compact fields.
+    window.m_addressEdit->setText(QStringLiteral("LW17")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().numberDisplay.monitorAddress, QStringLiteral("LW17")); QVERIFY(!window.m_textEdit->isEnabled()); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

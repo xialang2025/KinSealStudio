@@ -1,0 +1,46 @@
+{
+  "failures": [
+    {
+      "run": "number-create-r1",
+      "error": "RuntimeError(\"{'serial': 28, 'status': 'error', 'error': 'Error: access violation accessing 0x0'}\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": {
+        "request": {
+          "op": "scene-event",
+          "hwnd": 2821612,
+          "type": 2,
+          "x": 160,
+          "y": 120,
+          "button": 1,
+          "buttons": 1
+        },
+        "result": {
+          "serial": 28,
+          "status": "error",
+          "error": "Error: access violation accessing 0x0"
+        }
+      }
+    },
+    {
+      "run": "number-inspect-r1",
+      "error": "RuntimeError(\"widget match not unique {'op': 'tab', 'name': 'tabWidget', 'value': 1} []\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": null
+    },
+    {
+      "run": "number-inspect-r2",
+      "error": "RuntimeError(\"widget match not unique {'op': 'tab', 'kind': 'QTabWidget', 'value': 1} [(2493566, ''), (462226, ''), (1772850, ''), (1969530, '')]\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": null
+    },
+    {
+      "run": "value-bilingual-r1",
+      "error": "RuntimeError(\"widget match not unique {'op': 'tab', 'kind': 'QTabWidget', 'value': 1} []\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": null
+    }
+  ],
+  "limits": [
+    "Qt GUI property values and compiled files are observations, not firmware execution evidence."
+  ]
+}

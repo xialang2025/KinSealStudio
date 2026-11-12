@@ -74,6 +74,25 @@ void addConditionSlots(StaticTextProperties *condition, bool touch, QList<Addres
 QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
+    if (object->hasNumberDisplayProperties) //20261112-0 add: Numeric input, monitor and range roles remain independent.
+    {
+        addressSlots.append({Stage3AddressField::MonitorWord, &object->numberDisplay.monitorAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
+        if (object->numberDisplay.allowInput && !object->numberDisplay.sameMonitor) { addressSlots.append({Stage3AddressField::Operation, &object->numberDisplay.inputAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))}); }
+        if (object->numberDisplay.offsetEnabled) { addressSlots.append({Stage3AddressField::OffsetWord, &object->numberDisplay.offsetAddress, PlcAddressRole::Word, 1U}); }
+        if (object->numberDisplay.allowInput && object->numberDisplay.inputRangeSource == 1)
+        {
+            addressSlots.append({Stage3AddressField::InputMinimumWord, &object->numberDisplay.inputMinimumAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
+            addressSlots.append({Stage3AddressField::InputMaximumWord, &object->numberDisplay.inputMaximumAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
+        }
+        if (object->numberDisplay.displayRange && object->numberDisplay.displayRangeSource == 1)
+        {
+            addressSlots.append({Stage3AddressField::DisplayMinimumWord, &object->numberDisplay.displayMinimumAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
+            addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->numberDisplay.displayMaximumAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
+        }
+        if (object->numberDisplay.allowInput && object->numberDisplay.notice && object->numberDisplay.noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &object->numberDisplay.noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (object->numberDisplay.allowInput && object->numberDisplay.notice && object->numberDisplay.noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &object->numberDisplay.noticeWordAddress, PlcAddressRole::Word, object->numberDisplay.noticeWordType == 0 || object->numberDisplay.noticeWordType == 2 ? 1U : 2U}); }
+        addConditionSlots(&object->numberDisplay.visibility, false, &addressSlots); if (object->numberDisplay.allowInput) { addConditionSlots(&object->numberDisplay.touch, true, &addressSlots); }
+    }
 
     if (object->type == QStringLiteral("gif")) //20261112-0 add: Playback gating and visibility use independent typed address slots.
     {
@@ -279,6 +298,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->hasNumberDisplayProperties && !object->numberDisplay.appearance.picturePng.isEmpty()) //20261112-0 add
+    {
+        if (!mergePicture(candidate, object->numberDisplay.appearance.picture, object->numberDisplay.appearance.picturePng, &resolved, error)) { return false; }
+        object->numberDisplay.appearance.picture = resolved;
+    }
 
     if (object->type == QStringLiteral("gif")) //20261112-0 add: Cross-project paste binds original animation bytes independently of PNG states.
     {
@@ -462,6 +486,11 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         if (object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty() && clipboard.source.macros.contains(object.bitButton.macroName))
         {
             if (!mergeMacro(clipboard.source, candidate, object.bitButton.macroName, &mappedIds, error)) { return false; }
+        }
+        if (object.hasNumberDisplayProperties && object.numberDisplay.allowInput && object.numberDisplay.customKeyboard) //20261112-0 add: A keyboard ID cannot silently bind to a different target document's page.
+        {
+            reference = HmiReference(); reference.id = QStringLiteral("numeric-keyboard"); reference.targetKind = QStringLiteral("page"); reference.targetId = object.numberDisplay.keyboardPageId;
+            if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; }
         }
         if (!mergeObjectPictures(candidate, &object, error) || !validateObjectAddresses(object, *candidate, error)) { return false; }
         copies.append(object);
@@ -669,7 +698,7 @@ bool validateIncrements(const QList<HmiObject> &objects, const QList<Stage3Addre
 
     Q_FOREACH (increment, increments)
     {
-        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::TouchWord) ||
+        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::DisplayMaximumWord) ||
             fields.contains(int(increment.field)))
         {
             return editError(error, QStringLiteral("递增规则包含未知或重复的地址角色。"));
@@ -844,6 +873,11 @@ Stage3DuplicateDialog::Stage3DuplicateDialog(const HmiProject &project, const QS
     m_addressField->addItem(QStringLiteral("显现字地址"), int(Stage3AddressField::VisibilityWord));
     m_addressField->addItem(QStringLiteral("触控位地址"), int(Stage3AddressField::TouchBit));
     m_addressField->addItem(QStringLiteral("触控字地址"), int(Stage3AddressField::TouchWord));
+    m_addressField->addItem(QStringLiteral("偏移字地址"), int(Stage3AddressField::OffsetWord)); //20261112-0 add
+    m_addressField->addItem(QStringLiteral("输入下限地址"), int(Stage3AddressField::InputMinimumWord));
+    m_addressField->addItem(QStringLiteral("输入上限地址"), int(Stage3AddressField::InputMaximumWord));
+    m_addressField->addItem(QStringLiteral("显示下限地址"), int(Stage3AddressField::DisplayMinimumWord));
+    m_addressField->addItem(QStringLiteral("显示上限地址"), int(Stage3AddressField::DisplayMaximumWord));
     m_columnAddressStep = new QSpinBox(m_advancedIncrementGroup);
     m_columnAddressStep->setObjectName(QStringLiteral("duplicateColumnAddressStepSpin"));
     m_columnAddressStep->setRange(-256, 256);

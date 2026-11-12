@@ -23,7 +23,8 @@ struct Stage3Clipboard
 enum class Stage3AddressField
 {
     Operation, MonitorBit, MonitorWord, LampMultiMonitor, NoticeBit, NoticeWord,
-    VisibilityBit, VisibilityWord, TouchBit, TouchWord
+    VisibilityBit, VisibilityWord, TouchBit, TouchWord,
+    OffsetWord, InputMinimumWord, InputMaximumWord, DisplayMinimumWord, DisplayMaximumWord //20261112-0 add
 };
 
 struct Stage3AddressIncrement

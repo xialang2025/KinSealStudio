@@ -41,6 +41,7 @@ bool resourceError(QString *error, const QString &message) //20261110-8 add
 template<typename Visitor> void visitPictureStates(HmiObject &object, Visitor visitor) //20261110-8 add
 {
     int index;
+    if (object.hasNumberDisplayProperties) { visitor(object.numberDisplay.appearance); } //20261112-0 add
     if (object.hasImageDisplayProperties) //20261112-0 add: Include picture-display rows in rename/replace/delete protection on every page.
     { for (index = 0; index < object.imageDisplay.states.size(); ++index) { visitor(object.imageDisplay.states[index]); } }
     if (!object.hasBitButtonProperties) { return; }
