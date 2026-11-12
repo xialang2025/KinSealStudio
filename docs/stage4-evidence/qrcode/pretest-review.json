@@ -1,0 +1,10 @@
+{
+  "mode": "read_only_before_logic_repairs",
+  "findings": [
+    {"id":"QR-REV-01","description":"共享权限字地址拾取只限制单字，U32/I32/F32应使用2字跨度。","resolution":"已按现有权限类型顺序修正，增加二维码地址边界验证。"},
+    {"id":"QR-REV-02","description":"自动插入字段造成scale注释黏附QR字段和重复日期标记。","resolution":"修正字段功能注释。"},
+    {"id":"QR-REV-03","description":"新增复制测试曾使用错误偏移参数签名。","resolution":"按已有API改为QPoint。"}
+  ],
+  "sourceAndDeviceGate": "未开放未知类型或写USB",
+  "previewBoundary": "UTF8 ECI26描述预览；不声称原生编码、空串、ECC/版本/掩码/留白一致"
+}

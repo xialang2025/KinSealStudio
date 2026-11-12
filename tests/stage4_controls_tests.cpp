@@ -2,6 +2,7 @@
 #include "hmi_canvas.h"
 #include "message_display_dialog.h"
 #include "scale_dialog.h"
+#include "qr_code_dialog.h" //20261112-0 add
 #include "hmi_property_widgets.h"
 #include "native_project_codec.h"
 #include "project_capabilities.h"
@@ -13,6 +14,8 @@
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QFile>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPainter>
@@ -51,6 +54,11 @@ private slots:
     void scaleRangeErrorsAndEqualLimits();
     void scaleRenderingCountsAndClipping();
     void scaleTypedRoundTripMixedAndCreation();
+    void qrDefaultsAndPermissionBranches();
+    void qrDescriptionRasterAndCapacity();
+    void qrStrictPersistenceAndBackendGates();
+    void qrCopyAndCompactProperties();
+    void qrCreationEditCancellationAndHistory();
 };
 
 /******************************************************************************
@@ -478,6 +486,223 @@ void Stage4ControlTests::scaleTypedRoundTripMixedAndCreation() //20261112-0 add
     QCOMPARE(describeProjectCapabilities(window.currentEditorProject()).value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
     QVERIFY(!buildProjectPayload(window.currentEditorProject(), &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
     QVERIFY(!exportNativeProjectSource(window.currentEditorProject(), &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged"));
+}
+
+/******************************************************************************
+ * Function Name   : qrObject
+ * Description     : Provide a new independent QR family with the measured native editing defaults.
+ * Input Parameters: None
+ * Return Value    : Typed QR object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject qrObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("stage4-qr"); object.type = QStringLiteral("qrcode"); object.name = QStringLiteral("二维码"); object.address = QStringLiteral("LW0"); object.geometry = QRect(480, 20, 160, 110);
+    return object;
+}
+
+/******************************************************************************
+ * Function Name   : existingFiveObjects
+ * Description     : Keep the established five independent families in each new control's mixed persistence fixture.
+ * Input Parameters: None
+ * Return Value    : Valid text, bit button, word button, lamp and system function objects.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static QList<HmiObject> existingFiveObjects() //20261112-0 add
+{
+    QList<HmiObject> objects;
+    HmiObject object;
+    int index;
+    for (index = 0; index < 5; ++index)
+    {
+        object = HmiObject(); object.id = QStringLiteral("existing-%1").arg(index); object.name = object.id; object.geometry = QRect(20 + index * 140, 220, 100, 50);
+        object.type = index == 0 ? QStringLiteral("text") : QStringLiteral("switch");
+        if (index == 0) { object.hasStaticTextProperties = true; object.text = QStringLiteral("原有文本"); }
+        else { object.hasBitButtonProperties = true; object.address = index == 1 ? QStringLiteral("LB0") : QString(); }
+        if (index == 2) { object.hasWordButtonProperties = true; object.address = QStringLiteral("LW0"); object.bitButton.indicator = false; object.bitButton.dualMonitor = false; }
+        if (index == 3) { object.hasLampProperties = true; object.bitButton.monitorSame = false; }
+        if (index == 4) { object.hasFunctionButtonProperties = true; object.bitButton.indicator = false; object.bitButton.dualMonitor = false; }
+        objects.append(object);
+    }
+    return objects;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrDefaultsAndPermissionBranches
+ * Description     : Exercise both QR pages and measured limits, visibility hierarchy, tolerance and dormant values.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::qrDefaultsAndPermissionBranches() //20261112-0 add
+{
+    QrCodeDialog dialog(qrObject(), HmiProject());
+    QSpinBox *length;
+    QLineEdit *description;
+    HmiPermissionEditor *permission;
+    QGroupBox *word;
+    QComboBox *type;
+    QComboBox *comparison;
+    QLineEdit *tolerance;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog));
+    QCOMPARE(dialog.windowTitle(), QStringLiteral("二维码")); QCOMPARE(dialog.findChild<QTabWidget *>()->count(), 2);
+    length = dialog.findChild<QSpinBox *>(QStringLiteral("QrCharacterLength")); description = dialog.findChild<QLineEdit *>(QStringLiteral("QrDescription"));
+    QCOMPARE(length->minimum(), 0); QCOMPARE(length->maximum(), 255); QCOMPARE(length->value(), 25); QCOMPARE(description->maxLength(), 32767); QVERIFY(description->text().isEmpty());
+    QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("QrEncoding"))->count(), 2); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("QrEncoding"))->itemText(1), QStringLiteral("GB2312"));
+    QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("QrSwapBytes"))->isChecked()); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-general.png")))); }
+    dialog.findChild<QTabWidget *>()->setCurrentIndex(1);
+    permission = dialog.findChild<HmiPermissionEditor *>(QStringLiteral("QrVisibility")); word = dialog.findChild<QGroupBox *>(QStringLiteral("QrVisibilityWord"));
+    type = dialog.findChild<QComboBox *>(QStringLiteral("QrVisibilityType")); comparison = dialog.findChild<QComboBox *>(QStringLiteral("QrVisibilityComparison")); tolerance = dialog.findChild<QLineEdit *>(QStringLiteral("QrVisibilityTolerance"));
+    QVERIFY(!permission->isChecked()); QVERIFY(!word->isEnabled()); permission->setChecked(true); word->setChecked(true);
+    QCOMPARE(type->itemText(0), QStringLiteral("16位正整数")); QCOMPARE(type->itemText(1), QStringLiteral("32位正整数")); QCOMPARE(type->itemText(2), QStringLiteral("16位整数")); QCOMPARE(type->itemText(3), QStringLiteral("32位整数")); QCOMPARE(type->itemText(4), QStringLiteral("32位浮点数"));
+    comparison->setCurrentIndex(2); QVERIFY(tolerance->isVisible()); QVERIFY(tolerance->isEnabled()); tolerance->setText(QStringLiteral("2"));
+    type->setCurrentIndex(4); comparison->setCurrentIndex(3); QVERIFY(tolerance->isVisible());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-permissions.png")))); }
+    permission->setChecked(false); QVERIFY(!tolerance->isEnabled()); QCOMPARE(dialog.object().qrCode.visibility.tolerance, QStringLiteral("2"));
+    length->setValue(0); QCOMPARE(dialog.object().qrCode.characterLength, 0); length->setValue(255); QCOMPARE(dialog.object().qrCode.characterLength, 255);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrDescriptionRasterAndCapacity
+ * Description     : Render scannable description fixtures, keep quiet zones and preserve unsupported long data without stale QR output.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::qrDescriptionRasterAndCapacity() //20261112-0 add
+{
+    QImage ascii = qrDescriptionPreview(QStringLiteral("HTTPS://KINSEAL.TEST/STAGE4"));
+    QImage chinese = qrDescriptionPreview(QStringLiteral("金玺测试"));
+    QImage empty = qrDescriptionPreview(QString());
+    QImage painted(170, 120, QImage::Format_RGB32);
+    QPainter painter;
+    QrCodeProperties properties;
+    QString error;
+    QrCodeDialog dialog(qrObject(), HmiProject());
+    QFile nativeModules(QFINDTESTDATA("../docs/stage4-evidence/qrcode/native/qr-preview-decoded.json"));
+    QJsonArray rows;
+    int index;
+    int x;
+    QVERIFY(!ascii.isNull()); QVERIFY(!chinese.isNull()); QVERIFY(!empty.isNull()); QVERIFY(ascii != chinese); QVERIFY(ascii != empty);
+    QVERIFY(nativeModules.open(QIODevice::ReadOnly)); rows = QJsonDocument::fromJson(nativeModules.readAll()).object().value(QStringLiteral("records")).toArray().first().toObject().value(QStringLiteral("moduleRows")).toArray();
+    QCOMPARE(rows.size(), 25); QCOMPARE(empty.size(), QSize(33, 33));
+    for (index = 0; index < rows.size(); ++index)
+    {
+        QCOMPARE(rows.at(index).toString().size(), 25);
+        for (x = 0; x < 25; ++x) { QCOMPARE(empty.pixelColor(x + 4, index + 4), QColor(rows.at(index).toString().at(x) == QLatin1Char('1') ? Qt::black : Qt::white)); }
+    }
+    for (index = 0; index < ascii.width(); ++index) { QCOMPARE(ascii.pixelColor(index, 0), QColor(Qt::white)); QCOMPARE(ascii.pixelColor(0, index), QColor(Qt::white)); }
+    properties.description = QStringLiteral("金玺测试"); painted.fill(Qt::magenta); painter.begin(&painted); paintQrCode(&painter, QRectF(5, 5, 160, 110), properties); painter.end();
+    QCOMPARE(painted.pixelColor(0, 0), QColor(Qt::magenta)); QCOMPARE(painted.pixelColor(6, 6), QColor(Qt::white));
+    dialog.findChild<QLineEdit *>(QStringLiteral("QrDescription"))->setText(QString(32767, QLatin1Char('x')));
+    QCOMPARE(dialog.object().qrCode.description.size(), 32767); QVERIFY(qrDescriptionPreview(dialog.object().qrCode.description, &error).isNull()); QVERIFY(!error.isEmpty());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR"))
+    {
+        QVERIFY(ascii.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-scan-ascii.png"))));
+        QVERIFY(chinese.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-scan-chinese.png"))));
+        QVERIFY(empty.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-scan-empty.png"))));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrStrictPersistenceAndBackendGates
+ * Description     : Round-trip all QR fields with other families and reject malformed records and unknown source/device generation atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::qrStrictPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject qrOnly;
+    HmiObject object = qrObject();
+    HmiObject parsed = messageObject();
+    QJsonObject json;
+    QJsonObject properties;
+    QJsonObject visibility;
+    QByteArray source = QByteArrayLiteral("unchanged");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("unchanged")};
+    QString error;
+    object.qrCode.encoding = 1; object.qrCode.swapBytes = true; object.qrCode.characterLength = 0; object.qrCode.description = QStringLiteral("金玺测试");
+    object.qrCode.visibility.tolerance = QStringLiteral("0.25"); object.qrCode.visibility.wordAddress = QStringLiteral("LW42");
+    qrOnly.objects = {object}; project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), object});
+    QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson());
+    json = object.toJson(); properties = json.value(QStringLiteral("qrCode")).toObject(); properties.insert(QStringLiteral("characterLength"), 1.5); json.insert(QStringLiteral("qrCode"), properties);
+    QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("message"));
+    json = object.toJson(); properties = json.value(QStringLiteral("qrCode")).toObject(); visibility = properties.value(QStringLiteral("visibility")).toObject(); visibility.insert(QStringLiteral("unknown"), true); properties.insert(QStringLiteral("visibility"), visibility); json.insert(QStringLiteral("qrCode"), properties);
+    QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    json = object.toJson(); json.insert(QStringLiteral("type"), QStringLiteral("text")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    object.qrCode.monitorAddress = QStringLiteral("LB0"); QVERIFY(!object.qrCode.validateAddresses(project.connections, &error)); object.qrCode.monitorAddress = QStringLiteral("LW0");
+    object.qrCode.visibility.visibilityEnabled = true; object.qrCode.visibility.wordEnabled = true; object.qrCode.visibility.dataType = 1; object.qrCode.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.qrCode.validateAddresses(project.connections, &error));
+    QCOMPARE(loaded.objects.size(), 8);
+    QVERIFY(!exportNativeProjectSource(qrOnly, &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged")); QVERIFY(!buildProjectPayload(qrOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrCopyAndCompactProperties
+ * Description     : Preserve dormant QR fields through real selection cloning and typed compact-panel description/address changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::qrCopyAndCompactProperties() //20261112-0 add
+{
+    MainWindow window;
+    HmiProject project;
+    HmiProject copied;
+    HmiObject object = qrObject();
+    Stage3Clipboard clipboard;
+    QStringList created;
+    QString error;
+    object.qrCode.swapBytes = true; object.qrCode.encoding = 1; object.qrCode.characterLength = 255;
+    project.objects = {messageObject(), scaleObject(), object};
+    QVERIFY2(captureStage3Selection(project, {object.id}, &clipboard, &error), qPrintable(error));
+    QVERIFY2(pasteStage3Selection(project, clipboard, QPoint(0, 120), &copied, &created, &error), qPrintable(error));
+    QCOMPARE(copied.objects.last().qrCode.toJson(), object.qrCode.toJson()); QVERIFY(copied.objects.last().id != object.id);
+    window.setProject(project, QString()); window.m_canvas->selectObject(object.id); window.m_textEdit->setPlainText(QStringLiteral("HTTPS://KINSEAL.TEST/EDIT")); window.m_addressEdit->setText(QStringLiteral("LW8")); window.applySelectedProperties();
+    object = window.currentEditorProject().objects.last(); QCOMPARE(object.qrCode.description, QStringLiteral("HTTPS://KINSEAL.TEST/EDIT")); QCOMPARE(object.qrCode.monitorAddress, QStringLiteral("LW8")); QCOMPARE(object.qrCode.characterLength, 255); QVERIFY(object.qrCode.swapBytes);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrCreationEditCancellationAndHistory
+ * Description     : Exercise real command placement, creation cancellation, edit cancellation and one-step accepted edits with undo/redo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::qrCreationEditCancellationAndHistory() //20261112-0 add
+{
+    MainWindow window;
+    HmiProject project;
+    int history;
+    window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } });
+    window.m_commands.value(QStringLiteral("action_qrcode"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QCOMPARE(window.m_projectHistory.size(), history);
+    QTimer::singleShot(0, &window, []() {
+        QrCodeDialog *dialog = qobject_cast<QrCodeDialog *>(QApplication::activeModalWidget());
+        if (dialog != nullptr) { dialog->findChild<QLineEdit *>(QStringLiteral("QrDescription"))->setText(QStringLiteral("create")); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); }
+    });
+    window.m_commands.value(QStringLiteral("action_qrcode"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20)));
+    QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 130)));
+    QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 130)));
+    QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("create")); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() {
+        QrCodeDialog *dialog = qobject_cast<QrCodeDialog *>(QApplication::activeModalWidget());
+        if (dialog != nullptr) { dialog->findChild<QLineEdit *>(QStringLiteral("QrDescription"))->setText(QStringLiteral("discard")); dialog->reject(); }
+    });
+    window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("create"));
+    QTimer::singleShot(0, &window, []() {
+        QrCodeDialog *dialog = qobject_cast<QrCodeDialog *>(QApplication::activeModalWidget());
+        if (dialog != nullptr) { dialog->findChild<QLineEdit *>(QStringLiteral("QrDescription"))->setText(QStringLiteral("edit")); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); }
+    });
+    window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("edit")); QCOMPARE(window.m_projectHistory.size(), history + 2);
+    window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("create")); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    window.restoreProjectHistory(1); window.restoreProjectHistory(1); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("edit"));
 }
 
 QTEST_MAIN(Stage4ControlTests)

@@ -1,0 +1,955 @@
+{
+  "date": "2026-11-12",
+  "family": "qrcode",
+  "scope": "原厂自有私有桌面：Qt getter、属性变化、最小源及离线编译；未执行USB传输、PLC通信或前置/切换桌面。",
+  "runtimeTerminationVerifiedInEachRun": true,
+  "records": [
+    {
+      "path": "native-probe-qrcode-default-r2.json",
+      "run": "qrcode-default-r2",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 110102,
+      "sha256": "6999ec7c2e3286e1a2e0e3a1b6f6ae3db9ebb4507a8421229e656dc157efe57f"
+    },
+    {
+      "path": "native-probe-qrcode-description-chinese-ascii-r1.json",
+      "run": "qrcode-description-chinese-ascii-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 52856,
+      "sha256": "65c734d3cc1f1a183bfbb2a36271a6f7aa3d825cc64ae11479ba5c07b15e37ea"
+    },
+    {
+      "path": "native-probe-qrcode-description-chinese-gb2312-r1.json",
+      "run": "qrcode-description-chinese-gb2312-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 53604,
+      "sha256": "5a7cd995f49413c5951ae706a67e81654a8296bdbb28e7620cb9b2a20e6124f2"
+    },
+    {
+      "path": "native-probe-qrcode-inspect-r1.json",
+      "run": "qrcode-inspect-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 44473,
+      "sha256": "864ef296d5ac105bab9c4e387b8e430f8513c9bfb52707c5be48c4442f587e5b"
+    },
+    {
+      "path": "native-probe-qrcode-length0-r1.json",
+      "run": "qrcode-length0-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 52774,
+      "sha256": "9251691da5b697ff678ba10b3fae4b7314dcf97e030c3a8f56f3efeee4c666de"
+    },
+    {
+      "path": "native-probe-qrcode-length255-r1.json",
+      "run": "qrcode-length255-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 52841,
+      "sha256": "7c5768561a70bfdadbc5dcbb2d77bae51f35964614c7c740ae8ce00f26f1b7bf"
+    },
+    {
+      "path": "native-probe-qrcode-permission-r5.json",
+      "run": "qrcode-permission-r5",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 174468,
+      "sha256": "7df0dca3d1c18c642842e3f29aab698970c02e2803261a12a16215807aae1654"
+    },
+    {
+      "path": "native-probe-qrcode-swap-r1.json",
+      "run": "qrcode-swap-r1",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "bytes": 52505,
+      "sha256": "bbafa42b8743b2b3365e4e963559b96afeb5367b2a0e9912fea709c02132e806"
+    },
+    {
+      "path": "native-probe-qrcode-ui-r2.json",
+      "run": "qrcode-ui-r2",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 41, 'status': 'error', 'error': 'Error: system error'}\")",
+      "bytes": 90309,
+      "sha256": "c16c5c24d3569f49d72ab7935b1de0946677025e79042781cfa6202c19da2c66"
+    }
+  ],
+  "excludedDiagnostics": [
+    {
+      "run": "qrcode-default-r1",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"widget match not unique {'op': 'spin', 'name': 'spinBox_Length', 'value': -1} []\")",
+      "sha256": "3e5dae9cd708cd123f6a279e1527581130f8e41e42cb4c8cf215a5d38fcae5d6",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "qrcode-permission-r1",
+      "status": "partial-or-error",
+      "error": "RuntimeError('Unknown command combo-index')",
+      "sha256": "81d46a12815ab7f210aa897a65a309944630f630850b90a6f3ae123d7ef272ff",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "qrcode-permission-r2",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"{'serial': 31, 'status': 'error', 'error': 'Error: system error'}\")",
+      "sha256": "bf74442e75097f932bf164aa54212662f89e069a78cedf85c12cc27f3026da82",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "qrcode-permission-r3",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "sha256": "e1244ec8a9768ccdac959c191955d14491f557d529475986dfb8d9736951b01a",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "qrcode-permission-r4",
+      "status": "partial-or-error",
+      "error": "AssertionError()",
+      "sha256": "279bd0931589d6e29895fe8ea619e19b1c172896f9cdcff32626a6345590e845",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    },
+    {
+      "run": "qrcode-ui-r1",
+      "status": "partial-or-error",
+      "error": "RuntimeError(\"widget match not unique {'op': 'text', 'name': 'lineEdit_link', 'value': '金玺测试'} []\")",
+      "sha256": "f4a815da4031dbb16946f9005d7402d0269a695501d18403197d0136a80316ba",
+      "reason": "失败或未实际改变值的探针；不充当原生通过证据。有效子结果由保留的独立运行分别说明。"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "qrcode-default-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-default-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "4a4930614728f4f009154039e48789582883f662fe7de58b5c41d2ddeb891a1d",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "85c65e76244a74651b0ea02be03521e2dbe86082bd378b9a7f8c1b945e68ecfd",
+          "retainedPath": "compiled/qrcode-default-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "retainedPath": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3891,
+          "sha256": "92d10327b42c961d4f5495787986bc6abd41cab0c56dc0efce091780d0cc2494",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7957,
+          "sha256": "75147789f7f7bd7f880e035dbe022d36531e5394ee1ea5ae85f2b6578f48d7ed",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-default-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-default-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retainedPath": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "734c7e03310a9c12eac1111c158aeebf8146d70870acfe943565bd884a83aa35",
+          "retainedPath": "compiled/qrcode-default-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1047,
+          "sha256": "b7bb4557e490a0c39a4b460f5fbc2cf75937e1c574e749edb4c86c797bb4d9b2",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "11085c13bb961e1ecdbfcbe1b6c7a29ff1c1dc0433c4ffe55883e170b03d0532",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "qrcode-description-chinese-ascii-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-description-chinese-ascii-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "ead701176c66cc9d460916a59c6afc618e362365426d595ef636fbe930a821c6",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "af0fe9b240a940b134dbf7c4138351b22b331cd2df82fa2a0cb357671ec1725e",
+          "retainedPath": "compiled/qrcode-description-chinese-ascii-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "sharedFrom": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3935,
+          "sha256": "65ff7f7355aa53153f5c28b88b5b89df354222dc9e53a6ddfd7b701d92d9a531",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 8030,
+          "sha256": "4e98a311820b945a197bbc953a9ee9565bf8a2df12e24baa05751a4c503b3ed8",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-description-chinese-ascii-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-description-chinese-ascii-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "sharedFrom": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "d44c182c3efdb14c6a36f8a8cccea18d3146cebc726ede6fdf518ea5ae0861ab",
+          "retainedPath": "compiled/qrcode-description-chinese-ascii-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1083,
+          "sha256": "5d9485995b41f696f5477090b45d95a8c3e2479218f52dec8e49b7c2f4d1891e",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "48f4b3df88601b04a1639a22da54b1f3f6b311177548747f33c49f78941b9600",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "qrcode-description-chinese-gb2312-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-description-chinese-gb2312-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "cccd2cdbf45dbffcbc5898a0daa202f57690ba167ec5316d10d4f1d295ca1636",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "e52ad13c0855896740157b8fca31382926b2891a5dab15d2c17c74738afeca18",
+          "retainedPath": "compiled/qrcode-description-chinese-gb2312-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "sharedFrom": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3937,
+          "sha256": "b482f6495f2fa890a5f761fb8a9e5f5dbb499cdd458afee8bbb621e63cdb6228",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 8045,
+          "sha256": "935fae3da6b5b26bd591623746bf742e445b7a1aafdd1a8addaaee399bac887f",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-description-chinese-gb2312-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-description-chinese-gb2312-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "sharedFrom": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "3ccd96965a5e2b86a93edddf043dbcf1e997e72c2cd35d0b7f6c8c0e5d5a20e3",
+          "retainedPath": "compiled/qrcode-description-chinese-gb2312-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1086,
+          "sha256": "59c130e2a18b4357ff2ddf5957c1752395a35e60157d66de384f4bd5cf3eeeb5",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "7af32f9e2ad094e52ac2069df1faa8b3d3d8908db1ec3ee7f3f986d0514d0134",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "qrcode-length0-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-length0-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "f1a9778c6461c637006e2854635fc7834a3557c6bf396c5f3cec31f7581a58a9",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "87ce7f0e8fa9d7dba819255ef6fb5493589ea83400b35198a225d89f3407ead1",
+          "retainedPath": "compiled/qrcode-length0-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "sharedFrom": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3891,
+          "sha256": "483bbb721dbdecea2e42d00b94ce5c7eb70c3f733cc8b61e68536bad9ed3718a",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7953,
+          "sha256": "0795edabc8ecfe65aeeb6af37032f6ddb520a94d40c8ec25b62e037e533ef640",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-length0-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-length0-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "sharedFrom": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "5983d3dd17c0ecd47386f1862d3fefdb4c607a9a54028181fdbf882e22be1fba",
+          "retainedPath": "compiled/qrcode-length0-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1042,
+          "sha256": "741475c7f092630dd1dbdef2f6d6300970e36f462456fc8379694b88228c0754",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "3303d8b7188278731d44ad0ca98bb22a232d37ed7d780419851dbc7c40093f59",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "qrcode-length255-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-length255-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "8889db01c42bdba43a3d2e47282817d88cf756113b97ec738fd8dd12f23a3dd7",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "0ae7d8cdd421eadaadcf6e61ab30a3fb3e6332df827b2d3ef97b10478bef5b9b",
+          "retainedPath": "compiled/qrcode-length255-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "sharedFrom": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3895,
+          "sha256": "8a2cdd6554ad97eeb669921fd61610b788693a70a9d8aa7b4c77d78b5d864c68",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7998,
+          "sha256": "d88ba396795508b05c5230afea72bccfc1197db421e64cd1510604f662d34e90",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-length255-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-length255-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "sharedFrom": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "ca0bcf79882ad01a968b195a1a67f5384f94d6ae2204c81a931f23d378061716",
+          "retainedPath": "compiled/qrcode-length255-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1054,
+          "sha256": "6b773f40ee2ed4692ed66b9645c6f7d215959aee4cdf797d35532f28f7bede20",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "76282f0b42668f731282f1bd521529a30b51e81835c47876e2ba5db037107072",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    },
+    {
+      "label": "qrcode-swap-r1",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled/qrcode-swap-r1/AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "2cb1fcb0ecc2484054306f055f9633ab38e47646b5898155eb0b5f56022f653c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "omittedReproducible": true
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "164445b07716791f4702eab4a2a26d6fecc75ea134d030e79a26aed88c30f2f7",
+          "retainedPath": "compiled/qrcode-swap-r1/ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 2112,
+          "sha256": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+          "sharedFrom": "compiled/qrcode-default-r1/ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "omittedReproducible": true
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 3885,
+          "sha256": "ce5112ba8ca8b256453ff7e92cdaf470a9eafde9f5cf141def5010a921d58dea",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 7992,
+          "sha256": "dbd5d3cb95c76ca26b0355e1979fb1efab1be6d6e0f7df8737fd8423cac5dfa8",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+          "retainedPath": "compiled/qrcode-swap-r1/PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+          "retainedPath": "compiled/qrcode-swap-r1/SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "sharedFrom": "compiled/qrcode-default-r1/SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "99b63f05c795551d4cc271521f2a5c354d62d9538d595230916bcd8774082efa",
+          "retainedPath": "compiled/qrcode-swap-r1/SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1042,
+          "sha256": "fcb1d57c209796db1592cd2b1c140a87fd26d9785514267b35f8277497f8ac39",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "7781cfd3c502dcb4cfa823086ba495e8c34e70e45e6a186eb49e8601f4039aad",
+          "omittedReproducible": true
+        }
+      ],
+      "retention": "仅保留契约相关dat；完全相同的像素段引用首次保留文件，所有原始哈希在此登记。"
+    }
+  ],
+  "sources": [
+    {
+      "path": "qrcode-default.sm",
+      "bytes": 3891,
+      "sha256": "92d10327b42c961d4f5495787986bc6abd41cab0c56dc0efce091780d0cc2494"
+    },
+    {
+      "path": "qrcode-description-chinese-ascii.sm",
+      "bytes": 3935,
+      "sha256": "65ff7f7355aa53153f5c28b88b5b89df354222dc9e53a6ddfd7b701d92d9a531"
+    },
+    {
+      "path": "qrcode-description-chinese-gb2312.sm",
+      "bytes": 3937,
+      "sha256": "b482f6495f2fa890a5f761fb8a9e5f5dbb499cdd458afee8bbb621e63cdb6228"
+    },
+    {
+      "path": "qrcode-length0.sm",
+      "bytes": 3891,
+      "sha256": "483bbb721dbdecea2e42d00b94ce5c7eb70c3f733cc8b61e68536bad9ed3718a"
+    },
+    {
+      "path": "qrcode-length255.sm",
+      "bytes": 3895,
+      "sha256": "8a2cdd6554ad97eeb669921fd61610b788693a70a9d8aa7b4c77d78b5d864c68"
+    },
+    {
+      "path": "qrcode-swap.sm",
+      "bytes": 3885,
+      "sha256": "ce5112ba8ca8b256453ff7e92cdaf470a9eafde9f5cf141def5010a921d58dea"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "qrcode-chinese-ascii-r1.png",
+      "bytes": 9954,
+      "sha256": "4f32dcb1be51b9ffab98c530e8e460097edcfeaee81a9979f43408a86b19bd28"
+    },
+    {
+      "path": "qrcode-chinese-gb2312-r1.png",
+      "bytes": 9996,
+      "sha256": "c2d2b842cda165c7c54c2ba920cf1ffbd0687d8c2bbd7ea92ac2e79ad42754b9"
+    },
+    {
+      "path": "qrcode-default-r1.png",
+      "bytes": 9694,
+      "sha256": "cbf37af222e7df00c2d0dae9ae916bdcbd673893c9813fb9835a4e9c69b9719f"
+    },
+    {
+      "path": "qrcode-equality-float-r5.png",
+      "bytes": 12089,
+      "sha256": "8f3b92a4ddb8cd5a53ba08ed61bb37f64330061ff04270511e8ac4c1cc6ef0fa"
+    }
+  ],
+  "previewPixelObservations": [
+    {
+      "path": "qrcode-default-r1.png",
+      "sourceRect": [
+        675,
+        83,
+        773,
+        180
+      ],
+      "pixelSize": [
+        98,
+        97
+      ],
+      "rgbSha256": "ac07e1280c4d14e9b79aa5e4cc6ba5f78d19bbfd68ba952e6905065ced387c75",
+      "note": "截图相同坐标处原始RGB像素比较；不等价于二维码载荷解码或扫描验收。"
+    },
+    {
+      "path": "qrcode-chinese-ascii-r1.png",
+      "sourceRect": [
+        675,
+        83,
+        773,
+        180
+      ],
+      "pixelSize": [
+        98,
+        97
+      ],
+      "rgbSha256": "ac07e1280c4d14e9b79aa5e4cc6ba5f78d19bbfd68ba952e6905065ced387c75",
+      "note": "截图相同坐标处原始RGB像素比较；不等价于二维码载荷解码或扫描验收。"
+    },
+    {
+      "path": "qrcode-chinese-gb2312-r1.png",
+      "sourceRect": [
+        675,
+        83,
+        773,
+        180
+      ],
+      "pixelSize": [
+        98,
+        97
+      ],
+      "rgbSha256": "ac07e1280c4d14e9b79aa5e4cc6ba5f78d19bbfd68ba952e6905065ced387c75",
+      "note": "截图相同坐标处原始RGB像素比较；不等价于二维码载荷解码或扫描验收。"
+    }
+  ],
+  "observations": {
+    "lengthHardRange": [
+      0,
+      255
+    ],
+    "lengthDefault": 25,
+    "length0And255": "均创建/保存/原生离线编译成功",
+    "encodingOptions": [
+      "ASCII",
+      "GB2312"
+    ],
+    "descriptionMaxLength": 32767,
+    "visibilityTypeOrder": [
+      "U16",
+      "U32",
+      "I16",
+      "I32",
+      "F32"
+    ],
+    "equalityErrorField": "QMetaObject queued setCurrentIndex实际成功并回读==/<>；U16/F32下误差输入均可见且启用，默认0，见permission-r5。",
+    "unknown": [
+      "空描述原始二维码载荷",
+      "设备GB2312/字序/字符串内存解释",
+      "描述写入地址时机",
+      "原厂QR容错/版本/留白的算法契约",
+      "权限条件组合及屏端显示"
+    ]
+  },
+  "scripts": [
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/audit_evidence.py",
+      "bytes": 3798,
+      "sha256": "88c4b6922126fc15057fc11f47ac5f764345bfed89821cd0f225f570e6799c8e"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/base-message-probe.py",
+      "bytes": 50758,
+      "sha256": "3051b9e4cabae9d99110db41de1cac8d9388fb196d62f61ead5f61370e30e787"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/finalize_evidence.py",
+      "bytes": 7602,
+      "sha256": "7e622cbf48a68db82fae066964ad20c4f6408ccf705b78991813bd39d624d148"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/native_qrcode_probe.py",
+      "bytes": 52052,
+      "sha256": "8fc15729f294ceae8b19ad3c936d5155c576e5e866bad777cfe47c9c5e10b8b3"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/native_scale_probe.py",
+      "bytes": 52050,
+      "sha256": "363f02ea2886743258788d36491ece0ea5cec9bd33180b037d895d36222d93e6"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/prepare_probe.py",
+      "bytes": 3837,
+      "sha256": "8f3b524a7b077a991a9232b38faeb0042b0ee95b84bea2c9337c86acf960ffd1"
+    },
+    {
+      "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/scenarios.py",
+      "bytes": 6618,
+      "sha256": "a1c553e6877326ace36d599b8aa9cdac4704521c301cd7b01330edaed6e0e344"
+    }
+  ],
+  "cleanup": {
+    "path": ".scratch/kinseal-stage4-20261112/native-scale-qr/cleanup.json",
+    "sha256": "148fe9b0ddebfde11faadaf4eec0eaac05d3fb10fded9950cb55ed3bd4d63c77",
+    "result": {
+      "filesRemoved": 645,
+      "unknownRetained": [],
+      "remainingRuntimeDirectories": []
+    }
+  },
+  "previewPixelLimit": "直接QLineEdit::setText后的中文ASCII/GB2312预览区域与空描述完全相同；未证明用户文本编辑信号路径已触发，不据此推断原厂不支持中文或算法相同。中文值已原生确认保存及编译，设备端仍待验。",
+  "integrityAudit": {
+    "checkedContentHashes": 61,
+    "result": "passed",
+    "notes": "验证全部源/截图/保留JSON及每个保留/共享dat引用的真实文件哈希。"
+  }
+}

@@ -799,7 +799,7 @@ void Stage2WorkflowTests::nativeShellPendingCommandsAreReadOnly() //20261111-1 a
         message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
         if (message != nullptr) { explained = message->text().contains(QStringLiteral("后续阶段")); message->accept(); }
     });
-    window.m_commands.value(QStringLiteral("action_qrcode"))->trigger();
+    window.m_commands.value(QStringLiteral("action_online_simulation"))->trigger();
     QVERIFY(explained); QCOMPARE(window.currentEditorProject().toJson(), before);
     QVERIFY(!window.m_dirty);
 }

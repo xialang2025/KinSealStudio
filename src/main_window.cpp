@@ -968,6 +968,12 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
     object.address = m_addressEdit->text();
+    if (object.type == QStringLiteral("qrcode")) //20261112-0 add: Keep the compact description and address synchronized with the typed QR record.
+    {
+        object.qrCode.description = object.text; object.qrCode.monitorAddress = object.address.trimmed();
+        if (!object.qrCode.validate(&controlError) || !object.qrCode.validateAddresses(m_project.connections, &controlError))
+        { QMessageBox::warning(this, QStringLiteral("二维码属性未提交"), controlError); return; }
+    }
     if (object.type == QStringLiteral("message")) //20261112-0 add: The compact property panel edits the first state in the current language.
     {
         object.messageDisplay.states[0].insert(m_project.activeLanguage, object.text);
@@ -1431,8 +1437,10 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         {
             m_textEdit->setPlainText(bitButtonContent(object.bitButton.states[0], m_project.activeLanguage));
         }
+        if (object.type == QStringLiteral("qrcode")) { m_textEdit->setPlainText(object.qrCode.description); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_textEdit->setPlainText(object.messageDisplay.text(0, m_project.activeLanguage)); } //20261112-0 add
         m_addressEdit->setText(object.address);
+        if (object.type == QStringLiteral("qrcode")) { m_addressEdit->setText(object.qrCode.monitorAddress); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_addressEdit->setText(object.messageDisplay.monitorAddress); } //20261112-0 add
         m_xSpin->setValue(object.geometry.x());
         m_ySpin->setValue(object.geometry.y());

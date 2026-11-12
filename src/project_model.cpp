@@ -251,6 +251,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     }
     if (type == QStringLiteral("message")) { json.insert(QStringLiteral("messageDisplay"), messageDisplay.toJson()); } //20261112-0 add
     if (type == QStringLiteral("scale")) { json.insert(QStringLiteral("scale"), scale.toJson()); } //20261112-0 add
+    if (type == QStringLiteral("qrcode")) { json.insert(QStringLiteral("qrCode"), qrCode.toJson()); } //20261112-0 add
     return json;
 }
 
@@ -287,7 +288,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -302,6 +303,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("qrCode")) //20261112-0 add
+        {
+            if (!item.value().isObject() || !QrCodeProperties::fromJson(item.value().toObject(), &object->qrCode, error)) { return false; }
         }
         else if (key == QStringLiteral("scale")) //20261112-0 add
         {
@@ -330,6 +335,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     { return modelError(error, QStringLiteral("消息显示类型与专有属性不匹配。")); }
     if ((object->type == QStringLiteral("scale")) != json.contains(QStringLiteral("scale")))
     { return modelError(error, QStringLiteral("刻度类型与专有属性不匹配。")); }
+    if ((object->type == QStringLiteral("qrcode")) != json.contains(QStringLiteral("qrCode"))) //20261112-0 add
+    { return modelError(error, QStringLiteral("二维码类型与专有属性不匹配。")); }
     object->name = json.value(QStringLiteral("name")).toString();
     object->text = json.value(QStringLiteral("text")).toString();
     object->address = json.value(QStringLiteral("address")).toString();
@@ -402,6 +409,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->type != QStringLiteral("image") &&
          object->type != QStringLiteral("message") && //20261112-0 add
          object->type != QStringLiteral("scale") && //20261112-0 add
+         object->type != QStringLiteral("qrcode") && //20261112-0 add
          object->type != QStringLiteral("text")))
     {
         if (error != nullptr)
@@ -680,7 +688,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     //20261112-0 add: Schema10 is reserved for stage-3 editor flags; message data starts at schema11.
     Q_FOREACH (page, allPages())
     {
-        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale")) { schema = 11; stage1 = true; } }
+        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode")) { schema = 11; stage1 = true; } }
     }
     resolution = {{QStringLiteral("width"), pageWidth}, {QStringLiteral("height"), pageHeight}};
     if (stage1)
@@ -1549,6 +1557,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
     Q_FOREACH (object, allObjects)
     {
         if (object.type == QStringLiteral("message") && !object.messageDisplay.validateAddresses(connections, error)) { return false; } //20261112-0 add
+        if (object.type == QStringLiteral("qrcode") && (!object.qrCode.validate(error) || !object.qrCode.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.hasWordButtonProperties && (object.type != QStringLiteral("switch") ||
             !object.hasBitButtonProperties || object.bitButton.indicator || object.bitButton.dualMonitor ||
             !object.wordButton.validate(error))) //20261109-6 add: Enforce the same subtype contract for in-memory compile and save calls.

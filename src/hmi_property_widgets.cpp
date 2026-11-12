@@ -75,7 +75,7 @@ HmiPermissionEditor::HmiPermissionEditor(const QString &title, const QString &pr
     wordLayout->addWidget(m_value, 2, 0, 1, 2); wordLayout->addWidget(m_errorLabel, 2, 2); wordLayout->addWidget(m_error, 2, 3);
     layout->addWidget(m_word);
     QObject::connect(bitPicker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_bitAddress, true); });
-    QObject::connect(wordPicker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_wordAddress, false); });
+    QObject::connect(wordPicker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_wordAddress, false, m_type->currentIndex() == 0 || m_type->currentIndex() == 2 ? 1 : 2); }); //20261112-0 change: Validate the full U32/I32/F32 permission read span in the picker.
     QObject::connect(m_comparison, &QComboBox::currentIndexChanged, this, [this](int comparison) {
         m_error->setVisible(comparison == 2 || comparison == 3);
         m_errorLabel->setVisible(comparison == 2 || comparison == 3);

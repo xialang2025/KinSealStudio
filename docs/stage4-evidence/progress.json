@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 2,
-  "blockedLayers": 6,
-  "active": "C08",
+  "editorSlicesDelivered": 3,
+  "blockedLayers": 9,
+  "active": "C09",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -90,14 +90,29 @@
     {
       "id": "C08",
       "name": "二维码",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "二维码两页全部可见字段、显现及地址联动、真实QR描述预览、确认后拖框、取消/撤销、KSP及混合复制重开",
+      "evidence": "qrcode/windows-final-r3/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C08-001",
+        "Q-S04-C08-002",
+        "Q-S04-C08-003"
+      ]
     },
     {
       "id": "C09",
       "name": "图片显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
