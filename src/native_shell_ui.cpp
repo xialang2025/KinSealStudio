@@ -175,6 +175,10 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("number")); }); //20261112-0 change: Configure before beginning rectangle placement.
             }
+            else if (id == QStringLiteral("action_polyBtn")) //20261112-0 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("multistate")); });
+            }
             else if (id == QStringLiteral("action_screenbutton")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("screen")); });
@@ -541,7 +545,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (state != nullptr)
     {
         blocked = state->blockSignals(true);
-        count = !selected || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
+        count = !selected || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.type == QStringLiteral("multistate") ? object.multiStateButton.stateCount : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
         state->clear();
         for (index = 0; index < count; ++index) { state->addItem(QString::number(index)); }
         state->setEnabled(m_hasProject && count > 1);

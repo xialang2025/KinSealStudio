@@ -108,6 +108,13 @@ private slots:
     void screenResourcesAndRealAddressRoles();
     void screenShellCreationCancellationAndUndo();
     void screenLanguageCompactProperties();
+    void multiDefaultsAndMirroredAddressLifetime();
+    void multiCountShrinkRegrowAndSelection();
+    void multiAllStatesLanguagesAndFlags();
+    void multiStrictMixedPersistenceAndBackendGates();
+    void multiResourcesAndFullAddressRoles();
+    void multiShellPlacementStatePreviewAndUndo();
+    void multiLanguageCompactProperties();
 };
 
 /******************************************************************************
@@ -1862,6 +1869,160 @@ void Stage4ControlTests::screenLanguageCompactProperties() //20261112-0 add
     window.m_textEdit->setPlainText(QStringLiteral("English edited")); window.applySelectedProperties(); object = window.currentEditorProject().objects.first(); QCOMPARE(bitButtonContent(object.screenButton.common.states[0], QStringLiteral("中文")), QStringLiteral("中文")); QCOMPARE(bitButtonContent(object.screenButton.common.states[0], QStringLiteral("English")), QStringLiteral("English edited"));
     BitButtonDialog dialog(object, project);
     QCOMPARE(dialog.object().screenButton.common.macroName, QStringLiteral("dormant macro")); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->minimum(), 0); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->maximum(), 255); QCOMPARE(dialog.object().screenButton.common.pressTime, 0); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitSize"))->maximum(), 128); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("BitBackground"))->isEnabled());
+}
+
+/******************************************************************************
+ * Function Name   : multiObject
+ * Description     : Create an independent three-state input record without activating shared lamp or bit-switch layouts.
+ * Input Parameters: None
+ * Return Value    : Bounded multi-state button.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject multiObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("multi-object"); object.type = QStringLiteral("multistate"); object.name = QStringLiteral("多态按钮"); object.geometry = QRect(100, 350, 130, 70); object.text = QStringLiteral("OFF"); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiDefaultsAndMirroredAddressLifetime
+ * Description     : Verify native three-state defaults, six action drafts and the documented same-address mirror/uncheck lifetime.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiDefaultsAndMirroredAddressLifetime() //20261112-0 add
+{
+    BitButtonDialog dialog(multiObject(), HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("BitButtonTabs"));
+    QLineEdit *monitor = dialog.findChild<QLineEdit *>(QStringLiteral("MultiMonitor"));
+    QLineEdit *write = dialog.findChild<QLineEdit *>(QStringLiteral("MultiWrite"));
+    QCheckBox *same = dialog.findChild<QCheckBox *>(QStringLiteral("MultiSameAddress"));
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("多态按钮")); QCOMPARE(tabs->count(), 4); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("MultiDataType"))->count(), 2); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("MultiStateCount"))->value(), 3); QVERIFY(!same->isChecked()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("BitMacro"))->isEnabled()); QVERIFY(!dialog.object().hasBitButtonProperties); QVERIFY(!dialog.object().hasLampProperties); QVERIFY(dialog.object().address.isEmpty());
+    monitor->setText(QStringLiteral("LW12")); write->setText(QStringLiteral("LW25")); same->setChecked(true); QCOMPARE(write->text(), QStringLiteral("LW12")); QVERIFY(!write->isEnabled()); monitor->setText(QStringLiteral("LW14")); QCOMPARE(write->text(), QStringLiteral("LW14")); same->setChecked(false); QVERIFY(write->isEnabled()); QCOMPARE(write->text(), QStringLiteral("LW14"));
+    for (index = 0; index < 6; ++index) { dialog.findChild<QRadioButton *>(QStringLiteral("MultiAction%1").arg(index))->click(); QCOMPARE(dialog.object().multiStateButton.action, index); }
+    tabs->setCurrentIndex(1); QCOMPARE(tabs->widget(1)->findChildren<QWidget *>().size(), 0);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { tabs->setCurrentIndex(0); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("multi-general.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiCountShrinkRegrowAndSelection
+ * Description     : Reproduce the successful native lifetime experiment and prevent deleted state data from returning.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiCountShrinkRegrowAndSelection() //20261112-0 add
+{
+    HmiObject original = multiObject();
+    BitButtonDialog dialog(original, HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("BitButtonTabs"));
+    QSpinBox *count = dialog.findChild<QSpinBox *>(QStringLiteral("MultiStateCount"));
+    QSpinBox *state = dialog.findChild<QSpinBox *>(QStringLiteral("BitState"));
+    QPlainTextEdit *text = dialog.findChild<QPlainTextEdit *>(QStringLiteral("BitText"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); tabs->setCurrentIndex(2); state->setValue(2); QCOMPARE(text->toPlainText(), QString()); text->setPlainText(QStringLiteral("C15_STATE2_KEEP")); dialog.findChild<QPushButton *>(QStringLiteral("BitNoImage"))->click(); QVERIFY(!dialog.object().multiStateButton.state(2)->useImage); QVERIFY(dialog.findChild<QSpinBox *>(QStringLiteral("BitOpacity"))->isEnabled());
+    count->setValue(2); QCOMPARE(state->maximum(), 1); QCOMPARE(state->value(), 1); QCOMPARE(text->toPlainText(), QStringLiteral("ON")); count->setValue(3); state->setValue(2); QCOMPARE(text->toPlainText(), QString()); QVERIFY(dialog.object().multiStateButton.state(2)->useImage); QCOMPARE(dialog.object().multiStateButton.state(2)->picture, QStringLiteral("switch_ON.kvg")); QCOMPARE(dialog.object().multiStateButton.state(2)->background, QColor(QStringLiteral("#a0a0a0"))); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("BitOpacity"))->isEnabled());
+    count->setValue(32); state->setValue(31); text->setPlainText(QStringLiteral("tail31")); count->setValue(3); QCOMPARE(state->value(), 2); count->setValue(32); state->setValue(31); QCOMPARE(text->toPlainText(), QString()); dialog.reject(); QCOMPARE(original.multiStateButton.stateCount, 3); QCOMPARE(bitButtonContent(*original.multiStateButton.state(2), QStringLiteral("中文")), QString());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiAllStatesLanguagesAndFlags
+ * Description     : Keep thirty-two independent language/text/image drafts and state-local visual flags through shared editor access.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiAllStatesLanguagesAndFlags() //20261112-0 add
+{
+    HmiProject project;
+    HmiObject object = multiObject();
+    BitButtonDialog *dialog;
+    QSpinBox *state;
+    QComboBox *language;
+    QPlainTextEdit *text;
+    int index;
+    project.languages = {QStringLiteral("中文"), QStringLiteral("English")}; object.multiStateButton.setStateCount(32); dialog = new BitButtonDialog(object, project); dialog->show(); QVERIFY(QTest::qWaitForWindowExposed(dialog)); dialog->findChild<QTabWidget *>(QStringLiteral("BitButtonTabs"))->setCurrentIndex(2); state = dialog->findChild<QSpinBox *>(QStringLiteral("BitState")); language = dialog->findChild<QComboBox *>(QStringLiteral("BitLanguage")); text = dialog->findChild<QPlainTextEdit *>(QStringLiteral("BitText"));
+    for (index = 0; index < 32; ++index) { state->setValue(index); language->setCurrentText(QStringLiteral("中文")); text->setPlainText(QStringLiteral("中文%1").arg(index)); language->setCurrentText(QStringLiteral("English")); text->setPlainText(QStringLiteral("English %1").arg(index)); }
+    state->setValue(2); dialog->findChild<QCheckBox *>(QStringLiteral("Bit3D"))->setChecked(true); object = dialog->object(); QVERIFY(object.multiStateButton.state(2)->effect3d); QVERIFY(!object.multiStateButton.state(0)->effect3d); QVERIFY(!object.multiStateButton.state(1)->effect3d); QVERIFY(dialog->findChild<QCheckBox *>(QStringLiteral("BitFlash"))->isEnabled());
+    for (index = 0; index < 32; ++index) { QCOMPARE(bitButtonContent(*object.multiStateButton.state(index), QStringLiteral("中文")), QStringLiteral("中文%1").arg(index)); QCOMPARE(bitButtonContent(*object.multiStateButton.state(index), QStringLiteral("English")), QStringLiteral("English %1").arg(index)); }
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("multi-appearance.png")))); } delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip fifteen families and a multi-only project while rejecting bad state lists and unrecovered native outputs atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = multiObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.multiStateButton.setStateCount(32); object.multiStateButton.extraStates.last().text.languageTexts.insert(QStringLiteral("中文"), QStringLiteral("state31")); project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 15); QCOMPARE(loaded.toJson(), project.toJson());
+    only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.multiStateButton.toJson(); props.insert(QStringLiteral("extraStates"), QJsonArray()); json.insert(QStringLiteral("multiStateButton"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props = object.multiStateButton.toJson(); props.insert(QStringLiteral("dataType"), 2); json.insert(QStringLiteral("multiStateButton"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("multi-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiResourcesAndFullAddressRoles
+ * Description     : Protect extra-state resources across pages and validate independent full-width monitor/write/notice increments.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiResourcesAndFullAddressRoles() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject result;
+    HmiPage page;
+    HmiObject object = multiObject();
+    Stage3DuplicateOptions options;
+    QString error;
+    object.multiStateButton.setStateCount(32); object.multiStateButton.dataType = 1; object.multiStateButton.monitorAddress = QStringLiteral("LW10"); object.multiStateButton.writeAddress = QStringLiteral("LW20"); object.multiStateButton.common.notice = true; object.multiStateButton.common.noticeBit = true; object.multiStateButton.common.noticeBitAddress = QStringLiteral("LB30"); object.multiStateButton.state(31)->picture = QStringLiteral("multi.png"); object.multiStateButton.state(31)->picturePng = imagePng(Qt::green); project.pictures.insert(QStringLiteral("multi.png"), imagePng(Qt::green)); project.objects = {object}; page.id = QStringLiteral("multi-page"); page.name = QStringLiteral("多态副页"); object.id = QStringLiteral("multi-other"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(project, QStringLiteral("multi.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(project, QStringLiteral("multi.png"), &result, &error)); QVERIFY2(renameStage3Picture(project, QStringLiteral("multi.png"), QStringLiteral("multi-new.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().multiStateButton.state(31)->picture, QStringLiteral("multi-new.png"));
+    options.columns = 2; options.increments = {{Stage3AddressField::MonitorWord, 2, 0}, {Stage3AddressField::Operation, 4, 0}, {Stage3AddressField::NoticeBit, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().multiStateButton.monitorAddress, QStringLiteral("LW12")); QCOMPARE(result.objects.last().multiStateButton.writeAddress, QStringLiteral("LW24")); QCOMPARE(result.objects.last().multiStateButton.common.noticeBitAddress, QStringLiteral("LB33")); QVERIFY(result.objects.last().address.isEmpty());
+    object.multiStateButton.monitorAddress = QStringLiteral("LW4096"); QVERIFY(!object.multiStateButton.validateAddresses({}, &error)); object.multiStateButton.dataType = 0; QVERIFY2(object.multiStateButton.validateAddresses({}, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiShellPlacementStatePreviewAndUndo
+ * Description     : Exercise actual creation/cancellation, thirty-two-state preview, editing, shrinking and undo without PLC writes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiShellPlacementStatePreviewAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    int history;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size(); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_polyBtn"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("MultiStateCount"))->setValue(32); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_polyBtn"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QCOMPARE(window.currentEditorProject().objects.first().multiStateButton.stateCount, 32); QCOMPARE(window.findChild<QComboBox *>(QStringLiteral("NativeStatePreview"))->count(), 32); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { BitButtonDialog *dialog = qobject_cast<BitButtonDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("MultiStateCount"))->setValue(2); dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().multiStateButton.stateCount, 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().multiStateButton.stateCount, 32); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::multiLanguageCompactProperties
+ * Description     : Preserve English/Chinese OFF labels and real monitor identity during compact edits and whole-object undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::multiLanguageCompactProperties() //20261112-0 add
+{
+    HmiProject project;
+    HmiObject object = multiObject();
+    MainWindow window;
+    project.languages = {QStringLiteral("中文"), QStringLiteral("English")}; project.activeLanguage = QStringLiteral("English"); object.text = QStringLiteral("中文"); object.multiStateButton.common.states[0].text.languageTexts = {{QStringLiteral("中文"), QStringLiteral("中文")}, {QStringLiteral("English"), QStringLiteral("English")}}; project.objects = {object}; window.setProject(project, QString()); window.m_canvas->selectObject(object.id); QCOMPARE(window.m_textEdit->toPlainText(), QStringLiteral("English")); window.m_nameEdit->setText(QStringLiteral("multi renamed")); window.m_addressEdit->setText(QStringLiteral("LW8")); window.applySelectedProperties(); object = window.currentEditorProject().objects.first(); QCOMPARE(object.multiStateButton.monitorAddress, QStringLiteral("LW8")); QVERIFY(object.address.isEmpty()); QCOMPARE(bitButtonContent(object.multiStateButton.common.states[0], QStringLiteral("English")), QStringLiteral("English")); QCOMPARE(bitButtonContent(object.multiStateButton.common.states[0], QStringLiteral("中文")), QStringLiteral("中文")); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().multiStateButton.monitorAddress, QStringLiteral("LW0"));
 }
 
 QTEST_MAIN(Stage4ControlTests)

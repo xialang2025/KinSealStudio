@@ -42,6 +42,7 @@ template<typename Visitor> void visitPictureStates(HmiObject &object, Visitor vi
 {
     int index;
     if (object.hasNumberDisplayProperties) { visitor(object.numberDisplay.appearance); } //20261112-0 add
+    if (object.type == QStringLiteral("multistate")) { for (index = 0; index < object.multiStateButton.stateCount; ++index) { visitor(*object.multiStateButton.state(index)); } } //20261112-0 add
     if (object.type == QStringLiteral("screen")) { for (index = 0; index < 2; ++index) { visitor(object.screenButton.common.states[index]); } } //20261112-0 add
     if (object.type == QStringLiteral("time")) { visitor(object.timeDisplay.appearance); } //20261112-0 add
     if (object.type == QStringLiteral("ascii")) { visitor(object.asciiDisplay.common.appearance); } //20261112-0 add

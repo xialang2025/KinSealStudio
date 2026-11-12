@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 9,
-  "blockedLayers": 33,
-  "active": "C15",
+  "editorSlicesDelivered": 10,
+  "blockedLayers": 37,
+  "active": "C16",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -250,14 +250,30 @@
     {
       "id": "C15",
       "name": "多态按钮",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立多态按钮模型与四页、2无符号类型和6功能、监控/写入及同址镜像、2..32独立状态与缩容真实截尾、双语/图库/权限通知、全页资源与完整字跨度复制、multi-only schema12及15类混合工程、创建编辑预览撤销",
+      "evidence": "multi-state-button/windows-r1/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C15-001",
+        "Q-S04-C15-002",
+        "Q-S04-C15-003",
+        "Q-S04-C15-004"
+      ]
     },
     {
       "id": "C16",
       "name": "多功能按钮",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

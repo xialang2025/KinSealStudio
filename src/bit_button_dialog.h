@@ -118,6 +118,16 @@ private:
     int m_screenActionDraft = 0;
     QWidget *createScreenGeneral();
     void refreshScreenTarget();
+    QComboBox *m_multiDataType = nullptr; //20261112-0 add
+    QLineEdit *m_multiMonitor = nullptr;
+    QLineEdit *m_multiWrite = nullptr;
+    QPushButton *m_multiWritePicker = nullptr;
+    QCheckBox *m_multiSame = nullptr;
+    QSpinBox *m_multiCount = nullptr;
+    QButtonGroup *m_multiActions = nullptr;
+    QWidget *createMultiGeneral();
+    void refreshMultiAddresses();
+    void resizeMultiStates(int count);
 
     void storeState();
     void loadState();

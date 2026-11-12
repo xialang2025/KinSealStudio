@@ -75,7 +75,17 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
     NumberDisplayProperties *ascii;
+    MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("multistate")) //20261112-0 add: Monitor and input are distinct unsigned-word roles.
+    {
+        multi = &object->multiStateButton; screen = &multi->common;
+        addressSlots.append({Stage3AddressField::MonitorWord, &multi->monitorAddress, PlcAddressRole::Word, multi->dataType == 0 ? 1U : 2U});
+        if (!multi->sameAddress) { addressSlots.append({Stage3AddressField::Operation, &multi->writeAddress, PlcAddressRole::Word, multi->dataType == 0 ? 1U : 2U}); }
+        addConditionSlots(&screen->visibility, false, &addressSlots); addConditionSlots(&screen->touch, true, &addressSlots);
+        if (screen->notice && screen->noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &screen->noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (screen->notice && screen->noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &screen->noticeWordAddress, PlcAddressRole::Word, screen->noticeWordType == 0 || screen->noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("screen")) //20261112-0 add: Navigation is not an operating PLC address.
     {
         screen = &object->screenButton.common;
@@ -319,6 +329,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->type == QStringLiteral("multistate")) //20261112-0 add
+    {
+        for (index = 0; index < object->multiStateButton.stateCount; ++index)
+        { if (!object->multiStateButton.state(index)->picturePng.isEmpty()) { if (!mergePicture(candidate, object->multiStateButton.state(index)->picture, object->multiStateButton.state(index)->picturePng, &resolved, error)) { return false; } object->multiStateButton.state(index)->picture = resolved; } }
+    }
     if (object->type == QStringLiteral("screen")) //20261112-0 add
     {
         for (index = 0; index < 2; ++index)

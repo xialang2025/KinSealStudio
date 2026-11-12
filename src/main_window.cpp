@@ -968,6 +968,8 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.staticText.languageTexts.insert(m_project.activeLanguage, object.text);
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
+    if (object.type == QStringLiteral("multistate")) //20261112-0 add: Preserve per-language OFF text in the independent multi-state record.
+    { if (object.multiStateButton.common.states[0].sameLanguage) { object.multiStateButton.common.states[0].sharedText = object.text; } else { object.multiStateButton.common.states[0].text.languageTexts.insert(m_project.activeLanguage, object.text); } object.text = bitButtonContent(object.multiStateButton.common.states[0], m_project.languages.first()); }
     if (object.type == QStringLiteral("screen")) //20261112-0 add: Compact text edits the real OFF state; page targets are never numeric addresses.
     {
         if (object.screenButton.common.states[0].sameLanguage) { object.screenButton.common.states[0].sharedText = object.text; }
@@ -975,6 +977,8 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.text = bitButtonContent(object.screenButton.common.states[0], m_project.languages.first());
     }
     object.address = object.type == QStringLiteral("screen") ? QString() : m_addressEdit->text();
+    if (object.type == QStringLiteral("multistate")) //20261112-0 add: The compact address edits the full-width monitor only.
+    { object.multiStateButton.monitorAddress = object.address.trimmed(); if (object.multiStateButton.sameAddress) { object.multiStateButton.writeAddress = object.multiStateButton.monitorAddress; } object.address.clear(); if (!object.multiStateButton.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("多态按钮属性未提交"), controlError); return; } }
     if (object.type == QStringLiteral("ascii")) //20261112-0 add: ASCII monitor editing validates a base carrier without assuming a recovered string span.
     {
         object.asciiDisplay.common.monitorAddress = object.address.trimmed();
@@ -1457,10 +1461,12 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         {
             m_textEdit->setPlainText(bitButtonContent(object.bitButton.states[0], m_project.activeLanguage));
         }
+        if (object.type == QStringLiteral("multistate")) { m_textEdit->setPlainText(bitButtonContent(object.multiStateButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add
         if (object.type == QStringLiteral("screen")) { m_textEdit->setPlainText(bitButtonContent(object.screenButton.common.states[0], m_project.activeLanguage)); } //20261112-0 add: A compact edit must read the same language that it will update.
         if (object.type == QStringLiteral("qrcode")) { m_textEdit->setPlainText(object.qrCode.description); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_textEdit->setPlainText(object.messageDisplay.text(0, m_project.activeLanguage)); } //20261112-0 add
         m_addressEdit->setText(object.address);
+        if (object.type == QStringLiteral("multistate")) { m_addressEdit->setText(object.multiStateButton.monitorAddress); } //20261112-0 add
         if (object.type == QStringLiteral("ascii")) { m_addressEdit->setText(object.asciiDisplay.common.monitorAddress); } //20261112-0 add
         if (object.hasNumberDisplayProperties) { m_addressEdit->setText(object.numberDisplay.monitorAddress); } //20261112-0 add
         if (object.type == QStringLiteral("qrcode")) { m_addressEdit->setText(object.qrCode.monitorAddress); } //20261112-0 add
