@@ -1912,17 +1912,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/ascii/native/manifest.json"
+        "evidence": "../docs/stage4-evidence/time/native/manifest.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次C12编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次C13编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "进入C13；保留本控件未决层"
+        "nextAction": "进入C14；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -1965,6 +1965,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T05:48:45.635045+00:00"
+        },
+        {
+          "executionId": "stage4-time-20261112",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/ascii/native/manifest.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次C12编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "进入C13；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T06:13:00.486625+00:00"
         }
       ]
     },
@@ -3399,6 +3419,14 @@
     {
       "id": "stage4-ascii-20261112",
       "productPassed": 46,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": false,
+      "completeControl": false
+    },
+    {
+      "id": "stage4-time-20261112",
+      "productPassed": 53,
       "productFailed": 0,
       "productSkipped": 0,
       "usbAccessed": false,

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 7,
-  "blockedLayers": 25,
-  "active": "C13",
+  "editorSlicesDelivered": 8,
+  "blockedLayers": 29,
+  "active": "C14",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -204,14 +204,30 @@
     {
       "id": "C13",
       "name": "时间显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "时间独立模型、三页、9日期与4时间格式、独立7字号、显现权限、数值/ASCII/时间三类切换及草稿、跨页外形资源和显现地址复制、仅时间schema12与13类混合保存、创建转换撤销",
+      "evidence": "time/windows-final-r2/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C13-001",
+        "Q-S04-C13-002",
+        "Q-S04-C13-003",
+        "Q-S04-C13-004"
+      ]
     },
     {
       "id": "C14",
       "name": "画面按钮",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

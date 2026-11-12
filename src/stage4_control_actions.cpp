@@ -39,6 +39,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = QStringLiteral("数值显示器"); object.geometry = QRect(0, 0, 120, 60); object.address = QStringLiteral("LW0"); object.hasNumberDisplayProperties = true;
         dialog = new NumberDisplayDialog(object, currentEditorProject(), this);
     }
+    else if (type == QStringLiteral("time")) //20261112-0 add
+    {
+        object.name = QStringLiteral("时间显示器"); object.geometry = QRect(0, 0, 120, 60);
+        dialog = new NumberDisplayDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("ascii")) //20261112-0 add
     {
         object.name = QStringLiteral("ASCII显示器"); object.geometry = QRect(0, 0, 120, 60); object.address = QStringLiteral("LW0");
@@ -66,7 +71,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
-        else if (type == QStringLiteral("ascii")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
+        else if (type == QStringLiteral("time") || type == QStringLiteral("ascii")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
         if (!applyControlDraft(object, m_project.macros, pictures, false, &error, &animations)) //20261112-0 change
@@ -99,7 +104,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("qrcode")) { dialog = new QrCodeDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("gif")) { dialog = new GifDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("number")) { dialog = new NumberDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
-    else if (object.type == QStringLiteral("ascii")) { dialog = new NumberDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
+    else if (object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii")) { dialog = new NumberDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("image")) { dialog = new ImageDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("scale")) { dialog = new ScaleDialog(object, this); }
     else { return; }
@@ -109,7 +114,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("gif")) { animations = qobject_cast<GifDisplayDialog *>(dialog)->animations(); object = qobject_cast<GifDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("number")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
-        else if (object.type == QStringLiteral("ascii")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
+        else if (object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii")) { pictures = qobject_cast<NumberDisplayDialog *>(dialog)->pictures(); object = qobject_cast<NumberDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
         if (!applyControlDraft(object, m_project.macros, pictures, true, &error, &animations)) { QMessageBox::warning(this, QStringLiteral("控件修改未提交"), error); } //20261112-0 change

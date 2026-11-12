@@ -75,6 +75,7 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
     NumberDisplayProperties *ascii;
+    if (object->type == QStringLiteral("time")) { addConditionSlots(&object->timeDisplay.visibility, false, &addressSlots); } //20261112-0 add: RTC exposes only visibility carriers.
     if (object->type == QStringLiteral("ascii")) //20261112-0 add: Keep ASCII base carriers separate from unknown string spans and inactive numeric ranges.
     {
         ascii = &object->asciiDisplay.common;
@@ -309,6 +310,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->type == QStringLiteral("time") && !object->timeDisplay.appearance.picturePng.isEmpty()) //20261112-0 add
+    {
+        if (!mergePicture(candidate, object->timeDisplay.appearance.picture, object->timeDisplay.appearance.picturePng, &resolved, error)) { return false; }
+        object->timeDisplay.appearance.picture = resolved;
+    }
     if (object->type == QStringLiteral("ascii") && !object->asciiDisplay.common.appearance.picturePng.isEmpty()) //20261112-0 add
     {
         if (!mergePicture(candidate, object->asciiDisplay.common.appearance.picture, object->asciiDisplay.common.appearance.picturePng, &resolved, error)) { return false; }

@@ -76,6 +76,21 @@ void paintAsciiDisplay(QPainter *painter, const QRectF &rect, const AsciiDisplay
 }
 
 /******************************************************************************
+ * Function Name   : paintTimeDisplay
+ * Description     : Paint measured clock format tokens without binding them to a fabricated PLC carrier or host clock.
+ * Input Parameters: painter, rect, properties
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void paintTimeDisplay(QPainter *painter, const QRectF &rect, const TimeDisplayProperties &properties) //20261112-0 add
+{
+    NumberDisplayProperties visual;
+    visual.allowInput = false; visual.displayAddress = false; visual.fontSize = properties.fontSize; visual.alignment = properties.alignment; visual.opacity = properties.opacity;
+    visual.textColor = properties.textColor; visual.backgroundColor = properties.backgroundColor; visual.effect3d = properties.effect3d; visual.transparent = properties.transparent; visual.appearance = properties.appearance;
+    paintNumberDisplay(painter, rect, visual, properties.sample(), true);
+}
+
+/******************************************************************************
  * Function Name   : NumberDisplayDialog::field
  * Description     : Read the actual typed widget value while retaining fields not represented by an active editor.
  * Input Parameters: key
@@ -225,7 +240,7 @@ QWidget *NumberDisplayDialog::range(const QString &prefix, QWidget *parent) //20
  * Date            : 2026.11.12
  ******************************************************************************/
 NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProject &project, QWidget *parent) //20261112-0 add
-    : QDialog(parent), m_original(object), m_project(project), m_draft(object.type == QStringLiteral("ascii") ? object.asciiDisplay.common : object.numberDisplay), m_asciiDraft(object.asciiDisplay), m_asciiMode(object.type == QStringLiteral("ascii")) //20261112-0 change
+    : QDialog(parent), m_original(object), m_project(project), m_draft(object.type == QStringLiteral("ascii") ? object.asciiDisplay.common : object.numberDisplay), m_asciiDraft(object.asciiDisplay), m_timeDraft(object.timeDisplay), m_asciiMode(object.type == QStringLiteral("ascii")), m_timeMode(object.type == QStringLiteral("time")) //20261112-0 change
 {
     QVBoxLayout *root;
     QHBoxLayout *content;
@@ -256,6 +271,11 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     QJsonArray connections;
     PlcConnection connection;
     int index;
+    if (m_timeMode) //20261112-0 add: Seed only shared visual fields; clock records contain no numeric address or input draft.
+    {
+        m_draft.fontSize = 16; m_draft.alignment = m_timeDraft.alignment; m_draft.opacity = m_timeDraft.opacity; m_draft.textColor = m_timeDraft.textColor; m_draft.backgroundColor = m_timeDraft.backgroundColor;
+        m_draft.effect3d = m_timeDraft.effect3d; m_draft.transparent = m_timeDraft.transparent; m_draft.appearance = m_timeDraft.appearance; m_draft.visibility = m_timeDraft.visibility;
+    }
     setObjectName(QStringLiteral("NumberDisplayDialog")); resize(820, 650); setFont(QFont(QStringLiteral("SimSun"), 9));
     setStyleSheet(QStringLiteral("QLineEdit,QComboBox,QSpinBox {background:#caeace;} QLineEdit:disabled,QComboBox:disabled,QSpinBox:disabled {background:#d0e9f4;}"));
     Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
@@ -263,19 +283,31 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     page = new QWidget(tabs); layout = new QVBoxLayout(page); layout->setSpacing(6); row = new QHBoxLayout(); names = {QStringLiteral("数值输入/显示"), QStringLiteral("ASCII输入/显示"), QStringLiteral("日期/时间显示")};
     for (index = 0; index < 3; ++index)
     {
-        type = new QRadioButton(names.at(index), page); type->setObjectName(QStringLiteral("NumberFamily%1").arg(index)); type->setChecked(index == (m_asciiMode ? 1 : 0)); row->addWidget(type);
-        if (index == 2) { type->setEnabled(false); type->setToolTip(QStringLiteral("C13接续日期/时间类型切换事务。")); }
-        else { connect(type, &QRadioButton::toggled, this, [this, index](bool checked) { if (checked) { m_asciiMode = index == 1; updateLinkage(); } }); } //20261112-0 change: Share the native family shell while retaining distinct typed records.
+        type = new QRadioButton(names.at(index), page); type->setObjectName(QStringLiteral("NumberFamily%1").arg(index)); type->setChecked(index == (m_timeMode ? 2 : m_asciiMode ? 1 : 0)); row->addWidget(type);
+        connect(type, &QRadioButton::toggled, this, [this, index](bool checked) { if (checked) { m_asciiMode = index == 1; m_timeMode = index == 2; updateLinkage(); } }); //20261112-0 change: Share the native family shell while retaining distinct typed records.
     }
-    layout->addLayout(row); form = new QFormLayout(); dataType = combo(QStringLiteral("dataType"), NumberDisplayProperties::dataTypes(), page); form->addRow(QStringLiteral("数据类型:"), dataType); m_dataTypeLabel = form->labelForField(dataType); form->addRow(QStringLiteral("监控地址:"), address(QStringLiteral("monitorAddress"), false, page));
+    layout->addLayout(row); m_dataControls = new QWidget(page); form = new QFormLayout(m_dataControls); dataType = combo(QStringLiteral("dataType"), NumberDisplayProperties::dataTypes(), page); form->addRow(QStringLiteral("数据类型:"), dataType); m_dataTypeLabel = form->labelForField(dataType); form->addRow(QStringLiteral("监控地址:"), address(QStringLiteral("monitorAddress"), false, page));
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("offsetEnabled"), QStringLiteral("偏移地址"), page)); row->addWidget(address(QStringLiteral("offsetAddress"), false, page)); row->addWidget(check(QStringLiteral("displayAddress"), QStringLiteral("显示监控地址"), page)); form->addRow(row);
-    row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("allowInput"), QStringLiteral("允许输入"), page)); row->addWidget(check(QStringLiteral("sameMonitor"), QStringLiteral("与监视地址相同"), page)); row->addWidget(check(QStringLiteral("password"), QStringLiteral("密码"), page)); row->addWidget(check(QStringLiteral("inputMarker"), QStringLiteral("是否显示输入标志"), page)); form->addRow(row); form->addRow(QStringLiteral("输入地址:"), address(QStringLiteral("inputAddress"), false, page)); layout->addLayout(form);
+    row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("allowInput"), QStringLiteral("允许输入"), page)); row->addWidget(check(QStringLiteral("sameMonitor"), QStringLiteral("与监视地址相同"), page)); row->addWidget(check(QStringLiteral("password"), QStringLiteral("密码"), page)); row->addWidget(check(QStringLiteral("inputMarker"), QStringLiteral("是否显示输入标志"), page)); form->addRow(row); form->addRow(QStringLiteral("输入地址:"), address(QStringLiteral("inputAddress"), false, page)); layout->addWidget(m_dataControls);
     m_asciiControls = new QWidget(page); form = new QFormLayout(m_asciiControls); row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("asciiAutoWrap"), QStringLiteral("自动换行"), m_asciiControls)); row->addWidget(check(QStringLiteral("asciiSwapBytes"), QStringLiteral("高低字节互换"), m_asciiControls)); form->addRow(row); form->addRow(QStringLiteral("编码方式:"), combo(QStringLiteral("asciiEncoding"), {QStringLiteral("ASCII"), QStringLiteral("GB2312")}, m_asciiControls)); layout->addWidget(m_asciiControls);
     qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiAutoWrap")))->setChecked(m_asciiDraft.autoWrap); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiSwapBytes")))->setChecked(m_asciiDraft.swapBytes); qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("asciiEncoding")))->setCurrentIndex(m_asciiDraft.encoding);
+    m_timeControls = new QGroupBox(QStringLiteral("监控日期/时间"), page); m_timeControls->setObjectName(QStringLiteral("TimeControls")); form = new QFormLayout(m_timeControls);
+    row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("timeShowDate"), QStringLiteral("日期"), m_timeControls)); row->addWidget(combo(QStringLiteral("timeDateFormat"), TimeDisplayProperties::dateFormats(), m_timeControls)); form->addRow(row);
+    form->addRow(check(QStringLiteral("timeShowWeek"), QStringLiteral("星期"), m_timeControls)); row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("timeShowTime"), QStringLiteral("时间"), m_timeControls)); row->addWidget(combo(QStringLiteral("timeTimeFormat"), TimeDisplayProperties::timeFormats(), m_timeControls)); form->addRow(row);
+    m_timeSample = new QLabel(m_timeDraft.sample(), m_timeControls); m_timeSample->setObjectName(QStringLiteral("TimeFormatSample")); m_timeSample->setStyleSheet(QStringLiteral("background:#ffb64b;")); form->addRow(QStringLiteral("预览:"), m_timeSample); layout->addWidget(m_timeControls);
+    qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("timeShowDate")))->setChecked(m_timeDraft.showDate); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("timeShowWeek")))->setChecked(m_timeDraft.showWeek); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("timeShowTime")))->setChecked(m_timeDraft.showTime);
+    qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("timeDateFormat")))->setCurrentIndex(m_timeDraft.dateFormat); qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("timeTimeFormat")))->setCurrentIndex(m_timeDraft.timeFormat);
+    for (index = 0; index < 3; ++index)
+    {
+        key = QStringList{QStringLiteral("timeShowDate"), QStringLiteral("timeShowWeek"), QStringLiteral("timeShowTime")}.at(index);
+        connect(qobject_cast<QCheckBox *>(m_fields.value(key)), &QCheckBox::toggled, this, [this]() { if (m_ready && m_timeMode && !field(QStringLiteral("timeShowDate")).toBool() && !field(QStringLiteral("timeShowWeek")).toBool() && !field(QStringLiteral("timeShowTime")).toBool()) { QMessageBox::information(this, QStringLiteral("KinSealStudio"), QStringLiteral("不能隐藏所有时间和星期")); } }); //20261112-0 add: Evidence observes all three unchecked while the immediate message remains open.
+    }
     m_inputRange = new QGroupBox(QStringLiteral("数值输入范围"), page); form = new QFormLayout(m_inputRange); form->addRow(range(QStringLiteral("input"), m_inputRange)); layout->addWidget(m_inputRange);
     box = group(QStringLiteral("scaling"), QStringLiteral("缩放设置"), page); form = new QFormLayout(box); row = new QHBoxLayout(); row->addWidget(new QLabel(QStringLiteral("增益:"), box)); row->addWidget(line(QStringLiteral("gain"), box)); row->addWidget(new QLabel(QStringLiteral("偏移量:"), box)); row->addWidget(line(QStringLiteral("offset"), box)); form->addRow(row); layout->addWidget(box);
     macro = group(QStringLiteral("macroEnabled"), QStringLiteral("宏指令"), page); row = new QHBoxLayout(macro); row->addWidget(new QLabel(QStringLiteral("使用宏:"), macro)); row->addWidget(line(QStringLiteral("macroName"), macro)); row->addWidget(new QPushButton(QStringLiteral("写宏"), macro)); macro->setEnabled(false); layout->addWidget(macro); layout->addStretch(); tabs->addTab(page, QStringLiteral("基本"));
-    page = new QWidget(tabs); layout = new QVBoxLayout(page); form = new QFormLayout(); form->addRow(QStringLiteral("字体:"), combo(QStringLiteral("font"), {QStringLiteral("一般字体"), QStringLiteral("数码字体"), QStringLiteral("方正中等线简体")}, page)); form->addRow(QStringLiteral("字体大小:"), combo(QStringLiteral("fontSize"), {QStringLiteral("16"), QStringLiteral("24"), QStringLiteral("32"), QStringLiteral("40"), QStringLiteral("48"), QStringLiteral("64"), QStringLiteral("96"), QStringLiteral("192")}, page, true));
+    page = new QWidget(tabs); layout = new QVBoxLayout(page); m_numberFontControls = new QWidget(page); form = new QFormLayout(m_numberFontControls); form->addRow(QStringLiteral("字体:"), combo(QStringLiteral("font"), {QStringLiteral("一般字体"), QStringLiteral("数码字体"), QStringLiteral("方正中等线简体")}, page)); form->addRow(QStringLiteral("字体大小:"), combo(QStringLiteral("fontSize"), {QStringLiteral("16"), QStringLiteral("24"), QStringLiteral("32"), QStringLiteral("40"), QStringLiteral("48"), QStringLiteral("64"), QStringLiteral("96"), QStringLiteral("192")}, page, true));
+    layout->addWidget(m_numberFontControls); m_timeFontControls = new QWidget(page); form = new QFormLayout(m_timeFontControls); form->addRow(QStringLiteral("字体:"), combo(QStringLiteral("timeFont"), {QStringLiteral("汉字库字体")}, m_timeFontControls)); form->addRow(QStringLiteral("字体大小:"), combo(QStringLiteral("timeFontSize"), TimeDisplayProperties::fontSizes(), m_timeFontControls, true)); qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("timeFontSize")))->setCurrentIndex(TimeDisplayProperties::fontSizes().indexOf(QString::number(m_timeDraft.fontSize))); qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("timeFont")))->setCurrentIndex(0); layout->addWidget(m_timeFontControls); form = new QFormLayout();
+    m_timeTotal = spin(QStringLiteral("timeTotalDigits"), 1, 1, page); m_timeTotal->setEnabled(false); form->addRow(QStringLiteral("总位数:"), m_timeTotal); m_timeTotalLabel = form->labelForField(m_timeTotal);
     digits = spin(QStringLiteral("totalDigits"), 1, NumberDisplayProperties::maximumDigits(m_draft.dataType), page); form->addRow(QStringLiteral("总位数:"), digits); m_totalDigitsLabel = form->labelForField(digits);
     characterCount = spin(QStringLiteral("asciiCharacterCount"), 1, 256, page); characterCount->setValue(m_asciiDraft.characterCount); form->addRow(QStringLiteral("显示字符数:"), characterCount); m_characterCountLabel = form->labelForField(characterCount);
     form->addRow(QStringLiteral("小数位数:"), spin(QStringLiteral("decimalDigits"), 0, 99, page)); form->addRow(QStringLiteral("样式:"), combo(QStringLiteral("alignment"), {QStringLiteral("居中"), QStringLiteral("左对齐"), QStringLiteral("右对齐")}, page)); form->addRow(QStringLiteral("调整:"), combo(QStringLiteral("adjustment"), {QStringLiteral("前面去0"), QStringLiteral("0领头"), QStringLiteral("空格领头")}, page));
@@ -303,7 +335,7 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     noticeOn = new QRadioButton(QStringLiteral("1"), m_noticeBitStates); noticeOff = new QRadioButton(QStringLiteral("0"), m_noticeBitStates); noticeOn->setObjectName(QStringLiteral("Number_noticeBitValue")); noticeOff->setObjectName(QStringLiteral("Number_noticeBitZero")); noticeOn->setChecked(m_draft.noticeBitValue); noticeOff->setChecked(!m_draft.noticeBitValue); m_fields.insert(QStringLiteral("noticeBitValue"), noticeOn); noticeStateLayout->addWidget(noticeOn); noticeStateLayout->addWidget(noticeOff); form->addRow(m_noticeBitStates); //20261112-0 change: Native notifications use a 1/0 radio pair.
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("noticeWord"), QStringLiteral("通知字"), box)); row->addWidget(address(QStringLiteral("noticeWordAddress"), false, box)); form->addRow(row); form->addRow(QStringLiteral("数据类型:"), combo(QStringLiteral("noticeWordType"), StaticTextProperties::dataTypes(), box)); form->addRow(QStringLiteral("数值:"), line(QStringLiteral("noticeWordValue"), box)); layout->addWidget(box);
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("pressTimeEnabled"), QStringLiteral("按压时间"), page)); row->addWidget(spin(QStringLiteral("pressTime"), 0, 255, page)); m_pressUnits = new QLabel(QStringLiteral("x100毫秒"), page); row->addWidget(m_pressUnits); layout->addLayout(row); layout->addStretch(); tabs->addTab(page, QStringLiteral("权限设置"));
-    page = new QWidget(tabs); layout = new QVBoxLayout(page); box = new QGroupBox(QStringLiteral("键盘设置"), page); form = new QFormLayout(box); form->addRow(check(QStringLiteral("customKeyboard"), QStringLiteral("使用自定义键盘"), box)); form->addRow(check(QStringLiteral("asciiModifyInput"), QStringLiteral("修改输入"), box)); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiModifyInput")))->setChecked(m_asciiDraft.modifyInput); keyboard = new QComboBox(box); keyboard->setObjectName(QStringLiteral("Number_keyboardPageId"));
+    page = new QWidget(tabs); m_otherPage = page; layout = new QVBoxLayout(page); box = new QGroupBox(QStringLiteral("键盘设置"), page); form = new QFormLayout(box); form->addRow(check(QStringLiteral("customKeyboard"), QStringLiteral("使用自定义键盘"), box)); form->addRow(check(QStringLiteral("asciiModifyInput"), QStringLiteral("修改输入"), box)); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiModifyInput")))->setChecked(m_asciiDraft.modifyInput); keyboard = new QComboBox(box); keyboard->setObjectName(QStringLiteral("Number_keyboardPageId"));
     Q_FOREACH (keyboardPage, project.allPages()) { if (keyboardPage.kind == QStringLiteral("keyboard")) { keyboard->addItem(keyboardPage.name, keyboardPage.id); } }
     keyboard->setCurrentIndex(keyboard->findData(m_draft.keyboardPageId)); m_fields.insert(QStringLiteral("keyboardPageId"), keyboard); form->addRow(QStringLiteral("窗口编号:"), keyboard); m_keyboardLabel = form->labelForField(keyboard);
     box = group(QStringLiteral("keyboardPosition"), QStringLiteral("键盘自定义位置"), box); form->addRow(box); form = new QFormLayout(box); form->addRow(QStringLiteral("X位置:"), spin(QStringLiteral("keyboardX"), 0, 800, box)); form->addRow(QStringLiteral("Y位置:"), spin(QStringLiteral("keyboardY"), 0, 480, box)); layout->addWidget(box->parentWidget()); layout->addStretch(); tabs->addTab(page, QStringLiteral("其它"));
@@ -351,17 +383,20 @@ void NumberDisplayDialog::updateLinkage() //20261112-0 add
     if (!m_ready || m_updating) { return; } m_updating = true; draft = object().numberDisplay;
     m_draft.inputAddress = draft.inputAddress; //20261112-0 add: Display the synchronized address while retaining the independent input-address draft.
     qobject_cast<QLineEdit *>(m_fields.value(QStringLiteral("inputAddress")))->setText(draft.sameMonitor ? draft.monitorAddress : draft.inputAddress); m_inputShowingMonitor = draft.sameMonitor;
-    setObjectName(m_asciiMode ? QStringLiteral("AsciiDisplayDialog") : QStringLiteral("NumberDisplayDialog"));
+    m_dataControls->setVisible(!m_timeMode); m_timeControls->setVisible(m_timeMode); m_numberFontControls->setVisible(!m_timeMode); m_timeFontControls->setVisible(m_timeMode); m_timeTotal->setVisible(m_timeMode); m_timeTotalLabel->setVisible(m_timeMode);
+    if (m_timeMode && findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->indexOf(m_otherPage) >= 0) { findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->removeTab(3); }
+    if (!m_timeMode && findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->indexOf(m_otherPage) < 0) { findChild<QTabWidget *>(QStringLiteral("NumberTabs"))->addTab(m_otherPage, QStringLiteral("其它")); }
+    setObjectName(m_timeMode ? QStringLiteral("TimeDisplayDialog") : m_asciiMode ? QStringLiteral("AsciiDisplayDialog") : QStringLiteral("NumberDisplayDialog"));
     m_colorLabels.value(QStringLiteral("textColor"))->setText(m_asciiMode ? QStringLiteral("文本颜色:") : QStringLiteral("数值颜色:")); m_colorLabels.value(QStringLiteral("backgroundColor"))->setText(m_asciiMode ? QStringLiteral("文本背景颜色:") : QStringLiteral("数值背景颜色:")); //20261112-0 change
-    setWindowTitle(m_asciiMode ? draft.allowInput ? QStringLiteral("ASCII输入") : QStringLiteral("ASCII显示") : draft.allowInput ? QStringLiteral("数值输入") : QStringLiteral("数值显示"));
-    m_fields.value(QStringLiteral("dataType"))->setVisible(!m_asciiMode); m_dataTypeLabel->setVisible(!m_asciiMode); m_inputRange->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("scaling"))->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("displayRange"))->setVisible(!m_asciiMode);
-    m_asciiControls->setVisible(m_asciiMode); m_fields.value(QStringLiteral("asciiEncoding"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("totalDigits"))->setVisible(!m_asciiMode); m_totalDigitsLabel->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("asciiCharacterCount"))->setVisible(m_asciiMode); m_characterCountLabel->setVisible(m_asciiMode); m_fields.value(QStringLiteral("asciiModifyInput"))->setVisible(m_asciiMode);
-    m_fields.value(QStringLiteral("adjustment"))->setEnabled(!m_asciiMode); m_fields.value(QStringLiteral("customDisplay"))->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("customText"))->setVisible(!m_asciiMode);
-    m_fields.value(QStringLiteral("lowColor"))->setEnabled(!m_asciiMode); m_fields.value(QStringLiteral("highColor"))->setEnabled(!m_asciiMode); findChild<QPushButton *>(QStringLiteral("Number_lowColorPicker"))->setEnabled(!m_asciiMode); findChild<QPushButton *>(QStringLiteral("Number_highColorPicker"))->setEnabled(!m_asciiMode);
+    setWindowTitle(m_timeMode ? QStringLiteral("时间显示") : m_asciiMode ? draft.allowInput ? QStringLiteral("ASCII输入") : QStringLiteral("ASCII显示") : draft.allowInput ? QStringLiteral("数值输入") : QStringLiteral("数值显示"));
+    m_fields.value(QStringLiteral("dataType"))->setVisible(!m_asciiMode && !m_timeMode); m_dataTypeLabel->setVisible(!m_asciiMode && !m_timeMode); m_inputRange->setVisible(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("scaling"))->setVisible(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("macroEnabled"))->setVisible(!m_timeMode); m_fields.value(QStringLiteral("displayRange"))->setVisible(!m_asciiMode && !m_timeMode);
+    m_asciiControls->setVisible(m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("asciiEncoding"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("totalDigits"))->setVisible(!m_asciiMode && !m_timeMode); m_totalDigitsLabel->setVisible(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("asciiCharacterCount"))->setVisible(m_asciiMode); m_characterCountLabel->setVisible(m_asciiMode); m_fields.value(QStringLiteral("asciiModifyInput"))->setVisible(m_asciiMode);
+    m_fields.value(QStringLiteral("adjustment"))->setEnabled(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("customDisplay"))->setVisible(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("customText"))->setVisible(!m_asciiMode && !m_timeMode);
+    m_fields.value(QStringLiteral("lowColor"))->setEnabled(!m_asciiMode && !m_timeMode); m_fields.value(QStringLiteral("highColor"))->setEnabled(!m_asciiMode && !m_timeMode); findChild<QPushButton *>(QStringLiteral("Number_lowColorPicker"))->setEnabled(!m_asciiMode && !m_timeMode); findChild<QPushButton *>(QStringLiteral("Number_highColorPicker"))->setEnabled(!m_asciiMode && !m_timeMode);
     m_addressRows.value(QStringLiteral("offsetAddress"))->setVisible(draft.offsetEnabled); m_addressRows.value(QStringLiteral("inputAddress"))->setEnabled(draft.allowInput && !draft.sameMonitor);
     m_fields.value(QStringLiteral("sameMonitor"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("password"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("inputMarker"))->setEnabled(draft.allowInput); m_inputRange->setEnabled(draft.allowInput);
-    m_fields.value(QStringLiteral("decimalDigits"))->setEnabled(!m_asciiMode && NumberDisplayProperties::decimalEnabled(draft.dataType)); m_fields.value(QStringLiteral("customText"))->setEnabled(draft.customDisplay);
-    m_touch->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("notice"))->setVisible(draft.allowInput); m_fields.value(QStringLiteral("pressTimeEnabled"))->setVisible(draft.allowInput); m_fields.value(QStringLiteral("pressTime"))->setVisible(draft.allowInput && draft.pressTimeEnabled); m_pressUnits->setVisible(draft.allowInput && draft.pressTimeEnabled);
+    m_fields.value(QStringLiteral("decimalDigits"))->setEnabled(!m_asciiMode && !m_timeMode && NumberDisplayProperties::decimalEnabled(draft.dataType)); m_fields.value(QStringLiteral("customText"))->setEnabled(draft.customDisplay);
+    m_touch->setVisible(!m_timeMode); m_touch->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("notice"))->setVisible(draft.allowInput && !m_timeMode); m_fields.value(QStringLiteral("pressTimeEnabled"))->setVisible(draft.allowInput && !m_timeMode); m_fields.value(QStringLiteral("pressTime"))->setVisible(draft.allowInput && draft.pressTimeEnabled && !m_timeMode); m_pressUnits->setVisible(draft.allowInput && draft.pressTimeEnabled && !m_timeMode);
     for (index = 0; index < 2; ++index)
     {
         prefix = index == 0 ? QStringLiteral("input") : QStringLiteral("display"); fromAddress = index == 0 ? draft.inputRangeSource == 1 : draft.displayRangeSource == 1;
@@ -369,7 +404,9 @@ void NumberDisplayDialog::updateLinkage() //20261112-0 add
     }
     m_addressRows.value(QStringLiteral("noticeBitAddress"))->setEnabled(draft.noticeBit); m_noticeBitStates->setEnabled(draft.noticeBit); m_addressRows.value(QStringLiteral("noticeWordAddress"))->setEnabled(draft.noticeWord); m_fields.value(QStringLiteral("noticeWordType"))->setEnabled(draft.noticeWord); m_fields.value(QStringLiteral("noticeWordValue"))->setEnabled(draft.noticeWord);
     m_fields.value(QStringLiteral("keyboardPageId"))->setVisible(draft.customKeyboard); m_keyboardLabel->setVisible(draft.customKeyboard); m_fields.value(QStringLiteral("keyboardPosition"))->setVisible(draft.customKeyboard);
-    image.fill(Qt::white); painter.begin(&image); if (m_asciiMode) { paintAsciiDisplay(&painter, QRectF(5, 25, 135, 100), object().asciiDisplay); } else { paintNumberDisplay(&painter, QRectF(5, 25, 135, 100), draft); } painter.end(); m_preview->setPixmap(image); m_updating = false;
+    if (m_timeMode && object().timeDisplay.sample().isEmpty()) { m_updating = false; return; } //20261112-0 add: Preserve the last visible format and raster while the all-hidden draft is invalid.
+    if (m_timeMode) { m_timeSample->setText(object().timeDisplay.sample()); }
+    image.fill(Qt::white); painter.begin(&image); if (m_timeMode) { paintTimeDisplay(&painter, QRectF(5, 25, 135, 100), object().timeDisplay); } else if (m_asciiMode) { paintAsciiDisplay(&painter, QRectF(5, 25, 135, 100), object().asciiDisplay); } else { paintNumberDisplay(&painter, QRectF(5, 25, 135, 100), draft); } painter.end(); m_preview->setPixmap(image); m_updating = false;
 }
 
 /******************************************************************************
@@ -417,7 +454,14 @@ HmiObject NumberDisplayDialog::object() const //20261112-0 add
         result.type = QStringLiteral("ascii"); result.hasNumberDisplayProperties = false; result.asciiDisplay = m_asciiDraft; result.asciiDisplay.common = result.numberDisplay;
         result.asciiDisplay.characterCount = field(QStringLiteral("asciiCharacterCount")).toInt(); result.asciiDisplay.encoding = field(QStringLiteral("asciiEncoding")).toInt(); result.asciiDisplay.autoWrap = field(QStringLiteral("asciiAutoWrap")).toBool(); result.asciiDisplay.swapBytes = field(QStringLiteral("asciiSwapBytes")).toBool(); result.asciiDisplay.modifyInput = field(QStringLiteral("asciiModifyInput")).toBool();
     }
-    result.address = result.numberDisplay.monitorAddress; return result;
+    result.address = result.numberDisplay.monitorAddress;
+    if (m_timeMode) //20261112-0 add: Clock fields are independent; the shared shell never serializes dormant numeric addresses or keyboard references.
+    {
+        result.type = QStringLiteral("time"); result.hasNumberDisplayProperties = false; result.address.clear(); result.timeDisplay = m_timeDraft;
+        result.timeDisplay.showDate = field(QStringLiteral("timeShowDate")).toBool(); result.timeDisplay.showWeek = field(QStringLiteral("timeShowWeek")).toBool(); result.timeDisplay.showTime = field(QStringLiteral("timeShowTime")).toBool(); result.timeDisplay.dateFormat = field(QStringLiteral("timeDateFormat")).toInt(); result.timeDisplay.timeFormat = field(QStringLiteral("timeTimeFormat")).toInt(); result.timeDisplay.fontSize = field(QStringLiteral("timeFontSize")).toInt();
+        result.timeDisplay.alignment = result.numberDisplay.alignment; result.timeDisplay.opacity = result.numberDisplay.opacity; result.timeDisplay.textColor = result.numberDisplay.textColor; result.timeDisplay.backgroundColor = result.numberDisplay.backgroundColor; result.timeDisplay.effect3d = result.numberDisplay.effect3d; result.timeDisplay.transparent = result.numberDisplay.transparent; result.timeDisplay.appearance = result.numberDisplay.appearance; result.timeDisplay.visibility = result.numberDisplay.visibility;
+    }
+    return result;
 }
 
 /******************************************************************************
@@ -445,6 +489,11 @@ void NumberDisplayDialog::accept() //20261112-0 add
     HmiPage page;
     bool found = false;
     QString error;
+    if (m_timeMode) //20261112-0 add: Saving an empty display is rejected even when a previous immediate warning was dismissed.
+    {
+        if (!candidate.timeDisplay.validate(&error) || !candidate.timeDisplay.validateAddresses(m_project.connections, &error)) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), error); return; }
+        QDialog::accept(); return;
+    }
     if (m_asciiMode ? !candidate.asciiDisplay.validate(&error) || !candidate.asciiDisplay.validateAddresses(m_project.connections, &error) : !candidate.numberDisplay.validate(&error) || !candidate.numberDisplay.validateAddresses(m_project.connections, &error))
     { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), error); return; }
     Q_FOREACH (page, m_project.allPages()) { if (page.id == candidate.numberDisplay.keyboardPageId && page.kind == QStringLiteral("keyboard")) { found = true; } }

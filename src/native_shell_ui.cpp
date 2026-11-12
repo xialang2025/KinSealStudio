@@ -175,6 +175,10 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("number")); }); //20261112-0 change: Configure before beginning rectangle placement.
             }
+            else if (id == QStringLiteral("action_timeDisplay")) //20261112-0 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("time")); });
+            }
             else if (id == QStringLiteral("action_asciiDisplay")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("ascii")); });
@@ -533,7 +537,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     if (state != nullptr)
     {
         blocked = state->blockSignals(true);
-        count = !selected || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
+        count = !selected || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
         state->clear();
         for (index = 0; index < count; ++index) { state->addItem(QString::number(index)); }
         state->setEnabled(m_hasProject && count > 1);
@@ -546,7 +550,7 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     {
         typeLabel->setText(!selected ? QString() : object.type == QStringLiteral("text") ? QStringLiteral("静态文本") :
                            object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器") : object.type == QStringLiteral("lamp") ? QStringLiteral("指示灯") : object.type == QStringLiteral("image") ? QStringLiteral("图片显示器") : //20261112-0 change
-                           (object.type == QStringLiteral("number") || object.type == QStringLiteral("ascii")) ? QStringLiteral("数值显示器") : QStringLiteral("开关"));
+                           (object.type == QStringLiteral("time") || object.type == QStringLiteral("number") || object.type == QStringLiteral("ascii")) ? QStringLiteral("数值显示器") : QStringLiteral("开关"));
     }
     values.insert(QStringLiteral("NativeControlCount"), m_hasProject ? QString::number(m_canvas->objects().size()) : QString());
     values.insert(QStringLiteral("NativeResolution"), m_hasProject ? QStringLiteral("%1*%2").arg(m_project.pageWidth).arg(m_project.pageHeight) : QString());

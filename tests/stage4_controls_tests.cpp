@@ -92,6 +92,13 @@ private slots:
     void asciiResourcesAddressesAndGalleryTransaction();
     void asciiSampleRasterAndOptionIsolation();
     void asciiShellPlacementConversionAndHistory();
+    void timeNativeDefaultsAndThreePages();
+    void timeFormatsImmediateGuardAndDraftRetention();
+    void timeFamilySwitchPreservesIndependentDrafts();
+    void timeStrictMixedPersistenceAndBackendGates();
+    void timeResourcesVisibilityAndNoMonitorCarrier();
+    void timeRasterClippingAndFormatSamples();
+    void timeShellPlacementConversionAndUndo();
 };
 
 /******************************************************************************
@@ -1513,6 +1520,178 @@ void Stage4ControlTests::asciiShellPlacementConversionAndHistory() //20261112-0 
     QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 120))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); QCOMPARE(window.m_projectHistory.size(), history + 1);
     QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("NumberFamily0"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("number")); QVERIFY(window.currentEditorProject().objects.first().hasNumberDisplayProperties); QCOMPARE(window.m_projectHistory.size(), history + 2);
     window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); window.m_canvas->selectObject(window.currentEditorProject().objects.first().id); window.m_addressEdit->setText(QStringLiteral("LW9")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().asciiDisplay.common.monitorAddress, QStringLiteral("LW9")); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : timeObject
+ * Description     : Create a standalone RTC display with no numeric input or monitor carrier.
+ * Input Parameters: None
+ * Return Value    : Bounded time object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject timeObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("time-object"); object.type = QStringLiteral("time"); object.name = QStringLiteral("时间显示器"); object.geometry = QRect(450, 200, 220, 70); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeNativeDefaultsAndThreePages
+ * Description     : Verify measured clock-only pages, seven font sizes and absence of numeric/touch/input controls.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeNativeDefaultsAndThreePages() //20261112-0 add
+{
+    NumberDisplayDialog dialog(timeObject(), HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"));
+    QComboBox *sizes = dialog.findChild<QComboBox *>(QStringLiteral("Number_timeFontSize"));
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("时间显示")); QCOMPARE(tabs->count(), 3); QCOMPARE(dialog.object().type, QStringLiteral("time")); QVERIFY(dialog.object().address.isEmpty()); QVERIFY(!dialog.object().hasNumberDisplayProperties);
+    QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowDate"))->isChecked()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowWeek"))->isChecked()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowTime"))->isChecked());
+    QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("Number_monitorAddress"))->isVisible()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->isVisible()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_macroEnabled"))->isVisible()); QCOMPARE(dialog.findChild<QLabel *>(QStringLiteral("TimeFormatSample"))->text(), QStringLiteral("YYYY/MM/DD"));
+    tabs->setCurrentIndex(1); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("Number_timeFont"))->count(), 1); QCOMPARE(sizes->count(), 7); QCOMPARE(sizes->currentText(), QStringLiteral("16"));
+    for (index = 0; index < 7; ++index) { QCOMPARE(sizes->itemText(index), TimeDisplayProperties::fontSizes().at(index)); }
+    QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("Number_timeTotalDigits"))->isEnabled()); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("Number_timeTotalDigits"))->value(), 1); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("Number_decimalDigits"))->isEnabled()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_displayRange"))->isVisible());
+    tabs->setCurrentIndex(2); QVERIFY(!dialog.findChild<HmiPermissionEditor *>(QStringLiteral("NumberTouch"))->isVisible()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_notice"))->isVisible()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_pressTimeEnabled"))->isVisible());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("time-permissions.png")))); tabs->setCurrentIndex(0); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("time-basic.png")))); tabs->setCurrentIndex(1); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("time-display.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeFormatsImmediateGuardAndDraftRetention
+ * Description     : Verify date/time combinations, enabled unchecked format drafts and the immediate all-hidden message.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeFormatsImmediateGuardAndDraftRetention() //20261112-0 add
+{
+    NumberDisplayDialog dialog(timeObject(), HmiProject());
+    QCheckBox *date = dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowDate"));
+    QCheckBox *week = dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowWeek"));
+    QCheckBox *clock = dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowTime"));
+    QComboBox *dateFormat = dialog.findChild<QComboBox *>(QStringLiteral("Number_timeDateFormat"));
+    QComboBox *timeFormat = dialog.findChild<QComboBox *>(QStringLiteral("Number_timeTimeFormat"));
+    QLabel *sample = dialog.findChild<QLabel *>(QStringLiteral("TimeFormatSample"));
+    QString last;
+    QString error;
+    bool immediate = false;
+    int d;
+    int t;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); week->setChecked(true); clock->setChecked(true);
+    for (d = 0; d < 9; ++d) { for (t = 0; t < 4; ++t) { dateFormat->setCurrentIndex(d); timeFormat->setCurrentIndex(t); QCOMPARE(sample->text(), TimeDisplayProperties::dateFormats().at(d) + QStringLiteral(" (Mon) ") + TimeDisplayProperties::timeFormats().at(t)); } }
+    date->setChecked(false); QVERIFY(dateFormat->isEnabled()); QCOMPARE(sample->text(), QStringLiteral("(Mon) HH-MM-SS")); week->setChecked(false); last = sample->text();
+    QTimer::singleShot(0, &dialog, [&immediate]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { immediate = message->text() == QStringLiteral("不能隐藏所有时间和星期"); message->accept(); } }); clock->setChecked(false); QVERIFY(immediate); QCOMPARE(sample->text(), last); QVERIFY(!dialog.object().timeDisplay.validate(&error)); QVERIFY(timeFormat->isEnabled()); QVERIFY(dialog.isVisible());
+    clock->setChecked(true); QCOMPARE(dialog.object().timeDisplay.dateFormat, 8); QCOMPARE(dialog.object().timeDisplay.timeFormat, 3); QVERIFY2(dialog.object().timeDisplay.validate(&error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeFamilySwitchPreservesIndependentDrafts
+ * Description     : Retain numeric, ASCII and time-only fields across all three family transitions in one dialog.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeFamilySwitchPreservesIndependentDrafts() //20261112-0 add
+{
+    NumberDisplayDialog dialog(numberObject(), HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"));
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QLineEdit *>(QStringLiteral("Number_inputMinimum"))->setText(QStringLiteral("-123")); dialog.findChild<QComboBox *>(QStringLiteral("Number_fontSize"))->setCurrentIndex(2);
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily2"))->click(); QCOMPARE(tabs->count(), 3); QCOMPARE(dialog.windowTitle(), QStringLiteral("时间显示")); dialog.findChild<QCheckBox *>(QStringLiteral("Number_timeShowWeek"))->setChecked(true); dialog.findChild<QComboBox *>(QStringLiteral("Number_timeDateFormat"))->setCurrentIndex(8); dialog.findChild<QComboBox *>(QStringLiteral("Number_timeFontSize"))->setCurrentIndex(0); QCOMPARE(dialog.object().timeDisplay.fontSize, 12); QVERIFY2(dialog.object().timeDisplay.validate(&error), qPrintable(error));
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); QCOMPARE(tabs->count(), 4); dialog.findChild<QSpinBox *>(QStringLiteral("Number_asciiCharacterCount"))->setValue(19); dialog.findChild<QCheckBox *>(QStringLiteral("Number_asciiModifyInput"))->setChecked(true);
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily0"))->click(); QCOMPARE(dialog.object().numberDisplay.inputMinimum, QStringLiteral("-123")); QCOMPARE(dialog.object().numberDisplay.fontSize, 32);
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily2"))->click(); QCOMPARE(dialog.object().timeDisplay.dateFormat, 8); QCOMPARE(dialog.object().timeDisplay.fontSize, 12); QVERIFY(dialog.object().timeDisplay.showWeek); QVERIFY(!dialog.object().toJson().contains(QStringLiteral("numberDisplay"))); QVERIFY(!dialog.object().toJson().contains(QStringLiteral("asciiDisplay")));
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); QCOMPARE(dialog.object().asciiDisplay.characterCount, 19); QVERIFY(dialog.object().asciiDisplay.modifyInput);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip thirteen families and reject malformed clock records, schema downgrades and unknown output formats atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = timeObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.timeDisplay.showWeek = true; object.timeDisplay.showTime = true; object.timeDisplay.dateFormat = 8; object.timeDisplay.fontSize = 12;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 13); QCOMPARE(loaded.toJson(), project.toJson());
+    json = object.toJson(); props = object.timeDisplay.toJson(); props.insert(QStringLiteral("fontSize"), 32); json.insert(QStringLiteral("timeDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props.insert(QStringLiteral("fontSize"), 12); props.insert(QStringLiteral("dateFormat"), 1.5); json.insert(QStringLiteral("timeDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    json = object.toJson(); json.insert(QStringLiteral("address"), QStringLiteral("LW0")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); json = object.toJson(); json.remove(QStringLiteral("timeDisplay")); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); QCOMPARE(only.toJson(), json); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QCOMPARE(only.objects.first().type, QStringLiteral("time"));
+    QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("time-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeResourcesVisibilityAndNoMonitorCarrier
+ * Description     : Protect artwork across pages, preserve only real visibility address roles and merge picture collisions.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeResourcesVisibilityAndNoMonitorCarrier() //20261112-0 add
+{
+    HmiProject source;
+    HmiProject result;
+    HmiProject target;
+    HmiPage page;
+    HmiObject object = timeObject();
+    Stage3DuplicateOptions options;
+    Stage3Clipboard clipboard;
+    QStringList ids;
+    QString error;
+    object.timeDisplay.appearance = {QStringLiteral("clock.png"), imagePng(Qt::green)}; object.timeDisplay.visibility.visibilityEnabled = true; object.timeDisplay.visibility.bitEnabled = true; object.timeDisplay.visibility.bitAddress = QStringLiteral("LB10"); source.pictures.insert(QStringLiteral("clock.png"), imagePng(Qt::green)); source.objects = {object};
+    page.id = QStringLiteral("clock-page"); page.name = QStringLiteral("时钟副页"); object.id = QStringLiteral("clock-inactive"); page.objects = {object}; QVERIFY2(source.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(source, QStringLiteral("clock.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(source, QStringLiteral("clock.png"), &result, &error)); QVERIFY2(renameStage3Picture(source, QStringLiteral("clock.png"), QStringLiteral("clock-new.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().timeDisplay.appearance.picture, QStringLiteral("clock-new.png"));
+    options.columns = 2; options.increments = {{Stage3AddressField::MonitorWord, 100, 0}}; result = source; QVERIFY(!duplicateStage3Selection(source, {source.objects.first().id}, options, &result, nullptr, &error)); QCOMPARE(result.toJson(), source.toJson()); options.increments = {{Stage3AddressField::VisibilityBit, 2, 0}}; QVERIFY2(duplicateStage3Selection(source, {source.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QVERIFY(result.objects.last().address.isEmpty()); QCOMPARE(result.objects.last().timeDisplay.visibility.bitAddress, QStringLiteral("LB12"));
+    target.pictures.insert(QStringLiteral("clock.png"), imagePng(Qt::red)); QVERIFY2(captureStage3Selection(source, {source.objects.first().id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10, 10), &result, &ids, &error), qPrintable(error)); QCOMPARE(result.objects.last().timeDisplay.appearance.picturePng, imagePng(Qt::green)); QVERIFY(result.objects.last().timeDisplay.appearance.picture != QStringLiteral("clock.png"));
+    object.timeDisplay.visibility.wordEnabled = true; object.timeDisplay.visibility.dataType = 1; object.timeDisplay.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.timeDisplay.validateAddresses({}, &error)); object.timeDisplay.visibility.visibilityEnabled = false; QVERIFY2(object.timeDisplay.validateAddresses({}, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeRasterClippingAndFormatSamples
+ * Description     : Verify shared clock sample painting, the actual default background and clipping without host-clock substitution.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeRasterClippingAndFormatSamples() //20261112-0 add
+{
+    TimeDisplayProperties properties;
+    QImage raster(200, 100, QImage::Format_ARGB32);
+    QImage original;
+    QPainter painter;
+    raster.fill(Qt::magenta); painter.begin(&raster); paintTimeDisplay(&painter, QRectF(10, 10, 180, 80), properties); painter.end(); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta)); QCOMPARE(raster.pixelColor(12, 12), QColor(QStringLiteral("#a0a0ff"))); original = raster;
+    properties.showWeek = true; properties.showTime = true; properties.fontSize = 12; painter.begin(&raster); paintTimeDisplay(&painter, QRectF(10, 10, 180, 80), properties); painter.end(); QVERIFY(raster != original); QCOMPARE(properties.sample(), QStringLiteral("YYYY/MM/DD (Mon) HH:MM")); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::timeShellPlacementConversionAndUndo
+ * Description     : Exercise the actual clock command, creation cancellation, family conversion and whole-project undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::timeShellPlacementConversionAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    int history;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_timeDisplay"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QCOMPARE(window.m_projectHistory.size(), history);
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("Number_timeShowWeek"))->setChecked(true); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_timeDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(210, 100))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(210, 100))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("time")); QVERIFY(window.currentEditorProject().objects.first().timeDisplay.showWeek); QVERIFY(!window.m_addressEdit->isEnabled()); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); QCOMPARE(window.m_projectHistory.size(), history + 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("time")); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

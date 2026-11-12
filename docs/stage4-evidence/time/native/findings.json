@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-12",
+  "evidenceLayer": "原生私有副本上位机UI/原厂源保存/原厂离线编译；未验证屏端执行",
+  "installedExeSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeExeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "corrections": [
+    "时间字体仅汉字库字体；字号实际7项12/16/24/48/64/96/192，默认16，不能套数值的8项。",
+    "取消最后一个日期/星期/时间勾选时立即弹不能隐藏所有时间和星期；不是只在确定时校验。",
+    "日期/时间格式顺序与旧手册吻合。",
+    "原厂离线默认为type17/640B，一张图片；不能用普通数值地址代表RTC。"
+  ],
+  "bilingualFontSizeExperiment": [
+    {
+      "label": "time-bilingual-Chinese-initial",
+      "fontSize": [
+        "16"
+      ]
+    },
+    {
+      "label": "time-bilingual-English24",
+      "fontSize": [
+        "24"
+      ]
+    },
+    {
+      "label": "time-bilingual-Chinese-after-English24",
+      "fontSize": [
+        "24"
+      ]
+    }
+  ],
+  "bilingualLimit": "只证明该字号样例中文16→English24→中文24；不扩大为所有外观字段均共享或固件全部语言显示通过。"
+}
