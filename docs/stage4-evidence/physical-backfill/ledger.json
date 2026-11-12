@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 9,
-  "queued": 6,
+  "newNativeReferenceCompleted": 10,
+  "queued": 5,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -822,7 +822,7 @@
       "id": "C14",
       "name": "画面按钮",
       "family": "screen-button",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C14-product.ksp",
         "sha256": "88a663c571a9977e269df8d380fdbe794633fbbf29692eee8e2e7ca61c5a91ea",
@@ -903,7 +903,16 @@
         "bytes": 4201
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/screen-button/physical/screen-button-native-baseline-r1/run.json",
+        "sourceSha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150",
+        "completedAtUtc": "2026-11-12T11:28:39.538433+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80633698.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C15",
@@ -1349,7 +1358,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C14",
+  "next": "C15",
   "complete": false,
   "referenceBackfillComplete": false
 }

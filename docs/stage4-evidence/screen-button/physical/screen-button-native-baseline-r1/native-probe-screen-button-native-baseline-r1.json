@@ -1,0 +1,729 @@
+{
+  "date": "2026-11-12",
+  "run": "screen-button-native-baseline-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Physical20261112",
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage4-evidence\\screen-button\\native\\screen-button-default.sm",
+    "sha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150"
+  },
+  "systemInput": false,
+  "usbOrPlc": true,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 13276,
+  "sceneReads": [
+    {
+      "label": "native-reference-object-presence",
+      "data": {
+        "scene": "0x6294c38",
+        "items": [
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              160,
+              120,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x624e638",
+            "parent": "0x6241c98",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1.6260162601626016,
+              0,
+              0,
+              1.7241379310344827,
+              160,
+              120,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x62be4c0",
+            "parent": "0x6241c98",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 1,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              160,
+              120,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6045548",
+            "parent": "0x6241c98",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6241c98",
+            "parent": "0x0",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 3,
+            "selected": 0,
+            "visible": 1,
+            "z": 1
+          }
+        ],
+        "selected": []
+      }
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "physical-native-reference",
+      "sourceSha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150",
+      "logsRaw": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "logsDecodedCandidate": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "00e291df62da904c3f402bf3dd08588a3191aeaf88b5e89edabfc15c37b0a976"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "78beb1fe097eeeb693b416eb56ce8376b0c89ba9ecdf03bc0c7936c4b459219f"
+        },
+        {
+          "path": "ControlPixel.dat",
+          "bytes": 6272,
+          "sha256": "9b15252a9af81921de732b4925fd84fe901963d0e7c692c3a07ffbcfe5c96f19"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 11947,
+          "sha256": "036e931126a479a782372df123fd0e96b4471bca2192b30b12fb16e752ec8785"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2412,
+          "sha256": "d234d147ec2a49e831b7b68b50e5bc9a8a741e7c460989c68bd5b7e19a53432b"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "a7260c49cef81a2a427f0f7281509498609149424935dc4302460776b665ae0e"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1137,
+          "sha256": "891aba6fc51f7813804a80db5a163c78b2ac8687e61dbc07795351f7455d125b"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "56ab0288bd47ab194c9104ccfe093728f04357670f56543ee0eb6119d4aac055"
+        }
+      ],
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_USBdownload compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked"
+    }
+  ],
+  "nativeHardware": {
+    "startedEpoch": 1794482910.5331492,
+    "sourceSha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150",
+    "downloadButtonInvoked": true,
+    "completed": true,
+    "polls": [
+      {
+        "epoch": 1794482913.0986574,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482913.6016903,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482914.104971,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482914.6080456,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482915.1110506,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482915.6132934,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482916.116697,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482916.6196604,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482917.123133,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482917.6264648,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794482918.130116,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ],
+            [
+              "下载PLC 驱动"
+            ],
+            [
+              "下载完成"
+            ]
+          ]
+        ]
+      }
+    ],
+    "screenDisplayConfirmed": false,
+    "screenTouchConfirmed": false,
+    "transferOptions": [
+      {
+        "name": "clear_recipe_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "clear_hisData_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "clear_hisAlarm_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "update_CB",
+        "beforeChecked": false,
+        "afterChecked": false
+      }
+    ],
+    "completionLogWidget": "DownLoadDlg/m_table",
+    "completedEpoch": 1794482918.130116
+  },
+  "createdSources": [],
+  "workingCopyAfter": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-physical\\runtime-screen-button-native-baseline-r1\\NativePages.sm",
+    "sha256": "a993e8e599292fdff38fd1d1c878c70ef5864ea4effdd41bc3f05ea24e7b5150"
+  },
+  "status": "native-stage3-scenario-completed",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "originalName": "native-probe-screen-button-native-baseline-r1.json",
+    "originalSha256": "290ffdc28829967fa36388e27e76c52a813555ca8614d5056c8b94c309c172d8",
+    "archive": "raw\\native-probe-290ffdc28829967f.json.gz"
+  }
+}
