@@ -2294,17 +2294,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/xy-curve/native/native-manifest.json"
+        "evidence": "../docs/stage4-evidence/data-group/native/native-manifest.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次C25编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次C26编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "C26；保留本控件未决层"
+        "nextAction": "C27；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -2367,6 +2367,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T16:19:13.051452+00:00"
+        },
+        {
+          "executionId": "stage4-data-group-20261113",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/xy-curve/native/native-manifest.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次C25编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "C26；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T16:54:32.703195+00:00"
         }
       ]
     },
@@ -3810,6 +3830,15 @@
       "usbAccessed": true,
       "completeControl": false,
       "hardwareEvidence": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/run.json"
+    },
+    {
+      "id": "stage4-data-group-20261113",
+      "productPassed": 211,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": true,
+      "completeControl": false,
+      "hardwareEvidence": "docs/stage4-evidence/data-group/physical/group-baseline-r1/run.json"
     }
   ],
   "executionEnvironmentLimits": [

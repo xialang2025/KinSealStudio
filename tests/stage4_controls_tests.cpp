@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "data_group_dialog.h" //20261113-1 add
 #include "xy_curve_dialog.h" //20261113-1 add
 #include "history_trend_dialog.h" //20261112-1 add
 #include "data_collection_dialog.h"
@@ -159,6 +160,12 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void groupNativeDefaultsAndSingleChannelLimits(); //20261113-1 add
+    void groupSampleAndMaximumDraftLifetime(); //20261113-1 add
+    void groupPointBufferAndIndependentAddressRoles(); //20261113-1 add
+    void groupStrictPersistenceAndBackendGates(); //20261113-1 add
+    void groupStaticFillOwnershipAndClipping(); //20261113-1 add
+    void groupShellPlacementEditAndUndo(); //20261113-1 add
     void xyNativeBoundsAndDataTypeLifetime(); //20261113-1 add
     void xyIndependentChannelsAndRemovalReset(); //20261113-1 add
     void xyAxisHiddenFieldsAndAccessSpans(); //20261113-1 add
@@ -3662,6 +3669,131 @@ void Stage4ControlTests::xyShellPlacementEditAndUndo() //20261113-1 add
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_X_Y"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptTrend); window.m_commands.value(QStringLiteral("action_X_Y"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("X-Y曲线")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.readAddress, QStringLiteral("LW10"));
     QTimer::singleShot(0, &window, []() { XyCurveDialog *dialog = qobject_cast<XyCurveDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("XySampleTime"))->setValue(255); dialog->findChild<QDialogButtonBox *>(QStringLiteral("XyButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.sampleTime, 255); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().xyCurve.sampleTime, 1); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : groupObject
+ * Description     : Create one distinct data-group point buffer without trend timing or paired-coordinate fields.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiObject groupObject() //20261113-1 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("group-object"); object.name = QStringLiteral("数据群组"); object.type = QStringLiteral("datagroup"); object.geometry = QRect(100, 100, 240, 160); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupNativeDefaultsAndSingleChannelLimits
+ * Description     : Match the measured signed-first types, 10..800 points, fixed one channel and missing unsupported fields.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupNativeDefaultsAndSingleChannelLimits() //20261113-1 add
+{
+    DataGroupDialog dialog(groupObject(), HmiProject());
+    DataGroupProperties properties;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("GroupTabs"))->count(), 3); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->minimum(), 10); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->maximum(), 800); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->value(), 100); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("GroupChannelCount"))->minimum(), 1); QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("GroupChannelCount"))->maximum(), 1); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("GroupCurrentChannel"))->count(), 1); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("GroupDataType"))->itemText(1), QStringLiteral("32位整数")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("GroupDataType"))->count(), 7); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("GroupLineStyle"))->count(), 5); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupClearAddress")) == nullptr); QVERIFY(!properties.toJson().contains(QStringLiteral("sampleTime"))); QVERIFY(!properties.toJson().contains(QStringLiteral("channelCount"))); properties.samplePoints = 9; QVERIFY(!properties.validate(&error)); properties.samplePoints = 800; QVERIFY(properties.validate(&error)); properties.samplePoints = 801; QVERIFY(!properties.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("group-channel.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupSampleAndMaximumDraftLifetime
+ * Description     : Keep the sample point count enabled in both modes and preserve independent constant and address maximum drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupSampleAndMaximumDraftLifetime() //20261113-1 add
+{
+    DataGroupDialog dialog(groupObject(), HmiProject());
+    QComboBox *mode = dialog.findChild<QComboBox *>(QStringLiteral("GroupSampleMode"));
+    QComboBox *source = dialog.findChild<QComboBox *>(QStringLiteral("GroupRangeSource"));
+    QLineEdit *sample = dialog.findChild<QLineEdit *>(QStringLiteral("GroupSampleAddress"));
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("GroupTabs"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QVERIFY(!sample->isEnabled()); mode->setCurrentIndex(1); QVERIFY(sample->isEnabled()); QVERIFY(dialog.findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->isEnabled()); dialog.findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->setValue(250); sample->setText(QStringLiteral("LW10")); mode->setCurrentIndex(0); QVERIFY(!sample->isEnabled()); QCOMPARE(dialog.object().dataGroup.sampleAddress, QStringLiteral("LW10")); QCOMPARE(dialog.object().dataGroup.samplePoints, 250); mode->setCurrentIndex(1);
+    tabs->setCurrentIndex(1); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMaximum"))->isVisible()); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("GroupMaximumAddress"))->isVisible()); dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMinimum"))->setText(QStringLiteral("-20")); dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMaximum"))->setText(QStringLiteral("5000")); source->setCurrentIndex(1); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMaximum"))->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupMaximumAddress"))->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMinimum"))->isVisible()); dialog.findChild<QLineEdit *>(QStringLiteral("GroupMaximumAddress"))->setText(QStringLiteral("LW20")); source->setCurrentIndex(0); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMaximum"))->text(), QStringLiteral("5000")); source->setCurrentIndex(1); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("GroupMaximumAddress"))->text(), QStringLiteral("LW20")); dialog.findChild<QCheckBox *>(QStringLiteral("GroupYMarks"))->setChecked(false); QVERIFY(!source->isVisible()); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("GroupYMinimum"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("GroupYMarks"))->setChecked(true); QVERIFY(source->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupMaximumAddress"))->isVisible()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("GroupXMinimum")) == nullptr); QVERIFY(dialog.findChild<QSpinBox *>(QStringLiteral("GroupXTotalDigits")) == nullptr); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("group-display.png")))); }
+    dialog.findChild<QDialogButtonBox *>(QStringLiteral("GroupButtons"))->button(QDialogButtonBox::Ok)->click(); QCOMPARE(dialog.result(), int(QDialog::Accepted)); QCOMPARE(dialog.object().dataGroup.yMinimum, QStringLiteral("0")); QCOMPARE(dialog.object().dataGroup.yMaximum, QStringLiteral("1000")); QCOMPARE(dialog.object().dataGroup.maximumAddress, QStringLiteral("LW20"));
+    { HmiObject raw = groupObject(); raw.dataGroup.rangeSource = 1; raw.dataGroup.yMinimum = QStringLiteral("-20"); raw.dataGroup.yMaximum = QStringLiteral("5000"); DataGroupDialog reopened(raw, HmiProject()); QCOMPARE(reopened.object().dataGroup.yMinimum, QStringLiteral("0")); QCOMPARE(reopened.object().dataGroup.yMaximum, QStringLiteral("1000")); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupPointBufferAndIndependentAddressRoles
+ * Description     : Validate the whole declared point buffer and independently increment trigger, sample and dynamic-maximum carriers.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupPointBufferAndIndependentAddressRoles() //20261113-1 add
+{
+    HmiObject object = groupObject();
+    HmiProject project;
+    HmiProject result;
+    HmiProject sentinel;
+    Stage3DuplicateOptions options;
+    QString error;
+    object.dataGroup.dataType = 1; object.dataGroup.samplePoints = 800; QCOMPARE(object.dataGroup.readWordSpan(), 1600U); object.dataGroup.readAddress = QStringLiteral("LW2497"); QVERIFY(object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.readAddress = QStringLiteral("LW2498"); QVERIFY(!object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.readAddress = QStringLiteral("LW0"); object.dataGroup.sampleAddress = QStringLiteral("invalid"); object.dataGroup.maximumAddress = QStringLiteral("invalid"); QVERIFY(object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.sampleMode = 1; QVERIFY(!object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.sampleAddress = QStringLiteral("LW10"); object.dataGroup.rangeSource = 1; object.dataGroup.maximumAddress = QStringLiteral("LW4096"); QVERIFY(!object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.maximumAddress = QStringLiteral("LW4095"); QVERIFY(object.dataGroup.validateAddresses(project.connections, &error)); object.dataGroup.maximumAddress = QStringLiteral("LW20"); object.dataGroup.triggerAddress = QStringLiteral("LB10"); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 1600, 0}, {Stage3AddressField::TriggerBit, 2, 0}, {Stage3AddressField::SamplingWord, 1, 0}, {Stage3AddressField::DisplayMaximumWord, 2, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().dataGroup.readAddress, QStringLiteral("LW1600")); QCOMPARE(result.objects.last().dataGroup.triggerAddress, QStringLiteral("LB12")); QCOMPARE(result.objects.last().dataGroup.sampleAddress, QStringLiteral("LW11")); QCOMPARE(result.objects.last().dataGroup.maximumAddress, QStringLiteral("LW22")); project.objects[0].dataGroup.sampleAddress = QStringLiteral("LW4096"); sentinel = result; QVERIFY(!duplicateStage3Selection(project, {object.id}, options, &sentinel, nullptr, &error)); QCOMPARE(sentinel.toJson(), result.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupStrictPersistenceAndBackendGates
+ * Description     : Round-trip 26 families and reject trend-only fields and malformed source modes atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupStrictPersistenceAndBackendGates() //20261113-1 add
+{
+    HmiProject project = historyProject();
+    HmiObject history = project.objects.first();
+    HmiObject object = groupObject();
+    HmiProject loaded;
+    HmiProject only;
+    DataGroupProperties parsed;
+    QJsonObject json;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.dataGroup.dataType = 1; object.dataGroup.sampleMode = 1; object.dataGroup.samplePoints = 250; object.dataGroup.sampleAddress = QStringLiteral("LW10"); object.dataGroup.rangeSource = 1; object.dataGroup.maximumAddress = QStringLiteral("LW20"); object.dataGroup.yMinimum = QStringLiteral("-20"); object.dataGroup.yMaximum = QStringLiteral("5000"); object.dataGroup.lineStyle = 3;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), trackObject(), chartObject(), trendObject(), history, xyObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 26); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(json, &only, &error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")}); json = object.dataGroup.toJson(); json.insert(QStringLiteral("samplePoints"), 1.5); parsed.samplePoints = 10; QVERIFY(!DataGroupProperties::fromJson(json, &parsed, &error)); QCOMPARE(parsed.samplePoints, 10); json = object.dataGroup.toJson(); json.insert(QStringLiteral("channelCount"), 2); QVERIFY(!DataGroupProperties::fromJson(json, &parsed, &error)); json = object.dataGroup.toJson(); json.insert(QStringLiteral("clearAddress"), QStringLiteral("LB0")); QVERIFY(!DataGroupProperties::fromJson(json, &parsed, &error)); parsed = object.dataGroup; parsed.yMaximum = QStringLiteral("draft"); QVERIFY(parsed.validate(&error)); parsed.rangeSource = 0; QVERIFY(!parsed.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("group-mixed.ksp")), &error)); QVERIFY(only.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("group-only.ksp")), &error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupStaticFillOwnershipAndClipping
+ * Description     : Keep blue outer fill and white plot ownership explicit without interpreting live sample-address values.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupStaticFillOwnershipAndClipping() //20261113-1 add
+{
+    DataGroupProperties properties;
+    QImage image(240, 160, QImage::Format_ARGB32);
+    QImage first;
+    QPainter painter;
+    image.fill(Qt::transparent); painter.begin(&image); paintDataGroup(&painter, QRectF(10, 10, 220, 140), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(11, 11), QColor(QStringLiteral("#0000ff"))); QCOMPARE(image.pixelColor(60, 60), QColor(QStringLiteral("#ffffff"))); first = image; properties.channelColor = QStringLiteral("#00ff00"); properties.samplePoints = 800; properties.rangeSource = 1; properties.yMaximum = QStringLiteral("unfinished"); image.fill(Qt::transparent); painter.begin(&image); paintDataGroup(&painter, QRectF(10, 10, 220, 140), properties); paintDataGroup(&painter, QRectF(1, 1, 1, 1), properties); painter.end(); QVERIFY(image != first); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::groupShellPlacementEditAndUndo
+ * Description     : Use the actual dependency-free data-group action through accepted placement, compact buffer edits and undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::groupShellPlacementEditAndUndo() //20261113-1 add
+{
+    MainWindow window;
+    auto acceptGroup = []() { DataGroupDialog *dialog = qobject_cast<DataGroupDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("GroupButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_dataGroup"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptGroup); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptGroup); window.m_commands.value(QStringLiteral("action_dataGroup"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(260, 180))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(260, 180))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(240, 160)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("数据群组")); QVERIFY(!window.m_textEdit->isEnabled()); QVERIFY(window.currentEditorProject().configurationNodes.isEmpty()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.readAddress, QStringLiteral("LW10"));
+    QTimer::singleShot(0, &window, []() { DataGroupDialog *dialog = qobject_cast<DataGroupDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("GroupSamplePoints"))->setValue(800); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GroupButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.samplePoints, 800); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().dataGroup.samplePoints, 100); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

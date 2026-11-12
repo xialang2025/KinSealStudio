@@ -1,0 +1,101 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_dataGroup"
+  },
+  {
+    "op": "dump",
+    "label": "group-basic-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "group-basic-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "group-display-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "group-display-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 2
+  },
+  {
+    "op": "dump",
+    "label": "group-access-r1"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      400,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "group-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "group-default-r1"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "group-reopened-r1"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

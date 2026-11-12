@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 20,
-  "blockedLayers": 77,
-  "active": "C26",
+  "editorSlicesDelivered": 21,
+  "blockedLayers": 81,
+  "active": "C27",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -528,14 +528,31 @@
     {
       "id": "C26",
       "name": "数据群组",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立DataGroupProperties/Dialog，通道/显示/仅显现权限三页、固定单通道、7类型和10..800声明采样点、常量/地址采样草稿、Y轴常量最小值与常量/地址最大值、X仅字号和Y完整刻度、完整声明缓冲区跨度及独立采样/最大值复制角色、26类/单类schema12、创建/取消/侧栏/撤销、固定PC示意图及原厂基线实物下载",
+      "evidence": "data-group/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C26-001",
+        "Q-S04-C26-002",
+        "Q-S04-C26-003",
+        "Q-S04-C26-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/data-group/physical/group-baseline-r1/run.json"
     },
     {
       "id": "C27",
       "name": "动态报警条",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

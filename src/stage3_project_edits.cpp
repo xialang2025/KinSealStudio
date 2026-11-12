@@ -103,6 +103,14 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         addressSlots.append({Stage3AddressField::Operation, &object->xyCurve.readAddress, PlcAddressRole::Word, XyCurveProperties::wordCount(object->xyCurve.dataType) * u32(object->xyCurve.channelCount) * 2U});
         addressSlots.append({Stage3AddressField::TriggerBit, &object->xyCurve.triggerAddress, PlcAddressRole::Bit, 1U}); addressSlots.append({Stage3AddressField::ClearBit, &object->xyCurve.clearAddress, PlcAddressRole::Bit, 1U}); addConditionSlots(&object->xyCurve.visibility, false, &addressSlots);
     }
+    if (object->type == QStringLiteral("datagroup")) //20261113-1 add: A group owns one full point buffer and independent active sample/maximum words.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->dataGroup.readAddress, PlcAddressRole::Word, object->dataGroup.readWordSpan()});
+        addressSlots.append({Stage3AddressField::TriggerBit, &object->dataGroup.triggerAddress, PlcAddressRole::Bit, 1U});
+        if (object->dataGroup.sampleMode == 1) { addressSlots.append({Stage3AddressField::SamplingWord, &object->dataGroup.sampleAddress, PlcAddressRole::Word, 1U}); }
+        if (object->dataGroup.rangeSource == 1) { addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->dataGroup.maximumAddress, PlcAddressRole::Word, DataGroupProperties::wordCount(object->dataGroup.dataType)}); }
+        addConditionSlots(&object->dataGroup.visibility, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
@@ -858,7 +866,7 @@ bool validateIncrements(const QList<HmiObject> &objects, const QList<Stage3Addre
 
     Q_FOREACH (increment, increments)
     {
-        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::ClearBit) ||
+        if (int(increment.field) < int(Stage3AddressField::Operation) || int(increment.field) > int(Stage3AddressField::SamplingWord) ||
             fields.contains(int(increment.field)))
         {
             return editError(error, QStringLiteral("递增规则包含未知或重复的地址角色。"));
@@ -1040,6 +1048,7 @@ Stage3DuplicateDialog::Stage3DuplicateDialog(const HmiProject &project, const QS
     m_addressField->addItem(QStringLiteral("显示上限地址"), int(Stage3AddressField::DisplayMaximumWord));
     m_addressField->addItem(QStringLiteral("采样触发位地址"), int(Stage3AddressField::TriggerBit)); //20261112-1 add
     m_addressField->addItem(QStringLiteral("采样清除位地址"), int(Stage3AddressField::ClearBit));
+    m_addressField->addItem(QStringLiteral("数据群组采样地址"), int(Stage3AddressField::SamplingWord)); //20261113-1 add
     m_columnAddressStep = new QSpinBox(m_advancedIncrementGroup);
     m_columnAddressStep->setObjectName(QStringLiteral("duplicateColumnAddressStepSpin"));
     m_columnAddressStep->setRange(-256, 256);

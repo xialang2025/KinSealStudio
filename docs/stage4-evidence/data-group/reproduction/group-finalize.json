@@ -1,0 +1,30 @@
+{
+  "id": "C26",
+  "ordinal": 26,
+  "name": "数据群组",
+  "slug": "data-group",
+  "task": "S04-09",
+  "next": "C27",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/data-group/physical/group-baseline-r1/run.json",
+  "expectedPassed": 211,
+  "testRun": "docs/stage4-evidence/data-group/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/data-group/native/native-manifest.json",
+  "report": "docs/数据群组手册实现与验收.md",
+  "manual": "design_plan/数据群组功能与交互复刻手册.md",
+  "scope": "独立DataGroupProperties/Dialog，通道/显示/仅显现权限三页、固定单通道、7类型和10..800声明采样点、常量/地址采样草稿、Y轴常量最小值与常量/地址最大值、X仅字号和Y完整刻度、完整声明缓冲区跨度及独立采样/最大值复制角色、26类/单类schema12、创建/取消/侧栏/撤销、固定PC示意图及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C26-001",
+    "Q-S04-C26-002",
+    "Q-S04-C26-003",
+    "Q-S04-C26-004"
+  ],
+  "nativeSummary": "原厂数据类型实为I16/I32/U16/U32/BCD16/BCD32/F32有符号优先7项，纠正旧手册顺序；通道固定1..1，采样点10..800、两种采样模式均保留点数编辑，采样地址仅地址模式启用；线型编号0..4。Y范围来源为常量/地址，地址模式仍显示常量最小值且只将最大值改为地址；X只有字号，X数值范围/位数字段隐藏。两轴主3..10/次1..3，Y总位1..10、小数0..3。r2地址采样LW10/250点、动态最大值LW20及线型3在重开保留；地址范围的Y_Min/Y_Max重开回0/1000，不能声称-20/5000原生持久化通过。",
+  "protocol": "数据群组固定单曲线，完整声明点缓冲区和独立采样/最大值地址分别保护；原厂默认/地址变体已保存重开编译，关键DAT和源SHA见报告/清单。地址范围的数值最小/常量最大值重开归0/1000，编辑确认/重开按原厂归0/1000，独立SM保存映射仍未恢复。原厂默认已实物下载，四清除/更新false，输入/待传SHA一致；Lite独立源/设备编译仍实际拒绝，没有新增USB逐字节、显示/触控或PLC结论。",
+  "codeFiles": "src/data_group_properties.*、data_group_dialog.*、project_model.*、stage3_project_edits.*、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "reviewFindings": [
+    "只读复核覆盖固定单曲线、源模式切换草稿/可见性、声明完整缓冲区、采样枚举上界及独立采样/最大值角色、严格26类JSON和拒绝输出。",
+    "六项新增方法实际PASS；控件142+源59+SDK宏10=211/0/0，未将邻近趋势/XY字段冒充数据群组。",
+    "原厂地址范围重开数值回0/1000，编辑确认/重开归一已覆盖，KSP显式字段与原生格式仍分层；原厂基线下载不等于独立编码或运行验收。"
+  ]
+}

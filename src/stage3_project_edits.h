@@ -25,7 +25,7 @@ enum class Stage3AddressField
     Operation, MonitorBit, MonitorWord, LampMultiMonitor, NoticeBit, NoticeWord,
     VisibilityBit, VisibilityWord, TouchBit, TouchWord,
     OffsetWord, InputMinimumWord, InputMaximumWord, DisplayMinimumWord, DisplayMaximumWord, //20261112-0 add
-    TriggerBit, ClearBit //20261112-1 add: Independently increment trend sampling-control bits.
+    TriggerBit, ClearBit, SamplingWord //20261113-1 change: Keep sampling-control bits and the independent sample-word role distinct.
 };
 
 struct Stage3AddressIncrement
