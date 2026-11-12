@@ -27,6 +27,9 @@ private:
     QSpinBox *m_alpha;
     QLabel *m_preview;
     QPushButton *m_color;
+    QPushButton *m_foreground = nullptr;
+    QPushButton *m_background = nullptr;
+    QComboBox *m_pattern = nullptr;
     void refreshPreview();
 };
 

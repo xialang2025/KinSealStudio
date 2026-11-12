@@ -84,7 +84,7 @@ bool ScreenCanvas::beginResize(const QPointF &point) //20261108-14 add
 
     object = selectedObject(&selected);
     if (!selected || m_scene->selectedItems().size() != 1) { return false; }
-    if (isSupportedGraphic(object.type)) { return beginGraphicResize(object, point); } //20261113-2 add
+    if (graphicUsesVertices(object.type)) { return beginGraphicResize(object, point); } //20261113-2 add
     viewportPoint = viewportTransform().map(point);
     nearest = 6.0; chosen = -1;
     for (index = 0; index < 9; ++index)
@@ -555,7 +555,7 @@ void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261
     graphics = m_scene->selectedItems().first(); item = dynamic_cast<HmiControlItem *>(graphics);
     if (item == nullptr) { return; }
     bounds = item->toHmiObject().geometry;
-    if (isSupportedGraphic(item->toHmiObject().type)) //20261113-2 add: Lines expose their two roles, never eight empty box handles.
+    if (graphicUsesVertices(item->toHmiObject().type)) //20261113-2 add: Lines expose their two roles, never eight empty box handles.
     {
         painter->save(); painter->setPen(QPen(QColor(36, 111, 206), 0)); painter->setBrush(Qt::white);
         Q_FOREACH (handle, graphicHandles(item->toHmiObject().type, bounds, item->toHmiObject().graphic)) { painter->drawRect(QRectF(handle.x() - 2.0 * 100 / m_zoomPercent, handle.y() - 2.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent)); }

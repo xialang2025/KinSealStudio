@@ -262,7 +262,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("datagroup")) { json.insert(QStringLiteral("datagroup"), dataGroup.toJson()); } //20261113-1 add
     if (type == QStringLiteral("alarmdisplay") || type == QStringLiteral("historyalarm")) { json.insert(QStringLiteral("alarmDisplay"), alarmDisplay.toJson()); } //20261113-2 add
     if (type == QStringLiteral("historydata")) { json.insert(QStringLiteral("historyData"), historyData.toJson()); } //20261113-2 add
-    if (isSupportedGraphic(type)) { json.insert(QStringLiteral("graphic"), graphic.toJson()); } //20261113-2 add
+    if (isSupportedGraphic(type)) { json.insert(QStringLiteral("graphic"), graphic.toJson(type)); } //20261113-2 add
     if (type == QStringLiteral("recipe")) { json.insert(QStringLiteral("recipeDisplay"), recipeDisplay.toJson()); } //20261113-2 add
     if (type == QStringLiteral("track")) { json.insert(QStringLiteral("moveTrack"), moveTrack.toJson()); } //20261112-0 add
     if (type == QStringLiteral("wheel")) { json.insert(QStringLiteral("wheel"), wheel.toJson()); } //20261112-0 add
@@ -361,7 +361,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         }
         else if (key == QStringLiteral("graphic")) //20261113-2 add
         {
-            if (!item.value().isObject() || !GraphicProperties::fromJson(item.value().toObject(), &object->graphic, error)) { return false; }
+            if (!item.value().isObject() || !GraphicProperties::fromJson(item.value().toObject(), &object->graphic, error, json.value(QStringLiteral("type")).toString())) { return false; }
         }
         else if (key == QStringLiteral("recipeDisplay")) //20261113-2 add
         {

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 27,
-  "blockedLayers": 105,
-  "active": "G08",
+  "editorSlicesDelivered": 28,
+  "blockedLayers": 108,
+  "active": "G06",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -724,7 +724,7 @@
     {
       "id": "G06",
       "name": "圆/椭圆",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
@@ -738,9 +738,26 @@
     {
       "id": "G08",
       "name": "矩形",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立rect家族与按家族严格graphic JSON；菜单直接拖框、四象限归一、八柄缩放、双击三独立颜色/13填充/六线型/1..9线宽/0..255透明度；关闭/取消和整步撤销、剪贴板、混合既有5类及直线、schema12、紧凑文本/地址保护、共享画布/预览、默认原厂ROI像素对照及实物基线下载",
+      "evidence": "rect/windows-r1/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G08-001",
+        "Q-S04-G08-002",
+        "Q-S04-G08-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/rect/physical/rect-baseline-r1/run.json",
+      "report": "docs/矩形图形实现与验收.md"
     },
     {
       "id": "G09",

@@ -19,13 +19,19 @@ struct GraphicProperties
     int endCap = 0;
     QColor lineColor = Qt::black;
     int alpha = 255;
+    int fillStyle = 1;
+    QColor foreground = Qt::black;
+    QColor background = Qt::white;
+    int radiusX = 10; // Common closed-shape storage; only the rounded-rectangle family will serialize radii.
+    int radiusY = 10;
     QVector<QPointF> points = {QPointF(0, 0), QPointF(1, 1)};
-    QJsonObject toJson() const;
-    static bool fromJson(const QJsonObject &json, GraphicProperties *output, QString *error);
+    QJsonObject toJson(const QString &type = QStringLiteral("line")) const;
+    static bool fromJson(const QJsonObject &json, GraphicProperties *output, QString *error, const QString &type = QStringLiteral("line"));
     bool validate(const QString &type, QString *error = nullptr) const;
 };
 
 bool isSupportedGraphic(const QString &type);
+bool graphicUsesVertices(const QString &type);
 QString graphicName(const QString &type);
 QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);
 QPainterPath graphicHitPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);

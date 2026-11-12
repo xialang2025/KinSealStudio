@@ -63,7 +63,7 @@ bool ScreenCanvas::graphicPress(QMouseEvent *event, const QPointF &point) //2026
 {
     QPainterPath path;
 
-    if (event->button() != Qt::LeftButton || !m_hasPending || !isSupportedGraphic(m_pendingObject.type)) { return false; }
+    if (event->button() != Qt::LeftButton || !m_hasPending || !graphicUsesVertices(m_pendingObject.type)) { return false; }
     m_dragOrigin = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
     m_graphicEnd = m_dragOrigin; m_drawing = true;
     path.moveTo(m_dragOrigin); path.lineTo(m_graphicEnd);

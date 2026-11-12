@@ -35,12 +35,16 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     QFormLayout *form;
     QVBoxLayout *column;
     QDialogButtonBox *buttons;
+    QWidget *leftPane;
+    QWidget *rightPane;
+    QVBoxLayout *leftLayout;
+    QVBoxLayout *rightLayout;
     QLabel *label;
     QComboBox *combo;
     int index;
 
     setWindowTitle(graphicName(object.type)); setObjectName(QStringLiteral("GraphicDialog")); resize(600, 480);
-    setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }")); //20261113-2 add: Match the observed native input palette.
+    if (graphicUsesVertices(object.type)) { setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }")); } //20261113-2 change: Closed native dialogs use white inputs.
     outer = new QVBoxLayout(this); tabs = new QTabWidget(this); page = new QWidget(tabs); grid = new QGridLayout(page);
     tabs->addTab(page, graphicName(object.type)); outer->addWidget(tabs, 1);
     stroke = new QGroupBox(QStringLiteral("属性"), page); form = new QFormLayout(stroke);
@@ -66,6 +70,24 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     grid->setColumnMinimumWidth(0, 280); grid->setColumnStretch(2, 1); grid->setRowStretch(3, 1);
     Q_FOREACH (combo, page->findChildren<QComboBox *>()) { combo->setFixedWidth(160); }
     Q_FOREACH (label, page->findChildren<QLabel *>()) { if (label != m_preview) { label->setMinimumWidth(60); } }
+    if (!graphicUsesVertices(object.type)) //20261113-2 add: Filled graphics have no endpoint or arrow fields.
+    {
+        form = qobject_cast<QFormLayout *>(fill->layout());
+        m_foreground = new QPushButton(fill); m_foreground->setObjectName(QStringLiteral("Fore_Color")); form->addRow(QStringLiteral("前景色："), m_foreground);
+        m_background = new QPushButton(fill); m_background->setObjectName(QStringLiteral("Back_Color")); form->addRow(QStringLiteral("背景色："), m_background);
+        m_pattern = new QComboBox(fill); m_pattern->setObjectName(QStringLiteral("Pattern")); m_pattern->setFixedWidth(160);
+        m_pattern->addItems({QStringLiteral("透明"), QStringLiteral("纯色"), QStringLiteral("横向过渡"), QStringLiteral("横向对称过渡"), QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"), QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"), QStringLiteral("右上角辐射"), QStringLiteral("左上角辐射"), QStringLiteral("中心辐射")});
+        m_pattern->setCurrentIndex(m_draft.fillStyle); form->addRow(QStringLiteral("样 式："), m_pattern);
+        while (grid->count() > 0) { delete grid->takeAt(0); }
+        shape->hide(); leftPane = new QWidget(page); rightPane = new QWidget(page); leftLayout = new QVBoxLayout(leftPane); rightLayout = new QVBoxLayout(rightPane);
+        leftLayout->setContentsMargins(0,0,0,0); rightLayout->setContentsMargins(0,0,0,0); leftLayout->setSpacing(26); rightLayout->setSpacing(26);
+        stroke->setFixedHeight(85); fill->setFixedHeight(153); preview->setFixedHeight(173); opacity->setFixedHeight(64); m_preview->setFixedSize(160,140);
+        leftLayout->addWidget(stroke); leftLayout->addWidget(fill); leftLayout->addStretch(1); rightLayout->addWidget(preview); rightLayout->addWidget(opacity); rightLayout->addStretch(1);
+        grid->addWidget(leftPane,0,0); grid->addWidget(rightPane,0,1); grid->setColumnMinimumWidth(1,180); grid->setRowStretch(0,1);
+        connect(m_pattern, &QComboBox::currentIndexChanged, this, &GraphicDialog::refreshPreview);
+        connect(m_foreground, &QPushButton::clicked, this, [this]() { QColor color = QColorDialog::getColor(m_draft.foreground, this, QStringLiteral("前景色")); if (color.isValid()) { m_draft.foreground = color; refreshPreview(); } });
+        connect(m_background, &QPushButton::clicked, this, [this]() { QColor color = QColorDialog::getColor(m_draft.background, this, QStringLiteral("背景色")); if (color.isValid()) { m_draft.background = color; refreshPreview(); } });
+    }
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GraphicButtons")); outer->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
     connect(buttons, &QDialogButtonBox::accepted, this, &GraphicDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -87,14 +109,15 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
 void GraphicDialog::refreshPreview() //20261113-2 add
 {
     GraphicProperties preview;
-    QPixmap pixels(130, 170);
+    QPixmap pixels;
     QPainter painter;
 
     m_draft.lineStyle = m_style->currentIndex(); m_draft.lineWidth = m_width->currentIndex() + 1;
     m_draft.endArrow = m_arrow->currentIndex(); m_draft.endCap = m_cap->currentIndex(); m_draft.alpha = m_alpha->value();
     m_color->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.lineColor.name()));
+    if (m_pattern != nullptr) { m_draft.fillStyle = m_pattern->currentIndex(); m_foreground->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.foreground.name())); m_background->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.background.name())); }
     preview = m_draft; preview.points = {QPointF(0, 0), QPointF(1, 1)};
-    pixels.fill(QColor(QStringLiteral("#cce8cf"))); painter.begin(&pixels); paintGraphic(&painter, m_original.type, QRectF(15, 35, 100, 100), preview); painter.end();
+    pixels = QPixmap(m_preview->size()); pixels.fill(graphicUsesVertices(m_original.type) ? QColor(QStringLiteral("#cce8cf")) : QColor(Qt::white)); painter.begin(&pixels); paintGraphic(&painter, m_original.type, graphicUsesVertices(m_original.type) ? QRectF(15,35,100,100) : QRectF(30,20,100,100), preview); painter.end();
     m_preview->setPixmap(pixels);
 }
 

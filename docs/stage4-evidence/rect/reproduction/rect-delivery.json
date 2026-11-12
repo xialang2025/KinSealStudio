@@ -1,0 +1,48 @@
+{
+  "id": "G08",
+  "ordinal": 33,
+  "name": "矩形",
+  "slug": "rect",
+  "task": "S04-11",
+  "next": "G06",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/rect/physical/rect-baseline-r1/run.json",
+  "source": "rect-default.sm",
+  "expectedPassed": 258,
+  "nativeManifest": "../docs/stage4-evidence/rect/native/retained-manifest.json",
+  "report": "docs/矩形图形实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立rect家族与按家族严格graphic JSON；菜单直接拖框、四象限归一、八柄缩放、双击三独立颜色/13填充/六线型/1..9线宽/0..255透明度；关闭/取消和整步撤销、剪贴板、混合既有5类及直线、schema12、紧凑文本/地址保护、共享画布/预览、默认原厂ROI像素对照及实物基线下载",
+  "nativeSummary": "从已有rect调查复用默认创建/属性及自定义样式的源和编译观测，action_rect直接拖框创建，双击矩形窗口。缺省实线/宽1、边框黑/前景黑/背景白、纯色index1、Alpha255；线型6项、线宽1..9、填充13项、Alpha0..255，矩形窗口没有末端箭头或端帽字段且输入框为白色。原厂默认样例100,100至300,200，解码ROI白色内部19701像素、黑边600像素。自定义样式样例已保存编译；静态图烘入SheetPixel，未生成ControlPara/ControlPixel。源前缀type65571是观察值，完整body尚未恢复。",
+  "protocol": "G08矩形原厂默认源SHA 5ddcdcffe9825f129645565b517aba043f370306d13d49583d85a5c2f5c06e61已真实编译和USB下载完成，输入/待传SHA一致，四清除/更新关闭。原厂静态矩形烘入SheetPixel且没有ControlPara/ControlPixel。默认图的指定ROI与Lite本地渲染进行实际测试比较；这不证明全部样式或独立设备编译通过。完整SM和静态背景合成编码未恢复时继续拒绝输出。",
+  "renderLimit": "默认实线黑边/白底矩形的原厂解码ROI采用真实PNG黄金样本验证；全部填充、粗边框、Alpha、虚线相位和颜色量化仍需逐样式校准。当前13种填充采用本地明确渐变几何，前景/背景草稿切换样式时保留；这不升级为原厂全部隐藏缓存或像素已通过。Alpha对本地笔、刷分别生效，其复杂交叠与原厂逐像素混合顺序保留未决。矩形采用八柄几何框，直线仍保留两个有序端点。 [实际独立ROI复核](stage4-evidence/rect/raster-comparison.json)记录指定221×121区域差异0像素；原厂整图带有页边框，未宣称两份整图字节相等。",
+  "methods": [
+    "rectNativeFieldsAndTypedDrafts",
+    "rectStrictPersistenceMixedCopyAndNativeRefusal",
+    "rectFourQuadrantsEightHandleResizeAndCancellation",
+    "rectDefaultNativePixelsAndIndependentFillPatterns",
+    "rectNativeMenuDoubleClickDraftAndUndo"
+  ],
+  "reviewFindings": [
+    "只读复核按家族JSON键集合、旧line数据兼容、三独立颜色、13样式、有限枚举/Alpha、纯静态对象拒绝文本与地址、四象限/八柄/取消/撤销及原厂源/设备门槛。",
+    "矩形专用窗口按原厂白色输入、三颜色和填充分组排列，隐藏直线专有末端字段；复用共享渲染但不把所有形状变成有序线段。",
+    "按用户要求检查C Temp，本轮没有新C盘Frida目录；所有构建/测试/调查临时环境均指向Z盘，原厂下载44文件已清理。"
+  ],
+  "unresolved": [
+    "Q-S04-G08-001",
+    "Q-S04-G08-002",
+    "Q-S04-G08-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G08-001：完整SM图元body及Lite静态背景编码/动态交叠仍未恢复，继续拒绝正式源和设备输出。",
+    "Q-S04-G08-002：全部渐变、粗笔、Alpha混合、dash及Qt4/Qt6量化未逐像素校准；零尺寸及半径无关规则只作为明确本地约束。",
+    "Q-S04-G08-003：实物显示和后续动态背景刷新尚无现场确认，下载成功只记T。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| Line_Type | graphic.lineStyle | 六项，1实线 |\n| Line_Width | graphic.lineWidth | 1..9，1 |\n| Line_Color | graphic.lineColor | 黑色 |\n| Fore_Color | graphic.foreground | 黑色 |\n| Back_Color | graphic.background | 白色 |\n| Pattern | graphic.fillStyle | 13项，1纯色 |\n| Alpha | graphic.alpha | 0..255，255 |\n| 几何框 | 对象geometry | 本地框表示；不是已恢复的SM字段 |",
+  "codeFiles": "src/graphic_properties.*、graphic_dialog.*、graphic_canvas.cpp、project_model.cpp、hmi_canvas.cpp、canvas_editing.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-2",
+  "recipes": [
+    "add_rect_tests.py"
+  ],
+  "testRun": "docs/stage4-evidence/rect/windows-r1/run.json"
+}
