@@ -4,7 +4,7 @@
   "skippedExisting": 5,
   "editorSlicesDelivered": 15,
   "blockedLayers": 57,
-  "active": "physical-backfill",
+  "active": "C21",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -403,7 +403,7 @@
     {
       "id": "C21",
       "name": "移动轨迹",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
@@ -549,13 +549,14 @@
     }
   ],
   "physicalBackfill": {
-    "state": "in_progress",
+    "state": "reference_backfill_complete_independent_encoders_blocked",
     "beforeNextControl": "C21",
     "authorization": "2026-11-12 user physical download requirement",
     "independentEncoderAndNativeReferenceMustRemainDistinct": true,
     "nativeReferenceCompleted": 14,
     "totalBackfill": 14,
     "next": null,
-    "referenceBackfillComplete": true
+    "referenceBackfillComplete": true,
+    "audit": "docs/stage4-evidence/physical-backfill/completion-audit.json"
   }
 }
