@@ -1,0 +1,3534 @@
+{
+  "date": "2026-11-12",
+  "run": "recipe-lifecycle-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Physical20261112",
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage4-evidence\\recipe\\native\\recipe-default-wide.sm",
+    "sha256": "84d8c22b7907748fc4d549b132af193852f320cb06cb5c11d10b29c6e2467a8a"
+  },
+  "systemInput": false,
+  "usbOrPlc": true,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 27056,
+  "usbTrace": {
+    "events": [
+      {
+        "kind": "usb-hook-ready",
+        "module": "libusb0.dll",
+        "path": "C:\\windows\\SYSTEM32\\libusb0.dll",
+        "name": "usb_bulk_write",
+        "address": "0x7ca54f44",
+        "epochMs": 1794526821798,
+        "hostEpochNs": 1794526821798852100
+      },
+      {
+        "kind": "usb-hook-ready",
+        "module": "libusb0.dll",
+        "path": "C:\\windows\\SYSTEM32\\libusb0.dll",
+        "name": "usb_bulk_read",
+        "address": "0x7ca54f6e",
+        "epochMs": 1794526821798,
+        "hostEpochNs": 1794526821799853100
+      },
+      {
+        "kind": "usb-hook-ready",
+        "module": "libusb0.dll",
+        "path": "C:\\windows\\SYSTEM32\\libusb0.dll",
+        "name": "usb_close",
+        "address": "0x7ca55130",
+        "epochMs": 1794526821798,
+        "hostEpochNs": 1794526821799853100
+      },
+      {
+        "kind": "usb-close-call",
+        "id": 1,
+        "phase": "enter",
+        "handle": "0x62bc748",
+        "epochMs": 1794526826149,
+        "hostEpochNs": 1794526826149423900
+      },
+      {
+        "kind": "usb-close-call",
+        "id": 1,
+        "phase": "leave",
+        "returned": 0,
+        "epochMs": 1794526826149,
+        "hostEpochNs": 1794526826150428400
+      },
+      {
+        "kind": "usb-call",
+        "id": 2,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526826250,
+        "threadId": 16656,
+        "hostEpochNs": 1794526826250745100,
+        "rawPath": "usb-raw/event-000002-enter.bin",
+        "bytes": 32,
+        "sha256": "8e8f6e0f9c8421a6fce7b54462b753ac8a837ad1c52fc3f8e6eda2f33b60c936",
+        "dataHex": "4b696e5365616c53747564696f4b697373310200000000000000000000000000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 2,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526826250,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526826251747100
+      },
+      {
+        "kind": "usb-call",
+        "id": 3,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 32,
+        "timeoutMs": 30000,
+        "epochMs": 1794526826250,
+        "threadId": 16656,
+        "hostEpochNs": 1794526826251747100
+      },
+      {
+        "kind": "usb-call",
+        "id": 3,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 32,
+        "timeoutMs": 30000,
+        "epochMs": 1794526826795,
+        "threadId": 16656,
+        "returned": 24,
+        "hostEpochNs": 1794526826796997400,
+        "rawPath": "usb-raw/event-000003-leave.bin",
+        "bytes": 24,
+        "sha256": "45b5b543830cc9e39d1113f264437190efe4166051780ac8d7b0852853ebd6b5",
+        "dataHex": "4c0103000102030432303135303731330000004100000000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 4,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526826796,
+        "threadId": 16656,
+        "hostEpochNs": 1794526826797994900,
+        "rawPath": "usb-raw/event-000004-enter.bin",
+        "bytes": 32,
+        "sha256": "459d5921b3d08e2ce5182ff48a3a437b55e6b5ee4772c1a5ffe200f1e05392fd",
+        "dataHex": "4b696e5365616c53747564696f4b6973735300100468850e06b0fe7f1108fd7f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 4,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526826796,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526826797994900
+      },
+      {
+        "kind": "usb-call",
+        "id": 5,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 32,
+        "timeoutMs": 30000,
+        "epochMs": 1794526826796,
+        "threadId": 16656,
+        "hostEpochNs": 1794526826797994900
+      },
+      {
+        "kind": "usb-call",
+        "id": 5,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 32,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827095,
+        "threadId": 16656,
+        "returned": 24,
+        "hostEpochNs": 1794526827096359300,
+        "rawPath": "usb-raw/event-000005-leave.bin",
+        "bytes": 24,
+        "sha256": "a5c6a7decdd2107ec7cc1512dbab281418e95771ed6675b8bbb96edb725ab374",
+        "dataHex": "0000007a0102030432303135303731330000004100000000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 6,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827096,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827097364000,
+        "rawPath": "usb-raw/event-000006-enter.bin",
+        "bytes": 32,
+        "sha256": "43c1f795203f58e18fc5809a751bccde04f7d3cb73c54c905b214abe85d07ef8",
+        "dataHex": "4b696e5365616c53747564696f4b6973733400000020303006b0fe7f1148b511"
+      },
+      {
+        "kind": "usb-call",
+        "id": 6,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827096,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526827098360300
+      },
+      {
+        "kind": "usb-call",
+        "id": 7,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827096,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827098360300
+      },
+      {
+        "kind": "usb-call",
+        "id": 7,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827345,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526827345624400,
+        "rawPath": "usb-raw/event-000007-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 8,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827345,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827348625200,
+        "rawPath": "usb-raw/event-000008-enter.bin",
+        "bytes": 32,
+        "sha256": "8467e852f3f0e6765e03b50aa1767e7fcdd129bdf2d85fc08fd541c452058bb9",
+        "dataHex": "4b696e5365616c53747564696f4b69737335fd7f11040000000400000010d32b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 8,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827345,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526827348625200
+      },
+      {
+        "kind": "usb-call",
+        "id": 9,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827345,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827348625200
+      },
+      {
+        "kind": "usb-call",
+        "id": 9,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827345,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526827348625200,
+        "rawPath": "usb-raw/event-000009-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 10,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827346,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827352622100,
+        "rawPath": "usb-raw/event-000010-enter.bin",
+        "bytes": 32,
+        "sha256": "7a262b68999e21946b3f66ec576dc0074fb047ed65251ceacac565f5f4116e97",
+        "dataHex": "4b696e5365616c53747564696f4b6973730afe7f1110fd7f11e2a8c10068850e"
+      },
+      {
+        "kind": "usb-call",
+        "id": 10,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827346,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526827352622100
+      },
+      {
+        "kind": "usb-call",
+        "id": 11,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827346,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827352622100
+      },
+      {
+        "kind": "usb-call",
+        "id": 11,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827346,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526827352622100,
+        "rawPath": "usb-raw/event-000011-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 12,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 4998,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827347,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827352622100,
+        "rawPath": "usb-raw/event-000012-enter.bin",
+        "bytes": 4998,
+        "sha256": "ae04b1e1adf1a67e1bed031dd456244f5b7d2ec287229bb16e976d2ab12f9678"
+      },
+      {
+        "kind": "usb-call",
+        "id": 12,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 4998,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827349,
+        "threadId": 16656,
+        "returned": 4998,
+        "hostEpochNs": 1794526827353623100
+      },
+      {
+        "kind": "usb-call",
+        "id": 13,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827349,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827353623100,
+        "rawPath": "usb-raw/event-000013-enter.bin",
+        "bytes": 32,
+        "sha256": "e0cc0c7c6cb44ba82a7009b7a361eb76b6ed1b829faf18331bdd9961afa1ef67",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000204ea30e01000000204ea3"
+      },
+      {
+        "kind": "usb-call",
+        "id": 13,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526827350,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526827353623100
+      },
+      {
+        "kind": "usb-call",
+        "id": 14,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526827350,
+        "threadId": 16656,
+        "hostEpochNs": 1794526827353623100
+      },
+      {
+        "kind": "usb-call",
+        "id": 14,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828695,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526828695081700,
+        "rawPath": "usb-raw/event-000014-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 15,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828695,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828696082800,
+        "rawPath": "usb-raw/event-000015-enter.bin",
+        "bytes": 32,
+        "sha256": "3c775290f2a788fcac3bcdc6fee85a7f5435e5527a2fe1eb2dfe9fc530df1734",
+        "dataHex": "4b696e5365616c53747564696f4b6973730b00001100000000000000007911a3"
+      },
+      {
+        "kind": "usb-call",
+        "id": 15,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828696,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526828697084400
+      },
+      {
+        "kind": "usb-call",
+        "id": 16,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828696,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828697084400
+      },
+      {
+        "kind": "usb-call",
+        "id": 16,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828696,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526828697084400,
+        "rawPath": "usb-raw/event-000016-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 17,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 640,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828697,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828698083500,
+        "rawPath": "usb-raw/event-000017-enter.bin",
+        "bytes": 640,
+        "sha256": "a15cd7428ce0f6ca9642f61d85d998499973db7f513d653e4181931a63fe360c"
+      },
+      {
+        "kind": "usb-call",
+        "id": 17,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 640,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828698,
+        "threadId": 16656,
+        "returned": 640,
+        "hostEpochNs": 1794526828701084400
+      },
+      {
+        "kind": "usb-call",
+        "id": 18,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828698,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828701084400,
+        "rawPath": "usb-raw/event-000018-enter.bin",
+        "bytes": 32,
+        "sha256": "57d5c30207840103cb60c26e6552cd6af14ae1aa297056127bd182f5fe931c28",
+        "dataHex": "4b696e5365616c53747564696f4b69737335020000cc11a37c48c72b06010000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 18,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828698,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526828701084400
+      },
+      {
+        "kind": "usb-call",
+        "id": 19,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828698,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828701084400
+      },
+      {
+        "kind": "usb-call",
+        "id": 19,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828947,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526828948151200,
+        "rawPath": "usb-raw/event-000019-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 20,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828947,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828949152600,
+        "rawPath": "usb-raw/event-000020-enter.bin",
+        "bytes": 32,
+        "sha256": "a3c082035271cbd308f7e395afa1bba7fc1866dda9099ade60cf656ddf94f94f",
+        "dataHex": "4b696e5365616c53747564696f4b6973730c8b3a6a0000000068850e06b0fe7f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 20,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828948,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526828949152600
+      },
+      {
+        "kind": "usb-call",
+        "id": 21,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828948,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828949152600
+      },
+      {
+        "kind": "usb-call",
+        "id": 21,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828948,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526828949152600,
+        "rawPath": "usb-raw/event-000021-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 22,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 72,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828948,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828950152700,
+        "rawPath": "usb-raw/event-000022-enter.bin",
+        "bytes": 72,
+        "sha256": "848b1e93be5f06d1433f2374106fa0925d89c8b4cdf1c0c8156ed21616340232"
+      },
+      {
+        "kind": "usb-call",
+        "id": 22,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 72,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828949,
+        "threadId": 16656,
+        "returned": 72,
+        "hostEpochNs": 1794526828951153700
+      },
+      {
+        "kind": "usb-call",
+        "id": 23,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828949,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828951153700,
+        "rawPath": "usb-raw/event-000023-enter.bin",
+        "bytes": 32,
+        "sha256": "c1748588cbfc0ca2e8313511eb6d7d29f26d7b68e47c7c7fc0e480776d44389f",
+        "dataHex": "4b696e5365616c53747564696f4b697373350000005885150601000000588515"
+      },
+      {
+        "kind": "usb-call",
+        "id": 23,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526828949,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526828951153700
+      },
+      {
+        "kind": "usb-call",
+        "id": 24,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526828949,
+        "threadId": 16656,
+        "hostEpochNs": 1794526828951153700
+      },
+      {
+        "kind": "usb-call",
+        "id": 24,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829166,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829167832900,
+        "rawPath": "usb-raw/event-000024-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 25,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829167,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829167832900,
+        "rawPath": "usb-raw/event-000025-enter.bin",
+        "bytes": 32,
+        "sha256": "40cf44c0a4396e5f6594627721fd18e07b480f5705eff80633b68ac4bb634387",
+        "dataHex": "4b696e5365616c53747564696f4b6973730ec0336a38b3a10ef0c42b0650d82b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 25,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829167,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829168832900
+      },
+      {
+        "kind": "usb-call",
+        "id": 26,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829167,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829168832900
+      },
+      {
+        "kind": "usb-call",
+        "id": 26,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829167,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829168832900,
+        "rawPath": "usb-raw/event-000026-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 27,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 47840,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829168,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829169831700,
+        "rawPath": "usb-raw/event-000027-enter.bin",
+        "bytes": 47840,
+        "sha256": "0490c540c98163652325cda5768a66b5f2ed1d4c484e62faa9dc32a75bd2e36d"
+      },
+      {
+        "kind": "usb-call",
+        "id": 27,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 47840,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829191,
+        "threadId": 16656,
+        "returned": 47840,
+        "hostEpochNs": 1794526829192829300
+      },
+      {
+        "kind": "usb-call",
+        "id": 28,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829191,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829192829300,
+        "rawPath": "usb-raw/event-000028-enter.bin",
+        "bytes": 32,
+        "sha256": "0c0a732c54d4299b7820eea52d51c38b0b45b41a3634e63ae8d5095a72eb7dea",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000e804aa0e01000000e804aa"
+      },
+      {
+        "kind": "usb-call",
+        "id": 28,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829192,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829193831500
+      },
+      {
+        "kind": "usb-call",
+        "id": 29,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829192,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829193831500
+      },
+      {
+        "kind": "usb-call",
+        "id": 29,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829470,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829471924300,
+        "rawPath": "usb-raw/event-000029-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 30,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829471,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829472926900,
+        "rawPath": "usb-raw/event-000030-enter.bin",
+        "bytes": 32,
+        "sha256": "a52f7c8cdc50e861f91bc77ed789024b88a50496ec6969f37956b33fd3b9f488",
+        "dataHex": "4b696e5365616c53747564696f4b69737316c0336a38b3a10ef0c42b0650d82b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 30,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829471,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829472926900
+      },
+      {
+        "kind": "usb-call",
+        "id": 31,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829471,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829472926900
+      },
+      {
+        "kind": "usb-call",
+        "id": 31,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829471,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829473926500,
+        "rawPath": "usb-raw/event-000031-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 32,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829472,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829473926500,
+        "rawPath": "usb-raw/event-000032-enter.bin",
+        "bytes": 32,
+        "sha256": "ef4ab1321035e027ccc858eb3d93776169a906639b57e2fda5cd1099eb5d1a07",
+        "dataHex": "4b696e5365616c53747564696f4b6973733500000008c0336a0100000008c033"
+      },
+      {
+        "kind": "usb-call",
+        "id": 32,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829472,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829474925800
+      },
+      {
+        "kind": "usb-call",
+        "id": 33,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829472,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829474925800
+      },
+      {
+        "kind": "usb-call",
+        "id": 33,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829472,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829474925800,
+        "rawPath": "usb-raw/event-000033-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 34,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829473,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829475926600,
+        "rawPath": "usb-raw/event-000034-enter.bin",
+        "bytes": 32,
+        "sha256": "f03c05bda767e4b33ea6dda7a4f393e775c41a041a12a5af0a49504f15a2c23a",
+        "dataHex": "4b696e5365616c53747564696f4b69737315c0336a10fd7f11e2a8c10090d42b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 34,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829473,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829476925200
+      },
+      {
+        "kind": "usb-call",
+        "id": 35,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829473,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829476925200
+      },
+      {
+        "kind": "usb-call",
+        "id": 35,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829473,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829476925200,
+        "rawPath": "usb-raw/event-000035-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 36,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 1424,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829474,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829476925200,
+        "rawPath": "usb-raw/event-000036-enter.bin",
+        "bytes": 1424,
+        "sha256": "d83b791e61e984a686e38bcc3e717cfd9dde91918565b5344ba17a433407d29a"
+      },
+      {
+        "kind": "usb-call",
+        "id": 36,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 1424,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829475,
+        "threadId": 16656,
+        "returned": 1424,
+        "hostEpochNs": 1794526829477924100
+      },
+      {
+        "kind": "usb-call",
+        "id": 37,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829475,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829477924100,
+        "rawPath": "usb-raw/event-000037-enter.bin",
+        "bytes": 32,
+        "sha256": "9014ea90d7450a4180e4a526d64e6ef00e35885c4c95d84aca8ffb45defb3910",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000b82ca30e01000000b82ca3"
+      },
+      {
+        "kind": "usb-call",
+        "id": 37,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829475,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829477924100
+      },
+      {
+        "kind": "usb-call",
+        "id": 38,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829475,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829477924100
+      },
+      {
+        "kind": "usb-call",
+        "id": 38,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829728,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829729289200,
+        "rawPath": "usb-raw/event-000038-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 39,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829728,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829730289500,
+        "rawPath": "usb-raw/event-000039-enter.bin",
+        "bytes": 32,
+        "sha256": "f79649cdc9e16c92d0125d66e3335776645956613f4da400c3dbfdf4099991cd",
+        "dataHex": "4b696e5365616c53747564696f4b69737312c0336a10fd7f11e2a8c10090d42b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 39,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829729,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829730289500
+      },
+      {
+        "kind": "usb-call",
+        "id": 40,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829729,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829730289500
+      },
+      {
+        "kind": "usb-call",
+        "id": 40,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829729,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829730289500,
+        "rawPath": "usb-raw/event-000040-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 41,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 200,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829729,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829731295300,
+        "rawPath": "usb-raw/event-000041-enter.bin",
+        "bytes": 200,
+        "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      {
+        "kind": "usb-call",
+        "id": 41,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 200,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829730,
+        "threadId": 16656,
+        "returned": 200,
+        "hostEpochNs": 1794526829731295300
+      },
+      {
+        "kind": "usb-call",
+        "id": 42,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829730,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829731295300,
+        "rawPath": "usb-raw/event-000042-enter.bin",
+        "bytes": 32,
+        "sha256": "f59e068979317cb93fc92f848e78afb6caf8dea72cd84dd89c7b761e9a9c767d",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000e814230401000000e81423"
+      },
+      {
+        "kind": "usb-call",
+        "id": 42,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829730,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829732290000
+      },
+      {
+        "kind": "usb-call",
+        "id": 43,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829730,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829732290000
+      },
+      {
+        "kind": "usb-call",
+        "id": 43,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829940,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829940240700,
+        "rawPath": "usb-raw/event-000043-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 44,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829940,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829941241800,
+        "rawPath": "usb-raw/event-000044-enter.bin",
+        "bytes": 32,
+        "sha256": "13244a10b4b41d9dd75037ff07b92ff46cc92e918a22f0d2e0f59172b2bd8380",
+        "dataHex": "4b696e5365616c53747564696f4b69737314c0336a10fd7f11e2a8c10090d42b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 44,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829940,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829941241800
+      },
+      {
+        "kind": "usb-call",
+        "id": 45,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829940,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829941241800
+      },
+      {
+        "kind": "usb-call",
+        "id": 45,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829941,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526829941241800,
+        "rawPath": "usb-raw/event-000045-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 46,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 2400,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829941,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829942247100,
+        "rawPath": "usb-raw/event-000046-enter.bin",
+        "bytes": 2400,
+        "sha256": "4fc5f17c64aaaf65f17b8bd41f9aef372b5f864fcde359bb9d675ee7f6f2573b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 46,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 2400,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829942,
+        "threadId": 16656,
+        "returned": 2400,
+        "hostEpochNs": 1794526829943244200
+      },
+      {
+        "kind": "usb-call",
+        "id": 47,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829943,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829943244200,
+        "rawPath": "usb-raw/event-000047-enter.bin",
+        "bytes": 32,
+        "sha256": "9014ea90d7450a4180e4a526d64e6ef00e35885c4c95d84aca8ffb45defb3910",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000b82ca30e01000000b82ca3"
+      },
+      {
+        "kind": "usb-call",
+        "id": 47,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526829943,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526829944242900
+      },
+      {
+        "kind": "usb-call",
+        "id": 48,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526829943,
+        "threadId": 16656,
+        "hostEpochNs": 1794526829944242900
+      },
+      {
+        "kind": "usb-call",
+        "id": 48,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830208,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830208616700,
+        "rawPath": "usb-raw/event-000048-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 49,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830208,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830209585200,
+        "rawPath": "usb-raw/event-000049-enter.bin",
+        "bytes": 32,
+        "sha256": "5ad7eb4244c6bc6255986f929050534678caa082d8abcb218e875f4deb4f3a34",
+        "dataHex": "4b696e5365616c53747564696f4b6973730dc0336a10fd7f11e2a8c10090d42b"
+      },
+      {
+        "kind": "usb-call",
+        "id": 49,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830208,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830210586400
+      },
+      {
+        "kind": "usb-call",
+        "id": 50,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830208,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830210586400
+      },
+      {
+        "kind": "usb-call",
+        "id": 50,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830209,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830210586400,
+        "rawPath": "usb-raw/event-000050-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 51,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 501,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830209,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830211584000,
+        "rawPath": "usb-raw/event-000051-enter.bin",
+        "bytes": 501,
+        "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+      },
+      {
+        "kind": "usb-call",
+        "id": 51,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 501,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830209,
+        "threadId": 16656,
+        "returned": 501,
+        "hostEpochNs": 1794526830211584000
+      },
+      {
+        "kind": "usb-call",
+        "id": 52,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830210,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830211584000,
+        "rawPath": "usb-raw/event-000052-enter.bin",
+        "bytes": 32,
+        "sha256": "9014ea90d7450a4180e4a526d64e6ef00e35885c4c95d84aca8ffb45defb3910",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000b82ca30e01000000b82ca3"
+      },
+      {
+        "kind": "usb-call",
+        "id": 52,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830210,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830212583200
+      },
+      {
+        "kind": "usb-call",
+        "id": 53,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830210,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830212583200
+      },
+      {
+        "kind": "usb-call",
+        "id": 53,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830419,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830419934200,
+        "rawPath": "usb-raw/event-000053-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 54,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830419,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830422023000,
+        "rawPath": "usb-raw/event-000054-enter.bin",
+        "bytes": 32,
+        "sha256": "a452341247bd46f4cd396b2833f921595a553f0bbb4ad79b4e6b977a5d608a85",
+        "dataHex": "4b696e5365616c53747564696f4b6973731e000011cdd39e0068850e06ecfc7f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 54,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830420,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830422023000
+      },
+      {
+        "kind": "usb-call",
+        "id": 55,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830420,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830422023000
+      },
+      {
+        "kind": "usb-call",
+        "id": 55,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830420,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830422023000,
+        "rawPath": "usb-raw/event-000055-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 56,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 1432,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830420,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830422935500,
+        "rawPath": "usb-raw/event-000056-enter.bin",
+        "bytes": 1432,
+        "sha256": "ab234800dbb8d0335effd1ca8ac039b046da94676e7f2ba69037807e0182ca1c"
+      },
+      {
+        "kind": "usb-call",
+        "id": 56,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 1432,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830422,
+        "threadId": 16656,
+        "returned": 1432,
+        "hostEpochNs": 1794526830422935500
+      },
+      {
+        "kind": "usb-call",
+        "id": 57,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830422,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830422935500,
+        "rawPath": "usb-raw/event-000057-enter.bin",
+        "bytes": 32,
+        "sha256": "57d5c30207840103cb60c26e6552cd6af14ae1aa297056127bd182f5fe931c28",
+        "dataHex": "4b696e5365616c53747564696f4b69737335020000cc11a37c48c72b06010000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 57,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830422,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830423936300
+      },
+      {
+        "kind": "usb-call",
+        "id": 58,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830422,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830423936300
+      },
+      {
+        "kind": "usb-call",
+        "id": 58,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830684,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830684435100,
+        "rawPath": "usb-raw/event-000058-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 59,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830685,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830685440200,
+        "rawPath": "usb-raw/event-000059-enter.bin",
+        "bytes": 32,
+        "sha256": "e8b52c9f59b4ea27886f71b3129403cb85b6aaa72a2379df97e4475a540ed556",
+        "dataHex": "4b696e5365616c53747564696f4b6973730f000000000e4711ecfa2b6ab08610"
+      },
+      {
+        "kind": "usb-call",
+        "id": 59,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830685,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830685440200
+      },
+      {
+        "kind": "usb-call",
+        "id": 60,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830685,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830686476500
+      },
+      {
+        "kind": "usb-call",
+        "id": 60,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830685,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830686476500,
+        "rawPath": "usb-raw/event-000060-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 61,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 3655,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830685,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830686476500,
+        "rawPath": "usb-raw/event-000061-enter.bin",
+        "bytes": 3655,
+        "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+      },
+      {
+        "kind": "usb-call",
+        "id": 61,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 3655,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830687,
+        "threadId": 16656,
+        "returned": 3655,
+        "hostEpochNs": 1794526830688438100
+      },
+      {
+        "kind": "usb-call",
+        "id": 62,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830687,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830688438100,
+        "rawPath": "usb-raw/event-000062-enter.bin",
+        "bytes": 32,
+        "sha256": "57d5c30207840103cb60c26e6552cd6af14ae1aa297056127bd182f5fe931c28",
+        "dataHex": "4b696e5365616c53747564696f4b69737335020000cc11a37c48c72b06010000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 62,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830688,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830689439200
+      },
+      {
+        "kind": "usb-call",
+        "id": 63,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830688,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830689439200
+      },
+      {
+        "kind": "usb-call",
+        "id": 63,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830960,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830961666100,
+        "rawPath": "usb-raw/event-000063-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 64,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830961,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830961666100,
+        "rawPath": "usb-raw/event-000064-enter.bin",
+        "bytes": 32,
+        "sha256": "0e63604b23e0c7292d37bc1cdb42caafd3cdaf082b2a83cae0d806402e199e72",
+        "dataHex": "4b696e5365616c53747564696f4b6973731100000000aea10ec0ec160608f324"
+      },
+      {
+        "kind": "usb-call",
+        "id": 64,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830961,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830962668300
+      },
+      {
+        "kind": "usb-call",
+        "id": 65,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830961,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830962668300
+      },
+      {
+        "kind": "usb-call",
+        "id": 65,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830961,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830962668300,
+        "rawPath": "usb-raw/event-000065-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 66,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830962,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830963670500,
+        "rawPath": "usb-raw/event-000066-enter.bin",
+        "bytes": 32,
+        "sha256": "1768b99142ef5af25176d82ae3e73559f9dc0be3bc6b2a8d015af51f4424b6f3",
+        "dataHex": "4b696e5365616c53747564696f4b69737335000000040000000100000008c033"
+      },
+      {
+        "kind": "usb-call",
+        "id": 66,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830962,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830964668500
+      },
+      {
+        "kind": "usb-call",
+        "id": 67,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830962,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830964668500
+      },
+      {
+        "kind": "usb-call",
+        "id": 67,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830962,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526830964668500,
+        "rawPath": "usb-raw/event-000067-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 68,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830962,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830964668500,
+        "rawPath": "usb-raw/event-000068-enter.bin",
+        "bytes": 32,
+        "sha256": "1958ae2cf4eb6b401cd4052782ed50343839cb8a6b29ae16fa19c8965e101555",
+        "dataHex": "4b696e5365616c53747564696f4b6973731bffffff28e7eb000049f400010000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 68,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526830963,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526830965670100
+      },
+      {
+        "kind": "usb-call",
+        "id": 69,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526830963,
+        "threadId": 16656,
+        "hostEpochNs": 1794526830965670100
+      },
+      {
+        "kind": "usb-call",
+        "id": 69,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526832253,
+        "threadId": 16656,
+        "returned": 1,
+        "hostEpochNs": 1794526832253232400,
+        "rawPath": "usb-raw/event-000069-leave.bin",
+        "bytes": 1,
+        "sha256": "c4694f2e93d5c4e7d51f9c5deb75e6cc8be5e1114178c6a45b6fc2c566a0aa8c",
+        "dataHex": "4f"
+      },
+      {
+        "kind": "usb-call",
+        "id": 70,
+        "phase": "enter",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526832253,
+        "threadId": 16656,
+        "hostEpochNs": 1794526832255203700,
+        "rawPath": "usb-raw/event-000070-enter.bin",
+        "bytes": 32,
+        "sha256": "a4a3a0a9fa78446e67fa214e3e26575b4de7d07e3016bfa33049963ef6a69556",
+        "dataHex": "4b696e5365616c53747564696f4b6973731affffff28e7eb000049f400010000"
+      },
+      {
+        "kind": "usb-call",
+        "id": 70,
+        "phase": "leave",
+        "name": "usb_bulk_write",
+        "direction": "out",
+        "endpoint": 1,
+        "requested": 32,
+        "timeoutMs": 5000,
+        "epochMs": 1794526832253,
+        "threadId": 16656,
+        "returned": 32,
+        "hostEpochNs": 1794526832255203700
+      },
+      {
+        "kind": "usb-call",
+        "id": 71,
+        "phase": "enter",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526832253,
+        "threadId": 16656,
+        "hostEpochNs": 1794526832255203700
+      },
+      {
+        "kind": "usb-call",
+        "id": 71,
+        "phase": "leave",
+        "name": "usb_bulk_read",
+        "direction": "in",
+        "endpoint": 129,
+        "requested": 4,
+        "timeoutMs": 30000,
+        "epochMs": 1794526832682,
+        "threadId": 16656,
+        "returned": -5,
+        "hostEpochNs": 1794526832682662700
+      }
+    ],
+    "agentSha256": "dcf27a3de2dcc7d600cb7a0924a4a4a9d3201dd4083694129e3acb4030d2435b",
+    "observationOnly": true
+  },
+  "sceneReads": [
+    {
+      "label": "native-reference-object-presence",
+      "data": {
+        "scene": "0x6280e90",
+        "items": [
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6284a00",
+            "parent": "0x60eaf10",
+            "rect": [
+              550,
+              80,
+              117,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x62848d0",
+            "parent": "0x60eaf10",
+            "rect": [
+              433,
+              80,
+              117,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x62847a0",
+            "parent": "0x60eaf10",
+            "rect": [
+              316,
+              80,
+              117,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6284670",
+            "parent": "0x60eaf10",
+            "rect": [
+              199,
+              80,
+              117,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6284540",
+            "parent": "0x60eaf10",
+            "rect": [
+              126,
+              80,
+              73,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6284410",
+            "parent": "0x60eaf10",
+            "rect": [
+              80,
+              80,
+              46,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfa20",
+            "parent": "0x60eaf10",
+            "rect": [
+              667,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfef0",
+            "parent": "0x60eaf10",
+            "rect": [
+              550,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfcf8",
+            "parent": "0x60eaf10",
+            "rect": [
+              433,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cf9b0",
+            "parent": "0x60eaf10",
+            "rect": [
+              316,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfb38",
+            "parent": "0x60eaf10",
+            "rect": [
+              199,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfe80",
+            "parent": "0x60eaf10",
+            "rect": [
+              126,
+              80,
+              0,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x61cfc88",
+            "parent": "0x60eaf10",
+            "rect": [
+              80,
+              348,
+              620,
+              0
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6178828",
+            "parent": "0x60eaf10",
+            "rect": [
+              80,
+              80,
+              620,
+              134
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              80,
+              80,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6178dc8",
+            "parent": "0x60eaf10",
+            "rect": [
+              80,
+              80,
+              620,
+              300
+            ],
+            "flags": 0,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x60eaf10",
+            "parent": "0x0",
+            "rect": [
+              80,
+              80,
+              620,
+              300
+            ],
+            "flags": 3,
+            "selected": 0,
+            "visible": 1,
+            "z": 1
+          }
+        ],
+        "selected": []
+      }
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "physical-native-reference",
+      "sourceSha256": "84d8c22b7907748fc4d549b132af193852f320cb06cb5c11d10b29c6e2467a8a",
+      "logsRaw": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "logsDecodedCandidate": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "0f37f586c4d5a970610ba2a4761cda584297b20c9ac3d8c6b90e2444e401b21a"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "6255dc6edde6243acfde6880e2d119c8d9ab8c48a98cbb5ec8c8d5e416197d47"
+        },
+        {
+          "path": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "a15cd7428ce0f6ca9642f61d85d998499973db7f513d653e4181931a63fe360c"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 233,
+          "sha256": "48e11bdb5373aff28ad29b311a62e65e6231ba8239b350abf030fdf0822ddd3a"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 8981,
+          "sha256": "95f7d40a221ea77d729a8026f8a7b9a455b841b0380ac59b0213141501e54b0f"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "4fc5f17c64aaaf65f17b8bd41f9aef372b5f864fcde359bb9d675ee7f6f2573b"
+        },
+        {
+          "path": "Recipe.dat",
+          "bytes": 212104,
+          "sha256": "8381a19b0be2c2a75a9ef67e66a87fd23482049b939f6bd8c00b624e05578e6a"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "848b1e93be5f06d1433f2374106fa0925d89c8b4cdf1c0c8156ed21616340232"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "448f060068f568008fbd9a00c59c67b42f08dee7b89a10208ea6e7fe46a9008e"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 1428,
+          "sha256": "8a3fbd81fee82553871864d4c7e98e5acf6d1f9806bbd01c6111f718ca1a2091"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "75fbeff55fcfdd6e337a816f5eb97006498618b36d991a6f15d6f917eab612a5"
+        }
+      ],
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_USBdownload compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked"
+    }
+  ],
+  "nativeHardware": {
+    "startedEpoch": 1794526823.6089482,
+    "sourceSha256": "84d8c22b7907748fc4d549b132af193852f320cb06cb5c11d10b29c6e2467a8a",
+    "downloadButtonInvoked": true,
+    "completed": true,
+    "polls": [
+      {
+        "epoch": 1794526826.6473598,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526827.1500566,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526827.6530037,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526828.1570137,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526828.6600819,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526829.1628318,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526829.6665065,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526830.169798,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526830.6729412,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526831.1769593,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ],
+            [
+              "下载PLC 驱动"
+            ],
+            [
+              "下载完成"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526831.6806757,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ],
+            [
+              "下载PLC 驱动"
+            ],
+            [
+              "下载完成"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526832.1843753,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ],
+            [
+              "下载PLC 驱动"
+            ],
+            [
+              "下载完成"
+            ]
+          ]
+        ]
+      },
+      {
+        "epoch": 1794526832.6876655,
+        "tables": [
+          [
+            [
+              "下载组态工程"
+            ],
+            [
+              "开始下载"
+            ],
+            [
+              "控制终端型号正确"
+            ],
+            [
+              "正在检查版本是否匹配"
+            ],
+            [
+              "初始化控制终端数据"
+            ],
+            [
+              "开始下载系统参数"
+            ],
+            [
+              "下载控件参数"
+            ],
+            [
+              "下载画面参数"
+            ],
+            [
+              "下载报警参数"
+            ],
+            [
+              "下载报警多语言数据"
+            ],
+            [
+              "下载历史数据采集器参数"
+            ],
+            [
+              "下载地址数据"
+            ],
+            [
+              "下载控件索引"
+            ],
+            [
+              "下载曲线数据"
+            ],
+            [
+              "下载组态数据"
+            ],
+            [
+              "下载控件信息"
+            ],
+            [
+              "下载页面信息"
+            ],
+            [
+              "下载PLC 驱动"
+            ],
+            [
+              "下载完成"
+            ]
+          ]
+        ]
+      }
+    ],
+    "screenDisplayConfirmed": false,
+    "screenTouchConfirmed": false,
+    "transferOptions": [
+      {
+        "name": "clear_recipe_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "clear_hisData_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "clear_hisAlarm_CB",
+        "beforeChecked": true,
+        "afterChecked": false
+      },
+      {
+        "name": "update_CB",
+        "beforeChecked": false,
+        "afterChecked": false
+      }
+    ],
+    "usbTraceStartIndex": 3,
+    "completionLogWidget": "DownLoadDlg/m_table",
+    "usbCompletion": {
+      "ready": true,
+      "modelConfirmed": true,
+      "parametersConfirmed": true,
+      "startAcknowledged": true,
+      "commitAcknowledged": true,
+      "resetWriteCompleted": true,
+      "resetReadCompleted": true,
+      "commitAckReadCallId": 69,
+      "resetCallId": 70,
+      "clearFlagsHex": "000000",
+      "commands": [
+        {
+          "code": "31",
+          "callId": 2,
+          "epochMs": 1794526826250
+        },
+        {
+          "code": "53",
+          "callId": 4,
+          "epochMs": 1794526826796
+        },
+        {
+          "code": "34",
+          "callId": 6,
+          "epochMs": 1794526827096
+        },
+        {
+          "code": "35",
+          "callId": 8,
+          "epochMs": 1794526827345
+        },
+        {
+          "code": "0A",
+          "callId": 10,
+          "epochMs": 1794526827346
+        },
+        {
+          "code": "35",
+          "callId": 13,
+          "epochMs": 1794526827349
+        },
+        {
+          "code": "0B",
+          "callId": 15,
+          "epochMs": 1794526828695
+        },
+        {
+          "code": "35",
+          "callId": 18,
+          "epochMs": 1794526828698
+        },
+        {
+          "code": "0C",
+          "callId": 20,
+          "epochMs": 1794526828947
+        },
+        {
+          "code": "35",
+          "callId": 23,
+          "epochMs": 1794526828949
+        },
+        {
+          "code": "0E",
+          "callId": 25,
+          "epochMs": 1794526829167
+        },
+        {
+          "code": "35",
+          "callId": 28,
+          "epochMs": 1794526829191
+        },
+        {
+          "code": "16",
+          "callId": 30,
+          "epochMs": 1794526829471
+        },
+        {
+          "code": "35",
+          "callId": 32,
+          "epochMs": 1794526829472
+        },
+        {
+          "code": "15",
+          "callId": 34,
+          "epochMs": 1794526829473
+        },
+        {
+          "code": "35",
+          "callId": 37,
+          "epochMs": 1794526829475
+        },
+        {
+          "code": "12",
+          "callId": 39,
+          "epochMs": 1794526829728
+        },
+        {
+          "code": "35",
+          "callId": 42,
+          "epochMs": 1794526829730
+        },
+        {
+          "code": "14",
+          "callId": 44,
+          "epochMs": 1794526829940
+        },
+        {
+          "code": "35",
+          "callId": 47,
+          "epochMs": 1794526829943
+        },
+        {
+          "code": "0D",
+          "callId": 49,
+          "epochMs": 1794526830208
+        },
+        {
+          "code": "35",
+          "callId": 52,
+          "epochMs": 1794526830210
+        },
+        {
+          "code": "1E",
+          "callId": 54,
+          "epochMs": 1794526830419
+        },
+        {
+          "code": "35",
+          "callId": 57,
+          "epochMs": 1794526830422
+        },
+        {
+          "code": "0F",
+          "callId": 59,
+          "epochMs": 1794526830685
+        },
+        {
+          "code": "35",
+          "callId": 62,
+          "epochMs": 1794526830687
+        },
+        {
+          "code": "11",
+          "callId": 64,
+          "epochMs": 1794526830961
+        },
+        {
+          "code": "35",
+          "callId": 66,
+          "epochMs": 1794526830962
+        },
+        {
+          "code": "1B",
+          "callId": 68,
+          "epochMs": 1794526830962
+        },
+        {
+          "code": "1A",
+          "callId": 70,
+          "epochMs": 1794526832253
+        }
+      ],
+      "warnings": [],
+      "errors": [],
+      "expectedResetReadFailures": [
+        {
+          "callId": 71,
+          "returned": -5,
+          "command": "1A"
+        }
+      ],
+      "inFlightCalls": 0
+    },
+    "uiCompletedEpoch": 1794526831.1769593,
+    "completedEpoch": 1794526832.6876655
+  },
+  "createdSources": [],
+  "workingCopyAfter": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-physical\\runtime-recipe-lifecycle-r1\\NativePages.sm",
+    "sha256": "84d8c22b7907748fc4d549b132af193852f320cb06cb5c11d10b29c6e2467a8a"
+  },
+  "status": "native-stage3-scenario-completed",
+  "ownedProcessTerminateRequestedEpoch": 1794526833.8254244,
+  "ownedProcessTerminateReturnedEpoch": 1794526833.8264248,
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "originalName": "native-probe-recipe-lifecycle-r1.json",
+    "originalSha256": "aa9583cc5b9da2d004c5df1e45d350209b9e3e54bc213f7ab3cf81e213fe5c24",
+    "archive": "raw\\native-probe-aa9583cc5b9da2d0.json.gz"
+  }
+}
