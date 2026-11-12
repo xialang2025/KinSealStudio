@@ -79,6 +79,8 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("wheel")) //20261112-0 add: Wheel has one U16 operation carrier and no slider ranges/notifications.
+    { addressSlots.append({Stage3AddressField::Operation, &object->wheel.address, PlcAddressRole::Word, 1U}); addConditionSlots(&object->wheel.visibility, false, &addressSlots); addConditionSlots(&object->wheel.touch, true, &addressSlots); }
     if (object->type == QStringLiteral("slider")) //20261112-0 add: Operation/range and shared conditions retain independent full-width roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->slider.address, PlcAddressRole::Word, u32(object->slider.transferWordCount())});
@@ -369,6 +371,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
     {
         for (index = 0; index < 2; ++index)
         { if (!object->screenButton.common.states[index].picturePng.isEmpty()) { if (!mergePicture(candidate, object->screenButton.common.states[index].picture, object->screenButton.common.states[index].picturePng, &resolved, error)) { return false; } object->screenButton.common.states[index].picture = resolved; } }
+    }
+    if (object->type == QStringLiteral("wheel") && !object->wheel.highlight.picturePng.isEmpty()) //20261112-0 add: Preserve exact highlight image identity during cross-project copies.
+    {
+        if (!mergePicture(candidate, object->wheel.highlight.picture, object->wheel.highlight.picturePng, &resolved, error)) { return false; }
+        object->wheel.highlight.picture = resolved;
     }
     if (object->type == QStringLiteral("time") && !object->timeDisplay.appearance.picturePng.isEmpty()) //20261112-0 add
     {

@@ -1,0 +1,97 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "label": "wheel-empty-r2",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_wheelView"
+  },
+  {
+    "op": "dump",
+    "label": "wheel-default-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "wheel-default-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "value": 1,
+    "name": "tabWidget"
+  },
+  {
+    "op": "dump",
+    "label": "wheel-permissions-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "wheel-permissions-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "value": 0,
+    "name": "tabWidget"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      360,
+      220
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "label": "wheel-placed-r2",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "editor-screenshot",
+    "label": "wheel-canvas-r2"
+  },
+  {
+    "op": "save",
+    "output": "wheel-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "wheel-default-r2"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "wheel-reopened-r2"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

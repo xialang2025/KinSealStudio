@@ -11,6 +11,7 @@
 #include "dropdown_dialog.h" //20261112-0 add
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
+#include "wheel_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
@@ -149,6 +150,12 @@ private slots:
     void sliderStrictMixedPersistenceAndBackendGates();
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
+    void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void wheelPermissionsAcceptanceAndAddressRoles();
+    void wheelGalleryBindingsCopiesAndResourceProtection();
+    void wheelStrictMixedPersistenceAndBackendGates();
+    void wheelMidpointRasterFontsAlphaAndClipping();
+    void wheelShellPlacementPicturesCompactAndUndo();
 };
 
 /******************************************************************************
@@ -2751,6 +2758,147 @@ void Stage4ControlTests::sliderShellMacroPlacementGeometryAndUndo() //20261112-0
     QTimer::singleShot(0, &window, acceptWithMacro); window.m_commands.value(QStringLiteral("action_Slider"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro"))); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro")));
     QTimer::singleShot(0, &window, acceptWithMacro); window.m_commands.value(QStringLiteral("action_Slider"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 54)); QVERIFY(window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro"))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("滑动开关")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().slider.address, QStringLiteral("LW10")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
     QTimer::singleShot(0, &window, []() { SliderDialog *dialog = qobject_cast<SliderDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("SliderPoint2"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("SliderButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(54, 54)); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 54)); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro")));
+}
+
+/******************************************************************************
+ * Function Name   : wheelObject
+ * Description     : Provide an independent wheel fixture using the actually observed free-size canvas rectangle.
+ * Input Parameters: None
+ * Return Value    : Typed wheel object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject wheelObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("wheel-object"); object.type = QStringLiteral("wheel"); object.name = QStringLiteral("滚轮控件"); object.geometry = QRect(240, 260, 200, 100); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelNativeBoundsAndIndependentDrafts
+ * Description     : Regress measured sensitivity, row/font menus, unsigned scalar bounds and independent rollover/alpha/color drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelNativeBoundsAndIndependentDrafts() //20261112-0 add
+{
+    WheelDialog dialog(wheelObject(), HmiProject());
+    QSpinBox *sensitivity = dialog.findChild<QSpinBox *>(QStringLiteral("WheelSensitivity"));
+    QSpinBox *rows = dialog.findChild<QSpinBox *>(QStringLiteral("WheelRows"));
+    QComboBox *low = dialog.findChild<QComboBox *>(QStringLiteral("WheelLowFont"));
+    WheelProperties properties;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("滚轮控件")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("WheelTabs"))->count(), 2); QCOMPARE(sensitivity->minimum(), 1); QCOMPARE(sensitivity->maximum(), 99); QCOMPARE(sensitivity->value(), 20); QCOMPARE(rows->minimum(), 2); QCOMPARE(rows->maximum(), 5); QCOMPARE(rows->value(), 3); QCOMPARE(low->count(), 7); QCOMPARE(low->itemText(1), QStringLiteral("12")); QCOMPARE(low->currentText(), QStringLiteral("16")); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("WheelHighFont"))->currentText(), QStringLiteral("24")); QCOMPARE(dialog.object().wheel.background, QStringLiteral("#55aaff")); QVERIFY(!dialog.object().wheel.rollover); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("WheelMinimum"))->maxLength(), 15);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("wheel-appearance.png")))); }
+    sensitivity->setValue(0); QCOMPARE(sensitivity->value(), 1); sensitivity->setValue(100); QCOMPARE(sensitivity->value(), 99); rows->setValue(1); QCOMPARE(rows->value(), 2); rows->setValue(6); QCOMPARE(rows->value(), 5); dialog.findChild<QCheckBox *>(QStringLiteral("WheelRollover"))->setChecked(true); QVERIFY(dialog.object().wheel.rollover);
+    properties.maximum = QStringLiteral("65535"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.maximum = QStringLiteral("65536"); QVERIFY(!properties.validate(&error)); properties.maximum = QStringLiteral("100"); properties.minimum = QStringLiteral("-1"); QVERIFY(!properties.validate(&error)); properties.minimum = QStringLiteral("0"); properties.step = QStringLiteral("0.5"); QVERIFY(!properties.validate(&error)); properties.step = QStringLiteral("0"); QVERIFY(!properties.validate(&error));
+    QTimer::singleShot(0, &dialog, []() { QDialog *child = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (child != nullptr) { child->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("WheelColor0"))->click(); QCOMPARE(dialog.object().wheel.background, QStringLiteral("#55aaff"));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelPermissionsAcceptanceAndAddressRoles
+ * Description     : Preserve fresh empty and accepted-one bit states, chosen zero and independent operation/permission address increments.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelPermissionsAcceptanceAndAddressRoles() //20261112-0 add
+{
+    WheelDialog dialog(wheelObject(), HmiProject());
+    HmiObject object;
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("WheelTabs"))->setCurrentIndex(1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("WheelVisibilityBitOn"))->isChecked()); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("WheelTouchBitOn"))->isChecked()); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 2); QVERIFY(dialog.findChild<QGroupBox *>(QStringLiteral("SliderNotice")) == nullptr); dialog.findChild<QDialogButtonBox *>(QStringLiteral("WheelButtons"))->button(QDialogButtonBox::Ok)->click(); object = dialog.object(); QVERIFY(object.wheel.visibilityBitChosen); QVERIFY(object.wheel.touchBitChosen); WheelDialog reopened(object, HmiProject()); reopened.show(); QVERIFY(QTest::qWaitForWindowExposed(&reopened)); reopened.findChild<QTabWidget *>(QStringLiteral("WheelTabs"))->setCurrentIndex(1); QVERIFY(reopened.findChild<QRadioButton *>(QStringLiteral("WheelVisibilityBitOn"))->isChecked()); reopened.findChild<QGroupBox *>(QStringLiteral("WheelVisibility"))->setChecked(true); reopened.findChild<QGroupBox *>(QStringLiteral("WheelVisibilityBit"))->setChecked(true); reopened.findChild<QRadioButton *>(QStringLiteral("WheelVisibilityBitOff"))->click(); object = reopened.object(); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::VisibilityBit, 3, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().wheel.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().wheel.visibility.bitAddress, QStringLiteral("LB3")); QVERIFY(!result.objects.last().wheel.visibility.bitState); object.wheel.touch.visibilityEnabled = true; object.wheel.touch.wordEnabled = true; object.wheel.touch.dataType = 1; object.wheel.touch.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.wheel.validateAddresses({}, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(reopened.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("wheel-permissions.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelGalleryBindingsCopiesAndResourceProtection
+ * Description     : Exercise actual nested gallery accept/cancel/clear and protect exact image bindings across every page and copied project.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelGalleryBindingsCopiesAndResourceProtection() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject result;
+    HmiProject target;
+    HmiPage page;
+    HmiObject object = wheelObject();
+    Stage3Clipboard clipboard;
+    QTimer interactor;
+    bool handled = false;
+    QString error;
+    project.pictures.insert(QStringLiteral("wheel.png"), imagePng(Qt::red)); WheelDialog dialog(object, project); dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QTimer::singleShot(0, &dialog, []() { QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (gallery != nullptr) { gallery->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("WheelSystemGallery"))->click(); QVERIFY(dialog.object().wheel.highlight.picture.isEmpty());
+    interactor.setInterval(20); connect(&interactor, &QTimer::timeout, &dialog, [&]() { QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget()); QListWidget *list = gallery == nullptr ? nullptr : gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems")); if (gallery == nullptr || gallery->objectName() != QStringLiteral("BitGallery") || list == nullptr || list->count() != 1) { return; } list->setCurrentRow(0); list->item(0)->setSelected(true); handled = true; interactor.stop(); gallery->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); }); //20261112-0 change: The shared gallery fills its list on a timer; wait for actual rows.
+    QTimer::singleShot(5000, &dialog, [&handled]() { QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (!handled && gallery != nullptr && gallery->objectName() == QStringLiteral("BitGallery")) { gallery->reject(); } }); interactor.start(); dialog.findChild<QPushButton *>(QStringLiteral("WheelProjectGallery"))->click(); interactor.stop(); QVERIFY(handled); QCOMPARE(dialog.object().wheel.highlight.picture, QStringLiteral("wheel.png")); QCOMPARE(dialog.object().wheel.highlight.picturePng, imagePng(Qt::red)); object = dialog.object(); dialog.findChild<QPushButton *>(QStringLiteral("WheelClearPicture"))->click(); QVERIFY(dialog.object().wheel.highlight.picturePng.isEmpty()); QVERIFY(dialog.pictures().contains(QStringLiteral("wheel.png")));
+    project.objects = {object}; page.id = QStringLiteral("wheel-page2"); page.name = QStringLiteral("滚轮副页"); object.id = QStringLiteral("wheel-other"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(project, QStringLiteral("wheel.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(project, QStringLiteral("wheel.png"), &result, &error)); QVERIFY2(renameStage3Picture(project, QStringLiteral("wheel.png"), QStringLiteral("wheel-new.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().wheel.highlight.picture, QStringLiteral("wheel-new.png")); QVERIFY2(replaceStage3Picture(result, QStringLiteral("wheel-new.png"), imagePng(Qt::green), &project, &error), qPrintable(error)); QCOMPARE(project.objects.first().wheel.highlight.picturePng, imagePng(Qt::green)); QVERIFY2(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error), qPrintable(error)); target.pictures.insert(QStringLiteral("wheel-new.png"), imagePng(Qt::blue)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(5, 5), &result, nullptr, &error), qPrintable(error)); QVERIFY(result.objects.first().wheel.highlight.picture != QStringLiteral("wheel-new.png")); QCOMPARE(result.objects.first().wheel.highlight.picturePng, imagePng(Qt::green));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip twenty typed families and wheel-only schema12 while refusing malformed fields/images and unknown backend formats.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = wheelObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.wheel.minimum = QStringLiteral("7"); object.wheel.maximum = QStringLiteral("88"); object.wheel.step = QStringLiteral("2"); object.wheel.rowCount = 5; object.wheel.opacity = 128; object.wheel.sensitivity = 99; project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 20); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.wheel.toJson(); props.insert(QStringLiteral("rowCount"), 3.5); json.insert(QStringLiteral("wheel"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props = object.wheel.toJson(); props.insert(QStringLiteral("rowCount"), 6); json.insert(QStringLiteral("wheel"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); props = object.wheel.toJson(); props.insert(QStringLiteral("highlight"), QJsonObject{{QStringLiteral("picture"), QStringLiteral("bad")}, {QStringLiteral("picturePng"), QStringLiteral("!!")}}); json.insert(QStringLiteral("wheel"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("wheel-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelMidpointRasterFontsAlphaAndClipping
+ * Description     : Check actual background alpha independently of text, measured midpoint samples and clipping over all font sizes and row counts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelMidpointRasterFontsAlphaAndClipping() //20261112-0 add
+{
+    WheelProperties properties;
+    QImage image(220, 140, QImage::Format_ARGB32);
+    QPainter painter;
+    int x;
+    int y;
+    int visible = 0;
+    int rows;
+    int size;
+    QCOMPARE(properties.editorSampleValue(), 50); properties.minimum = QStringLiteral("7"); properties.maximum = QStringLiteral("88"); properties.step = QStringLiteral("2"); QCOMPARE(properties.editorSampleValue(), 47); properties.opacity = 128; image.fill(Qt::transparent); painter.begin(&image); paintWheel(&painter, QRectF(10, 10, 200, 100), properties); painter.end(); QCOMPARE(image.pixelColor(20, 20).alpha(), 128); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); properties.opacity = 0; image.fill(Qt::transparent); painter.begin(&image); paintWheel(&painter, QRectF(10, 10, 200, 100), properties); painter.end(); QCOMPARE(image.pixelColor(20, 20).alpha(), 0);
+    for (y = 10; y < 110; ++y) { for (x = 10; x < 210; ++x) { if (image.pixelColor(x, y).alpha() > 0) { ++visible; } } } QVERIFY(visible > 20);
+    for (rows = 2; rows <= 5; ++rows) { Q_FOREACH (size, WheelProperties::fontSizes()) { properties.rowCount = rows; properties.lowFontSize = size; properties.highFontSize = size; image.fill(Qt::transparent); painter.begin(&image); paintWheel(&painter, QRectF(10, 10, 200, 100), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(215, 50).alpha(), 0); } }
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("wheel-clipped-raster.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::wheelShellPlacementPicturesCompactAndUndo
+ * Description     : Exercise actual entry, pending cancellation, free geometry, compact carrier edits and whole-document undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::wheelShellPlacementPicturesCompactAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    auto acceptWheel = []() { WheelDialog *dialog = qobject_cast<WheelDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("WheelButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_wheelView"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptWheel); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptWheel); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 100)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("滚轮控件")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().wheel.address, QStringLiteral("LW10")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
+    QTimer::singleShot(0, &window, []() { WheelDialog *dialog = qobject_cast<WheelDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("WheelRows"))->setValue(5); dialog->findChild<QDialogButtonBox *>(QStringLiteral("WheelButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().wheel.rowCount, 5); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().wheel.rowCount, 3); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

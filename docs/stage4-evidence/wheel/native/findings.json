@@ -1,0 +1,107 @@
+{
+  "pages": [
+    "外观设置",
+    "权限设置"
+  ],
+  "sensitivity": {
+    "minimum": 1,
+    "maximum": 99,
+    "default": 20,
+    "setZeroResult": 1,
+    "set100Result": 99
+  },
+  "rows": {
+    "minimum": 2,
+    "maximum": 5,
+    "default": 3,
+    "setOneResult": 2,
+    "setSixResult": 5
+  },
+  "opacity": {
+    "minimum": 0,
+    "maximum": 255,
+    "default": 255
+  },
+  "fonts": [
+    8,
+    12,
+    16,
+    24,
+    32,
+    40,
+    48
+  ],
+  "colors": {
+    "background": "#55aaff",
+    "low": "#000000",
+    "high": "#ffffff"
+  },
+  "numericInput": {
+    "maxLength": 15,
+    "observedU16Edges": true,
+    "negativeAndFractionsRejectedByAcceptableInput": true,
+    "stepZeroAcceptableInput": true,
+    "stepZeroAcceptBehavior": "Unobserved; Lite rejects zero to avoid undefined stepping."
+  },
+  "preview": {
+    "default": [
+      "49",
+      "50",
+      "51"
+    ],
+    "variant": [
+      "43",
+      "45",
+      "47",
+      "49",
+      "51"
+    ],
+    "variantRange": [
+      "7",
+      "88"
+    ],
+    "variantStep": "2",
+    "midpoint": 47,
+    "alphaObservation": "128 visibly changes only the blue background; row text remains black/white.",
+    "hiddenCurrent": "m_currentedit remains 50 while preview midpoint becomes 47."
+  },
+  "permission": {
+    "freshVisibilityAndTouchBitRadios": "Neither one nor zero is selected in each column.",
+    "defaultAcceptSaveReopen": "One is selected in each column.",
+    "notificationVisible": false,
+    "pressTimeVisible": false
+  },
+  "hiddenUi": [
+    "RedioGroup",
+    "radio_pic",
+    "radio_value",
+    "m_currentedit"
+  ],
+  "gallery": {
+    "system": "Actually opened and captured in r3.",
+    "project": "Actually opened and captured in r4.",
+    "imageSelectionReturn": "Not observed in these native probes; PC gallery transaction is tested separately."
+  },
+  "geometry": {
+    "requested": [
+      160,
+      120,
+      200,
+      100
+    ],
+    "actual": [
+      160,
+      120,
+      200,
+      100
+    ]
+  },
+  "errors": {
+    "r1": "Tab selection by class was ambiguous because hidden/main-window QTabWidgets also existed; stopped before creation. r2 selects exact tabWidget."
+  },
+  "limits": [
+    "Exact even-row layout, endpoint wrap/step runtime, native full validation errors and image-return behavior remain unobserved.",
+    "UI U16 scalar limits do not decode complete firmware storage or gestures.",
+    "Native source and device encoders are not inferred from DAT total lengths."
+  ]
+}

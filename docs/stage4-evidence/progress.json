@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 14,
-  "blockedLayers": 53,
-  "active": "C20",
-  "usbAccessed": false,
+  "editorSlicesDelivered": 15,
+  "blockedLayers": 57,
+  "active": "physical-backfill",
+  "usbAccessed": true,
   "complete": false,
   "controls": [
     {
@@ -365,9 +365,26 @@
     {
       "id": "C20",
       "name": "滚轮",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立WheelProperties/Dialog与外观/权限两页、灵敏度1..99和2..5行、七种高低亮字号、U16范围与步距文本、背景独立透明度、整数中点静态预览、三种高亮底图操作与嵌套图库事务、全页资源保护及冲突复制、20类混合和wheel-only schema12、工具箱/侧栏/撤销；按新增要求执行原厂单控件源实物下载并先进入历史控件补验",
+      "evidence": "wheel/windows-r3/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C20-001",
+        "Q-S04-C20-002",
+        "Q-S04-C20-003",
+        "Q-S04-C20-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/wheel/physical/wheel-native-baseline-r2/run.json"
     },
     {
       "id": "C21",
@@ -516,5 +533,11 @@
       "scope": "",
       "evidence": ""
     }
-  ]
+  ],
+  "physicalBackfill": {
+    "state": "in_progress",
+    "beforeNextControl": "C21",
+    "authorization": "2026-11-12 user physical download requirement",
+    "independentEncoderAndNativeReferenceMustRemainDistinct": true
+  }
 }
