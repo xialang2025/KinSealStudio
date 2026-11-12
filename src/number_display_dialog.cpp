@@ -24,16 +24,16 @@
 /******************************************************************************
  * Function Name   : paintNumberDisplay
  * Description     : Paint the editor's measured digit/address sample and selected artwork, without inventing a PLC runtime value.
- * Input Parameters: painter, rect, properties
+ * Input Parameters: painter, rect, properties, sample, ascii, wrap
  * Return Value    : None.
  * Date            : 2026.11.12
  ******************************************************************************/
-void paintNumberDisplay(QPainter *painter, const QRectF &rect, const NumberDisplayProperties &properties) //20261112-0 add
+void paintNumberDisplay(QPainter *painter, const QRectF &rect, const NumberDisplayProperties &properties, const QString &sample, bool ascii, bool wrap) //20261112-0 change
 {
     QImage image;
     QColor background(properties.backgroundColor);
     QFont font(properties.font == 1 ? QStringLiteral("DigifaceWide") : properties.font == 2 ? QStringLiteral("方正中等线简体") : QStringLiteral("SimSun"));
-    QString text(properties.totalDigits, QLatin1Char('8'));
+    QString text = sample.isNull() ? QString(properties.totalDigits, QLatin1Char('8')) : sample;
     QRectF numberRect = rect;
     int alignment = properties.alignment == 1 ? Qt::AlignLeft : properties.alignment == 2 ? Qt::AlignRight : Qt::AlignHCenter;
     painter->save(); painter->setClipRect(rect, Qt::IntersectClip);
@@ -46,17 +46,33 @@ void paintNumberDisplay(QPainter *painter, const QRectF &rect, const NumberDispl
         painter->setPen(Qt::white); painter->drawLine(rect.topLeft(), rect.topRight()); painter->drawLine(rect.topLeft(), rect.bottomLeft());
         painter->setPen(Qt::darkGray); painter->drawLine(rect.bottomLeft(), rect.bottomRight()); painter->drawLine(rect.topRight(), rect.bottomRight());
     }
-    if (properties.decimalDigits > 0 && NumberDisplayProperties::decimalEnabled(properties.dataType))
+    if (!ascii && properties.decimalDigits > 0 && NumberDisplayProperties::decimalEnabled(properties.dataType))
     { text = text.rightJustified(properties.decimalDigits + 1, QLatin1Char('0')); text.insert(text.size() - properties.decimalDigits, QLatin1Char('.')); }
     if (properties.password && properties.allowInput) { text.fill(QLatin1Char('*')); }
     if (properties.inputMarker && properties.allowInput) { text = QStringLiteral("input"); }
-    if (properties.customDisplay) { text = properties.customText; }
+    if (!ascii && properties.customDisplay) { text = properties.customText; }
     font.setPixelSize(properties.fontSize); painter->setFont(font); painter->setPen(QColor(properties.textColor));
     if (properties.displayAddress) { numberRect.setHeight(rect.height() * 0.62); }
-    painter->drawText(numberRect.adjusted(2, 1, -2, -1), alignment | Qt::AlignVCenter, text);
+    painter->drawText(numberRect.adjusted(2, 1, -2, -1), alignment | Qt::AlignVCenter | (wrap ? Qt::TextWrapAnywhere : 0), text);
     if (properties.displayAddress)
     { font.setFamily(QStringLiteral("SimSun")); font.setPixelSize(12); painter->setFont(font); painter->drawText(QRectF(rect.left(), numberRect.bottom(), rect.width(), rect.height() - numberRect.height()), Qt::AlignCenter, properties.monitorAddress); }
     painter->restore();
+}
+
+/******************************************************************************
+ * Function Name   : paintAsciiDisplay
+ * Description     : Render a bounded editor alphabet sample; byte swapping and GB2312 flags never pretend to decode unobserved PLC bytes.
+ * Input Parameters: painter, rect, properties
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void paintAsciiDisplay(QPainter *painter, const QRectF &rect, const AsciiDisplayProperties &properties) //20261112-0 add
+{
+    QString sample;
+    int index;
+    sample.reserve(properties.characterCount);
+    for (index = 0; index < properties.characterCount; ++index) { sample.append(QChar(u16('A' + index % 26))); }
+    paintNumberDisplay(painter, rect, properties.common, sample, true, properties.autoWrap);
 }
 
 /******************************************************************************
@@ -172,7 +188,7 @@ QWidget *NumberDisplayDialog::address(const QString &key, bool bit, QWidget *par
     layout->setContentsMargins(0, 0, 0, 0); picker->setObjectName(QStringLiteral("Number_") + key + QStringLiteral("Picker")); picker->setFixedWidth(26); layout->addWidget(text); layout->addWidget(picker); m_addressRows.insert(key, row);
     connect(picker, &QPushButton::clicked, this, [this, text, bit, key]() {
         NumberDisplayProperties draft = object().numberDisplay;
-        int span = key == QStringLiteral("offsetAddress") ? 1 : key == QStringLiteral("noticeWordAddress") ? (draft.noticeWordType == 0 || draft.noticeWordType == 2 ? 1 : 2) : NumberDisplayProperties::wordSpan(draft.dataType);
+        int span = key == QStringLiteral("offsetAddress") ? 1 : key == QStringLiteral("noticeWordAddress") ? (draft.noticeWordType == 0 || draft.noticeWordType == 2 ? 1 : 2) : m_asciiMode ? 1 : NumberDisplayProperties::wordSpan(draft.dataType); //20261112-0 change: ASCII only exposes the proven base carrier until its complete string span is recovered.
         editHmiAddress(this, text, bit, bit ? 1 : span);
     }); return row;
 }
@@ -209,7 +225,7 @@ QWidget *NumberDisplayDialog::range(const QString &prefix, QWidget *parent) //20
  * Date            : 2026.11.12
  ******************************************************************************/
 NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProject &project, QWidget *parent) //20261112-0 add
-    : QDialog(parent), m_original(object), m_project(project), m_draft(object.numberDisplay)
+    : QDialog(parent), m_original(object), m_project(project), m_draft(object.type == QStringLiteral("ascii") ? object.asciiDisplay.common : object.numberDisplay), m_asciiDraft(object.asciiDisplay), m_asciiMode(object.type == QStringLiteral("ascii")) //20261112-0 change
 {
     QVBoxLayout *root;
     QHBoxLayout *content;
@@ -226,6 +242,8 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     QHBoxLayout *noticeStateLayout;
     QComboBox *dataType;
     QComboBox *keyboard;
+    QSpinBox *digits;
+    QSpinBox *characterCount;
     QLineEdit *colorText;
     QPushButton *button;
     QHBoxLayout *columns;
@@ -245,17 +263,22 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     page = new QWidget(tabs); layout = new QVBoxLayout(page); layout->setSpacing(6); row = new QHBoxLayout(); names = {QStringLiteral("数值输入/显示"), QStringLiteral("ASCII输入/显示"), QStringLiteral("日期/时间显示")};
     for (index = 0; index < 3; ++index)
     {
-        type = new QRadioButton(names.at(index), page); type->setObjectName(QStringLiteral("NumberFamily%1").arg(index)); type->setChecked(index == 0); row->addWidget(type);
-        if (index != 0) { type->setEnabled(false); type->setToolTip(QStringLiteral("后续C12/C13接续共享类型切换事务。")); }
+        type = new QRadioButton(names.at(index), page); type->setObjectName(QStringLiteral("NumberFamily%1").arg(index)); type->setChecked(index == (m_asciiMode ? 1 : 0)); row->addWidget(type);
+        if (index == 2) { type->setEnabled(false); type->setToolTip(QStringLiteral("C13接续日期/时间类型切换事务。")); }
+        else { connect(type, &QRadioButton::toggled, this, [this, index](bool checked) { if (checked) { m_asciiMode = index == 1; updateLinkage(); } }); } //20261112-0 change: Share the native family shell while retaining distinct typed records.
     }
-    layout->addLayout(row); form = new QFormLayout(); dataType = combo(QStringLiteral("dataType"), NumberDisplayProperties::dataTypes(), page); form->addRow(QStringLiteral("数据类型:"), dataType); form->addRow(QStringLiteral("监控地址:"), address(QStringLiteral("monitorAddress"), false, page));
+    layout->addLayout(row); form = new QFormLayout(); dataType = combo(QStringLiteral("dataType"), NumberDisplayProperties::dataTypes(), page); form->addRow(QStringLiteral("数据类型:"), dataType); m_dataTypeLabel = form->labelForField(dataType); form->addRow(QStringLiteral("监控地址:"), address(QStringLiteral("monitorAddress"), false, page));
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("offsetEnabled"), QStringLiteral("偏移地址"), page)); row->addWidget(address(QStringLiteral("offsetAddress"), false, page)); row->addWidget(check(QStringLiteral("displayAddress"), QStringLiteral("显示监控地址"), page)); form->addRow(row);
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("allowInput"), QStringLiteral("允许输入"), page)); row->addWidget(check(QStringLiteral("sameMonitor"), QStringLiteral("与监视地址相同"), page)); row->addWidget(check(QStringLiteral("password"), QStringLiteral("密码"), page)); row->addWidget(check(QStringLiteral("inputMarker"), QStringLiteral("是否显示输入标志"), page)); form->addRow(row); form->addRow(QStringLiteral("输入地址:"), address(QStringLiteral("inputAddress"), false, page)); layout->addLayout(form);
+    m_asciiControls = new QWidget(page); form = new QFormLayout(m_asciiControls); row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("asciiAutoWrap"), QStringLiteral("自动换行"), m_asciiControls)); row->addWidget(check(QStringLiteral("asciiSwapBytes"), QStringLiteral("高低字节互换"), m_asciiControls)); form->addRow(row); form->addRow(QStringLiteral("编码方式:"), combo(QStringLiteral("asciiEncoding"), {QStringLiteral("ASCII"), QStringLiteral("GB2312")}, m_asciiControls)); layout->addWidget(m_asciiControls);
+    qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiAutoWrap")))->setChecked(m_asciiDraft.autoWrap); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiSwapBytes")))->setChecked(m_asciiDraft.swapBytes); qobject_cast<QComboBox *>(m_fields.value(QStringLiteral("asciiEncoding")))->setCurrentIndex(m_asciiDraft.encoding);
     m_inputRange = new QGroupBox(QStringLiteral("数值输入范围"), page); form = new QFormLayout(m_inputRange); form->addRow(range(QStringLiteral("input"), m_inputRange)); layout->addWidget(m_inputRange);
     box = group(QStringLiteral("scaling"), QStringLiteral("缩放设置"), page); form = new QFormLayout(box); row = new QHBoxLayout(); row->addWidget(new QLabel(QStringLiteral("增益:"), box)); row->addWidget(line(QStringLiteral("gain"), box)); row->addWidget(new QLabel(QStringLiteral("偏移量:"), box)); row->addWidget(line(QStringLiteral("offset"), box)); form->addRow(row); layout->addWidget(box);
     macro = group(QStringLiteral("macroEnabled"), QStringLiteral("宏指令"), page); row = new QHBoxLayout(macro); row->addWidget(new QLabel(QStringLiteral("使用宏:"), macro)); row->addWidget(line(QStringLiteral("macroName"), macro)); row->addWidget(new QPushButton(QStringLiteral("写宏"), macro)); macro->setEnabled(false); layout->addWidget(macro); layout->addStretch(); tabs->addTab(page, QStringLiteral("基本"));
     page = new QWidget(tabs); layout = new QVBoxLayout(page); form = new QFormLayout(); form->addRow(QStringLiteral("字体:"), combo(QStringLiteral("font"), {QStringLiteral("一般字体"), QStringLiteral("数码字体"), QStringLiteral("方正中等线简体")}, page)); form->addRow(QStringLiteral("字体大小:"), combo(QStringLiteral("fontSize"), {QStringLiteral("16"), QStringLiteral("24"), QStringLiteral("32"), QStringLiteral("40"), QStringLiteral("48"), QStringLiteral("64"), QStringLiteral("96"), QStringLiteral("192")}, page, true));
-    form->addRow(QStringLiteral("总位数:"), spin(QStringLiteral("totalDigits"), 1, NumberDisplayProperties::maximumDigits(m_draft.dataType), page)); form->addRow(QStringLiteral("小数位数:"), spin(QStringLiteral("decimalDigits"), 0, 99, page)); form->addRow(QStringLiteral("样式:"), combo(QStringLiteral("alignment"), {QStringLiteral("居中"), QStringLiteral("左对齐"), QStringLiteral("右对齐")}, page)); form->addRow(QStringLiteral("调整:"), combo(QStringLiteral("adjustment"), {QStringLiteral("前面去0"), QStringLiteral("0领头"), QStringLiteral("空格领头")}, page));
+    digits = spin(QStringLiteral("totalDigits"), 1, NumberDisplayProperties::maximumDigits(m_draft.dataType), page); form->addRow(QStringLiteral("总位数:"), digits); m_totalDigitsLabel = form->labelForField(digits);
+    characterCount = spin(QStringLiteral("asciiCharacterCount"), 1, 256, page); characterCount->setValue(m_asciiDraft.characterCount); form->addRow(QStringLiteral("显示字符数:"), characterCount); m_characterCountLabel = form->labelForField(characterCount);
+    form->addRow(QStringLiteral("小数位数:"), spin(QStringLiteral("decimalDigits"), 0, 99, page)); form->addRow(QStringLiteral("样式:"), combo(QStringLiteral("alignment"), {QStringLiteral("居中"), QStringLiteral("左对齐"), QStringLiteral("右对齐")}, page)); form->addRow(QStringLiteral("调整:"), combo(QStringLiteral("adjustment"), {QStringLiteral("前面去0"), QStringLiteral("0领头"), QStringLiteral("空格领头")}, page));
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("customDisplay"), QStringLiteral("自定义显示"), page)); row->addWidget(line(QStringLiteral("customText"), page)); form->addRow(row); layout->addLayout(form);
     box = new QGroupBox(QStringLiteral("颜色设置"), page); form = new QFormLayout(box); names = {QStringLiteral("textColor"), QStringLiteral("backgroundColor"), QStringLiteral("lowColor"), QStringLiteral("highColor")};
     for (index = 0; index < names.size(); ++index)
@@ -263,6 +286,7 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
         key = names.at(index); row = new QHBoxLayout(); colorText = line(key, box); colorText->setReadOnly(true); button = new QPushButton(QStringLiteral("选择颜色"), box); button->setObjectName(QStringLiteral("Number_") + key + QStringLiteral("Picker")); row->addWidget(colorText); row->addWidget(button);
         connect(button, &QPushButton::clicked, this, [this, colorText]() { QColor color = QColorDialog::getColor(QColor(colorText->text()), this, QStringLiteral("选择颜色")); if (color.isValid()) { colorText->setText(color.name()); } });
         form->addRow(QStringList{QStringLiteral("数值颜色:"), QStringLiteral("数值背景颜色:"), QStringLiteral("低位背景色:"), QStringLiteral("高位背景色:")}.at(index), row);
+        m_colorLabels.insert(key, qobject_cast<QLabel *>(form->labelForField(row))); m_colorLabels.value(key)->setObjectName(QStringLiteral("Number_") + key + QStringLiteral("Label")); //20261112-0 add
     }
     form->addRow(QStringLiteral("透明度:"), spin(QStringLiteral("opacity"), 0, 255, box)); layout->addWidget(box);
     row = new QHBoxLayout(); names = {QStringLiteral("系统图库"), QStringLiteral("工程图库"), QStringLiteral("删除图片")};
@@ -279,7 +303,7 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     noticeOn = new QRadioButton(QStringLiteral("1"), m_noticeBitStates); noticeOff = new QRadioButton(QStringLiteral("0"), m_noticeBitStates); noticeOn->setObjectName(QStringLiteral("Number_noticeBitValue")); noticeOff->setObjectName(QStringLiteral("Number_noticeBitZero")); noticeOn->setChecked(m_draft.noticeBitValue); noticeOff->setChecked(!m_draft.noticeBitValue); m_fields.insert(QStringLiteral("noticeBitValue"), noticeOn); noticeStateLayout->addWidget(noticeOn); noticeStateLayout->addWidget(noticeOff); form->addRow(m_noticeBitStates); //20261112-0 change: Native notifications use a 1/0 radio pair.
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("noticeWord"), QStringLiteral("通知字"), box)); row->addWidget(address(QStringLiteral("noticeWordAddress"), false, box)); form->addRow(row); form->addRow(QStringLiteral("数据类型:"), combo(QStringLiteral("noticeWordType"), StaticTextProperties::dataTypes(), box)); form->addRow(QStringLiteral("数值:"), line(QStringLiteral("noticeWordValue"), box)); layout->addWidget(box);
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("pressTimeEnabled"), QStringLiteral("按压时间"), page)); row->addWidget(spin(QStringLiteral("pressTime"), 0, 255, page)); m_pressUnits = new QLabel(QStringLiteral("x100毫秒"), page); row->addWidget(m_pressUnits); layout->addLayout(row); layout->addStretch(); tabs->addTab(page, QStringLiteral("权限设置"));
-    page = new QWidget(tabs); layout = new QVBoxLayout(page); box = new QGroupBox(QStringLiteral("键盘设置"), page); form = new QFormLayout(box); form->addRow(check(QStringLiteral("customKeyboard"), QStringLiteral("使用自定义键盘"), box)); keyboard = new QComboBox(box); keyboard->setObjectName(QStringLiteral("Number_keyboardPageId"));
+    page = new QWidget(tabs); layout = new QVBoxLayout(page); box = new QGroupBox(QStringLiteral("键盘设置"), page); form = new QFormLayout(box); form->addRow(check(QStringLiteral("customKeyboard"), QStringLiteral("使用自定义键盘"), box)); form->addRow(check(QStringLiteral("asciiModifyInput"), QStringLiteral("修改输入"), box)); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiModifyInput")))->setChecked(m_asciiDraft.modifyInput); keyboard = new QComboBox(box); keyboard->setObjectName(QStringLiteral("Number_keyboardPageId"));
     Q_FOREACH (keyboardPage, project.allPages()) { if (keyboardPage.kind == QStringLiteral("keyboard")) { keyboard->addItem(keyboardPage.name, keyboardPage.id); } }
     keyboard->setCurrentIndex(keyboard->findData(m_draft.keyboardPageId)); m_fields.insert(QStringLiteral("keyboardPageId"), keyboard); form->addRow(QStringLiteral("窗口编号:"), keyboard); m_keyboardLabel = form->labelForField(keyboard);
     box = group(QStringLiteral("keyboardPosition"), QStringLiteral("键盘自定义位置"), box); form->addRow(box); form = new QFormLayout(box); form->addRow(QStringLiteral("X位置:"), spin(QStringLiteral("keyboardX"), 0, 800, box)); form->addRow(QStringLiteral("Y位置:"), spin(QStringLiteral("keyboardY"), 0, 480, box)); layout->addWidget(box->parentWidget()); layout->addStretch(); tabs->addTab(page, QStringLiteral("其它"));
@@ -327,10 +351,16 @@ void NumberDisplayDialog::updateLinkage() //20261112-0 add
     if (!m_ready || m_updating) { return; } m_updating = true; draft = object().numberDisplay;
     m_draft.inputAddress = draft.inputAddress; //20261112-0 add: Display the synchronized address while retaining the independent input-address draft.
     qobject_cast<QLineEdit *>(m_fields.value(QStringLiteral("inputAddress")))->setText(draft.sameMonitor ? draft.monitorAddress : draft.inputAddress); m_inputShowingMonitor = draft.sameMonitor;
-    setWindowTitle(draft.allowInput ? QStringLiteral("数值输入") : QStringLiteral("数值显示"));
+    setObjectName(m_asciiMode ? QStringLiteral("AsciiDisplayDialog") : QStringLiteral("NumberDisplayDialog"));
+    m_colorLabels.value(QStringLiteral("textColor"))->setText(m_asciiMode ? QStringLiteral("文本颜色:") : QStringLiteral("数值颜色:")); m_colorLabels.value(QStringLiteral("backgroundColor"))->setText(m_asciiMode ? QStringLiteral("文本背景颜色:") : QStringLiteral("数值背景颜色:")); //20261112-0 change
+    setWindowTitle(m_asciiMode ? draft.allowInput ? QStringLiteral("ASCII输入") : QStringLiteral("ASCII显示") : draft.allowInput ? QStringLiteral("数值输入") : QStringLiteral("数值显示"));
+    m_fields.value(QStringLiteral("dataType"))->setVisible(!m_asciiMode); m_dataTypeLabel->setVisible(!m_asciiMode); m_inputRange->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("scaling"))->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("displayRange"))->setVisible(!m_asciiMode);
+    m_asciiControls->setVisible(m_asciiMode); m_fields.value(QStringLiteral("asciiEncoding"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("totalDigits"))->setVisible(!m_asciiMode); m_totalDigitsLabel->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("asciiCharacterCount"))->setVisible(m_asciiMode); m_characterCountLabel->setVisible(m_asciiMode); m_fields.value(QStringLiteral("asciiModifyInput"))->setVisible(m_asciiMode);
+    m_fields.value(QStringLiteral("adjustment"))->setEnabled(!m_asciiMode); m_fields.value(QStringLiteral("customDisplay"))->setVisible(!m_asciiMode); m_fields.value(QStringLiteral("customText"))->setVisible(!m_asciiMode);
+    m_fields.value(QStringLiteral("lowColor"))->setEnabled(!m_asciiMode); m_fields.value(QStringLiteral("highColor"))->setEnabled(!m_asciiMode); findChild<QPushButton *>(QStringLiteral("Number_lowColorPicker"))->setEnabled(!m_asciiMode); findChild<QPushButton *>(QStringLiteral("Number_highColorPicker"))->setEnabled(!m_asciiMode);
     m_addressRows.value(QStringLiteral("offsetAddress"))->setVisible(draft.offsetEnabled); m_addressRows.value(QStringLiteral("inputAddress"))->setEnabled(draft.allowInput && !draft.sameMonitor);
     m_fields.value(QStringLiteral("sameMonitor"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("password"))->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("inputMarker"))->setEnabled(draft.allowInput); m_inputRange->setEnabled(draft.allowInput);
-    m_fields.value(QStringLiteral("decimalDigits"))->setEnabled(NumberDisplayProperties::decimalEnabled(draft.dataType)); m_fields.value(QStringLiteral("customText"))->setEnabled(draft.customDisplay);
+    m_fields.value(QStringLiteral("decimalDigits"))->setEnabled(!m_asciiMode && NumberDisplayProperties::decimalEnabled(draft.dataType)); m_fields.value(QStringLiteral("customText"))->setEnabled(draft.customDisplay);
     m_touch->setEnabled(draft.allowInput); m_fields.value(QStringLiteral("notice"))->setVisible(draft.allowInput); m_fields.value(QStringLiteral("pressTimeEnabled"))->setVisible(draft.allowInput); m_fields.value(QStringLiteral("pressTime"))->setVisible(draft.allowInput && draft.pressTimeEnabled); m_pressUnits->setVisible(draft.allowInput && draft.pressTimeEnabled);
     for (index = 0; index < 2; ++index)
     {
@@ -339,7 +369,7 @@ void NumberDisplayDialog::updateLinkage() //20261112-0 add
     }
     m_addressRows.value(QStringLiteral("noticeBitAddress"))->setEnabled(draft.noticeBit); m_noticeBitStates->setEnabled(draft.noticeBit); m_addressRows.value(QStringLiteral("noticeWordAddress"))->setEnabled(draft.noticeWord); m_fields.value(QStringLiteral("noticeWordType"))->setEnabled(draft.noticeWord); m_fields.value(QStringLiteral("noticeWordValue"))->setEnabled(draft.noticeWord);
     m_fields.value(QStringLiteral("keyboardPageId"))->setVisible(draft.customKeyboard); m_keyboardLabel->setVisible(draft.customKeyboard); m_fields.value(QStringLiteral("keyboardPosition"))->setVisible(draft.customKeyboard);
-    image.fill(Qt::white); painter.begin(&image); paintNumberDisplay(&painter, QRectF(5, 25, 135, 100), draft); painter.end(); m_preview->setPixmap(image); m_updating = false;
+    image.fill(Qt::white); painter.begin(&image); if (m_asciiMode) { paintAsciiDisplay(&painter, QRectF(5, 25, 135, 100), object().asciiDisplay); } else { paintNumberDisplay(&painter, QRectF(5, 25, 135, 100), draft); } painter.end(); m_preview->setPixmap(image); m_updating = false;
 }
 
 /******************************************************************************
@@ -382,6 +412,11 @@ HmiObject NumberDisplayDialog::object() const //20261112-0 add
 #undef READ_NUMBER_STRING
     if (m_visibility != nullptr) { result.numberDisplay.visibility = m_visibility->properties(); result.numberDisplay.touch = m_touch->properties(); }
     if (m_inputShowingMonitor) { result.numberDisplay.inputAddress = m_draft.inputAddress; }
+    if (m_asciiMode) //20261112-0 add: One accepted family is persisted, with inactive numeric fields preserved in the ASCII common draft.
+    {
+        result.type = QStringLiteral("ascii"); result.hasNumberDisplayProperties = false; result.asciiDisplay = m_asciiDraft; result.asciiDisplay.common = result.numberDisplay;
+        result.asciiDisplay.characterCount = field(QStringLiteral("asciiCharacterCount")).toInt(); result.asciiDisplay.encoding = field(QStringLiteral("asciiEncoding")).toInt(); result.asciiDisplay.autoWrap = field(QStringLiteral("asciiAutoWrap")).toBool(); result.asciiDisplay.swapBytes = field(QStringLiteral("asciiSwapBytes")).toBool(); result.asciiDisplay.modifyInput = field(QStringLiteral("asciiModifyInput")).toBool();
+    }
     result.address = result.numberDisplay.monitorAddress; return result;
 }
 
@@ -410,7 +445,7 @@ void NumberDisplayDialog::accept() //20261112-0 add
     HmiPage page;
     bool found = false;
     QString error;
-    if (!candidate.numberDisplay.validate(&error) || !candidate.numberDisplay.validateAddresses(m_project.connections, &error))
+    if (m_asciiMode ? !candidate.asciiDisplay.validate(&error) || !candidate.asciiDisplay.validateAddresses(m_project.connections, &error) : !candidate.numberDisplay.validate(&error) || !candidate.numberDisplay.validateAddresses(m_project.connections, &error))
     { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), error); return; }
     Q_FOREACH (page, m_project.allPages()) { if (page.id == candidate.numberDisplay.keyboardPageId && page.kind == QStringLiteral("keyboard")) { found = true; } }
     if (candidate.numberDisplay.allowInput && candidate.numberDisplay.customKeyboard && !found)

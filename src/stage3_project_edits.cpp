@@ -74,6 +74,17 @@ void addConditionSlots(StaticTextProperties *condition, bool touch, QList<Addres
 QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
+    NumberDisplayProperties *ascii;
+    if (object->type == QStringLiteral("ascii")) //20261112-0 add: Keep ASCII base carriers separate from unknown string spans and inactive numeric ranges.
+    {
+        ascii = &object->asciiDisplay.common;
+        addressSlots.append({Stage3AddressField::MonitorWord, &ascii->monitorAddress, PlcAddressRole::Word, 1U});
+        if (ascii->allowInput && !ascii->sameMonitor) { addressSlots.append({Stage3AddressField::Operation, &ascii->inputAddress, PlcAddressRole::Word, 1U}); }
+        if (ascii->offsetEnabled) { addressSlots.append({Stage3AddressField::OffsetWord, &ascii->offsetAddress, PlcAddressRole::Word, 1U}); }
+        addConditionSlots(&ascii->visibility, false, &addressSlots); if (ascii->allowInput) { addConditionSlots(&ascii->touch, true, &addressSlots); }
+        if (ascii->allowInput && ascii->notice && ascii->noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &ascii->noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (ascii->allowInput && ascii->notice && ascii->noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &ascii->noticeWordAddress, PlcAddressRole::Word, ascii->noticeWordType == 0 || ascii->noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->hasNumberDisplayProperties) //20261112-0 add: Numeric input, monitor and range roles remain independent.
     {
         addressSlots.append({Stage3AddressField::MonitorWord, &object->numberDisplay.monitorAddress, PlcAddressRole::Word, u32(NumberDisplayProperties::wordSpan(object->numberDisplay.dataType))});
@@ -298,6 +309,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
 {
     int index;
     QString resolved;
+    if (object->type == QStringLiteral("ascii") && !object->asciiDisplay.common.appearance.picturePng.isEmpty()) //20261112-0 add
+    {
+        if (!mergePicture(candidate, object->asciiDisplay.common.appearance.picture, object->asciiDisplay.common.appearance.picturePng, &resolved, error)) { return false; }
+        object->asciiDisplay.common.appearance.picture = resolved;
+    }
     if (object->hasNumberDisplayProperties && !object->numberDisplay.appearance.picturePng.isEmpty()) //20261112-0 add
     {
         if (!mergePicture(candidate, object->numberDisplay.appearance.picture, object->numberDisplay.appearance.picturePng, &resolved, error)) { return false; }
@@ -487,9 +503,10 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
         {
             if (!mergeMacro(clipboard.source, candidate, object.bitButton.macroName, &mappedIds, error)) { return false; }
         }
-        if (object.hasNumberDisplayProperties && object.numberDisplay.allowInput && object.numberDisplay.customKeyboard) //20261112-0 add: A keyboard ID cannot silently bind to a different target document's page.
+        if ((object.hasNumberDisplayProperties && object.numberDisplay.allowInput && object.numberDisplay.customKeyboard) ||
+            (object.type == QStringLiteral("ascii") && object.asciiDisplay.common.allowInput && object.asciiDisplay.common.customKeyboard)) //20261112-0 change: A keyboard ID cannot silently bind to a different target document's page.
         {
-            reference = HmiReference(); reference.id = QStringLiteral("numeric-keyboard"); reference.targetKind = QStringLiteral("page"); reference.targetId = object.numberDisplay.keyboardPageId;
+            reference = HmiReference(); reference.id = QStringLiteral("value-keyboard"); reference.targetKind = QStringLiteral("page"); reference.targetId = object.type == QStringLiteral("ascii") ? object.asciiDisplay.common.keyboardPageId : object.numberDisplay.keyboardPageId;
             if (!mergeReferenceTarget(clipboard.source, target, candidate, &reference, &mappedIds, error)) { return false; }
         }
         if (!mergeObjectPictures(candidate, &object, error) || !validateObjectAddresses(object, *candidate, error)) { return false; }

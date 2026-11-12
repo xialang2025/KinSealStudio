@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-12",
+  "evidenceLayer": "原生私有副本上位机UI/原厂源保存/原厂离线编译；未验证屏端执行",
+  "installedExeSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeExeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "corrections": [
+    "高低字节互换默认checked=true，旧手册false被Qt属性与截图覆盖。",
+    "字符数QSpinBox范围1..256；透明度0..255。",
+    "宏组enabled=false；输入模式通知总开关勾选后位/字enabled=true。只读模式通知组隐藏。",
+    "GB2312下拉两项存在，但本轮切换尝试未成功，保留运行验证缺口。",
+    "原厂离线默认为type16/640B，一张图片；不能套Switch subtype。"
+  ],
+  "bilingualFontSizeExperiment": [
+    {
+      "label": "ascii-bilingual-Chinese-initial",
+      "fontSize": [
+        "16"
+      ]
+    },
+    {
+      "label": "ascii-bilingual-English24",
+      "fontSize": [
+        "24"
+      ]
+    },
+    {
+      "label": "ascii-bilingual-Chinese-after-English24",
+      "fontSize": [
+        "24"
+      ]
+    }
+  ],
+  "bilingualLimit": "只证明该字号样例中文16→English24→中文24；不扩大为所有外观字段均共享或固件全部语言显示通过。"
+}

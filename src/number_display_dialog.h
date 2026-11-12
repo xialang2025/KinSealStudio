@@ -13,7 +13,8 @@ class QLabel;
 class QPainter;
 class HmiPermissionEditor;
 
-void paintNumberDisplay(QPainter *painter, const QRectF &rect, const NumberDisplayProperties &properties);
+void paintNumberDisplay(QPainter *painter, const QRectF &rect, const NumberDisplayProperties &properties, const QString &sample = QString(), bool ascii = false, bool wrap = false); //20261112-0 change
+void paintAsciiDisplay(QPainter *painter, const QRectF &rect, const AsciiDisplayProperties &properties);
 
 //20261112-0 add: Four complete property pages share a detached object and gallery transaction.
 class NumberDisplayDialog : public QDialog
@@ -40,6 +41,7 @@ private:
     HmiObject m_original;
     HmiProject m_project;
     NumberDisplayProperties m_draft;
+    AsciiDisplayProperties m_asciiDraft;
     QMap<QString, QWidget *> m_fields;
     QMap<QString, QWidget *> m_addressRows;
     HmiPermissionEditor *m_visibility = nullptr;
@@ -49,9 +51,15 @@ private:
     QWidget *m_keyboardLabel = nullptr;
     QWidget *m_pressUnits = nullptr;
     QWidget *m_noticeBitStates = nullptr;
+    QWidget *m_dataTypeLabel = nullptr;
+    QWidget *m_totalDigitsLabel = nullptr;
+    QWidget *m_characterCountLabel = nullptr;
+    QWidget *m_asciiControls = nullptr;
+    QMap<QString, QLabel *> m_colorLabels; //20261112-0 add: The shared page uses the measured text/numeric labels for its active family.
     bool m_ready = false;
     bool m_updating = false;
     bool m_inputShowingMonitor = false;
+    bool m_asciiMode = false;
 };
 
 #endif

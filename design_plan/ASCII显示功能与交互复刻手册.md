@@ -285,3 +285,10 @@
 - exe 字符串证据：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-bitbutton-20261108\exe-strings-ascii.txt`／`exe-utf16-recovered.bin`（`QValueDlg`/`QValueBaseDlg`/`QValueShowDlg`/`SecurityWidget`/`ValueOtherWidget`、`btn_asciiDisplay`、`createASCIIInput()`、`m_HtoLCkBox`、`comboBox_Code`、`checkBox_Modify`、GB2312/UNICIDE/BIG5/GBK、日期与时间格式串等）；各 `at*-tree*.json` 页签控件枚举。
 - 环境备注：调查全程使用固定名私有桌面（OpenDesktopW 复用，失败才创建；进程结束后不关闭桌面句柄）。新建桌面上 GUI 启动偶发 0xC0000142 或无窗口（启动慢时编辑器窗口约 18–30 秒才出现），重试或复用 WinSta0 下遗留 KinSeal* 桌面即可；不要在用户交互桌面操作。
 - 姊妹手册：《数值显示功能与交互复刻手册.md》《时间显示功能与交互复刻手册.md》《位按钮功能与交互复刻手册.md》（同目录）——地址输入窗口、“选择颜色”窗口、系统图库窗口、画布通用右键菜单、权限页字段与数值类型字段可复用其描述。
+
+
+## 2026-11-12 原生补证与阶段4编辑切片
+
+原生互换默认true，字符数1..256，宏组禁用；通知输入模式可启用、只读隐藏，背景#a0a0ff；编码下拉有ASCII/GB2312两项，但本轮GB2312原生切换尝试失败，未宣称运行已验。
+
+本轮编辑实现与分层验收见[专项报告](../docs/ASCII显示手册实现与验收.md)。原手册历史未知项只按本轮已取得结果纠正；源/设备/现场范围保持独立，未宣称全控件通过。

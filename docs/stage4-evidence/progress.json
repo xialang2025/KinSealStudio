@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 6,
-  "blockedLayers": 21,
-  "active": "C12",
+  "editorSlicesDelivered": 7,
+  "blockedLayers": 25,
+  "active": "C13",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -181,14 +181,30 @@
     {
       "id": "C12",
       "name": "ASCII显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "ASCII独立模型、四页、1..256字符与编码/换行/互换、数值与ASCII往返草稿、输入/权限/通知/键盘、跨页资源与基址复制、schema12及12类混合保存、原子创建转换撤销",
+      "evidence": "ascii/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C12-001",
+        "Q-S04-C12-002",
+        "Q-S04-C12-003",
+        "Q-S04-C12-004"
+      ]
     },
     {
       "id": "C13",
       "name": "时间显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

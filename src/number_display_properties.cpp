@@ -146,11 +146,11 @@ QJsonObject NumberDisplayProperties::toJson() const //20261112-0 add
 /******************************************************************************
  * Function Name   : NumberDisplayProperties::fromJson
  * Description     : Reject missing/unknown fields, wrong types, fractional enums and corrupt embedded artwork atomically.
- * Input Parameters: json, output, error
+ * Input Parameters: json, output, error, numericFieldsActive
  * Return Value    : True for a complete valid numeric record.
  * Date            : 2026.11.12
  ******************************************************************************/
-bool NumberDisplayProperties::fromJson(const QJsonObject &json, NumberDisplayProperties *output, QString *error) //20261112-0 add
+bool NumberDisplayProperties::fromJson(const QJsonObject &json, NumberDisplayProperties *output, QString *error, bool numericFieldsActive) //20261112-0 change
 {
     NumberDisplayProperties candidate;
     QJsonObject shape = candidate.toJson();
@@ -185,18 +185,18 @@ bool NumberDisplayProperties::fromJson(const QJsonObject &json, NumberDisplayPro
     candidate.appearance.picturePng = QByteArray::fromBase64(encoded.toLatin1());
     if (QString::fromLatin1(candidate.appearance.picturePng.toBase64()) != encoded) { return numberError(error, QStringLiteral("数值外形Base64无效。")); }
     if (!StaticTextProperties::fromJson(json.value(QStringLiteral("visibility")).toObject(), &candidate.visibility, error) || candidate.visibility.toJson() != json.value(QStringLiteral("visibility")).toObject() ||
-        !StaticTextProperties::fromJson(json.value(QStringLiteral("touch")).toObject(), &candidate.touch, error) || candidate.touch.toJson() != json.value(QStringLiteral("touch")).toObject() || !candidate.validate(error)) { return false; }
+        !StaticTextProperties::fromJson(json.value(QStringLiteral("touch")).toObject(), &candidate.touch, error) || candidate.touch.toJson() != json.value(QStringLiteral("touch")).toObject() || !candidate.validate(error, numericFieldsActive)) { return false; }
     *output = candidate; return true;
 }
 
 /******************************************************************************
  * Function Name   : NumberDisplayProperties::validate
  * Description     : Validate active numeric constants and known UI bounds while retaining disabled ranges and address drafts.
- * Input Parameters: error
+ * Input Parameters: error, numericFieldsActive
  * Return Value    : True for a bounded savable numeric editor record.
  * Date            : 2026.11.12
  ******************************************************************************/
-bool NumberDisplayProperties::validate(QString *error) const //20261112-0 add
+bool NumberDisplayProperties::validate(QString *error, bool numericFieldsActive) const //20261112-0 change
 {
     double minimum;
     double maximum;
@@ -208,11 +208,11 @@ bool NumberDisplayProperties::validate(QString *error) const //20261112-0 add
         alignment < 0 || alignment > 2 || adjustment < 0 || adjustment > 2 || opacity < 0 || opacity > 255 || inputRangeSource < 0 || inputRangeSource > 1 || displayRangeSource < 0 || displayRangeSource > 1 ||
         noticeWordType < 0 || noticeWordType > 4 || pressTime < 0 || pressTime > 255 || keyboardX < 0 || keyboardX > 800 || keyboardY < 0 || keyboardY > 480 || macroEnabled || (noticeBit && noticeWord) ||
         !QColor(textColor).isValid() || !QColor(backgroundColor).isValid() || !QColor(lowColor).isValid() || !QColor(highColor).isValid()) { return numberError(error, QStringLiteral("数值显示参数超出已核定编辑范围。")); }
-    if (allowInput && inputRangeSource == 0 && dataType < 12 && (!numericConstant(inputMinimum, dataType, &minimum) || !numericConstant(inputMaximum, dataType, &maximum) || minimum > maximum))
+    if (numericFieldsActive && allowInput && inputRangeSource == 0 && dataType < 12 && (!numericConstant(inputMinimum, dataType, &minimum) || !numericConstant(inputMaximum, dataType, &maximum) || minimum > maximum))
     { return numberError(error, QStringLiteral("数值输入范围为空、格式或量程无效，或最小值大于最大值。")); }
-    if (displayRange && displayRangeSource == 0 && dataType < 12 && (!numericConstant(displayMinimum, dataType, &minimum) || !numericConstant(displayMaximum, dataType, &maximum) || minimum > maximum))
+    if (numericFieldsActive && displayRange && displayRangeSource == 0 && dataType < 12 && (!numericConstant(displayMinimum, dataType, &minimum) || !numericConstant(displayMaximum, dataType, &maximum) || minimum > maximum))
     { return numberError(error, QStringLiteral("范围显示的低限值或高限值无效。")); }
-    if (scaling)
+    if (numericFieldsActive && scaling)
     {
         gainValue = QLocale::c().toDouble(gain, &valid);
         if (!valid || !std::isfinite(gainValue) || gainValue == 0) { return numberError(error, QStringLiteral("缩放增益必须为有限非零数（Lite输入保护）。")); }

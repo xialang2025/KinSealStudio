@@ -969,6 +969,11 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
     object.address = m_addressEdit->text();
+    if (object.type == QStringLiteral("ascii")) //20261112-0 add: ASCII monitor editing validates a base carrier without assuming a recovered string span.
+    {
+        object.asciiDisplay.common.monitorAddress = object.address.trimmed();
+        if (!object.asciiDisplay.validateAddresses(m_project.connections, &controlError)) { QMessageBox::warning(this, QStringLiteral("ASCII属性未提交"), controlError); return; }
+    }
     if (object.hasNumberDisplayProperties) //20261112-0 add: The compact address field edits the actual numeric monitor carrier.
     {
         object.numberDisplay.monitorAddress = object.address.trimmed();
@@ -1423,6 +1428,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     m_textEdit->setEnabled(selected);
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
+    if (selected && object.type == QStringLiteral("ascii")) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("scale") || object.type == QStringLiteral("gif") || object.hasImageDisplayProperties)) { m_textEdit->setEnabled(false); m_addressEdit->setEnabled(false); } //20261112-0 change: Picture rows have no generic text or operation-address field.
     m_xSpin->setEnabled(selected);
     m_ySpin->setEnabled(selected);
@@ -1447,6 +1453,7 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         if (object.type == QStringLiteral("qrcode")) { m_textEdit->setPlainText(object.qrCode.description); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_textEdit->setPlainText(object.messageDisplay.text(0, m_project.activeLanguage)); } //20261112-0 add
         m_addressEdit->setText(object.address);
+        if (object.type == QStringLiteral("ascii")) { m_addressEdit->setText(object.asciiDisplay.common.monitorAddress); } //20261112-0 add
         if (object.hasNumberDisplayProperties) { m_addressEdit->setText(object.numberDisplay.monitorAddress); } //20261112-0 add
         if (object.type == QStringLiteral("qrcode")) { m_addressEdit->setText(object.qrCode.monitorAddress); } //20261112-0 add
         if (object.type == QStringLiteral("message")) { m_addressEdit->setText(object.messageDisplay.monitorAddress); } //20261112-0 add

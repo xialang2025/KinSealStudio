@@ -86,6 +86,12 @@ private slots:
     void numberPicturesCopiesAndAddressRoles();
     void numberActualRasterAndHiddenAppearanceDrafts();
     void numberShellPlacementEditAndUndo();
+    void asciiNativeDefaultsAndDistinctFields();
+    void asciiNumericSwitchAndDormantDrafts();
+    void asciiStrictMixedPersistenceAndBackendGates();
+    void asciiResourcesAddressesAndGalleryTransaction();
+    void asciiSampleRasterAndOptionIsolation();
+    void asciiShellPlacementConversionAndHistory();
 };
 
 /******************************************************************************
@@ -1359,6 +1365,154 @@ void Stage4ControlTests::numberShellPlacementEditAndUndo() //20261112-0 add
     QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->setChecked(false); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QVERIFY(!window.currentEditorProject().objects.first().numberDisplay.allowInput); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.first().numberDisplay.allowInput);
     window.m_canvas->selectObject(window.currentEditorProject().objects.first().id); QVERIFY(window.m_addressEdit->isEnabled()); //20261112-0 change: Restoring document history clears selection; explicitly select the object before editing its compact fields.
     window.m_addressEdit->setText(QStringLiteral("LW17")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().numberDisplay.monitorAddress, QStringLiteral("LW17")); QVERIFY(!window.m_textEdit->isEnabled()); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : asciiObject
+ * Description     : Build a standalone ASCII control with independent string options and a shared visual/access draft.
+ * Input Parameters: None
+ * Return Value    : Default typed ASCII object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject asciiObject() //20261112-0 add
+{
+    HmiObject object;
+    object.type = QStringLiteral("ascii"); object.id = QStringLiteral("ascii-object"); object.name = QStringLiteral("ASCII显示器"); object.geometry = QRect(260, 100, 180, 80); object.address = QStringLiteral("LW0"); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiNativeDefaultsAndDistinctFields
+ * Description     : Verify corrected native defaults, ASCII-specific bounds and enablement without exposing numeric-only controls.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiNativeDefaultsAndDistinctFields() //20261112-0 add
+{
+    NumberDisplayDialog dialog(asciiObject(), HmiProject());
+    QTabWidget *tabs = dialog.findChild<QTabWidget *>(QStringLiteral("NumberTabs"));
+    QSpinBox *characters = dialog.findChild<QSpinBox *>(QStringLiteral("Number_asciiCharacterCount"));
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("ASCII输入")); QCOMPARE(tabs->count(), 4); QCOMPARE(dialog.object().type, QStringLiteral("ascii")); QVERIFY(!dialog.object().hasNumberDisplayProperties);
+    QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("Number_asciiSwapBytes"))->isChecked()); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("Number_asciiAutoWrap"))->isChecked()); QVERIFY(dialog.findChild<QCheckBox *>(QStringLiteral("Number_displayAddress"))->isChecked());
+    QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("Number_asciiEncoding"))->count(), 2); QVERIFY(!dialog.findChild<QComboBox *>(QStringLiteral("Number_dataType"))->isVisible()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_scaling"))->isVisible()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_macroEnabled"))->isEnabled());
+    dialog.findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->setChecked(false); QCOMPARE(dialog.windowTitle(), QStringLiteral("ASCII显示")); QVERIFY(!dialog.findChild<QComboBox *>(QStringLiteral("Number_asciiEncoding"))->isEnabled());
+    tabs->setCurrentIndex(2); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_notice"))->isVisible()); dialog.findChild<QCheckBox *>(QStringLiteral("Number_allowInput"))->setChecked(true); QVERIFY(dialog.findChild<QGroupBox *>(QStringLiteral("Number_notice"))->isVisible());
+    tabs->setCurrentIndex(1); QCOMPARE(characters->value(), 5); QCOMPARE(characters->minimum(), 1); QCOMPARE(characters->maximum(), 256); QVERIFY(!dialog.findChild<QSpinBox *>(QStringLiteral("Number_decimalDigits"))->isEnabled()); QVERIFY(!dialog.findChild<QComboBox *>(QStringLiteral("Number_adjustment"))->isEnabled()); QVERIFY(!dialog.findChild<QGroupBox *>(QStringLiteral("Number_displayRange"))->isVisible()); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("Number_lowColorPicker"))->isEnabled());
+    characters->setValue(256); QCOMPARE(dialog.object().asciiDisplay.characterCount, 256); dialog.findChild<QComboBox *>(QStringLiteral("Number_asciiEncoding"))->setCurrentIndex(1); QVERIFY(dialog.object().asciiDisplay.swapBytes); QCOMPARE(dialog.object().asciiDisplay.encoding, 1);
+    QCOMPARE(dialog.findChild<QLabel *>(QStringLiteral("Number_textColorLabel"))->text(), QStringLiteral("文本颜色:")); QCOMPARE(dialog.findChild<QLabel *>(QStringLiteral("Number_backgroundColorLabel"))->text(), QStringLiteral("文本背景颜色:")); //20261112-0 add
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("ascii-display.png")))); tabs->setCurrentIndex(0); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("ascii-basic.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiNumericSwitchAndDormantDrafts
+ * Description     : Switch actual family radios without losing string options or invalid but inactive numeric range/scaling drafts.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiNumericSwitchAndDormantDrafts() //20261112-0 add
+{
+    NumberDisplayDialog dialog(numberObject(), HmiProject());
+    HmiObject object;
+    HmiObject parsed;
+    QString error;
+    dialog.findChild<QComboBox *>(QStringLiteral("Number_dataType"))->setCurrentIndex(8); dialog.findChild<QLineEdit *>(QStringLiteral("Number_inputMinimum"))->setText(QStringLiteral("dormant-range")); dialog.findChild<QGroupBox *>(QStringLiteral("Number_scaling"))->setChecked(true); dialog.findChild<QLineEdit *>(QStringLiteral("Number_gain"))->setText(QStringLiteral("0"));
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); QCOMPARE(dialog.windowTitle(), QStringLiteral("ASCII输入")); dialog.findChild<QSpinBox *>(QStringLiteral("Number_asciiCharacterCount"))->setValue(128); dialog.findChild<QCheckBox *>(QStringLiteral("Number_asciiSwapBytes"))->setChecked(false); dialog.findChild<QCheckBox *>(QStringLiteral("Number_asciiModifyInput"))->setChecked(true);
+    object = dialog.object(); QVERIFY2(object.asciiDisplay.validate(&error), qPrintable(error)); QCOMPARE(object.asciiDisplay.common.inputMinimum, QStringLiteral("dormant-range")); QVERIFY2(HmiObject::fromJson(object.toJson(), &parsed, &error), qPrintable(error)); QCOMPARE(parsed.toJson(), object.toJson());
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily0"))->click(); object = dialog.object(); QVERIFY(object.hasNumberDisplayProperties); QCOMPARE(object.numberDisplay.dataType, 8); QCOMPARE(object.numberDisplay.gain, QStringLiteral("0")); QVERIFY(!object.numberDisplay.validate(&error));
+    dialog.findChild<QRadioButton *>(QStringLiteral("NumberFamily1"))->click(); QCOMPARE(dialog.object().asciiDisplay.characterCount, 128); QVERIFY(!dialog.object().asciiDisplay.swapBytes); QVERIFY(dialog.object().asciiDisplay.modifyInput);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip twelve control families and reject malformed ASCII records, version downgrades and unrecovered native output atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = asciiObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.asciiDisplay.encoding = 1; object.asciiDisplay.characterCount = 255; object.asciiDisplay.autoWrap = true; object.asciiDisplay.modifyInput = true; object.asciiDisplay.common.keyboardPageId = QStringLiteral("dormant-keyboard");
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 12); QCOMPARE(loaded.toJson(), project.toJson());
+    json = object.toJson(); props = object.asciiDisplay.toJson(); props.insert(QStringLiteral("characterCount"), 4.5); json.insert(QStringLiteral("asciiDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
+    props = object.asciiDisplay.toJson(); props.insert(QStringLiteral("encoding"), 2); json.insert(QStringLiteral("asciiDisplay"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    only.objects = {object}; json = only.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QCOMPARE(only.objects.first().type, QStringLiteral("ascii"));
+    QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("ascii-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiResourcesAddressesAndGalleryTransaction
+ * Description     : Exercise active address roles, cross-page resource protection and the actual nested ASCII artwork selector.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiResourcesAddressesAndGalleryTransaction() //20261112-0 add
+{
+    HmiProject source;
+    HmiProject result;
+    HmiPage page;
+    HmiObject object = asciiObject();
+    Stage3DuplicateOptions options;
+    NumberDisplayDialog *dialog;
+    QTimer child;
+    bool accepted = false;
+    QString error;
+    object.asciiDisplay.common.appearance = {QStringLiteral("ascii.png"), imagePng(Qt::green)}; object.asciiDisplay.common.sameMonitor = false; object.asciiDisplay.common.inputAddress = QStringLiteral("LW20"); object.asciiDisplay.common.offsetEnabled = true; object.asciiDisplay.common.offsetAddress = QStringLiteral("LW30"); source.pictures.insert(QStringLiteral("ascii.png"), imagePng(Qt::green)); source.objects.append(object);
+    page.id = QStringLiteral("ascii-second-page"); page.name = QStringLiteral("ASCII第二页"); object.id = QStringLiteral("ascii-inactive"); page.objects.append(object); QVERIFY2(source.addPage(page, &error), qPrintable(error)); QCOMPARE(stage3PictureUsage(source, QStringLiteral("ascii.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(source, QStringLiteral("ascii.png"), &result, &error));
+    QVERIFY2(renameStage3Picture(source, QStringLiteral("ascii.png"), QStringLiteral("renamed-ascii.png"), &result, &error), qPrintable(error)); QCOMPARE(result.inactivePages.first().objects.first().asciiDisplay.common.appearance.picture, QStringLiteral("renamed-ascii.png"));
+    options.columns = 2; options.increments = {{Stage3AddressField::MonitorWord, 1, 0}, {Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::OffsetWord, 3, 0}}; QVERIFY2(duplicateStage3Selection(source, {source.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().asciiDisplay.common.monitorAddress, QStringLiteral("LW1")); QCOMPARE(result.objects.last().asciiDisplay.common.inputAddress, QStringLiteral("LW22")); QCOMPARE(result.objects.last().asciiDisplay.common.offsetAddress, QStringLiteral("LW33"));
+    dialog = new NumberDisplayDialog(source.objects.first(), source); dialog->findChild<QPushButton *>(QStringLiteral("NumberPicture2"))->click(); child.setInterval(15);
+    connect(&child, &QTimer::timeout, dialog, [&]() { QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget()); QListWidget *items; if (gallery == nullptr || gallery->objectName() != QStringLiteral("BitGallery")) { return; } items = gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems")); if (items == nullptr || items->count() != 1) { return; } items->setCurrentRow(0); accepted = true; child.stop(); gallery->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click(); }); child.start();
+    dialog->findChild<QPushButton *>(QStringLiteral("NumberPicture1"))->click(); QVERIFY(accepted); QCOMPARE(dialog->object().asciiDisplay.common.appearance.picturePng, imagePng(Qt::green)); dialog->reject(); delete dialog; QCOMPARE(source.objects.first().asciiDisplay.common.appearance.picture, QStringLiteral("ascii.png"));
+    object = asciiObject(); object.asciiDisplay.common.visibility.visibilityEnabled = true; object.asciiDisplay.common.visibility.wordEnabled = true; object.asciiDisplay.common.visibility.dataType = 1; object.asciiDisplay.common.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.asciiDisplay.validateAddresses({}, &error)); object.asciiDisplay.common.visibility.visibilityEnabled = false; QVERIFY2(object.asciiDisplay.validateAddresses({}, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiSampleRasterAndOptionIsolation
+ * Description     : Check real sample pixels, clipping and wrap/password changes while keeping unobserved byte/encoding runtime behavior out of the preview.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiSampleRasterAndOptionIsolation() //20261112-0 add
+{
+    AsciiDisplayProperties properties;
+    QImage raster(120, 100, QImage::Format_ARGB32);
+    QImage original;
+    QPainter painter;
+    raster.fill(Qt::magenta); painter.begin(&raster); paintAsciiDisplay(&painter, QRectF(10, 10, 100, 80), properties); painter.end(); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta)); QCOMPARE(raster.pixelColor(12, 12), QColor(QStringLiteral("#a0a0ff"))); original = raster;
+    properties.swapBytes = false; properties.encoding = 1; painter.begin(&raster); paintAsciiDisplay(&painter, QRectF(10, 10, 100, 80), properties); painter.end(); QCOMPARE(raster, original);
+    properties.common.password = true; painter.begin(&raster); paintAsciiDisplay(&painter, QRectF(10, 10, 100, 80), properties); painter.end(); QVERIFY(raster != original); properties.common.password = false; properties.autoWrap = true; properties.characterCount = 32; painter.begin(&raster); paintAsciiDisplay(&painter, QRectF(10, 10, 100, 80), properties); painter.end(); QVERIFY(raster != original);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::asciiShellPlacementConversionAndHistory
+ * Description     : Execute the real ASCII entry, placement and accepted family conversion as one undoable object transaction.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::asciiShellPlacementConversionAndHistory() //20261112-0 add
+{
+    MainWindow window;
+    int history;
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_asciiDisplay"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 120))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { NumberDisplayDialog *dialog = qobject_cast<NumberDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("NumberFamily0"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("NumberButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("number")); QVERIFY(window.currentEditorProject().objects.first().hasNumberDisplayProperties); QCOMPARE(window.m_projectHistory.size(), history + 2);
+    window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("ascii")); window.m_canvas->selectObject(window.currentEditorProject().objects.first().id); window.m_addressEdit->setText(QStringLiteral("LW9")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().asciiDisplay.common.monitorAddress, QStringLiteral("LW9")); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

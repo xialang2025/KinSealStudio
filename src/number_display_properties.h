@@ -44,8 +44,8 @@ struct NumberDisplayProperties
     static bool decimalEnabled(int type);
     void changeDataType(int type);
     QJsonObject toJson() const;
-    static bool fromJson(const QJsonObject &json, NumberDisplayProperties *output, QString *error);
-    bool validate(QString *error = nullptr) const;
+    static bool fromJson(const QJsonObject &json, NumberDisplayProperties *output, QString *error, bool numericFieldsActive = true); //20261112-0 change
+    bool validate(QString *error = nullptr, bool numericFieldsActive = true) const;
     bool validateAddresses(const QVector<PlcConnection> &connections, QString *error = nullptr) const;
 };
 

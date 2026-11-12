@@ -1,0 +1,48 @@
+{
+  "failures": [
+    {
+      "run": "ascii-boundaries-r1",
+      "error": "RuntimeError(\"{'serial': 29, 'status': 'error', 'error': 'Error: system error'}\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": {
+        "request": {
+          "op": "combo",
+          "hwnd": 3279902,
+          "value": 1
+        },
+        "result": {
+          "serial": 29,
+          "status": "error",
+          "error": "Error: system error"
+        }
+      }
+    },
+    {
+      "run": "ascii-boundaries-r2",
+      "error": "RuntimeError(\"widget match not unique {'op': 'group', 'name': 'groupBox_Notice', 'value': True} []\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": null
+    },
+    {
+      "run": "ascii-code-index-r1",
+      "error": "RuntimeError(\"{'serial': 22, 'status': 'error', 'error': 'Error: system error'}\")",
+      "ownedProcessTerminated": true,
+      "lastFailedOperation": {
+        "request": {
+          "op": "combo-index-only",
+          "hwnd": 1707760,
+          "value": 1
+        },
+        "result": {
+          "serial": 22,
+          "status": "error",
+          "error": "Error: system error"
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Qt GUI property values and compiled files are observations, not firmware execution evidence.",
+    "GB2312 selection via direct toolkit setters returned a native system error; background-key attempt did not select it. No GB2312 runtime success is claimed."
+  ]
+}
