@@ -64,7 +64,10 @@
         "Q-S04-C06-002",
         "Q-S04-C06-003"
       ],
-      "hardwareEvidence": "docs/stage4-evidence/message/physical/message-native-baseline-r1/run.json"
+      "hardwareEvidence": "docs/stage4-evidence/message/physical/message-lifecycle-r1/run.json",
+      "legacyHardwareEvidence": [
+        "docs/stage4-evidence/message/physical/message-native-baseline-r1/run.json"
+      ]
     },
     {
       "id": "C07",
@@ -823,5 +826,11 @@
     "processedIncludingExisting": 34,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": true
+  },
+  "lifecycleBackfill": {
+    "total": 28,
+    "completed": 1,
+    "complete": false,
+    "evidence": "docs/stage4-evidence/lifecycle-backfill/audit.json"
   }
 }
