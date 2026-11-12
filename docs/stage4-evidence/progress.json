@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 0,
-  "blockedLayers": 0,
-  "active": "C06",
+  "editorSlicesDelivered": 1,
+  "blockedLayers": 3,
+  "active": "C07",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -46,14 +46,29 @@
     {
       "id": "C06",
       "name": "消息显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "W1～W4和KSP持久化/混合复制；完整原生源/设备编码未恢复",
+      "evidence": "message/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C06-001",
+        "Q-S04-C06-002",
+        "Q-S04-C06-003"
+      ]
     },
     {
       "id": "C07",
       "name": "刻度",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

@@ -28,6 +28,7 @@ def main():
     environment = module.clean_environment()
     environment["PATH"] = ("G:/01_Professional/QT6/Installed/6.12.0/mingw_64/bin;"
                            "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/bin;" + environment["PATH"])
+    environment["KINSEAL_STAGE4_CAPTURE_DIR"] = str(output)
     record = dict(startedAtUtc=datetime.now(timezone.utc).isoformat(), runs=[], usbAccessed=False,
                   desktopSwitched=False, systemInput=False, passed=False)
     try:

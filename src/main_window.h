@@ -30,6 +30,7 @@ class MainWindow : public QMainWindow
     friend class Stage1BackendTests; //20261110-5 add: Verify page switching and persistence through the actual editor model.
     friend class Stage2WorkflowTests; //20261110-7 add: Exercise whole-project transactions without operating user windows.
     friend class Stage3IntegrationTests; //20261110-8 add: Verify resource placement and project clipboard transactions.
+    friend class Stage4ControlTests; //20261112-0 add: Exercise real control actions and transaction history.
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -57,6 +58,8 @@ private slots:
     void selectTreeObject(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void createStaticText(); //20261108-14 add
     void editStaticText();
+    void createStage4Control(const QString &type); //20261112-0 add
+    void editStage4Control();
     void configureLanguages();
     void configureConnections(); //20261109-0 add
     void configureMacroSdk(); //20261109-0 add

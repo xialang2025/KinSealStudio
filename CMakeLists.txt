@@ -62,6 +62,11 @@ qt_add_executable(KinSealStudioLite WIN32
     src/static_text_dialog.cpp
     src/static_text_dialog.h
     src/static_text_actions.cpp
+    src/stage4_control_actions.cpp #20261112-0 add: Each new control retains an independent typed model and dialog.
+    src/message_display_properties.h
+    src/message_display_properties.cpp
+    src/message_display_dialog.h
+    src/message_display_dialog.cpp
     src/canvas_editing.cpp
     src/bit_button_properties.h #20261108-15 add
     src/bit_button_properties.cpp
@@ -152,6 +157,13 @@ qt_add_executable(KinSealStaticTextTests ${KINSEAL_TEST_SOURCES} tests/static_te
 target_include_directories(KinSealStaticTextTests PRIVATE src third_party/lzokay)
 target_link_libraries(KinSealStaticTextTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi) #20261109-0 change
 target_compile_definitions(KinSealStaticTextTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+
+#20261112-0 add: Exercise the actual new-control dialogs, source gates and project transactions on a private desktop.
+qt_add_executable(KinSealStage4ControlTests ${KINSEAL_TEST_SOURCES} tests/stage4_controls_tests.cpp)
+target_include_directories(KinSealStage4ControlTests PRIVATE src third_party/lzokay)
+target_link_libraries(KinSealStage4ControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+target_compile_definitions(KinSealStage4ControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+target_sources(KinSealStage4ControlTests PRIVATE src/plc_native_catalog.cpp src/plc_native_catalog.h)
 
 #20261109-6 add: Word dialog interaction tests share the actual application code and resource catalog.
 qt_add_executable(KinSealWordButtonDialogTests ${KINSEAL_TEST_SOURCES} tests/word_button_dialog_tests.cpp)
@@ -278,6 +290,7 @@ endforeach()
 
 #20261109-6 add: Every independent project-model target must resolve word-property serialization.
 foreach(KINSEAL_WORD_MODEL_TARGET KinSealDeviceMacroTests KinSealNativeSourceTests)
+    target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/message_display_properties.cpp src/message_display_properties.h) #20261112-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/word_button_properties.cpp src/word_button_properties.h)
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/lamp_properties.cpp src/lamp_properties.h) #20261109-8 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/function_button_properties.cpp src/function_button_properties.h) #20261110-0 add

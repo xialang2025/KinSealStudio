@@ -262,7 +262,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
             item = dynamic_cast<HmiControlItem *>(graphicsItem);
             if (item == nullptr) { continue; }
             position = command.mid(8).toInt();
-            if (position < 0 || position >= (item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261110-0 change
+            if (position < 0 || position >= (item->toHmiObject().type == QStringLiteral("message") ? item->toHmiObject().messageDisplay.stateCount : item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261112-0 change
                 item->toHmiObject().hasLampProperties ? item->toHmiObject().lamp.stateCount() : 2)) { continue; }
             graphicsItem->setData(11, position); graphicsItem->update();
         }
@@ -483,7 +483,7 @@ void ScreenCanvas::contextMenuEvent(QContextMenuEvent *event) //20261108-14 add
     images->addAction(QStringLiteral("保持比例"))->setData(QStringLiteral("imageMode1"));
     images->addAction(QStringLiteral("原始大小"))->setData(QStringLiteral("imageMode2"));
     simulation = menu.addMenu(QStringLiteral("模拟状态"));
-    stateCount = item != nullptr && item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261110-0 change
+    stateCount = item != nullptr && item->toHmiObject().type == QStringLiteral("message") ? item->toHmiObject().messageDisplay.stateCount : item != nullptr && item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261112-0 change
                  item != nullptr && item->toHmiObject().hasLampProperties ? item->toHmiObject().lamp.stateCount() : 2;
     for (index = 0; index < stateCount; ++index)
     {

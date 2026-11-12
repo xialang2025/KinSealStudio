@@ -74,6 +74,11 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
 
+    if (object->type == QStringLiteral("message")) //20261112-0 add: Monitor and visibility are reads, never an operating write slot.
+    {
+        addressSlots.append({Stage3AddressField::MonitorWord, &object->messageDisplay.monitorAddress, PlcAddressRole::Word, object->messageDisplay.dataType == 0 ? 1U : 2U});
+        addConditionSlots(&object->messageDisplay.appearance, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("switch") && !object->hasLampProperties && !object->hasFunctionButtonProperties)
     {
         addressSlots.append({Stage3AddressField::Operation, &object->address,

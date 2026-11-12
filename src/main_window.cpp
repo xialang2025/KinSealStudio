@@ -944,6 +944,7 @@ void MainWindow::applySelectedProperties() //20261107-6 add
 {
     HmiObject object;
     QRect geometry;
+    QString controlError; //20261112-0 add
     bool selected;
     int maximum_x;
     int maximum_y;
@@ -967,6 +968,14 @@ void MainWindow::applySelectedProperties() //20261107-6 add
         object.text = object.staticText.languageTexts.value(m_project.languages.first(), object.text);
     }
     object.address = m_addressEdit->text();
+    if (object.type == QStringLiteral("message")) //20261112-0 add: The compact property panel edits the first state in the current language.
+    {
+        object.messageDisplay.states[0].insert(m_project.activeLanguage, object.text);
+        object.messageDisplay.monitorAddress = object.address.trimmed();
+        object.text = object.messageDisplay.text(0, m_project.languages.first()); object.address = object.messageDisplay.monitorAddress;
+        if (!object.messageDisplay.validateAddresses(m_project.connections, &controlError))
+        { QMessageBox::warning(this, QStringLiteral("属性无效"), controlError); return; }
+    }
     if (object.name.isEmpty())
     {
         QMessageBox::warning(this, QStringLiteral("属性无效"),
@@ -1421,7 +1430,9 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
         {
             m_textEdit->setPlainText(bitButtonContent(object.bitButton.states[0], m_project.activeLanguage));
         }
+        if (object.type == QStringLiteral("message")) { m_textEdit->setPlainText(object.messageDisplay.text(0, m_project.activeLanguage)); } //20261112-0 add
         m_addressEdit->setText(object.address);
+        if (object.type == QStringLiteral("message")) { m_addressEdit->setText(object.messageDisplay.monitorAddress); } //20261112-0 add
         m_xSpin->setValue(object.geometry.x());
         m_ySpin->setValue(object.geometry.y());
         m_widthSpin->setValue(object.geometry.width());

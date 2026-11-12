@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-12",
+  "scope": "原厂V5.1/AMT070W124-L800X480R，私有桌面UI和离线编译；未访问USB或观察实屏",
+  "observations": [
+    {
+      "id": "C06-NATIVE-DEFAULT-001",
+      "finding": "spinBox_total默认2，Qt范围1..128；状态1经确定、保存、原厂编译成功。原帮助最小2不可覆盖本次直接结果。",
+      "evidence": ["native-probe-default-r1.json", "native-probe-matrix1-r1.json", "message-state1.sm", "compiled/message-state1/ControlPara.dat"]
+    },
+    {
+      "id": "C06-NATIVE-MOVE-001",
+      "finding": "移动速度默认5，Qt范围1..10。向左移动显示速度，5与10分别保存和原厂编译。速度单位和固件换算未观察。",
+      "evidence": ["native-probe-default-r1.json", "native-probe-matrix2-r1.json"]
+    },
+    {
+      "id": "C06-NATIVE-ADDRESS-001",
+      "finding": "数据类别切换32位正整数后，当前监视地址文本仍LW0。尚未观察所有地址家族和跨度。",
+      "evidence": ["native-probe-matrix1-r1.json#u32-address", "message-u32.sm"]
+    },
+    {
+      "id": "C06-NATIVE-STATE-001",
+      "finding": "真实后台表格cell点击状态2后输入KEEP-2，表格状态2同步修改；总状态3→2→3后状态2重置为数字2。删除的状态文本不会在当前对话框重新增长时恢复。",
+      "evidence": ["native-probe-colors-r1.json#tableReads"],
+      "limitation": "本run后续取消色窗定位出现歧义而中止，前述表格步骤成功；不借该run宣称整个场景成功。"
+    },
+    {
+      "id": "C06-NATIVE-COLOR-001",
+      "finding": "原生颜色窗口currentColor读数：字体#000000，前景#ffffff，背景#ffffff，边框#e0e0e0。",
+      "evidence": ["native-probe-colors-r2.json"]
+    },
+    {
+      "id": "C06-NATIVE-LANGUAGE-001",
+      "finding": "中文/English分别保存状态文本。English字号改24，切中文回16，再切English仍24。不能以全局字号建模。",
+      "evidence": ["native-probe-language-r1.json", "message-bilingual-size24.sm", "compiled/message-bilingual-size24/Message.dat"]
+    },
+    {
+      "id": "C06-NATIVE-LANGUAGE-002",
+      "finding": "English四种颜色分别设置红/绿/蓝/洋红、样式设横向过渡后，切中文读取四颜色仍黑/白/白/#e0e0e0、样式仍纯色；切English样式回横向过渡。四颜色和样式按语言独立。",
+      "evidence": ["native-probe-language-style-r1.json", "message-bilingual-colored.sm"],
+      "limitation": "当前字体列表仅宋体，尚未以第二字体家族做独立切换；每语言字号和其他外观已直接观察。"
+    },
+    {
+      "id": "C06-NATIVE-STYLE-001",
+      "finding": "完整13项索引顺序已从Qt读出；10右上角辐射、11左上角辐射、12中心辐射。外形按钮当前visible=false。文本编辑为QPlainTextEdit/plainTextEdit。",
+      "evidence": ["native-probe-default-r1.json#message-default"]
+    },
+    {
+      "id": "C06-NATIVE-PERMISSION-001",
+      "finding": "显现总开关+受位控制LB0/状态1+等级3可确认、保存并原厂编译。",
+      "evidence": ["native-probe-permissions-r2.json", "message-visibility-bit-level.sm", "compiled/message-visibility-bit-level/ControlPara.dat"],
+      "limitation": "第一次字条件==组合探针在Qt activated调用返回system error并终止；未保存或编译，不能推断不支持==。AND/OR、误差和阈值固件语义未验证。"
+    },
+    {
+      "id": "C06-NATIVE-SOURCE-001",
+      "finding": "默认单消息源在相同空白基线前缀后，page.objects.count=1，movable=1，源对象type=35(0x23)。",
+      "evidence": ["source-prefix-observation.json", "message-default.sm"],
+      "limitation": "仅定位对象类型入口；变长对象体、嵌套语言和引用文法尚未恢复，不开放语义导出。"
+    },
+    {
+      "id": "C06-NATIVE-DEVICE-001",
+      "finding": "原厂单消息编译ControlPara为640字节，首字节35。小矩阵观测LE u16字段：0x100类型索引(0/1)，0x102总状态数(1/2/3)，0x104移动方向(0/1)，0x106速度(5/10)。",
+      "evidence": ["device-differences.json", "compiled/message-default-r1/ControlPara.dat", "compiled/message-default-r2/ControlPara.dat"],
+      "limitation": "默认重复编译存在脏字节差异；没有把重复差异当可自由忽略的掩码。全布局/扫描/图像/字库和固件兼容尚未恢复，不能开放设备包或USB。"
+    },
+    {
+      "id": "C06-NATIVE-GLYPH-001",
+      "finding": "默认2态Message.dat=208B、SimMessage.dat=720B；1态104/616B；3态312/824B；本次双语2态416/928B。这是样本观测，尚无通用编码定义。",
+      "evidence": ["device-differences.json", "compiled/"]
+    }
+  ]
+}

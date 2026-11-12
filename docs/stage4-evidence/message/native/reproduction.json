@@ -1,0 +1,829 @@
+{
+  "scenarios": [
+    {
+      "name": "colors-scenario.json",
+      "actions": [
+        {
+          "op": "scene-double",
+          "y": 170,
+          "x": 260
+        },
+        {
+          "name": "tableWidget",
+          "op": "table-click",
+          "row": 2
+        },
+        {
+          "name": "plainTextEdit",
+          "op": "multitext",
+          "value": "KEEP-2"
+        },
+        {
+          "label": "real-custom-state2",
+          "op": "read-tables"
+        },
+        {
+          "name": "spinBox_total",
+          "op": "spin",
+          "value": 2
+        },
+        {
+          "name": "spinBox_total",
+          "op": "spin",
+          "value": 3
+        },
+        {
+          "label": "real-shrink-regrow",
+          "op": "read-tables"
+        },
+        {
+          "op": "invoke",
+          "name": "pushButton_fontColor"
+        },
+        {
+          "label": "default-font-color",
+          "op": "dump"
+        },
+        {
+          "text": "取消",
+          "windowIndex": 0,
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "invoke",
+          "name": "pushButton_foreColor"
+        },
+        {
+          "label": "default-foreground-color",
+          "op": "dump"
+        },
+        {
+          "text": "取消",
+          "windowIndex": 0,
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "invoke",
+          "name": "pushButton_bkColor"
+        },
+        {
+          "label": "default-background-color",
+          "op": "dump"
+        },
+        {
+          "text": "取消",
+          "windowIndex": 0,
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "invoke",
+          "name": "pushButton_frameColor"
+        },
+        {
+          "label": "default-frame-color",
+          "op": "dump"
+        },
+        {
+          "text": "取消",
+          "windowIndex": 0,
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-state3-real-regrown.sm"
+        }
+      ]
+    },
+    {
+      "name": "colors2-scenario.json",
+      "actions": [
+        {
+          "y": 170,
+          "op": "scene-double",
+          "x": 260
+        },
+        {
+          "name": "pushButton_fontColor",
+          "op": "invoke"
+        },
+        {
+          "label": "default-fontColor",
+          "op": "dump"
+        },
+        {
+          "kind": "QPushButton",
+          "op": "invoke",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "name": "pushButton_foreColor",
+          "op": "invoke"
+        },
+        {
+          "label": "default-foreColor",
+          "op": "dump"
+        },
+        {
+          "kind": "QPushButton",
+          "op": "invoke",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "name": "pushButton_bkColor",
+          "op": "invoke"
+        },
+        {
+          "label": "default-bkColor",
+          "op": "dump"
+        },
+        {
+          "kind": "QPushButton",
+          "op": "invoke",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "name": "pushButton_frameColor",
+          "op": "invoke"
+        },
+        {
+          "label": "default-frameColor",
+          "op": "dump"
+        },
+        {
+          "kind": "QPushButton",
+          "op": "invoke",
+          "name": "",
+          "text": "取消"
+        },
+        {
+          "name": "cancel",
+          "op": "invoke"
+        }
+      ]
+    },
+    {
+      "name": "create-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_messagedisplay"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "scene-drag",
+          "to": [
+            360,
+            220
+          ],
+          "from": [
+            160,
+            120
+          ]
+        },
+        {
+          "op": "scene-read",
+          "label": "created-default"
+        },
+        {
+          "op": "save",
+          "output": "message-default.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "message-default-r1"
+        }
+      ]
+    },
+    {
+      "name": "default-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_messagedisplay"
+        },
+        {
+          "op": "dump",
+          "label": "message-default"
+        },
+        {
+          "op": "screenshot",
+          "label": "message-default"
+        },
+        {
+          "op": "invoke",
+          "name": "cancel"
+        }
+      ]
+    },
+    {
+      "name": "language-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_delete"
+        },
+        {
+          "op": "action",
+          "name": "action_messagedisplay"
+        },
+        {
+          "op": "dump",
+          "label": "bilingual-default"
+        },
+        {
+          "name": "plainTextEdit",
+          "value": "中文零",
+          "op": "multitext"
+        },
+        {
+          "name": "lanCombox",
+          "value": 1,
+          "op": "combo"
+        },
+        {
+          "name": "plainTextEdit",
+          "value": "EN-ZERO",
+          "op": "multitext"
+        },
+        {
+          "name": "fontSize",
+          "value": 2,
+          "op": "combo"
+        },
+        {
+          "op": "dump",
+          "label": "english-size24"
+        },
+        {
+          "name": "lanCombox",
+          "value": 0,
+          "op": "combo"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-after-english-size24"
+        },
+        {
+          "op": "read-tables",
+          "label": "chinese-text"
+        },
+        {
+          "name": "lanCombox",
+          "value": 1,
+          "op": "combo"
+        },
+        {
+          "op": "dump",
+          "label": "english-return"
+        },
+        {
+          "op": "read-tables",
+          "label": "english-text"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "from": [
+            160,
+            120
+          ],
+          "to": [
+            360,
+            220
+          ],
+          "op": "scene-drag"
+        },
+        {
+          "op": "save",
+          "output": "message-bilingual-size24.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "message-bilingual-size24"
+        }
+      ]
+    },
+    {
+      "name": "language-style-scenario.json",
+      "actions": [
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "op": "combo",
+          "value": 1,
+          "name": "lanCombox"
+        },
+        {
+          "name": "pushButton_fontColor",
+          "op": "invoke"
+        },
+        {
+          "op": "color",
+          "value": 4294901760,
+          "kind": "QColorDialog"
+        },
+        {
+          "op": "invoke",
+          "text": "确定",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_foreColor",
+          "op": "invoke"
+        },
+        {
+          "op": "color",
+          "value": 4278255360,
+          "kind": "QColorDialog"
+        },
+        {
+          "op": "invoke",
+          "text": "确定",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_bkColor",
+          "op": "invoke"
+        },
+        {
+          "op": "color",
+          "value": 4278190335,
+          "kind": "QColorDialog"
+        },
+        {
+          "op": "invoke",
+          "text": "确定",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_frameColor",
+          "op": "invoke"
+        },
+        {
+          "op": "color",
+          "value": 4294902015,
+          "kind": "QColorDialog"
+        },
+        {
+          "op": "invoke",
+          "text": "确定",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "op": "combo",
+          "value": 2,
+          "name": "comboBox_style"
+        },
+        {
+          "op": "combo",
+          "value": 0,
+          "name": "lanCombox"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-after-English-appearance"
+        },
+        {
+          "name": "pushButton_fontColor",
+          "op": "invoke"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-fontColor"
+        },
+        {
+          "op": "invoke",
+          "text": "取消",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_foreColor",
+          "op": "invoke"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-foreColor"
+        },
+        {
+          "op": "invoke",
+          "text": "取消",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_bkColor",
+          "op": "invoke"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-bkColor"
+        },
+        {
+          "op": "invoke",
+          "text": "取消",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "name": "pushButton_frameColor",
+          "op": "invoke"
+        },
+        {
+          "op": "dump",
+          "label": "chinese-frameColor"
+        },
+        {
+          "op": "invoke",
+          "text": "取消",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "op": "combo",
+          "value": 1,
+          "name": "lanCombox"
+        },
+        {
+          "op": "dump",
+          "label": "english-appearance-return"
+        },
+        {
+          "name": "accept",
+          "op": "invoke"
+        },
+        {
+          "output": "message-bilingual-colored.sm",
+          "op": "save"
+        }
+      ]
+    },
+    {
+      "name": "matrix1-scenario.json",
+      "actions": [
+        {
+          "label": "message-default-r2",
+          "op": "native-compile"
+        },
+        {
+          "y": 170,
+          "x": 260,
+          "op": "scene-double"
+        },
+        {
+          "value": 3,
+          "name": "spinBox_total",
+          "op": "spin"
+        },
+        {
+          "label": "state3",
+          "op": "read-tables"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-state3.sm"
+        },
+        {
+          "label": "message-state3",
+          "op": "native-compile"
+        },
+        {
+          "y": 170,
+          "x": 260,
+          "op": "scene-double"
+        },
+        {
+          "value": 1,
+          "name": "spinBox_total",
+          "op": "spin"
+        },
+        {
+          "label": "state1-before-accept",
+          "op": "dump"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "label": "state1-after-accept",
+          "op": "dump"
+        },
+        {
+          "op": "save",
+          "output": "message-state1.sm"
+        },
+        {
+          "label": "message-state1",
+          "op": "native-compile"
+        },
+        {
+          "y": 170,
+          "x": 260,
+          "op": "scene-double"
+        },
+        {
+          "value": 2,
+          "name": "spinBox_total",
+          "op": "spin"
+        },
+        {
+          "value": 1,
+          "name": "comboBox_dataType",
+          "op": "combo"
+        },
+        {
+          "label": "u32-address",
+          "op": "dump"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-u32.sm"
+        },
+        {
+          "label": "message-u32",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "matrix2-scenario.json",
+      "actions": [
+        {
+          "x": 260,
+          "y": 170,
+          "op": "scene-double"
+        },
+        {
+          "row": 2,
+          "name": "tableWidget",
+          "op": "table-select"
+        },
+        {
+          "value": "KEEP-2",
+          "name": "plainTextEdit",
+          "op": "multitext"
+        },
+        {
+          "op": "read-tables",
+          "label": "custom-state2"
+        },
+        {
+          "value": 2,
+          "name": "spinBox_total",
+          "op": "spin"
+        },
+        {
+          "value": 3,
+          "name": "spinBox_total",
+          "op": "spin"
+        },
+        {
+          "op": "read-tables",
+          "label": "shrink-regrow-within-dialog"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-state3-regrown.sm"
+        },
+        {
+          "x": 260,
+          "y": 170,
+          "op": "scene-double"
+        },
+        {
+          "value": 1,
+          "name": "comboBox_move",
+          "op": "combo"
+        },
+        {
+          "op": "dump",
+          "label": "moveleft-speed5"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-state3-left-speed5.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "message-state3-left-speed5"
+        },
+        {
+          "x": 260,
+          "y": 170,
+          "op": "scene-double"
+        },
+        {
+          "value": 10,
+          "name": "spinBox",
+          "op": "spin"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-state3-left-speed10.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "message-state3-left-speed10"
+        },
+        {
+          "x": 260,
+          "y": 170,
+          "op": "scene-double"
+        },
+        {
+          "op": "invoke",
+          "name": "pushButton_fontColor"
+        },
+        {
+          "op": "dump",
+          "label": "font-color-dialog"
+        }
+      ]
+    },
+    {
+      "name": "permission-scenario.json",
+      "actions": [
+        {
+          "x": 260,
+          "op": "scene-double",
+          "y": 170
+        },
+        {
+          "name": "tabWidget",
+          "op": "tab",
+          "value": 1
+        },
+        {
+          "name": "GroupV",
+          "op": "group",
+          "value": true
+        },
+        {
+          "name": "groupBox_ShowByBit",
+          "op": "group",
+          "value": true
+        },
+        {
+          "name": "groupBox_ShowByWord",
+          "op": "group",
+          "value": true
+        },
+        {
+          "name": "groupBox_showlevel",
+          "op": "group",
+          "value": true
+        },
+        {
+          "name": "comboBox_Show_UserLevel",
+          "op": "combo",
+          "value": 2
+        },
+        {
+          "name": "comboBox_cpV",
+          "op": "combo",
+          "value": 2
+        },
+        {
+          "name": "lineEdit_valueV",
+          "op": "text",
+          "value": "7"
+        },
+        {
+          "name": "lineEdit_errV",
+          "op": "text",
+          "value": "2"
+        },
+        {
+          "label": "all-visibility-conditions",
+          "op": "dump"
+        },
+        {
+          "op": "invoke",
+          "name": "accept"
+        },
+        {
+          "op": "save",
+          "output": "message-visibility-three-conditions.sm"
+        },
+        {
+          "label": "message-visibility-three-conditions",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "permission2-scenario.json",
+      "actions": [
+        {
+          "op": "scene-double",
+          "x": 260,
+          "y": 170
+        },
+        {
+          "op": "tab",
+          "value": 1,
+          "name": "tabWidget"
+        },
+        {
+          "op": "group",
+          "value": true,
+          "name": "GroupV"
+        },
+        {
+          "op": "group",
+          "value": true,
+          "name": "groupBox_ShowByBit"
+        },
+        {
+          "name": "radioButton_5",
+          "op": "invoke"
+        },
+        {
+          "op": "group",
+          "value": true,
+          "name": "groupBox_showlevel"
+        },
+        {
+          "op": "combo",
+          "value": 2,
+          "name": "comboBox_Show_UserLevel"
+        },
+        {
+          "label": "bit-and-level-visibility",
+          "op": "dump"
+        },
+        {
+          "name": "accept",
+          "op": "invoke"
+        },
+        {
+          "op": "save",
+          "output": "message-visibility-bit-level.sm"
+        },
+        {
+          "label": "message-visibility-bit-level",
+          "op": "native-compile"
+        }
+      ]
+    }
+  ],
+  "originalProbe": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage3-evidence\\continuation-20261111\\canvas-native\\canvas_native_probe.py",
+  "originalProbeSha256": "b284a6bab27518dd25325ee114f4b96208ad9ed41141e5c996732697f5f535ab",
+  "adaptations": [
+    "Task-specific OUT/WORK/TEMP and desktop; private patched executable reused by hardlink.",
+    "Release Qt4 codecs/imageformats/iconengines copied beside task executable.",
+    "GUI-thread setPlainText on QPlainTextEdit; table activation uses real owned viewport PostMessage.",
+    "QColorDialog currentColor getter and setCurrentColor setter for language appearance probe.",
+    "PrintWindow only owned private window; no global input or desktop switch; finally terminates owned PID and closes desktop."
+  ],
+  "python": "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "scriptSha256": "3051b9e4cabae9d99110db41de1cac8d9388fb196d62f61ead5f61370e30e787"
+}

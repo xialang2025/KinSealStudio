@@ -1,0 +1,2740 @@
+{
+  "date": "2026-11-12",
+  "run": "default-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Message20261112",
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage1-evidence\\native-analysis\\A-empty-one-page.sm",
+    "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+  },
+  "steps": [
+    {
+      "request": {
+        "op": "invoke",
+        "pointer": "0x605d990",
+        "slot": "trigger"
+      },
+      "result": {
+        "serial": 19,
+        "status": "completed",
+        "value": {
+          "queuedMetaInvoke": 1,
+          "slot": "trigger",
+          "pointer": "0x605d990"
+        },
+        "guiThread": 19768,
+        "dispatchHook": "DispatchMessageW"
+      }
+    },
+    {
+      "request": {
+        "op": "invoke",
+        "hwnd": 68630,
+        "slot": "click"
+      },
+      "result": {
+        "serial": 24,
+        "status": "completed",
+        "value": {
+          "queuedMetaInvoke": 1,
+          "slot": "click",
+          "pointer": "0x61f73b0"
+        },
+        "guiThread": 19768,
+        "dispatchHook": "DispatchMessageW"
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "message-default",
+      "windows": [
+        {
+          "hwnd": 68622,
+          "title": "消息显示器",
+          "winClass": "QWidget",
+          "widgets": [
+            {
+              "hwnd": 68622,
+              "qt": {
+                "pointer": "0x408ce30",
+                "kind": "qMessageShow",
+                "objectName": "qMessageShow",
+                "text": "",
+                "title": "消息显示器",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68632,
+              "qt": {
+                "pointer": "0x61f7410",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_preview",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68876,
+              "qt": {
+                "pointer": "0x61f7430",
+                "kind": "QGraphicsView",
+                "objectName": "graphicsView",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68882,
+              "qt": {
+                "pointer": "0x61f7450",
+                "kind": "QWidget",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68880,
+              "qt": {
+                "pointer": "0x627b220",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68878,
+              "qt": {
+                "pointer": "0x627aff0",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68630,
+              "qt": {
+                "pointer": "0x61f73b0",
+                "kind": "QPushButton",
+                "objectName": "cancel",
+                "text": "取消",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68628,
+              "qt": {
+                "pointer": "0x61f75b0",
+                "kind": "QPushButton",
+                "objectName": "help",
+                "text": "帮助",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68626,
+              "qt": {
+                "pointer": "0x61f74b0",
+                "kind": "QPushButton",
+                "objectName": "accept",
+                "text": "确定",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68624,
+              "qt": {
+                "pointer": "0x61f73d0",
+                "kind": "QTabWidget",
+                "objectName": "tabWidget",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "2"
+              }
+            },
+            {
+              "hwnd": 68720,
+              "qt": {
+                "pointer": "0x61f7570",
+                "kind": "QTabBar",
+                "objectName": "qt_tabwidget_tabbar",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "2"
+              }
+            },
+            {
+              "hwnd": 68842,
+              "qt": {
+                "pointer": "0x61f7790",
+                "kind": "QToolButton",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 199706,
+              "qt": {
+                "pointer": "0x61f7590",
+                "kind": "QToolButton",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68718,
+              "qt": {
+                "pointer": "0x61f73f0",
+                "kind": "QStackedWidget",
+                "objectName": "qt_tabwidget_stackedwidget",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "count": "2"
+              }
+            },
+            {
+              "hwnd": 68722,
+              "qt": {
+                "pointer": "0xe210178",
+                "kind": "qMessageShowOne",
+                "objectName": "qMessageShowOne",
+                "text": "",
+                "title": "Form",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68716,
+              "qt": {
+                "pointer": "0x61f85b0",
+                "kind": "QPushButton",
+                "objectName": "pushButton_waixing",
+                "text": "外形",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68704,
+              "qt": {
+                "pointer": "0x61f86b0",
+                "kind": "QPlainTextEdit",
+                "objectName": "plainTextEdit",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68712,
+              "qt": {
+                "pointer": "0x627d660",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68714,
+              "qt": {
+                "pointer": "0x61f83b0",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68708,
+              "qt": {
+                "pointer": "0x627c558",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68710,
+              "qt": {
+                "pointer": "0x61f86d0",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "20"
+              }
+            },
+            {
+              "hwnd": 68706,
+              "qt": {
+                "pointer": "0x61f85d0",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_viewport",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68666,
+              "qt": {
+                "pointer": "0x61f7d10",
+                "kind": "QTableWidget",
+                "objectName": "tableWidget",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "rowCount": "2",
+                "columnCount": "2"
+              }
+            },
+            {
+              "hwnd": 68670,
+              "qt": {
+                "pointer": "0x627bae0",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68672,
+              "qt": {
+                "pointer": "0x61f7c70",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68702,
+              "qt": {
+                "pointer": "0x61f80d0",
+                "kind": "QTableCornerButton",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68690,
+              "qt": {
+                "pointer": "0x61f7fb0",
+                "kind": "QHeaderView",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68698,
+              "qt": {
+                "pointer": "0x627c6c0",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68700,
+              "qt": {
+                "pointer": "0x61f8010",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68694,
+              "qt": {
+                "pointer": "0x627c738",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68696,
+              "qt": {
+                "pointer": "0x61f7fd0",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68692,
+              "qt": {
+                "pointer": "0x61f8310",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_viewport",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68678,
+              "qt": {
+                "pointer": "0x61f7f30",
+                "kind": "QHeaderView",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68686,
+              "qt": {
+                "pointer": "0x627c238",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68688,
+              "qt": {
+                "pointer": "0x61f8130",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68682,
+              "qt": {
+                "pointer": "0x627c0d0",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_hcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68684,
+              "qt": {
+                "pointer": "0x61f8390",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68680,
+              "qt": {
+                "pointer": "0x61f8030",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_viewport",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68674,
+              "qt": {
+                "pointer": "0x627bce8",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_vcontainer",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68676,
+              "qt": {
+                "pointer": "0x61f7c90",
+                "kind": "QScrollBar",
+                "objectName": "",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "0",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68668,
+              "qt": {
+                "pointer": "0x61f7e30",
+                "kind": "QWidget",
+                "objectName": "qt_scrollarea_viewport",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68664,
+              "qt": {
+                "pointer": "0x61f78f0",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_2",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68874,
+              "qt": {
+                "pointer": "0x61f7f90",
+                "kind": "QComboBox",
+                "objectName": "font",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "宋体",
+                "count": "1",
+                "items": [
+                  "宋体"
+                ]
+              }
+            },
+            {
+              "hwnd": 68872,
+              "qt": {
+                "pointer": "0x61f7bf0",
+                "kind": "QComboBox",
+                "objectName": "fontSize",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "1",
+                "currentText": "16",
+                "count": "7",
+                "items": [
+                  "12",
+                  "16",
+                  "24",
+                  "48",
+                  "64",
+                  "96",
+                  "192"
+                ]
+              }
+            },
+            {
+              "hwnd": 68870,
+              "qt": {
+                "pointer": "0x61f7df0",
+                "kind": "QLabel",
+                "objectName": "label_13",
+                "text": "字    体：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68868,
+              "qt": {
+                "pointer": "0x61f7e90",
+                "kind": "QLabel",
+                "objectName": "label_12",
+                "text": "字体大小：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68866,
+              "qt": {
+                "pointer": "0x61f7c50",
+                "kind": "QLabel",
+                "objectName": "lanLabel",
+                "text": "语    言：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68864,
+              "qt": {
+                "pointer": "0x61f7cd0",
+                "kind": "QComboBox",
+                "objectName": "lanCombox",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "中文",
+                "count": "1",
+                "items": [
+                  "中文"
+                ]
+              }
+            },
+            {
+              "hwnd": 68862,
+              "qt": {
+                "pointer": "0x61f7c10",
+                "kind": "QLabel",
+                "objectName": "label_14",
+                "text": "字体颜色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68860,
+              "qt": {
+                "pointer": "0x61f7db0",
+                "kind": "QPushButton",
+                "objectName": "pushButton_fontColor",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68858,
+              "qt": {
+                "pointer": "0x61f7f70",
+                "kind": "QComboBox",
+                "objectName": "comboBox_style",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "1",
+                "currentText": "纯色",
+                "count": "13",
+                "items": [
+                  "透明",
+                  "纯色",
+                  "横向过渡",
+                  "横向对称过渡",
+                  "纵向过渡",
+                  "纵向对称过渡",
+                  "斜上过渡",
+                  "斜上对称过渡",
+                  "斜下过渡",
+                  "斜下对称过渡",
+                  "右上角辐射",
+                  "左上角辐射",
+                  "中心辐射"
+                ]
+              }
+            },
+            {
+              "hwnd": 68856,
+              "qt": {
+                "pointer": "0x61f7d30",
+                "kind": "QLabel",
+                "objectName": "label_5",
+                "text": "样   式：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68854,
+              "qt": {
+                "pointer": "0x61f7eb0",
+                "kind": "QPushButton",
+                "objectName": "pushButton_bkColor",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68852,
+              "qt": {
+                "pointer": "0x61f7bd0",
+                "kind": "QLabel",
+                "objectName": "label_4",
+                "text": "背 景 色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68850,
+              "qt": {
+                "pointer": "0x61f7d50",
+                "kind": "QPushButton",
+                "objectName": "pushButton_foreColor",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68848,
+              "qt": {
+                "pointer": "0x61f7e10",
+                "kind": "QPushButton",
+                "objectName": "pushButton_frameColor",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68846,
+              "qt": {
+                "pointer": "0x61f7a50",
+                "kind": "QLabel",
+                "objectName": "label_3",
+                "text": "前 景 色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68844,
+              "qt": {
+                "pointer": "0x61f79f0",
+                "kind": "QLabel",
+                "objectName": "label_2",
+                "text": "边 框 色：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68636,
+              "qt": {
+                "pointer": "0x61f7a70",
+                "kind": "QGroupBox",
+                "objectName": "groupBox",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68660,
+              "qt": {
+                "pointer": "0x61f78d0",
+                "kind": "QSpinBox",
+                "objectName": "spinBox",
+                "text": "5",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "minimum": "1",
+                "maximum": "10",
+                "value": "5",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68662,
+              "qt": {
+                "pointer": "0x61f7910",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "5",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68658,
+              "qt": {
+                "pointer": "0x61f7850",
+                "kind": "QComboBox",
+                "objectName": "comboBox_move",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "不移动",
+                "count": "3",
+                "items": [
+                  "不移动",
+                  "向左移动",
+                  "向右移动"
+                ]
+              }
+            },
+            {
+              "hwnd": 68656,
+              "qt": {
+                "pointer": "0x61f7830",
+                "kind": "QLabel",
+                "objectName": "label_10",
+                "text": "走 马 灯：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68654,
+              "qt": {
+                "pointer": "0x61f7af0",
+                "kind": "QLabel",
+                "objectName": "label_9",
+                "text": "移动速度：",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68652,
+              "qt": {
+                "pointer": "0x61f7950",
+                "kind": "QPushButton",
+                "objectName": "pushButton_addr",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68650,
+              "qt": {
+                "pointer": "0x61f7970",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_addr",
+                "text": "LW0",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68648,
+              "qt": {
+                "pointer": "0x61f7b50",
+                "kind": "QLabel",
+                "objectName": "label_8",
+                "text": "监视地址：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68646,
+              "qt": {
+                "pointer": "0x61f7810",
+                "kind": "QLabel",
+                "objectName": "label_7",
+                "text": "总状态数：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68642,
+              "qt": {
+                "pointer": "0x61f77f0",
+                "kind": "QSpinBox",
+                "objectName": "spinBox_total",
+                "text": "2",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "minimum": "1",
+                "maximum": "128",
+                "value": "2",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68644,
+              "qt": {
+                "pointer": "0x61f7b30",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "2",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68640,
+              "qt": {
+                "pointer": "0x61f7b70",
+                "kind": "QComboBox",
+                "objectName": "comboBox_dataType",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 1,
+                "currentIndex": "0",
+                "currentText": "16位正整数",
+                "count": "2",
+                "items": [
+                  "16位正整数",
+                  "32位正整数"
+                ]
+              }
+            },
+            {
+              "hwnd": 68638,
+              "qt": {
+                "pointer": "0x61f7a90",
+                "kind": "QLabel",
+                "objectName": "label_6",
+                "text": "数据类别：",
+                "title": "",
+                "enabled": 1,
+                "visible": 1
+              }
+            },
+            {
+              "hwnd": 68840,
+              "qt": {
+                "pointer": "0x6107708",
+                "kind": "SecurityWidget",
+                "objectName": "SecurityWidget",
+                "text": "",
+                "title": "Form",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68836,
+              "qt": {
+                "pointer": "0x61f9ad0",
+                "kind": "QLabel",
+                "objectName": "label_delay",
+                "text": "x100毫秒",
+                "title": "",
+                "enabled": 1,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68834,
+              "qt": {
+                "pointer": "0x61f9970",
+                "kind": "QSpinBox",
+                "objectName": "spin_time",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "minimum": "0",
+                "maximum": "255",
+                "value": "0",
+                "singleStep": "1"
+              }
+            },
+            {
+              "hwnd": 68838,
+              "qt": {
+                "pointer": "0x61f9b90",
+                "kind": "QLineEdit",
+                "objectName": "qt_spinbox_lineedit",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68832,
+              "qt": {
+                "pointer": "0x61f9a70",
+                "kind": "QCheckBox",
+                "objectName": "check_Press",
+                "text": "按压时间",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68792,
+              "qt": {
+                "pointer": "0x61f9510",
+                "kind": "QGroupBox",
+                "objectName": "GroupV",
+                "text": "",
+                "title": "",
+                "enabled": 1,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68814,
+              "qt": {
+                "pointer": "0x61f9790",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_ShowByWord",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68830,
+              "qt": {
+                "pointer": "0x61f98f0",
+                "kind": "QLabel",
+                "objectName": "label_errV",
+                "text": "误差:",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68828,
+              "qt": {
+                "pointer": "0x61f9b10",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_errV",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68826,
+              "qt": {
+                "pointer": "0x61f9a50",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_valueV",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68824,
+              "qt": {
+                "pointer": "0x61f9950",
+                "kind": "QComboBox",
+                "objectName": "comboBox_cpV",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "<",
+                "count": "6",
+                "items": [
+                  "<",
+                  ">",
+                  "==",
+                  "<>",
+                  "<=",
+                  ">="
+                ]
+              }
+            },
+            {
+              "hwnd": 68822,
+              "qt": {
+                "pointer": "0x61f97f0",
+                "kind": "QPushButton",
+                "objectName": "btn_ctlAddrwV",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68820,
+              "qt": {
+                "pointer": "0x61f9a30",
+                "kind": "QLineEdit",
+                "objectName": "edit_ctlAddrwV",
+                "text": "LW0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68818,
+              "qt": {
+                "pointer": "0x61f94f0",
+                "kind": "QComboBox",
+                "objectName": "comboBox_DataTypeV",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "16位正整数",
+                "count": "5",
+                "items": [
+                  "16位正整数",
+                  "32位正整数",
+                  "16位整数",
+                  "32位整数",
+                  "32位浮点数"
+                ]
+              }
+            },
+            {
+              "hwnd": 68816,
+              "qt": {
+                "pointer": "0x61f94d0",
+                "kind": "QLabel",
+                "objectName": "label_DataType",
+                "text": "数据类型:",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68800,
+              "qt": {
+                "pointer": "0x61f9750",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_ShowByBit",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68812,
+              "qt": {
+                "pointer": "0x61f9770",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_6",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68810,
+              "qt": {
+                "pointer": "0x61f9730",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_5",
+                "text": "1",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68808,
+              "qt": {
+                "pointer": "0x61f9530",
+                "kind": "QLabel",
+                "objectName": "label_7",
+                "text": "显现状态：",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68806,
+              "qt": {
+                "pointer": "0x61f94b0",
+                "kind": "QPushButton",
+                "objectName": "btn_ctlAddrV",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68804,
+              "qt": {
+                "pointer": "0x61f9590",
+                "kind": "QLineEdit",
+                "objectName": "edit_ctlAddrV",
+                "text": "LB0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68802,
+              "qt": {
+                "pointer": "0x61f9490",
+                "kind": "QLabel",
+                "objectName": "label_6",
+                "text": "地址",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68794,
+              "qt": {
+                "pointer": "0x61f93f0",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_showlevel",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68798,
+              "qt": {
+                "pointer": "0x61f96d0",
+                "kind": "QComboBox",
+                "objectName": "comboBox_Show_UserLevel",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "1",
+                "count": "8",
+                "items": [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8"
+                ]
+              }
+            },
+            {
+              "hwnd": 68796,
+              "qt": {
+                "pointer": "0x61f9690",
+                "kind": "QLabel",
+                "objectName": "label_8",
+                "text": "有效最低等级",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68764,
+              "qt": {
+                "pointer": "0x61f9030",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_Notice",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68790,
+              "qt": {
+                "pointer": "0x61f93d0",
+                "kind": "QLabel",
+                "objectName": "label_dataTypeWN",
+                "text": "数据类型:",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68788,
+              "qt": {
+                "pointer": "0x61f96f0",
+                "kind": "QComboBox",
+                "objectName": "comboBox_NoteW",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "16位正整数",
+                "count": "5",
+                "items": [
+                  "16位正整数",
+                  "32位正整数",
+                  "16位整数",
+                  "32位整数",
+                  "32位浮点数"
+                ]
+              }
+            },
+            {
+              "hwnd": 68786,
+              "qt": {
+                "pointer": "0x61f9610",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_ValueNw",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68784,
+              "qt": {
+                "pointer": "0x61f9670",
+                "kind": "QLabel",
+                "objectName": "label_WN",
+                "text": "设置值：",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68782,
+              "qt": {
+                "pointer": "0x61f9570",
+                "kind": "QPushButton",
+                "objectName": "btn_noticeAddrW",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68780,
+              "qt": {
+                "pointer": "0x61f95f0",
+                "kind": "QLineEdit",
+                "objectName": "edit_noticeAddrW",
+                "text": "LW0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68778,
+              "qt": {
+                "pointer": "0x61f9630",
+                "kind": "QCheckBox",
+                "objectName": "checkBox_NoteW",
+                "text": "通知字",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68776,
+              "qt": {
+                "pointer": "0x61f9550",
+                "kind": "QCheckBox",
+                "objectName": "checkBox_NoteB",
+                "text": "通知位",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68774,
+              "qt": {
+                "pointer": "0x61f9250",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_4",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68772,
+              "qt": {
+                "pointer": "0x61f91b0",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_3",
+                "text": "1",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "true",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68770,
+              "qt": {
+                "pointer": "0x61f9190",
+                "kind": "QLabel",
+                "objectName": "label_BN",
+                "text": "状态：",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68768,
+              "qt": {
+                "pointer": "0x61f8fd0",
+                "kind": "QPushButton",
+                "objectName": "btn_noticeAddrB",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68766,
+              "qt": {
+                "pointer": "0x61f9130",
+                "kind": "QLineEdit",
+                "objectName": "edit_noticeAddrB",
+                "text": "LB0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68724,
+              "qt": {
+                "pointer": "0x61f8c70",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_Touch",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68746,
+              "qt": {
+                "pointer": "0x61f9270",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_TouchByW",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68762,
+              "qt": {
+                "pointer": "0x61f90f0",
+                "kind": "QLabel",
+                "objectName": "label_errT",
+                "text": "误差:",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68760,
+              "qt": {
+                "pointer": "0x61f9350",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_errT",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68758,
+              "qt": {
+                "pointer": "0x61f9150",
+                "kind": "QPushButton",
+                "objectName": "btn_ctlAddrwT",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68756,
+              "qt": {
+                "pointer": "0x61f9310",
+                "kind": "QLineEdit",
+                "objectName": "lineEdit_valueT",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68754,
+              "qt": {
+                "pointer": "0x61f9390",
+                "kind": "QLineEdit",
+                "objectName": "edit_ctlAddrwT",
+                "text": "LW0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68752,
+              "qt": {
+                "pointer": "0x61f90b0",
+                "kind": "QLabel",
+                "objectName": "label_9",
+                "text": "数据类型:",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68750,
+              "qt": {
+                "pointer": "0x61f91f0",
+                "kind": "QComboBox",
+                "objectName": "comboBox_ComparaT",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "<",
+                "count": "6",
+                "items": [
+                  "<",
+                  ">",
+                  "==",
+                  "<>",
+                  "<=",
+                  ">="
+                ]
+              }
+            },
+            {
+              "hwnd": 68748,
+              "qt": {
+                "pointer": "0x61f9090",
+                "kind": "QComboBox",
+                "objectName": "comboBox_dataT",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "0",
+                "currentText": "16位正整数",
+                "count": "5",
+                "items": [
+                  "16位正整数",
+                  "32位正整数",
+                  "16位整数",
+                  "32位整数",
+                  "32位浮点数"
+                ]
+              }
+            },
+            {
+              "hwnd": 68740,
+              "qt": {
+                "pointer": "0x61f9050",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_touchlevel",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68744,
+              "qt": {
+                "pointer": "0x61f9370",
+                "kind": "QComboBox",
+                "objectName": "comboBox_Touch_UserLevel",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "currentIndex": "1",
+                "currentText": "2",
+                "count": "8",
+                "items": [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8"
+                ]
+              }
+            },
+            {
+              "hwnd": 68742,
+              "qt": {
+                "pointer": "0x61f8ff0",
+                "kind": "QLabel",
+                "objectName": "label_3",
+                "text": "有效最低等级",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68726,
+              "qt": {
+                "pointer": "0x61f8f10",
+                "kind": "QGroupBox",
+                "objectName": "groupBox_TouchByBit",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68738,
+              "qt": {
+                "pointer": "0x61f8d90",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_2",
+                "text": "0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68736,
+              "qt": {
+                "pointer": "0x61f8d70",
+                "kind": "QRadioButton",
+                "objectName": "radioButton_1",
+                "text": "1",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "true"
+              }
+            },
+            {
+              "hwnd": 68734,
+              "qt": {
+                "pointer": "0x61f8cd0",
+                "kind": "QLabel",
+                "objectName": "label_2",
+                "text": "有效状态：",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            },
+            {
+              "hwnd": 68732,
+              "qt": {
+                "pointer": "0x61f8f50",
+                "kind": "QPushButton",
+                "objectName": "btn_ctlAddrT",
+                "text": "",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "checked": "false",
+                "checkable": "false"
+              }
+            },
+            {
+              "hwnd": 68730,
+              "qt": {
+                "pointer": "0x61f8f70",
+                "kind": "QLineEdit",
+                "objectName": "edit_ctlAddrT",
+                "text": "LB0",
+                "title": "",
+                "enabled": 0,
+                "visible": 0,
+                "maxLength": "32767"
+              }
+            },
+            {
+              "hwnd": 68728,
+              "qt": {
+                "pointer": "0x61f8c90",
+                "kind": "QLabel",
+                "objectName": "label_1",
+                "text": "地址",
+                "title": "",
+                "enabled": 0,
+                "visible": 0
+              }
+            }
+          ],
+          "nativeChildren": [
+            {
+              "hwnd": 68622,
+              "text": "消息显示器",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68632,
+              "text": "groupBox_preview",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68876,
+              "text": "graphicsView",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68882,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68880,
+              "text": "qt_scrollarea_vcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68878,
+              "text": "qt_scrollarea_hcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68630,
+              "text": "cancel",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68628,
+              "text": "help",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68626,
+              "text": "accept",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68624,
+              "text": "tabWidget",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68720,
+              "text": "qt_tabwidget_tabbar",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68842,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 199706,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68718,
+              "text": "qt_tabwidget_stackedwidget",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68722,
+              "text": "qMessageShowOne",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68716,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68704,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68712,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68714,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68708,
+              "text": "qt_scrollarea_hcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68710,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68706,
+              "text": "qt_scrollarea_viewport",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68666,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68670,
+              "text": "qt_scrollarea_hcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68672,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68702,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68690,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68698,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68700,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68694,
+              "text": "qt_scrollarea_hcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68696,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68692,
+              "text": "qt_scrollarea_viewport",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68678,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68686,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68688,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68682,
+              "text": "qt_scrollarea_hcontainer",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68684,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68680,
+              "text": "qt_scrollarea_viewport",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68674,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68676,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68668,
+              "text": "qt_scrollarea_viewport",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68664,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68874,
+              "text": "font",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68872,
+              "text": "fontSize",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68870,
+              "text": "label_13",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68868,
+              "text": "label_12",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68866,
+              "text": "lanLabel",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68864,
+              "text": "lanCombox",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68862,
+              "text": "label_14",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68860,
+              "text": "pushButton_fontColor",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68858,
+              "text": "comboBox_style",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68856,
+              "text": "label_5",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68854,
+              "text": "pushButton_bkColor",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68852,
+              "text": "label_4",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68850,
+              "text": "pushButton_foreColor",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68848,
+              "text": "pushButton_frameColor",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68846,
+              "text": "label_3",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68844,
+              "text": "label_2",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68636,
+              "text": "groupBox",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68660,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68662,
+              "text": "qt_spinbox_lineedit",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68658,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68656,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68654,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68652,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68650,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68648,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68646,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68642,
+              "text": "spinBox_total",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68644,
+              "text": "qt_spinbox_lineedit",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68640,
+              "text": "comboBox_dataType",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68638,
+              "text": "label_6",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68840,
+              "text": "SecurityWidget",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68836,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68834,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68838,
+              "text": "qt_spinbox_lineedit",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68832,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68792,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68814,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68830,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68828,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68826,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68824,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68822,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68820,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68818,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68816,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68800,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68812,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68810,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68808,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68806,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68804,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68802,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68794,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68798,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68796,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68764,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68790,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68788,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68786,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68784,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68782,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68780,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68778,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68776,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68774,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68772,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68770,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68768,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68766,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68724,
+              "text": "groupBox_Touch",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68746,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68762,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68760,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68758,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68756,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68754,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68752,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68750,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68748,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68740,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68744,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68742,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68726,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68738,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68736,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68734,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68732,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68730,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            },
+            {
+              "hwnd": 68728,
+              "text": "",
+              "class": "QWidget",
+              "controlId": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 3212,
+  "screenshots": [
+    {
+      "path": "message-default.png",
+      "hwnd": 68622,
+      "pid": 3212,
+      "width": 866,
+      "height": 668,
+      "sha256": "11b2eb00323059cff15c0f3c1f74ad18d5aec1852b5bff4cb911f96e3f9e98d2",
+      "method": "PrintWindow owned modal on private desktop; no foreground or global capture"
+    }
+  ],
+  "createdSources": [],
+  "workingCopyAfter": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-message\\runtime-default-r1\\NativePages.sm",
+    "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+  },
+  "status": "native-stage3-scenario-completed",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "originalBytes": 1254941,
+    "originalSha256": "e3e9e8c88324fe7c659ad20587a41b3f0be6c0aa6bece228448f1be78132d4b2",
+    "removed": "Repeated lookup snapshots and full main-window batch getters; explicit C06 snapshots, actual mutation requests/results, tables, sources, compilation manifests and errors retained."
+  }
+}

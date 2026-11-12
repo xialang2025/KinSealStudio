@@ -249,6 +249,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     {
         json.insert(QStringLiteral("functionButton"), functionButton.toJson());
     }
+    if (type == QStringLiteral("message")) { json.insert(QStringLiteral("messageDisplay"), messageDisplay.toJson()); } //20261112-0 add
     return json;
 }
 
@@ -285,7 +286,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; }
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -300,6 +301,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("messageDisplay")) //20261112-0 add: Its 128-row language/state schema has its own strict parser.
+        {
+            if (!item.value().isObject() || !MessageDisplayProperties::fromJson(item.value().toObject(), &object->messageDisplay, error)) { return false; }
         }
         else if (key == QStringLiteral("staticText") || key == QStringLiteral("bitButton") || key == QStringLiteral("wordButton") ||
                  key == QStringLiteral("lamp") || key == QStringLiteral("functionButton"))
@@ -316,6 +321,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     object->extensions = json.value(QStringLiteral("extensions")).toObject();
     object->id = json.value(QStringLiteral("id")).toString();
     object->type = json.value(QStringLiteral("type")).toString();
+    if ((object->type == QStringLiteral("message")) != json.contains(QStringLiteral("messageDisplay"))) //20261112-0 add
+    { return modelError(error, QStringLiteral("消息显示类型与专有属性不匹配。")); }
     object->name = json.value(QStringLiteral("name")).toString();
     object->text = json.value(QStringLiteral("text")).toString();
     object->address = json.value(QStringLiteral("address")).toString();
@@ -386,6 +393,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         (object->type != QStringLiteral("switch") &&
          object->type != QStringLiteral("number") &&
          object->type != QStringLiteral("image") &&
+         object->type != QStringLiteral("message") && //20261112-0 add
          object->type != QStringLiteral("text")))
     {
         if (error != nullptr)
@@ -661,6 +669,11 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     if (!connections.isEmpty()) { schema = qMax(schema, 4); }
     if (!nativeSourceSnapshot.isEmpty() || !nativeSourceWarnings.isEmpty()) { schema = qMax(schema, 5); }
     if (stage1) { schema = 9; }
+    //20261112-0 add: Schema10 is reserved for stage-3 editor flags; message data starts at schema11.
+    Q_FOREACH (page, allPages())
+    {
+        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message")) { schema = 11; stage1 = true; } }
+    }
     resolution = {{QStringLiteral("width"), pageWidth}, {QStringLiteral("height"), pageHeight}};
     if (stage1)
     {
@@ -748,12 +761,12 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
     }
     if (!exactInteger(json.value(QStringLiteral("schemaVersion")))) { return modelError(error, QStringLiteral("工程版本必须为整数。")); }
     schema = json.value(QStringLiteral("schemaVersion")).toInt();
-    if (schema < 1 || schema > 9) { return modelError(error, QStringLiteral("工程版本不受支持。")); }
+    if (schema < 1 || schema > 11) { return modelError(error, QStringLiteral("工程版本不受支持。")); } //20261112-0 change
     allowed = {QStringLiteral("format"), QStringLiteral("schemaVersion"), QStringLiteral("projectName"), QStringLiteral("targetModel"),
         QStringLiteral("resolution"), QStringLiteral("pages"), QStringLiteral("languages"), QStringLiteral("activeLanguage"),
         QStringLiteral("macros"), QStringLiteral("pictures"), QStringLiteral("connections"), QStringLiteral("nativeSourceSnapshot"),
         QStringLiteral("nativeSourceWarnings")};
-    if (schema == 9)
+    if (schema >= 9) //20261112-0 change
     {
         allowed.append({QStringLiteral("projectId"), QStringLiteral("activePageId"), QStringLiteral("startupPageId"), QStringLiteral("startupLanguage"),
             QStringLiteral("pageOrder"), QStringLiteral("configurationNodes"), QStringLiteral("references"), QStringLiteral("macroIds"), QStringLiteral("extensions")});
@@ -868,7 +881,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
     {
         return modelError(error, QStringLiteral("页面数量无效；旧schema只支持一个画面，多页需版本9。"));
     }
-    if (schema == 9)
+    if (schema >= 9) //20261112-0 change
     {
         Q_FOREACH (key, (QStringList{QStringLiteral("projectId"), QStringLiteral("activePageId"), QStringLiteral("startupPageId"), QStringLiteral("startupLanguage")}))
         {
@@ -1527,6 +1540,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
     Q_FOREACH (page, allPages()) { allObjects.append(page.objects); } //20261110-5 change
     Q_FOREACH (object, allObjects)
     {
+        if (object.type == QStringLiteral("message") && !object.messageDisplay.validateAddresses(connections, error)) { return false; } //20261112-0 add
         if (object.hasWordButtonProperties && (object.type != QStringLiteral("switch") ||
             !object.hasBitButtonProperties || object.bitButton.indicator || object.bitButton.dualMonitor ||
             !object.wordButton.validate(error))) //20261109-6 add: Enforce the same subtype contract for in-memory compile and save calls.
