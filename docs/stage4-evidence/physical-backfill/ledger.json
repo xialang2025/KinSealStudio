@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 8,
-  "queued": 7,
+  "newNativeReferenceCompleted": 9,
+  "queued": 6,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -726,7 +726,7 @@
       "id": "C13",
       "name": "时间显示",
       "family": "time",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C13-product.ksp",
         "sha256": "6521871fdbef3f65134d4f281d1438d286c3a3feb99ba5386838d28dbef49416",
@@ -807,7 +807,16 @@
         "bytes": 3787
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/time/physical/time-native-baseline-r1/run.json",
+        "sourceSha256": "c6f243f1ab5e586c1bc9bfc5f0d4e64d1ff2bcc846cd1ffe18f5feab79a607de",
+        "completedAtUtc": "2026-11-12T11:27:37.517019+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80644885.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C14",
@@ -1340,7 +1349,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C13",
+  "next": "C14",
   "complete": false,
   "referenceBackfillComplete": false
 }
