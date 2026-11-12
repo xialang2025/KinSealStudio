@@ -1,0 +1,17 @@
+********* Start testing of Stage3CanvasTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : Stage3CanvasTests::initTestCase()
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] immediate QList("A", "C", "B") 1
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] item QVariant(Invalid) QVariant(Invalid) QGraphicsItem(0x0) ( ItemIsMovable | ItemIsSelectable | ItemSendsGeometryChanges ) true
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] item QVariant(Invalid) QVariant(Invalid) QGraphicsItem(0x2146fafce20, pos=0,0, z=2, flags=(ItemIsSelectable)) ( ItemSendsGeometryChanges ) true
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] item QVariant(Invalid) QVariant(Invalid) QGraphicsItem(0x2146fafce20, pos=0,0, z=2, flags=(ItemIsSelectable)) ( ItemSendsGeometryChanges ) true
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] item QVariant(Invalid) QVariant(QString, "7b89aa89-cc8e-4f0a-86fd-f9b0d7ff092b") QGraphicsItem(0x0) ( ItemIsSelectable ) true
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] item QVariant(Invalid) QVariant(Invalid) QGraphicsItem(0x0) ( ) false
+QINFO  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() [DEBUG-c21-group] after-events QList("A", "C", "B") 1
+FAIL!  : Stage3CanvasTests::nestedGroupsRetainIndependentLocks() Compared values are not the same
+   Actual   (canvas.scene()->selectedItems().size()): 1
+   Expected (2)                                     : 2
+Z:/Project/vscode_prj_temp/REA/KinSealStudio/tests/stage3_canvas_tests.cpp(856) : failure location
+PASS   : Stage3CanvasTests::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted, 403ms
+********* Finished testing of Stage3CanvasTests *********
