@@ -41,6 +41,7 @@ bool resourceError(QString *error, const QString &message) //20261110-8 add
 template<typename Visitor> void visitPictureStates(HmiObject &object, Visitor visitor) //20261110-8 add
 {
     int index;
+    if (object.type == QStringLiteral("track")) { visitor(object.moveTrack.appearance); } //20261112-0 add: Include inactive pages in track image reference protection.
     if (object.type == QStringLiteral("wheel")) { visitor(object.wheel.highlight); } //20261112-0 add: Protect highlight bindings across every active/inactive page.
     if (object.hasNumberDisplayProperties) { visitor(object.numberDisplay.appearance); } //20261112-0 add
     if (object.type == QStringLiteral("multifunction")) { for (index = 0; index < 2; ++index) { visitor(object.multiFunctionButton.common.states[index]); } } //20261112-0 add

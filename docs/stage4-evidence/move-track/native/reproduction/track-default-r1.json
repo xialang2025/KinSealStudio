@@ -1,0 +1,97 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "label": "track-empty-r2",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_moveTrack"
+  },
+  {
+    "op": "dump",
+    "label": "track-default-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "track-default-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "value": 1,
+    "name": "tabWidget"
+  },
+  {
+    "op": "dump",
+    "label": "track-permissions-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "track-permissions-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "value": 0,
+    "name": "tabWidget"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      360,
+      220
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "label": "track-placed-r2",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "editor-screenshot",
+    "label": "track-canvas-r2"
+  },
+  {
+    "op": "save",
+    "output": "track-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "track-default-r2"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "track-reopened-r2"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

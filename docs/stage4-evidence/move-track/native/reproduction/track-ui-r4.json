@@ -1,0 +1,183 @@
+[
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "text",
+    "name": "min_lineEdit",
+    "value": "-1"
+  },
+  {
+    "op": "text",
+    "name": "max_lineEdit",
+    "value": "1.5"
+  },
+  {
+    "op": "dump",
+    "label": "track-input-negative-fraction"
+  },
+  {
+    "op": "text",
+    "name": "min_lineEdit",
+    "value": "7"
+  },
+  {
+    "op": "text",
+    "name": "max_lineEdit",
+    "value": "88"
+  },
+  {
+    "op": "spin",
+    "name": "moveDistance_spinBox",
+    "value": -1
+  },
+  {
+    "op": "dump",
+    "label": "track-distance-lower"
+  },
+  {
+    "op": "spin",
+    "name": "moveDistance_spinBox",
+    "value": 901
+  },
+  {
+    "op": "dump",
+    "label": "track-distance-upper"
+  },
+  {
+    "op": "combo",
+    "name": "range_Combox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "track-range-address"
+  },
+  {
+    "op": "text",
+    "name": "minAddr_lineEdit",
+    "value": "LW20"
+  },
+  {
+    "op": "text",
+    "name": "maxAddr_lineEdit",
+    "value": "LW24"
+  },
+  {
+    "op": "combo",
+    "name": "range_Combox",
+    "value": 0
+  },
+  {
+    "op": "dump",
+    "label": "track-range-constant-return"
+  },
+  {
+    "op": "combo",
+    "name": "range_Combox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "track-range-address-return"
+  },
+  {
+    "op": "combo",
+    "name": "range_Combox",
+    "value": 0
+  },
+  {
+    "op": "combo",
+    "name": "direction_comboBox",
+    "value": 0
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "group",
+    "name": "groupBox_Notice",
+    "value": true
+  },
+  {
+    "op": "dump",
+    "label": "track-notice-enabled"
+  },
+  {
+    "op": "invoke",
+    "name": "checkBox_NoteB",
+    "kind": "QCheckBox"
+  },
+  {
+    "op": "dump",
+    "label": "track-notice-bit"
+  },
+  {
+    "op": "invoke",
+    "name": "checkBox_NoteW",
+    "kind": "QCheckBox"
+  },
+  {
+    "op": "dump",
+    "label": "track-notice-word"
+  },
+  {
+    "op": "group",
+    "name": "groupBox_Notice",
+    "value": false
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "text",
+    "name": "max_lineEdit",
+    "value": "65535"
+  },
+  {
+    "op": "dump",
+    "label": "track-u16-max"
+  },
+  {
+    "op": "text",
+    "name": "max_lineEdit",
+    "value": "65536"
+  },
+  {
+    "op": "dump",
+    "label": "track-u16-overflow"
+  },
+  {
+    "op": "text",
+    "name": "max_lineEdit",
+    "value": "88"
+  },
+  {
+    "op": "screenshot",
+    "label": "track-variant-r4"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "save",
+    "output": "track-variant.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "track-variant-r4"
+  }
+]

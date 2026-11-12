@@ -79,6 +79,14 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
+        if (object->moveTrack.dynamicRange) { addressSlots.append({Stage3AddressField::DisplayMinimumWord, &object->moveTrack.minimumAddress, PlcAddressRole::Word, 1U}); addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->moveTrack.maximumAddress, PlcAddressRole::Word, 1U}); }
+        addConditionSlots(&object->moveTrack.visibility, false, &addressSlots); addConditionSlots(&object->moveTrack.touch, true, &addressSlots);
+        if (object->moveTrack.notice && object->moveTrack.noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &object->moveTrack.noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (object->moveTrack.notice && object->moveTrack.noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &object->moveTrack.noticeWordAddress, PlcAddressRole::Word, object->moveTrack.noticeWordType == 0 || object->moveTrack.noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("wheel")) //20261112-0 add: Wheel has one U16 operation carrier and no slider ranges/notifications.
     { addressSlots.append({Stage3AddressField::Operation, &object->wheel.address, PlcAddressRole::Word, 1U}); addConditionSlots(&object->wheel.visibility, false, &addressSlots); addConditionSlots(&object->wheel.touch, true, &addressSlots); }
     if (object->type == QStringLiteral("slider")) //20261112-0 add: Operation/range and shared conditions retain independent full-width roles.
@@ -371,6 +379,11 @@ bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *erro
     {
         for (index = 0; index < 2; ++index)
         { if (!object->screenButton.common.states[index].picturePng.isEmpty()) { if (!mergePicture(candidate, object->screenButton.common.states[index].picture, object->screenButton.common.states[index].picturePng, &resolved, error)) { return false; } object->screenButton.common.states[index].picture = resolved; } }
+    }
+    if (object->type == QStringLiteral("track") && !object->moveTrack.appearance.picturePng.isEmpty()) //20261112-0 add: Preserve image identity during resource-conflict copies.
+    {
+        if (!mergePicture(candidate, object->moveTrack.appearance.picture, object->moveTrack.appearance.picturePng, &resolved, error)) { return false; }
+        object->moveTrack.appearance.picture = resolved;
     }
     if (object->type == QStringLiteral("wheel") && !object->wheel.highlight.picturePng.isEmpty()) //20261112-0 add: Preserve exact highlight image identity during cross-project copies.
     {

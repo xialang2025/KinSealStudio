@@ -1,0 +1,77 @@
+{
+  "directionOrder": [
+    "向上",
+    "向下",
+    "向左",
+    "向右"
+  ],
+  "distance": {
+    "minimum": 0,
+    "maximum": 900,
+    "default": 100,
+    "lowerClamp": 0,
+    "upperClamp": 900
+  },
+  "range": {
+    "default": "constant",
+    "minimum": "0",
+    "maximum": "100",
+    "minimumAddress": "LW0",
+    "maximumAddress": "LW0",
+    "addressModeDisablesConstants": true,
+    "bothDraftsRetained": true,
+    "dynamicDraft": [
+      "LW20",
+      "LW24"
+    ],
+    "constantDraft": [
+      "7",
+      "88"
+    ]
+  },
+  "scalarInput": {
+    "acceptedMax": "65535",
+    "refusedOverflow": "65536",
+    "negativeAndFractionAcceptableInput": false,
+    "nativeAcceptInvalidBehavior": "Not tested"
+  },
+  "appearance": {
+    "nativeResourceString": ":/btn/images/gray.kvg",
+    "liteMappedResource": ":/system-gallery/default/gray.kvg",
+    "defaultStaticOnly": true
+  },
+  "permissions": {
+    "visibilityDefaultLevel": 1,
+    "touchDefaultLevel": 2,
+    "freshBitStates": "Neither radio selected",
+    "acceptedReopenedBitStates": "One selected; observed in r3/r4 reopened dialog",
+    "types": [
+      "16位正整数",
+      "32位正整数",
+      "16位整数",
+      "32位整数",
+      "32位浮点数"
+    ],
+    "comparisons": [
+      "<",
+      ">",
+      "==",
+      "<>",
+      "<=",
+      ">="
+    ],
+    "noticeChildrenEnableAfterMaster": true,
+    "noticeBitAndWordExclusive": true,
+    "pressTimeHidden": true,
+    "equalityToleranceInteraction": "r3 queued native call failed before equality snapshot; not verified"
+  },
+  "errors": {
+    "r1": "Output directory was missing; probe failed before retaining initial snapshot. Owned process termination and private desktop cleanup execute in finally; this run supplies no native behavior assertion.",
+    "r3": "Native GUI-thread permission group invocation reported system error; partial input/range/notice observations retained, no variant compiled in this run."
+  },
+  "limits": [
+    "Exact movement position, axis geometry under all directions, touch/write timing and actual PLC value mapping remain unobserved.",
+    "Lite ordered min<max and one-word edit carrier do not establish complete firmware layout.",
+    "Native image selection round-trip and permission formulas are not promoted by shared-widget implementation."
+  ]
+}

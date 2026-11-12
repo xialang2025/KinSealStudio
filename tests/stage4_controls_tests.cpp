@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "move_track_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
@@ -151,6 +152,12 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void trackDefaultsAndRangeDraftLifetime(); //20261112-0 add
+    void trackPermissionsNotificationsAndAddressCopies();
+    void trackResourceTransactionsAndCopyConflicts();
+    void trackStrictMixedPersistenceAndBackendGates();
+    void trackStaticRasterAndClipping();
+    void trackShellPlacementEditAndUndo();
     void wheelPermissionsAcceptanceAndAddressRoles();
     void wheelGalleryBindingsCopiesAndResourceProtection();
     void wheelStrictMixedPersistenceAndBackendGates();
@@ -2899,6 +2906,140 @@ void Stage4ControlTests::wheelShellPlacementPicturesCompactAndUndo() //20261112-
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_wheelView"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptWheel); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
     QTimer::singleShot(0, &window, acceptWheel); window.m_commands.value(QStringLiteral("action_wheelView"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 100)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("滚轮控件")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().wheel.address, QStringLiteral("LW10")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
     QTimer::singleShot(0, &window, []() { WheelDialog *dialog = qobject_cast<WheelDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("WheelRows"))->setValue(5); dialog->findChild<QDialogButtonBox *>(QStringLiteral("WheelButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().wheel.rowCount, 5); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().wheel.rowCount, 3); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : trackObject
+ * Description     : Build a standalone track fixture with a real embedded system graphic binding.
+ * Input Parameters: None
+ * Return Value    : Typed track object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject trackObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("track-object"); object.type = QStringLiteral("track"); object.name = QStringLiteral("移动轨迹"); object.geometry = QRect(100, 100, 200, 100); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackDefaultsAndRangeDraftLifetime
+ * Description     : Exercise observed direction/distance bounds and repeated constant/address switching without draft resets.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackDefaultsAndRangeDraftLifetime() //20261112-0 add
+{
+    MoveTrackDialog dialog(trackObject(), HmiProject());
+    QSpinBox *distance = dialog.findChild<QSpinBox *>(QStringLiteral("TrackDistance"));
+    QComboBox *direction = dialog.findChild<QComboBox *>(QStringLiteral("TrackDirection"));
+    QComboBox *range = dialog.findChild<QComboBox *>(QStringLiteral("TrackRange"));
+    QLineEdit *minimum = dialog.findChild<QLineEdit *>(QStringLiteral("TrackMinimum"));
+    QLineEdit *minimumAddress = dialog.findChild<QLineEdit *>(QStringLiteral("TrackMinimumAddress"));
+    MoveTrackProperties properties;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("TrackTabs"))->count(), 2); QCOMPARE(distance->value(), 100); QCOMPARE(distance->minimum(), 0); QCOMPARE(distance->maximum(), 900); QCOMPARE(direction->count(), 4); QCOMPARE(direction->itemText(0), QStringLiteral("向上")); QCOMPARE(direction->currentText(), QStringLiteral("向右")); QCOMPARE(dialog.object().moveTrack.appearance.picture, QStringLiteral(":/system-gallery/default/gray.kvg"));
+    minimum->setText(QStringLiteral("7")); dialog.findChild<QLineEdit *>(QStringLiteral("TrackMaximum"))->setText(QStringLiteral("88")); QVERIFY(minimum->isEnabled()); QVERIFY(!minimumAddress->isEnabled()); range->setCurrentIndex(1); QVERIFY(!minimum->isEnabled()); QVERIFY(minimumAddress->isEnabled()); minimumAddress->setText(QStringLiteral("LW20")); range->setCurrentIndex(0); QCOMPARE(minimum->text(), QStringLiteral("7")); range->setCurrentIndex(1); QCOMPARE(minimumAddress->text(), QStringLiteral("LW20")); QCOMPARE(dialog.object().moveTrack.maximum, QStringLiteral("88"));
+    properties.maximum = QStringLiteral("65535"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.maximum = QStringLiteral("65536"); QVERIFY(!properties.validate(&error)); properties.maximum = QStringLiteral("100"); properties.minimum = QStringLiteral("-1"); QVERIFY(!properties.validate(&error)); properties.minimum = QStringLiteral("1.5"); QVERIFY(!properties.validate(&error)); properties.minimum = QStringLiteral("0"); properties.distance = 0; QVERIFY(properties.validate(&error)); properties.distance = 901; QVERIFY(!properties.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { range->setCurrentIndex(0); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("track-appearance.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackPermissionsNotificationsAndAddressCopies
+ * Description     : Check fresh/accepted access state, exclusive notifications and independently incremented dynamic address roles.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackPermissionsNotificationsAndAddressCopies() //20261112-0 add
+{
+    MoveTrackDialog dialog(trackObject(), HmiProject());
+    HmiObject object;
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("TrackTabs"))->setCurrentIndex(1); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("TrackVisibilityBitOn"))->isChecked()); QVERIFY(!dialog.findChild<QRadioButton *>(QStringLiteral("TrackTouchBitOn"))->isChecked()); dialog.findChild<QGroupBox *>(QStringLiteral("TrackNotice"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("TrackNoticeBit"))->click(); dialog.findChild<QCheckBox *>(QStringLiteral("TrackNoticeWord"))->click(); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("TrackNoticeBit"))->isChecked()); dialog.findChild<QLineEdit *>(QStringLiteral("TrackNoticeWordValue"))->setText(QStringLiteral("12")); dialog.findChild<QGroupBox *>(QStringLiteral("TrackNotice"))->setChecked(false); QCOMPARE(dialog.object().moveTrack.noticeWordValue, QStringLiteral("12")); dialog.findChild<QDialogButtonBox *>(QStringLiteral("TrackButtons"))->button(QDialogButtonBox::Ok)->click(); object = dialog.object(); QVERIFY(object.moveTrack.visibilityBitChosen); QVERIFY(object.moveTrack.touchBitChosen);
+    object.moveTrack.dynamicRange = true; object.moveTrack.minimumAddress = QStringLiteral("LW20"); object.moveTrack.maximumAddress = QStringLiteral("LW24"); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::DisplayMinimumWord, 3, 0}, {Stage3AddressField::DisplayMaximumWord, 5, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().moveTrack.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().moveTrack.minimumAddress, QStringLiteral("LW23")); QCOMPARE(result.objects.last().moveTrack.maximumAddress, QStringLiteral("LW29"));
+    object.moveTrack.maximumAddress = QStringLiteral("LB0"); QVERIFY(!object.moveTrack.validateAddresses(project.connections, &error)); object.moveTrack.maximumAddress = QStringLiteral("LW0"); object.moveTrack.notice = true; object.moveTrack.noticeWord = true; object.moveTrack.noticeWordType = 1; object.moveTrack.noticeWordAddress = QStringLiteral("LW65535"); QVERIFY(!object.moveTrack.validateAddresses(project.connections, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("track-permissions.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackResourceTransactionsAndCopyConflicts
+ * Description     : Protect track images across inactive pages and preserve content under a cross-project name collision.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackResourceTransactionsAndCopyConflicts() //20261112-0 add
+{
+    HmiObject object = trackObject();
+    MoveTrackDialog dialog(trackObject(), HmiProject());
+    HmiProject project;
+    HmiProject target;
+    HmiProject result;
+    HmiPage page;
+    Stage3Clipboard clipboard;
+    QString error;
+    project.pictures.insert(QStringLiteral("track.png"), imagePng(Qt::red)); object.moveTrack.appearance.picture = QStringLiteral("track.png"); object.moveTrack.appearance.picturePng = project.pictures.value(QStringLiteral("track.png")); project.objects = {object}; page.id = QStringLiteral("track-page2"); page.name = QStringLiteral("轨迹副页"); object.id = QStringLiteral("track-other"); page.objects = {object}; QVERIFY(project.addPage(page, &error)); QCOMPARE(stage3PictureUsage(project, QStringLiteral("track.png")).boundStates, 2); QVERIFY(!deleteStage3Picture(project, QStringLiteral("track.png"), &result, &error)); QVERIFY(renameStage3Picture(project, QStringLiteral("track.png"), QStringLiteral("track-new.png"), &result, &error)); QCOMPARE(result.inactivePages.first().objects.first().moveTrack.appearance.picture, QStringLiteral("track-new.png")); QVERIFY(captureStage3Selection(result, {result.objects.first().id}, &clipboard, &error)); target.pictures.insert(QStringLiteral("track-new.png"), imagePng(Qt::blue)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(5, 5), &project, nullptr, &error), qPrintable(error)); QVERIFY(project.objects.first().moveTrack.appearance.picture != QStringLiteral("track-new.png")); QCOMPARE(project.objects.first().moveTrack.appearance.picturePng, imagePng(Qt::red));
+    QTimer::singleShot(0, &dialog, []() { QDialog *child = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (child != nullptr) { child->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("TrackProjectGallery"))->click(); QCOMPARE(dialog.object().moveTrack.appearance.picture, QStringLiteral(":/system-gallery/default/gray.kvg")); QVERIFY(dialog.pictures().isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip 21 families and standalone schema12; preserve caller outputs when rejecting unknown encodings.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = trackObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject properties;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), sliderObject(), wheelObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 21); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY(HmiProject::fromJson(json, &only, &error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); properties = object.moveTrack.toJson(); properties.insert(QStringLiteral("distance"), 100.5); json.insert(QStringLiteral("moveTrack"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); properties = object.moveTrack.toJson(); properties.insert(QStringLiteral("extra"), true); json.insert(QStringLiteral("moveTrack"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); properties = object.moveTrack.toJson(); properties.insert(QStringLiteral("appearance"), QJsonObject{{QStringLiteral("picture"), QStringLiteral("bad")}, {QStringLiteral("picturePng"), QStringLiteral("!!")}}); json.insert(QStringLiteral("moveTrack"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("track-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackStaticRasterAndClipping
+ * Description     : Render actual embedded pixels with clipping while avoiding a fabricated direction-dependent live position.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackStaticRasterAndClipping() //20261112-0 add
+{
+    MoveTrackProperties properties;
+    QImage image(120, 90, QImage::Format_ARGB32);
+    QPainter painter;
+    properties.appearance.picture = QStringLiteral("red.png"); properties.appearance.picturePng = imagePng(Qt::red); image.fill(Qt::transparent); painter.begin(&image); paintMoveTrack(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QCOMPARE(image.pixelColor(50, 30), QColor(Qt::red)); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(115, 50).alpha(), 0);
+    properties.direction = 0; properties.distance = 900; image.fill(Qt::transparent); painter.begin(&image); paintMoveTrack(&painter, QRectF(10, 10, 100, 60), properties); painter.end(); QCOMPARE(image.pixelColor(50, 30), QColor(Qt::red));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::trackShellPlacementEditAndUndo
+ * Description     : Exercise toolbox cancellation, pending placement, compact address edits and one-transaction property undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::trackShellPlacementEditAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    auto acceptTrack = []() { MoveTrackDialog *dialog = qobject_cast<MoveTrackDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrackButtons"))->button(QDialogButtonBox::Ok)->click(); } };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_moveTrack"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, &window, acceptTrack); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTimer::singleShot(0, &window, acceptTrack); window.m_commands.value(QStringLiteral("action_moveTrack"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 100)); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("移动轨迹")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.address, QStringLiteral("LW10"));
+    QTimer::singleShot(0, &window, []() { MoveTrackDialog *dialog = qobject_cast<MoveTrackDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("TrackDistance"))->setValue(900); dialog->findChild<QDialogButtonBox *>(QStringLiteral("TrackButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.distance, 900); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().moveTrack.distance, 100); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
 }
 
 QTEST_MAIN(Stage4ControlTests)

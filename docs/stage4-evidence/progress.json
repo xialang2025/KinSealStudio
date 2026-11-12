@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 15,
-  "blockedLayers": 57,
-  "active": "C21",
+  "editorSlicesDelivered": 16,
+  "blockedLayers": 61,
+  "active": "C22",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -403,14 +403,31 @@
     {
       "id": "C21",
       "name": "移动轨迹",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立MoveTrackProperties/Dialog及两页全部可见字段、方向实测顺序和距离0..900、常量/地址双草稿保留、gray银色球及图库嵌套资源事务、fresh/accepted权限选择与通知互斥、21类混合/单类型schema12、独立地址角色递增/侧栏/撤销；新增单类型门槛与原厂基线实物下载",
+      "evidence": "move-track/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C21-001",
+        "Q-S04-C21-002",
+        "Q-S04-C21-003",
+        "Q-S04-C21-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/move-track/physical/track-native-baseline-r1/run.json"
     },
     {
       "id": "C22",
       "name": "图表",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

@@ -2148,17 +2148,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/wheel/native/native-manifest.json"
+        "evidence": "../docs/stage4-evidence/move-track/native/native-manifest.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次C20编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次C21编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "先执行历史控件实物下载补验，再进入C21；保留本控件未决层"
+        "nextAction": "C22；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -2221,6 +2221,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T10:58:45.665737+00:00"
+        },
+        {
+          "executionId": "stage4-move-track-20261112",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/wheel/native/native-manifest.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次C20编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "先执行历史控件实物下载补验，再进入C21；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T12:05:57.235550+00:00"
         }
       ]
     },
@@ -3661,6 +3681,15 @@
       "usbAccessed": true,
       "completeControl": false,
       "hardwareEvidence": "docs/stage4-evidence/wheel/physical/wheel-native-baseline-r2/run.json"
+    },
+    {
+      "id": "stage4-move-track-20261112",
+      "productPassed": 178,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": true,
+      "completeControl": false,
+      "hardwareEvidence": "docs/stage4-evidence/move-track/physical/track-native-baseline-r1/run.json"
     }
   ],
   "executionEnvironmentLimits": [

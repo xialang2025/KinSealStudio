@@ -1,0 +1,17 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核检查独立草稿、0..900距离、方向顺序、动态图范围不重置、通知互斥与关闭保留、权限默认寿命、跨页资源/复制、schema12与未知源/设备拒绝；发现并补齐常量即时验证。",
+    "首轮测试编译漏传可选newIds，修正测试调用；控件109/0/0、源59/0/0，宏首轮SDK变量错误5通过/5跳过，已配置真实SDK重跑10/0/0。截图调整字段宽和组间距后最终控件再次109/0/0。",
+    "原厂r3权限调用失败明确保留；原厂基线实物完成不代替新版独立编码或E，完整编码与实际写入语义继续阻塞。"
+  ],
+  "finalRun": "docs/stage4-evidence/move-track/windows-final/run.json",
+  "tests": {
+    "passed": 178,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}
