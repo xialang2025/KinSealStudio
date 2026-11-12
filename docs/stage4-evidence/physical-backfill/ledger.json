@@ -1,8 +1,8 @@
 {
   "totalReviewed": 20,
   "existingTransportEvidence": 5,
-  "newNativeReferenceCompleted": 4,
-  "queued": 11,
+  "newNativeReferenceCompleted": 5,
+  "queued": 10,
   "independentNewEncodersBlocked": 15,
   "records": [
     {
@@ -342,7 +342,7 @@
       "id": "C09",
       "name": "图片显示",
       "family": "picture",
-      "status": "queued_native_reference_download_independent_encoder_blocked",
+      "status": "native_reference_download_passed_independent_encoder_blocked",
       "productInput": {
         "path": "docs\\stage4-evidence\\physical-backfill\\inputs\\C09-product.ksp",
         "sha256": "d159b67e45bd2eed7b90b2fb71fe977e8f2622b734b5642f2f6a84b781852864",
@@ -423,7 +423,16 @@
         "bytes": 6221
       },
       "referenceAndProductSettingsNotDeclaredEquivalent": true,
-      "nativeDownload": null
+      "nativeDownload": {
+        "evidence": "docs/stage4-evidence/picture/physical/picture-native-baseline-r1/run.json",
+        "sourceSha256": "f5ebf97a08fa31f98cdcf9e0b68e333270a41a6a3b7d8a1b7f7be98099dfaacd",
+        "completedAtUtc": "2026-11-12T11:24:15.977293+00:00",
+        "cleanup": {
+          "deletedFiles": 46,
+          "logicalBytes": 80619091.0
+        }
+      },
+      "displayAndTouchNotInferred": true
     },
     {
       "id": "C10",
@@ -1304,7 +1313,7 @@
       "displayAndTouchNotInferred": true
     }
   ],
-  "next": "C09",
+  "next": "C10",
   "complete": false,
   "referenceBackfillComplete": false
 }
