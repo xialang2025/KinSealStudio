@@ -1,5 +1,6 @@
 #include "hmi_canvas.h"
 #include "static_text_renderer.h" //20261108-14 add
+#include "slider_dialog.h" //20261112-0 add
 #include "flow_block_dialog.h" //20261112-0 add
 #include "dropdown_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261108-15 add
@@ -110,6 +111,7 @@ void HmiControlItem::paint(QPainter *painter,
     painter->setPen(outline_pen);
 
     if (m_type == QStringLiteral("gif")) { paintGifDisplay(painter, item_rect, m_record.gifDisplay); } //20261112-0 add
+    else if (m_type == QStringLiteral("slider")) { paintSlider(painter, item_rect, m_record.slider); } //20261112-0 add
     else if (m_type == QStringLiteral("flow")) { paintFlowBlock(painter, item_rect, m_record.flowBlock); } //20261112-0 add
     else if (m_type == QStringLiteral("dropdown")) { paintDropdown(painter, item_rect, m_record.dropdown); } //20261112-0 add
     else if (m_type == QStringLiteral("multifunction")) { paintBitButton(painter, item_rect, m_record.multiFunctionButton.common.states[m_record.multiFunctionButton.pressedEffect ? qBound(0, data(11).toInt(), 1) : 0], data(10).toString()); } //20261112-0 add
@@ -642,8 +644,9 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
         before = objects(); object = m_pendingObject;
         delete m_draftRect; m_draftRect = nullptr;
         m_drawing = false; m_hasPending = false; m_pendingObject = HmiObject();
+        if (object.type == QStringLiteral("slider")) { geometry = object.slider.constrainedGeometry(geometry); } //20261112-0 add: Native placement constrains perpendicular size.
         object.geometry = geometry; object.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        object.name = (object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
+        object.name = (object.type == QStringLiteral("slider") ? QStringLiteral("滑动开关%1") : object.type == QStringLiteral("flow") ? QStringLiteral("流动块%1") : object.type == QStringLiteral("dropdown") ? QStringLiteral("下拉框%1") : object.type == QStringLiteral("multifunction") ? QStringLiteral("多功能按钮%1") : object.type == QStringLiteral("multistate") ? QStringLiteral("多态按钮%1") : object.type == QStringLiteral("screen") ? QStringLiteral("画面按钮%1") : object.type == QStringLiteral("time") ? QStringLiteral("时间显示器%1") : object.type == QStringLiteral("ascii") ? QStringLiteral("ASCII显示器%1") : object.hasNumberDisplayProperties ? QStringLiteral("数值显示器%1") : object.type == QStringLiteral("gif") ? QStringLiteral("GIF显示器%1") : object.hasImageDisplayProperties ? QStringLiteral("图片显示器%1") : object.type == QStringLiteral("qrcode") ? QStringLiteral("二维码%1") : object.type == QStringLiteral("scale") ? QStringLiteral("刻度%1") : object.type == QStringLiteral("message") ? QStringLiteral("消息显示器%1") : object.hasLampProperties ? QStringLiteral("指示灯%1") : object.hasFunctionButtonProperties ? QStringLiteral("功能按钮%1") : //20261112-0 change
             object.hasWordButtonProperties ? QStringLiteral("字按钮%1") : object.type == QStringLiteral("switch") ? QStringLiteral("位按钮%1") : QStringLiteral("静态文本%1")).arg(before.size() + 1);
         object.layer = before.size() + 1; item = new HmiControlItem(object); item->setData(10, m_language);
         m_scene->clearSelection(); m_scene->addItem(item); item->setSelected(true);

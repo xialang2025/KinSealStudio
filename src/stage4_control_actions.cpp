@@ -5,6 +5,7 @@
 #include "qr_code_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
+#include "slider_dialog.h" //20261112-0 add
 #include "flow_block_dialog.h" //20261112-0 add
 #include "dropdown_dialog.h" //20261112-0 add
 #include "bit_button_dialog.h" //20261112-0 add
@@ -42,6 +43,10 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     {
         object.name = QStringLiteral("数值显示器"); object.geometry = QRect(0, 0, 120, 60); object.address = QStringLiteral("LW0"); object.hasNumberDisplayProperties = true;
         dialog = new NumberDisplayDialog(object, currentEditorProject(), this);
+    }
+    else if (type == QStringLiteral("slider")) //20261112-0 add
+    {
+        object.name = QStringLiteral("滑动开关"); object.geometry = QRect(0, 0, 200, 54); dialog = new SliderDialog(object, currentEditorProject(), this);
     }
     else if (type == QStringLiteral("flow")) //20261112-0 add
     {
@@ -93,6 +98,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     if (dialog->exec() == QDialog::Accepted)
     {
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
+        else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("flow")) { object = qobject_cast<FlowBlockDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("dropdown")) { controlMacros = qobject_cast<DropdownDialog *>(dialog)->macros(); object = qobject_cast<DropdownDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("multifunction") || type == QStringLiteral("multistate") || type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }
@@ -130,6 +136,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     object = m_canvas->selectedObject(&selected);
     if (!selected) { return; }
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
+    else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("flow")) { dialog = new FlowBlockDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("dropdown")) { dialog = new DropdownDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { dialog = new BitButtonDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -143,6 +150,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     if (dialog->exec() == QDialog::Accepted)
     {
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
+        else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("flow")) { object = qobject_cast<FlowBlockDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("dropdown")) { controlMacros = qobject_cast<DropdownDialog *>(dialog)->macros(); object = qobject_cast<DropdownDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen")) { pictures = qobject_cast<BitButtonDialog *>(dialog)->pictures(); object = qobject_cast<BitButtonDialog *>(dialog)->object(); }

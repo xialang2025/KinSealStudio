@@ -1,0 +1,142 @@
+{
+  "pages": [
+    "一般属性",
+    "权限控制"
+  ],
+  "preview": false,
+  "dataTypes": [
+    "U16",
+    "U32",
+    "I16",
+    "I32",
+    "F32"
+  ],
+  "wordButtonValidationMap": [
+    0,
+    1,
+    2,
+    3,
+    6
+  ],
+  "dimensions": {
+    "minimum": 1,
+    "maximum": 800,
+    "defaults": {
+      "railHeight": 10,
+      "thumbWidth": 10,
+      "thumbHeight": 50
+    },
+    "allFourStylesDimensionsEnabled": true
+  },
+  "colors": {
+    "background": "#f0f0f0",
+    "border": "#000000",
+    "railBackground": "#00ff00",
+    "fill": "#00f0f0",
+    "railBorder": "#00f0f0",
+    "thumbBackground": "#c8d2dc",
+    "thumbBorder": "#000000"
+  },
+  "transparentColorButtonsRemainEnabled": true,
+  "hiddenUi": [
+    "ckx_alarmValue",
+    "ckx_useSlide"
+  ],
+  "dynamicRange": {
+    "constantsBefore": [
+      "7",
+      "88"
+    ],
+    "firstEnable": [
+      "LW2",
+      "LW3"
+    ],
+    "modifiedDynamic": [
+      "LW20",
+      "LW24"
+    ],
+    "disabledConstants": [
+      "7",
+      "88"
+    ],
+    "reenabledAddresses": [
+      "LW2",
+      "LW3"
+    ],
+    "u32DoesNotAvoidOverlap": true,
+    "f32RetainsConstants": true
+  },
+  "geometry": {
+    "defaultRequested": [
+      160,
+      120,
+      200,
+      100
+    ],
+    "defaultActual": [
+      160,
+      120,
+      200,
+      54
+    ],
+    "defaultThumb": [
+      255,
+      122,
+      10,
+      50
+    ],
+    "defaultRail": [
+      165,
+      142,
+      190,
+      10
+    ],
+    "defaultFill": [
+      165,
+      142,
+      95,
+      10
+    ],
+    "pointLeftActual": [
+      160,
+      120,
+      54,
+      54
+    ],
+    "pointLeftThumb": [
+      162,
+      142,
+      50,
+      10
+    ],
+    "pointLeftRail": [
+      182,
+      125,
+      10,
+      44
+    ],
+    "pointLeftFill": [
+      182,
+      147,
+      10,
+      22
+    ]
+  },
+  "directionTransition": "Point Up / direction Right -> Point Left resets direction menu to Up/Down, index0 Up.",
+  "freshPermissionBitOn": {
+    "visibility": true,
+    "touch": true
+  },
+  "evidenceErrors": {
+    "r1": "Creation succeeded but input retained an old static text; exactly-one-root guard refused save/compile.",
+    "r2": "Default source compiled with exactly one root; final generic properties action opened page properties, not Slider.",
+    "r3": "Explicit selection reopened Slider; validator FFI failed with system error, no validator limits inferred.",
+    "r4": "Explicit selection changed to Point Left; source saved and native compiled.",
+    "r5": "All four styles, transparency/color enablement and Point Left reset captured; cancelled afterward."
+  },
+  "limits": [
+    "Thumb midpoint is an editor design sample, not an LW0 read.",
+    "F32 validator bounds remain unobserved.",
+    "All direction combinations, style pixel geometry, drag timing and device encoding remain unresolved."
+  ]
+}

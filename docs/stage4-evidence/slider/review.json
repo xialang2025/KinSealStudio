@@ -1,0 +1,17 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核检查动态切换对外草稿、五类型到七类型显式映射、轴向方向重置与初始化、完整跨度/重叠、权限默认1、取消和宏放置原子性、严格模型及源/设备拒绝；未发现字段错位或业务事务泄漏。",
+    "默认矩形几何有本轮实测；单/双向形状、未测方向组合和非默认尺寸是有边界PC近似，F32校验器失败明确记录。构建首次目标名误用和缺QRect完整定义分别修正，失败日志保留，不作产品通过依据。",
+    "首轮97/0/0后截图复核修正上方等宽列、270px范围组、85px色块和75px写宏按钮；布局修正后最终97/0/0。独立原生源59/0/0；宏测试初次5通过/5因SDK变量未配置跳过，使用已有原厂script SDK重跑10/0/0，保留两份记录。"
+  ],
+  "finalRun": "docs/stage4-evidence/slider/windows-r2/run.json",
+  "tests": {
+    "passed": 97,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

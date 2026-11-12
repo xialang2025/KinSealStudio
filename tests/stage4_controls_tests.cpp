@@ -10,6 +10,7 @@
 #include "bit_button_dialog.h" //20261112-0 add
 #include "dropdown_dialog.h" //20261112-0 add
 #include "flow_block_dialog.h" //20261112-0 add
+#include "slider_dialog.h" //20261112-0 add
 #include "bit_button_renderer.h" //20261112-0 add
 #include <QImageReader>
 #include "stage3_resources.h"
@@ -140,6 +141,14 @@ private slots:
     void flowStrictMixedPersistenceAndBackendGates();
     void flowActualRasterCountPatternsAndClipping();
     void flowShellPlacementEditingCompactAndUndo();
+    void sliderDefaultsStylesColorsAndTransparency(); //20261112-0 add
+    void sliderRangeCacheAndPointingGeometry();
+    void sliderFiveTypeMappingAndAddressSpans();
+    void sliderPermissionsNotificationsAndAddressCopies();
+    void sliderMacroDependenciesAndClipboard();
+    void sliderStrictMixedPersistenceAndBackendGates();
+    void sliderCenteredRasterAndClipping();
+    void sliderShellMacroPlacementGeometryAndUndo();
 };
 
 /******************************************************************************
@@ -2566,6 +2575,182 @@ void Stage4ControlTests::flowShellPlacementEditingCompactAndUndo() //20261112-0 
     window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_flow_block"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_flow_block"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
     QTimer::singleShot(0, &window, []() { FlowBlockDialog *dialog = qobject_cast<FlowBlockDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QDialogButtonBox *>(QStringLiteral("FlowButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.m_commands.value(QStringLiteral("action_flow_block"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(200, 110))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(200, 110))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("流动块")); QVERIFY(!window.m_textEdit->isEnabled()); QCOMPARE(window.m_addressEdit->text(), QStringLiteral("LB0")); window.m_addressEdit->setText(QStringLiteral("LB8")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().flowBlock.triggerAddress, QStringLiteral("LB8")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
     QTimer::singleShot(0, &window, []() { FlowBlockDialog *dialog = qobject_cast<FlowBlockDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("FlowVertical"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("FlowButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QVERIFY(window.currentEditorProject().objects.first().flowBlock.vertical); window.restoreProjectHistory(-1); QVERIFY(!window.currentEditorProject().objects.first().flowBlock.vertical); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : sliderObject
+ * Description     : Provide an independent slider fixture with the measured default perpendicular envelope.
+ * Input Parameters: None
+ * Return Value    : Typed slider object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject sliderObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("slider-object"); object.type = QStringLiteral("slider"); object.name = QStringLiteral("滑动开关"); object.geometry = QRect(20, 260, 200, 54); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderDefaultsStylesColorsAndTransparency
+ * Description     : Exercise two observed pages, native defaults, all editable style dimensions and local color transactions.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderDefaultsStylesColorsAndTransparency() //20261112-0 add
+{
+    SliderDialog dialog(sliderObject(), HmiProject());
+    QComboBox *style = dialog.findChild<QComboBox *>(QStringLiteral("SliderStyle"));
+    QSpinBox *width = dialog.findChild<QSpinBox *>(QStringLiteral("SliderThumbWidth"));
+    QSpinBox *height = dialog.findChild<QSpinBox *>(QStringLiteral("SliderThumbHeight"));
+    QSpinBox *rail = dialog.findChild<QSpinBox *>(QStringLiteral("SliderRailHeight"));
+    int index;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("滑动开关")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("SliderTabs"))->count(), 2); QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("SliderDataType"))->count(), 5); QCOMPARE(dialog.findChild<QLineEdit *>(QStringLiteral("SliderAddress"))->text(), QStringLiteral("LW0")); QCOMPARE(style->currentIndex(), 1); QCOMPARE(width->value(), 10); QCOMPARE(height->value(), 50); QCOMPARE(rail->value(), 10); QCOMPARE(width->minimum(), 1); QCOMPARE(height->maximum(), 800); QCOMPARE(rail->maximum(), 800); QVERIFY(dialog.findChild<QLabel *>(QStringLiteral("SliderPreview")) == nullptr);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("slider-general.png")))); }
+    for (index = 0; index < 4; ++index) { style->setCurrentIndex(index); QVERIFY(width->isEnabled()); QVERIFY(height->isEnabled()); dialog.findChild<QCheckBox *>(QStringLiteral("SliderTransparent%1").arg(index))->setChecked(true); }
+    for (index = 0; index < 7; ++index) { QVERIFY(dialog.findChild<QPushButton *>(QStringLiteral("SliderColor%1").arg(index))->isEnabled()); }
+    QTimer::singleShot(0, &dialog, []() { QDialog *child = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (child != nullptr) { child->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("SliderColor0"))->click(); QCOMPARE(dialog.object().slider.background, QStringLiteral("#f0f0f0"));
+    QTimer::singleShot(0, &dialog, []() { QColorDialog *child = qobject_cast<QColorDialog *>(QApplication::activeModalWidget()); if (child != nullptr) { child->setCurrentColor(QColor(Qt::red)); child->accept(); } }); dialog.findChild<QPushButton *>(QStringLiteral("SliderColor0"))->click(); QCOMPARE(dialog.object().slider.background, QStringLiteral("#ff0000")); QCOMPARE(dialog.object().slider.railBackground, QStringLiteral("#00ff00")); QVERIFY(dialog.object().slider.backgroundTransparent); dialog.reject();
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderRangeCacheAndPointingGeometry
+ * Description     : Reproduce measured constant caching, discarded dynamic edits, overlapping U32 defaults and axis geometry changes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderRangeCacheAndPointingGeometry() //20261112-0 add
+{
+    SliderDialog dialog(sliderObject(), HmiProject());
+    QLineEdit *minimum = dialog.findChild<QLineEdit *>(QStringLiteral("SliderMinimum"));
+    QLineEdit *maximum = dialog.findChild<QLineEdit *>(QStringLiteral("SliderMaximum"));
+    QCheckBox *dynamic = dialog.findChild<QCheckBox *>(QStringLiteral("SliderDynamic"));
+    QComboBox *direction = dialog.findChild<QComboBox *>(QStringLiteral("SliderDirection"));
+    SliderProperties properties;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); minimum->setText(QStringLiteral("7")); maximum->setText(QStringLiteral("88")); dynamic->setChecked(true); QCOMPARE(minimum->text(), QStringLiteral("LW2")); QCOMPARE(maximum->text(), QStringLiteral("LW3")); QVERIFY(dialog.findChild<QPushButton *>(QStringLiteral("SliderMinimumPicker"))->isVisible()); minimum->setText(QStringLiteral("LW20")); maximum->setText(QStringLiteral("LW24")); dynamic->setChecked(false); QCOMPARE(minimum->text(), QStringLiteral("7")); QCOMPARE(maximum->text(), QStringLiteral("88")); QVERIFY(!dialog.findChild<QPushButton *>(QStringLiteral("SliderMinimumPicker"))->isVisible()); dynamic->setChecked(true); QCOMPARE(minimum->text(), QStringLiteral("LW2")); QCOMPARE(maximum->text(), QStringLiteral("LW3")); dialog.findChild<QComboBox *>(QStringLiteral("SliderDataType"))->setCurrentIndex(1); QCOMPARE(maximum->text(), QStringLiteral("LW3")); dynamic->setChecked(false); dialog.findChild<QComboBox *>(QStringLiteral("SliderDataType"))->setCurrentIndex(4); QCOMPARE(minimum->text(), QStringLiteral("7"));
+    QCOMPARE(direction->currentIndex(), 1); dialog.findChild<QRadioButton *>(QStringLiteral("SliderPoint2"))->click(); QCOMPARE(direction->itemText(0), QStringLiteral("向上")); QCOMPARE(direction->currentIndex(), 0); QCOMPARE(dialog.object().geometry.size(), QSize(54, 54)); properties = dialog.object().slider; QCOMPARE(properties.constrainedGeometry(QRect(160, 120, 200, 100)), QRect(160, 120, 54, 100)); properties.pointing = 0; QCOMPARE(properties.constrainedGeometry(QRect(160, 120, 200, 100)), QRect(160, 120, 200, 54));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderFiveTypeMappingAndAddressSpans
+ * Description     : Protect signed limits, explicit F32 mapping, finite ranges and full two-word dynamic/operation address spans.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderFiveTypeMappingAndAddressSpans() //20261112-0 add
+{
+    SliderProperties properties;
+    QString error;
+    int type;
+    properties.maximum = QStringLiteral("65535"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.maximum = QStringLiteral("65536"); QVERIFY(!properties.validate(&error)); properties.dataType = 2; properties.minimum = QStringLiteral("-32768"); properties.maximum = QStringLiteral("32767"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.minimum = QStringLiteral("-32769"); QVERIFY(!properties.validate(&error)); properties.dataType = 4; properties.minimum = QStringLiteral("-0.5"); properties.maximum = QStringLiteral("2.5"); QVERIFY2(properties.validate(&error), qPrintable(error)); properties.maximum = QStringLiteral("nan"); QVERIFY(!properties.validate(&error)); properties.maximum = QStringLiteral("-0.5"); QVERIFY(!properties.validate(&error));
+    for (type = 0; type < 5; ++type) { properties = SliderProperties(); properties.dataType = type; properties.address = QStringLiteral("LW4096"); QCOMPARE(properties.validateAddresses({}, &error), type == 0 || type == 2); }
+    properties = SliderProperties(); properties.dataType = 1; properties.setDynamicRange(true); QVERIFY2(properties.validateAddresses({}, &error), qPrintable(error)); properties.maximumAddress = QStringLiteral("LW4096"); QVERIFY(!properties.validateAddresses({}, &error)); properties.setDynamicRange(false); QVERIFY2(properties.validateAddresses({}, &error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderPermissionsNotificationsAndAddressCopies
+ * Description     : Preserve fresh selected-one radios and independent active operation, dynamic, visibility and notification addresses.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderPermissionsNotificationsAndAddressCopies() //20261112-0 add
+{
+    SliderDialog dialog(sliderObject(), HmiProject());
+    HmiObject object;
+    HmiProject project;
+    HmiProject result;
+    Stage3DuplicateOptions options;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QTabWidget *>(QStringLiteral("SliderTabs"))->setCurrentIndex(1); QVERIFY(dialog.findChild<QRadioButton *>(QStringLiteral("SliderVisibilityBitOn"))->isChecked()); QVERIFY(dialog.findChild<QRadioButton *>(QStringLiteral("SliderTouchBitOn"))->isChecked()); QCOMPARE(dialog.object().slider.touch.minimumLevel, 2); dialog.findChild<QGroupBox *>(QStringLiteral("SliderVisibility"))->setChecked(true); dialog.findChild<QGroupBox *>(QStringLiteral("SliderVisibilityBit"))->setChecked(true); dialog.findChild<QRadioButton *>(QStringLiteral("SliderVisibilityBitOff"))->click(); dialog.findChild<QGroupBox *>(QStringLiteral("SliderNotice"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("SliderNoticeBit"))->setChecked(true); dialog.findChild<QCheckBox *>(QStringLiteral("SliderNoticeWord"))->setChecked(true); QVERIFY(!dialog.findChild<QCheckBox *>(QStringLiteral("SliderNoticeBit"))->isChecked()); dialog.findChild<QComboBox *>(QStringLiteral("SliderNoticeWordType"))->setCurrentIndex(1); dialog.findChild<QLineEdit *>(QStringLiteral("SliderNoticeWordAddress"))->setText(QStringLiteral("LW4096")); QVERIFY(!dialog.object().slider.validateAddresses({}, &error)); dialog.findChild<QLineEdit *>(QStringLiteral("SliderNoticeWordAddress"))->setText(QStringLiteral("LW30")); object = dialog.object(); object.slider.setDynamicRange(true); project.objects = {object}; options.columns = 2; options.increments = {{Stage3AddressField::Operation, 2, 0}, {Stage3AddressField::DisplayMinimumWord, 4, 0}, {Stage3AddressField::DisplayMaximumWord, 6, 0}, {Stage3AddressField::VisibilityBit, 3, 0}, {Stage3AddressField::NoticeWord, 8, 0}}; QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().slider.address, QStringLiteral("LW2")); QCOMPARE(result.objects.last().slider.minimumAddress, QStringLiteral("LW6")); QCOMPARE(result.objects.last().slider.maximumAddress, QStringLiteral("LW9")); QCOMPARE(result.objects.last().slider.visibility.bitAddress, QStringLiteral("LB3")); QCOMPARE(result.objects.last().slider.noticeWordAddress, QStringLiteral("LW38")); QVERIFY(!result.objects.last().slider.visibility.bitState);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("slider-permissions.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderMacroDependenciesAndClipboard
+ * Description     : Test actual child-editor cancellation, local save, cross-page rename and collision-safe cross-project macro transfer.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderMacroDependenciesAndClipboard() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject result;
+    HmiProject target;
+    HmiPage page;
+    HmiObject object = sliderObject();
+    SliderDialog dialog(object, project);
+    Stage3Clipboard clipboard;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); dialog.findChild<QGroupBox *>(QStringLiteral("SliderMacro"))->setChecked(true); QTimer::singleShot(0, &dialog, []() { QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (editor != nullptr) { editor->reject(); } }); dialog.findChild<QPushButton *>(QStringLiteral("SliderWriteMacro"))->click(); QVERIFY(dialog.macros().isEmpty());
+    QTimer::singleShot(0, &dialog, []() { QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (editor != nullptr) { editor->findChild<QLineEdit *>(QStringLiteral("MacroName"))->setText(QStringLiteral("SliderMacroA")); editor->findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"))->setPlainText(QStringLiteral("void Macro_Entry() {}")); editor->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Save)->click(); } }); dialog.findChild<QPushButton *>(QStringLiteral("SliderWriteMacro"))->click(); QVERIFY(dialog.macros().contains(QStringLiteral("SliderMacroA"))); QVERIFY(project.macros.isEmpty()); object = dialog.object(); project.macros = dialog.macros(); project.objects = {object}; page.id = QStringLiteral("slider-page2"); page.name = QStringLiteral("滑块副页"); object.id = QStringLiteral("slider-other"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); QVERIFY2(project.renameMacro(QStringLiteral("SliderMacroA"), QStringLiteral("SliderMacroB"), &error), qPrintable(error)); QCOMPARE(project.objects.first().slider.macroName, QStringLiteral("SliderMacroB")); QCOMPARE(project.inactivePages.first().objects.first().slider.macroName, QStringLiteral("SliderMacroB")); QVERIFY2(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10, 10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.macros.value(QStringLiteral("SliderMacroB")), QStringLiteral("void Macro_Entry() {}")); target.macros.insert(QStringLiteral("SliderMacroB"), QStringLiteral("different")); result = target; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10, 10), &result, nullptr, &error)); QCOMPARE(result.toJson(), target.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderStrictMixedPersistenceAndBackendGates
+ * Description     : Round-trip nineteen families and slider-only schema12; reject malformed fields without enabling unknown native outputs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderStrictMixedPersistenceAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject only;
+    HmiObject object = sliderObject();
+    HmiObject parsed = qrObject();
+    QJsonObject json;
+    QJsonObject props;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    object.slider.minimum = QStringLiteral("7"); object.slider.maximum = QStringLiteral("88"); object.slider.setDynamicRange(true); object.slider.minimumAddress = QStringLiteral("LW20"); object.slider.maximumAddress = QStringLiteral("LW24"); project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), numberObject(), asciiObject(), timeObject(), screenObject(project), multiObject(), mfObject(), dropdownObject(), flowObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 19); QCOMPARE(loaded.toJson(), project.toJson()); only.objects = {object}; json = only.toJson(); QCOMPARE(json.value(QStringLiteral("schemaVersion")).toInt(), 12); QVERIFY2(HmiProject::fromJson(json, &only, &error), qPrintable(error)); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &only, &error)); QVERIFY(!exportNativeProjectSource(only, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(only, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    json = object.toJson(); props = object.slider.toJson(); props.insert(QStringLiteral("thumbWidth"), 10.5); json.insert(QStringLiteral("slider"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode")); props = object.slider.toJson(); props.insert(QStringLiteral("pointing"), 4); json.insert(QStringLiteral("slider"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); props = object.slider.toJson(); props.insert(QStringLiteral("invented"), true); json.insert(QStringLiteral("slider"), props); QVERIFY(!HmiObject::fromJson(json, &parsed, &error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(loaded.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("slider-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderCenteredRasterAndClipping
+ * Description     : Verify measured default rail/thumb pixels, opposite fill directions and clipping across four PC style approximations.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderCenteredRasterAndClipping() //20261112-0 add
+{
+    SliderProperties properties;
+    QImage image(220, 74, QImage::Format_ARGB32);
+    QPainter painter;
+    int style;
+    image.fill(Qt::transparent); painter.begin(&image); paintSlider(&painter, QRectF(10, 10, 200, 54), properties); painter.end(); QCOMPARE(image.pixelColor(30, 35), QColor(QStringLiteral("#00f0f0"))); QCOMPARE(image.pixelColor(180, 35), QColor(QStringLiteral("#00ff00"))); QCOMPARE(image.pixelColor(110, 20), QColor(QStringLiteral("#c8d2dc"))); QCOMPARE(image.pixelColor(5, 5).alpha(), 0);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("slider-default-raster.png")))); }
+    properties.direction = 0; image.fill(Qt::transparent); painter.begin(&image); paintSlider(&painter, QRectF(10, 10, 200, 54), properties); painter.end(); QCOMPARE(image.pixelColor(30, 35), QColor(QStringLiteral("#00ff00"))); QCOMPARE(image.pixelColor(180, 35), QColor(QStringLiteral("#00f0f0")));
+    for (style = 0; style < 4; ++style) { properties.style = style; properties.pointing = style; properties.backgroundTransparent = true; properties.borderTransparent = true; image.fill(Qt::transparent); painter.begin(&image); paintSlider(&painter, QRectF(10, 10, 54, 54), properties); painter.end(); QCOMPARE(image.pixelColor(5, 5).alpha(), 0); QCOMPARE(image.pixelColor(70, 30).alpha(), 0); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::sliderShellMacroPlacementGeometryAndUndo
+ * Description     : Exercise real toolbox entry, pending macro cancellation, constrained placement, compact edits and axis-change undo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::sliderShellMacroPlacementGeometryAndUndo() //20261112-0 add
+{
+    MainWindow window;
+    auto acceptWithMacro = []() {
+        SliderDialog *dialog = qobject_cast<SliderDialog *>(QApplication::activeModalWidget());
+        if (dialog == nullptr) { return; }
+        dialog->findChild<QGroupBox *>(QStringLiteral("SliderMacro"))->setChecked(true); QTimer::singleShot(0, dialog, []() { QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (editor != nullptr) { editor->findChild<QLineEdit *>(QStringLiteral("MacroName"))->setText(QStringLiteral("PendingSliderMacro")); editor->findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"))->setPlainText(QStringLiteral("void Macro_Entry() {}")); editor->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Save)->click(); } }); dialog->findChild<QPushButton *>(QStringLiteral("SliderWriteMacro"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("SliderButtons"))->button(QDialogButtonBox::Ok)->click();
+    };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_Slider"))); QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("action_Slider"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement());
+    QTimer::singleShot(0, &window, acceptWithMacro); window.m_commands.value(QStringLiteral("action_Slider"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro"))); QTest::keyClick(window.m_canvas->viewport(), Qt::Key_Escape); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro")));
+    QTimer::singleShot(0, &window, acceptWithMacro); window.m_commands.value(QStringLiteral("action_Slider"))->trigger(); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(220, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(220, 120))); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 54)); QVERIFY(window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro"))); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("滑动开关")); QVERIFY(!window.m_textEdit->isEnabled()); window.m_addressEdit->setText(QStringLiteral("LW10")); window.applySelectedProperties(); QCOMPARE(window.currentEditorProject().objects.first().slider.address, QStringLiteral("LW10")); QVERIFY(window.currentEditorProject().objects.first().address.isEmpty());
+    QTimer::singleShot(0, &window, []() { SliderDialog *dialog = qobject_cast<SliderDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QRadioButton *>(QStringLiteral("SliderPoint2"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("SliderButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(54, 54)); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().geometry.size(), QSize(200, 54)); window.restoreProjectHistory(-1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); QVERIFY(!window.currentEditorProject().macros.contains(QStringLiteral("PendingSliderMacro")));
 }
 
 QTEST_MAIN(Stage4ControlTests)

@@ -25,6 +25,14 @@
       "status": "native-stage3-scenario-completed",
       "error": null,
       "rawArchive": "raw\\native-probe-flow-followup-r3.json.gz"
+    },
+    {
+      "path": "native-probe-flow-single-r4.json",
+      "sha256": "d15b6e28d44230a0b45f0369387c872f44fe43969e145596d5c3942a63a87a37",
+      "rawSha256": "827342ddb642cc72aa40b17499d9aaa63e6305472ef5cf1d57acb739d9d39548",
+      "status": "native-stage3-scenario-completed",
+      "error": null,
+      "rawArchive": "raw\\native-probe-flow-single-r4.json.gz"
     }
   ],
   "nativeCompilations": [
@@ -134,6 +142,113 @@
           "omittedReproducible": true
         }
       ]
+    },
+    {
+      "label": "flow-single-r4",
+      "files": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retainedPath": "compiled\\flow-single-r4\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "84b62c68de8cd0ac25482e117638991b42533865df2f2330e4e600aa8bd037ec",
+          "retainedPath": "compiled\\flow-single-r4\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retainedPath": "compiled\\flow-single-r4\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "291c9c75a55754449817d75b630494c50714bc15d00f00ca39486940456cc8c1",
+          "retainedPath": "compiled\\flow-single-r4\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7776,
+          "sha256": "5c6b6248c96e0bb1550f09108c02507ab170479ecc360224f2762766dd25141d",
+          "retainedPath": "compiled\\flow-single-r4\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retainedPath": "compiled\\flow-single-r4\\Curve.dat"
+        },
+        {
+          "name": "input-native.sm",
+          "bytes": 4825,
+          "sha256": "48a8eff0ebce9b4e63662e91ac4fb9825b29cc04c546fc4dc2055f4a659695ab",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "omittedReproducible": true
+        },
+        {
+          "name": "load.kns",
+          "bytes": 8340,
+          "sha256": "58577dcf7ec26253f02d85ca73acea49450b6c2d952cd4dc7fea2eeefc86e72e",
+          "omittedReproducible": true
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "omittedReproducible": true
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2436,
+          "sha256": "201412d2abbd5d197d9e09a0b1bd2f476ed7d434c4e941ca3e3a9678553c1e4b",
+          "retainedPath": "compiled\\flow-single-r4\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "64d96e615d404d73614a0e7ecb7cf529e7a9b07e3ca657aeecad1c5c9ab9631d",
+          "retainedPath": "compiled\\flow-single-r4\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retainedPath": "compiled\\flow-single-r4\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "22ad9a130d8d26194ef2b0cc8cd88acd0f4ff450833f56db2afbc5c2e895764a",
+          "retainedPath": "compiled\\flow-single-r4\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1159,
+          "sha256": "8ab680c86b2bf0891f25576a73fe2a05cfbb5b6fb9100b77bbbb502fec4001e1",
+          "omittedReproducible": true
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "6be9313bb6449c6e7afe3f876345206e414aad60654578e9e82e1815a7718046",
+          "omittedReproducible": true
+        }
+      ]
     }
   ],
   "source": {
@@ -144,5 +259,17 @@
   "usbAccessed": false,
   "systemInput": false,
   "ownedProcessTerminated": true,
-  "observations": "findings.json"
+  "observations": "findings.json",
+  "sourceContextCorrection": {
+    "original": "flow-default.sm has a pre-existing static-text root plus a flow root; UI findings remain valid but it is not a pure single-control compilation.",
+    "singleControlSource": {
+      "path": "flow-single-default.sm",
+      "bytes": 4825,
+      "sha256": "48a8eff0ebce9b4e63662e91ac4fb9825b29cc04c546fc4dc2055f4a659695ab",
+      "selectableRootsBefore": 0,
+      "selectableRootsAfter": 1,
+      "compile": "flow-single-r4"
+    },
+    "rawRecord": "native-probe-flow-single-r4.json"
+  }
 }

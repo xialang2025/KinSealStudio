@@ -1,0 +1,82 @@
+[
+  {
+    "op": "action",
+    "name": "action_Slider"
+  },
+  {
+    "op": "dump",
+    "label": "slider-default-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "slider-default-r1"
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "slider-permissions-r1"
+  },
+  {
+    "op": "screenshot",
+    "label": "slider-permissions-r1"
+  },
+  {
+    "op": "tab",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      160,
+      120
+    ],
+    "to": [
+      360,
+      220
+    ]
+  },
+  {
+    "op": "scene-read",
+    "label": "slider-after-placement-r1"
+  },
+  {
+    "op": "scene-assert",
+    "label": "slider-require-one-r1",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "editor-screenshot",
+    "label": "slider-canvas-r1"
+  },
+  {
+    "op": "save",
+    "output": "slider-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "slider-default-r1"
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "slider-reopened-r1"
+  },
+  {
+    "op": "invoke",
+    "text": "取消",
+    "kind": "QPushButton"
+  }
+]

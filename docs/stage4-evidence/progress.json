@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 13,
-  "blockedLayers": 49,
-  "active": "C19",
+  "editorSlicesDelivered": 14,
+  "blockedLayers": 53,
+  "active": "C20",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -342,14 +342,30 @@
     {
       "id": "C19",
       "name": "滑动开关",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立SliderProperties/Dialog与两页全部可见字段、五类型显式映射、动态常数缓存和重新启用地址重置、尺寸1..800与轴向菜单/几何约束、七色四透明及始终可编辑颜色、权限通知/宏子事务、独立完整地址递增、19类混合与slider-only schema12、工具箱放置/侧栏/编辑/撤销；补正C18纯单控件源上下文并自动清理C盘旧Frida临时包",
+      "evidence": "slider/windows-r2/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C19-001",
+        "Q-S04-C19-002",
+        "Q-S04-C19-003",
+        "Q-S04-C19-004"
+      ]
     },
     {
       "id": "C20",
       "name": "滚轮",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

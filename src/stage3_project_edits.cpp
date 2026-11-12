@@ -79,6 +79,14 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
     int index; //20261112-0 add: Each MF command owns an independently validated address slot.
     MultiStateButtonProperties *multi; //20261112-0 add
     BitButtonProperties *screen; //20261112-0 add
+    if (object->type == QStringLiteral("slider")) //20261112-0 add: Operation/range and shared conditions retain independent full-width roles.
+    {
+        addressSlots.append({Stage3AddressField::Operation, &object->slider.address, PlcAddressRole::Word, u32(object->slider.transferWordCount())});
+        if (object->slider.dynamicRange) { addressSlots.append({Stage3AddressField::DisplayMinimumWord, &object->slider.minimumAddress, PlcAddressRole::Word, u32(object->slider.transferWordCount())}); addressSlots.append({Stage3AddressField::DisplayMaximumWord, &object->slider.maximumAddress, PlcAddressRole::Word, u32(object->slider.transferWordCount())}); }
+        addConditionSlots(&object->slider.visibility, false, &addressSlots); addConditionSlots(&object->slider.touch, true, &addressSlots);
+        if (object->slider.notice && object->slider.noticeBit) { addressSlots.append({Stage3AddressField::NoticeBit, &object->slider.noticeBitAddress, PlcAddressRole::Bit, 1U}); }
+        if (object->slider.notice && object->slider.noticeWord) { addressSlots.append({Stage3AddressField::NoticeWord, &object->slider.noticeWordAddress, PlcAddressRole::Word, object->slider.noticeWordType == 0 || object->slider.noticeWordType == 2 ? 1U : 2U}); }
+    }
     if (object->type == QStringLiteral("flow")) //20261112-0 add: Trigger and visibility are separate read-only roles; no touch/notice carriers are created.
     { addressSlots.append({Stage3AddressField::MonitorBit, &object->flowBlock.triggerAddress, PlcAddressRole::Bit, 1U}); addConditionSlots(&object->flowBlock.visibility, false, &addressSlots); }
     if (object->type == QStringLiteral("dropdown")) //20261112-0 add: The selector owns one full-width operation carrier and independent notification roles.
@@ -557,6 +565,7 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
             if (!groups.contains(object.group)) { groups.insert(object.group, QUuid::createUuid().toString(QUuid::WithoutBraces)); }
             object.group = groups.value(object.group);
         }
+        if (object.type == QStringLiteral("slider") && !object.slider.macroName.isEmpty() && clipboard.source.macros.contains(object.slider.macroName)) { if (!mergeMacro(clipboard.source, candidate, object.slider.macroName, &mappedIds, error)) { return false; } } //20261112-0 add
         if (object.type == QStringLiteral("dropdown") && !object.dropdown.macroName.isEmpty() && clipboard.source.macros.contains(object.dropdown.macroName)) { if (!mergeMacro(clipboard.source, candidate, object.dropdown.macroName, &mappedIds, error)) { return false; } } //20261112-0 add
         if (object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty() && clipboard.source.macros.contains(object.bitButton.macroName))
         {
