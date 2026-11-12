@@ -1484,7 +1484,9 @@ void MainWindow::fillProperties(const HmiObject &object, bool selected) //202611
     }
     m_nameEdit->setEnabled(selected);
     m_textEdit->setEnabled(selected);
+    if (selected && isSupportedGraphic(object.type)) { m_textEdit->setEnabled(false); } //20261113-2 add
     m_addressEdit->setEnabled(selected && !object.hasLampProperties && !object.hasFunctionButtonProperties); //20261110-0 change: Function switches do not expose an operating address.
+    if (selected && isSupportedGraphic(object.type)) { m_addressEdit->setEnabled(false); } //20261113-2 add
     if (selected && object.hasNumberDisplayProperties) { m_textEdit->setEnabled(false); } //20261112-0 add
     if (selected && (object.type == QStringLiteral("screen") || object.type == QStringLiteral("multifunction"))) { m_addressEdit->setEnabled(false); } //20261112-0 change: MF commands cannot be represented by a single compact address field.
     if (selected && (object.type == QStringLiteral("ascii") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("track") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("recipe") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")))) { m_textEdit->setEnabled(false); } //20261113-1 change: X/Y uses its typed range and channel text rather than a generic label.

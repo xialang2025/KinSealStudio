@@ -1,0 +1,17 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读检查类型与属性匹配、schema12、有限坐标/枚举、跨象限首尾、轴线载体、路径命中和绘图边界、菜单/双击/取消/撤销；源和设备白名单未扩大。",
+    "发现本地向右箭头和折三角形轮廓重复、选中线仍使用通用矩形装饰后，已分别修正；最终结果以实际回归为准。",
+    "端点调整包围框改为向外取整，保留未拖动端点的小数精度，加入100.25/200.5坐标回归。"
+  ],
+  "finalRun": "docs/stage4-evidence/line/windows-r2/run.json",
+  "tests": {
+    "passed": 253,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

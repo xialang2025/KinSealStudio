@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "graphic_dialog.h" //20261113-2 add
 #include "hmi_canvas.h"
 #include "recipe_dialog.h" //20261113-2 add
 #include "data_collection_dialog.h" //20261112-1 add
@@ -210,7 +211,8 @@ void MainWindow::editStage4Control() //20261112-0 add
     bool selected;
     object = m_canvas->selectedObject(&selected);
     if (!selected) { return; }
-    if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
+    if (isSupportedGraphic(object.type)) { dialog = new GraphicDialog(object, this); } //20261113-2 add
+    else if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
     else if (object.type == QStringLiteral("chart")) { dialog = new ChartDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("trend")) { dialog = new TrendDialog(object, currentEditorProject(), this); } //20261112-1 add
     else if (object.type == QStringLiteral("historytrend")) { dialog = new HistoryTrendDialog(object, currentEditorProject(), this); } //20261112-1 add
@@ -235,7 +237,8 @@ void MainWindow::editStage4Control() //20261112-0 add
     else { return; }
     if (dialog->exec() == QDialog::Accepted)
     {
-        if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
+        if (isSupportedGraphic(object.type)) { object = qobject_cast<GraphicDialog *>(dialog)->object(); } //20261113-2 add
+        else if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("chart")) { object = qobject_cast<ChartDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("trend")) { object = qobject_cast<TrendDialog *>(dialog)->object(); } //20261112-1 add
         else if (object.type == QStringLiteral("historytrend")) { object = qobject_cast<HistoryTrendDialog *>(dialog)->object(); } //20261112-1 add

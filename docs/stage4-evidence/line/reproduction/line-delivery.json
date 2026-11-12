@@ -1,0 +1,50 @@
+{
+  "id": "G01",
+  "ordinal": 32,
+  "name": "直线",
+  "slug": "line",
+  "task": "S04-11",
+  "next": "G08",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/line/physical/line-baseline-r1/run.json",
+  "source": "line-drag-attempt.sm",
+  "expectedPassed": 253,
+  "nativeManifest": "../docs/stage4-evidence/line/native/retained-manifest.json",
+  "report": "docs/直线图形实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立line类型/graphic JSON和有序归一点；菜单直接拖线、四象限及水平/垂直线、双击六线型/1..9线宽/六末端/两端帽/黑色/0..255透明度，样式草稿取消；两端点控制柄、跨端拖动保留角色、整步撤销/取消、剪贴板、紧凑文本/地址保护、schema12、路径命中和箭头边界",
+  "nativeSummary": "已有原厂line-inspect/drag/details/custom四轮实测：action_line直接进入绘制而非先弹窗；100,100拖到300,200创建，双击标题直线。默认实线、宽1、无末端、矩形端点、黑色、Alpha255；线型六项、末端六项、端点两项，Alpha0..255。自定义宽9/两点划线/圆形末端/半圆端点/Alpha100已保存编译。原厂静态线烘入SheetPixel，未生成ControlPara/ControlPixel；源前缀type65573已观察，完整body未恢复。旧端点探针未实际改变几何，不能据此声称原厂端点编辑已验证。",
+  "protocol": "G01原厂直线基线源SHA eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c已真实编译并USB下载完成，输入/待传SHA一致，四清除/更新项均关闭。静态线只在SheetPixel中观察到，没有ControlPara/ControlPixel。type65573前缀不等于完整SM codec；Lite独立源/设备输出继续拒绝。",
+  "renderLimit": "有序归一点是Lite本地几何表示，保持首尾方向并随几何框移动/缩放；水平/垂直线以最小一像素载体保存，不强行丢弃合法线段。六种末端按不同本地轮廓呈现，箭头尺寸公式、端帽、虚线相位和Qt4/Qt6像素尚未校准，未宣称像素全等。两端点调整和零长度拒绝是明确的本地编辑策略，原厂完整柄行为和零长度规则仍待验。",
+  "methods": [
+    "lineStrictModelPersistenceAndBackendRefusal",
+    "lineDirectedPlacementAndAxisAlignedGeometry",
+    "lineEndpointRoleAndCancellation",
+    "lineDraftCancelAndClipboardPreserveDirection",
+    "lineRendererHitAndOpacity",
+    "lineNativeMenuAndDoubleClickStyleTransaction"
+  ],
+  "reviewFindings": [
+    "只读检查类型与属性匹配、schema12、有限坐标/枚举、跨象限首尾、轴线载体、路径命中和绘图边界、菜单/双击/取消/撤销；源和设备白名单未扩大。",
+    "发现本地向右箭头和折三角形轮廓重复、选中线仍使用通用矩形装饰后，已分别修正；最终结果以实际回归为准。",
+    "端点调整包围框改为向外取整，保留未拖动端点的小数精度，加入100.25/200.5坐标回归。"
+  ],
+  "unresolved": [
+    "Q-S04-G01-001",
+    "Q-S04-G01-002",
+    "Q-S04-G01-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G01-001：完整SM路径/嵌套图元及Lite独立背景编码尚未恢复，继续拒绝源导出和正式编译。",
+    "Q-S04-G01-002：末端尺寸/端帽/虚线相位/粗线Alpha及全部几何像素未校准，原厂端点编辑和退化规则未完全验证。",
+    "Q-S04-G01-003：实物屏显示与后续动态背景交叠尚未确认，下载成功不升级为E。"
+  ],
+  "codeFiles": "src/graphic_properties.*、graphic_dialog.*、graphic_canvas.cpp、project_model.*、hmi_canvas.*、canvas_editing.cpp、main_window.cpp、native_shell_ui.cpp、static_text_actions.cpp、stage4_control_actions.cpp、CMakeLists.txt",
+  "codeMarker": "//20261113-2",
+  "recipes": [
+    "integrate_graphics_line.py",
+    "add_line_tests.py"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| Line_Type | graphic.lineStyle | 6项，缺省1实线 |\n| Line_Width | graphic.lineWidth | 1..9，缺省1 |\n| End_Arrow | graphic.endArrow | 6项，缺省0无形状 |\n| End_Cap | graphic.endCap | 2项，缺省0矩形 |\n| Line_Color | graphic.lineColor | RGB，缺省黑色 |\n| Alpha | graphic.alpha | 0..255，缺省255 |\n| 首尾几何 | graphic.points与对象几何 | 本地有序归一点，未冒称原厂SM字段 |",
+  "testRun": "docs/stage4-evidence/line/windows-r2/run.json"
+}

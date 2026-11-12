@@ -80,6 +80,7 @@ HmiObject HmiControlItem::toHmiObject() const //20261107-6 add
  ******************************************************************************/
 void HmiControlItem::setObject(const HmiObject &object) //20261107-6 add
 {
+    prepareGeometryChange(); //20261113-2 add: Marker and hit extents can change independently of the box.
     m_record = object; //20261108-14 add
     m_id = object.id;
     m_type = object.type;
@@ -121,7 +122,8 @@ void HmiControlItem::paint(QPainter *painter,
     outline_pen = QPen(QColor(70, 90, 120), 1.0);
     painter->setPen(outline_pen);
 
-    if (m_type == QStringLiteral("gif")) { paintGifDisplay(painter, item_rect, m_record.gifDisplay); } //20261112-0 add
+    if (isSupportedGraphic(m_type)) { paintGraphic(painter, m_type, item_rect, m_record.graphic); } //20261113-2 add
+    else if (m_type == QStringLiteral("gif")) { paintGifDisplay(painter, item_rect, m_record.gifDisplay); } //20261112-0 add
     else if (m_type == QStringLiteral("chart")) { paintChart(painter, item_rect, m_record.chart); } //20261112-1 add
     else if (m_type == QStringLiteral("trend")) { paintTrend(painter, item_rect, m_record.trend); } //20261112-1 add
     else if (m_type == QStringLiteral("historytrend")) { paintHistoryTrend(painter, item_rect, m_record.historyTrend); } //20261112-1 add
@@ -206,7 +208,7 @@ void HmiControlItem::paint(QPainter *painter,
         paintStaticText(painter, item_rect, staticTextContent(m_record, data(10).toString()), m_record.staticText);
     }
 
-    if (option->state & QStyle::State_Selected)
+    if ((option->state & QStyle::State_Selected) && !isSupportedGraphic(m_type)) //20261113-2 change: Directed lines use endpoint adornments only.
     {
         selection_pen = QPen(QColor(36, 111, 206), 1.0, Qt::DashLine);
         painter->setPen(selection_pen);
@@ -584,6 +586,7 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
     {
         cancelInteraction(); event->accept(); return;
     }
+    if (graphicPress(event, point)) { return; } //20261113-2 add
     if (event->button() == Qt::LeftButton && m_hasPending)
     {
         m_dragOrigin = QPointF(qBound(0.0, point.x(), double(m_pageWidth)), qBound(0.0, point.y(), double(m_pageHeight)));
@@ -636,6 +639,7 @@ void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261110-8 change
     QPoint point;
 
     point = mapToScene(event->position().toPoint()).toPoint(); emit pageCoordinatesChanged(point);
+    if (graphicMove(event, point)) { return; } //20261113-2 add
     if (m_drawing && m_draftRect != nullptr)
     {
         point.setX(qBound(0, point.x(), m_pageWidth)); point.setY(qBound(0, point.y(), m_pageHeight));
@@ -660,6 +664,7 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
     QRect geometry;
     QList<HmiObject> before;
 
+    if (graphicRelease(event)) { return; } //20261113-2 add
     if (event->button() != Qt::LeftButton) { QGraphicsView::mouseReleaseEvent(event); return; }
     if (m_drawing && m_draftRect != nullptr)
     {

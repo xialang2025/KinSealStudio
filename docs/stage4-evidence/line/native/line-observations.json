@@ -1,0 +1,5610 @@
+{
+  "layer": "Owned private native editor and fresh original offline compiler; not hardware execution",
+  "runs": [
+    {
+      "date": "2026-11-12",
+      "run": "line-custom-r1",
+      "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "patch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "desktop": "KinSealStage4Graphics20261112",
+      "input": {
+        "path": "docs\\stage4-evidence\\graphics\\native\\line-drag-attempt.sm",
+        "sha256": "eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c"
+      },
+      "steps": [
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 1,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328520,
+            "count": 0
+          },
+          "result": {
+            "serial": 2,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 3,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-viewport",
+            "hwnd": 4328536
+          },
+          "result": {
+            "serial": 4,
+            "status": "completed",
+            "value": 3083404,
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 4328536,
+            "x": 200,
+            "y": 150
+          },
+          "result": {
+            "serial": 5,
+            "status": "completed",
+            "value": [
+              200,
+              150
+            ],
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 6,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 7,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "combo",
+            "hwnd": 5114528,
+            "value": 5
+          },
+          "result": {
+            "serial": 8,
+            "status": "completed",
+            "value": {
+              "pointer": "0xe07bbe8",
+              "kind": "QComboBox",
+              "objectName": "Line_Type",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "5",
+              "currentText": "两点划线",
+              "count": "6",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "editable": "false",
+              "x": "90",
+              "y": "20",
+              "width": "161",
+              "height": "22",
+              "items": [
+                "透明线",
+                "实线",
+                "虚线",
+                "短划线",
+                "点划线",
+                "两点划线"
+              ]
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 9,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 10,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "combo",
+            "hwnd": 3083896,
+            "value": 8
+          },
+          "result": {
+            "serial": 11,
+            "status": "completed",
+            "value": {
+              "pointer": "0xe07bda8",
+              "kind": "QComboBox",
+              "objectName": "Line_Width",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "8",
+              "currentText": "9",
+              "count": "9",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "editable": "false",
+              "x": "90",
+              "y": "50",
+              "width": "161",
+              "height": "22",
+              "items": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"
+              ]
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 12,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 13,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "combo",
+            "hwnd": 3280604,
+            "value": 5
+          },
+          "result": {
+            "serial": 14,
+            "status": "completed",
+            "value": {
+              "pointer": "0xe07bb28",
+              "kind": "QComboBox",
+              "objectName": "End_Arrow",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "5",
+              "currentText": "圆形",
+              "count": "6",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "editable": "false",
+              "x": "90",
+              "y": "20",
+              "width": "161",
+              "height": "22",
+              "items": [
+                "无形状",
+                "实心三角形",
+                "向右箭头",
+                "折三角形",
+                "菱形",
+                "圆形"
+              ]
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 15,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 16,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "combo",
+            "hwnd": 3215036,
+            "value": 1
+          },
+          "result": {
+            "serial": 17,
+            "status": "completed",
+            "value": {
+              "pointer": "0xe07bcc8",
+              "kind": "QComboBox",
+              "objectName": "End_Cap",
+              "text": "",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "currentIndex": "1",
+              "currentText": "半圆",
+              "count": "2",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "editable": "false",
+              "x": "90",
+              "y": "50",
+              "width": "161",
+              "height": "22",
+              "items": [
+                "矩形",
+                "半圆"
+              ]
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 18,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 19,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "spin",
+            "hwnd": 10881450,
+            "value": 100
+          },
+          "result": {
+            "serial": 20,
+            "status": "completed",
+            "value": {
+              "pointer": "0xe07b648",
+              "kind": "QSpinBox",
+              "objectName": "Alpha",
+              "text": "100",
+              "title": "",
+              "enabled": 1,
+              "visible": 1,
+              "minimum": "0",
+              "maximum": "255",
+              "value": "100",
+              "singleStep": "1",
+              "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+              "readOnly": "false",
+              "x": "20",
+              "y": "20",
+              "width": "121",
+              "height": "30"
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 21,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 22,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 23,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 24,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "hwnd": 4195878,
+            "slot": "click"
+          },
+          "result": {
+            "serial": 25,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "click",
+              "pointer": "0xe07bf68"
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 26,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3542180,
+            "count": 0
+          },
+          "result": {
+            "serial": 27,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2755760,
+            "count": 0
+          },
+          "result": {
+            "serial": 28,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3345484,
+            "count": 0
+          },
+          "result": {
+            "serial": 29,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2165864,
+            "count": 0
+          },
+          "result": {
+            "serial": 30,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328520,
+            "count": 0
+          },
+          "result": {
+            "serial": 31,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3804216,
+            "count": 0
+          },
+          "result": {
+            "serial": 32,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2427974,
+            "count": 0
+          },
+          "result": {
+            "serial": 33,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4590628,
+            "count": 0
+          },
+          "result": {
+            "serial": 34,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3738442,
+            "count": 0
+          },
+          "result": {
+            "serial": 35,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328480,
+            "count": 0
+          },
+          "result": {
+            "serial": 36,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3803906,
+            "count": 0
+          },
+          "result": {
+            "serial": 37,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4459550,
+            "count": 0
+          },
+          "result": {
+            "serial": 38,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4524814,
+            "count": 0
+          },
+          "result": {
+            "serial": 39,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2165740,
+            "count": 0
+          },
+          "result": {
+            "serial": 40,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3148930,
+            "count": 0
+          },
+          "result": {
+            "serial": 41,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x607e908",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 42,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x607e908"
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 43,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3542180,
+            "count": 0
+          },
+          "result": {
+            "serial": 44,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2755760,
+            "count": 0
+          },
+          "result": {
+            "serial": 45,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3345484,
+            "count": 0
+          },
+          "result": {
+            "serial": 46,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2165864,
+            "count": 0
+          },
+          "result": {
+            "serial": 47,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328520,
+            "count": 0
+          },
+          "result": {
+            "serial": 48,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3804216,
+            "count": 0
+          },
+          "result": {
+            "serial": 49,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2427974,
+            "count": 0
+          },
+          "result": {
+            "serial": 50,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4590628,
+            "count": 0
+          },
+          "result": {
+            "serial": 51,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3738442,
+            "count": 0
+          },
+          "result": {
+            "serial": 52,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328480,
+            "count": 0
+          },
+          "result": {
+            "serial": 53,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3803906,
+            "count": 0
+          },
+          "result": {
+            "serial": 54,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4459550,
+            "count": 0
+          },
+          "result": {
+            "serial": 55,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4524814,
+            "count": 0
+          },
+          "result": {
+            "serial": 56,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2165740,
+            "count": 0
+          },
+          "result": {
+            "serial": 57,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3148930,
+            "count": 0
+          },
+          "result": {
+            "serial": 58,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x6082d68",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 59,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x6082d68"
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 60,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "table-read",
+            "hwnd": 4000678
+          },
+          "result": {
+            "serial": 61,
+            "status": "completed",
+            "value": [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ],
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 58
+          },
+          "result": {
+            "serial": 62,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 250
+          },
+          "result": {
+            "serial": 63,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "hwnd": 3215088,
+            "slot": "click"
+          },
+          "result": {
+            "serial": 64,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "click",
+              "pointer": "0xe07d388"
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 65,
+            "status": "completed",
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-read",
+            "hwnd": 4328536
+          },
+          "result": {
+            "serial": 66,
+            "status": "completed",
+            "value": {
+              "scene": "0x626b788",
+              "items": [
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x621fff0",
+                  "parent": "0x0",
+                  "rect": [
+                    297,
+                    197,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 0,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x621ffe0",
+                  "parent": "0x0",
+                  "rect": [
+                    97,
+                    97,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 0,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0xe05c068",
+                  "parent": "0x0",
+                  "rect": [
+                    95.30425724725052,
+                    95.30425724725042,
+                    218.69574275274948,
+                    118.69574275274958
+                  ],
+                  "flags": 3,
+                  "selected": 0,
+                  "visible": 1,
+                  "z": 1
+                }
+              ],
+              "selected": []
+            },
+            "guiThread": 21128,
+            "dispatchHook": "DispatchMessageW"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "line-fields-all-nondefault",
+          "windows": [
+            {
+              "hwnd": 4719916,
+              "title": "直线",
+              "winClass": "QWidget",
+              "widgets": [
+                {
+                  "hwnd": 4719916,
+                  "qt": {
+                    "pointer": "0x613b478",
+                    "kind": "QLineDlg",
+                    "objectName": "QLineDlg",
+                    "text": "",
+                    "title": "直线",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "373",
+                    "y": "109",
+                    "width": "605",
+                    "height": "471"
+                  }
+                },
+                {
+                  "hwnd": 6161584,
+                  "qt": {
+                    "pointer": "0xe07c088",
+                    "kind": "QDialogButtonBox",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "437",
+                    "width": "583",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 8260246,
+                  "qt": {
+                    "pointer": "0xe07bfc8",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "帮助",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "508",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 8194236,
+                  "qt": {
+                    "pointer": "0xe07bfa8",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "取消",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "427",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 4195878,
+                  "qt": {
+                    "pointer": "0xe07bf68",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "确定",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "346",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 4131588,
+                  "qt": {
+                    "pointer": "0xe07b868",
+                    "kind": "QTabWidget",
+                    "objectName": "tabWidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "11",
+                    "width": "583",
+                    "height": "420"
+                  }
+                },
+                {
+                  "hwnd": 2624412,
+                  "qt": {
+                    "pointer": "0xe07b6c8",
+                    "kind": "QTabBar",
+                    "objectName": "qt_tabwidget_tabbar",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "48",
+                    "height": "20"
+                  }
+                },
+                {
+                  "hwnd": 4392098,
+                  "qt": {
+                    "pointer": "0xe07b8a8",
+                    "kind": "QStackedWidget",
+                    "objectName": "qt_tabwidget_stackedwidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "2",
+                    "y": "21",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 3999492,
+                  "qt": {
+                    "pointer": "0xe07b628",
+                    "kind": "QWidget",
+                    "objectName": "tab",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 6162660,
+                  "qt": {
+                    "pointer": "0xe07c148",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_5",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "220",
+                    "width": "281",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 2952832,
+                  "qt": {
+                    "pointer": "0xe07bdc8",
+                    "kind": "QLabel",
+                    "objectName": "label_3",
+                    "text": "边框色：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 5178540,
+                  "qt": {
+                    "pointer": "0xe07c168",
+                    "kind": "QPushButton",
+                    "objectName": "Line_Color",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "styleSheet": "background:#000000",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 6097072,
+                  "qt": {
+                    "pointer": "0xe07bec8",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_3",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "10",
+                    "width": "151",
+                    "height": "201"
+                  }
+                },
+                {
+                  "hwnd": 5049108,
+                  "qt": {
+                    "pointer": "0xe07c188",
+                    "kind": "QGraphicsView",
+                    "objectName": "MainView",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "10",
+                    "y": "20",
+                    "width": "131",
+                    "height": "171"
+                  }
+                },
+                {
+                  "hwnd": 2821756,
+                  "qt": {
+                    "pointer": "0xe07c128",
+                    "kind": "QWidget",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "1",
+                    "y": "1",
+                    "width": "129",
+                    "height": "169"
+                  }
+                },
+                {
+                  "hwnd": 4262916,
+                  "qt": {
+                    "pointer": "0x62a77c0",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_vcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 3018404,
+                  "qt": {
+                    "pointer": "0x62a7a68",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_hcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 5704038,
+                  "qt": {
+                    "pointer": "0xe07bb08",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_2",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "10",
+                    "width": "281",
+                    "height": "91"
+                  }
+                },
+                {
+                  "hwnd": 3083896,
+                  "qt": {
+                    "pointer": "0xe07bda8",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Width",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "8",
+                    "currentText": "9",
+                    "count": "9",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7",
+                      "8",
+                      "9"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 3083922,
+                  "qt": {
+                    "pointer": "0xe07bca8",
+                    "kind": "QLabel",
+                    "objectName": "label_2",
+                    "text": "线 宽：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 5768924,
+                  "qt": {
+                    "pointer": "0xe07bc48",
+                    "kind": "QLabel",
+                    "objectName": "label",
+                    "text": "线 型：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 5114528,
+                  "qt": {
+                    "pointer": "0xe07bbe8",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Type",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "5",
+                    "currentText": "两点划线",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "透明线",
+                      "实线",
+                      "虚线",
+                      "短划线",
+                      "点划线",
+                      "两点划线"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 5048734,
+                  "qt": {
+                    "pointer": "0xe07b668",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "110",
+                    "width": "281",
+                    "height": "101"
+                  }
+                },
+                {
+                  "hwnd": 5049202,
+                  "qt": {
+                    "pointer": "0xe07bd28",
+                    "kind": "QLabel",
+                    "objectName": "label_4",
+                    "text": "末端箭头：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 4719852,
+                  "qt": {
+                    "pointer": "0xe07bba8",
+                    "kind": "QLabel",
+                    "objectName": "label_6",
+                    "text": "端点形状：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 3280604,
+                  "qt": {
+                    "pointer": "0xe07bb28",
+                    "kind": "QComboBox",
+                    "objectName": "End_Arrow",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "5",
+                    "currentText": "圆形",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "无形状",
+                      "实心三角形",
+                      "向右箭头",
+                      "折三角形",
+                      "菱形",
+                      "圆形"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 3215036,
+                  "qt": {
+                    "pointer": "0xe07bcc8",
+                    "kind": "QComboBox",
+                    "objectName": "End_Cap",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "1",
+                    "currentText": "半圆",
+                    "count": "2",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "矩形",
+                      "半圆"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 4917668,
+                  "qt": {
+                    "pointer": "0xe07b728",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_4",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "220",
+                    "width": "151",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 10881450,
+                  "qt": {
+                    "pointer": "0xe07b648",
+                    "kind": "QSpinBox",
+                    "objectName": "Alpha",
+                    "text": "100",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "minimum": "0",
+                    "maximum": "255",
+                    "value": "100",
+                    "singleStep": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "20",
+                    "y": "20",
+                    "width": "121",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 3215028,
+                  "qt": {
+                    "pointer": "0xe07b7c8",
+                    "kind": "QLineEdit",
+                    "objectName": "qt_spinbox_lineedit",
+                    "text": "100",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "maxLength": "32767",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "1",
+                    "y": "1",
+                    "width": "97",
+                    "height": "28"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "systemInput": false,
+      "usbOrPlc": false,
+      "qtOperationsGuiThreadOnly": true,
+      "pid": 13532,
+      "screenshots": [
+        {
+          "path": "line-fields-all-nondefault-line-custom-r1.png",
+          "hwnd": 4719916,
+          "pid": 13532,
+          "width": 621,
+          "height": 510,
+          "sha256": "91dd8a33576c1794a27334ba7a904f145b9e0314503dca2284ddf679f0f97dba",
+          "method": "PrintWindow owned modal on private desktop; no foreground or global capture"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "line-custom-style.sm",
+          "bytes": 3680,
+          "sha256": "b45fc3d93e9052aa28555956092f94b58f3e84c1c4f9c5e24b4be41d2c05d8bf"
+        }
+      ],
+      "nativeCompilations": [
+        {
+          "label": "line-custom-style-r1",
+          "sourceSha256": "b45fc3d93e9052aa28555956092f94b58f3e84c1c4f9c5e24b4be41d2c05d8bf",
+          "logsRaw": [
+            [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ]
+          ],
+          "logsDecodedCandidate": [
+            [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ]
+          ],
+          "files": [
+            {
+              "path": "AddrPara.dat",
+              "bytes": 200,
+              "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+            },
+            {
+              "path": "AlarmMuti.dat",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "path": "AlarmPara.dat",
+              "bytes": 47840,
+              "sha256": "09090ef9b74182ae9775bc8d3fbb1e38ebbdb52049dfd91bfaf51e457ba79acc"
+            },
+            {
+              "path": "Collect.dat",
+              "bytes": 1424,
+              "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+            },
+            {
+              "path": "Curve.dat",
+              "bytes": 501,
+              "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+            },
+            {
+              "path": "load.bin",
+              "bytes": 233,
+              "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303"
+            },
+            {
+              "path": "load.kns",
+              "bytes": 7663,
+              "sha256": "4e60de0bf93a9f4b5946ef2a563f0c3ca4395c5842e7f94889e54d3a87e78497"
+            },
+            {
+              "path": "MarcoVar.dat",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "path": "PicLenPara.dat",
+              "bytes": 2400,
+              "sha256": "0ac9b533198d5f351f52e458abf2d7541342fd2a573ec4b2f99f0962f0aef58d"
+            },
+            {
+              "path": "SheetPara.dat",
+              "bytes": 72,
+              "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+            },
+            {
+              "path": "SheetPixel.dat",
+              "bytes": 5391,
+              "sha256": "a8c6d58ce317b5ada6646675aaf80b31c8466a5e5270a5dd79c3706b4fbcb3c0"
+            },
+            {
+              "path": "SysPara.dat",
+              "bytes": 4998,
+              "sha256": "7e0f843b8468ce54c028ddc652c30cea5ff59662970b8beee846988f5dacfc2b"
+            },
+            {
+              "path": "upLoad.knr",
+              "bytes": 1060,
+              "sha256": "08bfafa531d75ce36096c6dc626d2d6fb23ce63f55a788bd7252832ed722bb75"
+            },
+            {
+              "path": "Usbload.bin",
+              "bytes": 1704,
+              "sha256": "c03cb1b9ce2c149f1abedeedcb8983d3f4d343197d22192f5d9969b59cb2efa1"
+            }
+          ],
+          "usbWriteCommandsInvoked": false,
+          "method": "actual native action_USBdownload compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked"
+        }
+      ],
+      "sceneReads": [
+        {
+          "label": "line-custom-after-save",
+          "data": {
+            "scene": "0x626b788",
+            "items": [
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x621fff0",
+                "parent": "0x0",
+                "rect": [
+                  297,
+                  197,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 0,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x621ffe0",
+                "parent": "0x0",
+                "rect": [
+                  97,
+                  97,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 0,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0xe05c068",
+                "parent": "0x0",
+                "rect": [
+                  95.30425724725052,
+                  95.30425724725042,
+                  218.69574275274948,
+                  118.69574275274958
+                ],
+                "flags": 3,
+                "selected": 0,
+                "visible": 1,
+                "z": 1
+              }
+            ],
+            "selected": []
+          }
+        }
+      ],
+      "createdSources": [],
+      "workingCopyAfter": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-graphics\\runtime-line-custom-r1\\NativePages.sm",
+        "sha256": "b45fc3d93e9052aa28555956092f94b58f3e84c1c4f9c5e24b4be41d2c05d8bf"
+      },
+      "status": "native-stage4-graphics-scenario-completed",
+      "exitCodeBeforeCleanup": 0,
+      "ownedProcessTerminated": true,
+      "ownMruCleanup": {
+        "removed": 2,
+        "otherEntriesPreserved": 1
+      },
+      "producerJsonSha256BeforeCompaction": "98a9b2cdcf5ae1ae068f5d79842be035e5bad6f72e64350784dab592e85366ee"
+    },
+    {
+      "date": "2026-11-12",
+      "run": "line-details-r1",
+      "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "patch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "desktop": "KinSealStage4Graphics20261112",
+      "input": {
+        "path": "docs\\stage4-evidence\\graphics\\native\\line-drag-attempt.sm",
+        "sha256": "eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c"
+      },
+      "steps": [
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 1,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3345398,
+            "count": 0
+          },
+          "result": {
+            "serial": 2,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 3,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-viewport",
+            "hwnd": 2821758
+          },
+          "result": {
+            "serial": 4,
+            "status": "completed",
+            "value": 4982552,
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 2821758,
+            "x": 200,
+            "y": 150
+          },
+          "result": {
+            "serial": 5,
+            "status": "completed",
+            "value": [
+              200,
+              150
+            ],
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 6,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 7,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 8,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 9,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "hwnd": 724846,
+            "slot": "reject"
+          },
+          "result": {
+            "serial": 10,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "reject",
+              "pointer": "0x61b08a0"
+            },
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 11,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018550,
+            "count": 0
+          },
+          "result": {
+            "serial": 12,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3738686,
+            "count": 0
+          },
+          "result": {
+            "serial": 13,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5705670,
+            "count": 0
+          },
+          "result": {
+            "serial": 14,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4852594,
+            "count": 0
+          },
+          "result": {
+            "serial": 15,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3345398,
+            "count": 0
+          },
+          "result": {
+            "serial": 16,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 6293764,
+            "count": 0
+          },
+          "result": {
+            "serial": 17,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018540,
+            "count": 0
+          },
+          "result": {
+            "serial": 18,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3737018,
+            "count": 0
+          },
+          "result": {
+            "serial": 19,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018632,
+            "count": 0
+          },
+          "result": {
+            "serial": 20,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3474286,
+            "count": 0
+          },
+          "result": {
+            "serial": 21,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5113616,
+            "count": 0
+          },
+          "result": {
+            "serial": 22,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018492,
+            "count": 0
+          },
+          "result": {
+            "serial": 23,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3149724,
+            "count": 0
+          },
+          "result": {
+            "serial": 24,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 10619306,
+            "count": 0
+          },
+          "result": {
+            "serial": 25,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3934980,
+            "count": 0
+          },
+          "result": {
+            "serial": 26,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x611a9a0",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 27,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x611a9a0"
+            },
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 28,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "table-read",
+            "hwnd": 2756356
+          },
+          "result": {
+            "serial": 29,
+            "status": "completed",
+            "value": [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ],
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 58
+          },
+          "result": {
+            "serial": 30,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 250
+          },
+          "result": {
+            "serial": 31,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "hwnd": 5966052,
+            "slot": "click"
+          },
+          "result": {
+            "serial": 32,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "click",
+              "pointer": "0xe35be00"
+            },
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 33,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-viewport",
+            "hwnd": 2821758
+          },
+          "result": {
+            "serial": 34,
+            "status": "completed",
+            "value": 4982552,
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 2821758,
+            "x": 100,
+            "y": 100
+          },
+          "result": {
+            "serial": 35,
+            "status": "completed",
+            "value": [
+              100,
+              100
+            ],
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 2821758,
+            "x": 150,
+            "y": 150
+          },
+          "result": {
+            "serial": 36,
+            "status": "completed",
+            "value": [
+              150,
+              150
+            ],
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-drag",
+            "from": [
+              100,
+              100
+            ],
+            "to": [
+              150,
+              150
+            ]
+          },
+          "mappedViewportPoints": [
+            [
+              100,
+              100
+            ],
+            [
+              150,
+              150
+            ]
+          ],
+          "delivery": "owned private viewport PostMessage; no system input"
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 37,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-read",
+            "hwnd": 2821758
+          },
+          "result": {
+            "serial": 38,
+            "status": "completed",
+            "value": {
+              "scene": "0x63107d0",
+              "items": [
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0xe2a1668",
+                  "parent": "0x0",
+                  "rect": [
+                    297,
+                    197,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 1,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0xe2a1538",
+                  "parent": "0x0",
+                  "rect": [
+                    97,
+                    97,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 1,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x61f9b38",
+                  "parent": "0x0",
+                  "rect": [
+                    100,
+                    100,
+                    200,
+                    100
+                  ],
+                  "flags": 3,
+                  "selected": 1,
+                  "visible": 1,
+                  "z": 1
+                }
+              ],
+              "selected": [
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x61f9b38",
+                  "parent": "0x0",
+                  "rect": [
+                    100,
+                    100,
+                    200,
+                    100
+                  ],
+                  "flags": 3,
+                  "selected": 1,
+                  "visible": 1,
+                  "z": 1
+                }
+              ]
+            },
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 39,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018550,
+            "count": 0
+          },
+          "result": {
+            "serial": 40,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3738686,
+            "count": 0
+          },
+          "result": {
+            "serial": 41,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5705670,
+            "count": 0
+          },
+          "result": {
+            "serial": 42,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4852594,
+            "count": 0
+          },
+          "result": {
+            "serial": 43,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3345398,
+            "count": 0
+          },
+          "result": {
+            "serial": 44,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 6293764,
+            "count": 0
+          },
+          "result": {
+            "serial": 45,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018540,
+            "count": 0
+          },
+          "result": {
+            "serial": 46,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3737018,
+            "count": 0
+          },
+          "result": {
+            "serial": 47,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018632,
+            "count": 0
+          },
+          "result": {
+            "serial": 48,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3474286,
+            "count": 0
+          },
+          "result": {
+            "serial": 49,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5113616,
+            "count": 0
+          },
+          "result": {
+            "serial": 50,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3018492,
+            "count": 0
+          },
+          "result": {
+            "serial": 51,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3149724,
+            "count": 0
+          },
+          "result": {
+            "serial": 52,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 10619306,
+            "count": 0
+          },
+          "result": {
+            "serial": 53,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3934980,
+            "count": 0
+          },
+          "result": {
+            "serial": 54,
+            "status": "completed",
+            "guiThread": 12880,
+            "dispatchHook": "DispatchMessageW"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "line-default-properties",
+          "windows": [
+            {
+              "hwnd": 724846,
+              "title": "直线",
+              "winClass": "QWidget",
+              "widgets": [
+                {
+                  "hwnd": 724846,
+                  "qt": {
+                    "pointer": "0x61b08a0",
+                    "kind": "QLineDlg",
+                    "objectName": "QLineDlg",
+                    "text": "",
+                    "title": "直线",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "373",
+                    "y": "109",
+                    "width": "605",
+                    "height": "471"
+                  }
+                },
+                {
+                  "hwnd": 724844,
+                  "qt": {
+                    "pointer": "0xe359d20",
+                    "kind": "QDialogButtonBox",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "437",
+                    "width": "583",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 724842,
+                  "qt": {
+                    "pointer": "0xe359c00",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "帮助",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "508",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 724840,
+                  "qt": {
+                    "pointer": "0xe359d40",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "取消",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "427",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 659312,
+                  "qt": {
+                    "pointer": "0xe359d00",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "确定",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "346",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 659286,
+                  "qt": {
+                    "pointer": "0xe359560",
+                    "kind": "QTabWidget",
+                    "objectName": "tabWidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "11",
+                    "width": "583",
+                    "height": "420"
+                  }
+                },
+                {
+                  "hwnd": 659290,
+                  "qt": {
+                    "pointer": "0xe3594c0",
+                    "kind": "QTabBar",
+                    "objectName": "qt_tabwidget_tabbar",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "48",
+                    "height": "20"
+                  }
+                },
+                {
+                  "hwnd": 659288,
+                  "qt": {
+                    "pointer": "0xe3597e0",
+                    "kind": "QStackedWidget",
+                    "objectName": "qt_tabwidget_stackedwidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "2",
+                    "y": "21",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 659292,
+                  "qt": {
+                    "pointer": "0xe3595e0",
+                    "kind": "QWidget",
+                    "objectName": "tab",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 659302,
+                  "qt": {
+                    "pointer": "0xe359e20",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_5",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "220",
+                    "width": "281",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 659332,
+                  "qt": {
+                    "pointer": "0xe359c80",
+                    "kind": "QLabel",
+                    "objectName": "label_3",
+                    "text": "边框色：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 724866,
+                  "qt": {
+                    "pointer": "0xe359ee0",
+                    "kind": "QPushButton",
+                    "objectName": "Line_Color",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "styleSheet": "background:#000000",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 659300,
+                  "qt": {
+                    "pointer": "0xe359d60",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_3",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "10",
+                    "width": "151",
+                    "height": "201"
+                  }
+                },
+                {
+                  "hwnd": 2753834,
+                  "qt": {
+                    "pointer": "0xe359fa0",
+                    "kind": "QGraphicsView",
+                    "objectName": "MainView",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "10",
+                    "y": "20",
+                    "width": "131",
+                    "height": "171"
+                  }
+                },
+                {
+                  "hwnd": 724864,
+                  "qt": {
+                    "pointer": "0xe359dc0",
+                    "kind": "QWidget",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "1",
+                    "y": "1",
+                    "width": "129",
+                    "height": "169"
+                  }
+                },
+                {
+                  "hwnd": 659318,
+                  "qt": {
+                    "pointer": "0xe2e0748",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_vcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 659314,
+                  "qt": {
+                    "pointer": "0xe2e08b0",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_hcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 659298,
+                  "qt": {
+                    "pointer": "0xe359b60",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_2",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "10",
+                    "width": "281",
+                    "height": "91"
+                  }
+                },
+                {
+                  "hwnd": 2100176,
+                  "qt": {
+                    "pointer": "0xe359b40",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Width",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "1",
+                    "count": "9",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7",
+                      "8",
+                      "9"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 2165690,
+                  "qt": {
+                    "pointer": "0xe359ac0",
+                    "kind": "QLabel",
+                    "objectName": "label_2",
+                    "text": "线 宽：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 2165686,
+                  "qt": {
+                    "pointer": "0xe359840",
+                    "kind": "QLabel",
+                    "objectName": "label",
+                    "text": "线 型：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 2165682,
+                  "qt": {
+                    "pointer": "0xe359aa0",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Type",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "1",
+                    "currentText": "实线",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "透明线",
+                      "实线",
+                      "虚线",
+                      "短划线",
+                      "点划线",
+                      "两点划线"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 659296,
+                  "qt": {
+                    "pointer": "0xe359740",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "110",
+                    "width": "281",
+                    "height": "101"
+                  }
+                },
+                {
+                  "hwnd": 2231212,
+                  "qt": {
+                    "pointer": "0xe359a80",
+                    "kind": "QLabel",
+                    "objectName": "label_4",
+                    "text": "末端箭头：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 1903528,
+                  "qt": {
+                    "pointer": "0xe359a40",
+                    "kind": "QLabel",
+                    "objectName": "label_6",
+                    "text": "端点形状：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 1903522,
+                  "qt": {
+                    "pointer": "0xe359b80",
+                    "kind": "QComboBox",
+                    "objectName": "End_Arrow",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "无形状",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "无形状",
+                      "实心三角形",
+                      "向右箭头",
+                      "折三角形",
+                      "菱形",
+                      "圆形"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 2362268,
+                  "qt": {
+                    "pointer": "0xe359980",
+                    "kind": "QComboBox",
+                    "objectName": "End_Cap",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "矩形",
+                    "count": "2",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "editable": "false",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "矩形",
+                      "半圆"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 659294,
+                  "qt": {
+                    "pointer": "0xe3596a0",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_4",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "220",
+                    "width": "151",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 724820,
+                  "qt": {
+                    "pointer": "0xe3596c0",
+                    "kind": "QSpinBox",
+                    "objectName": "Alpha",
+                    "text": "255",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "minimum": "0",
+                    "maximum": "255",
+                    "value": "255",
+                    "singleStep": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "20",
+                    "y": "20",
+                    "width": "121",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 2165656,
+                  "qt": {
+                    "pointer": "0xe359780",
+                    "kind": "QLineEdit",
+                    "objectName": "qt_spinbox_lineedit",
+                    "text": "255",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "maxLength": "32767",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "1",
+                    "y": "1",
+                    "width": "97",
+                    "height": "28"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "systemInput": false,
+      "usbOrPlc": false,
+      "qtOperationsGuiThreadOnly": true,
+      "pid": 21748,
+      "screenshots": [
+        {
+          "path": "line-default-properties-line-details-r1.png",
+          "hwnd": 724846,
+          "pid": 21748,
+          "width": 621,
+          "height": 510,
+          "sha256": "804303afa8e123523c1553560e3e8536adfc1c1ab96f60c8b232e5e2de25c081",
+          "method": "PrintWindow owned modal on private desktop; no foreground or global capture"
+        }
+      ],
+      "nativeCompilations": [
+        {
+          "label": "line-default-r1",
+          "sourceSha256": "eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c",
+          "logsRaw": [
+            [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ]
+          ],
+          "logsDecodedCandidate": [
+            [
+              [
+                "开始编译..."
+              ],
+              [
+                "准备组态数据..."
+              ],
+              [
+                "提取控件数据..."
+              ],
+              [
+                "开始编译画面：画面1"
+              ],
+              [
+                "结束编译画面：画面1"
+              ],
+              [
+                "编译成功..."
+              ]
+            ]
+          ],
+          "files": [
+            {
+              "path": "AddrPara.dat",
+              "bytes": 200,
+              "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+            },
+            {
+              "path": "AlarmMuti.dat",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "path": "AlarmPara.dat",
+              "bytes": 47840,
+              "sha256": "f261a3812da94072ebc66ebbd7df75156861c337e0601c40f38e9013a392c4b0"
+            },
+            {
+              "path": "Collect.dat",
+              "bytes": 1424,
+              "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+            },
+            {
+              "path": "Curve.dat",
+              "bytes": 501,
+              "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+            },
+            {
+              "path": "load.bin",
+              "bytes": 233,
+              "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303"
+            },
+            {
+              "path": "load.kns",
+              "bytes": 6644,
+              "sha256": "36e64c8cb83aedbba813bc41ece6d9a4d4ee56c4fb174553adb5309252e242f7"
+            },
+            {
+              "path": "MarcoVar.dat",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            {
+              "path": "PicLenPara.dat",
+              "bytes": 2400,
+              "sha256": "e9cdcddcb89d3a9271233a29b42a1363cea604cecce0de92201397374cedfa70"
+            },
+            {
+              "path": "SheetPara.dat",
+              "bytes": 72,
+              "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+            },
+            {
+              "path": "SheetPixel.dat",
+              "bytes": 4342,
+              "sha256": "3f48cdfa124ffa5c7c6558b8db5feb8642ac58adc2653e83ce89a9b44b0a7064"
+            },
+            {
+              "path": "SysPara.dat",
+              "bytes": 4998,
+              "sha256": "721e8a22d93a6bcd293258b7d0d839ff423d4a751bc1c5bec15962504c04e451"
+            },
+            {
+              "path": "upLoad.knr",
+              "bytes": 952,
+              "sha256": "e73d8b960c79ca1a92841528f32c448618a29374c3273147c3d41b9a62296847"
+            },
+            {
+              "path": "Usbload.bin",
+              "bytes": 1704,
+              "sha256": "e4f8051ce308c40c757d363e5c0d264f92fccaae310406494149e3a9f02a9db8"
+            }
+          ],
+          "usbWriteCommandsInvoked": false,
+          "method": "actual native action_USBdownload compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked"
+        }
+      ],
+      "sceneReads": [
+        {
+          "label": "line-start-handle-to150150",
+          "data": {
+            "scene": "0x63107d0",
+            "items": [
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0xe2a1668",
+                "parent": "0x0",
+                "rect": [
+                  297,
+                  197,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 1,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0xe2a1538",
+                "parent": "0x0",
+                "rect": [
+                  97,
+                  97,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 1,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x61f9b38",
+                "parent": "0x0",
+                "rect": [
+                  100,
+                  100,
+                  200,
+                  100
+                ],
+                "flags": 3,
+                "selected": 1,
+                "visible": 1,
+                "z": 1
+              }
+            ],
+            "selected": [
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x61f9b38",
+                "parent": "0x0",
+                "rect": [
+                  100,
+                  100,
+                  200,
+                  100
+                ],
+                "flags": 3,
+                "selected": 1,
+                "visible": 1,
+                "z": 1
+              }
+            ]
+          }
+        }
+      ],
+      "status": "partial-or-error",
+      "error": "AssertionError(('action_save', {'pointer': '0x6116968', 'objectName': 'action_save', 'text': '保存(&S)', 'enabled': 0, 'children': []}))",
+      "exitCodeBeforeCleanup": 0,
+      "ownedProcessTerminated": true,
+      "ownMruCleanup": {
+        "removed": 1,
+        "otherEntriesPreserved": 1
+      },
+      "producerJsonSha256BeforeCompaction": "f804e799cfdbaeec6616036ab02306b6f28d3abeb83bd86bf5783882ac641c79"
+    },
+    {
+      "date": "2026-11-12",
+      "run": "line-drag-r1",
+      "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "patch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "desktop": "KinSealStage4Graphics20261112",
+      "input": {
+        "path": "tests\\fixtures\\native-source\\multipage\\A-empty-one-page.sm",
+        "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+      },
+      "steps": [
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 1,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5245286,
+            "count": 0
+          },
+          "result": {
+            "serial": 2,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 3,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3082112,
+            "count": 0
+          },
+          "result": {
+            "serial": 4,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328346,
+            "count": 0
+          },
+          "result": {
+            "serial": 5,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4589982,
+            "count": 0
+          },
+          "result": {
+            "serial": 6,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4197200,
+            "count": 0
+          },
+          "result": {
+            "serial": 7,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5245286,
+            "count": 0
+          },
+          "result": {
+            "serial": 8,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5376304,
+            "count": 0
+          },
+          "result": {
+            "serial": 9,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3868076,
+            "count": 0
+          },
+          "result": {
+            "serial": 10,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5703908,
+            "count": 0
+          },
+          "result": {
+            "serial": 11,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4393720,
+            "count": 0
+          },
+          "result": {
+            "serial": 12,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 7276572,
+            "count": 0
+          },
+          "result": {
+            "serial": 13,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3869756,
+            "count": 0
+          },
+          "result": {
+            "serial": 14,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4786074,
+            "count": 0
+          },
+          "result": {
+            "serial": 15,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4785424,
+            "count": 0
+          },
+          "result": {
+            "serial": 16,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4130532,
+            "count": 0
+          },
+          "result": {
+            "serial": 17,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4458916,
+            "count": 0
+          },
+          "result": {
+            "serial": 18,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x60773b0",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 19,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x60773b0"
+            },
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 20,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-viewport",
+            "hwnd": 3672872
+          },
+          "result": {
+            "serial": 21,
+            "status": "completed",
+            "value": 2297334,
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 3672872,
+            "x": 100,
+            "y": 100
+          },
+          "result": {
+            "serial": 22,
+            "status": "completed",
+            "value": [
+              100,
+              100
+            ],
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 3672872,
+            "x": 300,
+            "y": 200
+          },
+          "result": {
+            "serial": 23,
+            "status": "completed",
+            "value": [
+              300,
+              200
+            ],
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-drag",
+            "from": [
+              100,
+              100
+            ],
+            "to": [
+              300,
+              200
+            ]
+          },
+          "mappedViewportPoints": [
+            [
+              100,
+              100
+            ],
+            [
+              300,
+              200
+            ]
+          ],
+          "delivery": "owned private viewport PostMessage; no system input"
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 24,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-read",
+            "hwnd": 3672872
+          },
+          "result": {
+            "serial": 25,
+            "status": "completed",
+            "value": {
+              "scene": "0x6141e70",
+              "items": [
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x6215840",
+                  "parent": "0x0",
+                  "rect": [
+                    297,
+                    197,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 1,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x62158a0",
+                  "parent": "0x0",
+                  "rect": [
+                    97,
+                    97,
+                    5,
+                    5
+                  ],
+                  "flags": 0,
+                  "selected": 0,
+                  "visible": 1,
+                  "z": 9999
+                },
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x61395d0",
+                  "parent": "0x0",
+                  "rect": [
+                    100,
+                    100,
+                    200,
+                    100
+                  ],
+                  "flags": 3,
+                  "selected": 1,
+                  "visible": 1,
+                  "z": 1
+                }
+              ],
+              "selected": [
+                {
+                  "transform": [
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  "pointer": "0x61395d0",
+                  "parent": "0x0",
+                  "rect": [
+                    100,
+                    100,
+                    200,
+                    100
+                  ],
+                  "flags": 3,
+                  "selected": 1,
+                  "visible": 1,
+                  "z": 1
+                }
+              ]
+            },
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 26,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3082112,
+            "count": 0
+          },
+          "result": {
+            "serial": 27,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4328346,
+            "count": 0
+          },
+          "result": {
+            "serial": 28,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4589982,
+            "count": 0
+          },
+          "result": {
+            "serial": 29,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4197200,
+            "count": 0
+          },
+          "result": {
+            "serial": 30,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5245286,
+            "count": 0
+          },
+          "result": {
+            "serial": 31,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5376304,
+            "count": 0
+          },
+          "result": {
+            "serial": 32,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3868076,
+            "count": 0
+          },
+          "result": {
+            "serial": 33,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5703908,
+            "count": 0
+          },
+          "result": {
+            "serial": 34,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4393720,
+            "count": 0
+          },
+          "result": {
+            "serial": 35,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 7276572,
+            "count": 0
+          },
+          "result": {
+            "serial": 36,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3869756,
+            "count": 0
+          },
+          "result": {
+            "serial": 37,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4786074,
+            "count": 0
+          },
+          "result": {
+            "serial": 38,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4785424,
+            "count": 0
+          },
+          "result": {
+            "serial": 39,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4130532,
+            "count": 0
+          },
+          "result": {
+            "serial": 40,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4458916,
+            "count": 0
+          },
+          "result": {
+            "serial": 41,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x6077040",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 42,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x6077040"
+            },
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 43,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-viewport",
+            "hwnd": 3672872
+          },
+          "result": {
+            "serial": 44,
+            "status": "completed",
+            "value": 2297334,
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-point",
+            "hwnd": 3672872,
+            "x": 200,
+            "y": 150
+          },
+          "result": {
+            "serial": 45,
+            "status": "completed",
+            "value": [
+              200,
+              150
+            ],
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 30
+          },
+          "result": {
+            "serial": 46,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 47,
+            "status": "completed",
+            "guiThread": 4240,
+            "dispatchHook": "DispatchMessageW"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "line-double-after-drag",
+          "windows": [
+            {
+              "hwnd": 3280588,
+              "title": "直线",
+              "winClass": "QWidget",
+              "widgets": [
+                {
+                  "hwnd": 3280588,
+                  "qt": {
+                    "pointer": "0x6115348",
+                    "kind": "QLineDlg",
+                    "objectName": "QLineDlg",
+                    "text": "",
+                    "title": "直线",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "373",
+                    "y": "109",
+                    "width": "605",
+                    "height": "471"
+                  }
+                },
+                {
+                  "hwnd": 3083994,
+                  "qt": {
+                    "pointer": "0xe1624a0",
+                    "kind": "QDialogButtonBox",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "437",
+                    "width": "583",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 3149490,
+                  "qt": {
+                    "pointer": "0xe162480",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "帮助",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "508",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 3147184,
+                  "qt": {
+                    "pointer": "0xe1626e0",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "取消",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "427",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 3280502,
+                  "qt": {
+                    "pointer": "0xe1627e0",
+                    "kind": "QPushButton",
+                    "objectName": "",
+                    "text": "确定",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "346",
+                    "y": "0",
+                    "width": "75",
+                    "height": "23"
+                  }
+                },
+                {
+                  "hwnd": 3607594,
+                  "qt": {
+                    "pointer": "0xe161e20",
+                    "kind": "QTabWidget",
+                    "objectName": "tabWidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "11",
+                    "y": "11",
+                    "width": "583",
+                    "height": "420"
+                  }
+                },
+                {
+                  "hwnd": 3608572,
+                  "qt": {
+                    "pointer": "0xe161ce0",
+                    "kind": "QTabBar",
+                    "objectName": "qt_tabwidget_tabbar",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "48",
+                    "height": "20"
+                  }
+                },
+                {
+                  "hwnd": 4263916,
+                  "qt": {
+                    "pointer": "0xe161de0",
+                    "kind": "QStackedWidget",
+                    "objectName": "qt_tabwidget_stackedwidget",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "count": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "2",
+                    "y": "21",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 4722658,
+                  "qt": {
+                    "pointer": "0xe161f00",
+                    "kind": "QWidget",
+                    "objectName": "tab",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "577",
+                    "height": "395"
+                  }
+                },
+                {
+                  "hwnd": 2952886,
+                  "qt": {
+                    "pointer": "0xe162080",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_5",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "220",
+                    "width": "281",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 3672868,
+                  "qt": {
+                    "pointer": "0xe162120",
+                    "kind": "QLabel",
+                    "objectName": "label_3",
+                    "text": "边框色：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 2821858,
+                  "qt": {
+                    "pointer": "0xe1620e0",
+                    "kind": "QPushButton",
+                    "objectName": "Line_Color",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "styleSheet": "background:#000000",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 3346430,
+                  "qt": {
+                    "pointer": "0xe162360",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_3",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "10",
+                    "width": "151",
+                    "height": "201"
+                  }
+                },
+                {
+                  "hwnd": 2821774,
+                  "qt": {
+                    "pointer": "0xe162160",
+                    "kind": "QGraphicsView",
+                    "objectName": "MainView",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "10",
+                    "y": "20",
+                    "width": "131",
+                    "height": "171"
+                  }
+                },
+                {
+                  "hwnd": 3674104,
+                  "qt": {
+                    "pointer": "0xe1620c0",
+                    "kind": "QWidget",
+                    "objectName": "",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "1",
+                    "y": "1",
+                    "width": "129",
+                    "height": "169"
+                  }
+                },
+                {
+                  "hwnd": 3736744,
+                  "qt": {
+                    "pointer": "0x629c4d8",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_vcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 2821788,
+                  "qt": {
+                    "pointer": "0x629c2d0",
+                    "kind": "QWidget",
+                    "objectName": "qt_scrollarea_hcontainer",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 0,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "0",
+                    "y": "0",
+                    "width": "100",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 4392206,
+                  "qt": {
+                    "pointer": "0xe162420",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_2",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "10",
+                    "width": "281",
+                    "height": "91"
+                  }
+                },
+                {
+                  "hwnd": 4785448,
+                  "qt": {
+                    "pointer": "0xe162340",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Width",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "1",
+                    "count": "9",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7",
+                      "8",
+                      "9"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 2953116,
+                  "qt": {
+                    "pointer": "0xe162280",
+                    "kind": "QLabel",
+                    "objectName": "label_2",
+                    "text": "线 宽：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 3212580,
+                  "qt": {
+                    "pointer": "0xe162460",
+                    "kind": "QLabel",
+                    "objectName": "label",
+                    "text": "线 型：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "61",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 4917938,
+                  "qt": {
+                    "pointer": "0xe162320",
+                    "kind": "QComboBox",
+                    "objectName": "Line_Type",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "1",
+                    "currentText": "实线",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "透明线",
+                      "实线",
+                      "虚线",
+                      "短划线",
+                      "点划线",
+                      "两点划线"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 4066114,
+                  "qt": {
+                    "pointer": "0xe161cc0",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "110",
+                    "width": "281",
+                    "height": "101"
+                  }
+                },
+                {
+                  "hwnd": 4328250,
+                  "qt": {
+                    "pointer": "0xe161e80",
+                    "kind": "QLabel",
+                    "objectName": "label_4",
+                    "text": "末端箭头：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "20",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 2887368,
+                  "qt": {
+                    "pointer": "0xe161e60",
+                    "kind": "QLabel",
+                    "objectName": "label_6",
+                    "text": "端点形状：",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "20",
+                    "y": "50",
+                    "width": "71",
+                    "height": "22"
+                  }
+                },
+                {
+                  "hwnd": 3149824,
+                  "qt": {
+                    "pointer": "0xe161ca0",
+                    "kind": "QComboBox",
+                    "objectName": "End_Arrow",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "无形状",
+                    "count": "6",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "90",
+                    "y": "20",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "无形状",
+                      "实心三角形",
+                      "向右箭头",
+                      "折三角形",
+                      "菱形",
+                      "圆形"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 4918148,
+                  "qt": {
+                    "pointer": "0xe161fe0",
+                    "kind": "QComboBox",
+                    "objectName": "End_Cap",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "currentIndex": "0",
+                    "currentText": "矩形",
+                    "count": "2",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "90",
+                    "y": "50",
+                    "width": "161",
+                    "height": "22",
+                    "items": [
+                      "矩形",
+                      "半圆"
+                    ]
+                  }
+                },
+                {
+                  "hwnd": 2884896,
+                  "qt": {
+                    "pointer": "0xe161f60",
+                    "kind": "QGroupBox",
+                    "objectName": "groupBox_4",
+                    "text": "",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "checked": "false",
+                    "checkable": "false",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "x": "320",
+                    "y": "220",
+                    "width": "151",
+                    "height": "61"
+                  }
+                },
+                {
+                  "hwnd": 3279842,
+                  "qt": {
+                    "pointer": "0xe161f80",
+                    "kind": "QSpinBox",
+                    "objectName": "Alpha",
+                    "text": "255",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "minimum": "0",
+                    "maximum": "255",
+                    "value": "255",
+                    "singleStep": "1",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "20",
+                    "y": "20",
+                    "width": "121",
+                    "height": "30"
+                  }
+                },
+                {
+                  "hwnd": 8914656,
+                  "qt": {
+                    "pointer": "0xe161fa0",
+                    "kind": "QLineEdit",
+                    "objectName": "qt_spinbox_lineedit",
+                    "text": "255",
+                    "title": "",
+                    "enabled": 1,
+                    "visible": 1,
+                    "maxLength": "32767",
+                    "font": "SimSun,9,-1,5,50,0,0,0,0,0",
+                    "readOnly": "false",
+                    "x": "1",
+                    "y": "1",
+                    "width": "97",
+                    "height": "28"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "systemInput": false,
+      "usbOrPlc": false,
+      "qtOperationsGuiThreadOnly": true,
+      "pid": 14652,
+      "sceneReads": [
+        {
+          "label": "line-after-drag",
+          "data": {
+            "scene": "0x6141e70",
+            "items": [
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x6215840",
+                "parent": "0x0",
+                "rect": [
+                  297,
+                  197,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 1,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x62158a0",
+                "parent": "0x0",
+                "rect": [
+                  97,
+                  97,
+                  5,
+                  5
+                ],
+                "flags": 0,
+                "selected": 0,
+                "visible": 1,
+                "z": 9999
+              },
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x61395d0",
+                "parent": "0x0",
+                "rect": [
+                  100,
+                  100,
+                  200,
+                  100
+                ],
+                "flags": 3,
+                "selected": 1,
+                "visible": 1,
+                "z": 1
+              }
+            ],
+            "selected": [
+              {
+                "transform": [
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "pointer": "0x61395d0",
+                "parent": "0x0",
+                "rect": [
+                  100,
+                  100,
+                  200,
+                  100
+                ],
+                "flags": 3,
+                "selected": 1,
+                "visible": 1,
+                "z": 1
+              }
+            ]
+          }
+        }
+      ],
+      "screenshots": [
+        {
+          "path": "line-after-drag-line-drag-r1.png",
+          "pid": 14652,
+          "sha256": "6b1c745b6a4f4764ece2575b7c867b6b49813f4c05e3058b3763302afcec5e3a",
+          "method": "PrintWindow own private editor"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "line-drag-attempt.sm",
+          "bytes": 3416,
+          "sha256": "eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c"
+        }
+      ],
+      "createdSources": [],
+      "workingCopyAfter": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-graphics\\runtime-line-drag-r1\\NativePages.sm",
+        "sha256": "eb70868aae07460009ad12aba3dc2e0da3df56ed61d0a7772c04c8c8da4f215c"
+      },
+      "status": "native-stage4-graphics-scenario-completed",
+      "exitCodeBeforeCleanup": 0,
+      "ownedProcessTerminated": true,
+      "ownMruCleanup": {
+        "removed": 2,
+        "otherEntriesPreserved": 1
+      },
+      "producerJsonSha256BeforeCompaction": "b001fd52bf2179b32890c46eef595259c4e1f67d98c77d4b1cf94631c5fc310b"
+    },
+    {
+      "date": "2026-11-12",
+      "run": "line-inspect-r1",
+      "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+      "patch": {
+        "offset": "0x7c4",
+        "before": "5589e5",
+        "after": "b001c3"
+      },
+      "desktop": "KinSealStage4Graphics20261112",
+      "input": {
+        "path": "tests\\fixtures\\native-source\\multipage\\A-empty-one-page.sm",
+        "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+      },
+      "steps": [
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 1,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 7211036,
+            "count": 0
+          },
+          "result": {
+            "serial": 2,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 3,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5441242,
+            "count": 0
+          },
+          "result": {
+            "serial": 4,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4262810,
+            "count": 0
+          },
+          "result": {
+            "serial": 5,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5638372,
+            "count": 0
+          },
+          "result": {
+            "serial": 6,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3083084,
+            "count": 0
+          },
+          "result": {
+            "serial": 7,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 7211036,
+            "count": 0
+          },
+          "result": {
+            "serial": 8,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4064990,
+            "count": 0
+          },
+          "result": {
+            "serial": 9,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 2428052,
+            "count": 0
+          },
+          "result": {
+            "serial": 10,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5245540,
+            "count": 0
+          },
+          "result": {
+            "serial": 11,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3279660,
+            "count": 0
+          },
+          "result": {
+            "serial": 12,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 5114286,
+            "count": 0
+          },
+          "result": {
+            "serial": 13,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3214388,
+            "count": 0
+          },
+          "result": {
+            "serial": 14,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4393380,
+            "count": 0
+          },
+          "result": {
+            "serial": 15,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 7277192,
+            "count": 0
+          },
+          "result": {
+            "serial": 16,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 4524446,
+            "count": 0
+          },
+          "result": {
+            "serial": 17,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "menus",
+            "hwnd": 3016576,
+            "count": 0
+          },
+          "result": {
+            "serial": 18,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "invoke",
+            "pointer": "0x6078370",
+            "slot": "trigger"
+          },
+          "result": {
+            "serial": 19,
+            "status": "completed",
+            "value": {
+              "queuedMetaInvoke": 1,
+              "slot": "trigger",
+              "pointer": "0x6078370"
+            },
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 248
+          },
+          "result": {
+            "serial": 20,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "batch",
+            "hwnd": null,
+            "count": 247
+          },
+          "result": {
+            "serial": 21,
+            "status": "completed",
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        },
+        {
+          "request": {
+            "op": "scene-read",
+            "hwnd": 3149274
+          },
+          "result": {
+            "serial": 22,
+            "status": "completed",
+            "value": {
+              "scene": "0x62764b8",
+              "items": [],
+              "selected": []
+            },
+            "guiThread": 15616,
+            "dispatchHook": "DispatchMessageW"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "line-after-entry",
+          "windows": []
+        }
+      ],
+      "systemInput": false,
+      "usbOrPlc": false,
+      "qtOperationsGuiThreadOnly": true,
+      "pid": 22092,
+      "sceneReads": [
+        {
+          "label": "line-after-entry",
+          "data": {
+            "scene": "0x62764b8",
+            "items": [],
+            "selected": []
+          }
+        }
+      ],
+      "createdSources": [],
+      "workingCopyAfter": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-graphics\\runtime-line-inspect-r1\\NativePages.sm",
+        "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+      },
+      "status": "native-stage4-graphics-scenario-completed",
+      "exitCodeBeforeCleanup": 0,
+      "ownedProcessTerminated": true,
+      "ownMruCleanup": {
+        "removed": 1,
+        "otherEntriesPreserved": 1
+      },
+      "producerJsonSha256BeforeCompaction": "fe8455e53c06dc9dc760691791f8cefab6e7098a948f692350561c593a77c9d7"
+    }
+  ]
+}

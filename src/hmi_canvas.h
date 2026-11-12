@@ -10,6 +10,7 @@
 #include <QVariant>
 
 class QGraphicsScene;
+class QGraphicsPathItem;
 class QMouseEvent;
 class QPainter;
 class QStyleOptionGraphicsItem;
@@ -22,6 +23,8 @@ public:
     explicit HmiControlItem(const HmiObject &object);
     HmiObject toHmiObject() const;
     void setObject(const HmiObject &object);
+    QRectF boundingRect() const override; //20261113-2 add
+    QPainterPath shape() const override;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -103,6 +106,13 @@ private:
     QString m_resizeId;
     QRect m_resizeOriginal;
     int m_resizeHandle = 0;
+    QGraphicsPathItem *m_graphicDraft = nullptr; //20261113-2 add
+    QPointF m_graphicEnd;
+    bool graphicPress(QMouseEvent *event, const QPointF &point);
+    bool graphicMove(QMouseEvent *event, const QPointF &point);
+    bool graphicRelease(QMouseEvent *event);
+    bool beginGraphicResize(const HmiObject &object, const QPointF &point);
+    bool updateGraphicResize(const QPointF &point);
     bool m_grid = false;
     QList<HmiObject> m_clipboard;
     QList<QList<HmiObject>> m_history;

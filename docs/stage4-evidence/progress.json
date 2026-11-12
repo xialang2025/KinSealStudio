@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 26,
-  "blockedLayers": 102,
-  "active": "G01",
+  "editorSlicesDelivered": 27,
+  "blockedLayers": 105,
+  "active": "G08",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -673,9 +673,25 @@
     {
       "id": "G01",
       "name": "直线",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立line类型/graphic JSON和有序归一点；菜单直接拖线、四象限及水平/垂直线、双击六线型/1..9线宽/六末端/两端帽/黑色/0..255透明度，样式草稿取消；两端点控制柄、跨端拖动保留角色、整步撤销/取消、剪贴板、紧凑文本/地址保护、schema12、路径命中和箭头边界",
+      "evidence": "line/windows-r2/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G01-001",
+        "Q-S04-G01-002",
+        "Q-S04-G01-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/line/physical/line-baseline-r1/run.json"
     },
     {
       "id": "G02",
@@ -722,7 +738,7 @@
     {
       "id": "G08",
       "name": "矩形",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

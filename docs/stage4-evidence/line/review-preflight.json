@@ -1,0 +1,28 @@
+{
+  "mode": "read_only_review_then_authorized_fixes",
+  "scope": [
+    "typed JSON and schema",
+    "finite ordered geometry",
+    "four quadrants and axes",
+    "marker bounds and hit path",
+    "menu/double-click/cancel/undo",
+    "native/device refusal"
+  ],
+  "findings": [
+    {
+      "issue": "Right-arrow and folded-triangle local outlines were identical",
+      "resolution": "Different local shaft and folded polygons"
+    },
+    {
+      "issue": "Generic selected-rectangle adornment applied to directed line",
+      "resolution": "Use ordered endpoint handles only"
+    },
+    {
+      "issue": "Rounding endpoint bounds could reject or lose fractional tail positions",
+      "resolution": "Outward floor/ceil geometry with normalized points and fractional regression"
+    }
+  ],
+  "nativeEndpointEditVerified": false,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

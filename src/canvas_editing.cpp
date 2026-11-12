@@ -1,6 +1,7 @@
 #include "hmi_canvas.h"
 #include <QContextMenuEvent>
 #include <QGraphicsScene>
+#include <QGraphicsPathItem> //20261113-2 add
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QLineF>
@@ -83,6 +84,7 @@ bool ScreenCanvas::beginResize(const QPointF &point) //20261108-14 add
 
     object = selectedObject(&selected);
     if (!selected || m_scene->selectedItems().size() != 1) { return false; }
+    if (isSupportedGraphic(object.type)) { return beginGraphicResize(object, point); } //20261113-2 add
     viewportPoint = viewportTransform().map(point);
     nearest = 6.0; chosen = -1;
     for (index = 0; index < 9; ++index)
@@ -125,6 +127,7 @@ void ScreenCanvas::updateResize(const QPointF &point) //20261108-14 add
     HmiObject object;
     QGraphicsItem *graphicsItem;
 
+    if (updateGraphicResize(point)) { return; } //20261113-2 add
     left = m_resizeOriginal.x(); top = m_resizeOriginal.y();
     right = left + m_resizeOriginal.width(); bottom = top + m_resizeOriginal.height();
     if (m_resizeHandle & 1) { left = qBound(0, qRound(point.x()), right - 1); }
@@ -552,6 +555,12 @@ void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261
     graphics = m_scene->selectedItems().first(); item = dynamic_cast<HmiControlItem *>(graphics);
     if (item == nullptr) { return; }
     bounds = item->toHmiObject().geometry;
+    if (isSupportedGraphic(item->toHmiObject().type)) //20261113-2 add: Lines expose their two roles, never eight empty box handles.
+    {
+        painter->save(); painter->setPen(QPen(QColor(36, 111, 206), 0)); painter->setBrush(Qt::white);
+        Q_FOREACH (handle, graphicHandles(item->toHmiObject().type, bounds, item->toHmiObject().graphic)) { painter->drawRect(QRectF(handle.x() - 2.0 * 100 / m_zoomPercent, handle.y() - 2.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent)); }
+        painter->restore(); return;
+    }
     // Remove the world transform only for editor adornments; device rasterizers never see these pixels.
     mapping = painter->worldTransform(); painter->save(); painter->resetTransform();
     painter->setPen(QPen(QColor(36, 111, 206), 1)); painter->setBrush(Qt::white);
@@ -609,6 +618,7 @@ void ScreenCanvas::cancelInteraction() //20261110-8 add
     m_resizeId.clear(); m_resizeHandle = 0; m_pendingObject = HmiObject();
     m_interactionOriginal.clear(); m_interactionSelection.clear();
     delete m_draftRect; m_draftRect = nullptr;
+    delete m_graphicDraft; m_graphicDraft = nullptr; //20261113-2 add
     if (canceled)
     {
         m_activeTool = QStringLiteral("select");
