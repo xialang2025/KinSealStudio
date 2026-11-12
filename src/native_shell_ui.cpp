@@ -151,9 +151,9 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             action = new QAction(label, this);
             action->setObjectName(id);
             m_commands.insert(id, action);
-            if (id == QStringLiteral("action_line") || id == QStringLiteral("action_rect")) //20261113-2 add: Native line creation enters drawing immediately.
+            if (id == QStringLiteral("action_line") || id == QStringLiteral("action_rect") || id == QStringLiteral("action_ellipse")) //20261113-2 change: Native static shapes enter drawing immediately.
             {
-                connect(action, &QAction::triggered, this, [this, id]() { HmiObject object; object.type = id == QStringLiteral("action_line") ? QStringLiteral("line") : QStringLiteral("rect"); object.text.clear(); object.address.clear(); m_canvas->beginControlPlacement(object); });
+                connect(action, &QAction::triggered, this, [this, id]() { HmiObject object; object.type = id == QStringLiteral("action_line") ? QStringLiteral("line") : id == QStringLiteral("action_rect") ? QStringLiteral("rect") : QStringLiteral("ellipse"); object.text.clear(); object.address.clear(); m_canvas->beginControlPlacement(object); });
             }
             else if (id == QStringLiteral("action_qrcode")) //20261112-0 add
             {

@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect");
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse");
 }
 
 /******************************************************************************
@@ -55,6 +55,7 @@ QString graphicName(const QString &type) //20261113-2 add
 {
     if (type == QStringLiteral("line")) { return QStringLiteral("直线"); }
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
+    if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     return QString();
 }
 
@@ -189,6 +190,7 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
     QPainterPath path;
 
     if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
+    if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
     if (vertices.size() != 2) { return path; }
     path.moveTo(vertices[0]); path.lineTo(vertices[1]);
     return path;
@@ -292,7 +294,7 @@ void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, co
 
     if (painter == nullptr || !properties.validate(type)) { return; }
     color.setAlpha(properties.alpha); pen = QPen(color, properties.lineWidth, styles[properties.lineStyle], properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
-    painter->save(); painter->setRenderHint(QPainter::Antialiasing, false); painter->setPen(pen); painter->setBrush(graphicUsesVertices(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties));
+    painter->save(); painter->setRenderHint(QPainter::Antialiasing, type == QStringLiteral("ellipse")); painter->setPen(pen); painter->setBrush(graphicUsesVertices(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
     painter->drawPath(graphicPath(type, rect, properties));
     if (properties.lineStyle != 0) { painter->setPen(Qt::NoPen); painter->setBrush(color); painter->drawPath(graphicArrow(type, rect, properties)); }
     painter->restore();

@@ -1,0 +1,22 @@
+{
+  "mode": "read_only_review",
+  "families": [
+    "line",
+    "rect",
+    "ellipse"
+  ],
+  "checks": [
+    "strict family JSON and native output refusal",
+    "true ellipse path and corner hit exclusion",
+    "default colors/fill and 13 distinct local fills",
+    "all quadrant placement and eight handles",
+    "cancel/undo and eight-type KSP persistence",
+    "new USB commit/reset/read lifecycle and user default ellipse observation"
+  ],
+  "blockers": [],
+  "tests": 263,
+  "priorFailuresPreserved": [
+    "windows-r1 incorrect test PNG directory",
+    "windows-r2 SDK unset; only SDK target rerun"
+  ]
+}

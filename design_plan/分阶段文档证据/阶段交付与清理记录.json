@@ -2520,17 +2520,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/rect/native/retained-manifest.json"
+        "evidence": "../docs/stage4-evidence/ellipse/native/retained-manifest.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次G08编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次G06编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "G06；保留本控件未决层"
+        "nextAction": "G05；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -2573,6 +2573,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T22:19:27.230948+00:00"
+        },
+        {
+          "executionId": "stage4-ellipse-20261113",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/rect/native/retained-manifest.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次G08编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "G06；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T23:12:04.952698+00:00"
         }
       ]
     },
@@ -4046,6 +4066,15 @@
       "usbAccessed": true,
       "completeControl": false,
       "hardwareEvidence": "docs/stage4-evidence/rect/physical/rect-baseline-r1/run.json"
+    },
+    {
+      "id": "stage4-ellipse-20261113",
+      "productPassed": 263,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": true,
+      "completeControl": false,
+      "hardwareEvidence": "docs/stage4-evidence/ellipse/physical/ellipse-baseline-r2/run.json"
     }
   ],
   "executionEnvironmentLimits": [

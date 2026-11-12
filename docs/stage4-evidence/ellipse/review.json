@@ -1,0 +1,17 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核椭圆注册、真实曲线路径、按家族严格JSON、封闭形状无箭头/端帽、八柄缩放、混合8类型与源/设备拒绝。",
+    "首轮实际193+59+10通过、1项失败，原因为测试错误指向rect目录下的椭圆PNG；改正到ellipse原厂证据路径后重新构建测试，失败轮保留。",
+    "原厂基线第2轮使用协议§73的修复流程，逐调用确认提交和重启完成；原第1轮只保留历史日志完成事实，不当作本轮时序证据。"
+  ],
+  "finalRun": "docs/stage4-evidence/ellipse/windows-final/run.json",
+  "tests": {
+    "passed": 263,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

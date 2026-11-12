@@ -1,0 +1,50 @@
+{
+  "id": "G06",
+  "ordinal": 34,
+  "name": "圆/椭圆",
+  "slug": "ellipse",
+  "task": "S04-11",
+  "next": "G05",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/ellipse/physical/ellipse-baseline-r2/run.json",
+  "source": "ellipse-empty-default.sm",
+  "expectedPassed": 263,
+  "nativeManifest": "../docs/stage4-evidence/ellipse/native/retained-manifest.json",
+  "report": "docs/圆与椭圆图形实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立ellipse类型、真实椭圆/圆路径和曲线抗锯齿；菜单直接拖框、四象限归一、八柄缩放、双击三独立颜色/13填充/六线型/1..9线宽/0..255透明度；取消与整步撤销、剪贴板、8类混合保存重开、schema12、紧凑文本/地址保护及新流程原厂基线实物下载",
+  "nativeSummary": "原厂action_ellipse直接拖框创建，双击标题圆/椭圆；默认实线/宽1、边框黑/前景黑/背景白、纯色index1、Alpha255。无末端箭头或端帽字段。使用仅含椭圆的ellipse-empty-default.sm，避免早期含额外对象的ellipse-default.sm；默认与自定义样式均有源和原厂编译证据。静态图烘入SheetPixel，未生成ControlPara/ControlPixel；源顶层type65572已识别，完整body未恢复。",
+  "protocol": "G06圆/椭圆的纯净原厂源SHA 4e28bddada110760a971117435f77bc662d0361193044725b4e465d629d1b41e已通过修复后的真实USB流程下载：正确机型/设备参数、开始和提交ACK、完整重启写入及重启后读取退出均记录，四清除/更新false。原厂编译为SheetPixel，没有ControlPara/ControlPixel；完整SM和独立静态背景编码仍拒绝。",
+  "renderLimit": "使用真实椭圆路径和抗锯齿，验证圆/非方形路径、空角命中、白色内部、13种填充草稿以及透明度。原厂解码PNG和实际本地栅格均保留，差异见raster-comparison.json；未宣称Qt4/Qt6曲线边缘、渐变、RGB565量化、粗笔和Alpha混合逐像素一致。 本轮ROI实际差异999像素，未将抗锯齿/量化差异隐藏为完全一致。",
+  "methods": [
+    "ellipseNativeFieldsAndTypedDrafts",
+    "ellipseStrictPersistenceMixedCopyAndNativeRefusal",
+    "ellipseFourQuadrantsEightHandleResizeAndCancellation",
+    "ellipseCurvedRasterFillAndNativeComparisonInput",
+    "ellipseNativeMenuDoubleClickDraftAndUndo"
+  ],
+  "reviewFindings": [
+    "只读复核椭圆注册、真实曲线路径、按家族严格JSON、封闭形状无箭头/端帽、八柄缩放、混合8类型与源/设备拒绝。",
+    "首轮实际193+59+10通过、1项失败，原因为测试错误指向rect目录下的椭圆PNG；改正到ellipse原厂证据路径后重新构建测试，失败轮保留。",
+    "原厂基线第2轮使用协议§73的修复流程，逐调用确认提交和重启完成；原第1轮只保留历史日志完成事实，不当作本轮时序证据。"
+  ],
+  "unresolved": [
+    "Q-S04-G06-001",
+    "Q-S04-G06-002",
+    "Q-S04-G06-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G06-001：完整SM椭圆图元body与独立静态背景编码未恢复，正式源及设备输出保持拒绝。",
+    "Q-S04-G06-002：曲线边缘、RGB565量化、全填充/粗笔/Alpha混合未逐像素校准，不把真实椭圆路径等同原厂像素完全一致。",
+    "Q-S04-G06-003：默认椭圆显示已有用户确认；其他样式、动态背景交叠及运行刷新仍需现场专项验收，静态对象无可据此接受的触控/PLC行为。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| Line_Type | graphic.lineStyle | 六项，1实线 |\n| Line_Width | graphic.lineWidth | 1..9，1 |\n| Line_Color | graphic.lineColor | 黑色 |\n| Fore_Color | graphic.foreground | 黑色 |\n| Back_Color | graphic.background | 白色 |\n| Pattern | graphic.fillStyle | 13项，1纯色 |\n| Alpha | graphic.alpha | 0..255，255 |\n| 几何框 | 对象geometry | 本地框表示；不是已恢复的SM字段 |",
+  "codeFiles": "src/graphic_properties.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-2",
+  "recipes": [
+    "add_ellipse_tests.py",
+    "add_rect_tests.py"
+  ],
+  "screenObservation": "用户在本轮ellipse-baseline-r2后明确反馈“能看到椭圆，没有宽度提示”；只确认默认样例可见，未升级完整样式、触控或PLC通过。",
+  "testRun": "docs/stage4-evidence/ellipse/windows-final/run.json"
+}
