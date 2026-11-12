@@ -1,0 +1,54 @@
+{
+  "id": "batch-20261112",
+  "date": "2026-11-12",
+  "scope": "W1 native picture list batch operations, using real saved three-state red/green/green source and existing two PNG gallery resources.",
+  "facts": [
+    {
+      "fact": "Reopened native three-state source initializes batch start0/end2. An in-session increase from2 to3 had retained end1 in earlier lifecycle evidence; the end draft is not always reset to count-1.",
+      "evidence": "native-probe-batch-delete-r1.json/batch-delete-checkbox-only; earlier native-probe-lifecycle-r1.json/batch-ranges"
+    },
+    {
+      "fact": "Batch Add and Batch Delete checkboxes are independent, both can be true. Shared range enabled equals logical OR; unchecking one while the other stays true retains enabled range.",
+      "evidence": "native-probe-batch-multi-flags-r1.json/flags-*"
+    },
+    {
+      "fact": "Checking Batch Delete does not clear any image immediately. Clicking Delete Current State Picture clears the closed range and retains rows/state numbers.",
+      "evidence": "native-probe-batch-delete-r1.json/tableReads before-batch-delete,after-batch-delete-checkbox-only,after-batch-delete-button"
+    },
+    {
+      "fact": "Batch Delete equal range1..1 clears only state1. Reversed2..0 leaves rows unchanged; no error dialog was captured in that probe.",
+      "evidence": "native-probe-batch-delete-bounds-r1.json/tableReads and after-batch-delete-reversed"
+    },
+    {
+      "fact": "With3 states, range spinboxes min0/max2. Native setValue(-10) and setValue(999) clamp to0 and2. Valid last-state range2..2 works.",
+      "evidence": "native-probe-batch-add-r1.json/batch-add-clamped-boundaries,batch-add-equal-2-2; native-probe-batch-delete-bounds-r1.json/batch-delete-clamped-boundaries"
+    },
+    {
+      "fact": "Batch Add range0..1 with one selected red image fills only state0, leaving state1 empty. It neither repeats the image nor automatically takes the next gallery image.",
+      "evidence": "native-probe-batch-add-r1.json/tableReads before-batch-add-two-empty,after-batch-add-red-range-0-1"
+    },
+    {
+      "fact": "Batch Add gallery uses MultiSelection(mode2). Clicking green then red produces native selectedItems [(0,1),(0,0)], yet confirm fills red then green in states0/1: gallery position order governs this two-item probe, not click order.",
+      "evidence": "native-probe-batch-multi-r2.json/tableSelections two-picks-green-then-red; tableReads after-two-picked-range0-2; picture-batch-gallery-two-selected.png"
+    },
+    {
+      "fact": "Two selected images fill only two rows of range0..2; trailing state2 remains empty. Equal range1..1 truncates two selected images to red at state1; state2 remains empty.",
+      "evidence": "native-probe-batch-multi-r2.json/tableReads after-two-picked-range0-2,both-after-add-equal-range"
+    },
+    {
+      "fact": "With both checkboxes true, the gallery still performs batch add and Delete Current State Picture performs batch delete using the shared range.",
+      "evidence": "native-probe-batch-multi-r2.json/both-before-delete and tableReads both-after-delete,both-after-add-equal-range,both-after-delete-equal-range"
+    },
+    {
+      "fact": "Batch Add reversed2..0 rejects before opening gallery with 批量加起始结束位置异常，请重新设置。 and leaves list unchanged.",
+      "evidence": "native-probe-batch-multi-r2.json/reversed-add-post-click QMessageBox and tableReads"
+    }
+  ],
+  "limitations": [
+    "Tests cover the existing two PNG resources in engineer/project gallery. System gallery, cross-row ordering across more than5 assets, duplicate resource names and asset import bulk dialog were not exercised.",
+    "This supplement does not restore .sm source body, binary resource encoding, W2 panel switching or file/resource global transactions.",
+    "batch-add-r1 completed single/equal/boundary observations but later failed looking for a gallery after reversed range rejection. batch-multi-r2 captured the actual rejection message.",
+    "batch-multi-flags-r1 completed checkbox truth table but failed the initial selectedItems getter because Qt4 exports this method as nonconst. Native DLL export was checked, getter corrected, and batch-multi-r2 succeeded."
+  ],
+  "supersededInitialLimitation": "The initial findings limitation about uncovered batch add/delete execution is narrowed by these observed cases; other initial gaps remain."
+}

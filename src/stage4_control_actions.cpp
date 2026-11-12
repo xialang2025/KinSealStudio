@@ -3,6 +3,7 @@
 #include "message_display_dialog.h"
 #include "scale_dialog.h"
 #include "qr_code_dialog.h" //20261112-0 add
+#include "image_display_dialog.h" //20261112-0 add
 #include <QMessageBox>
 #include <QStatusBar>
 
@@ -17,6 +18,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
 {
     HmiObject object;
     QDialog *dialog;
+    QMap<QString, QByteArray> pictures = m_project.pictures; //20261112-0 add: Child resource edits publish together with the object.
     QString error;
     object.type = type;
     if (type == QStringLiteral("message"))
@@ -29,6 +31,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = QStringLiteral("二维码"); object.address = QStringLiteral("LW0"); object.geometry = QRect(0, 0, 160, 110);
         dialog = new QrCodeDialog(object, currentEditorProject(), this);
     }
+    else if (type == QStringLiteral("image")) //20261112-0 add
+    {
+        object.name = QStringLiteral("图片显示器"); object.hasImageDisplayProperties = true; object.geometry = QRect(0, 0, 200, 100);
+        dialog = new ImageDisplayDialog(object, currentEditorProject(), this);
+    }
     else if (type == QStringLiteral("scale"))
     {
         object.name = QStringLiteral("刻度"); object.geometry = QRect(0, 0, 160, 110);
@@ -39,10 +46,11 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
     {
         if (type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
+        else if (type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
-        if (!applyControlDraft(object, m_project.macros, m_project.pictures, false, &error))
+        if (!applyControlDraft(object, m_project.macros, pictures, false, &error)) //20261112-0 change
         { QMessageBox::warning(this, QStringLiteral("控件未创建"), error); delete dialog; return; }
-        beginControlDraftPlacement(object, m_project.macros, m_project.pictures);
+        beginControlDraftPlacement(object, m_project.macros, pictures); //20261112-0 change
         statusBar()->showMessage(QStringLiteral("在画布拖出%1；按 Esc 取消。").arg(object.name), 10000);
     }
     else { m_canvas->setActiveTool(QStringLiteral("select")); }
@@ -60,20 +68,23 @@ void MainWindow::editStage4Control() //20261112-0 add
 {
     HmiObject object;
     QDialog *dialog;
+    QMap<QString, QByteArray> pictures = m_project.pictures; //20261112-0 add
     QString error;
     bool selected;
     object = m_canvas->selectedObject(&selected);
     if (!selected) { return; }
     if (object.type == QStringLiteral("message")) { dialog = new MessageDisplayDialog(object, currentEditorProject(), this); }
     else if (object.type == QStringLiteral("qrcode")) { dialog = new QrCodeDialog(object, currentEditorProject(), this); } //20261112-0 add
+    else if (object.type == QStringLiteral("image")) { dialog = new ImageDisplayDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("scale")) { dialog = new ScaleDialog(object, this); }
     else { return; }
     if (dialog->exec() == QDialog::Accepted)
     {
         if (object.type == QStringLiteral("message")) { object = qobject_cast<MessageDisplayDialog *>(dialog)->object(); }
         else if (object.type == QStringLiteral("qrcode")) { object = qobject_cast<QrCodeDialog *>(dialog)->object(); }
+        else if (object.type == QStringLiteral("image")) { pictures = qobject_cast<ImageDisplayDialog *>(dialog)->pictures(); object = qobject_cast<ImageDisplayDialog *>(dialog)->object(); }
         else { object = qobject_cast<ScaleDialog *>(dialog)->object(); } //20261112-0 change
-        if (!applyControlDraft(object, m_project.macros, m_project.pictures, true, &error)) { QMessageBox::warning(this, QStringLiteral("控件修改未提交"), error); }
+        if (!applyControlDraft(object, m_project.macros, pictures, true, &error)) { QMessageBox::warning(this, QStringLiteral("控件修改未提交"), error); } //20261112-0 change
     }
     delete dialog;
 }

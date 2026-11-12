@@ -1,0 +1,109 @@
+{
+  "control": "C09图片显示",
+  "facts": [
+    {
+      "fact": "Static mode fixes state count to1 and disables count, monitor, interval and condition group.",
+      "evidence": "native-probe-default-r1.json/preserved-modal-0; conditions-r1/return-static"
+    },
+    {
+      "fact": "Time mode count defaults2, range2..128. Interval defaults1, range1..1000, unit100ms. Monitor disabled.",
+      "evidence": "native-probe-conditions-r1.json/multiple-time"
+    },
+    {
+      "fact": "Numeric mode defaults addressLW0, enables monitor and state count2..128, disables interval.",
+      "evidence": "native-probe-conditions-r1.json/multiple-numeric"
+    },
+    {
+      "fact": "Bit mode defaults addressLB0, enables monitor, forces exactly2 states and disables count/interval.",
+      "evidence": "native-probe-conditions-r1.json/multiple-bit"
+    },
+    {
+      "fact": "Count3→bit→time leaves2; multiple→static fixes1. Disabled draft monitor text can remainLB0.",
+      "evidence": "native-probe-conditions-r1.json/return-time,return-static"
+    },
+    {
+      "fact": "State list is DropWidget,2 columns. Shrinking3→2 then regrowing3 discards state2 image; delete clears selected image and preserves row count/state number.",
+      "evidence": "native-probe-lifecycle-r1.json/tableReads three-assigned-images,shrink-regrow-state2,after-delete-state1"
+    },
+    {
+      "fact": "Batch enabled with3 states: start0,end1, both min0/max2.",
+      "evidence": "native-probe-lifecycle-r1.json/batch-ranges"
+    },
+    {
+      "fact": "Explicit gallery column1 selection identifies probe-green.png. Distinct states red/green swap to green/red on Down and return on Up.",
+      "evidence": "native-probe-distinct-r1.json/distinct-green-selected and tableReads distinct-red-green,distinct-after-down,distinct-after-up"
+    },
+    {
+      "fact": "Gallery cancel preserves selected row; child confirm followed by parent cancel restores original rows; source checkpoint hashes equal original.",
+      "evidence": "native-probe-lifecycle-r1.json/tableReads and sourceCheckpoints"
+    },
+    {
+      "fact": "PNG static import and two-state distinct red/green native save and offline compile succeeded. Compiled type15, ControlPara640B.",
+      "evidence": "native-probe-load-r3.json; native-probe-distinct-r1.json; compiled/*"
+    }
+  ],
+  "limitations": [
+    "Full .sm body and device picture resource codec remain unresolved.",
+    "No hardware rendering or monitor timing has been tested. Numeric/bit variant samples contain two red references; distinct-r1 is the verified red/green sample.",
+    "Multiple-r2 table label two-images-red-green is inaccurate: both rows were actually probe-red.png. Table contents are authoritative.",
+    "Batch add/delete execution, drag/drop, invalid-file/format bounds, resource replacement/deletion and every permission combination are not covered.",
+    "Gallery import followed by cancel appeared discarded in load-r1; retained partial run is insufficient to claim complete library resource transaction semantics."
+  ],
+  "scope": "Native W1 host evidence; no W2 physical panel runtime or source/device codec compatibility claimed.",
+  "supplements": [
+    {
+      "id": "batch-20261112",
+      "date": "2026-11-12",
+      "scope": "W1 native picture list batch operations, using real saved three-state red/green/green source and existing two PNG gallery resources.",
+      "facts": [
+        {
+          "fact": "Reopened native three-state source initializes batch start0/end2. An in-session increase from2 to3 had retained end1 in earlier lifecycle evidence; the end draft is not always reset to count-1.",
+          "evidence": "native-probe-batch-delete-r1.json/batch-delete-checkbox-only; earlier native-probe-lifecycle-r1.json/batch-ranges"
+        },
+        {
+          "fact": "Batch Add and Batch Delete checkboxes are independent, both can be true. Shared range enabled equals logical OR; unchecking one while the other stays true retains enabled range.",
+          "evidence": "native-probe-batch-multi-flags-r1.json/flags-*"
+        },
+        {
+          "fact": "Checking Batch Delete does not clear any image immediately. Clicking Delete Current State Picture clears the closed range and retains rows/state numbers.",
+          "evidence": "native-probe-batch-delete-r1.json/tableReads before-batch-delete,after-batch-delete-checkbox-only,after-batch-delete-button"
+        },
+        {
+          "fact": "Batch Delete equal range1..1 clears only state1. Reversed2..0 leaves rows unchanged; no error dialog was captured in that probe.",
+          "evidence": "native-probe-batch-delete-bounds-r1.json/tableReads and after-batch-delete-reversed"
+        },
+        {
+          "fact": "With3 states, range spinboxes min0/max2. Native setValue(-10) and setValue(999) clamp to0 and2. Valid last-state range2..2 works.",
+          "evidence": "native-probe-batch-add-r1.json/batch-add-clamped-boundaries,batch-add-equal-2-2; native-probe-batch-delete-bounds-r1.json/batch-delete-clamped-boundaries"
+        },
+        {
+          "fact": "Batch Add range0..1 with one selected red image fills only state0, leaving state1 empty. It neither repeats the image nor automatically takes the next gallery image.",
+          "evidence": "native-probe-batch-add-r1.json/tableReads before-batch-add-two-empty,after-batch-add-red-range-0-1"
+        },
+        {
+          "fact": "Batch Add gallery uses MultiSelection(mode2). Clicking green then red produces native selectedItems [(0,1),(0,0)], yet confirm fills red then green in states0/1: gallery position order governs this two-item probe, not click order.",
+          "evidence": "native-probe-batch-multi-r2.json/tableSelections two-picks-green-then-red; tableReads after-two-picked-range0-2; picture-batch-gallery-two-selected.png"
+        },
+        {
+          "fact": "Two selected images fill only two rows of range0..2; trailing state2 remains empty. Equal range1..1 truncates two selected images to red at state1; state2 remains empty.",
+          "evidence": "native-probe-batch-multi-r2.json/tableReads after-two-picked-range0-2,both-after-add-equal-range"
+        },
+        {
+          "fact": "With both checkboxes true, the gallery still performs batch add and Delete Current State Picture performs batch delete using the shared range.",
+          "evidence": "native-probe-batch-multi-r2.json/both-before-delete and tableReads both-after-delete,both-after-add-equal-range,both-after-delete-equal-range"
+        },
+        {
+          "fact": "Batch Add reversed2..0 rejects before opening gallery with 批量加起始结束位置异常，请重新设置。 and leaves list unchanged.",
+          "evidence": "native-probe-batch-multi-r2.json/reversed-add-post-click QMessageBox and tableReads"
+        }
+      ],
+      "limitations": [
+        "Tests cover the existing two PNG resources in engineer/project gallery. System gallery, cross-row ordering across more than5 assets, duplicate resource names and asset import bulk dialog were not exercised.",
+        "This supplement does not restore .sm source body, binary resource encoding, W2 panel switching or file/resource global transactions.",
+        "batch-add-r1 completed single/equal/boundary observations but later failed looking for a gallery after reversed range rejection. batch-multi-r2 captured the actual rejection message.",
+        "batch-multi-flags-r1 completed checkbox truth table but failed the initial selectedItems getter because Qt4 exports this method as nonconst. Native DLL export was checked, getter corrected, and batch-multi-r2 succeeded."
+      ],
+      "supersededInitialLimitation": "The initial findings limitation about uncovered batch add/delete execution is narrowed by these observed cases; other initial gaps remain."
+    }
+  ]
+}

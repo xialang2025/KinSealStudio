@@ -1,0 +1,177 @@
+{
+  "date": "2026-11-12",
+  "run": "inspect-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Picture20261112",
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\picture-static-red.sm",
+    "sha256": "f5ebf97a08fa31f98cdcf9e0b68e333270a41a6a3b7d8a1b7f7be98099dfaacd"
+  },
+  "steps": [
+    {
+      "request": {
+        "op": "scene-read",
+        "hwnd": 2559330
+      },
+      "result": {
+        "serial": 4,
+        "status": "completed",
+        "value": {
+          "scene": "0x626e140",
+          "items": [
+            {
+              "transform": [
+                1,
+                0,
+                0,
+                1,
+                160,
+                120,
+                0,
+                0,
+                1
+              ],
+              "pointer": "0x6045000",
+              "parent": "0x626f790",
+              "rect": [
+                160,
+                120,
+                200,
+                100
+              ],
+              "flags": 1,
+              "selected": 0,
+              "visible": 1,
+              "z": 0
+            },
+            {
+              "transform": [
+                1,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1
+              ],
+              "pointer": "0x626f790",
+              "parent": "0x0",
+              "rect": [
+                160,
+                120,
+                200,
+                100
+              ],
+              "flags": 3,
+              "selected": 0,
+              "visible": 1,
+              "z": 1
+            }
+          ],
+          "selected": []
+        },
+        "guiThread": 21792,
+        "dispatchHook": "DispatchMessageW"
+      }
+    }
+  ],
+  "snapshots": [],
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 22072,
+  "sceneReads": [
+    {
+      "label": "static-picture-source-geometry",
+      "data": {
+        "scene": "0x626e140",
+        "items": [
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              160,
+              120,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x6045000",
+            "parent": "0x626f790",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 1,
+            "selected": 0,
+            "visible": 1,
+            "z": 0
+          },
+          {
+            "transform": [
+              1,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "pointer": "0x626f790",
+            "parent": "0x0",
+            "rect": [
+              160,
+              120,
+              200,
+              100
+            ],
+            "flags": 3,
+            "selected": 0,
+            "visible": 1,
+            "z": 1
+          }
+        ],
+        "selected": []
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "static-picture-source-geometry.png",
+      "pid": 22072,
+      "sha256": "18cd942c7d367c05229957a110925cd0214f142f6d7da7eaa38c712c1d4d8063",
+      "method": "PrintWindow own private editor"
+    }
+  ],
+  "createdSources": [],
+  "workingCopyAfter": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\picture\\runtime-inspect-r1\\NativePages.sm",
+    "sha256": "f5ebf97a08fa31f98cdcf9e0b68e333270a41a6a3b7d8a1b7f7be98099dfaacd"
+  },
+  "status": "native-stage3-scenario-completed",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "originalBytes": 313246,
+    "originalSha256": "bf6b64183c7a4214ca265972c3aa710c34118d2db11685f46756b9c06ff33b07",
+    "removed": "Repeated modal lookup snapshots, full main-window getter batches, and menu inventory. Explicit snapshots, first/last modal when needed, mutation requests/results, table reads, file selections, source/compile manifests and failures retained."
+  }
+}

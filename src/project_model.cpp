@@ -252,6 +252,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("message")) { json.insert(QStringLiteral("messageDisplay"), messageDisplay.toJson()); } //20261112-0 add
     if (type == QStringLiteral("scale")) { json.insert(QStringLiteral("scale"), scale.toJson()); } //20261112-0 add
     if (type == QStringLiteral("qrcode")) { json.insert(QStringLiteral("qrCode"), qrCode.toJson()); } //20261112-0 add
+    if (type == QStringLiteral("image") && hasImageDisplayProperties) { json.insert(QStringLiteral("imageDisplay"), imageDisplay.toJson()); } //20261112-0 add
     return json;
 }
 
@@ -288,7 +289,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -303,6 +304,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("extensions"))
         {
             if (!item.value().isObject() || !inactiveExtensions(item.value().toObject(), QStringLiteral("object.extensions"), error)) { return false; }
+        }
+        else if (key == QStringLiteral("imageDisplay")) //20261112-0 add
+        {
+            if (!item.value().isObject() || !ImageDisplayProperties::fromJson(item.value().toObject(), &object->imageDisplay, error)) { return false; }
         }
         else if (key == QStringLiteral("qrCode")) //20261112-0 add
         {
@@ -337,6 +342,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     { return modelError(error, QStringLiteral("刻度类型与专有属性不匹配。")); }
     if ((object->type == QStringLiteral("qrcode")) != json.contains(QStringLiteral("qrCode"))) //20261112-0 add
     { return modelError(error, QStringLiteral("二维码类型与专有属性不匹配。")); }
+    object->hasImageDisplayProperties = json.contains(QStringLiteral("imageDisplay")); //20261112-0 add
+    if (object->hasImageDisplayProperties && object->type != QStringLiteral("image")) { return modelError(error, QStringLiteral("图片显示类型与专有属性不匹配。")); }
     object->name = json.value(QStringLiteral("name")).toString();
     object->text = json.value(QStringLiteral("text")).toString();
     object->address = json.value(QStringLiteral("address")).toString();
@@ -688,7 +695,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     //20261112-0 add: Schema10 is reserved for stage-3 editor flags; message data starts at schema11.
     Q_FOREACH (page, allPages())
     {
-        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode")) { schema = 11; stage1 = true; } }
+        Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("message") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.hasImageDisplayProperties) { schema = 11; stage1 = true; } }
     }
     resolution = {{QStringLiteral("width"), pageWidth}, {QStringLiteral("height"), pageHeight}};
     if (stage1)
@@ -1556,6 +1563,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
     Q_FOREACH (page, allPages()) { allObjects.append(page.objects); } //20261110-5 change
     Q_FOREACH (object, allObjects)
     {
+        if (object.hasImageDisplayProperties && (object.type != QStringLiteral("image") || object.hasBitButtonProperties || !object.imageDisplay.validate(error) || !object.imageDisplay.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("message") && !object.messageDisplay.validateAddresses(connections, error)) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("qrcode") && (!object.qrCode.validate(error) || !object.qrCode.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.hasWordButtonProperties && (object.type != QStringLiteral("switch") ||
@@ -1588,7 +1596,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
             if (error != nullptr && error->isEmpty()) { *error = QStringLiteral("功能按钮必须使用单态开关外观、有效功能类型和工程语言，宏指令与原生版本一样禁用。"); }
             return false;
         }
-        if (!object.hasLampProperties && !object.hasFunctionButtonProperties) //20261110-0 change: System functions and lamps have no operating write address.
+        if (!object.hasLampProperties && !object.hasFunctionButtonProperties && !object.hasImageDisplayProperties) //20261112-0 change: Typed image monitors validate their actual bit/word role separately.
         {
             addresses.append(qMakePair(object.address, object.type == QStringLiteral("switch") && !object.hasWordButtonProperties ?
                                         PlcAddressRole::Bit : PlcAddressRole::Word));

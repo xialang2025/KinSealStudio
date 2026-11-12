@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 3,
-  "blockedLayers": 9,
-  "active": "C09",
+  "editorSlicesDelivered": 4,
+  "blockedLayers": 12,
+  "active": "C10",
   "usbAccessed": false,
   "complete": false,
   "controls": [
@@ -112,14 +112,29 @@
     {
       "id": "C09",
       "name": "图片显示",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "图片三页、静态/时间/数值/位联动、1/2..128态、批量/排序/清图、图库子事务、全页资源引用和冲突复制、真实图像预览、9类混合KSP与创建编辑撤销",
+      "evidence": "picture/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "not_run",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C09-001",
+        "Q-S04-C09-002",
+        "Q-S04-C09-003"
+      ]
     },
     {
       "id": "C10",
       "name": "GIF显示",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

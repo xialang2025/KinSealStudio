@@ -29,6 +29,10 @@ def main():
     environment["PATH"] = ("G:/01_Professional/QT6/Installed/6.12.0/mingw_64/bin;"
                            "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/bin;" + environment["PATH"])
     environment["KINSEAL_STAGE4_CAPTURE_DIR"] = str(output)
+    temporary = output / "temp"
+    temporary.mkdir()
+    for key in ("TEMP", "TMP", "TMPDIR"):
+        environment[key] = str(temporary) #20261112-0 add: Keep Qt settings and test scratch files off the user's system drive.
     record = dict(startedAtUtc=datetime.now(timezone.utc).isoformat(), runs=[], usbAccessed=False,
                   desktopSwitched=False, systemInput=False, passed=False)
     try:
@@ -49,6 +53,10 @@ def main():
     finally:
         desktop.close()
         record["privateDesktopHandleClosed"] = True
+        record["temporaryRoot"] = str(temporary)
+        record["temporaryFilesRemaining"] = [str(path.relative_to(temporary)) for path in temporary.rglob("*") if path.is_file()]
+        if not any(temporary.iterdir()):
+            temporary.rmdir()
         record["completedAtUtc"] = datetime.now(timezone.utc).isoformat()
         (output / "run.json").write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
         # Empty stdout/stderr are disposable launcher output; keep nonempty diagnostics and all actual Qt logs.

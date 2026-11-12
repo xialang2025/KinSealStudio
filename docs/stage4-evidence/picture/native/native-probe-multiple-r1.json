@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-12",
+  "run": "multiple-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Picture20261112",
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\picture-static-red.sm",
+    "sha256": "f5ebf97a08fa31f98cdcf9e0b68e333270a41a6a3b7d8a1b7f7be98099dfaacd"
+  },
+  "steps": [
+    {
+      "request": {
+        "op": "scene-viewport",
+        "hwnd": 1445722
+      },
+      "result": {
+        "serial": 4,
+        "status": "completed",
+        "value": 1445730,
+        "guiThread": 5372,
+        "dispatchHook": "DispatchMessageW"
+      }
+    },
+    {
+      "request": {
+        "op": "scene-point",
+        "hwnd": 1445722,
+        "x": 260,
+        "y": 170
+      },
+      "result": {
+        "serial": 5,
+        "status": "completed",
+        "value": [
+          260,
+          170
+        ],
+        "guiThread": 5372,
+        "dispatchHook": "DispatchMessageW"
+      }
+    }
+  ],
+  "snapshots": [],
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 7836,
+  "status": "partial-or-error",
+  "error": "RuntimeError(\"widget match not unique {'op': 'invoke', 'name': 'm_MutilradioBtn'} []\")",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 2
+  },
+  "compaction": {
+    "originalBytes": 423916,
+    "originalSha256": "d3379106d957ed93186ac47f7e6f11090c2cb453db8af762248a9f55e4915c87",
+    "removed": "Repeated modal lookup snapshots, full main-window getter batches, and menu inventory. Explicit snapshots, first/last modal when needed, mutation requests/results, table reads, file selections, source/compile manifests and failures retained."
+  }
+}

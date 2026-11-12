@@ -14,6 +14,7 @@
 #include "message_display_properties.h" //20261112-0 add
 #include "scale_properties.h" //20261112-0 add
 #include "qr_code_properties.h" //20261112-0 add
+#include "image_display_properties.h" //20261112-0 add
 
 struct HmiObject
 {
@@ -36,6 +37,8 @@ struct HmiObject
     MessageDisplayProperties messageDisplay; //20261112-0 add: Message states use their own source/device family.
     ScaleProperties scale; //20261112-0 add: A scale is a static graphic with no PLC role.
     QrCodeProperties qrCode; //20261112-0 add: A QR monitor is independent of buttons and static text.
+    bool hasImageDisplayProperties = false; //20261112-0 add: Legacy image placeholders stay loadable until configured.
+    ImageDisplayProperties imageDisplay;
     double layer = 1;
     QString group;
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.

@@ -24,6 +24,9 @@ public:
     HmiObject object();
     QMap<QString, QString> macros() const;
     QMap<QString, QByteArray> pictures() const;
+    bool choosePictureForControl(bool projectGallery, QString *name, QByteArray *png,
+                                 QMap<QString, QByteArray> *pool,
+                                 QVector<QPair<QString, QByteArray>> *choices = nullptr); //20261112-0 add
 protected:
     void accept() override;
 private:
@@ -109,7 +112,8 @@ private:
     void loadState();
     void refresh();
     void refreshMonitor();
-    void selectPicture(bool projectGallery);
+    bool selectPicture(bool projectGallery, bool rejectGif = false,
+                       QVector<QPair<QString, QByteArray>> *choices = nullptr); //20261112-0 change
     void editMacro();
     void chooseColor(bool background);
     QWidget *createGeneral();

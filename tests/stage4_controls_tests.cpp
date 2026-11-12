@@ -3,6 +3,10 @@
 #include "message_display_dialog.h"
 #include "scale_dialog.h"
 #include "qr_code_dialog.h" //20261112-0 add
+#include "image_display_dialog.h" //20261112-0 add
+#include "stage3_resources.h"
+#include <QBuffer>
+#include <QListWidget>
 #include "hmi_property_widgets.h"
 #include "native_project_codec.h"
 #include "project_capabilities.h"
@@ -59,6 +63,11 @@ private slots:
     void qrStrictPersistenceAndBackendGates();
     void qrCopyAndCompactProperties();
     void qrCreationEditCancellationAndHistory();
+    void imageDefaultsConditionsAndStateLifetime();
+    void imageBatchOrderDeletionAndGalleryCancel();
+    void imageResourceBindingsAndCopyCollisions();
+    void imagePersistenceLegacyAndBackendGates();
+    void imageActualRasterAndPlacementTransaction();
 };
 
 /******************************************************************************
@@ -703,6 +712,211 @@ void Stage4ControlTests::qrCreationEditCancellationAndHistory() //20261112-0 add
     window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("edit")); QCOMPARE(window.m_projectHistory.size(), history + 2);
     window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("create")); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
     window.restoreProjectHistory(1); window.restoreProjectHistory(1); QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("edit"));
+}
+
+/******************************************************************************
+ * Function Name   : imagePng
+ * Description     : Create a deterministic tiny image source for actual renderer and binding tests.
+ * Input Parameters: color
+ * Return Value    : Valid PNG bytes.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static QByteArray imagePng(const QColor &color) //20261112-0 add
+{
+    QImage image(8, 6, QImage::Format_ARGB32);
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    image.fill(color); buffer.open(QIODevice::WriteOnly); image.save(&buffer, "PNG"); return bytes;
+}
+
+/******************************************************************************
+ * Function Name   : imageObject
+ * Description     : Provide one valid static picture independently from old unconfigured image placeholders.
+ * Input Parameters: None
+ * Return Value    : Typed image object.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+static HmiObject imageObject() //20261112-0 add
+{
+    HmiObject object;
+    object.id = QStringLiteral("stage4-image"); object.type = QStringLiteral("image"); object.name = QStringLiteral("图片显示器"); object.geometry = QRect(20, 320, 160, 100); object.hasImageDisplayProperties = true;
+    object.imageDisplay.states[0] = {QStringLiteral("red.png"), imagePng(Qt::red)}; return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::imageDefaultsConditionsAndStateLifetime
+ * Description     : Exercise measured defaults, all switching modes, address-role changes and destructive shrinking.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::imageDefaultsConditionsAndStateLifetime() //20261112-0 add
+{
+    HmiObject object = imageObject();
+    ImageDisplayDialog *dialog;
+    QSpinBox *count;
+    QLineEdit *address;
+    QSpinBox *interval;
+    QGroupBox *conditions;
+    QTableWidget *table;
+    bool explained = false;
+    object.imageDisplay.states[0] = ImageDisplayState(); dialog = new ImageDisplayDialog(object, HmiProject()); dialog->show(); QVERIFY(QTest::qWaitForWindowExposed(dialog));
+    count = dialog->findChild<QSpinBox *>(QStringLiteral("ImageStateCount")); address = dialog->findChild<QLineEdit *>(QStringLiteral("ImageMonitorAddress")); interval = dialog->findChild<QSpinBox *>(QStringLiteral("ImageInterval")); conditions = dialog->findChild<QGroupBox *>(QStringLiteral("ImageConditions")); table = dialog->findChild<QTableWidget *>(QStringLiteral("ImageStates"));
+    QCOMPARE(dialog->findChild<QTabWidget *>()->count(), 3); QCOMPARE(count->minimum(), 1); QCOMPARE(count->maximum(), 1); QVERIFY(!count->isEnabled()); QVERIFY(!conditions->isEnabled()); QVERIFY(!address->isEnabled()); QVERIFY(address->text().isEmpty()); QCOMPARE(interval->minimum(), 1); QCOMPARE(interval->maximum(), 1000); QCOMPARE(interval->value(), 1); QVERIFY(!interval->isEnabled());
+    QTimer::singleShot(0, dialog, [&explained]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { explained = message->text() == QStringLiteral("状态没有选择图片!!"); message->accept(); } });
+    dialog->findChild<QDialogButtonBox *>(QStringLiteral("ImageButtons"))->button(QDialogButtonBox::Ok)->click(); QVERIFY(explained); QVERIFY(dialog->isVisible());
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-general.png")))); }
+    dialog->findChild<QRadioButton *>(QStringLiteral("ImageType1"))->click(); QCOMPARE(count->minimum(), 2); QCOMPARE(count->maximum(), 128); QCOMPARE(count->value(), 2); QVERIFY(interval->isEnabled()); QVERIFY(!conditions->isCheckable()); QCOMPARE(dialog->findChild<QSpinBox *>(QStringLiteral("ImageBatchEnd"))->value(), 1);
+    count->setValue(3); QCOMPARE(table->rowCount(), 3); QCOMPARE(dialog->findChild<QSpinBox *>(QStringLiteral("ImageBatchEnd"))->value(), 1); dialog->findChild<QRadioButton *>(QStringLiteral("ImageCondition1"))->click(); QCOMPARE(address->text(), QStringLiteral("LW0")); QVERIFY(address->isEnabled()); QVERIFY(!interval->isEnabled());
+    dialog->findChild<QRadioButton *>(QStringLiteral("ImageCondition2"))->click(); QCOMPARE(count->value(), 2); QCOMPARE(count->maximum(), 2); QCOMPARE(address->text(), QStringLiteral("LB0")); QVERIFY(!count->isEnabled());
+    dialog->findChild<QRadioButton *>(QStringLiteral("ImageCondition0"))->click(); QCOMPARE(count->value(), 2); QCOMPARE(address->text(), QStringLiteral("LB0")); QVERIFY(!address->isEnabled());
+    dialog->findChild<QRadioButton *>(QStringLiteral("ImageType0"))->click(); QCOMPARE(count->value(), 1); QVERIFY(conditions->isChecked()); QVERIFY(!conditions->isEnabled()); delete dialog;
+    object = imageObject(); object.imageDisplay.displayType = 1; object.imageDisplay.conditionEnabled = true; object.imageDisplay.setStateCount(3); object.imageDisplay.states[2] = {QStringLiteral("green.png"), imagePng(Qt::green)};
+    dialog = new ImageDisplayDialog(object, HmiProject()); count = dialog->findChild<QSpinBox *>(QStringLiteral("ImageStateCount")); count->setValue(2); count->setValue(3); QVERIFY(dialog->object().imageDisplay.states.at(2).picturePng.isEmpty()); delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::imageBatchOrderDeletionAndGalleryCancel
+ * Description     : Exercise actual child multi-selection, ordered/truncated filling, batch deletion, reversed intervals and cancellation.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::imageBatchOrderDeletionAndGalleryCancel() //20261112-0 add
+{
+    HmiProject project;
+    HmiObject object = imageObject();
+    ImageDisplayDialog *dialog;
+    QTableWidget *table;
+    QCheckBox *add;
+    QCheckBox *remove;
+    QSpinBox *start;
+    QSpinBox *end;
+    QTimer interactor;
+    bool handled = false;
+    bool modeMatched = false;
+    bool explained = false;
+    object.imageDisplay.displayType = 1; object.imageDisplay.conditionEnabled = true; object.imageDisplay.setStateCount(3); object.imageDisplay.states.fill(ImageDisplayState());
+    project.pictures = {{QStringLiteral("a-red.png"), imagePng(Qt::red)}, {QStringLiteral("b-green.png"), imagePng(Qt::green)}};
+    dialog = new ImageDisplayDialog(object, project); dialog->show(); dialog->findChild<QTabWidget *>()->setCurrentIndex(1); table = dialog->findChild<QTableWidget *>(QStringLiteral("ImageStates")); add = dialog->findChild<QCheckBox *>(QStringLiteral("ImageBatchAdd")); remove = dialog->findChild<QCheckBox *>(QStringLiteral("ImageBatchDelete")); start = dialog->findChild<QSpinBox *>(QStringLiteral("ImageBatchStart")); end = dialog->findChild<QSpinBox *>(QStringLiteral("ImageBatchEnd"));
+    QCOMPARE(end->value(), 2); add->setChecked(true); remove->setChecked(true); add->setChecked(false); QVERIFY(start->isEnabled()); add->setChecked(true);
+    interactor.setInterval(20); connect(&interactor, &QTimer::timeout, dialog, [&]() {
+        QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QListWidget *list;
+        if (gallery == nullptr || gallery->objectName() != QStringLiteral("BitGallery")) { return; }
+        list = gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems")); if (list == nullptr || list->count() != 2) { return; }
+        modeMatched = list->selectionMode() == QAbstractItemView::MultiSelection; list->clearSelection(); list->item(1)->setSelected(true); list->item(0)->setSelected(true); handled = true; interactor.stop(); gallery->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click();
+    });
+    interactor.start(); dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction2"))->click(); QVERIFY(handled); QVERIFY(modeMatched);
+    QCOMPARE(dialog->object().imageDisplay.states.at(0).picture, QStringLiteral("a-red.png")); QCOMPARE(dialog->object().imageDisplay.states.at(1).picture, QStringLiteral("b-green.png")); QVERIFY(dialog->object().imageDisplay.states.at(2).picture.isEmpty());
+    table->setCurrentCell(0, 0); dialog->findChild<QPushButton *>(QStringLiteral("ImageMove1"))->click(); QCOMPARE(dialog->object().imageDisplay.states.at(0).picture, QStringLiteral("b-green.png")); dialog->findChild<QPushButton *>(QStringLiteral("ImageMove0"))->click(); QCOMPARE(dialog->object().imageDisplay.states.at(0).picture, QStringLiteral("a-red.png"));
+    start->setValue(1); end->setValue(1); dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction0"))->click(); QVERIFY(dialog->object().imageDisplay.states.at(1).picture.isEmpty()); QCOMPARE(table->rowCount(), 3); QVERIFY(!dialog->object().imageDisplay.states.at(0).picture.isEmpty());
+    start->setValue(2); end->setValue(0); dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction0"))->click(); QVERIFY(!dialog->object().imageDisplay.states.at(0).picture.isEmpty());
+    QTimer::singleShot(0, dialog, [&explained]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { explained = message->text() == QStringLiteral("批量加起始结束位置异常，请重新设置。"); message->accept(); } });
+    dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction2"))->click(); QVERIFY(explained);
+    add->setChecked(false); remove->setChecked(false); QVERIFY(!start->isEnabled()); QTimer::singleShot(50, dialog, []() { QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (gallery != nullptr) { gallery->reject(); } });
+    dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction2"))->click(); QCOMPARE(dialog->object().imageDisplay.states.at(0).picture, QStringLiteral("a-red.png")); QCOMPARE(dialog->pictures(), project.pictures);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-pictures.png")))); dialog->findChild<QTabWidget *>()->setCurrentIndex(2); QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-permissions.png")))); }
+    delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::imageResourceBindingsAndCopyCollisions
+ * Description     : Protect and remap picture bindings on active/inactive pages and preserve bytes during cross-project name collisions.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::imageResourceBindingsAndCopyCollisions() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject renamed;
+    HmiProject replaced;
+    HmiProject target;
+    HmiProject copied;
+    HmiObject object = imageObject();
+    HmiPage page;
+    Stage3Clipboard clipboard;
+    QString error;
+    project.objects = {object}; project.pictures.insert(QStringLiteral("red.png"), object.imageDisplay.states.first().picturePng);
+    page.id = QStringLiteral("image-page2"); page.name = QStringLiteral("图片第二页"); object.id = QStringLiteral("image-on-page2"); page.objects = {object}; QVERIFY2(project.addPage(page, &error), qPrintable(error)); //20261112-0 change: Register page order through the actual model API.
+    QCOMPARE(stage3PictureUsage(project, QStringLiteral("red.png")).boundStates, 2);
+    QVERIFY2(renameStage3Picture(project, QStringLiteral("red.png"), QStringLiteral("renamed.png"), &renamed, &error), qPrintable(error)); QCOMPARE(renamed.objects.first().imageDisplay.states.first().picture, QStringLiteral("renamed.png")); QCOMPARE(renamed.inactivePages.first().objects.first().imageDisplay.states.first().picture, QStringLiteral("renamed.png"));
+    QVERIFY(!deleteStage3Picture(renamed, QStringLiteral("renamed.png"), &target, &error)); QVERIFY(target.objects.isEmpty());
+    QVERIFY2(replaceStage3Picture(renamed, QStringLiteral("renamed.png"), imagePng(Qt::green), &replaced, &error), qPrintable(error)); QCOMPARE(replaced.inactivePages.first().objects.first().imageDisplay.states.first().picturePng, imagePng(Qt::green));
+    target.pictures.insert(QStringLiteral("renamed.png"), imagePng(Qt::blue)); QVERIFY2(captureStage3Selection(replaced, {replaced.objects.first().id}, &clipboard, &error), qPrintable(error)); QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(), &copied, nullptr, &error), qPrintable(error));
+    QVERIFY(copied.objects.first().imageDisplay.states.first().picture.startsWith(QStringLiteral("renamed.png~"))); QCOMPARE(copied.objects.first().imageDisplay.states.first().picturePng, imagePng(Qt::green)); QCOMPARE(copied.pictures.value(QStringLiteral("renamed.png")), imagePng(Qt::blue));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::imagePersistenceLegacyAndBackendGates
+ * Description     : Preserve a nine-family mixed project, reject corrupt picture records and keep legacy placeholders and backend output safe.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::imagePersistenceLegacyAndBackendGates() //20261112-0 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject imageOnly;
+    HmiObject object = imageObject();
+    HmiObject parsed = qrObject();
+    HmiObject legacy;
+    QJsonObject json;
+    QJsonObject properties;
+    QJsonObject row;
+    QJsonArray rows;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson()); QCOMPARE(loaded.objects.size(), 9);
+    json = object.toJson(); properties = json.value(QStringLiteral("imageDisplay")).toObject(); rows = properties.value(QStringLiteral("states")).toArray(); row = rows.first().toObject(); row.insert(QStringLiteral("picturePng"), QStringLiteral("not base64!")); rows[0] = row; properties.insert(QStringLiteral("states"), rows); json.insert(QStringLiteral("imageDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
+    legacy = object; legacy.hasImageDisplayProperties = false; QVERIFY2(HmiObject::fromJson(legacy.toJson(), &parsed, &error), qPrintable(error)); QVERIFY(!parsed.hasImageDisplayProperties);
+    imageOnly.objects = {object}; QVERIFY(!exportNativeProjectSource(imageOnly, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(imageOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-mixed.ksp")), &error), qPrintable(error)); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::imageActualRasterAndPlacementTransaction
+ * Description     : Verify real state pixels and execute child gallery, accepted placement, edit cancellation and whole-object undo/redo.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+void Stage4ControlTests::imageActualRasterAndPlacementTransaction() //20261112-0 add
+{
+    HmiObject object = imageObject();
+    QImage raster(180, 120, QImage::Format_ARGB32);
+    QPainter painter;
+    HmiProject project;
+    MainWindow window;
+    QTimer parentTimer;
+    QTimer childTimer;
+    bool configured = false;
+    bool childAccepted = false;
+    int history;
+    raster.fill(Qt::magenta); painter.begin(&raster); paintImageDisplay(&painter, QRectF(10, 10, 160, 100), object.imageDisplay, 0); painter.end(); QCOMPARE(raster.pixelColor(50, 50), QColor(Qt::red)); QCOMPARE(raster.pixelColor(0, 0), QColor(Qt::magenta));
+    object.imageDisplay.states[0].picturePng = imagePng(Qt::green); painter.begin(&raster); paintImageDisplay(&painter, QRectF(10, 10, 160, 100), object.imageDisplay, 0); painter.end(); QCOMPARE(raster.pixelColor(50, 50), QColor(Qt::green));
+    project.pictures.insert(QStringLiteral("green.png"), imagePng(Qt::green)); window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
+    QTimer::singleShot(0, &window, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.m_commands.value(QStringLiteral("pictruedisplay"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QCOMPARE(window.m_projectHistory.size(), history);
+    parentTimer.setInterval(20); childTimer.setInterval(20);
+    connect(&childTimer, &QTimer::timeout, &window, [&]() {
+        QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QListWidget *list;
+        if (gallery == nullptr || gallery->objectName() != QStringLiteral("BitGallery")) { return; }
+        list = gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems")); if (list == nullptr || list->count() != 1) { return; } list->setCurrentRow(0); childAccepted = true; childTimer.stop(); gallery->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click();
+    });
+    connect(&parentTimer, &QTimer::timeout, &window, [&]() {
+        ImageDisplayDialog *dialog = qobject_cast<ImageDisplayDialog *>(QApplication::activeModalWidget());
+        if (dialog == nullptr || configured) { return; } configured = true; parentTimer.stop(); dialog->findChild<QPushButton *>(QStringLiteral("ImagePictureAction2"))->click(); dialog->findChild<QDialogButtonBox *>(QStringLiteral("ImageButtons"))->button(QDialogButtonBox::Ok)->click();
+    });
+    parentTimer.start(); childTimer.start(); window.m_commands.value(QStringLiteral("pictruedisplay"))->trigger(); QVERIFY(configured); QVERIFY(childAccepted); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(window.currentEditorProject().objects.isEmpty());
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20, 20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(180, 120))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(180, 120)));
+    QCOMPARE(window.currentEditorProject().objects.size(), 1); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.states.first().picturePng, imagePng(Qt::green)); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { ImageDisplayDialog *dialog = qobject_cast<ImageDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->reject(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QTimer::singleShot(0, &window, []() { ImageDisplayDialog *dialog = qobject_cast<ImageDisplayDialog *>(QApplication::activeModalWidget()); if (dialog != nullptr) { dialog->findChild<QSpinBox *>(QStringLiteral("ImageInterval"))->setValue(7); dialog->findChild<QDialogButtonBox *>(QStringLiteral("ImageButtons"))->button(QDialogButtonBox::Ok)->click(); } }); window.editStage4Control(); QCOMPARE(window.m_projectHistory.size(), history + 2); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 7);
+    window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 1); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty()); window.restoreProjectHistory(1); window.restoreProjectHistory(1); QVERIFY(window.currentEditorProject().objects.first().hasImageDisplayProperties); QCOMPARE(window.currentEditorProject().objects.first().imageDisplay.interval, 7);
 }
 
 QTEST_MAIN(Stage4ControlTests)

@@ -1,0 +1,871 @@
+{
+  "probePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\picture\\batch_probe.py",
+  "probeSha256": "d694f75d75863c609e41bf69b58ad23a81b1cf04600a9530e31e92c49c01fda7",
+  "scenarios": [
+    {
+      "name": "batch-add-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 1,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "before-batch-add-two-empty"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 0
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 1
+        },
+        {
+          "op": "dump",
+          "label": "batch-add-range-0-1"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "dump",
+          "label": "after-batch-add-selection"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-add-red-range-0-1"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 2
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 2
+        },
+        {
+          "op": "dump",
+          "label": "batch-add-equal-2-2"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-add-equal"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": -10
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 999
+        },
+        {
+          "op": "dump",
+          "label": "batch-add-clamped-boundaries"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 2
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 0
+        },
+        {
+          "op": "dump",
+          "label": "batch-add-reversed-2-0"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "dump",
+          "label": "after-batch-add-reversed"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-add-reversed"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "batch-delete-bounds-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": -10
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 999
+        },
+        {
+          "op": "dump",
+          "label": "batch-delete-clamped-boundaries"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 1
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 1
+        },
+        {
+          "op": "dump",
+          "label": "batch-delete-equal-1-1"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-delete-equal"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 2
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 0
+        },
+        {
+          "op": "dump",
+          "label": "batch-delete-reversed-2-0"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "dump",
+          "label": "after-batch-delete-reversed"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-delete-reversed"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "batch-delete-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "spin",
+          "name": "m_StatuspBox",
+          "value": 3
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 2,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "dump",
+          "label": "setup-green-selected"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "setup-three-distinct-references"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-batch-three-state.sm"
+        },
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "read-tables",
+          "label": "before-batch-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "batch-delete-checkbox-only"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-delete-checkbox-only"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-delete-button"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "dump",
+          "label": "after-add-checkbox-with-delete-checked"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-both-checkbox-clicks"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "batch-multi-flags-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "dump",
+          "label": "flags-none"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "flags-delete-only"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "dump",
+          "label": "flags-both-delete-then-add"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "dump",
+          "label": "flags-delete-only-after-uncheck-add"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "flags-neither-after-uncheck-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "dump",
+          "label": "flags-add-only"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "flags-both-add-then-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "flags-add-only-after-uncheck-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "dump",
+          "label": "flags-neither-after-uncheck-add"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 0,
+          "column": 1,
+          "control": false
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 1,
+          "column": 1,
+          "control": false
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 2,
+          "column": 1,
+          "control": false
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "multi-before-three-empty"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 0
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 2
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "dump",
+          "label": "batch-multi-gallery-default"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0,
+          "control": false
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1,
+          "control": true
+        },
+        {
+          "op": "table-selection",
+          "name": "tableWidget",
+          "label": "two-picks-control"
+        },
+        {
+          "op": "screenshot",
+          "title": "工程图库",
+          "output": "picture-batch-gallery-two-selected.png"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-batch-two-picked-range0-2"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "both-before-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "both-after-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0,
+          "control": false
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1,
+          "control": true
+        },
+        {
+          "op": "table-selection",
+          "name": "tableWidget",
+          "label": "both-two-picks-control"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "both-after-add"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 2
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 0
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "dump",
+          "label": "reversed-add-post-click"
+        },
+        {
+          "op": "read-tables",
+          "label": "reversed-add-post-click"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "batch-multi-r2-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 1,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 2,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "multi-before-three-empty"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batch"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 0
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 2
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "tableWidget",
+          "slot": "clearSelection"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0
+        },
+        {
+          "op": "table-selection",
+          "name": "tableWidget",
+          "label": "two-picks-green-then-red"
+        },
+        {
+          "op": "screenshot",
+          "title": "工程图库",
+          "label": "picture-batch-gallery-two-selected"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "after-two-picked-range0-2"
+        },
+        {
+          "op": "invoke",
+          "name": "checkBox_batchDel"
+        },
+        {
+          "op": "dump",
+          "label": "both-before-delete"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "both-after-delete"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 1
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "tableWidget",
+          "slot": "clearSelection"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 0
+        },
+        {
+          "op": "table-selection",
+          "name": "tableWidget",
+          "label": "both-two-picked-equal-range"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "both-after-add-equal-range"
+        },
+        {
+          "op": "invoke",
+          "name": "m_deletepicbtn"
+        },
+        {
+          "op": "read-tables",
+          "label": "both-after-delete-equal-range"
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_Start",
+          "value": 2
+        },
+        {
+          "op": "spin",
+          "name": "spinBox_End",
+          "value": 0
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "dump",
+          "label": "reversed-add-post-click"
+        },
+        {
+          "op": "read-tables",
+          "label": "reversed-add-post-click"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    }
+  ],
+  "privateDesktop": "KinSealStage4PictureBatch20261112",
+  "selectedItemsGetter": "_ZN12QTableWidget13selectedItemsEv (nonconst Qt4 export); positions retrieved through row/column getters on GUI thread.",
+  "selectionPreparation": "Native QTableWidget.clearSelection slot, then real owned viewport click events; no real keyboard/mouse input.",
+  "baseSource": {
+    "path": "picture-batch-three-state.sm",
+    "sha256": "a97bc7a54b5ae933a53a2956083104378a5eadc38f7bae7af45cb70e294e555b",
+    "origin": "Actual native save after growing to3 and assigning red/green/green."
+  }
+}

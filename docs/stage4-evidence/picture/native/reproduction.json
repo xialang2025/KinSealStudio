@@ -1,0 +1,853 @@
+{
+  "date": "2026-11-12",
+  "scenarios": [
+    {
+      "name": "conditions-scenario.json",
+      "actions": [
+        {
+          "name": "pictruedisplay",
+          "op": "action"
+        },
+        {
+          "seconds": 0.5,
+          "op": "wait"
+        },
+        {
+          "name": "m_MutilradioBtn",
+          "op": "invoke"
+        },
+        {
+          "label": "multiple-time",
+          "op": "dump"
+        },
+        {
+          "value": 3,
+          "name": "m_StatuspBox",
+          "op": "spin"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "label": "three-state-list",
+          "op": "read-tables"
+        },
+        {
+          "value": 0,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "name": "m_FixedradioBtn",
+          "op": "invoke"
+        },
+        {
+          "label": "multiple-numeric",
+          "op": "dump"
+        },
+        {
+          "name": "m_BitradioBtn",
+          "op": "invoke"
+        },
+        {
+          "label": "multiple-bit",
+          "op": "dump"
+        },
+        {
+          "name": "m_TimeradioBtn",
+          "op": "invoke"
+        },
+        {
+          "label": "return-time",
+          "op": "dump"
+        },
+        {
+          "name": "m_SingleradioBtn",
+          "op": "invoke"
+        },
+        {
+          "label": "return-static",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        }
+      ]
+    },
+    {
+      "name": "default-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "pictruedisplay"
+        },
+        {
+          "op": "dump",
+          "label": "picture-default"
+        },
+        {
+          "op": "screenshot",
+          "label": "picture-default"
+        },
+        {
+          "op": "invoke",
+          "name": "m_cancelBtn"
+        }
+      ]
+    },
+    {
+      "name": "distinct-scenario.json",
+      "actions": [
+        {
+          "op": "action",
+          "name": "action_checkall"
+        },
+        {
+          "op": "action",
+          "name": "action_openpropertiset"
+        },
+        {
+          "op": "wait",
+          "seconds": 0.35
+        },
+        {
+          "op": "tab",
+          "name": "tabWidget",
+          "value": 1
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 1,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "table-click",
+          "name": "tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "dump",
+          "label": "distinct-green-selected"
+        },
+        {
+          "op": "invoke",
+          "name": "",
+          "text": "确定",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "distinct-red-green"
+        },
+        {
+          "op": "table-click",
+          "name": "m_tableWidget",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "op": "invoke",
+          "name": "btn_Down"
+        },
+        {
+          "op": "read-tables",
+          "label": "distinct-after-down"
+        },
+        {
+          "op": "invoke",
+          "name": "btn_Up"
+        },
+        {
+          "op": "read-tables",
+          "label": "distinct-after-up"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-distinct-red-green.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-distinct-red-green"
+        }
+      ]
+    },
+    {
+      "name": "inspect-scenario.json",
+      "actions": [
+        {
+          "op": "scene-read",
+          "label": "static-picture-source-geometry"
+        },
+        {
+          "op": "editor-screenshot",
+          "label": "static-picture-source-geometry"
+        }
+      ]
+    },
+    {
+      "name": "lifecycle-scenario.json",
+      "actions": [
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.35,
+          "op": "wait"
+        },
+        {
+          "value": 3,
+          "name": "m_StatuspBox",
+          "op": "spin"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "column": 1,
+          "row": 2,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "column": 0,
+          "row": 0,
+          "name": "tableWidget",
+          "op": "table-click"
+        },
+        {
+          "kind": "QPushButton",
+          "text": "确定",
+          "name": "",
+          "op": "invoke"
+        },
+        {
+          "label": "three-assigned-images",
+          "op": "read-tables"
+        },
+        {
+          "value": 0,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "value": 2,
+          "name": "m_StatuspBox",
+          "op": "spin"
+        },
+        {
+          "value": 3,
+          "name": "m_StatuspBox",
+          "op": "spin"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "label": "shrink-regrow-state2",
+          "op": "read-tables"
+        },
+        {
+          "column": 1,
+          "row": 0,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "name": "btn_Down",
+          "op": "invoke"
+        },
+        {
+          "label": "after-move-down",
+          "op": "read-tables"
+        },
+        {
+          "name": "btn_Up",
+          "op": "invoke"
+        },
+        {
+          "label": "after-move-up",
+          "op": "read-tables"
+        },
+        {
+          "column": 1,
+          "row": 1,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "name": "m_deletepicbtn",
+          "op": "invoke"
+        },
+        {
+          "label": "after-delete-state1",
+          "op": "read-tables"
+        },
+        {
+          "name": "checkBox_batch",
+          "op": "invoke"
+        },
+        {
+          "label": "batch-ranges",
+          "op": "dump"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "picture-after-list-cancel.sm",
+          "op": "copy-source"
+        },
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.35,
+          "op": "wait"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "label": "reopen-after-list-cancel",
+          "op": "read-tables"
+        },
+        {
+          "column": 1,
+          "row": 0,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "column": 1,
+          "row": 0,
+          "name": "tableWidget",
+          "op": "table-click"
+        },
+        {
+          "label": "green-selected-before-gallery-cancel",
+          "op": "dump"
+        },
+        {
+          "kind": "QPushButton",
+          "text": "取消",
+          "name": "",
+          "op": "invoke"
+        },
+        {
+          "label": "after-selection-gallery-cancel",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "column": 1,
+          "row": 0,
+          "name": "tableWidget",
+          "op": "table-click"
+        },
+        {
+          "kind": "QPushButton",
+          "text": "确定",
+          "name": "",
+          "op": "invoke"
+        },
+        {
+          "label": "green-child-confirmed",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.35,
+          "op": "wait"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "label": "main-cancel-after-child-confirm",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_cancelBtn",
+          "op": "invoke"
+        },
+        {
+          "output": "picture-after-gallery-cancel.sm",
+          "op": "copy-source"
+        }
+      ]
+    },
+    {
+      "name": "load-scenario.json",
+      "actions": [
+        {
+          "name": "pictruedisplay",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "name": "tabWidget",
+          "value": 1,
+          "op": "tab"
+        },
+        {
+          "name": "m_tableWidget",
+          "op": "table-click",
+          "row": 0,
+          "column": 1
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-red.png",
+          "op": "arm-file"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-red.png",
+          "op": "native-file"
+        },
+        {
+          "label": "red-imported-before-gallery-cancel",
+          "op": "dump"
+        },
+        {
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton",
+          "text": "取消"
+        },
+        {
+          "label": "gallery-cancel-leaves-control-empty",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "name": "tableWidget",
+          "op": "table-click",
+          "row": 0,
+          "column": 0
+        },
+        {
+          "label": "red-reselected-after-cancel",
+          "op": "dump"
+        },
+        {
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton",
+          "text": "确定"
+        },
+        {
+          "label": "red-committed-to-state0",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "from": [
+            160,
+            120
+          ],
+          "op": "scene-drag",
+          "to": [
+            360,
+            220
+          ]
+        },
+        {
+          "output": "picture-static-red.sm",
+          "op": "save"
+        },
+        {
+          "label": "picture-static-red",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "load2-scenario.json",
+      "actions": [
+        {
+          "name": "pictruedisplay",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "op": "tab",
+          "value": 1,
+          "name": "tabWidget"
+        },
+        {
+          "op": "table-click",
+          "row": 0,
+          "column": 1,
+          "name": "m_tableWidget"
+        },
+        {
+          "name": "m_SelectPicpushBtn",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-red.png",
+          "op": "arm-file"
+        },
+        {
+          "name": "pbtn_add",
+          "op": "invoke"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-red.png",
+          "op": "native-file"
+        },
+        {
+          "op": "invoke",
+          "text": "确定",
+          "kind": "QPushButton",
+          "name": ""
+        },
+        {
+          "label": "red-state0",
+          "op": "read-tables"
+        },
+        {
+          "name": "m_okBtn",
+          "op": "invoke"
+        },
+        {
+          "op": "scene-drag",
+          "from": [
+            160,
+            120
+          ],
+          "to": [
+            360,
+            220
+          ]
+        },
+        {
+          "output": "picture-static-red.sm",
+          "op": "save"
+        },
+        {
+          "label": "picture-static-red",
+          "op": "native-compile"
+        }
+      ]
+    },
+    {
+      "name": "multiple-scenario.json",
+      "actions": [
+        {
+          "x": 260,
+          "op": "scene-double",
+          "y": 170
+        },
+        {
+          "op": "invoke",
+          "name": "m_MutilradioBtn"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "arm-file",
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-green.png"
+        },
+        {
+          "op": "invoke",
+          "name": "pbtn_add"
+        },
+        {
+          "op": "native-file",
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-green.png"
+        },
+        {
+          "text": "确定",
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "two-images-red-green"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-time.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-time"
+        },
+        {
+          "x": 260,
+          "op": "scene-double",
+          "y": 170
+        },
+        {
+          "op": "invoke",
+          "name": "m_FixedradioBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-numeric.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-numeric"
+        },
+        {
+          "x": 260,
+          "op": "scene-double",
+          "y": 170
+        },
+        {
+          "op": "invoke",
+          "name": "m_BitradioBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-bit.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-bit"
+        }
+      ]
+    },
+    {
+      "name": "multiple2-scenario.json",
+      "actions": [
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "op": "invoke",
+          "name": "m_MutilradioBtn"
+        },
+        {
+          "value": 1,
+          "name": "tabWidget",
+          "op": "tab"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "name": "m_tableWidget",
+          "op": "table-click"
+        },
+        {
+          "op": "invoke",
+          "name": "m_SelectPicpushBtn"
+        },
+        {
+          "op": "arm-file",
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-green.png"
+        },
+        {
+          "op": "invoke",
+          "name": "pbtn_add"
+        },
+        {
+          "op": "native-file",
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\docs\\stage4-evidence\\picture\\native\\probe-green.png"
+        },
+        {
+          "text": "确定",
+          "name": "",
+          "op": "invoke",
+          "kind": "QPushButton"
+        },
+        {
+          "op": "read-tables",
+          "label": "two-images-red-green"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-time.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-time"
+        },
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "op": "invoke",
+          "name": "m_FixedradioBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-numeric.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-numeric"
+        },
+        {
+          "name": "action_checkall",
+          "op": "action"
+        },
+        {
+          "name": "action_openpropertiset",
+          "op": "action"
+        },
+        {
+          "seconds": 0.4,
+          "op": "wait"
+        },
+        {
+          "op": "invoke",
+          "name": "m_BitradioBtn"
+        },
+        {
+          "op": "invoke",
+          "name": "m_okBtn"
+        },
+        {
+          "op": "save",
+          "output": "picture-multiple-bit.sm"
+        },
+        {
+          "op": "native-compile",
+          "label": "picture-multiple-bit"
+        }
+      ]
+    }
+  ],
+  "python": "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "probePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\picture\\probe.py",
+  "probeSha256": "9892821b5824251a2c308dae16e6962a8d9d6ffe09ea9f8e1100968d7aed4753",
+  "preparationPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\native-picture\\prepare.py",
+  "preparationSha256": "4edfa5de19b4a43272b77dac45d689c5cabb3db629286ba323df92afadb5e8b9",
+  "isolation": "Separate private desktop and runtime, copied source, task-specific temp. Qt operations dispatched on native GUI thread; window-owned PostMessage and PrintWindow only; no real mouse/keyboard, desktop switch, focus activation, USB, or PLC access.",
+  "nativeCompile": "Actual native compiler phase via action_USBdownload; verified new SysPara mtime and success log, copied WORK/compile; no transfer button invoked.",
+  "patch": "Private task executable only: offset0x7c4 5589e5→b001c3; original installation unchanged.",
+  "knownAutomationIssues": [
+    "Table selection must use viewport click to activate native binding; setCurrentCell alone does not.",
+    "Importing into an existing gallery does not necessarily select the new image; verify lineEdit_des and explicitly click correct cell.",
+    "Source checkpoints after cancellation are copied unchanged working sources, not newly saved native projects.",
+    "Retained failed probe runs are automation failures; they do not establish unsupported native features."
+  ]
+}

@@ -2,6 +2,7 @@
 #include "bit_button_renderer.h"
 #include "kvg_library.h" //20261109-0 add
 #include "hmi_property_widgets.h"
+#include "stage3_resources.h" //20261112-0 add
 #include <QBuffer>
 #include <QButtonGroup> //20261110-0 add
 #include <QCheckBox>
@@ -1222,11 +1223,12 @@ void BitButtonDialog::editMacro() //20261108-15 add
 /******************************************************************************
  * Function Name   : BitButtonDialog::selectPicture
  * Description     : Browse recovered SVG categories in small batches and import portable project images.
- * Input Parameters: projectGallery
+ * Input Parameters: projectGallery, rejectGif, choices
  * Return Value    : None
  * Date            : 2026.11.09
  ******************************************************************************/
-void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
+bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
+                                    QVector<QPair<QString, QByteArray>> *choices) //20261112-0 change
 {
     QDialog dialog(this);
     QGridLayout *layout;
@@ -1238,6 +1240,8 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
     QTreeWidgetItem *groupItem;
     QDialogButtonBox *buttons;
     QPushButton *import;
+    QPushButton *batchImport; //20261112-0 add
+    QPushButton *deletePicture;
     QPushButton *background;
     QLabel *hint;
     QLineEdit *search;
@@ -1272,6 +1276,7 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
     QByteArray selectedData;
     QObject *signalSource;
     int dialogResult;
+    int selectedIndex;
 
     gallery = m_project.pictures; dialog.setObjectName(QStringLiteral("BitGallery"));
     dialog.setWindowTitle(projectGallery ? QStringLiteral("工程图库") : QStringLiteral("系统图库")); dialog.resize(1040, 660);
@@ -1280,6 +1285,7 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
     root = new QTreeWidgetItem(tree, QStringList{dialog.windowTitle()});
     root->setExpanded(true);
     list = new QListWidget(&dialog); list->setObjectName(QStringLiteral("GalleryItems")); list->setViewMode(QListView::IconMode);
+    if (choices != nullptr) { list->setSelectionMode(QAbstractItemView::MultiSelection); } //20261112-0 add: Native batch mode toggles independently selected gallery entries.
     list->setIconSize(QSize(90, 90)); list->setGridSize(QSize(140, 125)); list->setResizeMode(QListView::Adjust);
     search = new QLineEdit(&dialog); search->setObjectName(QStringLiteral("GallerySearch"));
     search->setPlaceholderText(QStringLiteral("搜索全部图库：输入图片名称或分类")); search->setClearButtonEnabled(true);
@@ -1296,13 +1302,22 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
     hint->setWordWrap(true); layout->addWidget(hint, 3, 0, 1, 4);
     background = new QPushButton(QStringLiteral("修改图库底色"), &dialog); layout->addWidget(background, 4, 0);
     import = new QPushButton(QStringLiteral("导入图片…"), &dialog); import->setVisible(projectGallery); import->setObjectName(QStringLiteral("GalleryImport")); layout->addWidget(import, 4, 1);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); layout->addWidget(buttons, 4, 2, 1, 2);
+    batchImport = new QPushButton(QStringLiteral("批量添加图片"), &dialog); batchImport->setObjectName(QStringLiteral("GalleryBatchImport")); batchImport->setVisible(projectGallery); layout->addWidget(batchImport, 5, 1); //20261112-0 add
+    deletePicture = new QPushButton(QStringLiteral("删除图片"), &dialog); deletePicture->setObjectName(QStringLiteral("GalleryDelete")); deletePicture->setVisible(projectGallery); layout->addWidget(deletePicture, 5, 0);
+    if (projectGallery) { import->setText(QStringLiteral("添加图片")); }
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); layout->addWidget(buttons, projectGallery ? 5 : 4, 2, 1, 2);
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
     connect(list, &QListWidget::itemDoubleClicked, &dialog, [&dialog]() { dialog.accept(); });
     connect(list, &QListWidget::currentItemChanged, &dialog, [hint, projectGallery](QListWidgetItem *current, QListWidgetItem *) {
         QString warning;
-        if (current == nullptr || projectGallery) { return; }
+        QImage image;
+        if (current == nullptr) { return; }
+        if (projectGallery) //20261112-0 add: Expose the normalized embedded resource's actual metadata alongside the gallery grid.
+        {
+            image = QImage::fromData(current->data(Qt::UserRole).toByteArray(), "PNG");
+            hint->setText(QStringLiteral("图片名称：%1\n描述：%1\n类型：PNG\n尺寸：%2×%3").arg(current->text()).arg(image.width()).arg(image.height())); return;
+        }
         warning = kvgPictureWarning(current->data(Qt::UserRole + 1).toString());
         hint->setText(QStringLiteral("当前图片：%1。%2").arg(current->text(), warning.isEmpty() ?
                       QStringLiteral("双击或按确定使用选中的图片。") : warning));
@@ -1430,8 +1445,9 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
         color = QColorDialog::getColor(Qt::white, &dialog, QStringLiteral("选择颜色"), QColorDialog::DontUseNativeDialog);
         if (color.isValid()) { palette = list->palette(); palette.setColor(QPalette::Base, color); list->setPalette(palette); }
     });
-    connect(import, &QPushButton::clicked, &dialog, [&dialog, list, &gallery]() {
+    connect(import, &QPushButton::clicked, &dialog, [&dialog, list, &gallery, rejectGif, import]() {
         QString path;
+        QStringList paths;
         QString name;
         QImageReader reader;
         QImage image;
@@ -1441,37 +1457,61 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
         QBuffer buffer;
         QListWidgetItem *entry;
         int suffix;
-        path = QFileDialog::getOpenFileName(&dialog, QStringLiteral("导入工程图片"), QString(), QStringLiteral("图片 (*.png *.jpg *.jpeg *.bmp *.gif *.svg *.kvg)"));
-        if (path.isEmpty()) { return; }
-        reader.setFileName(path); reader.setDecideFormatFromContent(true);
-        if (QFileInfo(path).size() > 16 * 1024 * 1024)
+        if (import->property("batchImport").toBool()) { paths = QFileDialog::getOpenFileNames(&dialog, QStringLiteral("批量添加图片"), QString(), QStringLiteral("图片 (*.png *.jpg *.jpeg *.bmp *.gif *.svg *.kvg)")); }
+        else { paths.append(QFileDialog::getOpenFileName(&dialog, QStringLiteral("导入工程图片"), QString(), QStringLiteral("图片 (*.png *.jpg *.jpeg *.bmp *.gif *.svg *.kvg)"))); }
+        Q_FOREACH (path, paths) //20261112-0 add: Stage every imported file inside this child dialog's private pool.
         {
-            QMessageBox::warning(&dialog, QStringLiteral("图片过大"), QStringLiteral("本版支持不超过16 MiB、4096×4096的图片。")); return;
+            if (path.isEmpty()) { continue; }
+            reader.setFileName(path); reader.setDecideFormatFromContent(true);
+            if (rejectGif && reader.format().toLower() == QByteArrayLiteral("gif")) //20261112-0 add: Never flatten an animated GIF into a static picture state.
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("图片类型错误"), QStringLiteral("GIF图片只能用在GIF显示控件中")); return;
+            }
+            if (QFileInfo(path).size() > 16 * 1024 * 1024)
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("图片过大"), QStringLiteral("本版支持不超过16 MiB、4096×4096的图片。")); return;
+            }
+            if (QFileInfo(path).suffix().compare(QStringLiteral("kvg"), Qt::CaseInsensitive) == 0 ||
+                QFileInfo(path).suffix().compare(QStringLiteral("svg"), Qt::CaseInsensitive) == 0) {
+                source.setFileName(path);
+                if (source.open(QIODevice::ReadOnly)) { image = importKvgImage(source.readAll(), &error); }
+            } else if (reader.size().width() <= 4096 && reader.size().height() <= 4096) {
+                image = reader.read();
+            }
+            buffer.setBuffer(&png); buffer.open(QIODevice::WriteOnly);
+            if (image.isNull() || image.width() > 4096 || image.height() > 4096 || !image.save(&buffer, "PNG") || png.size() > 16 * 1024 * 1024)
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("导入失败"), error.isEmpty() ? QStringLiteral("无法读取图片或转换后的图片过大。") : error); return;
+            }
+            name = QFileInfo(path).completeBaseName() + QStringLiteral(".png"); suffix = 1;
+            while (gallery.contains(name)) { name = QFileInfo(path).completeBaseName() + QStringLiteral("_%1.png").arg(suffix++); }
+            gallery.insert(name, png); entry = new QListWidgetItem(QIcon(QPixmap::fromImage(image.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation))), name, list);
+            entry->setData(Qt::UserRole, png); entry->setData(Qt::UserRole + 1, name); list->setCurrentItem(entry);
         }
-        if (QFileInfo(path).suffix().compare(QStringLiteral("kvg"), Qt::CaseInsensitive) == 0 ||
-            QFileInfo(path).suffix().compare(QStringLiteral("svg"), Qt::CaseInsensitive) == 0) {
-            source.setFileName(path);
-            if (source.open(QIODevice::ReadOnly)) { image = importKvgImage(source.readAll(), &error); }
-        } else if (reader.size().width() <= 4096 && reader.size().height() <= 4096) {
-            image = reader.read();
-        }
-        buffer.setBuffer(&png); buffer.open(QIODevice::WriteOnly);
-        if (image.isNull() || image.width() > 4096 || image.height() > 4096 || !image.save(&buffer, "PNG") || png.size() > 16 * 1024 * 1024)
-        {
-            QMessageBox::warning(&dialog, QStringLiteral("导入失败"), error.isEmpty() ? QStringLiteral("无法读取图片或转换后的图片过大。") : error); return;
-        }
-        name = QFileInfo(path).completeBaseName() + QStringLiteral(".png"); suffix = 1;
-        while (gallery.contains(name)) { name = QFileInfo(path).completeBaseName() + QStringLiteral("_%1.png").arg(suffix++); }
-        gallery.insert(name, png); entry = new QListWidgetItem(QIcon(QPixmap::fromImage(image.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation))), name, list);
-        entry->setData(Qt::UserRole, png); entry->setData(Qt::UserRole + 1, name); list->setCurrentItem(entry);
+    });
+    connect(batchImport, &QPushButton::clicked, &dialog, [import]() { import->setProperty("batchImport", true); import->click(); import->setProperty("batchImport", false); }); //20261112-0 add
+    connect(deletePicture, &QPushButton::clicked, &dialog, [this, &dialog, list, &gallery, &pending, &cursor]() {
+        QListWidgetItem *entry = list->currentItem();
+        HmiProject candidate = m_project;
+        Stage3PictureUsage usage;
+        if (entry == nullptr) { return; }
+        candidate.pictures = gallery; usage = stage3PictureUsage(candidate, entry->text());
+        if (usage.boundStates + usage.detachedStates + usage.explicitReferences != 0)
+        { QMessageBox::warning(&dialog, QStringLiteral("图片仍被使用"), QStringLiteral("图片仍被控件状态引用，请先解除引用。")); return; }
+        gallery.remove(entry->text()); if (pending.indexOf(entry->text()) >= cursor) { pending.removeAll(entry->text()); } delete entry;
     });
     list->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(list, &QListWidget::customContextMenuRequested, &dialog, [list, projectGallery, &gallery, &pending, &cursor](const QPoint &point) {
+    connect(list, &QListWidget::customContextMenuRequested, &dialog, [this, &dialog, list, projectGallery, &gallery, &pending, &cursor](const QPoint &point) {
         QMenu menu;
         QListWidgetItem *entry;
+        Stage3PictureUsage usage;
+        HmiProject candidate;
         entry = list->itemAt(point); if (!projectGallery || entry == nullptr) { return; }
         menu.addAction(QStringLiteral("删除图片"));
         if (menu.exec(list->viewport()->mapToGlobal(point)) != nullptr) {
+            candidate = m_project; candidate.pictures = gallery; usage = stage3PictureUsage(candidate, entry->text()); //20261112-0 add
+            if (usage.boundStates + usage.detachedStates + usage.explicitReferences != 0)
+            { QMessageBox::warning(&dialog, QStringLiteral("图片仍被使用"), QStringLiteral("图片仍被控件状态引用，请先解除引用。")); return; }
             gallery.remove(entry->text());
             if (pending.indexOf(entry->text()) >= cursor) { pending.removeAll(entry->text()); }
             delete entry;
@@ -1484,13 +1524,40 @@ void BitButtonDialog::selectPicture(bool projectGallery) //20261109-3 change
     } //20261109-1 add: Drop closures before their referenced filter/draft state leaves this stack frame.
     if (dialogResult == QDialog::Accepted)
     {
+        if (choices != nullptr) //20261112-0 add
+        {
+            choices->clear();
+            for (selectedIndex = 0; selectedIndex < list->count(); ++selectedIndex)
+            {
+                if (list->item(selectedIndex)->isSelected()) { choices->append(qMakePair(list->item(selectedIndex)->data(Qt::UserRole + 1).toString(), list->item(selectedIndex)->data(Qt::UserRole).toByteArray())); }
+            }
+        }
         m_project.pictures = gallery; //20261108-15 change: Confirm deletion even when the gallery is now empty.
-        if (list->currentItem() == nullptr) { return; }
+        if (list->currentItem() == nullptr) { return true; } //20261112-0 change: A confirmed resource-only draft is still an accepted child transaction.
         selected = list->currentItem()->data(Qt::UserRole + 1).toString(); selectedData = list->currentItem()->data(Qt::UserRole).toByteArray();
         storeState(); m_project.pictures = gallery; appearance(m_state).picture = selected;
         appearance(m_state).picturePng = selectedData; appearance(m_state).useImage = true;
         loadState();
+        return true; //20261112-0 add
     }
+    return false; //20261112-0 add
+}
+
+/******************************************************************************
+ * Function Name   : BitButtonDialog::choosePictureForControl
+ * Description     : Reuse the bounded gallery on an invisible adapter, returning only a confirmed picture and resource pool.
+ * Input Parameters: projectGallery, name, png, pool, choices
+ * Return Value    : True after child confirmation; cancellation leaves all caller values unchanged.
+ * Date            : 2026.11.12
+ ******************************************************************************/
+bool BitButtonDialog::choosePictureForControl(bool projectGallery, QString *name, QByteArray *png,
+                                             QMap<QString, QByteArray> *pool,
+                                             QVector<QPair<QString, QByteArray>> *choices) //20261112-0 add
+{
+    if (name == nullptr || png == nullptr || pool == nullptr) { return false; }
+    m_state = 0; appearance(0).picture = *name; appearance(0).picturePng = *png; loadState();
+    if (!selectPicture(projectGallery, true, choices)) { return false; }
+    *name = appearance(0).picture; *png = appearance(0).picturePng; *pool = m_project.pictures; return true;
 }
 
 /******************************************************************************

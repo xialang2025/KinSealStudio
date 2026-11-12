@@ -1846,22 +1846,44 @@
       "taskId": "S04-03",
       "document": "05_阶段4_控件逐项复刻.md",
       "heading": "S04-03 4B：图片显示、GIF显示",
-      "documentation": "generated_and_checked",
+      "documentation": "updated_per_control",
       "investigation": {
-        "state": "not_revalidated_in_this_run",
-        "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+        "state": "native_ui_and_minimal_compile_captured",
+        "evidence": "../docs/stage4-evidence/picture/native/delivery.json"
       },
       "implementation": {
-        "state": "not_assessed_this_run",
-        "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+        "state": "partial_editor_and_KSP_slices",
+        "scope": "本次C09编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "heading": "S04-03 4B：图片显示、GIF显示",
-        "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
-      }
+        "nextAction": "进入C10；保留本控件未决层"
+      },
+      "executionHistory": [
+        {
+          "executionId": "stage4-picture-20261112",
+          "previousState": {
+            "documentation": "generated_and_checked",
+            "investigation": {
+              "state": "not_revalidated_in_this_run",
+              "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+            },
+            "implementation": {
+              "state": "not_assessed_this_run",
+              "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "heading": "S04-03 4B：图片显示、GIF显示",
+              "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T03:52:11.024977+00:00"
+        }
+      ]
     },
     {
       "taskId": "S04-04",
@@ -3277,6 +3299,31 @@
         "remainingThisControlRuntimeCopies": 0,
         "unrelatedCleanupBlock": "native-graphics/runtime-rect-*清理被自动审批blocked by policy拒绝，由调查代理独立登记；未宣称已清理。"
       }
+    },
+    {
+      "id": "stage4-picture-20261112",
+      "productPassed": 26,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": false,
+      "completeControl": false,
+      "cleanup": {
+        "deletedProductFiles": 42,
+        "deletedProductBytes": 623542,
+        "sharedBuildRetained": true,
+        "nativeRuntimeCleanup": "调查代理本人picture/gif运行时及批量补证均已清理，详见native/delivery.json与batch-supplement-delivery.json；不重复计量。",
+        "systemTempBlocked": "../temp-cleanup-blocked.json",
+        "testTemporaryFilesRemaining": 0,
+        "finalRun": "windows-final/run.json",
+        "tempRedirectValidation": "windows-temp-validation/run.json"
+      }
+    }
+  ],
+  "executionEnvironmentLimits": [
+    {
+      "id": "S04-TEMP-001",
+      "evidence": "../docs/stage4-evidence/temp-cleanup-blocked.json",
+      "state": "automatic_cleanup_rejected_work_continues_with_owned_Z_temp"
     }
   ]
 }

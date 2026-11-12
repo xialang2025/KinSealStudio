@@ -74,6 +74,12 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
 {
     QList<AddressSlot> addressSlots;
 
+    if (object->hasImageDisplayProperties) //20261112-0 add: Static/time variants retain inactive address drafts.
+    {
+        if (object->imageDisplay.conditionEnabled && object->imageDisplay.condition != 0)
+        { addressSlots.append({object->imageDisplay.condition == 2 ? Stage3AddressField::MonitorBit : Stage3AddressField::MonitorWord, &object->imageDisplay.monitorAddress, object->imageDisplay.condition == 2 ? PlcAddressRole::Bit : PlcAddressRole::Word, 1U}); }
+        addConditionSlots(&object->imageDisplay.visibility, false, &addressSlots);
+    }
     if (object->type == QStringLiteral("qrcode")) //20261112-0 add: String span remains unknown; only validate its base carrier.
     {
         addressSlots.append({Stage3AddressField::MonitorWord, &object->qrCode.monitorAddress, PlcAddressRole::Word, 1U});
@@ -266,7 +272,17 @@ bool mergeStatePicture(HmiProject *candidate, BitButtonState *state, QString *er
 bool mergeObjectPictures(HmiProject *candidate, HmiObject *object, QString *error) //20261110-8 add
 {
     int index;
+    QString resolved;
 
+    if (object->hasImageDisplayProperties) //20261112-0 add: Remap exact-content picture bindings before cloning image states.
+    {
+        for (index = 0; index < object->imageDisplay.states.size(); ++index)
+        {
+            if (object->imageDisplay.states[index].picturePng.isEmpty()) { continue; }
+            if (!mergePicture(candidate, object->imageDisplay.states[index].picture, object->imageDisplay.states[index].picturePng, &resolved, error)) { return false; }
+            object->imageDisplay.states[index].picture = resolved;
+        }
+    }
     if (!object->hasBitButtonProperties) { return true; }
     for (index = 0; index < 2; ++index)
     {

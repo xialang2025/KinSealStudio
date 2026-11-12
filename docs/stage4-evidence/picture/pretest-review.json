@@ -1,0 +1,21 @@
+{
+  "mode": "read_only_review_before_repairs",
+  "findings": [
+    {
+      "id": "IMAGE-REV-01",
+      "description": "静态进入多态后批量终点未初始化成1。",
+      "resolution": "进入多态设末行；后续扩容保留草稿，新增回归断言。"
+    },
+    {
+      "id": "IMAGE-REV-02",
+      "description": "补证前批量加暂按同图重复，倒序暂用猜测提示。",
+      "resolution": "按原厂补证改为图库位置顺序/区间截断，不补满；采用精确倒序加提示，倒序删无操作。"
+    },
+    {
+      "id": "IMAGE-REV-03",
+      "description": "原共有图库未检查新图片显示状态引用，且GIF可能被首帧扁平化。",
+      "resolution": "全页资源遍历及复制重映射包含图片状态，静态图片选图拒绝GIF。"
+    }
+  ],
+  "sourceDeviceUnknown": true
+}
