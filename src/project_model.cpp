@@ -261,6 +261,7 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     if (type == QStringLiteral("alarmbar")) { json.insert(QStringLiteral("alarmBar"), alarmBar.toJson()); } //20261113-2 add
     if (type == QStringLiteral("datagroup")) { json.insert(QStringLiteral("datagroup"), dataGroup.toJson()); } //20261113-1 add
     if (type == QStringLiteral("alarmdisplay") || type == QStringLiteral("historyalarm")) { json.insert(QStringLiteral("alarmDisplay"), alarmDisplay.toJson()); } //20261113-2 add
+    if (type == QStringLiteral("historydata")) { json.insert(QStringLiteral("historyData"), historyData.toJson()); } //20261113-2 add
     if (type == QStringLiteral("track")) { json.insert(QStringLiteral("moveTrack"), moveTrack.toJson()); } //20261112-0 add
     if (type == QStringLiteral("wheel")) { json.insert(QStringLiteral("wheel"), wheel.toJson()); } //20261112-0 add
     if (type == QStringLiteral("slider")) { json.insert(QStringLiteral("slider"), slider.toJson()); } //20261112-0 add
@@ -308,7 +309,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
-        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("multiFunctionButton"), QStringLiteral("dropdown"), QStringLiteral("flowBlock"), QStringLiteral("slider"), QStringLiteral("wheel"), QStringLiteral("moveTrack"), QStringLiteral("chart"), QStringLiteral("trend"), QStringLiteral("historytrend"), QStringLiteral("xycurve"), QStringLiteral("datagroup"), QStringLiteral("alarmBar"), QStringLiteral("alarmDisplay"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
+        QStringLiteral("lamp"), QStringLiteral("functionButton"), QStringLiteral("messageDisplay"), QStringLiteral("scale"), QStringLiteral("qrCode"), QStringLiteral("imageDisplay"), QStringLiteral("gifDisplay"), QStringLiteral("numberDisplay"), QStringLiteral("asciiDisplay"), QStringLiteral("timeDisplay"), QStringLiteral("screenButton"), QStringLiteral("multiStateButton"), QStringLiteral("multiFunctionButton"), QStringLiteral("dropdown"), QStringLiteral("flowBlock"), QStringLiteral("slider"), QStringLiteral("wheel"), QStringLiteral("moveTrack"), QStringLiteral("chart"), QStringLiteral("trend"), QStringLiteral("historytrend"), QStringLiteral("xycurve"), QStringLiteral("datagroup"), QStringLiteral("alarmBar"), QStringLiteral("alarmDisplay"), QStringLiteral("historyData"), QStringLiteral("extensions")}, QStringLiteral("object"), error)) { return false; } //20261112-0 change
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
@@ -351,6 +352,10 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("alarmDisplay")) //20261113-2 add
         {
             if (!item.value().isObject() || !AlarmDisplayProperties::fromJson(item.value().toObject(), &object->alarmDisplay, error)) { return false; }
+        }
+        else if (key == QStringLiteral("historyData")) //20261113-2 add
+        {
+            if (!item.value().isObject() || !HistoryDataProperties::fromJson(item.value().toObject(), &object->historyData, error)) { return false; }
         }
         else if (key == QStringLiteral("moveTrack")) //20261112-0 add
         {
@@ -449,6 +454,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     if ((object->type == QStringLiteral("alarmbar")) != json.contains(QStringLiteral("alarmBar"))) { return modelError(error, QStringLiteral("动态报警条类型与专有属性不匹配。")); } //20261113-2 add
     if ((object->type == QStringLiteral("datagroup")) != json.contains(QStringLiteral("datagroup"))) { return modelError(error, QStringLiteral("数据群组类型与专有属性不匹配。")); } //20261113-1 add
     if (((object->type == QStringLiteral("alarmdisplay") || object->type == QStringLiteral("historyalarm"))) != json.contains(QStringLiteral("alarmDisplay"))) { return modelError(error, QStringLiteral("报警显示器类型与专有属性不匹配。")); } //20261113-2 add
+    if ((object->type == QStringLiteral("historydata")) != json.contains(QStringLiteral("historyData"))) { return modelError(error, QStringLiteral("历史数据显示器类型与专有属性不匹配。")); } //20261113-2 add
     if ((object->type == QStringLiteral("track")) != json.contains(QStringLiteral("moveTrack"))) { return modelError(error, QStringLiteral("移动轨迹类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("wheel")) != json.contains(QStringLiteral("wheel"))) { return modelError(error, QStringLiteral("滚轮类型与专有属性不匹配。")); } //20261112-0 add
     if ((object->type == QStringLiteral("slider")) != json.contains(QStringLiteral("slider"))) { return modelError(error, QStringLiteral("滑动开关类型与专有属性不匹配。")); } //20261112-0 add
@@ -537,6 +543,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
          object->type != QStringLiteral("datagroup") && //20261113-1 add
          object->type != QStringLiteral("historyalarm") && //20261113-2 add: Historical records keep a distinct type while sharing table attributes.
          object->type != QStringLiteral("alarmdisplay") && //20261113-2 add
+         object->type != QStringLiteral("historydata") && //20261113-2 add
          object->type != QStringLiteral("track") && //20261112-0 add
          object->type != QStringLiteral("wheel") && //20261112-0 add
          object->type != QStringLiteral("slider") && //20261112-0 add
@@ -847,7 +854,7 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     Q_FOREACH (node, configurationNodes) { if ((node.kind == QStringLiteral("dataCollection") || node.kind == QStringLiteral("alarm")) && node.implemented && node.active) { schema = 12; stage1 = true; } } //20261112-1 add: Collector-only files must emit every required schema12 container.
     if (!animations.isEmpty()) { schema = 12; stage1 = true; } //20261112-0 add
     Q_FOREACH (page, allPages())
-    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) || object.type == QStringLiteral("track") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
+    { Q_FOREACH (object, page.objects) { if (object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("datagroup") || (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("track") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("multifunction") || object.type == QStringLiteral("multistate") || object.type == QStringLiteral("screen") || object.type == QStringLiteral("time") || object.type == QStringLiteral("gif") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties) { schema = 12; stage1 = true; } } } //20261112-0 change: Clock-only documents must declare their typed schema before saving or restoring history.
     if (schema >= 12)
     {
         for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture) { animationJson.insert(picture.key(), QString::fromLatin1(picture.value().toBase64())); }
@@ -1129,7 +1136,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
         }
         if (!HmiPage::fromJson(pageJson, &page, error)) { return false; }
         if (schema < 12) //20261112-0 change: A lower schema cannot conceal newly typed numeric or animation fields.
-        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton")) || value.toObject().contains(QStringLiteral("multiFunctionButton")) || value.toObject().contains(QStringLiteral("dropdown")) || value.toObject().contains(QStringLiteral("flowBlock")) || value.toObject().contains(QStringLiteral("slider")) || value.toObject().contains(QStringLiteral("wheel")) || value.toObject().contains(QStringLiteral("moveTrack")) || value.toObject().contains(QStringLiteral("chart")) || value.toObject().contains(QStringLiteral("trend")) || value.toObject().contains(QStringLiteral("historytrend")) || value.toObject().contains(QStringLiteral("xycurve")) || value.toObject().contains(QStringLiteral("datagroup")) || value.toObject().contains(QStringLiteral("alarmBar")) || value.toObject().contains(QStringLiteral("alarmDisplay"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
+        { Q_FOREACH (value, pageJson.value(QStringLiteral("objects")).toArray()) { if (value.toObject().contains(QStringLiteral("gifDisplay")) || value.toObject().contains(QStringLiteral("numberDisplay")) || value.toObject().contains(QStringLiteral("asciiDisplay")) || value.toObject().contains(QStringLiteral("timeDisplay")) || value.toObject().contains(QStringLiteral("screenButton")) || value.toObject().contains(QStringLiteral("multiStateButton")) || value.toObject().contains(QStringLiteral("multiFunctionButton")) || value.toObject().contains(QStringLiteral("dropdown")) || value.toObject().contains(QStringLiteral("flowBlock")) || value.toObject().contains(QStringLiteral("slider")) || value.toObject().contains(QStringLiteral("wheel")) || value.toObject().contains(QStringLiteral("moveTrack")) || value.toObject().contains(QStringLiteral("chart")) || value.toObject().contains(QStringLiteral("trend")) || value.toObject().contains(QStringLiteral("historytrend")) || value.toObject().contains(QStringLiteral("xycurve")) || value.toObject().contains(QStringLiteral("datagroup")) || value.toObject().contains(QStringLiteral("alarmBar")) || value.toObject().contains(QStringLiteral("alarmDisplay")) || value.toObject().contains(QStringLiteral("historyData"))) { return modelError(error, QStringLiteral("GIF、数值、ASCII、时间或画面按钮专有数据必须使用schema12。")); } } }
         if (parsedPageIds.contains(page.id)) { return modelError(error, QStringLiteral("页面稳定ID重复：%1。").arg(page.id)); }
         parsedPageIds.insert(page.id);
         if (page.id == loaded.activePageId) { assignActivePage(&loaded, page); activeFound = true; }
@@ -1401,6 +1408,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
         {
             Q_FOREACH (object, page.objects)
             {
+                if (object.type == QStringLiteral("historydata") && (!collections.contains(object.historyData.collectionId) || !object.historyData.validateCollection(collections.value(object.historyData.collectionId), error))) { return modelError(error, QStringLiteral("历史数据显示器的数据采集或列引用无效。")); } //20261113-2 add
                 if (object.type == QStringLiteral("historytrend") && (!collections.contains(object.historyTrend.collectionId) || !object.historyTrend.validateCollection(collections.value(object.historyTrend.collectionId), error))) { return modelError(error, QStringLiteral("历史趋势图的数据采集或数据项引用无效。")); }
             }
         }
@@ -1750,6 +1758,7 @@ bool HmiProject::setLanguages(const QStringList &newLanguages, QString *error) /
         {
             object = &pages[pageIndex].objects[objectIndex];
             if ((object->type == QStringLiteral("alarmdisplay") || object->type == QStringLiteral("historyalarm"))) { object->alarmDisplay.setLanguages(newLanguages); } //20261113-2 add
+            if (object->type == QStringLiteral("historydata")) { object->historyData.setLanguages(newLanguages); } //20261113-2 add
             if (!object->hasFunctionButtonProperties || object->functionButton.function != 13) { continue; }
             if (object->functionButton.type < 0 || object->functionButton.type >= languages.size())
             {
@@ -1833,6 +1842,12 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
             Q_FOREACH (captionLanguage, object.alarmDisplay.captions.keys()) { if (!languages.contains(captionLanguage)) { return modelError(error, QStringLiteral("报警显示列名语言%1未在目标工程启用，事务已取消。").arg(captionLanguage)); } }
         }
         if ((object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) && (!object.address.isEmpty() || !object.text.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.alarmDisplay.validate(error) || !object.alarmDisplay.validateAddresses(connections, error))) { return false; } //20261113-2 add
+        if (object.type == QStringLiteral("historydata")) //20261113-2 add: Do not let cross-project paste silently discard source caption languages.
+        {
+            QString language;
+            Q_FOREACH (language, object.historyData.captions.keys()) { if (!languages.contains(language)) { return modelError(error, QStringLiteral("历史数据列名语言%1未在目标工程启用，事务已取消。").arg(language)); } }
+        }
+        if (object.type == QStringLiteral("historydata") && (!object.text.isEmpty() || !object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.historyData.validate(error) || !object.historyData.validateAddresses(connections, error))) { return false; } //20261113-2 add
         if (object.type == QStringLiteral("track") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || object.hasImageDisplayProperties || !object.moveTrack.validate(error) || !object.moveTrack.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("wheel") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.wheel.validate(error) || !object.wheel.validateAddresses(connections, error))) { return false; } //20261112-0 add
         if (object.type == QStringLiteral("slider") && (!object.address.isEmpty() || object.hasBitButtonProperties || object.hasStaticTextProperties || object.hasNumberDisplayProperties || !object.slider.validate(error) || !object.slider.validateAddresses(connections, error))) { return false; } //20261112-0 add
@@ -1987,4 +2002,37 @@ bool HmiProject::load(const QString &path, HmiProject *project, QString *error) 
         return false;
     }
     return fromJson(document.object(), project, error);
+}
+
+/******************************************************************************
+ * Function Name   : HmiProject::replaceDataCollection
+ * Description     : Replace a collector and reconcile every table in one validated candidate; preserve unrelated history-trend removal guards.
+ * Input Parameters: node, error
+ * Return Value    : True after an atomic collection-and-table update.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+bool HmiProject::replaceDataCollection(const HmiConfigurationNode &node, QString *error) //20261113-2 add
+{
+    HmiProject candidate = *this;
+    DataCollectionProperties collection;
+    QList<HmiPage> pages;
+    HmiObject *object;
+    int index;
+    int pageIndex;
+    int objectIndex;
+    bool replaced = false;
+    if (!validateModel(error) || node.kind != QStringLiteral("dataCollection") || !node.active || !node.implemented || !DataCollectionProperties::fromJson(node.properties, &collection, error)) { return false; }
+    for (index = 0; index < candidate.configurationNodes.size(); ++index) { if (candidate.configurationNodes[index].id == node.id) { if (candidate.configurationNodes[index].kind != QStringLiteral("dataCollection")) { return false; } candidate.configurationNodes[index] = node; replaced = true; break; } }
+    if (!replaced) { candidate.configurationNodes.append(node); }
+    pages = candidate.allPages();
+    for (pageIndex = 0; pageIndex < pages.size(); ++pageIndex)
+    {
+        for (objectIndex = 0; objectIndex < pages[pageIndex].objects.size(); ++objectIndex)
+        {
+            object = &pages[pageIndex].objects[objectIndex]; if (object->type == QStringLiteral("historydata") && object->historyData.collectionId == node.id) { object->historyData.reconcileCollection(collection, languages); }
+        }
+    }
+    candidate.inactivePages.clear();
+    for (pageIndex = 0; pageIndex < pages.size(); ++pageIndex) { if (pages[pageIndex].id == candidate.activePageId) { assignActivePage(&candidate, pages[pageIndex]); } else { candidate.inactivePages.append(pages[pageIndex]); } }
+    if (!candidate.validateModel(error)) { return false; } *this = candidate; return true;
 }

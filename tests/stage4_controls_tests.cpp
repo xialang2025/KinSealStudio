@@ -12,6 +12,7 @@
 #include "flow_block_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
+#include "history_data_dialog.h" //20261113-2 add
 #include "alarm_display_dialog.h" //20261113-2 add
 #include "alarm_bar_dialog.h" //20261113-2 add
 #include "alarm_registration_dialog.h"
@@ -163,6 +164,14 @@ private slots:
     void sliderCenteredRasterAndClipping();
     void sliderShellMacroPlacementGeometryAndUndo();
     void wheelNativeBoundsAndIndependentDrafts(); //20261112-0 add
+    void historyDataMeasuredDefaultsAndZeroRows(); //20261113-2 add
+    void historyDataAllColumnLanguageSynchronization(); //20261113-2 add
+    void historyDataVisibleColumnGuard(); //20261113-2 add
+    void historyDataStrictRoundTripAndBackendGates(); //20261113-2 add
+    void historyDataCollectorReconciliationAcrossPages(); //20261113-2 add
+    void historyDataClipboardAndFullVisibilitySpans(); //20261113-2 add
+    void historyDataRendererGridAndZeroRowClipping(); //20261113-2 add
+    void historyDataShellPlacementCollectionEditAndUndo(); //20261113-2 add
     void historyAlarmSharedDialogKeepsDistinctIdentity(); //20261113-2 add
     void historyAlarmStrictTypeLanguagesAndBackendGates(); //20261113-2 add
     void historyAlarmWordVisibilityAndCopyDependencies(); //20261113-2 add
@@ -4191,5 +4200,188 @@ void Stage4ControlTests::historyAlarmShellEntryPlacementEditAndUndo() //20261113
 
 }
 
+
+/******************************************************************************
+ * Function Name   : historyDataProject
+ * Description     : Build a three-channel collector and independent table with three project languages.
+ * Input Parameters: None
+ * Return Value    : Complete C30 editor project.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject historyDataProject() //20261113-2 add
+{
+    HmiProject project = historyProject();
+    DataCollectionProperties collection;
+    HmiObject object;
+    DataCollectionProperties::fromJson(project.configurationNodes.first().properties, &collection); project.languages = {QStringLiteral("中文"), QStringLiteral("English"), QStringLiteral("Deutsch")}; object.id = QStringLiteral("history-data-1"); object.name = QStringLiteral("历史数据显示器"); object.type = QStringLiteral("historydata"); object.geometry = QRect(100,100,320,180); object.historyData.collectionId = project.configurationNodes.first().id; object.historyData.reconcileCollection(collection, project.languages); project.objects = {object}; return project;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataMeasuredDefaultsAndZeroRows
+ * Description     : Keep native C30 defaults separate from alarm-table limits and retain editable hidden date fields.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataMeasuredDefaultsAndZeroRows() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HistoryDataDialog dialog(project.objects.first(), project);
+    QSpinBox *rows = dialog.findChild<QSpinBox *>(QStringLiteral("HistoryDataRows"));
+    QComboBox *size = dialog.findChild<QComboBox *>(QStringLiteral("HistoryDataFontSize"));
+    HistoryDataProperties properties = project.objects.first().historyData;
+    QString error;
+    dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); QCOMPARE(dialog.windowTitle(), QStringLiteral("历史数据显示器")); QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("HistoryDataTabs"))->count(), 3); QCOMPARE(dialog.findChildren<HmiPermissionEditor *>().size(), 1); QCOMPARE(rows->minimum(), 0); QCOMPARE(rows->maximum(), 20); QCOMPARE(rows->value(), 5); QCOMPARE(size->count(), 4); QCOMPARE(size->currentText(), QStringLiteral("16")); QCOMPARE(properties.lineColor, QStringLiteral("#00c000")); QCOMPARE(properties.columns.size(), 3); QCOMPARE(properties.columns.first().names.value(QStringLiteral("中文")), QStringLiteral("First"));
+    dialog.findChild<QCheckBox *>(QStringLiteral("HistoryDataShowDate"))->setChecked(false); dialog.findChild<QCheckBox *>(QStringLiteral("HistoryDataShowTime"))->setChecked(false); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("HistoryDataDateCaption"))->isEnabled()); QVERIFY(dialog.findChild<QLineEdit *>(QStringLiteral("HistoryDataTimeCaption"))->isEnabled()); rows->setValue(0); size->setCurrentText(QStringLiteral("48")); QVERIFY(dialog.object().historyData.validate(&error)); QCOMPARE(dialog.object().historyData.rows, 0); QCOMPARE(dialog.object().historyData.fontSize, 48); properties.rows = 21; QVERIFY(!properties.validate(&error)); properties.rows = 0; properties.fontSize = 64; QVERIFY(!properties.validate(&error));
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-data-general.png")))); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataAllColumnLanguageSynchronization
+ * Description     : Synchronize all first-language names to current or all languages while preserving date/time captions, shared flags and project language.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataAllColumnLanguageSynchronization() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HistoryDataDialog dialog(project.objects.first(), project);
+    QComboBox *language = dialog.findChild<QComboBox *>(QStringLiteral("HistoryDataDataLanguage"));
+    QComboBox *general = dialog.findChild<QComboBox *>(QStringLiteral("HistoryDataLanguage"));
+    QTableWidget *table = dialog.findChild<QTableWidget *>(QStringLiteral("HistoryDataColumns"));
+    QLineEdit *name = dialog.findChild<QLineEdit *>(QStringLiteral("HistoryDataColumnName"));
+    int row;
+    for (row = 0; row < 3; ++row) { table->setCurrentCell(row, 0); name->setText(QStringLiteral("C%1").arg(row)); } dialog.findChild<QLineEdit *>(QStringLiteral("HistoryDataDateCaption"))->setText(QStringLiteral("D0")); table->item(1, 1)->setCheckState(Qt::Unchecked); language->setCurrentText(QStringLiteral("English")); QCOMPARE(general->currentText(), QStringLiteral("English"));
+    for (row = 0; row < 3; ++row) { table->setCurrentCell(row, 0); name->setText(QStringLiteral("E%1").arg(row)); } dialog.findChild<QLineEdit *>(QStringLiteral("HistoryDataDateCaption"))->setText(QStringLiteral("D1")); language->setCurrentText(QStringLiteral("Deutsch")); for (row = 0; row < 3; ++row) { table->setCurrentCell(row, 0); name->setText(QStringLiteral("G%1").arg(row)); }
+    language->setCurrentText(QStringLiteral("English")); table->setCurrentCell(1, 0); dialog.findChild<QPushButton *>(QStringLiteral("HistoryDataSyncCurrent"))->click(); for (row = 0; row < 3; ++row) { QCOMPARE(dialog.object().historyData.columns[row].names.value(QStringLiteral("English")), QStringLiteral("C%1").arg(row)); QCOMPARE(dialog.object().historyData.columns[row].names.value(QStringLiteral("Deutsch")), QStringLiteral("G%1").arg(row)); } QCOMPARE(table->currentRow(), 1); QCOMPARE(name->text(), QStringLiteral("C1"));
+    dialog.findChild<QPushButton *>(QStringLiteral("HistoryDataSyncAll"))->click(); for (row = 0; row < 3; ++row) { QCOMPARE(dialog.object().historyData.columns[row].names.value(QStringLiteral("Deutsch")), QStringLiteral("C%1").arg(row)); } QVERIFY(!dialog.object().historyData.columns[1].shown); QCOMPARE(dialog.object().historyData.captionsFor(QStringLiteral("中文")).date, QStringLiteral("D0")); QCOMPARE(dialog.object().historyData.captionsFor(QStringLiteral("English")).date, QStringLiteral("D1")); QCOMPARE(project.activeLanguage, QStringLiteral("中文")); dialog.findChild<QTabWidget *>(QStringLiteral("HistoryDataTabs"))->setCurrentIndex(1); dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-data-columns.png")))); } dialog.reject(); QCOMPARE(project.objects.first().historyData.columns.first().names.value(QStringLiteral("中文")), QStringLiteral("First"));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataVisibleColumnGuard
+ * Description     : Accept date-only and zero-row tables but reject the measured no-visible-column case without closing the parent editor.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataVisibleColumnGuard() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HistoryDataProperties properties = project.objects.first().historyData;
+    HistoryDataDialog dialog(project.objects.first(), project);
+    QTableWidget *table = dialog.findChild<QTableWidget *>(QStringLiteral("HistoryDataColumns"));
+    QString error;
+    int index;
+    for (index = 0; index < properties.columns.size(); ++index) { properties.columns[index].shown = false; table->item(index, 1)->setCheckState(Qt::Unchecked); } properties.showTime = false; properties.rows = 0; QVERIFY(properties.validate(&error)); properties.showDate = false; QVERIFY(!properties.validate(&error)); QCOMPARE(error, QStringLiteral("未选择任何显示数据")); dialog.findChild<QCheckBox *>(QStringLiteral("HistoryDataShowDate"))->setChecked(false); dialog.findChild<QCheckBox *>(QStringLiteral("HistoryDataShowTime"))->setChecked(false);
+    QTimer::singleShot(0, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); QCOMPARE(message->windowTitle(), QStringLiteral("设置错误")); QCOMPARE(message->text(), QStringLiteral("未选择任何显示数据")); message->accept(); }); dialog.findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); QCOMPARE(dialog.result(), int(QDialog::Rejected)); dialog.findChild<QCheckBox *>(QStringLiteral("HistoryDataShowDate"))->setChecked(true); dialog.findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); QCOMPARE(dialog.result(), int(QDialog::Accepted));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataStrictRoundTripAndBackendGates
+ * Description     : Round-trip distinct typed tables and reject unknown, fractional, malformed, stale-source and unsupported backend inputs atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataStrictRoundTripAndBackendGates() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HmiProject loaded;
+    HmiProject mixed = historyProject();
+    HistoryDataProperties parsed = project.objects.first().historyData;
+    QJsonObject json;
+    QJsonArray columns;
+    QJsonObject column;
+    HmiObject object;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    int index;
+    project.objects[0].historyData.rows = 0; project.objects[0].historyData.columns[1].shown = false; QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson()); json = project.objects.first().historyData.toJson(); json.insert(QStringLiteral("rows"), 1.5); parsed.rows = 17; QVERIFY(!HistoryDataProperties::fromJson(json, &parsed, &error)); QCOMPARE(parsed.rows, 17); json = project.objects.first().historyData.toJson(); json.insert(QStringLiteral("unknown"), true); QVERIFY(!HistoryDataProperties::fromJson(json, &parsed, &error)); json.remove(QStringLiteral("unknown")); columns = json.value(QStringLiteral("columns")).toArray(); column = columns[0].toObject(); column.insert(QStringLiteral("shown"), 1); columns[0] = column; json.insert(QStringLiteral("columns"), columns); QVERIFY(!HistoryDataProperties::fromJson(json, &parsed, &error));
+    json = project.objects.first().toJson(); json.insert(QStringLiteral("type"), QStringLiteral("text")); QVERIFY(!HmiObject::fromJson(json, &object, &error)); json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); QVERIFY(!HmiProject::fromJson(json, &loaded, &error)); loaded = project; loaded.objects[0].historyData.columns.swapItemsAt(0, 1); QVERIFY(!loaded.validateModel(&error)); loaded = project; loaded.configurationNodes.clear(); QVERIFY(!loaded.validateModel(&error)); QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")}); mixed.languages = project.languages; mixed.configurationNodes = project.configurationNodes; for (index = 0; index < 8; ++index) { mixed.objects[0].historyTrend.curves[index].sourceItemId = project.objects.first().historyData.columns.first().sourceItemId; } mixed.objects.append(project.objects.first()); mixed.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(mixed.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 7);
+    if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-data-only.ksp")), &error)); QVERIFY(mixed.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("history-data-mixed.ksp")), &error)); }
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataCollectorReconciliationAcrossPages
+ * Description     : Shrink, grow and rename collector items by stable identity over active and inactive pages with atomic invalid-update refusal.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataCollectorReconciliationAcrossPages() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HmiProject before;
+    HmiPage page;
+    HmiConfigurationNode node = project.configurationNodes.first();
+    DataCollectionProperties collection;
+    QString error;
+    QString firstId = project.objects.first().historyData.columns.first().sourceItemId;
+    project.objects[0].historyData.columns[0].names[QStringLiteral("English")] = QStringLiteral("Kept"); project.objects[0].historyData.columns[1].shown = false; page.id = QStringLiteral("data-page-2"); page.name = QStringLiteral("Second page"); page.objects = project.objects; page.objects[0].id = QStringLiteral("data-other"); QVERIFY(project.addPage(page, &error)); QVERIFY(DataCollectionProperties::fromJson(node.properties, &collection, &error)); collection.items.removeLast(); collection.sampleLength = 2; collection.items[0].name = QStringLiteral("Renamed source"); node.properties = collection.toJson(); QVERIFY2(project.replaceDataCollection(node, &error), qPrintable(error)); QCOMPARE(project.objects.first().historyData.columns.size(), 2); QCOMPARE(project.inactivePages.first().objects.first().historyData.columns.size(), 2); QCOMPARE(project.objects.first().historyData.columns.first().sourceItemId, firstId); QCOMPARE(project.objects.first().historyData.columns.first().names.value(QStringLiteral("English")), QStringLiteral("Kept")); QVERIFY(!project.objects.first().historyData.columns[1].shown);
+    collection.sampleLength = 3; collection.items.append(DataCollectionProperties::createItem(2)); collection.items[2].name = QStringLiteral("New source"); node.properties = collection.toJson(); QVERIFY(project.replaceDataCollection(node, &error)); QCOMPARE(project.inactivePages.first().objects.first().historyData.columns.last().names.value(QStringLiteral("English")), QStringLiteral("New source")); QVERIFY(project.setLanguages({QStringLiteral("English"), QStringLiteral("日本語")}, &error)); QCOMPARE(project.objects.first().historyData.columns.first().names.size(), 2); QCOMPARE(project.inactivePages.first().objects.first().historyData.captions.size(), 2);
+    project.objects[0].historyData.showDate = false; project.objects[0].historyData.showTime = false; project.objects[0].historyData.columns[0].shown = false; project.objects[0].historyData.columns[1].shown = false; before = project; collection.sampleLength = 2; collection.items.removeLast(); node.properties = collection.toJson(); QVERIFY(!project.replaceDataCollection(node, &error)); QCOMPARE(project.toJson(), before.toJson());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataClipboardAndFullVisibilitySpans
+ * Description     : Copy the real collector only into compatible projects, preserve all languages and increment full visibility carriers.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataClipboardAndFullVisibilitySpans() //20261113-2 add
+{
+    HmiProject project = historyDataProject();
+    HmiProject result;
+    HmiProject sentinel;
+    HmiProject target;
+    Stage3Clipboard clipboard;
+    Stage3DuplicateOptions options;
+    QString error;
+    project.objects[0].historyData.visibility.visibilityEnabled = true; project.objects[0].historyData.visibility.wordEnabled = true; project.objects[0].historyData.visibility.dataType = 1; project.objects[0].historyData.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!project.validateModel(&error)); project.objects[0].historyData.visibility.wordAddress = QStringLiteral("LW4095"); QVERIFY(project.validateModel(&error)); project.objects[0].historyData.visibility.wordAddress = QStringLiteral("LW10"); options.columns = 2; options.increments = {{Stage3AddressField::VisibilityWord, 2, 0}}; QVERIFY2(duplicateStage3Selection(project, {project.objects.first().id}, options, &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.objects.last().historyData.visibility.wordAddress, QStringLiteral("LW12")); QCOMPARE(result.configurationNodes.size(), 1); QVERIFY(captureStage3Selection(project, {project.objects.first().id}, &clipboard, &error)); sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error)); QCOMPARE(result.toJson(), sentinel.toJson()); target.languages = project.languages; QVERIFY2(pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error), qPrintable(error)); QCOMPARE(result.configurationNodes.size(), project.configurationNodes.size()); QCOMPARE(result.configurationNodes.first().toJson(), project.configurationNodes.first().toJson()); target = project; target.configurationNodes[0].name = QStringLiteral("conflict"); sentinel = result; QVERIFY(!pasteStage3Selection(target, clipboard, QPoint(10,10), &result, nullptr, &error)); QCOMPARE(result.toJson(), sentinel.toJson());
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataRendererGridAndZeroRowClipping
+ * Description     : Verify independent grid flags, header-only zero rows and clipping without fabricating historical values.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataRendererGridAndZeroRowClipping() //20261113-2 add
+{
+    HistoryDataProperties properties = historyDataProject().objects.first().historyData;
+    QImage grid(330, 150, QImage::Format_ARGB32);
+    QImage plain = grid;
+    QImage zero = grid;
+    QPainter painter;
+    grid.fill(Qt::magenta); painter.begin(&grid); paintHistoryData(&painter, QRectF(10,10,300,120), properties, QStringLiteral("中文")); painter.end(); QCOMPARE(grid.pixelColor(0,0), QColor(Qt::magenta)); QCOMPARE(grid.pixelColor(70,90), QColor(properties.lineColor)); QCOMPARE(grid.pixelColor(90,50), QColor(properties.lineColor)); properties.verticalLines = false; properties.horizontalLines = false; plain.fill(Qt::magenta); painter.begin(&plain); paintHistoryData(&painter, QRectF(10,10,300,120), properties, QStringLiteral("中文")); painter.end(); QCOMPARE(plain.pixelColor(70,90), QColor(properties.backgroundColor)); QCOMPARE(plain.pixelColor(90,50), QColor(properties.backgroundColor)); properties.rows = 0; zero.fill(Qt::magenta); painter.begin(&zero); paintHistoryData(&painter, QRectF(10,10,300,120), properties, QStringLiteral("中文")); painter.end(); QCOMPARE(zero.pixelColor(20,20), QColor(properties.titleBackground)); QCOMPARE(zero.pixelColor(0,0), QColor(Qt::magenta)); QVERIFY(zero != plain);
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::historyDataShellPlacementCollectionEditAndUndo
+ * Description     : Use real menu creation, cancellation, placement and property edits, then reconcile collector shrink and undo the whole transaction.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::historyDataShellPlacementCollectionEditAndUndo() //20261113-2 add
+{
+    MainWindow window;
+    HmiProject project = historyDataProject();
+    auto acceptData = []() { HistoryDataDialog *dialog = qobject_cast<HistoryDataDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); };
+    window.setProject(HmiProject(), QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); QVERIFY(window.m_commands.contains(QStringLiteral("action_historyrecord"))); QTimer::singleShot(0, []() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); QVERIFY(message != nullptr); QCOMPARE(message->text(), QStringLiteral("没有建立数据采集")); message->accept(); }); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); project.objects.clear(); window.setProject(project, QString()); QTimer::singleShot(0, []() { QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->reject(); }); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(!window.m_canvas->hasPendingPlacement()); QTimer::singleShot(0, acceptData); window.m_commands.value(QStringLiteral("action_historyrecord"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(20,20))); QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(QPointF(340,200))); QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(QPointF(340,200))); QCOMPARE(window.currentEditorProject().objects.first().type, QStringLiteral("historydata")); QCOMPARE(window.findChild<QLabel *>(QStringLiteral("NativeSelectionType"))->text(), QStringLiteral("历史数据显示器")); QVERIFY(!window.m_addressEdit->isEnabled()); QVERIFY(!window.m_textEdit->isEnabled());
+    QTimer::singleShot(0, []() { HistoryDataDialog *dialog = qobject_cast<HistoryDataDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QSpinBox *>(QStringLiteral("HistoryDataRows"))->setValue(0); dialog->findChild<QDialogButtonBox *>(QStringLiteral("HistoryDataButtons"))->button(QDialogButtonBox::Ok)->click(); }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().historyData.rows, 0); QTimer::singleShot(0, []() { DataCollectionDialog *dialog = qobject_cast<DataCollectionDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog != nullptr); dialog->findChild<QSpinBox *>(QStringLiteral("CollectionLength"))->setValue(2); QMetaObject::invokeMethod(dialog, "accept", Qt::DirectConnection); }); window.configureDataCollection(project.configurationNodes.first().id); QCOMPARE(window.currentEditorProject().objects.first().historyData.columns.size(), 2); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().historyData.columns.size(), 3); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().objects.first().historyData.rows, 5); window.restoreProjectHistory(-1); QVERIFY(window.currentEditorProject().objects.isEmpty());
+
+}
 QTEST_MAIN(Stage4ControlTests)
 #include "stage4_controls_tests.moc"

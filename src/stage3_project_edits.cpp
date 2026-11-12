@@ -113,6 +113,7 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         addConditionSlots(&object->dataGroup.visibility, false, &addressSlots);
     }
     if ((object->type == QStringLiteral("alarmdisplay") || object->type == QStringLiteral("historyalarm"))) { addConditionSlots(&object->alarmDisplay.visibility, false, &addressSlots); } //20261113-2 add
+    if (object->type == QStringLiteral("historydata")) { addConditionSlots(&object->historyData.visibility, false, &addressSlots); } //20261113-2 add
     if (object->type == QStringLiteral("track")) //20261112-0 add: Track constants and dynamic ranges have independent word-carrier roles.
     {
         addressSlots.append({Stage3AddressField::Operation, &object->moveTrack.address, PlcAddressRole::Word, 1U});
@@ -642,14 +643,14 @@ bool appendSelection(const HmiProject &target, const Stage3Clipboard &clipboard,
                 if (!reused) { candidate->configurationNodes.append(required); }
             }
         }
-        if (object.type == QStringLiteral("historytrend")) //20261112-1 add: Reuse the exact collection or copy it only into an empty target; never overwrite a conflicting collector.
+        if (object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("historydata")) //20261113-2 change: Reuse the exact collection or copy it only into an empty target; never overwrite a conflicting collector.
         {
             HmiConfigurationNode required;
             HmiConfigurationNode peer;
             bool found = false;
             bool reused = false;
-            Q_FOREACH (peer, clipboard.source.configurationNodes) { if (peer.id == object.historyTrend.collectionId && peer.kind == QStringLiteral("dataCollection") && peer.active && peer.implemented) { required = peer; found = true; break; } }
-            if (!found) { return editError(error, QStringLiteral("剪贴板缺少历史趋势图的数据采集定义。")); }
+            Q_FOREACH (peer, clipboard.source.configurationNodes) { if (peer.id == (object.type == QStringLiteral("historydata") ? object.historyData.collectionId : object.historyTrend.collectionId) && peer.kind == QStringLiteral("dataCollection") && peer.active && peer.implemented) { required = peer; found = true; break; } }
+            if (!found) { return editError(error, QStringLiteral("剪贴板缺少历史数据控件的数据采集定义。")); }
             Q_FOREACH (peer, candidate->configurationNodes)
             {
                 if (peer.id == required.id && peer.toJson() == required.toJson()) { reused = true; }

@@ -1,0 +1,208 @@
+[
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_fontcolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4286578816
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "m_linecolorbtn"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4278190335
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "BG_Color"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4278222848
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "Text_Color"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4294901760
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "FG_Color"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4290822336
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "invoke-queued",
+    "kind": "QPushButton",
+    "name": "Frame_Color"
+  },
+  {
+    "op": "color",
+    "kind": "QColorDialog",
+    "value": 4278255615
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定",
+    "window": "选择颜色"
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "history-data-colors-lang1-r6"
+  },
+  {
+    "op": "combo-activate",
+    "kind": "QComboBox",
+    "name": "lanCombox",
+    "value": 2
+  },
+  {
+    "op": "dump",
+    "label": "history-data-colors-lang2-r6"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "accept"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "save",
+    "output": "history-data-colors.sm"
+  },
+  {
+    "op": "tree-list",
+    "label": "history-data-collector-tree-r6"
+  },
+  {
+    "op": "tree-double",
+    "entry": "C30Multi"
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nSampleLen",
+    "value": 2
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "save",
+    "output": "history-data-shrunk-before-reopen.sm"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-shrunk-general-r6"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "HisDataTable",
+    "label": "history-data-shrunk-columns-r6"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-shrunk-columns-r6"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "accept"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "save",
+    "output": "history-data-shrunk.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-data-shrunk-r6"
+  }
+]

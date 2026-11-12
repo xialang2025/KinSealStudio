@@ -2397,17 +2397,17 @@
       "documentation": "updated_per_control",
       "investigation": {
         "state": "native_ui_and_minimal_compile_captured",
-        "evidence": "../docs/stage4-evidence/history-alarm/native/native-manifest.json"
+        "evidence": "../docs/stage4-evidence/history-data/native/native-manifest.json"
       },
       "implementation": {
         "state": "partial_editor_and_KSP_slices",
-        "scope": "本次C29编辑切片；全批次和源/设备兼容未完成"
+        "scope": "本次C30编辑切片；全批次和源/设备兼容未完成"
       },
       "blockingDependencies": [],
       "dependencyAssessment": "explicit_task_prerequisites_only; check section and declared input scope",
       "resumePoint": {
         "document": "05_阶段4_控件逐项复刻.md",
-        "nextAction": "C30；保留本控件未决层"
+        "nextAction": "C31；保留本控件未决层"
       },
       "executionHistory": [
         {
@@ -2470,6 +2470,26 @@
             }
           },
           "recordedAtUtc": "2026-11-12T19:05:01.164282+00:00"
+        },
+        {
+          "executionId": "stage4-history-data-20261113",
+          "previousState": {
+            "documentation": "updated_per_control",
+            "investigation": {
+              "state": "native_ui_and_minimal_compile_captured",
+              "evidence": "../docs/stage4-evidence/history-alarm/native/native-manifest.json"
+            },
+            "implementation": {
+              "state": "partial_editor_and_KSP_slices",
+              "scope": "本次C29编辑切片；全批次和源/设备兼容未完成"
+            },
+            "blockingDependencies": [],
+            "resumePoint": {
+              "document": "05_阶段4_控件逐项复刻.md",
+              "nextAction": "C30；保留本控件未决层"
+            }
+          },
+          "recordedAtUtc": "2026-11-12T20:13:48.404155+00:00"
         }
       ]
     },
@@ -3928,6 +3948,15 @@
       "usbAccessed": true,
       "completeControl": false,
       "hardwareEvidence": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/run.json"
+    },
+    {
+      "id": "stage4-history-data-20261113",
+      "productPassed": 237,
+      "productFailed": 0,
+      "productSkipped": 0,
+      "usbAccessed": true,
+      "completeControl": false,
+      "hardwareEvidence": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/run.json"
     }
   ],
   "executionEnvironmentLimits": [

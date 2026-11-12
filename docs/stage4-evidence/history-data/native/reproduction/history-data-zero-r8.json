@@ -1,0 +1,68 @@
+[
+  {
+    "op": "action",
+    "name": "action_historyrecord"
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "m_rowspin",
+    "value": 0
+  },
+  {
+    "op": "dump",
+    "label": "history-data-zero-rows-r8"
+  },
+  {
+    "op": "screenshot",
+    "label": "history-data-zero-rows-r8"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "accept"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      150,
+      100
+    ],
+    "to": [
+      470,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "history-data-zero-rows.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-data-zero-rows-r8"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-zero-rows-reopened-r8"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "cancel"
+  }
+]

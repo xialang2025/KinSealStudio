@@ -1,0 +1,31 @@
+{
+  "id": "C30",
+  "ordinal": 30,
+  "name": "历史数据显示器",
+  "slug": "history-data",
+  "task": "S04-10",
+  "next": "C31",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/run.json",
+  "expectedPassed": 237,
+  "testRun": "docs/stage4-evidence/history-data/windows-final/run.json",
+  "nativeManifest": "../docs/stage4-evidence/history-data/native/native-manifest.json",
+  "report": "docs/历史数据显示器手册实现与验收.md",
+  "manual": "design_plan/历史数据显示器功能与交互复刻手册.md",
+  "scope": "独立historydata类型与真实采集前置；一般/数据/显现权限三页、六共用颜色、四字号、0..20行、双向格线、日期时间关闭仍可编辑；稳定采集列ID/顺序、分语言列名、共用显示标志、两页语言同步及首语言全部数据列名同步；所有页采集通道增删原子协调与撤销、复制依赖/语言冲突保护、schema12保存、时间在日期前的空白示意表格及原厂基线实物下载",
+  "unresolved": [
+    "Q-S04-C30-001",
+    "Q-S04-C30-002",
+    "Q-S04-C30-003",
+    "Q-S04-C30-004"
+  ],
+  "nativeSummary": "原厂九轮调查已归档。无采集提示没有建立数据采集；行数0可保存/编译/重开，字号仅12/16/24/48；六颜色和显示标志跨语言共用。首语言名称同步作用于全部数据列，保留日期时间名和隐藏标志；采集长度3→2允许且保留前两项列名/显示。隐藏全部数据列而保留日期时间时允许；日期时间和数据列全隐藏时实测设置错误：未选择任何显示数据。",
+  "protocol": "历史数据控件绑定真实采集；已实测六共用色、四字号、0..20行、多语言全列同步、3→2采集缩减，真正无可见列时原厂拒绝。默认原厂源已实物下载，四清除/更新关闭，输入/待传SHA一致；未恢复独立采集/显示器设备记录，独立输出仍实际拒绝。显示/触控、采样查询翻页与0行固件语义未通过。",
+  "codeFiles": "src/history_data_properties.*、history_data_dialog.*、data_collection_dialog.cpp、project_model.*、stage3_project_edits.cpp、stage4_control_actions.cpp、static_text_actions.cpp、main_window.cpp、native_shell_ui.cpp、hmi_canvas.cpp、CMakeLists.txt",
+  "codeMarker": "//20261113-2",
+  "reviewFindings": [
+    "只读复核检查独立C30字段范围、JSON/type/schema、语言/同步作用域、零行剪裁和采集全页协调；发现提前验证路径后已修复。",
+    "8项新增方法实际PASS，共用回归168+59+10=237/0/0；真实采集缩减与整工程撤销通过。",
+    "九轮原厂证据含三轮partial原样保留，真正全隐藏错误和0行保存编译重开均按观测记录。实物仅原厂默认基线传输，E和独立编码仍阻塞。"
+  ]
+}

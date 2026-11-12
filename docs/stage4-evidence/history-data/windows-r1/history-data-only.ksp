@@ -1,0 +1,206 @@
+{
+    "activeLanguage": "中文",
+    "activePageId": "page-1",
+    "animations": {
+    },
+    "configurationNodes": [
+        {
+            "active": true,
+            "id": "history-collection",
+            "implemented": true,
+            "kind": "dataCollection",
+            "name": "C24",
+            "ownerPageId": "",
+            "properties": {
+                "dataType": 0,
+                "fullPercent": 90,
+                "fullStop": false,
+                "interval": 1,
+                "items": [
+                    {
+                        "cacheIndex": 0,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-aa3c6f2f-4d01-4570-bce2-fbd9e9baf351",
+                        "name": "First",
+                        "offset": "",
+                        "scaled": false
+                    },
+                    {
+                        "cacheIndex": 1,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-278b6b3e-f45c-4096-8a3f-44c5b5b536f5",
+                        "name": "Second",
+                        "offset": "",
+                        "scaled": false
+                    },
+                    {
+                        "cacheIndex": 2,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-903ec0e2-f4f0-4d99-b372-a4dd12a5fd42",
+                        "name": "Third",
+                        "offset": "",
+                        "scaled": false
+                    }
+                ],
+                "notice": false,
+                "noticeAddress": "LB0",
+                "readAddress": "LW0",
+                "sampleCount": 1,
+                "sampleLength": 3,
+                "samplingMode": 0,
+                "triggerAddress": "LB0",
+                "triggerMinute": 1,
+                "upload": false
+            }
+        }
+    ],
+    "format": "KinSealStudio-Prototype",
+    "languages": [
+        "中文",
+        "English",
+        "Deutsch"
+    ],
+    "macroIds": {
+    },
+    "macros": {
+    },
+    "pageOrder": [
+        "page-1"
+    ],
+    "pages": [
+        {
+            "height": 480,
+            "id": "page-1",
+            "kind": "normal",
+            "name": "画面1",
+            "objects": [
+                {
+                    "address": "",
+                    "group": "",
+                    "height": 180,
+                    "historyData": {
+                        "backgroundColor": "#e0e0e0",
+                        "captions": {
+                            "Deutsch": {
+                                "date": "日期",
+                                "time": "时间"
+                            },
+                            "English": {
+                                "date": "日期",
+                                "time": "时间"
+                            },
+                            "中文": {
+                                "date": "日期",
+                                "time": "时间"
+                            }
+                        },
+                        "collectionId": "history-collection",
+                        "columns": [
+                            {
+                                "names": {
+                                    "Deutsch": "First",
+                                    "English": "First",
+                                    "中文": "First"
+                                },
+                                "shown": true,
+                                "sourceItemId": "collection-item-aa3c6f2f-4d01-4570-bce2-fbd9e9baf351"
+                            },
+                            {
+                                "names": {
+                                    "Deutsch": "Second",
+                                    "English": "Second",
+                                    "中文": "Second"
+                                },
+                                "shown": false,
+                                "sourceItemId": "collection-item-278b6b3e-f45c-4096-8a3f-44c5b5b536f5"
+                            },
+                            {
+                                "names": {
+                                    "Deutsch": "Third",
+                                    "English": "Third",
+                                    "中文": "Third"
+                                },
+                                "shown": true,
+                                "sourceItemId": "collection-item-903ec0e2-f4f0-4d99-b372-a4dd12a5fd42"
+                            }
+                        ],
+                        "fontSize": 16,
+                        "frameColor": "#000000",
+                        "horizontalLines": true,
+                        "lineColor": "#00c000",
+                        "rows": 0,
+                        "showDate": true,
+                        "showTime": true,
+                        "textColor": "#000000",
+                        "titleBackground": "#ffff00",
+                        "titleColor": "#000000",
+                        "verticalLines": true,
+                        "visibility": {
+                            "adaptive": false,
+                            "alignment": 0,
+                            "backgroundColor": "#ffffffff",
+                            "bitAddress": "LB0",
+                            "bitEnabled": false,
+                            "bitState": true,
+                            "bold": false,
+                            "compareValue": "0",
+                            "comparison": 0,
+                            "dataType": 0,
+                            "fontFamily": "微软雅黑",
+                            "fontSize": 16,
+                            "foregroundColor": "#ffff0000",
+                            "italic": false,
+                            "levelEnabled": false,
+                            "minimumLevel": 1,
+                            "opacity": 255,
+                            "spacing": 0,
+                            "style": 0,
+                            "textColor": "#ff000000",
+                            "texts": {
+                            },
+                            "tolerance": "0",
+                            "underline": false,
+                            "version": 1,
+                            "visibilityEnabled": false,
+                            "wordAddress": "LW0",
+                            "wordEnabled": false
+                        },
+                        "visibilityBitChosen": false
+                    },
+                    "id": "history-data-1",
+                    "layer": 1,
+                    "name": "历史数据显示器",
+                    "text": "",
+                    "type": "historydata",
+                    "width": 320,
+                    "x": 100,
+                    "y": 100
+                }
+            ],
+            "width": 800
+        }
+    ],
+    "pictures": {
+    },
+    "projectId": "project-1",
+    "projectName": "新建工程",
+    "references": [
+    ],
+    "resolution": {
+        "height": 480,
+        "width": 800
+    },
+    "schemaVersion": 12,
+    "startupLanguage": "",
+    "startupPageId": "page-1",
+    "targetModel": "AMT070W124-L800X480R"
+}

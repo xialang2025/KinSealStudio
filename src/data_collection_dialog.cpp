@@ -250,17 +250,14 @@ void DataCollectionDialog::accept() //20261112-1 add
     HmiConfigurationNode peer;
     QString error;
     int index;
-    int existing = -1;
     if (!m_initialValid) { QMessageBox::warning(this, QStringLiteral("配置未提交"), QStringLiteral("原有数据采集属性无效，已保留原始配置。")); return; }
     if (result.name.isEmpty() || result.name.size() > 48 || !m_draft.validate(&error) || !m_draft.validateAddresses(m_project.connections, &error)) { QMessageBox::warning(this, QStringLiteral("配置未提交"), error.isEmpty() ? QStringLiteral("数据采集名称不能为空且不能超过48个字符。") : error); return; }
     for (index = 0; index < candidate.configurationNodes.size(); ++index)
     {
         peer = candidate.configurationNodes[index];
-        if (peer.id == result.id) { existing = index; }
-        else if (peer.kind == QStringLiteral("dataCollection") && peer.implemented && peer.active) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("已经达到最大数据采集数量，请删除后再新建。")); return; }
+        if (peer.id != result.id && peer.kind == QStringLiteral("dataCollection") && peer.implemented && peer.active) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("已经达到最大数据采集数量，请删除后再新建。")); return; }
     }
-    if (existing < 0) { candidate.configurationNodes.append(result); } else { candidate.configurationNodes[existing] = result; }
-    if (!candidate.validateModel(&error)) { QMessageBox::warning(this, QStringLiteral("配置未提交"), error); return; } QDialog::accept();
+    if (!candidate.replaceDataCollection(result, &error)) { QMessageBox::warning(this, QStringLiteral("配置未提交"), error); return; } QDialog::accept(); //20261113-2 change: Validate source and every dependent table together.
 }
 
 /******************************************************************************

@@ -14,6 +14,7 @@
 #include "alarm_registration_dialog.h"
 #include "data_group_dialog.h" //20261113-1 add
 #include "alarm_display_dialog.h" //20261113-2 add
+#include "history_data_dialog.h" //20261113-2 add
 #include "move_track_dialog.h" //20261112-0 add
 #include "wheel_dialog.h" //20261112-0 add
 #include "slider_dialog.h" //20261112-0 add
@@ -80,6 +81,14 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         object.name = type == QStringLiteral("historyalarm") ? QStringLiteral("历史报警显示器") : QStringLiteral("报警显示器");
         if (!hasAlarmRegistrations(currentEditorProject())) { QMessageBox::warning(this, object.name, QStringLiteral("位报警和条件报警都不存在")); return; }
         object.geometry = QRect(0, 0, 320, 160); dialog = new AlarmDisplayDialog(object, currentEditorProject(), this);
+    }
+    else if (type == QStringLiteral("historydata")) //20261113-2 add: Match the measured collection prerequisite before constructing a detached editor.
+    {
+        HmiConfigurationNode collection;
+        bool found = false;
+        Q_FOREACH (collection, currentEditorProject().configurationNodes) { if (collection.kind == QStringLiteral("dataCollection") && collection.active && collection.implemented) { found = true; break; } }
+        if (!found) { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("没有建立数据采集")); return; }
+        object.name = QStringLiteral("历史数据显示器"); object.geometry = QRect(0, 0, 320, 180); dialog = new HistoryDataDialog(object, currentEditorProject(), this);
     }
     else if (type == QStringLiteral("track")) //20261112-0 add
     {
@@ -150,6 +159,7 @@ void MainWindow::createStage4Control(const QString &type) //20261112-0 add
         else if (type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (type == QStringLiteral("alarmdisplay") || type == QStringLiteral("historyalarm")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
+        else if (type == QStringLiteral("historydata")) { object = qobject_cast<HistoryDataDialog *>(dialog)->object(); } //20261113-2 add
         else if (type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -197,6 +207,7 @@ void MainWindow::editStage4Control() //20261112-0 add
     else if (object.type == QStringLiteral("alarmbar")) { dialog = new AlarmBarDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("datagroup")) { dialog = new DataGroupDialog(object, currentEditorProject(), this); } //20261113-1 add
     else if (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) { dialog = new AlarmDisplayDialog(object, currentEditorProject(), this); } //20261113-2 add
+    else if (object.type == QStringLiteral("historydata")) { dialog = new HistoryDataDialog(object, currentEditorProject(), this); } //20261113-2 add
     else if (object.type == QStringLiteral("track")) { dialog = new MoveTrackDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("wheel")) { dialog = new WheelDialog(object, currentEditorProject(), this); } //20261112-0 add
     else if (object.type == QStringLiteral("slider")) { dialog = new SliderDialog(object, currentEditorProject(), this); } //20261112-0 add
@@ -220,6 +231,7 @@ void MainWindow::editStage4Control() //20261112-0 add
         else if (object.type == QStringLiteral("alarmbar")) { object = qobject_cast<AlarmBarDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("datagroup")) { object = qobject_cast<DataGroupDialog *>(dialog)->object(); } //20261113-1 add
         else if (object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("historyalarm")) { object = qobject_cast<AlarmDisplayDialog *>(dialog)->object(); } //20261113-2 add
+        else if (object.type == QStringLiteral("historydata")) { object = qobject_cast<HistoryDataDialog *>(dialog)->object(); } //20261113-2 add
         else if (object.type == QStringLiteral("track")) { pictures = qobject_cast<MoveTrackDialog *>(dialog)->pictures(); object = qobject_cast<MoveTrackDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("wheel")) { pictures = qobject_cast<WheelDialog *>(dialog)->pictures(); object = qobject_cast<WheelDialog *>(dialog)->object(); } //20261112-0 add
         else if (object.type == QStringLiteral("slider")) { controlMacros = qobject_cast<SliderDialog *>(dialog)->macros(); object = qobject_cast<SliderDialog *>(dialog)->object(); } //20261112-0 add
@@ -264,8 +276,8 @@ void MainWindow::configureDataCollection(const QString &id) //20261112-1 add
     if (id.isEmpty()) { node.kind = QStringLiteral("dataCollection"); node.name = QStringLiteral("数据采集1"); }
     dialog = new DataCollectionDialog(node, candidate, this);
     if (dialog->exec() != QDialog::Accepted) { delete dialog; return; }
-    if (existing < 0) { candidate.configurationNodes.append(dialog->node()); } else { candidate.configurationNodes[existing] = dialog->node(); }
-    delete dialog;
+    node = dialog->node(); delete dialog;
+    if (!candidate.replaceDataCollection(node, &error)) { QMessageBox::warning(this, QStringLiteral("数据采集未提交"), error); return; } //20261113-2 change: Reconcile all historical-data columns before one undoable publish.
     if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("数据采集未提交"), error); }
 
 }

@@ -1,0 +1,97 @@
+[
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_historyrecord"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-general-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "history-data-general-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "history-data-columns-r2"
+  },
+  {
+    "op": "screenshot",
+    "label": "history-data-columns-r2"
+  },
+  {
+    "op": "read-tables",
+    "label": "history-data-columns-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 2
+  },
+  {
+    "op": "dump",
+    "label": "history-data-access-r2"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 0
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      150,
+      100
+    ],
+    "to": [
+      470,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "history-data-default.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-data-default-r2"
+  },
+  {
+    "op": "scene-select",
+    "soleRoot": true
+  },
+  {
+    "op": "action",
+    "name": "action_openpropertiset"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-reopened-r2"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

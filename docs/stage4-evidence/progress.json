@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 24,
-  "blockedLayers": 93,
-  "active": "C30",
+  "editorSlicesDelivered": 25,
+  "blockedLayers": 97,
+  "active": "C31",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -624,14 +624,31 @@
     {
       "id": "C30",
       "name": "历史数据显示器",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立historydata类型与真实采集前置；一般/数据/显现权限三页、六共用颜色、四字号、0..20行、双向格线、日期时间关闭仍可编辑；稳定采集列ID/顺序、分语言列名、共用显示标志、两页语言同步及首语言全部数据列名同步；所有页采集通道增删原子协调与撤销、复制依赖/语言冲突保护、schema12保存、时间在日期前的空白示意表格及原厂基线实物下载",
+      "evidence": "history-data/windows-final/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-C30-001",
+        "Q-S04-C30-002",
+        "Q-S04-C30-003",
+        "Q-S04-C30-004"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/run.json"
     },
     {
       "id": "C31",
       "name": "配方显示器",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },

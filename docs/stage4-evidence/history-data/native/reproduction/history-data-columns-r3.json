@@ -1,0 +1,72 @@
+[
+  {
+    "op": "action",
+    "name": "action_checkall"
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 0
+  },
+  {
+    "op": "action",
+    "name": "action_datasamp"
+  },
+  {
+    "op": "text",
+    "kind": "QLineEdit",
+    "name": "sHisdatalogName",
+    "value": "C30Multi"
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nSampleLen",
+    "value": 3
+  },
+  {
+    "op": "spin",
+    "kind": "QSpinBox",
+    "name": "nSampleSize",
+    "value": 100
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "确定"
+  },
+  {
+    "op": "save",
+    "output": "history-data-three-language-collection.sm"
+  },
+  {
+    "op": "action",
+    "name": "action_historyrecord"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-three-language-general-r3"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "history-data-three-language-columns-r3"
+  },
+  {
+    "op": "read-tables",
+    "label": "history-data-three-language-columns-r3"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "text": "取消"
+  }
+]

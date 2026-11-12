@@ -1,0 +1,71 @@
+[
+  {
+    "op": "action",
+    "name": "action_historyrecord"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_datecheck"
+  },
+  {
+    "op": "invoke",
+    "kind": "QCheckBox",
+    "name": "m_timecheck"
+  },
+  {
+    "op": "tab",
+    "kind": "QTabWidget",
+    "name": "tabWidget",
+    "value": 1
+  },
+  {
+    "op": "table-click",
+    "kind": "QTableWidget",
+    "name": "HisDataTable",
+    "row": 0,
+    "column": 1,
+    "checkbox": true
+  },
+  {
+    "op": "table-state",
+    "kind": "QTableWidget",
+    "name": "HisDataTable",
+    "label": "history-data-no-columns-r9"
+  },
+  {
+    "op": "invoke",
+    "kind": "QPushButton",
+    "name": "accept"
+  },
+  {
+    "op": "dump",
+    "label": "history-data-no-columns-accept-result-r9"
+  },
+  {
+    "op": "assert-main-only"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      150,
+      100
+    ],
+    "to": [
+      470,
+      280
+    ]
+  },
+  {
+    "op": "scene-assert",
+    "minSelectableRoots": 1
+  },
+  {
+    "op": "save",
+    "output": "history-data-no-columns.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "history-data-no-columns-r9"
+  }
+]
