@@ -582,11 +582,11 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
     bool selected;
 
     point = mapToScene(event->position().toPoint());
+    if (graphicPress(event, point)) { return; } //20261113-2 change: Multi-click graphics consume right-click completion before generic cancellation.
     if (event->button() == Qt::RightButton && hasActiveInteraction())
     {
         cancelInteraction(); event->accept(); return;
     }
-    if (graphicPress(event, point)) { return; } //20261113-2 add
     if (event->button() == Qt::LeftButton && m_hasPending)
     {
         m_dragOrigin = QPointF(qBound(0.0, point.x(), double(m_pageWidth)), qBound(0.0, point.y(), double(m_pageHeight)));

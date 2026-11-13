@@ -158,6 +158,7 @@ void ScreenCanvas::mouseDoubleClickEvent(QMouseEvent *event) //20261108-14 add
 {
     HmiControlItem *item;
 
+    if (m_hasPending && m_pendingObject.type == QStringLiteral("polyline") && graphicPress(event,mapToScene(event->position().toPoint()))) { return; } //20261113-2 add: Do not open an existing object's properties while a multi-click draft owns the gesture.
     item = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
     if (event->button() == Qt::LeftButton && item != nullptr)
     {
@@ -618,7 +619,7 @@ void ScreenCanvas::cancelInteraction() //20261110-8 add
     m_resizeId.clear(); m_resizeHandle = 0; m_pendingObject = HmiObject();
     m_interactionOriginal.clear(); m_interactionSelection.clear();
     delete m_draftRect; m_draftRect = nullptr;
-    delete m_graphicDraft; m_graphicDraft = nullptr; //20261113-2 add
+    delete m_graphicDraft; m_graphicDraft = nullptr; m_graphicVertices.clear(); //20261113-2 change: A canceled multi-click draft cannot leak into the next tool.
     if (canceled)
     {
         m_activeTool = QStringLiteral("select");

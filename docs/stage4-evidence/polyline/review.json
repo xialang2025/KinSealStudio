@@ -1,0 +1,18 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核真实多点路径、右键在通用取消前分流、中间顶点操作不再只取首尾、页切换/取消清草稿和一次历史事务。",
+    "严格有序坐标/有限范围/本地点数与重复点门槛；图形源/设备拒绝不变，10类混合复制和保存不丢顶点。",
+    "首次构建发现两个取消接口void返回值的测试断言错误，改成实际状态检查后重新构建；失败构建日志保留，未冒称首轮通过。",
+    "第二轮测试因持久化样例遗漏必填name而被正确拒绝；补全测试数据后实际windows-r3为207+59+10=276/0/0，生产校验未放宽。"
+  ],
+  "finalRun": "docs/stage4-evidence/polyline/windows-r3/run.json",
+  "tests": {
+    "passed": 276,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}

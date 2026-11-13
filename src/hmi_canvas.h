@@ -108,6 +108,7 @@ private:
     int m_resizeHandle = 0;
     QGraphicsPathItem *m_graphicDraft = nullptr; //20261113-2 add
     QPointF m_graphicEnd;
+    QVector<QPointF> m_graphicVertices; //20261113-2 add: Uncommitted ordered click vertices, cleared on cancel and page replacement.
     bool graphicPress(QMouseEvent *event, const QPointF &point);
     bool graphicMove(QMouseEvent *event, const QPointF &point);
     bool graphicRelease(QMouseEvent *event);

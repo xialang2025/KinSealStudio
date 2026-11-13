@@ -1,0 +1,51 @@
+{
+  "id": "G04",
+  "ordinal": 36,
+  "name": "折线",
+  "slug": "polyline",
+  "task": "S04-11",
+  "next": "G09",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/polyline/physical/polyline-baseline-r1/run.json",
+  "source": "polyline-right-three-point.sm",
+  "expectedPassed": 276,
+  "nativeManifest": "../docs/stage4-evidence/polyline/native/retained-manifest.json",
+  "report": "docs/折线图形实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立polyline与有序多顶点JSON，逐点点击和右键结束、临时尾段不落盘、一次创建一个事务；逐顶点控制柄和中间顶点拖动保留其他端点、取消/换页清空草稿、整步撤销、10类混合KSP及剪贴板；真实开放多段路径、末段方向箭头、原厂六线型/1..9线宽/六末端/两端帽/黑色/Alpha字段；未知SM/设备继续拒绝",
+  "nativeSummary": "action_foldline直接绘制，左击100,100→250,100→250,200后右键完成的三点原厂源已保存、编译，并双击打开折线属性。默认实线/宽1/无箭头/矩形端点/黑色/Alpha255；六线型、宽1..9、六箭头、两端帽、Alpha0..255。双击和Enter探针没有证明绘制已结束，不把它们作为已证结束手势。自定义短划线、宽8、三角末端、半圆端帽、Alpha128已保存并重开。静态SheetPixel，无ControlPara/ControlPixel。",
+  "protocol": "G04折线使用保留原厂三点右键结束源，SHA 2fac27d72ba777de8d357536e334160dbb1478eb8be5822b1d6108d73fe9ec68。按§73完整提交/重启后读取流程核验，关闭四清除/更新。保存全部有序顶点，不能由首尾包围框替代实际折线路径；完整SM body及独立设备背景合成尚未恢复，继续拒绝正式输出。",
+  "renderLimit": "本地路径逐一连接有序顶点且不自动闭合，末端箭头朝最后一段。默认原厂栅格与实际本地输出保留并记录指定ROI实际0像素差异（仅默认样例）；粗笔折角、dash相位、端帽、箭头尺寸及RGB565/Alpha量化未宣称全部逐像素一致。4096点和拒绝相邻重复点是明确本地限制；未新增未经证实的插/删点命令。",
+  "methods": [
+    "polylineNativeFieldsAndOrderedJson",
+    "polylineMultiClickRightFinishOneTransaction",
+    "polylineCancelAndInvalidFinish",
+    "polylineIntermediateHandleAndCancel",
+    "polylinePersistenceMixedCopyAndNativeRefusal",
+    "polylineRealPathAndTailRasterInput",
+    "polylineNativeMenuDoubleClickDraftAndUndo"
+  ],
+  "reviewFindings": [
+    "只读复核真实多点路径、右键在通用取消前分流、中间顶点操作不再只取首尾、页切换/取消清草稿和一次历史事务。",
+    "严格有序坐标/有限范围/本地点数与重复点门槛；图形源/设备拒绝不变，10类混合复制和保存不丢顶点。",
+    "首次构建发现两个取消接口void返回值的测试断言错误，改成实际状态检查后重新构建；失败构建日志保留，未冒称首轮通过。",
+    "第二轮测试因持久化样例遗漏必填name而被正确拒绝；补全测试数据后实际windows-r3为207+59+10=276/0/0，生产校验未放宽。"
+  ],
+  "unresolved": [
+    "Q-S04-G04-001",
+    "Q-S04-G04-002",
+    "Q-S04-G04-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G04-001：原厂完整SM图元body和独立设备编码未恢复，正式输出继续拒绝。",
+    "Q-S04-G04-002：原厂顶点插入/删除、替代结束手势、极限点数和完整线型/粗笔/箭头像素未穷尽恢复；当前局部编辑策略见报告。",
+    "Q-S04-G04-003：原厂基线T与屏显/PLC分别记录，默认及全部变体的完整现场显示尚未验收。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| Line_Type / Line_Width | graphic.lineStyle / lineWidth | 六项/1..9，实线/1 |\n| End_Arrow / End_Cap | graphic.endArrow / endCap | 六项/两项，无箭头/矩形 |\n| Line_Color / Alpha | graphic.lineColor / alpha | 黑色/0..255，255 |\n| 本地有序顶点 | graphic.points | normalized有限坐标；不是已恢复SM body |",
+  "codeFiles": "src/graphic_properties.cpp、graphic_canvas.cpp、hmi_canvas.h/.cpp、canvas_editing.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-2",
+  "recipes": [
+    "add_polyline_tests.py"
+  ],
+  "testRun": "docs/stage4-evidence/polyline/windows-r3/run.json"
+}

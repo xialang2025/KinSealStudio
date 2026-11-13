@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 30,
-  "blockedLayers": 114,
-  "active": "G04",
+  "editorSlicesDelivered": 31,
+  "blockedLayers": 117,
+  "active": "G09",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -791,9 +791,26 @@
     {
       "id": "G04",
       "name": "折线",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立polyline与有序多顶点JSON，逐点点击和右键结束、临时尾段不落盘、一次创建一个事务；逐顶点控制柄和中间顶点拖动保留其他端点、取消/换页清空草稿、整步撤销、10类混合KSP及剪贴板；真实开放多段路径、末段方向箭头、原厂六线型/1..9线宽/六末端/两端帽/黑色/Alpha字段；未知SM/设备继续拒绝",
+      "evidence": "polyline/windows-r3/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G04-001",
+        "Q-S04-G04-002",
+        "Q-S04-G04-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/polyline/physical/polyline-baseline-r1/run.json",
+      "report": "docs/折线图形实现与验收.md"
     },
     {
       "id": "G05",
@@ -880,7 +897,7 @@
     {
       "id": "G09",
       "name": "多边形",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
@@ -920,8 +937,8 @@
     "legacyResult": "marker B requested, marker A remained",
     "fixedResult": "marker B displayed; explicit user confirmation",
     "regressionTests": 18,
-    "activeControl": "G04",
-    "processedIncludingExisting": 35,
+    "activeControl": "G09",
+    "processedIncludingExisting": 36,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": false
   },

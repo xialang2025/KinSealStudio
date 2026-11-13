@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect"); //20261113-2 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline"); //20261113-2 change
 }
 
 /******************************************************************************
@@ -41,7 +41,7 @@ bool isSupportedGraphic(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicUsesVertices(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line");
+    return type == QStringLiteral("line") || type == QStringLiteral("polyline"); //20261113-2 change: Each polyline vertex keeps its ordered role.
 }
 
 /******************************************************************************
@@ -57,6 +57,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
+    if (type == QStringLiteral("polyline")) { return QStringLiteral("折线"); } //20261113-2 add
     return QString();
 }
 
@@ -153,6 +154,8 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
 bool GraphicProperties::validate(const QString &type, QString *error) const //20261113-2 add
 {
     QPointF point;
+    QPointF previous;
+    bool hasPrevious = false;
 
     if (!isSupportedGraphic(type) || lineStyle < 0 || lineStyle > 5 || lineWidth < 1 || lineWidth > 9 || endArrow < 0 || endArrow > 5 || endCap < 0 || endCap > 1 || alpha < 0 || alpha > 255 || !lineColor.isValid() || lineColor.alpha() != 255)
     { return graphicError(error, QStringLiteral("图形线型、线宽、颜色、箭头、端点或透明度无效。")); }
@@ -162,10 +165,13 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
         if (type == QStringLiteral("roundrect") && (radiusX < 0 || radiusX > 99 || radiusY < 0 || radiusY > 99)) { return graphicError(error, QStringLiteral("圆角X/Y半径必须为0到99。")); } //20261113-2 add
         return true;
     }
-    if (points.size() != 2 || points.first() == points.last()) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
+    if (type == QStringLiteral("line") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
+    if (type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
     Q_FOREACH (point, points)
     {
         if (!std::isfinite(point.x()) || !std::isfinite(point.y()) || point.x() < 0 || point.x() > 1 || point.y() < 0 || point.y() > 1) { return graphicError(error, QStringLiteral("图形归一坐标超出有限范围。")); }
+        if (type == QStringLiteral("polyline") && hasPrevious && point == previous) { return graphicError(error, QStringLiteral("折线相邻顶点不能重合。")); } //20261113-2 add
+        previous = point; hasPrevious = true;
     }
     return true;
 }
@@ -198,10 +204,17 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
 {
     QVector<QPointF> vertices = graphicHandles(type, rect, properties);
     QPainterPath path;
+    int index;
 
     if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
     if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
     if (type == QStringLiteral("roundrect")) { path.addRoundedRect(rect, properties.radiusX, properties.radiusY, Qt::AbsoluteSize); return path; } //20261113-2 add: Default native raster indicates equal absolute radii on a non-square box; extreme clipping remains a local rule.
+    if (type == QStringLiteral("polyline")) //20261113-2 add: Every stored point contributes a genuine segment, without automatic closure.
+    {
+        if (vertices.size() < 2) { return path; }
+        path.moveTo(vertices.first()); for (index = 1; index < vertices.size(); ++index) { path.lineTo(vertices[index]); }
+        return path;
+    }
     if (vertices.size() != 2) { return path; }
     path.moveTo(vertices[0]); path.lineTo(vertices[1]);
     return path;
@@ -222,8 +235,8 @@ static QPainterPath graphicArrow(const QString &type, const QRectF &rect, const 
     double size = 6.0 + properties.lineWidth;
     QPointF delta;
 
-    if (!graphicUsesVertices(type) || vertices.size() != 2 || properties.endArrow == 0) { return path; }
-    delta = vertices.last() - vertices.first(); transform.translate(vertices.last().x(), vertices.last().y());
+    if (!graphicUsesVertices(type) || vertices.size() < 2 || properties.endArrow == 0) { return path; }
+    delta = vertices.last() - vertices[vertices.size() - 2]; transform.translate(vertices.last().x(), vertices.last().y()); //20261113-2 change: Polyline arrows follow the final segment, not the overall box diagonal.
     transform.rotate(std::atan2(delta.y(), delta.x()) * 180.0 / 3.14159265358979323846);
     if (properties.endArrow == 5) { path.addEllipse(QRectF(-size, -size / 2, size, size)); }
     else if (properties.endArrow == 2)
