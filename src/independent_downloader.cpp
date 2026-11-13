@@ -1,4 +1,5 @@
 #include "independent_downloader.h"
+#include "device_roundrect_raster.h" //20261113-16 add
 #include "device_compile_plan.h" //20261113-11 add
 #include "device_package.h"
 #include "graphic_properties.h"
@@ -1047,6 +1048,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         else if (object.type == QStringLiteral("table")) //20261113-12 add: A pure image table has no PLC state, control record or dynamic image index.
         {
             paintDeviceTableGraphic(&painter,QRectF(object.geometry),object.graphic);
+        }
+        else if (object.type == QStringLiteral("roundrect")) //20261113-16 add: The original fixed scan conversion is independent of the editor renderer.
+        {
+            paintDeviceRoundrectGraphic(&painter,object.geometry,object.graphic);
         }
         else if (object.type == QStringLiteral("rect")) //20261113-13 add: Canonical closed-path pixels reuse the shared rectangle renderer.
         {

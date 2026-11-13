@@ -53,6 +53,11 @@ private slots:
     void lineUnprovedFieldsPreserveOutput_data();
     void lineUnprovedFieldsPreserveOutput();
     void lineSourceAndPackageGates();
+    void roundrectCanonicalFrames_data(); //20261113-16 add
+    void roundrectCanonicalFrames();
+    void roundrectUnprovedFieldsPreserveOutput_data();
+    void roundrectUnprovedFieldsPreserveOutput();
+    void roundrectSourceAndPackageGates();
     void freelineCanonicalFrames_data(); //20261113-15 add
     void freelineCanonicalFrames();
     void freelineUnprovedFieldsPreserveOutput_data();
@@ -341,6 +346,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiObject table; //20261113-12 add: Both static families must coexist with the five existing record families.
     HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     HmiObject line; //20261113-14 add: A fourth background family must leave the existing dynamic record count unchanged.
+    HmiObject roundrect; //20261113-16 add: A sixth static family must preserve all five dynamic records.
     HmiObject freeline; //20261113-15 add: The fifth background family contributes no dynamic records.
     QSet<QString> found;
     QString family;
@@ -363,7 +369,8 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     rectangle = rectangleProject().objects.first(); rectangle.geometry.moveTopLeft(QPoint(100,300)); project.objects.append(rectangle); //20261113-13 add
     line = lineProject().objects.first(); line.geometry = QRect(400,350,100,60); project.objects.append(line); //20261113-14 add
     freeline = freelineProject().objects.first(); freeline.geometry = QRect(600,350,100,60); project.objects.append(freeline); //20261113-15 add
-    QCOMPARE(project.objects.size(),10);
+    roundrect = rectangleProject().objects.first(); roundrect.type = QStringLiteral("roundrect"); roundrect.id = QStringLiteral("stage5-roundrect"); roundrect.geometry.moveTopLeft(QPoint(350,80)); project.objects.append(roundrect); //20261113-16 add
+    QCOMPARE(project.objects.size(),11);
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -1149,6 +1156,141 @@ void Stage5CompilerTests::freelineSourceAndPackageGates() //20261113-15 add
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
     QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
+    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::roundrectCanonicalFrames_data
+ * Description     : Bind independently observed geometry and binary style modes to complete saved-source frames.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::roundrectCanonicalFrames_data() //20261113-16 add
+{
+    QString root = QFINDTESTDATA("../docs/stage5-evidence/native/roundrect");
+    QJsonArray cases = QJsonDocument::fromJson(testFileBytes(QDir(root).filePath(QStringLiteral("B-S-M-fixed-scanline-r1.json")))).object().value(QStringLiteral("cases")).toArray();
+    QJsonValue sample;
+    QString run;
+
+    QTest::addColumn<QJsonObject>("sample");
+    Q_FOREACH (sample,cases)
+    {
+        run = sample.toObject().value(QStringLiteral("run")).toString();
+        if (run.contains(QStringLiteral("reopen")) || run.contains(QStringLiteral("default-repeat"))) { QTest::newRow(qPrintable(run)) << sample.toObject(); }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::roundrectCanonicalFrames
+ * Description     : Compare actual project compiler RGB565 and segment closure without injecting native geometry.
+ * Input Parameters: Qt sample column.
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::roundrectCanonicalFrames() //20261113-16 add
+{
+    QFETCH(QJsonObject,sample);
+    HmiProject project = rectangleProject();
+    HmiObject object = project.objects.first();
+    QJsonValue value;
+    QJsonArray rect;
+    QString root = QFINDTESTDATA("../docs/stage5-evidence/native/roundrect");
+    QString folder = sample.value(QStringLiteral("folder")).toString();
+    QByteArray native = testFileBytes(QDir(root).filePath(folder.mid(folder.indexOf(QStringLiteral("roundrect/"))+10)+QStringLiteral("/SheetPixel.dat")));
+    QVector<QByteArray> payloads;
+    QString error;
+
+    object.type = QStringLiteral("roundrect"); object.graphic.lineStyle = sample.value(QStringLiteral("lineStyle")).toInt(); object.graphic.fillStyle = sample.value(QStringLiteral("fillStyle")).toInt();
+    project.objects.clear();
+    Q_FOREACH (value,sample.value(QStringLiteral("rectangles")).toArray())
+    {
+        rect = value.toArray(); object.geometry = QRect(rect[0].toInt(),rect[1].toInt(),rect[2].toInt(),rect[3].toInt());
+        object.id = QStringLiteral("rounded-%1").arg(project.objects.size()); project.objects.append(object);
+    }
+    QCOMPARE(decodeTestFrame(native).size(),768000);
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
+    QCOMPARE(payloads.size(),10); QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native));
+    QCOMPARE(payloads[5].size(),2400); QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0);
+    QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::roundrectUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate unsupported roundrect rendering and geometric boundaries.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::roundrectUnprovedFieldsPreserveOutput_data() //20261113-16 add
+{
+    int variant;
+
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<16;++variant) { QTest::newRow(qPrintable(QString::number(variant))) << variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::roundrectUnprovedFieldsPreserveOutput
+ * Description     : Reject unproved styles, small sizes, edge clipping and overlap before changing caller output.
+ * Input Parameters: Qt fixture variant
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::roundrectUnprovedFieldsPreserveOutput() //20261113-16 add
+{
+    QFETCH(int,variant);
+    HmiProject project = rectangleProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+
+    project.objects[0].type = QStringLiteral("roundrect");
+    plan.staticRoundrectCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.fillStyle=2; }
+    if (variant==5) { project.objects[0].graphic.background=Qt::red; }
+    if (variant==6) { project.objects[0].graphic.foreground=Qt::red; }
+    if (variant==7) { project.objects[0].geometry=QRect(100,100,99,100); }
+    if (variant==8) { project.objects[0].geometry.moveLeft(600); }
+    if (variant==9) { project.objects[0].geometry.moveTop(380); }
+    if (variant==10) { peer=project.objects[0]; peer.id=QStringLiteral("overlap"); project.objects.append(peer); }
+    if (variant==11) { peer=project.objects[0]; peer.id=QStringLiteral("touching"); peer.geometry.moveLeft(300); project.objects.append(peer); }
+    if (variant==12) { project.objects[0].graphic.radiusX=0; }
+    if (variant==13) { project.objects[0].graphic.radiusY=20; }
+    if (variant==14) { project.objects[0].geometry.moveLeft(0); }
+    if (variant==15) { project.objects[0].geometry.moveTop(0); }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticRoundrectCount,77);
+    QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::roundrectSourceAndPackageGates
+ * Description     : Revalidate a roundrect device package while retaining native-SM and legacy text rejection.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::roundrectSourceAndPackageGates() //20261113-16 add
+{
+    HmiProject project = rectangleProject();
+    QTemporaryDir temporary;
+    QString target = temporary.filePath(QStringLiteral("roundrect"));
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QString error;
+
+    project.objects[0].type = QStringLiteral("roundrect");
     QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));

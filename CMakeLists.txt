@@ -51,6 +51,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/native_project_codec.cpp
     src/device_compile_plan.cpp #20261113-11 add: Pure bounded semantics and independently verified offline package publication.
     src/device_compile_plan.h
+    src/device_roundrect_raster.cpp #20261113-16 add: Independently verified fixed background spans.
+    src/device_roundrect_raster.h
     src/device_package.cpp
     src/device_package.h
     src/independent_downloader.cpp #20261108-10 add
