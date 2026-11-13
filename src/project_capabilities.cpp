@@ -1,4 +1,5 @@
 #include "project_capabilities.h"
+#include "device_compile_plan.h" //20261113-11 add
 #include "project_model.h"
 #include "native_project_codec.h"
 #include "device_address_compiler.h" //20261110-5 add
@@ -14,6 +15,8 @@
  ******************************************************************************/
 QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 add
 {
+    DeviceCompilePlan compilePlan; //20261113-11 add
+    QJsonObject compileIssue;
     QJsonObject result;
     QJsonObject target;
     QJsonObject model;
@@ -56,8 +59,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     {
         backendError = QStringLiteral("所含对象类型尚未恢复原厂源或设备编码。");
     }
-    deviceAllowed = backendAllowed && targetAllowed && nativeObjectsAllowed;
-    deviceError = !modelAllowed ? modelError : backendError;
+    deviceAllowed = prepareDeviceCompilePlan(project,&compilePlan,&deviceError,&compileIssue); //20261113-11 change: Source and device eligibility are independent.
     if (deviceAllowed && !defaultsAllowed)
     {
         deviceAllowed = false;
@@ -93,6 +95,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     result.insert(QStringLiteral("nativeSource"), native);
     device.insert(QStringLiteral("status"), deviceAllowed ? QStringLiteral("candidate") : QStringLiteral("blocked"));
     device.insert(QStringLiteral("reason"), deviceError);
+    device.insert(QStringLiteral("issue"),compileIssue); //20261113-11 add
     device.insert(QStringLiteral("offlineCompileRequired"), true);
     device.insert(QStringLiteral("usbAccessed"), false);
     result.insert(QStringLiteral("deviceCompile"), device);

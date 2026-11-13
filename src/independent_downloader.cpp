@@ -1,4 +1,7 @@
 #include "independent_downloader.h"
+#include "device_compile_plan.h" //20261113-11 add
+#include "device_package.h"
+#include "graphic_properties.h"
 #include "device_address_compiler.h" //20261109-0 add
 #include "text_payload_compiler.h" //20261108-11 add
 #include "static_text_renderer.h" //20261108-14 add
@@ -758,6 +761,7 @@ static void storePayloadLength(QByteArray *bytes, int offset, u32 value) //20261
 bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
                          QString *error) //20261109-0 add
 {
+    DeviceCompilePlan compilePlan; //20261113-11 add: Freeze bounded semantics before the existing five-family compilers run.
     QVector<QByteArray> generated;
     QVector<HmiDownloadStep> plan;
     QList<HmiObject> objects;
@@ -798,6 +802,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     bool hasSwitch;
     bool secondStateActive; //20261109-6 add
 
+    if (payloads == nullptr || !prepareDeviceCompilePlan(project,&compilePlan,error)) { return false; } //20261113-11 add
     if (!project.validateSinglePageBackend(error)) //20261110-5 add: Block uncompiled pages/configuration before loading payloads or opening USB.
     {
         return false;
@@ -813,7 +818,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     {
         hasSwitch = hasSwitch || object.type == QStringLiteral("switch");
     }
-    if (!hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.objects.size() == 1 && project.connections.isEmpty() && project.languages.size() == 1 &&
+    if (project.objects.size() == 1 && project.objects.first().type == QStringLiteral("text") && !hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.objects.size() == 1 && project.connections.isEmpty() && project.languages.size() == 1 &&
         (!project.objects.first().hasStaticTextProperties || !project.objects.first().staticText.visibilityEnabled)) //20261109-0 change: Keep the proven single-text raster for non-dynamic text.
     {
         return buildSingleTextPayload(project, payloads, error);
@@ -839,7 +844,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     {
         return false;
     }
-    objects = project.objects;
+    objects = compilePlan.objects; //20261113-11 change: Persisted layer ties keep their original stable ordering.
     std::stable_sort(objects.begin(), objects.end(), [](const HmiObject &left, const HmiObject &right) {
         return left.layer < right.layer;
     });
@@ -978,6 +983,13 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
             ++controlCount;
             pictureCount += sprites.lengthRecords.size() / 12; //20261109-0 change: Flashing states add one text-free sprite each.
         }
+        else if (object.type == QStringLiteral("polyline")) //20261113-11 add: Only the independently gated static orthogonal slice reaches this branch.
+        {
+            // Saved-and-reopened native cap zero is FlatCap; a newly created native object retains a different cached pen.
+            painter.save(); painter.setRenderHint(QPainter::Antialiasing,false); painter.setBrush(Qt::NoBrush);
+            painter.setPen(QPen(Qt::black,1,Qt::SolidLine,Qt::FlatCap));
+            painter.drawPath(graphicPath(object.type,QRectF(object.geometry),object.graphic)); painter.restore();
+        }
         else
         {
             if (error != nullptr)
@@ -1034,7 +1046,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         generated.append(macros.marcoVar);
         generated.append(macros.marcoRun);
     }
-    if (!buildDeviceTransferPlan(generated, &plan, error))
+    if (!validateDevicePayloadStructure(generated,error) || !buildDeviceTransferPlan(generated, &plan, error)) //20261113-11 change
     {
         return false;
     }
@@ -1457,6 +1469,16 @@ bool downloadProject(const HmiProject &project, QString *error) //20261109-0 add
  * Date            : 2026.11.09
  ******************************************************************************/
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
+                          QString *error) //20261113-11 change
+{
+    QVector<QByteArray> payloads;
+
+    if (!buildProjectPayload(project,&payloads,error)) { return false; }
+    return publishDevicePackage(project,payloads,outputDirectory,error);
+}
+
+#if 0 //20261113-11 del: Retain the old per-file publisher for history; staging publication prevents partial or stale packages.
+bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
                           QString *error) //20261109-0 add
 {
     static const char *names[] = {"SysPara.dat", "SheetPara.dat", "AlarmPara.dat", "Collect.dat",
@@ -1520,6 +1542,8 @@ bool exportProjectPayload(const HmiProject &project, const QString &outputDirect
     }
     return true;
 }
+
+#endif
 
 /******************************************************************************
  * Function Name   : downloadFixedTestProject

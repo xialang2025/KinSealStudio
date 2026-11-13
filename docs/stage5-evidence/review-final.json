@@ -1,0 +1,18 @@
+{
+  "mode": "read_only_review_after_repairs",
+  "businessLogicChangedDuringReview": false,
+  "tests": {
+    "passed": 107,
+    "failed": 0,
+    "skipped": 0
+  },
+  "actualFinalRun": "docs/stage5-evidence/windows-r5/run.json",
+  "canonicalNativeFramesEqual": 6,
+  "findings": [
+    "type仅首字节，下一字节macro flag保持；真实14段宏包和帧校验通过。",
+    "整帧对照针对保存重开后的canonical笔；旧创建时与新结果一像素差异已分别保存。",
+    "GUI下载worker直接buildProjectPayload，不受离线输出目录拒绝覆盖策略影响；共用预检仍在任何USB前。",
+    "旧主目录用户修改未参与验证；阶段5全类型、多页/配置和原厂非确定掩码未宣称完成。"
+  ],
+  "usbCommunicationExecuted": false
+}

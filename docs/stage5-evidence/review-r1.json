@@ -1,0 +1,11 @@
+{
+  "mode": "read_only_review_before_repair",
+  "businessLogicChangedDuringReview": false,
+  "findings": [
+    "Initial 83 tests passed against older retained created-time raster; fresh reopen evidence finds one extra endpoint pixel with SquareCap. FlatCap candidate is exactly equal to three fresh native outputs.",
+    "New package validator still needs explicit type/subtype and control geometry whitelists; checksums alone must not admit a rehashed unknown record.",
+    "New array-bounds warning occurs through QByteArray empty-data specialization despite checked PicLen length; use a bounded byte reader. Existing lzokay lb_pos warning is third-party and not changed.",
+    "Offline directory publication stages on same parent and refuses existing destinations; write/corruption/manifest/occupation seams passed. No USB API is invoked by the new tests."
+  ],
+  "next": "Repair only the identified bounded cases, rerun affected targets and fresh native pixel comparisons."
+}

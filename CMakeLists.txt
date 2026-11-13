@@ -49,6 +49,10 @@ qt_add_executable(KinSealStudioLite WIN32
     src/native_test_project.h
     src/native_project_codec.h #20261109-0 add
     src/native_project_codec.cpp
+    src/device_compile_plan.cpp #20261113-11 add: Pure bounded semantics and independently verified offline package publication.
+    src/device_compile_plan.h
+    src/device_package.cpp
+    src/device_package.h
     src/independent_downloader.cpp #20261108-10 add
     src/independent_downloader.h
     src/device_transfer_plan.cpp #20261109-0 add
@@ -244,6 +248,12 @@ qt_add_executable(KinSealStage1BackendTests ${KINSEAL_TEST_SOURCES} tests/stage1
 target_include_directories(KinSealStage1BackendTests PRIVATE src third_party/lzokay)
 target_link_libraries(KinSealStage1BackendTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealStage1BackendTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+
+#20261113-11 add: Exercise real offline compilation and publication failure seams without USB calls.
+qt_add_executable(KinSealStage5CompilerTests ${KINSEAL_TEST_SOURCES} tests/stage5_compiler_tests.cpp src/plc_native_catalog.cpp)
+target_include_directories(KinSealStage5CompilerTests PRIVATE src third_party/lzokay)
+target_link_libraries(KinSealStage5CompilerTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+target_compile_definitions(KinSealStage5CompilerTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261110-7 add: Verify real configuration dialogs and cross-page batch edits without USB access.
 qt_add_executable(KinSealStage2DialogsTests ${KINSEAL_TEST_SOURCES} tests/stage2_project_dialogs_tests.cpp)

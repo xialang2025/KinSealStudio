@@ -1,0 +1,162 @@
+{
+  "date": "2026-11-12",
+  "run": "tiny-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage5Offline20261113",
+  "input": {
+    "path": "..\\kinseal-stage4-20261112\\worktree\\docs\\stage4-evidence\\polyline\\native\\polyline-right-three-point.sm",
+    "sha256": "2fac27d72ba777de8d357536e334160dbb1478eb8be5822b1d6108d73fe9ec68"
+  },
+  "systemInput": false,
+  "usbOrPlc": false,
+  "outputs": [
+    {
+      "path": "polyline-tiny.sm",
+      "bytes": 3408,
+      "sha256": "3941358d1dacabb2999875b2eab0a0599cdfc4c843339a4fa50601fda9426888"
+    }
+  ],
+  "nativeCompilations": [
+    {
+      "label": "tiny",
+      "sourceSha256": "3941358d1dacabb2999875b2eab0a0599cdfc4c843339a4fa50601fda9426888",
+      "logsRaw": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "logsDecodedCandidate": [
+        [
+          [
+            "开始编译..."
+          ],
+          [
+            "准备组态数据..."
+          ],
+          [
+            "提取控件数据..."
+          ],
+          [
+            "开始编译画面：画面1"
+          ],
+          [
+            "结束编译画面：画面1"
+          ],
+          [
+            "编译成功..."
+          ]
+        ]
+      ],
+      "files": [
+        {
+          "path": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+          "path": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "d5e92571ca6e04c2c6df5c98c21d46fef5fa972550470aec028faefddfc08319"
+        },
+        {
+          "path": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+          "path": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+          "path": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303"
+        },
+        {
+          "path": "load.kns",
+          "bytes": 6026,
+          "sha256": "a91519f7d9471a5dadf667f3a4081f5692b4cac95ac1891c7c70ad5adc3bee81"
+        },
+        {
+          "path": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "PicLenPara.dat",
+          "bytes": 2400,
+          "sha256": "3f38ae1441e26dbaf5c499b24f26c0f81a9c01a90451a31433f868988492425e"
+        },
+        {
+          "path": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556"
+        },
+        {
+          "path": "SheetPixel.dat",
+          "bytes": 3684,
+          "sha256": "67180f5fe2399c39c2daf57c2e8eb3eef90af837007784f2daff729274300674"
+        },
+        {
+          "path": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "07a83f3af1afdd4cc516788bbb6ffc33ba10a43597c4a38ca2ee408ddc753299"
+        },
+        {
+          "path": "upLoad.knr",
+          "bytes": 936,
+          "sha256": "3c07ddb373214cda29e6616ecd7342ac5f49826c2a5294bf952865db3ea5f27f"
+        },
+        {
+          "path": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "5ca9001ac8127bcef58737d714f7260540e68ff453e0f91621636b9b2d92f1d5"
+        }
+      ],
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_USBdownload compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked"
+    }
+  ],
+  "status": "native-stage4-graphics-scenario-completed",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 2,
+    "otherEntriesPreserved": 1
+  },
+  "rawEvidence": {
+    "file": "native-probe.json.gz",
+    "uncompressedBytes": 80224,
+    "uncompressedSha256": "6064ace0fc81993ee6f1eae375a9447505eafaebe3bfea92454a0eef167fb235",
+    "archiveSha256": "24b21e712276abb4b3afab9638993b31ceeae1d11cafb83f41a5f3de7c3c9634"
+  }
+}

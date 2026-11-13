@@ -3,7 +3,8 @@
 #include "native_test_project.h" //20261108-7 add
 #include "native_project_codec.h" //20261109-0 add
 #include <QSaveFile>
-#include "independent_downloader.h" //20261108-10 add
+#include "independent_downloader.h"
+#include "device_package.h" //20261113-11 add //20261108-10 add
 #include "text_payload_compiler.h" //20261108-11 add
 #include "project_capabilities.h" //20261110-5 add
 
@@ -342,6 +343,14 @@ int main(int argc, char *argv[]) //20261107-6 add
             return 14;
         }
         writeDownloadResult(true, QStringLiteral("工程数据段和提交命令均获设备确认，重启命令已发送；请核对屏端显示与触控行为。"));
+        return 0;
+    }
+    if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--verify-compiled-package")) //20261113-11 add: No USB access is involved in artifact verification.
+    {
+        if (!verifyDevicePackage(arguments.at(2), &inspectObject, &validation_error))
+        { writeDownloadResult(false,validation_error); return 23; }
+        capabilityBytes = QJsonDocument(inspectObject).toJson(QJsonDocument::Compact) + '\n';
+        std::fwrite(capabilityBytes.constData(),1,size_t(capabilityBytes.size()),stdout); std::fflush(stdout);
         return 0;
     }
     if (arguments.size() >= 4 &&

@@ -1,0 +1,54 @@
+[
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        150,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_foldline"
+  },
+  {
+    "op": "scene-click",
+    "x": 75,
+    "y": 65
+  },
+  {
+    "op": "scene-click",
+    "x": 205,
+    "y": 65
+  },
+  {
+    "op": "scene-click",
+    "x": 205,
+    "y": 185
+  },
+  {
+    "op": "scene-click",
+    "x": 205,
+    "y": 185,
+    "button": "right"
+  },
+  {
+    "op": "scene-read",
+    "label": "shifted-sized"
+  },
+  {
+    "op": "save",
+    "output": "polyline-shifted.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "shifted-sized"
+  }
+]
