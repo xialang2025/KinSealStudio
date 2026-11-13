@@ -3,8 +3,8 @@
   "total": 41,
   "skippedExisting": 5,
   "editorSlicesDelivered": 33,
-  "blockedLayers": 123,
-  "active": "G03",
+  "blockedLayers": 126,
+  "active": "G07",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -801,9 +801,26 @@
     {
       "id": "G03",
       "name": "曲线/圆弧",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "investigated_geometry_blocked",
+      "scope": "原厂外观/源前缀/编译与控制柄调查；真实曲率未恢复，不提供折线替代实现",
+      "evidence": "curve/review.json",
+      "report": "docs/曲线圆弧调查与阻塞记录.md",
+      "hardwareEvidence": "docs/stage4-evidence/curve/physical/curve-baseline-r1/run.json",
+      "unresolved": [
+        "Q-S04-G03-001",
+        "Q-S04-G03-002",
+        "Q-S04-G03-003"
+      ],
+      "layers": {
+        "D": "bounded_investigation",
+        "U": "geometry_blocked",
+        "P_KSP": "not_implemented",
+        "P_SM": "blocked",
+        "R_PC": "geometry_blocked",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      }
     },
     {
       "id": "G04",
@@ -880,7 +897,7 @@
     {
       "id": "G07",
       "name": "扇形",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
@@ -971,8 +988,8 @@
     "legacyResult": "marker B requested, marker A remained",
     "fixedResult": "marker B displayed; explicit user confirmation",
     "regressionTests": 18,
-    "activeControl": "G03",
-    "processedIncludingExisting": 38,
+    "activeControl": "G07",
+    "processedIncludingExisting": 39,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": false
   },
@@ -981,5 +998,7 @@
     "completed": 28,
     "complete": true,
     "evidence": "docs/stage4-evidence/lifecycle-backfill/audit.json"
-  }
+  },
+  "investigationSlicesRecorded": 1,
+  "processedIncludingExisting": 39
 }
