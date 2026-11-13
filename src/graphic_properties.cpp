@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon"); //20261113-2 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline"); //20261113-2 change
 }
 
 /******************************************************************************
@@ -41,7 +41,7 @@ bool isSupportedGraphic(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicUsesVertices(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon"); //20261113-2 change: Each polyline vertex keeps its ordered role.
+    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline"); //20261113-2 change: Each polyline vertex keeps its ordered role.
 }
 
 /******************************************************************************
@@ -53,7 +53,7 @@ bool graphicUsesVertices(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicStrokeOnly(const QString &type) //20261113-4 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("polyline");
+    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("freeline"); //20261113-5 change: The observed native default has two path elements, not a proven sampled freehand path.
 }
 
 /******************************************************************************
@@ -69,6 +69,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
+    if (type == QStringLiteral("freeline")) { return QStringLiteral("自由直线"); } //20261113-5 add
     if (type == QStringLiteral("polygon")) { return QStringLiteral("多边形"); } //20261113-4 add
     if (type == QStringLiteral("polyline")) { return QStringLiteral("折线"); } //20261113-2 add
     return QString();
@@ -184,6 +185,7 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
         if (!graphicUsesVertices(type)) { return true; }
     }
     if (type == QStringLiteral("polygon") && (points.size() < 3 || points.size() > 4096 || points.first() == points.last())) { return graphicError(error, QStringLiteral("多边形需要3到4096个顶点，末点不重复首点。")); } //20261113-4 add: This is an explicit local resource/closure policy.
+    if (type == QStringLiteral("freeline") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("自由直线当前首尾切片只支持两个不同端点；采样路径尚未恢复。")); } //20261113-5 add: Reject unverified multi-point freeline input rather than silently reducing it.
     if (type == QStringLiteral("line") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
     if (type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
     Q_FOREACH (point, points)

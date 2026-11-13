@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-12",
+  "run": "freeline-qt-six-point-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Graphics20261112",
+  "input": {
+    "path": "worktree\\tests\\fixtures\\native-source\\multipage\\A-empty-one-page.sm",
+    "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+  },
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 22828,
+  "status": "partial-or-error",
+  "error": "RuntimeError(\"{'serial': 28, 'status': 'error', 'error': 'Error: access violation accessing 0x0'}\")",
+  "exitCodeBeforeCleanup": 0,
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "compaction": {
+    "rawArchive": "native-probe-freeline-qt-six-point-r1.json.gz",
+    "rawSha256": "a5c4ad53db10517400f1369039a93ae0ac73e49129fb1778a245e3af0a1067b0"
+  }
+}

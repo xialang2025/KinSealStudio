@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-12",
+  "run": "freeline-qt-six-point-r1",
+  "originalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "patch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "desktop": "KinSealStage4Graphics20261112",
+  "input": {
+    "path": "worktree\\tests\\fixtures\\native-source\\multipage\\A-empty-one-page.sm",
+    "sha256": "abdd296d806df87b713bd9cc118c11231a07d20f353a1f98e123afbc4b4d71a6"
+  },
+  "steps": [
+    {
+      "request": {
+        "op": "batch",
+        "hwnd": null,
+        "count": 248
+      },
+      "result": {
+        "serial": 1,
+        "status": "completed",
+        "guiThread": 25660,
+        "dispatchHook": "DispatchMessageW"
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "initial",
+      "windows": []
+    }
+  ],
+  "systemInput": false,
+  "usbOrPlc": false,
+  "qtOperationsGuiThreadOnly": true,
+  "pid": 22828
+}

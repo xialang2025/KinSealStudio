@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 32,
-  "blockedLayers": 120,
-  "active": "G02",
+  "editorSlicesDelivered": 33,
+  "blockedLayers": 123,
+  "active": "G03",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -777,14 +777,31 @@
     {
       "id": "G02",
       "name": "自由直线",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立freeline类型的已证首尾拖线及六线型/1..9宽/六箭头/两端帽/黑色/0..255透明度切片；两端点角色、反向拖动、取消和零长度拒绝、双击属性草稿/整步撤销、12类混合KSP/复制；原厂独立窗口尺寸与字段几何；多点自由采样/平滑尚未恢复，严格拒绝多点freeline与未知SM/独立设备输出",
+      "evidence": "freeline/windows-r1/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G02-001",
+        "Q-S04-G02-002",
+        "Q-S04-G02-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/freeline/physical/freeline-baseline-r1/run.json",
+      "report": "docs/自由直线首尾切片实现与验收.md"
     },
     {
       "id": "G03",
       "name": "曲线/圆弧",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     },
@@ -954,8 +971,8 @@
     "legacyResult": "marker B requested, marker A remained",
     "fixedResult": "marker B displayed; explicit user confirmation",
     "regressionTests": 18,
-    "activeControl": "G02",
-    "processedIncludingExisting": 37,
+    "activeControl": "G03",
+    "processedIncludingExisting": 38,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": false
   },

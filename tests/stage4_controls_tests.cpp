@@ -110,6 +110,12 @@ private slots:
     void polygonMixedPersistenceCopyAndNativeRefusal();
     void polygonFilledRasterAndTransparentHitShape();
     void polygonNativeMenuDialogDraftAndUndo();
+    void freelineObservedFieldsAndSamplingRefusal();
+    void freelineObservedDragEndpointsOneTransaction();
+    void freelineEndpointResizeCancelAndZeroLength();
+    void freelineMixedKspCopyAndNativeRefusal();
+    void freelineDefaultRasterAndTransparentStroke();
+    void freelineNativeMenuDialogDraftAndUndo();
     void initTestCase();
     void messageDefaultsAndNativeBounds();
     void messageLanguageAndHiddenStateDrafts();
@@ -5447,6 +5453,118 @@ void Stage4ControlTests::polygonNativeMenuDialogDraftAndUndo() //20261113-4 add
     window.setProject(HmiProject(),QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); window.m_commands.value(QStringLiteral("action_polygon"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(QApplication::activeModalWidget()==nullptr); Q_FOREACH (point,points) { QTest::mouseClick(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(point)); } QTest::mouseClick(window.m_canvas->viewport(),Qt::RightButton,Qt::NoModifier,window.m_canvas->mapFromScene(points.last())); QCOMPARE(window.currentEditorProject().objects.size(),1); QCOMPARE(window.currentEditorProject().objects.first().graphic.background,QColor(Qt::black)); QVERIFY(!window.m_textEdit->isEnabled()); QVERIFY(!window.m_addressEdit->isEnabled()); before = window.currentEditorProject().toJson();
     QTimer::singleShot(0,[]() { GraphicDialog *dialog = qobject_cast<GraphicDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog!=nullptr); QCOMPARE(dialog->windowTitle(),QStringLiteral("多边形")); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("polygon-default-properties.png")))); } dialog->findChild<QComboBox *>(QStringLiteral("Pattern"))->setCurrentIndex(12); dialog->findChild<QComboBox *>(QStringLiteral("Line_Width"))->setCurrentIndex(2); dialog->findChild<QSpinBox *>(QStringLiteral("Alpha"))->setValue(128); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("polygon-properties.png")))); } dialog->findChild<QDialogButtonBox *>(QStringLiteral("GraphicButtons"))->button(QDialogButtonBox::Ok)->click(); }); QTest::mouseDClick(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(220,140))); QCOMPARE(window.currentEditorProject().objects.first().graphic.points.size(),3); QCOMPARE(window.currentEditorProject().objects.first().graphic.fillStyle,12); QCOMPARE(window.currentEditorProject().objects.first().graphic.alpha,128);
     QTimer::singleShot(0,[]() { GraphicDialog *dialog = qobject_cast<GraphicDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog!=nullptr); dialog->findChild<QComboBox *>(QStringLiteral("Pattern"))->setCurrentIndex(0); dialog->reject(); }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().graphic.fillStyle,12); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().toJson(),before);
+}
+
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineObservedFieldsAndSamplingRefusal
+ * Description     : Preserve the separately observed freeline stroke fields and reject unverified multi-point input atomically.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineObservedFieldsAndSamplingRefusal() //20261113-5 add
+{
+    HmiObject object;
+    GraphicDialog *dialog;
+    GraphicProperties parsed;
+    QJsonObject json;
+    QString error;
+    object.type = QStringLiteral("freeline"); dialog = new GraphicDialog(object); dialog->show(); QVERIFY(QTest::qWaitForWindowExposed(dialog)); QCOMPARE(dialog->windowTitle(),QStringLiteral("自由直线")); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("Line_Type"))->count(),6); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("Line_Width"))->count(),9); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("End_Arrow"))->count(),6); QCOMPARE(dialog->findChild<QComboBox *>(QStringLiteral("End_Cap"))->count(),2); QVERIFY(dialog->findChild<QComboBox *>(QStringLiteral("Pattern"))==nullptr); QCOMPARE(dialog->findChild<QSpinBox *>(QStringLiteral("Alpha"))->maximum(),255);
+    json = object.graphic.toJson(object.type); QVERIFY(GraphicProperties::fromJson(json,&parsed,&error,object.type)); json.insert(QStringLiteral("points"),QJsonArray{QJsonArray{0,0},QJsonArray{.5,.2},QJsonArray{1,1}}); QVERIFY(!GraphicProperties::fromJson(json,&parsed,&error,object.type)); QVERIFY(error.contains(QStringLiteral("采样"))); QCOMPARE(parsed.toJson(object.type),object.graphic.toJson(object.type)); json = object.graphic.toJson(object.type); json.insert(QStringLiteral("fillStyle"),1); QVERIFY(!GraphicProperties::fromJson(json,&parsed,&error,object.type)); dialog->reject(); delete dialog;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineObservedDragEndpointsOneTransaction
+ * Description     : Match the named native six-move probe which retained two endpoints, without claiming a recovered sampled path.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineObservedDragEndpointsOneTransaction() //20261113-5 add
+{
+    ScreenCanvas canvas;
+    HmiObject draft;
+    HmiObject object;
+    QPointF point;
+    QVector<QPointF> moves = {QPointF(130,90),QPointF(160,150),QPointF(200,170),QPointF(240,140),QPointF(280,200)};
+    QSignalSpy changed(&canvas,&ScreenCanvas::documentChanged);
+    canvas.setProject(HmiProject()); canvas.resize(900,550); canvas.show(); QVERIFY(QTest::qWaitForWindowExposed(&canvas)); draft.type = QStringLiteral("freeline"); canvas.beginControlPlacement(draft); QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(100,100))); Q_FOREACH (point,moves) { QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(point)); QVERIFY(canvas.objects().isEmpty()); } QTest::mouseRelease(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(moves.last())); QCOMPARE(changed.size(),1); QCOMPARE(canvas.objects().size(),1); object = canvas.objects().first(); QCOMPARE(object.type,QStringLiteral("freeline")); QCOMPARE(object.geometry,QRect(100,100,180,100)); QCOMPARE(graphicHandles(object.type,object.geometry,object.graphic),(QVector<QPointF>{QPointF(100,100),QPointF(280,200)})); QCOMPARE(graphicPath(object.type,object.geometry,object.graphic).elementCount(),2); QVERIFY(!canvas.hasActiveInteraction());
+    canvas.beginControlPlacement(draft); QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(300,300))); QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(QPointF(400,350))); canvas.cancelInteraction(); QVERIFY(!canvas.hasActiveInteraction()); QCOMPARE(canvas.objects().first().toJson(),object.toJson()); QCOMPARE(changed.size(),1);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineEndpointResizeCancelAndZeroLength
+ * Description     : Keep start/tail roles during endpoint movement and discard a zero-length new gesture without changing the original object.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineEndpointResizeCancelAndZeroLength() //20261113-5 add
+{
+    ScreenCanvas canvas;
+    HmiProject project;
+    HmiObject object;
+    HmiObject after;
+    QVector<QPointF> handles;
+    QSignalSpy changed(&canvas,&ScreenCanvas::documentChanged);
+    object.type = QStringLiteral("freeline"); object.id = QStringLiteral("free-resize"); object.name = QStringLiteral("自由直线"); object.geometry = QRect(100,100,180,100); project.objects.append(object); canvas.setProject(project); canvas.resize(900,550); canvas.show(); QVERIFY(QTest::qWaitForWindowExposed(&canvas)); canvas.selectObject(object.id); QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(280,200))); QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(QPointF(60,250))); QTest::mouseRelease(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(60,250))); after = canvas.objects().first(); handles = graphicHandles(after.type,after.geometry,after.graphic); QCOMPARE(handles[0],QPointF(100,100)); QCOMPARE(handles[1],QPointF(60,250)); QCOMPARE(changed.size(),1);
+    QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(handles[0])); QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(QPointF(350,250))); canvas.cancelInteraction(); QCOMPARE(canvas.objects().first().toJson(),after.toJson()); canvas.beginControlPlacement(object); QTest::mouseClick(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(400,300))); QCOMPARE(canvas.objects().size(),1); QCOMPARE(changed.size(),1);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineMixedKspCopyAndNativeRefusal
+ * Description     : Round-trip the independent bounded family with twelve mixed object families and preserve native output refusal.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineMixedKspCopyAndNativeRefusal() //20261113-5 add
+{
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject pasted;
+    HmiObject object;
+    Stage3Clipboard clipboard;
+    QString error;
+    QString type;
+    QStringList types = {QStringLiteral("line"),QStringLiteral("rect"),QStringLiteral("ellipse"),QStringLiteral("roundrect"),QStringLiteral("polyline"),QStringLiteral("polygon")};
+    QByteArray native = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    object.type = QStringLiteral("freeline"); object.id = QStringLiteral("free-model"); object.name = QStringLiteral("自由直线"); object.geometry = QRect(100,100,180,100); object.graphic.endArrow = 4; object.graphic.endCap = 1; object.graphic.lineWidth = 5; object.graphic.alpha = 128; project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("freeline-only.ksp")),&error)); }
+    Q_FOREACH (type,types) { object.type = type; object.id = QStringLiteral("mixed-")+type; object.graphic = GraphicProperties(); if (type == QStringLiteral("polygon")) { object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; } project.objects.append(object); } project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.size(),12); QCOMPARE(loaded.toJson(),project.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineDefaultRasterAndTransparentStroke
+ * Description     : Retain a real local default raster for comparison with the named two-point native sample and verify transparent stroke behavior.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineDefaultRasterAndTransparentStroke() //20261113-5 add
+{
+    GraphicProperties properties;
+    QImage image(800,480,QImage::Format_ARGB32);
+    QImage native(QFINDTESTDATA("../docs/stage4-evidence/freeline/native/sheet-freeline-default-r2.png"));
+    QPainter painter;
+    QVERIFY(!native.isNull()); image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("freeline"),QRectF(100,100,180,100),properties); painter.end(); QCOMPARE(image.pixelColor(190,150),QColor(Qt::black)); QCOMPARE(image.pixelColor(130,90),QColor(197,222,255)); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("freeline-default-raster.png")))); } properties.lineStyle = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("freeline"),QRectF(100,100,180,100),properties); painter.end(); QCOMPARE(image.pixelColor(190,150),QColor(197,222,255));
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::freelineNativeMenuDialogDraftAndUndo
+ * Description     : Use the actual native-named command and dialog, retaining endpoint geometry through accepted, canceled and undone style edits.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage4ControlTests::freelineNativeMenuDialogDraftAndUndo() //20261113-5 add
+{
+    MainWindow window;
+    QJsonObject before;
+    window.setProject(HmiProject(),QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); window.m_commands.value(QStringLiteral("action_freeline"))->trigger(); QVERIFY(window.m_canvas->hasPendingPlacement()); QVERIFY(QApplication::activeModalWidget()==nullptr); QTest::mousePress(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(100,100))); QTest::mouseMove(window.m_canvas->viewport(),window.m_canvas->mapFromScene(QPointF(280,200))); QTest::mouseRelease(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(280,200))); QCOMPARE(window.currentEditorProject().objects.first().type,QStringLiteral("freeline")); before = window.currentEditorProject().toJson();
+    QTimer::singleShot(0,[]() { GraphicDialog *dialog = qobject_cast<GraphicDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog!=nullptr); QCOMPARE(dialog->windowTitle(),QStringLiteral("自由直线")); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog->grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("freeline-default-properties.png")))); } dialog->findChild<QComboBox *>(QStringLiteral("End_Arrow"))->setCurrentIndex(4); dialog->findChild<QComboBox *>(QStringLiteral("End_Cap"))->setCurrentIndex(1); dialog->findChild<QComboBox *>(QStringLiteral("Line_Width"))->setCurrentIndex(4); dialog->findChild<QSpinBox *>(QStringLiteral("Alpha"))->setValue(128); dialog->findChild<QDialogButtonBox *>(QStringLiteral("GraphicButtons"))->button(QDialogButtonBox::Ok)->click(); }); QTest::mouseDClick(window.m_canvas->viewport(),Qt::LeftButton,Qt::NoModifier,window.m_canvas->mapFromScene(QPointF(190,150))); QCOMPARE(window.currentEditorProject().objects.first().graphic.endArrow,4); QCOMPARE(window.currentEditorProject().objects.first().graphic.points.size(),2);
+    QTimer::singleShot(0,[]() { GraphicDialog *dialog = qobject_cast<GraphicDialog *>(QApplication::activeModalWidget()); QVERIFY(dialog!=nullptr); dialog->findChild<QSpinBox *>(QStringLiteral("Alpha"))->setValue(0); dialog->reject(); }); window.editStage4Control(); QCOMPARE(window.currentEditorProject().objects.first().graphic.alpha,128); window.restoreProjectHistory(-1); QCOMPARE(window.currentEditorProject().toJson(),before);
 }
 
 QTEST_MAIN(Stage4ControlTests)

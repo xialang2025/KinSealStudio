@@ -122,6 +122,20 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
             m_preview->setFixedSize(161,141); m_preview->setStyleSheet(QStringLiteral("border:1px solid #808a99;")); preview->layout()->setContentsMargins(10,2,10,10);
         }
     }
+    if (object.type == QStringLiteral("freeline")) //20261113-5 add: Match measured native freeline groups without promoting unknown sampling behavior.
+    {
+        resize(605,471); setFont(QFont(QStringLiteral("SimSun"),9));
+        while (grid->count() > 0) { delete grid->takeAt(0); }
+        stroke->setGeometry(20,10,281,91); shape->setGeometry(20,110,281,101); fill->setGeometry(20,220,281,61);
+        preview->setGeometry(320,10,151,201); opacity->setGeometry(320,220,151,61);
+        qobject_cast<QFormLayout *>(stroke->layout())->setContentsMargins(10,2,30,19); qobject_cast<QFormLayout *>(stroke->layout())->setVerticalSpacing(8);
+        qobject_cast<QFormLayout *>(shape->layout())->setContentsMargins(10,2,30,29); qobject_cast<QFormLayout *>(shape->layout())->setVerticalSpacing(8);
+        qobject_cast<QFormLayout *>(fill->layout())->setContentsMargins(10,2,30,19);
+        Q_FOREACH (combo, page->findChildren<QComboBox *>()) { combo->setFixedSize(161,22); }
+        Q_FOREACH (label, page->findChildren<QLabel *>()) { if (label != m_preview) { label->setMinimumWidth(74); } }
+        m_color->setFixedSize(161,22); m_alpha->setFixedSize(121,30); opacity->layout()->setContentsMargins(20,2,10,11);
+        m_preview->setFixedSize(131,171); m_preview->setStyleSheet(QStringLiteral("border:1px solid #808a99;")); preview->layout()->setContentsMargins(10,2,10,10);
+    }
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GraphicButtons")); outer->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
     connect(buttons, &QDialogButtonBox::accepted, this, &GraphicDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);

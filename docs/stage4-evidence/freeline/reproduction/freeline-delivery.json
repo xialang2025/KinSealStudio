@@ -1,0 +1,51 @@
+{
+  "id": "G02",
+  "ordinal": 38,
+  "name": "自由直线",
+  "slug": "freeline",
+  "task": "S04-11",
+  "next": "G03",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/freeline/physical/freeline-baseline-r1/run.json",
+  "source": "freeline-default.sm",
+  "expectedPassed": 289,
+  "nativeManifest": "../docs/stage4-evidence/freeline/native/retained-manifest.json",
+  "report": "docs/自由直线首尾切片实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立freeline类型的已证首尾拖线及六线型/1..9宽/六箭头/两端帽/黑色/0..255透明度切片；两端点角色、反向拖动、取消和零长度拒绝、双击属性草稿/整步撤销、12类混合KSP/复制；原厂独立窗口尺寸与字段几何；多点自由采样/平滑尚未恢复，严格拒绝多点freeline与未知SM/独立设备输出",
+  "nativeSummary": "原厂action_freeline直接绘制，六点拖动100,100→130,90→160,150→200,170→240,140→280,200后保存的默认源仅有两个path前缀元素，图像为首尾直线，hover后不变。不能据此宣称恢复采样路径。新增逐点点击探针保存0个path元素，未证明其他多点流程；显式Qt事件探针在press阶段访问错误，保留为失败证据。全部补证见docs/stage4-evidence/freeline/native/investigation-summary.json。默认实线/宽1/无箭头/矩形端点/黑色/Alpha255；自定义虚线/宽5/菱形/半圆端点/Alpha128保存重开。窗口605x471，原厂静态烘SheetPixel，无ControlPara/ControlPixel。",
+  "protocol": "G02自由直线仅交付已证两端点切片，不能称自由手绘采样完整复刻。原厂默认源SHA 20b0d323f46eca9cfebaa371d96274c85d121b5b6953476d362d575f8c463a8d；原厂单轮六move轨迹最终前缀只含首尾两个元素。原厂逐点点击补证为空路径，显式Qt调用补证失败，均保留。完整body、采样和独立背景设备合成未恢复，正式输出继续拒绝；基线T按§73完整提交/重启及其后读取流程核验，四清除/更新关闭。",
+  "renderLimit": "本地只支持两个不同端点的已证拖线切片；多点输入严格拒绝，不悄悄简化成首尾，也不拿折线冒充自由手绘。默认真实栅格与原厂对照保存指定ROI实际80差异像素；粗线、dash、端帽、箭头形状尺寸、Alpha/RGB565及全部界面像素未宣称完全一致。",
+  "methods": [
+    "freelineObservedFieldsAndSamplingRefusal",
+    "freelineObservedDragEndpointsOneTransaction",
+    "freelineEndpointResizeCancelAndZeroLength",
+    "freelineMixedKspCopyAndNativeRefusal",
+    "freelineDefaultRasterAndTransparentStroke",
+    "freelineNativeMenuDialogDraftAndUndo"
+  ],
+  "reviewFindings": [
+    "只读复核本家族独立type和字段，无填充/半径串用；默认源的两个prefix元素不等同完整SM body恢复。",
+    "原厂两种新探针均保留真实结果：逐点点击为空路径；显式Qt事件press失败。没有用失败补证推进采样通过。",
+    "本地严格限定两端点，导入多点freeline原子拒绝，源/设备门槛保持；12类混合和取消/一笔历史单独验收。"
+  ],
+  "unresolved": [
+    "Q-S04-G02-001",
+    "Q-S04-G02-002",
+    "Q-S04-G02-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G02-001：完整SM body和独立设备背景合成未恢复，正式输出继续拒绝。",
+    "Q-S04-G02-002：原厂多点采样/平滑/其他创建方式及完整端点/箭头像素尚未恢复；本轮只交付首尾切片，不升级整控件完成。",
+    "Q-S04-G02-003：原厂基线T和默认屏显分别记录，完整现场变体和触控E未验收。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| Line_Type / Line_Width | graphic.lineStyle / lineWidth | 六项/1..9；实线/1 |\n| End_Arrow / End_Cap | graphic.endArrow / endCap | 六项/两项；无箭头/矩形 |\n| Line_Color / Alpha | graphic.lineColor / alpha | 黑/0..255；255 |\n| 已证两点本地几何 | graphic.points | 只接受两点；采样路径未恢复 |",
+  "codeFiles": "src/graphic_properties.cpp、graphic_dialog.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-5",
+  "recipes": [
+    "implement_freeline.py",
+    "add_freeline_tests.py",
+    "run_graphic_validation.py"
+  ],
+  "testRun": "docs/stage4-evidence/freeline/windows-r1/run.json"
+}

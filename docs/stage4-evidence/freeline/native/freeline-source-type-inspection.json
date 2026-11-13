@@ -1,0 +1,86 @@
+{
+  "cases": [
+    {
+      "source": "freeline-default.sm",
+      "sourceSha256": "20b0d323f46eca9cfebaa371d96274c85d121b5b6953476d362d575f8c463a8d",
+      "exitCode": 22,
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2753）：尚未恢复的原生控件类型 65576。\",\"ok\":false}\r\n",
+      "stdoutEncoding": "utf-8",
+      "observedTopLevelType": 65576,
+      "observedTypeHex": "0x10028",
+      "typeOffset": 2749,
+      "observedPrefix": {
+        "count": 2,
+        "countOffset": 2753,
+        "recordOffset": 2757,
+        "recordFormat": ">Idd",
+        "records": [
+          {
+            "tag": 0,
+            "x": 100.0,
+            "y": 100.0
+          },
+          {
+            "tag": 1,
+            "x": 280.0,
+            "y": 200.0
+          }
+        ]
+      }
+    },
+    {
+      "source": "freeline-custom-style.sm",
+      "sourceSha256": "07523fd2ab31d41ed06c3b057e8db88228bea9b23bc536e3ad428bc73bbfff2f",
+      "exitCode": 22,
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2759）：尚未恢复的原生控件类型 65576。\",\"ok\":false}\r\n",
+      "stdoutEncoding": "utf-8",
+      "observedTopLevelType": 65576,
+      "observedTypeHex": "0x10028",
+      "typeOffset": 2755,
+      "observedPrefix": {
+        "count": 7,
+        "countOffset": 2759,
+        "recordOffset": 2763,
+        "recordFormat": ">Idd",
+        "records": [
+          {
+            "tag": 0,
+            "x": 100.0,
+            "y": 100.0
+          },
+          {
+            "tag": 1,
+            "x": 280.0,
+            "y": 200.0
+          },
+          {
+            "tag": 0,
+            "x": 280.0,
+            "y": 200.0
+          },
+          {
+            "tag": 1,
+            "x": 266.5962550994698,
+            "y": 199.41722848258564
+          },
+          {
+            "tag": 1,
+            "x": 259.0202253730831,
+            "y": 188.34456965171285
+          },
+          {
+            "tag": 1,
+            "x": 272.42397027361335,
+            "y": 188.9273411691272
+          },
+          {
+            "tag": 1,
+            "x": 280.0,
+            "y": 200.0
+          }
+        ]
+      }
+    }
+  ],
+  "limit": "Existing codec identifies only the top-level type, then rejects its unsupported body."
+}
