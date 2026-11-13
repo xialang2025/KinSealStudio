@@ -1,0 +1,330 @@
+{
+    "activeLanguage": "中文",
+    "activePageId": "page-1",
+    "animations": {
+    },
+    "configurationNodes": [
+        {
+            "active": true,
+            "id": "history-collection",
+            "implemented": true,
+            "kind": "dataCollection",
+            "name": "C24",
+            "ownerPageId": "",
+            "properties": {
+                "dataType": 0,
+                "fullPercent": 90,
+                "fullStop": false,
+                "interval": 1,
+                "items": [
+                    {
+                        "cacheIndex": 0,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65",
+                        "name": "First",
+                        "offset": "",
+                        "scaled": false
+                    },
+                    {
+                        "cacheIndex": 1,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-fc5e6d36-e4cc-4f88-86b3-c0475158bfcb",
+                        "name": "Second",
+                        "offset": "",
+                        "scaled": false
+                    },
+                    {
+                        "cacheIndex": 2,
+                        "digits": 4,
+                        "displayType": 0,
+                        "fractionalDigits": 0,
+                        "gain": "",
+                        "id": "collection-item-923a4549-dd1a-4bba-8d62-7e81e9878953",
+                        "name": "Third",
+                        "offset": "",
+                        "scaled": false
+                    }
+                ],
+                "notice": false,
+                "noticeAddress": "LB0",
+                "readAddress": "LW0",
+                "sampleCount": 1,
+                "sampleLength": 3,
+                "samplingMode": 0,
+                "triggerAddress": "LB0",
+                "triggerMinute": 1,
+                "upload": false
+            }
+        },
+        {
+            "active": true,
+            "id": "alarm-bit",
+            "implemented": true,
+            "kind": "alarm",
+            "name": "数位地址报警",
+            "ownerPageId": "",
+            "properties": {
+                "bitType": 0,
+                "count": 2,
+                "dataType": 0,
+                "family": 0,
+                "readAddress": "LB0",
+                "rows": [
+                    {
+                        "backPageId": "",
+                        "jumpPageId": "",
+                        "limit": "0",
+                        "messages": {
+                            "中文": "ALM1"
+                        },
+                        "used": true
+                    },
+                    {
+                        "backPageId": "",
+                        "jumpPageId": "",
+                        "limit": "0",
+                        "messages": {
+                            "中文": ""
+                        },
+                        "used": true
+                    }
+                ],
+                "scanSeconds": 1
+            }
+        }
+    ],
+    "format": "KinSealStudio-Prototype",
+    "languages": [
+        "中文"
+    ],
+    "macroIds": {
+    },
+    "macros": {
+    },
+    "pageOrder": [
+        "page-1"
+    ],
+    "pages": [
+        {
+            "height": 480,
+            "id": "page-1",
+            "kind": "normal",
+            "name": "画面1",
+            "objects": [
+                {
+                    "address": "",
+                    "group": "",
+                    "height": 160,
+                    "historytrend": {
+                        "backgroundColor": "#f0f0f0",
+                        "bottomColor": "#ffff00",
+                        "collectionId": "history-collection",
+                        "currentCurve": 0,
+                        "curveCount": 3,
+                        "curves": [
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            },
+                            {
+                                "color": "#ff0000",
+                                "lineStyle": 0,
+                                "maximum": "1000",
+                                "minimum": "0",
+                                "sourceItemId": "collection-item-82a865c4-c616-4272-90c6-9a68d79baa65"
+                            }
+                        ],
+                        "fractionalDigits": 0,
+                        "hours": 1,
+                        "minutes": 0,
+                        "seconds": 0,
+                        "timeFormat": 0,
+                        "totalDigits": 4,
+                        "visibility": {
+                            "adaptive": false,
+                            "alignment": 0,
+                            "backgroundColor": "#ffffffff",
+                            "bitAddress": "LB0",
+                            "bitEnabled": false,
+                            "bitState": true,
+                            "bold": false,
+                            "compareValue": "0",
+                            "comparison": 0,
+                            "dataType": 0,
+                            "fontFamily": "微软雅黑",
+                            "fontSize": 16,
+                            "foregroundColor": "#ffff0000",
+                            "italic": false,
+                            "levelEnabled": false,
+                            "minimumLevel": 1,
+                            "opacity": 255,
+                            "spacing": 0,
+                            "style": 0,
+                            "textColor": "#ff000000",
+                            "texts": {
+                            },
+                            "tolerance": "0",
+                            "underline": false,
+                            "version": 1,
+                            "visibilityEnabled": false,
+                            "wordAddress": "LW0",
+                            "wordEnabled": false
+                        },
+                        "visibilityBitChosen": false,
+                        "xAxis": {
+                            "axisColor": "#000000",
+                            "fontSize": 16,
+                            "grid": true,
+                            "gridColor": "#00ff00",
+                            "major": 4,
+                            "marks": true,
+                            "minor": 2,
+                            "ticks": true
+                        },
+                        "yAxis": {
+                            "axisColor": "#000000",
+                            "fontSize": 16,
+                            "grid": true,
+                            "gridColor": "#00ff00",
+                            "major": 4,
+                            "marks": true,
+                            "minor": 2,
+                            "ticks": true
+                        },
+                        "yMaximum": "1000",
+                        "yMinimum": "0"
+                    },
+                    "id": "history-object",
+                    "layer": 1,
+                    "name": "历史趋势图",
+                    "text": "",
+                    "type": "historytrend",
+                    "width": 240,
+                    "x": 100,
+                    "y": 100
+                },
+                {
+                    "address": "",
+                    "alarmBar": {
+                        "backgroundColor": "#c0c0c0",
+                        "direction": 0,
+                        "fontSize": 16,
+                        "foregroundColor": "#000000",
+                        "frameColor": "#e0e0e0",
+                        "pattern": 1,
+                        "sortOrder": 0,
+                        "speed": 3,
+                        "textColor": "#000000",
+                        "visibility": {
+                            "adaptive": false,
+                            "alignment": 0,
+                            "backgroundColor": "#ffffffff",
+                            "bitAddress": "LB0",
+                            "bitEnabled": false,
+                            "bitState": true,
+                            "bold": false,
+                            "compareValue": "0",
+                            "comparison": 0,
+                            "dataType": 0,
+                            "fontFamily": "微软雅黑",
+                            "fontSize": 16,
+                            "foregroundColor": "#ffff0000",
+                            "italic": false,
+                            "levelEnabled": false,
+                            "minimumLevel": 1,
+                            "opacity": 255,
+                            "spacing": 0,
+                            "style": 0,
+                            "textColor": "#ff000000",
+                            "texts": {
+                            },
+                            "tolerance": "0",
+                            "underline": false,
+                            "version": 1,
+                            "visibilityEnabled": false,
+                            "wordAddress": "LW0",
+                            "wordEnabled": false
+                        },
+                        "visibilityBitChosen": false
+                    },
+                    "group": "",
+                    "height": 60,
+                    "id": "alarmbar-1",
+                    "layer": 1,
+                    "name": "动态报警条",
+                    "text": "",
+                    "type": "alarmbar",
+                    "width": 320,
+                    "x": 20,
+                    "y": 20
+                }
+            ],
+            "width": 800
+        }
+    ],
+    "pictures": {
+    },
+    "projectId": "project-1",
+    "projectName": "新建工程",
+    "references": [
+    ],
+    "resolution": {
+        "height": 480,
+        "width": 800
+    },
+    "schemaVersion": 12,
+    "startupLanguage": "",
+    "startupPageId": "page-1",
+    "targetModel": "AMT070W124-L800X480R"
+}

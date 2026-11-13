@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "graphic_dialog.h" //20261113-8 add
 #include "hmi_canvas.h"
 
 #include <QAction>
@@ -156,6 +157,18 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 connect(action, &QAction::triggered, this, [this, id]() { HmiObject object; object.type = id == QStringLiteral("action_line") ? QStringLiteral("line") : id == QStringLiteral("action_rect") ? QStringLiteral("rect") : id == QStringLiteral("action_ellipse") ? QStringLiteral("ellipse") : id == QStringLiteral("action_RoundedRect") ? QStringLiteral("roundrect") : id == QStringLiteral("action_foldline") ? QStringLiteral("polyline") : id == QStringLiteral("action_polygon") ? QStringLiteral("polygon") : id == QStringLiteral("action_freeline") ? QStringLiteral("freeline") : QStringLiteral("sector"); if (object.type == QStringLiteral("polygon")) { object.graphic.foreground = Qt::white; object.graphic.background = Qt::black; } //20261113-4 change: Native polygons default to white foreground and black solid background.
                     if (object.type == QStringLiteral("sector")) { object.graphic.lineStyle = 0; } //20261113-7 add: Native default sector has transparent stroke and white solid fill.
                     object.text.clear(); object.address.clear(); m_canvas->beginControlPlacement(object); });
+            }
+            else if (id == QStringLiteral("action_table")) //20261113-8 add: The native table workflow requires accepted appearance before drawing.
+            {
+                connect(action,&QAction::triggered,this,[this]() {
+                    HmiObject object;
+                    GraphicDialog *dialog;
+
+                    m_canvas->cancelInteraction(); object.type = QStringLiteral("table"); object.text.clear(); object.address.clear(); object.graphic.background = QColor(QStringLiteral("#e0e0e0"));
+                    dialog = new GraphicDialog(object,this);
+                    if (dialog->exec() == QDialog::Accepted) { object = dialog->object(); delete dialog; m_canvas->beginControlPlacement(object); }
+                    else { delete dialog; }
+                });
             }
             else if (id == QStringLiteral("action_qrcode")) //20261112-0 add
             {

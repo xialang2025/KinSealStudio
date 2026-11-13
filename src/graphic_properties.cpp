@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline") || type == QStringLiteral("sector"); //20261113-7 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline") || type == QStringLiteral("sector") || type == QStringLiteral("table"); //20261113-8 change
 }
 
 /******************************************************************************
@@ -69,6 +69,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
+    if (type == QStringLiteral("table")) { return QStringLiteral("表格"); } //20261113-8 add
     if (type == QStringLiteral("sector")) { return QStringLiteral("扇形"); } //20261113-7 add
     if (type == QStringLiteral("freeline")) { return QStringLiteral("自由直线"); } //20261113-5 add
     if (type == QStringLiteral("polygon")) { return QStringLiteral("多边形"); } //20261113-4 add
@@ -89,6 +90,13 @@ QJsonObject GraphicProperties::toJson(const QString &type) const //20261113-2 ch
     QPointF point;
     QJsonObject json;
 
+    if (type == QStringLiteral("table")) //20261113-8 add: No cell data, width, arrow, fill-pattern or angle keys belong to this family.
+    {
+        return {{QStringLiteral("rows"),rows},{QStringLiteral("columns"),columns},
+                {QStringLiteral("horizontal"),showHorizontal},{QStringLiteral("vertical"),showVertical},{QStringLiteral("outline"),showOutline},
+                {QStringLiteral("lineStyle"),lineStyle},{QStringLiteral("lineColor"),lineColor.name(QColor::HexArgb)},
+                {QStringLiteral("frameColor"),frameColor.name(QColor::HexArgb)},{QStringLiteral("background"),background.name(QColor::HexArgb)},{QStringLiteral("alpha"),alpha}};
+    }
     json = {{QStringLiteral("lineStyle"), lineStyle}, {QStringLiteral("lineWidth"), lineWidth},
             {QStringLiteral("lineColor"), lineColor.name(QColor::HexArgb)}, {QStringLiteral("alpha"), alpha}};
     if (graphicUsesVertices(type))
@@ -138,6 +146,15 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
             if (!std::isfinite(number) || std::floor(number) != number || number < 0 || number > 255) { return graphicError(error, QStringLiteral("图形选项必须为范围内整数。")); }
         }
     }
+    if (type == QStringLiteral("table")) //20261113-8 add: Parse the bounded table draft atomically before ordinary stroke/fill fields.
+    {
+        candidate.rows = json.value(QStringLiteral("rows")).toInt(); candidate.columns = json.value(QStringLiteral("columns")).toInt();
+        candidate.showHorizontal = json.value(QStringLiteral("horizontal")).toBool(); candidate.showVertical = json.value(QStringLiteral("vertical")).toBool(); candidate.showOutline = json.value(QStringLiteral("outline")).toBool();
+        candidate.lineStyle = json.value(QStringLiteral("lineStyle")).toInt(); candidate.alpha = json.value(QStringLiteral("alpha")).toInt();
+        candidate.lineColor = QColor(json.value(QStringLiteral("lineColor")).toString()); candidate.frameColor = QColor(json.value(QStringLiteral("frameColor")).toString()); candidate.background = QColor(json.value(QStringLiteral("background")).toString());
+        if (!candidate.validate(type,error)) { return false; }
+        *output = candidate; return true;
+    }
     candidate.lineStyle = json.value(QStringLiteral("lineStyle")).toInt(); candidate.lineWidth = json.value(QStringLiteral("lineWidth")).toInt();
     candidate.alpha = json.value(QStringLiteral("alpha")).toInt(); candidate.lineColor = QColor(json.value(QStringLiteral("lineColor")).toString());
     if (graphicUsesVertices(type))
@@ -177,6 +194,12 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
     QPointF previous;
     bool hasPrevious = false;
 
+    if (type == QStringLiteral("table")) //20261113-8 add: Pens stay opaque; the separate alpha affects background only.
+    {
+        if (rows < 1 || rows > 30 || columns < 1 || columns > 30 || lineStyle < 0 || lineStyle > 5 || alpha < 0 || alpha > 255 || lineWidth != 1 || endArrow != 0 || endCap != 0 || !lineColor.isValid() || lineColor.alpha() != 255 || !frameColor.isValid() || frameColor.alpha() != 255 || !background.isValid() || background.alpha() != 255)
+        { return graphicError(error,QStringLiteral("表格行列必须为1到30，线型/透明度/独立颜色必须有效，且不支持线宽或箭头。")); }
+        return true;
+    }
     if (!isSupportedGraphic(type) || lineStyle < 0 || lineStyle > 5 || lineWidth < 1 || lineWidth > 9 || endArrow < 0 || endArrow > 5 || endCap < 0 || endCap > 1 || alpha < 0 || alpha > 255 || !lineColor.isValid() || lineColor.alpha() != 255)
     { return graphicError(error, QStringLiteral("图形线型、线宽、颜色、箭头、端点或透明度无效。")); }
     if (!graphicStrokeOnly(type)) //20261113-4 change: Polygon vertices still carry independent fill drafts.
@@ -232,7 +255,7 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
     {
         path.moveTo(rect.center()); path.arcTo(rect,45,90); return path; // Native cached prefix has eight elements; the fill closes implicitly and no unobserved ninth stroke element is added.
     }
-    if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
+    if (type == QStringLiteral("rect") || type == QStringLiteral("table")) { path.addRect(rect); return path; } //20261113-8 change
     if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
     if (type == QStringLiteral("roundrect")) { path.addRoundedRect(rect, properties.radiusX, properties.radiusY, Qt::AbsoluteSize); return path; } //20261113-2 add: Default native raster indicates equal absolute radii on a non-square box; extreme clipping remains a local rule.
     if (type == QStringLiteral("polyline") || type == QStringLiteral("polygon")) //20261113-4 change: Every stored point contributes a genuine segment, without automatic closure.
@@ -331,6 +354,28 @@ static QBrush graphicBrush(const QRectF &rect, const GraphicProperties &properti
 }
 
 /******************************************************************************
+ * Function Name   : paintTableGraphic
+ * Description     : Render background alpha independently from opaque internal grid and solid outer frame.
+ * Input Parameters: painter, rect, properties
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static void paintTableGraphic(QPainter *painter, const QRectF &rect, const GraphicProperties &properties) //20261113-8 add
+{
+    QColor background = properties.background;
+    QPainterPath grid;
+    int index;
+    const Qt::PenStyle styles[] = {Qt::NoPen,Qt::SolidLine,Qt::DashLine,Qt::DotLine,Qt::DashDotLine,Qt::DashDotDotLine};
+
+    background.setAlpha(properties.alpha); painter->save(); painter->setRenderHint(QPainter::Antialiasing,false); painter->fillRect(rect,background);
+    if (properties.showHorizontal) { for (index=1;index<properties.rows;++index) { grid.moveTo(rect.left(),rect.top()+rect.height()*index/properties.rows); grid.lineTo(rect.right(),rect.top()+rect.height()*index/properties.rows); } }
+    if (properties.showVertical) { for (index=1;index<properties.columns;++index) { grid.moveTo(rect.left()+rect.width()*index/properties.columns,rect.top()); grid.lineTo(rect.left()+rect.width()*index/properties.columns,rect.bottom()); } }
+    painter->setBrush(Qt::NoBrush); painter->setPen(QPen(properties.lineColor,1,styles[properties.lineStyle])); painter->drawPath(grid);
+    if (properties.showOutline) { painter->setPen(QPen(properties.frameColor,1,Qt::SolidLine)); painter->drawRect(rect); } // Native line-style zero suppresses the grid while the checked solid frame stays visible.
+    painter->restore();
+}
+
+/******************************************************************************
  * Function Name   : paintGraphic
  * Description     : Render the persisted line and its tail without changing surrounding painter state.
  * Input Parameters: painter, type, rect, properties
@@ -344,6 +389,7 @@ void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, co
     const Qt::PenStyle styles[] = {Qt::NoPen, Qt::SolidLine, Qt::DashLine, Qt::DotLine, Qt::DashDotLine, Qt::DashDotDotLine};
 
     if (painter == nullptr || !properties.validate(type)) { return; }
+    if (type == QStringLiteral("table")) { paintTableGraphic(painter,rect,properties); return; } //20261113-8 add
     color.setAlpha(properties.alpha); pen = QPen(color, properties.lineWidth, styles[properties.lineStyle], properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
     painter->save(); painter->setRenderHint(QPainter::Antialiasing, (type == QStringLiteral("ellipse") || type == QStringLiteral("sector"))); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
     painter->drawPath(graphicPath(type, rect, properties));

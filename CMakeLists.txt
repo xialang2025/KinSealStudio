@@ -118,6 +118,7 @@ qt_add_executable(KinSealStudioLite WIN32
     src/graphic_properties.cpp
     src/graphic_dialog.h
     src/graphic_dialog.cpp
+    src/graphic_table_dialog.cpp
     src/graphic_canvas.cpp
     src/recipe_properties.h
     src/recipe_properties.cpp

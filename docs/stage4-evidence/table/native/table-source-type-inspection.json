@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "source": "table-default.sm",
+      "sourceSha256": "f2e1f7e14a72773c0a337df74b36bf23033ebccdea6644a7d210669d2cd9d729",
+      "exitCode": 22,
+      "stdoutEncoding": "utf-8",
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2753）：尚未恢复的原生控件类型 36。\",\"ok\":false}\r\n",
+      "observedTopLevelType": 36,
+      "observedTypeHex": "0x24",
+      "typeOffset": 2749,
+      "prefix96BytesHex": "00000024000000070001000f000000000000000000000000000000004069000000000000405900000000000001ffff00000000000000000000000001ffffe0e0e0e0e0e0000001ffff0000000000000000000000014059000000000000405900"
+    },
+    {
+      "source": "table-lines-all-off.sm",
+      "sourceSha256": "10541b1d8bddca6aeb0b2c0b1e24f6d6e69df61a28eece0113d28ab8fbdc159b",
+      "exitCode": 22,
+      "stdoutEncoding": "utf-8",
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2753）：尚未恢复的原生控件类型 36。\",\"ok\":false}\r\n",
+      "observedTopLevelType": 36,
+      "observedTypeHex": "0x24",
+      "typeOffset": 2749,
+      "prefix96BytesHex": "00000024000000010001000f000000000000000000000000000000004069000000000000405900000000000001ffff000000000000000000000000018080e0e0e0e0e0e000000180800000000000000000000000014059000000000000405900"
+    },
+    {
+      "source": "table-custom-three-by-two.sm",
+      "sourceSha256": "358fb380c281b598a3ee5b68c47e29d14171c135484d3759b47a2805b2210a4a",
+      "exitCode": 22,
+      "stdoutEncoding": "utf-8",
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2759）：尚未恢复的原生控件类型 36。\",\"ok\":false}\r\n",
+      "observedTopLevelType": 36,
+      "observedTypeHex": "0x24",
+      "typeOffset": 2755,
+      "prefix96BytesHex": "00000024000000040001000f000000000000000000000000000000004069000000000000405900000000000001ffff000000000000000000000000018080e0e0e0e0e0e000000180800000000000000000000000014059000000000000405900"
+    }
+  ],
+  "limitation": "The unsupported type is explicitly rejected; no table body schema or encoder is recovered."
+}

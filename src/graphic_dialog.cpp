@@ -44,6 +44,7 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     QComboBox *combo;
     int index;
 
+    if (object.type == QStringLiteral("table")) { initializeTableUi(); return; } //20261113-8 add: Pure-image tables open appearance before placement.
     setWindowTitle(graphicName(object.type)); setObjectName(QStringLiteral("GraphicDialog")); resize(600, 480);
     if (object.type == QStringLiteral("polygon")) { resize(600,500); } //20261113-4 add: Retain the observed native polygon client dimensions.
     if (graphicStrokeOnly(object.type) || object.type == QStringLiteral("roundrect")) { setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }")); } //20261113-2 change: Native rounded-rectangle inputs retain the observed green style.
@@ -176,6 +177,7 @@ void GraphicDialog::refreshPreview() //20261113-2 add
     QPixmap pixels;
     QPainter painter;
 
+    if (m_original.type == QStringLiteral("table")) { refreshTablePreview(); return; } //20261113-8 add
     m_draft.lineStyle = m_style->currentIndex(); m_draft.lineWidth = m_width->currentIndex() + 1;
     m_draft.endArrow = m_arrow->currentIndex(); m_draft.endCap = m_cap->currentIndex(); m_draft.alpha = m_alpha->value();
     m_color->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.lineColor.name()));

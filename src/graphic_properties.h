@@ -22,6 +22,12 @@ struct GraphicProperties
     int fillStyle = 1;
     QColor foreground = Qt::black;
     QColor background = Qt::white;
+    int rows = 4; //20261113-8 add: Pure-image table counts are independent of any data-grid control.
+    int columns = 4;
+    bool showHorizontal = true;
+    bool showVertical = true;
+    bool showOutline = true;
+    QColor frameColor = Qt::black;
     int radiusX = 10; // Common closed-shape storage; only the rounded-rectangle family will serialize radii.
     int radiusY = 10;
     QVector<QPointF> points = {QPointF(0, 0), QPointF(1, 1)};

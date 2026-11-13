@@ -1,0 +1,63 @@
+{
+  "coordinateSpace": "800x480 page pixels; little-endian RGB565 decoded by the named native LZO helper",
+  "cases": [
+    {
+      "case": "table-default-r1",
+      "pixelsRgb565": {
+        "600,400": "0xc6ff",
+        "120,120": "0xe71c",
+        "100,100": "0x0",
+        "200,120": "0x0",
+        "120,133": "0xe71c",
+        "120,166": "0xe71c",
+        "120,150": "0x0",
+        "300,200": "0x0",
+        "120,167": "0xe71c"
+      }
+    },
+    {
+      "case": "table-lines-all-off-r2",
+      "pixelsRgb565": {
+        "600,400": "0xc6ff",
+        "120,120": "0xd6fd",
+        "100,100": "0xd6fd",
+        "200,120": "0xd6fd",
+        "120,133": "0xd6fd",
+        "120,166": "0xd6fd",
+        "120,150": "0xd6fd",
+        "300,200": "0xc6ff",
+        "120,167": "0xd6fd"
+      }
+    },
+    {
+      "case": "table-custom-three-by-two-r2",
+      "pixelsRgb565": {
+        "600,400": "0xc6ff",
+        "120,120": "0xd6fd",
+        "100,100": "0x0",
+        "200,120": "0x0",
+        "120,133": "0x0",
+        "120,166": "0xd6fd",
+        "120,150": "0xd6fd",
+        "300,200": "0x0",
+        "120,167": "0x0"
+      }
+    }
+  ],
+  "observations": [
+    "For Alpha128, sampled inside-cell background is blended; sampled internal lines and frame remain black (0x0000).",
+    "m_hnumberspin=3/m_Vnumberspin=2 produces three row bands and two column bands in this specimen."
+  ],
+  "limit": "Named specimen and point samples only; no all-alpha or all-line-style claim.",
+  "pointRoles": {
+    "600,400": "Page background away from table",
+    "120,120": "Inside a grid cell",
+    "100,100": "Frame corner",
+    "200,120": "Vertical inner line in the two-column specimen",
+    "120,133": "First horizontal inner line in the three-row specimen",
+    "120,167": "Second horizontal inner line in the three-row specimen",
+    "120,166": "Pixel immediately above the second horizontal inner line",
+    "120,150": "Default four-row central line; inside a cell in the three-row specimen",
+    "300,200": "Bottom-right outer-frame endpoint"
+  }
+}
