@@ -1,0 +1,44 @@
+[
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_line"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      300,
+      200
+    ],
+    "to": [
+      100,
+      100
+    ]
+  },
+  {
+    "op": "scene-read",
+    "label": "line-reversed"
+  },
+  {
+    "op": "save",
+    "output": "line-reversed.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

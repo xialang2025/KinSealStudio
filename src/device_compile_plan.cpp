@@ -104,7 +104,7 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             ++prepared.staticTableCount;
             continue;
         }
-        if (object.type != QStringLiteral("polyline"))
+        if (object.type != QStringLiteral("polyline") && object.type != QStringLiteral("line")) //20261113-14 change
         { return compilationIssue(project,object,QStringLiteral("type"),object.type,QStringLiteral("该类型尚未恢复独立设备编码。"),error,issue); }
         if (object.graphic.lineStyle != 1) { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("本切片只开放已核实线。"),error,issue); }
         if (object.graphic.lineWidth != 1) { return compilationIssue(project,object,QStringLiteral("graphic.lineWidth"),object.graphic.lineWidth,QStringLiteral("本切片只开放宽度1。"),error,issue); }
@@ -120,16 +120,19 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         Q_FOREACH (point,object.graphic.points)
         {
             absolute = QPointF(object.geometry.x()+point.x()*object.geometry.width(),object.geometry.y()+point.y()*object.geometry.height());
-            if (std::abs(absolute.x()-std::round(absolute.x())) > 1e-8 || std::abs(absolute.y()-std::round(absolute.y())) > 1e-8 || absolute.x() > 799 || absolute.y() > 479 || (!first && absolute.x() != previous.x() && absolute.y() != previous.y()))
-            { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("仅开放整数像素、屏内、水平或垂直线段；斜线/小数坐标尚未核定。"),error,issue); }
+            if (std::abs(absolute.x()-std::round(absolute.x())) > 1e-8 || std::abs(absolute.y()-std::round(absolute.y())) > 1e-8 || absolute.x() > 799 || absolute.y() > 479 || (object.type == QStringLiteral("polyline") && !first && absolute.x() != previous.x() && absolute.y() != previous.y())) //20261113-14 change: Oblique straight lines do not relax the orthogonal polyline contract.
+            { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("只开放屏内整数像素端点；折线仍只支持水平或垂直线段。"),error,issue); }
+            if (object.type == QStringLiteral("line") && !first && qRound(absolute.x()) == qRound(previous.x()) && qRound(absolute.y()) == qRound(previous.y())) //20261113-14 add: Distinct normalized doubles may collapse to one device pixel.
+            { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("直线取整后端点不能重合。"),error,issue); }
             previous = absolute; first = false;
         }
         Q_FOREACH (peer,prepared.objects)
         {
             if (peer.id != object.id && peer.geometry.intersects(object.geometry))
-            { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("折线与其它对象重叠的设备合成尚未核定。"),error,issue); }
+            { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("线段与其它对象重叠的设备合成尚未核定。"),error,issue); } //20261113-14 change
         }
-        ++prepared.staticPolylineCount;
+        if (object.type == QStringLiteral("line")) { ++prepared.staticLineCount; } //20261113-14 change
+        else { ++prepared.staticPolylineCount; }
     }
     prepared.sourceSnapshot = project.toJson();
     *plan = prepared;

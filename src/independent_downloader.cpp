@@ -46,6 +46,56 @@ using u32 = unsigned int; //20261108-12 add
 
 namespace
 {
+/******************************************************************************
+ * Function Name   : paintDeviceStraightLine
+ * Description     : Reproduce saved native one-pixel integer strokes with major-axis endpoint exclusion and strict-negative error ties.
+ * Input Parameters: painter, object (already validated integer endpoints and opaque black stroke)
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static void paintDeviceStraightLine(QPainter *painter, const HmiObject &object) //20261113-14 add
+{
+    QVector<QPointF> endpoints = graphicHandles(object.type,QRectF(object.geometry),object.graphic);
+    int sx = qRound(endpoints[0].x());
+    int sy = qRound(endpoints[0].y());
+    int ex = qRound(endpoints[1].x());
+    int ey = qRound(endpoints[1].y());
+    int dx = qAbs(ex-sx);
+    int dy = qAbs(ey-sy);
+    int error;
+    int step;
+    int x;
+    int y;
+
+    // The saved native 1x1 diagonal is empty; axial one-pixel strokes still paint their first major-axis pixel.
+    if (dx == 1 && dy == 1) { return; }
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing,false);
+    if (dx >= dy)
+    {
+        if (sx > ex) { std::swap(sx,ex); std::swap(sy,ey); }
+        step = ey >= sy ? 1 : -1; y = sy; error = dx;
+        for (x=sx;x<ex;++x)
+        {
+            painter->fillRect(QRect(x,y,1,1),Qt::black);
+            error -= 2*dy;
+            if (error < 0) { y += step; error += 2*dx; }
+        }
+    }
+    else
+    {
+        if (sy > ey) { std::swap(sx,ex); std::swap(sy,ey); }
+        step = ex >= sx ? 1 : -1; x = sx; error = dy;
+        for (y=sy;y<ey;++y)
+        {
+            painter->fillRect(QRect(x,y,1,1),Qt::black);
+            error -= 2*dx;
+            if (error < 0) { x += step; error += 2*dy; }
+        }
+    }
+    painter->restore();
+}
+
 struct PayloadSpec
 {
     const char *name;
@@ -982,6 +1032,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
             rawOffset += sprites.rawLength;
             ++controlCount;
             pictureCount += sprites.lengthRecords.size() / 12; //20261109-0 change: Flashing states add one text-free sprite each.
+        }
+        else if (object.type == QStringLiteral("line")) //20261113-14 add: Device pixels use the sampled integer raster rather than the Qt6 preview's line ties.
+        {
+            paintDeviceStraightLine(&painter,object);
         }
         else if (object.type == QStringLiteral("polyline")) //20261113-11 add: Only the independently gated static orthogonal slice reaches this branch.
         {
