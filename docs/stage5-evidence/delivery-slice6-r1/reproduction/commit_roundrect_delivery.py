@@ -12,7 +12,7 @@ read=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
 write=lambda p,d:p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 manifest=read(out/'package-manifest.json');assert manifest['checksPassed']==90 and read(out/'run.json')['passed']
 assert manifest['sourceCommit']=='8c330efc1a83f6dab2b8f8d392edd8f933666931'
-progress=read(base/'progress.json');progress['latestDelivery']=dict(package=manifest['package'],sourceCommit=manifest['sourceCommit'],evidence='docs/stage5-evidence/delivery-slice6-r1/package-manifest.json',checksPassed=90,usbAccessed=False);progress['active']='G09便携与规则补齐已交付，继续其余图形、动态记录与多页配置';write(base/'progress.json',progress)
+progress=read(base/'progress.json');progress['latestDelivery']=dict(package=manifest['package'],sourceCommit=manifest['sourceCommit'],evidence='docs/stage5-evidence/delivery-slice6-r1/package-manifest.json',checksPassed=90,usbAccessed=False);progress['active']='G06便携与规则补齐已交付，继续其余图形、动态记录与多页配置';write(base/'progress.json',progress)
 text=f'第六批便携包通过90项实际检查，源提交`{manifest["sourceCommit"]}`；包含圆角矩形默认/线框/奇数尺寸及十一对象混合，10/12/14段均实际编译并复读。十一对象截图已实际检查，观察到的Qt DLL均来自包内。包路径：`{manifest["package"]}`。没有USB通信，阶段5整体仍未完成。'
 def append(path,body):
     p=work/path;p.write_text(p.read_text(encoding='utf-8-sig').rstrip()+'\n\n'+body+'\n',encoding='utf-8')

@@ -48,7 +48,7 @@ rules.write_text(text,encoding='utf-8')
 
 report='''# 阶段5：圆角矩形定点背景编译与差分验收
 
-第六个静态背景C切片G09已完成受限实现，当前为五类控制记录+六类静态背景。阶段5共10项主任务仍未全部完成；其它动态记录、多页、配置和未核样式继续推进。本轮严格纯离线，没有USB通信，新产物deviceAcknowledged=false。
+第六个静态背景C切片G06已完成受限实现，当前为五类控制记录+六类静态背景。阶段5共10项主任务仍未全部完成；其它动态记录、多页、配置和未核样式继续推进。本轮严格纯离线，没有USB通信，新产物deviceAcknowledged=false。
 
 ## 支持范围及编码
 
@@ -93,7 +93,7 @@ AMT070W124-L800X480R、800×480普通单页；圆角半径10/10，X/Y至少1、�
 未决：其它半径/颜色/透明/小尺寸、完整SM/其它图形和26类动态记录、多页/活动配置及未知容器区。新产物T交阶段6、E交阶段10，历史原厂屏显确认不转作本次新编译器E通过。
 '''
 (work/'docs/阶段5_圆角矩形定点背景编译与差分验收.md').write_text(report,encoding='utf-8')
-summary='G09圆角矩形已接入受限定点背景C：半径10/10、X/Y≥1、宽高≥100、黑白/宽1/Alpha255、线型0/1×填充0/1、无相交或接触。23次原厂编译全帧相等，13份canonical/11独立场景；最终核心248+完整编辑器234共482/0/0。完整SM及未知样式/多页配置和新产物T/E未开放，没有USB通信。'
+summary='G06圆角矩形已接入受限定点背景C：半径10/10、X/Y≥1、宽高≥100、黑白/宽1/Alpha255、线型0/1×填充0/1、无相交或接触。23次原厂编译全帧相等，13份canonical/11独立场景；最终核心248+完整编辑器234共482/0/0。完整SM及未知样式/多页配置和新产物T/E未开放，没有USB通信。'
 append(work/'docs/阶段5逐项进度.md','## 第六批：圆角矩形定点背景\n\n'+summary+'\n\n[专项报告](阶段5_圆角矩形定点背景编译与差分验收.md)。规则已集中补齐于[UI编译规则](UI编译规则与阶段交付规范.md)，后续每个阶段性任务同步维护。阶段5共10项主任务仍未整体完成。')
 append(work/'design_plan/06_阶段5_设备编译与格式差分.md','## 12. 第六批圆角矩形实际执行\n\n'+summary+'\n\n[专项报告](../docs/阶段5_圆角矩形定点背景编译与差分验收.md)。已补齐[UI编译规则与阶段交付规范](../docs/UI编译规则与阶段交付规范.md)，每批必须更新字段/编码/证据/未支持范围。')
 append(work/'docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md','## 89. 阶段5圆角矩形定点背景编译（2026-11-13）\n\n'+summary+'\n\n只写SheetPixel，不新增控制/动态图/扫描。十一对象混合仍5条640B记录；10/12/14段既有流程保持。定点26.6细分/16.16交点替代Qt6直接曲线扫描的37像素差异，未使用像素忽略区。详见[专项报告](阶段5_圆角矩形定点背景编译与差分验收.md)及[详细UI编译规则](UI编译规则与阶段交付规范.md)。deviceAcknowledged=false。')
@@ -110,9 +110,9 @@ for file in ('design_plan/00_复刻执行总入口.md','docs/阶段4逐控件进
     p=work/file;t=p.read_text(encoding='utf-8-sig');first,rest=t.split('\n',1)
     link='../docs/UI编译规则与阶段交付规范.md' if file.startswith('design_plan') else 'UI编译规则与阶段交付规范.md'
     p.write_text(first+'\n\n> 新增维护入口：[UI编译规则与阶段交付规范]('+link+')；已补齐前序阶段规则，后续每批同步更新。\n'+rest,encoding='utf-8')
-append(work/'design_plan/复刻待验线索台账.csv',f'Q-S05-G09-C,阶段5圆角矩形,design_plan/06_阶段5_设备编译与格式差分.md,1,{sha(work/"design_plan/06_阶段5_设备编译与格式差分.md")},半径10黑白和已采样尺寸的定点背景C已恢复，SM/其它半径样式尺寸及新产物T-E待验,编译切片,受限C通过，整体未闭合,docs/阶段5_圆角矩形定点背景编译与差分验收.md,继续未知字段原厂探针；T-E按阶段6和10单独验证')
+append(work/'design_plan/复刻待验线索台账.csv',f'Q-S05-G06-C,阶段5圆角矩形,design_plan/06_阶段5_设备编译与格式差分.md,1,{sha(work/"design_plan/06_阶段5_设备编译与格式差分.md")},半径10黑白和已采样尺寸的定点背景C已恢复，SM/其它半径样式尺寸及新产物T-E待验,编译切片,受限C通过，整体未闭合,docs/阶段5_圆角矩形定点背景编译与差分验收.md,继续未知字段原厂探针；T-E按阶段6和10单独验证')
 p=work/'docs/stage5-evidence/progress.json';d=read(p)
-d.update(active='G09圆角矩形受限C及前序UI编译规则补齐；准备第六批便携交付',selectedSlice=d['selectedSlice']+' + G09圆角矩形',softwareTests=dict(passed=482,failed=0,skipped=0),nativeCanonicalPixelCases=61,uiCompilationRules='docs/UI编译规则与阶段交付规范.md')
+d.update(active='G06圆角矩形受限C及前序UI编译规则补齐；准备第六批便携交付',selectedSlice=d['selectedSlice']+' + G06圆角矩形',softwareTests=dict(passed=482,failed=0,skipped=0),nativeCanonicalPixelCases=61,uiCompilationRules='docs/UI编译规则与阶段交付规范.md')
 changes={
 'S05-02':'既有50场景加圆角11独立场景；圆角23次有效编译/13canonical，非确定区无忽略掩码。',
 'S05-03':'共享不可变单页计划、六类静态图形守卫；完整多页IR未恢复。',
