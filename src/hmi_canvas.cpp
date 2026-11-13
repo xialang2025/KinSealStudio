@@ -628,6 +628,24 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
 }
 
 /******************************************************************************
+ * Function Name   : sectorCreationRect
+ * Description     : Use the observed larger drag dimension for default square sectors and retain a bounded local reverse-drag policy.
+ * Input Parameters: origin, end, pageWidth, pageHeight
+ * Return Value    : Page-bounded square creation box.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static QRectF sectorCreationRect(const QPointF &origin, const QPointF &end, int pageWidth, int pageHeight) //20261113-7 add
+{
+    double xSign = end.x() < origin.x() ? -1 : 1;
+    double ySign = end.y() < origin.y() ? -1 : 1;
+    double side = qMax(qAbs(end.x()-origin.x()),qAbs(end.y()-origin.y()));
+
+    side = qMin(side,xSign < 0 ? origin.x() : pageWidth-origin.x());
+    side = qMin(side,ySign < 0 ? origin.y() : pageHeight-origin.y());
+    return QRectF(origin,origin+QPointF(xSign*qMax(0.0,side),ySign*qMax(0.0,side))).normalized();
+}
+
+/******************************************************************************
  * Function Name   : ScreenCanvas::mouseMoveEvent
  * Description     : Report current HMI page coordinates for the editor status bar.
  * Input Parameters: event
@@ -637,13 +655,15 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
 void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261110-8 change
 {
     QPoint point;
+    QRectF draft; //20261113-7 add
 
     point = mapToScene(event->position().toPoint()).toPoint(); emit pageCoordinatesChanged(point);
     if (graphicMove(event, point)) { return; } //20261113-2 add
     if (m_drawing && m_draftRect != nullptr)
     {
         point.setX(qBound(0, point.x(), m_pageWidth)); point.setY(qBound(0, point.y(), m_pageHeight));
-        m_draftRect->setRect(QRectF(m_dragOrigin, QPointF(point)).normalized()); event->accept(); return;
+        draft = m_pendingObject.type == QStringLiteral("sector") ? sectorCreationRect(m_dragOrigin,point,m_pageWidth,m_pageHeight) : QRectF(m_dragOrigin,QPointF(point)).normalized(); //20261113-7 change
+        m_draftRect->setRect(draft); event->accept(); return;
     }
     if (!m_resizeId.isEmpty()) { updateResize(point); viewport()->update(); event->accept(); return; }
     if (m_moving) { updateMove(point); viewport()->update(); event->accept(); return; }
@@ -669,6 +689,7 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
     if (m_drawing && m_draftRect != nullptr)
     {
         geometry = m_draftRect->rect().toRect();
+        if (m_pendingObject.type == QStringLiteral("sector")) { geometry = sectorCreationRect(m_dragOrigin,mapToScene(event->position().toPoint()),m_pageWidth,m_pageHeight).toRect(); } //20261113-7 add: Include the final release coordinate in the same creation transaction.
         if (geometry.width() <= 0 || geometry.height() <= 0 || objects().size() >= 100)
         {
             cancelInteraction(); event->accept(); return;

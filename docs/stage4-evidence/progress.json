@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "total": 41,
   "skippedExisting": 5,
-  "editorSlicesDelivered": 33,
-  "blockedLayers": 126,
-  "active": "G07",
+  "editorSlicesDelivered": 34,
+  "blockedLayers": 129,
+  "active": "G10",
   "usbAccessed": true,
   "complete": false,
   "controls": [
@@ -897,9 +897,26 @@
     {
       "id": "G07",
       "name": "扇形",
-      "status": "in_progress",
-      "scope": "",
-      "evidence": ""
+      "status": "editor_slice_delivered_native_layers_blocked",
+      "scope": "独立sector默认90度几何切片，圆心/45至135度真实圆弧与八元素缓存路径；较长拖动边生成正方形、四象限/页界本地约束、取消/零尺寸拒绝；八框柄/全圆选框边界/整步撤销；原厂透明线缺省、六线型/1..9宽/三色/13填充/Alpha，独立m_字段窗口和预览；13类混合KSP/剪贴板；未恢复角柄和完整SM/设备继续阻塞",
+      "evidence": "sector/windows-r1/run.json",
+      "layers": {
+        "D": "bounded_spec",
+        "U": "editor_slice",
+        "P_KSP": "passed_slice",
+        "P_SM": "blocked",
+        "R_PC": "slice",
+        "C": "blocked",
+        "T": "native_reference_transport_passed_independent_encoder_blocked",
+        "E": "unobserved"
+      },
+      "unresolved": [
+        "Q-S04-G07-001",
+        "Q-S04-G07-002",
+        "Q-S04-G07-003"
+      ],
+      "hardwareEvidence": "docs/stage4-evidence/sector/physical/sector-baseline-r1/run.json",
+      "report": "docs/扇形默认角度切片实现与验收.md"
     },
     {
       "id": "G08",
@@ -955,7 +972,7 @@
     {
       "id": "G10",
       "name": "表格",
-      "status": "queued",
+      "status": "in_progress",
       "scope": "",
       "evidence": ""
     }
@@ -988,8 +1005,8 @@
     "legacyResult": "marker B requested, marker A remained",
     "fixedResult": "marker B displayed; explicit user confirmation",
     "regressionTests": 18,
-    "activeControl": "G07",
-    "processedIncludingExisting": 39,
+    "activeControl": "G10",
+    "processedIncludingExisting": 40,
     "total": 41,
     "olderUiOnlyReferenceRunsRequireLifecycleAudit": false
   },
@@ -1000,5 +1017,5 @@
     "evidence": "docs/stage4-evidence/lifecycle-backfill/audit.json"
   },
   "investigationSlicesRecorded": 1,
-  "processedIncludingExisting": 39
+  "processedIncludingExisting": 40
 }

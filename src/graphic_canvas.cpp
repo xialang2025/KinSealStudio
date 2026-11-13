@@ -65,6 +65,7 @@ static bool assignGraphicVertices(HmiObject *object, const QVector<QPointF> &ver
  ******************************************************************************/
 QRectF HmiControlItem::boundingRect() const //20261113-2 add
 {
+    if (m_type == QStringLiteral("sector")) { return graphicHitPath(m_type,rect(),m_record.graphic).boundingRect().united(rect()).adjusted(-1,-1,1,1); } //20261113-7 add: Native sector selection retains the whole circle box, including empty lower corners.
     if (isSupportedGraphic(m_type)) { return graphicHitPath(m_type, rect(), m_record.graphic).boundingRect().adjusted(-1, -1, 1, 1); }
     return QGraphicsRectItem::boundingRect();
 }

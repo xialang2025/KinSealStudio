@@ -1,0 +1,53 @@
+{
+  "id": "G07",
+  "ordinal": 40,
+  "name": "扇形",
+  "slug": "sector",
+  "task": "S04-11",
+  "next": "G10",
+  "usbAccessed": true,
+  "hardwareRun": "docs/stage4-evidence/sector/physical/sector-baseline-r1/run.json",
+  "source": "sector-default.sm",
+  "expectedPassed": 295,
+  "nativeManifest": "../docs/stage4-evidence/sector/native/retained-manifest.json",
+  "report": "docs/扇形默认角度切片实现与验收.md",
+  "manual": "design_plan/A03_基础图形与表格规范.md",
+  "scope": "独立sector默认90度几何切片，圆心/45至135度真实圆弧与八元素缓存路径；较长拖动边生成正方形、四象限/页界本地约束、取消/零尺寸拒绝；八框柄/全圆选框边界/整步撤销；原厂透明线缺省、六线型/1..9宽/三色/13填充/Alpha，独立m_字段窗口和预览；13类混合KSP/剪贴板；未恢复角柄和完整SM/设备继续阻塞",
+  "nativeSummary": "原厂action_ArcItem直接拖动100,100到300,200后外框为100,100,200,200；高度主导的第二样例也取长边正方形。默认路径前缀8元素：圆心100,100连45度端点，再两段三次弧到135度端点；填充隐式闭合，不擅加第九描边元素。默认m_LineType透明线index0、宽1、黑边框/黑前景/白背景、纯色、Alpha255；六线型/1..9宽/13填充/0..255透明度，自定义虚线/宽3/中心辐射/128保存重开。原厂8框柄+2个径向中点角柄已见；已尝试角柄拖动，但保存源路径未变，不能认定角度编辑已恢复。ArcDlg 600x500且没有角度数值字段。原厂静态背景编译，无ControlPara/ControlPixel。",
+  "protocol": "G07只交付已证默认45度起点/90度跨度的扇形切片，不宣称角柄交互完整恢复。默认原厂源SHA b2dc8286626c78b72c93bafb7d4556551a5aa4ccf5518c1a5571191320f7e274；已见0x1002c和8元素path前缀，不等于完整SM body恢复。原厂静态图烘入SheetPixel，未知源/独立设备背景合成继续拒绝；基线按§73完整提交/重启及其后读取核验，四清除/更新关闭。",
+  "renderLimit": "本地默认真实圆弧使用已证45到135度范围，严格不保存未经恢复的角度/半径键或增加角度SpinBox；目前只提供八个框柄，原厂另两个角柄的交互未交付。较长边正方形只在创建时应用；反向/页界裁剪、后续非方框缩放是明确本地策略，未冒称全部原生一致。默认221x221 ROI实际304差异像素，原始对照另存；粗边框径向闭合、渐变、Alpha/RGB565量化和全部UI像素仍有未验证范围。",
+  "methods": [
+    "sectorNativeFieldsAndNoInventedAngles",
+    "sectorLargerDimensionCreationCancelAndBounds",
+    "sectorEightBoxHandlesResizeAndCancel",
+    "sectorMixedPersistenceCopyAndNativeRefusal",
+    "sectorNativeDefaultCurvedPathAndRaster",
+    "sectorNativeMenuAppearanceDraftAndUndo"
+  ],
+  "reviewFindings": [
+    "只读复核默认8元素真实曲线与原厂prefix逐项吻合，填充/边框/显式角度字段边界独立。",
+    "较长边正方形创建与全圆选框范围符合已观测默认；反向/边界/缩放为本地策略，不虚构角柄或输入框。",
+    "原厂角柄拖动尝试后的路径prefix与默认相同，保持未决；没有将根包围框不变直接当作角度已修改证据。",
+    "13类混合/取消/八柄/一笔历史及未知SM/设备拒绝由本轮真实测试核验。",
+    "实际窗口截图检查分组/字段/绿色输入和扇形预览，没有裁切；本轮构建无warning/error。未宣称图标/字体及全部UI像素一致。"
+  ],
+  "unresolved": [
+    "Q-S04-G07-001",
+    "Q-S04-G07-002",
+    "Q-S04-G07-003"
+  ],
+  "unresolvedText": [
+    "Q-S04-G07-001：完整SM body和独立设备背景合成未恢复，正式输出继续拒绝。",
+    "Q-S04-G07-002：原厂两角柄的真实角度编辑、扫角/跨零/整圆/缩放约定尚未恢复；当前只有默认角度切片。",
+    "Q-S04-G07-003：默认及全部变体的完整实屏/触控E未验收，基线T分开记录。"
+  ],
+  "fieldMappingMarkdown": "| 原厂QObject | Lite字段 | 实测范围/缺省 |\n|---|---|---|\n| m_LineType / m_LineWidth | graphic.lineStyle / lineWidth | 六项/1..9；透明线/1 |\n| m_LineColorBtn / m_FrontColorBtn / m_BackColorBtn | graphic.lineColor / foreground / background | 黑/黑/白 |\n| m_Pattern / m_Alpha | graphic.fillStyle / alpha | 13项/0..255；纯色/255 |\n| 已证默认形状 | sector类型隐含固定45度起点/90度跨度 | 不保存未恢复角度字段 |",
+  "codeFiles": "src/graphic_properties.cpp、graphic_canvas.cpp、graphic_dialog.cpp、hmi_canvas.cpp、native_shell_ui.cpp",
+  "codeMarker": "//20261113-7",
+  "recipes": [
+    "implement_sector.py",
+    "add_sector_tests.py",
+    "run_graphic_validation.py"
+  ],
+  "testRun": "docs/stage4-evidence/sector/windows-r1/run.json"
+}

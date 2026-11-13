@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline"); //20261113-2 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline") || type == QStringLiteral("sector"); //20261113-7 change
 }
 
 /******************************************************************************
@@ -69,6 +69,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
+    if (type == QStringLiteral("sector")) { return QStringLiteral("扇形"); } //20261113-7 add
     if (type == QStringLiteral("freeline")) { return QStringLiteral("自由直线"); } //20261113-5 add
     if (type == QStringLiteral("polygon")) { return QStringLiteral("多边形"); } //20261113-4 add
     if (type == QStringLiteral("polyline")) { return QStringLiteral("折线"); } //20261113-2 add
@@ -227,6 +228,10 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
     QPainterPath path;
     int index;
 
+    if (type == QStringLiteral("sector")) //20261113-7 add: Native default prefix describes a center plus the 45-to-135 degree circular arc.
+    {
+        path.moveTo(rect.center()); path.arcTo(rect,45,90); return path; // Native cached prefix has eight elements; the fill closes implicitly and no unobserved ninth stroke element is added.
+    }
     if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
     if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
     if (type == QStringLiteral("roundrect")) { path.addRoundedRect(rect, properties.radiusX, properties.radiusY, Qt::AbsoluteSize); return path; } //20261113-2 add: Default native raster indicates equal absolute radii on a non-square box; extreme clipping remains a local rule.
@@ -340,7 +345,7 @@ void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, co
 
     if (painter == nullptr || !properties.validate(type)) { return; }
     color.setAlpha(properties.alpha); pen = QPen(color, properties.lineWidth, styles[properties.lineStyle], properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
-    painter->save(); painter->setRenderHint(QPainter::Antialiasing, type == QStringLiteral("ellipse")); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
+    painter->save(); painter->setRenderHint(QPainter::Antialiasing, (type == QStringLiteral("ellipse") || type == QStringLiteral("sector"))); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
     painter->drawPath(graphicPath(type, rect, properties));
     if (properties.lineStyle != 0) { painter->setPen(Qt::NoPen); painter->setBrush(color); painter->drawPath(graphicArrow(type, rect, properties)); }
     painter->restore();

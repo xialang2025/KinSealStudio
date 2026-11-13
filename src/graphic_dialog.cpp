@@ -121,6 +121,22 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
             m_alpha->setFixedSize(141,30); opacity->layout()->setContentsMargins(10,13,10,10);
             m_preview->setFixedSize(161,141); m_preview->setStyleSheet(QStringLiteral("border:1px solid #808a99;")); preview->layout()->setContentsMargins(10,2,10,10);
         }
+        if (object.type == QStringLiteral("sector")) //20261113-7 add: Native ArcDlg exposes appearance only; no speculative angle spin boxes.
+        {
+            resize(600,500); setFont(QFont(QStringLiteral("SimSun"),9)); setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }"));
+            grid->setContentsMargins(20,10,9,9); grid->setHorizontalSpacing(19); leftPane->setFixedWidth(291); rightPane->setFixedWidth(161);
+            grid->setColumnMinimumWidth(0,291); grid->setColumnMinimumWidth(1,161); leftLayout->setSpacing(19); rightLayout->setSpacing(39);
+            stroke->setFixedHeight(111); fill->setFixedHeight(171); preview->setFixedHeight(191); opacity->setFixedHeight(71);
+            qobject_cast<QFormLayout *>(stroke->layout())->setContentsMargins(10,7,10,23); qobject_cast<QFormLayout *>(stroke->layout())->setVerticalSpacing(17);
+            qobject_cast<QFormLayout *>(fill->layout())->setContentsMargins(10,7,10,18); qobject_cast<QFormLayout *>(fill->layout())->setVerticalSpacing(12);
+            Q_FOREACH (combo, page->findChildren<QComboBox *>()) { combo->setFixedSize(181,23); }
+            Q_FOREACH (label, leftPane->findChildren<QLabel *>()) { label->setMinimumWidth(84); }
+            m_color->setFixedSize(181,23); m_foreground->setFixedSize(181,23); m_background->setFixedSize(181,23);
+            m_alpha->setFixedSize(121,30); opacity->layout()->setContentsMargins(20,2,20,21);
+            m_preview->setFixedSize(141,161); m_preview->setStyleSheet(QStringLiteral("border:1px solid #808a99;")); preview->layout()->setContentsMargins(10,2,10,10);
+            m_style->setObjectName(QStringLiteral("m_LineType")); m_width->setObjectName(QStringLiteral("m_LineWidth")); m_color->setObjectName(QStringLiteral("m_LineColorBtn"));
+            m_foreground->setObjectName(QStringLiteral("m_FrontColorBtn")); m_background->setObjectName(QStringLiteral("m_BackColorBtn")); m_pattern->setObjectName(QStringLiteral("m_Pattern")); m_alpha->setObjectName(QStringLiteral("m_Alpha"));
+        }
     }
     if (object.type == QStringLiteral("freeline")) //20261113-5 add: Match measured native freeline groups without promoting unknown sampling behavior.
     {
@@ -167,7 +183,7 @@ void GraphicDialog::refreshPreview() //20261113-2 add
     if (m_radiusX != nullptr) { m_draft.radiusX = m_radiusX->value(); m_draft.radiusY = m_radiusY->value(); } //20261113-2 add: Preview and committed object share the same bounded radius draft.
     preview = m_draft; preview.points = {QPointF(0, 0), QPointF(1, 1)};
     if (m_original.type == QStringLiteral("polygon")) { preview.points = {QPointF(0,0), QPointF(1,0), QPointF(.75,1)}; } //20261113-4 add: Canonical triangle preview does not overwrite the object vertices.
-    pixels = QPixmap(m_preview->size()); pixels.fill(graphicStrokeOnly(m_original.type) || m_original.type == QStringLiteral("roundrect") ? QColor(QStringLiteral("#cce8cf")) : QColor(Qt::white)); painter.begin(&pixels); paintGraphic(&painter, m_original.type, graphicStrokeOnly(m_original.type) ? QRectF(15,35,100,100) : m_original.type == QStringLiteral("roundrect") ? QRectF(25,10,100,100) : QRectF(30,20,100,100), preview); painter.end(); //20261113-2 change: Match the rounded-rectangle native preview inset and background.
+    pixels = QPixmap(m_preview->size()); pixels.fill(graphicStrokeOnly(m_original.type) || m_original.type == QStringLiteral("roundrect") || m_original.type == QStringLiteral("sector") ? QColor(QStringLiteral("#cce8cf")) : QColor(Qt::white)); painter.begin(&pixels); paintGraphic(&painter, m_original.type, graphicStrokeOnly(m_original.type) ? QRectF(15,35,100,100) : m_original.type == QStringLiteral("roundrect") ? QRectF(25,10,100,100) : m_original.type == QStringLiteral("sector") ? QRectF(20,30,100,100) : QRectF(30,20,100,100), preview); painter.end(); //20261113-2 change: Match the rounded-rectangle native preview inset and background.
     m_preview->setPixmap(pixels);
 }
 

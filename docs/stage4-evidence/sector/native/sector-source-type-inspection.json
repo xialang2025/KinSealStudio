@@ -1,0 +1,63 @@
+{
+  "cases": [
+    {
+      "source": "sector-default.sm",
+      "sourceSha256": "b2dc8286626c78b72c93bafb7d4556551a5aa4ccf5518c1a5571191320f7e274",
+      "exitCode": 22,
+      "stdout": "{\"message\":\"原生工程 object[0].（字节 2753）：尚未恢复的原生控件类型 65580。\",\"ok\":false}\r\n",
+      "stdoutEncoding": "utf-8",
+      "observedTopLevelType": 65580,
+      "observedTypeHex": "0x1002c",
+      "typeOffset": 2749,
+      "observedPrefix": {
+        "count": 8,
+        "countOffset": 2753,
+        "recordOffset": 2757,
+        "recordFormat": ">Idd",
+        "records": [
+          {
+            "tag": 0,
+            "x": 100.0,
+            "y": 100.0
+          },
+          {
+            "tag": 1,
+            "x": 170.71067811765488,
+            "y": 29.289321882654882
+          },
+          {
+            "tag": 2,
+            "x": 152.61423749014264,
+            "y": 11.192881255063867
+          },
+          {
+            "tag": 3,
+            "x": 127.61423749007878,
+            "y": 0.0
+          },
+          {
+            "tag": 3,
+            "x": 100.0,
+            "y": 0.0
+          },
+          {
+            "tag": 2,
+            "x": 72.38576251007879,
+            "y": 0.0
+          },
+          {
+            "tag": 3,
+            "x": 47.38576251014265,
+            "y": 11.192881254936138
+          },
+          {
+            "tag": 3,
+            "x": 29.289321882654882,
+            "y": 29.28932188234512
+          }
+        ]
+      }
+    }
+  ],
+  "limit": "Existing codec identifies only the top-level type, then rejects its unsupported body."
+}
