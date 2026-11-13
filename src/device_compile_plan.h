@@ -10,6 +10,7 @@ struct DeviceCompilePlan
     QList<HmiObject> objects;
     QJsonObject sourceSnapshot;
     int staticPolylineCount = 0;
+    int staticTableCount = 0; //20261113-12 add: Static tables allocate background pixels, never dynamic control records.
 };
 
 bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan,

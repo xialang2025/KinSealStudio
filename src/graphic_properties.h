@@ -43,6 +43,7 @@ QString graphicName(const QString &type);
 QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);
 QPainterPath graphicHitPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);
 void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, const GraphicProperties &properties);
+void paintDeviceTableGraphic(QPainter *painter, const QRectF &rect, const GraphicProperties &properties); //20261113-12 add
 QVector<QPointF> graphicHandles(const QString &type, const QRectF &rect, const GraphicProperties &properties);
 
 #endif

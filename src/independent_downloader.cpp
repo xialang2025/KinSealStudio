@@ -990,6 +990,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
             painter.setPen(QPen(Qt::black,1,Qt::SolidLine,Qt::FlatCap));
             painter.drawPath(graphicPath(object.type,QRectF(object.geometry),object.graphic)); painter.restore();
         }
+        else if (object.type == QStringLiteral("table")) //20261113-12 add: A pure image table has no PLC state, control record or dynamic image index.
+        {
+            paintDeviceTableGraphic(&painter,QRectF(object.geometry),object.graphic);
+        }
         else
         {
             if (error != nullptr)

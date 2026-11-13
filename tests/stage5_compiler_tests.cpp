@@ -37,6 +37,11 @@ private slots:
     void realMacroFourteenSegmentPackage();
     void snapshotCorruptionAndFalseIdentityAreRejected();
     void legacyTextCompilerRejectsPolyline();
+    void tableFullNativeRgb565Equality_data(); //20261113-12 add
+    void tableFullNativeRgb565Equality();
+    void tableUnprovedFieldsPreserveOutput_data();
+    void tableUnprovedFieldsPreserveOutput();
+    void tablePackageAndSourceGates();
 };
 
 /******************************************************************************
@@ -54,6 +59,25 @@ static HmiProject polylineProject() //20261113-11 add
     object.type = QStringLiteral("polyline"); object.id = QStringLiteral("stage5-polyline"); object.name = QStringLiteral("折线");
     object.text.clear(); object.address.clear(); object.geometry = QRect(100,100,150,100);
     object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(1,1)};
+    project.objects = {object};
+    return project;
+}
+
+/******************************************************************************
+ * Function Name   : tableProject
+ * Description     : Construct a fresh pure-image table without importing opaque native bytes.
+ * Input Parameters: None
+ * Return Value    : One ordinary page with the independently observed default table.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject tableProject() //20261113-12 add
+{
+    HmiProject project;
+    HmiObject object;
+
+    object.type = QStringLiteral("table"); object.id = QStringLiteral("stage5-table"); object.name = QStringLiteral("表格");
+    object.text.clear(); object.address.clear(); object.geometry = QRect(100,100,200,100);
+    object.graphic.background = QColor(QStringLiteral("#e0e0e0"));
     project.objects = {object};
     return project;
 }
@@ -247,6 +271,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiProject project = polylineProject();
     HmiPage page;
     HmiObject object;
+    HmiObject table; //20261113-12 add: Both static families must coexist with the five existing record families.
     QSet<QString> found;
     QString family;
     QString error;
@@ -264,9 +289,137 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
             object.id = QStringLiteral("existing-")+family; object.geometry = QRect(20+found.size()*130,20,100,50); found.insert(family); project.objects.append(object);
         }
     }
+    table = tableProject().objects.first(); table.geometry.moveTopLeft(QPoint(400,200)); project.objects.append(table); //20261113-12 add
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::tableFullNativeRgb565Equality_data
+ * Description     : Bind every grid toggle, no-line mode and native count/geometry boundaries to saved-source frames.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::tableFullNativeRgb565Equality_data() //20261113-12 add
+{
+    int mask;
+
+    QTest::addColumn<int>("mask"); QTest::addColumn<int>("lineStyle"); QTest::addColumn<int>("rows"); QTest::addColumn<int>("columns");
+    QTest::addColumn<QRect>("geometry"); QTest::addColumn<QString>("fixture");
+    for (mask=0;mask<8;++mask)
+    {
+        QTest::newRow(qPrintable(QStringLiteral("grid-flags-%1").arg(mask))) << mask << 1 << 4 << 4 << QRect(100,100,200,100) << QStringLiteral("table-flags-%1-reopen-r1").arg(mask);
+    }
+    QTest::newRow("no-grid-solid-outline") << 7 << 0 << 4 << 4 << QRect(100,100,200,100) << QStringLiteral("table-line-zero-reopen-r1");
+    QTest::newRow("minimum-native-one-cell") << 7 << 1 << 1 << 1 << QRect(100,100,40,40) << QStringLiteral("table-one-cell-reopen-r1");
+    QTest::newRow("three-by-two-shifted") << 7 << 1 << 3 << 2 << QRect(75,65,160,120) << QStringLiteral("table-three-by-two-reopen-r1");
+    QTest::newRow("maximum-thirty-by-thirty-screen-edge") << 7 << 1 << 30 << 30 << QRect(0,0,600,300) << QStringLiteral("table-thirty-boundary-reopen-r1");
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::tableFullNativeRgb565Equality
+ * Description     : Compare all 768000 RGB565 bytes and enforce the static table's zero-record/zero-sprite contract.
+ * Input Parameters: Qt fixture mask, lineStyle, rows, columns, geometry, fixture
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::tableFullNativeRgb565Equality() //20261113-12 add
+{
+    QFETCH(int,mask); QFETCH(int,lineStyle); QFETCH(int,rows); QFETCH(int,columns); QFETCH(QRect,geometry); QFETCH(QString,fixture);
+    HmiProject project = tableProject();
+    DeviceCompilePlan plan;
+    QVector<QByteArray> payloads;
+    QString error;
+    QString root = QFINDTESTDATA("../docs/stage5-evidence/native/table");
+    QByteArray native = testFileBytes(QDir(root).filePath(fixture+QStringLiteral("/compiled/fresh-process-3/SheetPixel.dat")));
+
+    project.objects[0].geometry = geometry; project.objects[0].graphic.rows = rows; project.objects[0].graphic.columns = columns;
+    project.objects[0].graphic.lineStyle = lineStyle; project.objects[0].graphic.showHorizontal = (mask&1)!=0;
+    project.objects[0].graphic.showVertical = (mask&2)!=0; project.objects[0].graphic.showOutline = (mask&4)!=0;
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error)); QCOMPARE(plan.staticTableCount,1); QCOMPARE(plan.staticPolylineCount,0);
+    QVERIFY(!native.isEmpty()); QCOMPARE(decodeTestFrame(native).size(),768000);
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10);
+    QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native)); QCOMPARE(payloads[5].size(),2400);
+    QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::tableUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate raster and boundary inputs outside the proven static-table slice.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::tableUnprovedFieldsPreserveOutput_data() //20261113-12 add
+{
+    int variant;
+
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<13;++variant) { QTest::newRow(qPrintable(QString::number(variant))) << variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::tableUnprovedFieldsPreserveOutput
+ * Description     : Reject unsupported tables and preserve both caller output and a prepared plan, including touching edges.
+ * Input Parameters: Qt fixture variant
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::tableUnprovedFieldsPreserveOutput() //20261113-12 add
+{
+    QFETCH(int,variant);
+    HmiProject project = tableProject();
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    HmiObject peer;
+    QString error;
+
+    plan.staticTableCount = 77;
+    if (variant == 0) { project.objects[0].graphic.lineStyle = 2; }
+    if (variant == 1) { project.objects[0].graphic.alpha = 128; }
+    if (variant == 2) { project.objects[0].graphic.lineColor = Qt::red; }
+    if (variant == 3) { project.objects[0].graphic.frameColor = Qt::red; }
+    if (variant == 4) { project.objects[0].graphic.background = Qt::white; }
+    if (variant == 5) { project.objects[0].graphic.rows = 3; }
+    if (variant == 6) { project.objects[0].graphic.columns = 3; }
+    if (variant == 7) { project.objects[0].geometry.moveLeft(600); }
+    if (variant == 8) { project.objects[0].geometry.moveTop(380); }
+    if (variant == 9) { peer = project.objects[0]; peer.id = QStringLiteral("overlap"); project.objects.append(peer); }
+    if (variant == 10) { peer = project.objects[0]; peer.id = QStringLiteral("touching-edge"); peer.geometry.moveLeft(300); project.objects.append(peer); }
+    if (variant == 11) { project.objects[0].type = QStringLiteral("recipe-display"); }
+    if (variant == 12) { project.objects[0].geometry = QRect(100,100,4,4); }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticTableCount,77);
+    QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::tablePackageAndSourceGates
+ * Description     : Publish and revalidate a real static-table package while preserving native-source and legacy-text gates.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::tablePackageAndSourceGates() //20261113-12 add
+{
+    HmiProject project = tableProject();
+    QJsonObject capabilities = describeProjectCapabilities(project);
+    QTemporaryDir temporary;
+    QJsonObject manifest;
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+    QString target = temporary.filePath(QStringLiteral("table"));
+
+    QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
+    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
 }
 
 /******************************************************************************

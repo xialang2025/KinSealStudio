@@ -356,11 +356,12 @@ static QBrush graphicBrush(const QRectF &rect, const GraphicProperties &properti
 /******************************************************************************
  * Function Name   : paintTableGraphic
  * Description     : Render background alpha independently from opaque internal grid and solid outer frame.
- * Input Parameters: painter, rect, properties
+ * Input Parameters: painter, rect, properties, gridCap
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-static void paintTableGraphic(QPainter *painter, const QRectF &rect, const GraphicProperties &properties) //20261113-8 add
+static void paintTableGraphic(QPainter *painter, const QRectF &rect, const GraphicProperties &properties,
+                              Qt::PenCapStyle gridCap = Qt::SquareCap) //20261113-12 change: Reuse geometry while preserving the native new-object versus saved-source cap distinction.
 {
     QColor background = properties.background;
     QPainterPath grid;
@@ -370,9 +371,22 @@ static void paintTableGraphic(QPainter *painter, const QRectF &rect, const Graph
     background.setAlpha(properties.alpha); painter->save(); painter->setRenderHint(QPainter::Antialiasing,false); painter->fillRect(rect,background);
     if (properties.showHorizontal) { for (index=1;index<properties.rows;++index) { grid.moveTo(rect.left(),rect.top()+rect.height()*index/properties.rows); grid.lineTo(rect.right(),rect.top()+rect.height()*index/properties.rows); } }
     if (properties.showVertical) { for (index=1;index<properties.columns;++index) { grid.moveTo(rect.left()+rect.width()*index/properties.columns,rect.top()); grid.lineTo(rect.left()+rect.width()*index/properties.columns,rect.bottom()); } }
-    painter->setBrush(Qt::NoBrush); painter->setPen(QPen(properties.lineColor,1,styles[properties.lineStyle])); painter->drawPath(grid);
+    painter->setBrush(Qt::NoBrush); painter->setPen(QPen(properties.lineColor,1,styles[properties.lineStyle],gridCap)); painter->drawPath(grid); //20261113-12 change: Open grid endpoints differ by one pixel after native save/reopen.
     if (properties.showOutline) { painter->setPen(QPen(properties.frameColor,1,Qt::SolidLine)); painter->drawRect(rect); } // Native line-style zero suppresses the grid while the checked solid frame stays visible.
     painter->restore();
+}
+
+/******************************************************************************
+ * Function Name   : paintDeviceTableGraphic
+ * Description     : Reuse table geometry with the flat grid cap observed in saved-and-reopened native compilation.
+ * Input Parameters: painter, rect, properties
+ * Return Value    : None.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void paintDeviceTableGraphic(QPainter *painter, const QRectF &rect, const GraphicProperties &properties) //20261113-12 add
+{
+    if (painter == nullptr || !properties.validate(QStringLiteral("table"))) { return; }
+    paintTableGraphic(painter,rect,properties,Qt::FlatCap);
 }
 
 /******************************************************************************

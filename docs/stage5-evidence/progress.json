@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "G10静态表格：保存重开与设备背景差分",
-  "selectedSlice": "G04 opaque black solid width-1 integer orthogonal polyline; no overlaps",
+  "active": "G08矩形：保存重开已采样，待C实现",
+  "selectedSlice": "G04正交折线 + G10受限整数静态表格",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -58,7 +58,7 @@
     }
   ],
   "softwareTests": {
-    "passed": 107,
+    "passed": 143,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 6,
+  "nativeCanonicalPixelCases": 18,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -85,6 +85,20 @@
     "sourceCommit": "34a0c4b799859e6bc92086ac446aa24b3ef81691",
     "evidence": "docs/stage5-evidence/delivery-slice1-r2/package-manifest.json",
     "checksPassed": 37,
+    "usbAccessed": false
+  },
+  "tableSlice": {
+    "nativeCompilations": 18,
+    "independentCanonicalFrameCases": 12,
+    "softwareTests": {
+      "passed": 143,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 567,
+    "cleanupLogicalBytes": 398011739,
+    "report": "docs/阶段5_静态表格设备背景编译与差分验收.md",
+    "complete": false,
     "usbAccessed": false
   }
 }

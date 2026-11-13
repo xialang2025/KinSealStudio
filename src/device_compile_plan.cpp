@@ -52,6 +52,33 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
+        if (object.type == QStringLiteral("table")) //20261113-12 add: Admit only the canonical opaque static-table raster contract.
+        {
+            if (object.graphic.lineStyle != 0 && object.graphic.lineStyle != 1)
+            { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("表格只开放已核无线/实线；其它线型尚未核定。"),error,issue); }
+            if (object.graphic.alpha != 255)
+            { return compilationIssue(project,object,QStringLiteral("graphic.alpha"),object.graphic.alpha,QStringLiteral("表格本切片只开放不透明背景。"),error,issue); }
+            if (object.graphic.lineColor != QColor(Qt::black))
+            { return compilationIssue(project,object,QStringLiteral("graphic.lineColor"),object.graphic.lineColor.name(QColor::HexArgb),QStringLiteral("表格本切片只开放黑色内部线。"),error,issue); }
+            if (object.graphic.frameColor != QColor(Qt::black))
+            { return compilationIssue(project,object,QStringLiteral("graphic.frameColor"),object.graphic.frameColor.name(QColor::HexArgb),QStringLiteral("表格本切片只开放黑色外框。"),error,issue); }
+            if (object.graphic.background != QColor(QStringLiteral("#e0e0e0")))
+            { return compilationIssue(project,object,QStringLiteral("graphic.background"),object.graphic.background.name(QColor::HexArgb),QStringLiteral("表格本切片只开放已核灰色背景#e0e0e0。"),error,issue); }
+            if (object.geometry.width() < 40 || object.geometry.height() < 40)
+            { return compilationIssue(project,object,QStringLiteral("geometry.minimum"),QJsonArray{object.geometry.width(),object.geometry.height()},QStringLiteral("本切片采用原厂创建时已核的最小40×40表格尺寸。"),error,issue); }
+            if (object.geometry.width() % object.graphic.columns != 0 || object.geometry.height() % object.graphic.rows != 0)
+            { return compilationIssue(project,object,QStringLiteral("graphic.cellSize"),QJsonArray{object.graphic.rows,object.graphic.columns},QStringLiteral("表格只开放整数像素单元格；非整除尺寸尚未核定。"),error,issue); }
+            if (object.geometry.x()+object.geometry.width() > 799 || object.geometry.y()+object.geometry.height() > 479)
+            { return compilationIssue(project,object,QStringLiteral("geometry.strokeExtent"),QJsonArray{object.geometry.x()+object.geometry.width(),object.geometry.y()+object.geometry.height()},QStringLiteral("表格外框端点必须完整位于800×480画面内。"),error,issue); }
+            Q_FOREACH (peer,prepared.objects)
+            {
+                // Include the right and bottom stroke pixels, which QRect's stored width otherwise excludes.
+                if (peer.id != object.id && peer.geometry.adjusted(0,0,1,1).intersects(object.geometry.adjusted(0,0,1,1)))
+                { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("表格与其它对象相交或边缘接触的设备合成尚未核定。"),error,issue); }
+            }
+            ++prepared.staticTableCount;
+            continue;
+        }
         if (object.type != QStringLiteral("polyline"))
         { return compilationIssue(project,object,QStringLiteral("type"),object.type,QStringLiteral("该类型尚未恢复独立设备编码。"),error,issue); }
         if (object.graphic.lineStyle != 1) { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("本切片只开放已核实线。"),error,issue); }

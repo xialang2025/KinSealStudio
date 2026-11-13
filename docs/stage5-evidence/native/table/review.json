@@ -1,0 +1,56 @@
+{
+  "mode": "read_only_review_after_implementation",
+  "newBusinessLogicChangedDuringReview": false,
+  "checks": [
+    "validated model before division",
+    "row and column ranges",
+    "right/bottom raster pixels and touching edges",
+    "static no records and no sprites",
+    "old preview default cap retained",
+    "independent native-source gate",
+    "atomic package and legacy text gate",
+    "existing five-family mixed indexes"
+  ],
+  "remaining": [
+    "unsupported color/alpha/style and noninteger cells",
+    "overlap composition",
+    "SM body",
+    "all stage5 tasks beyond this slice"
+  ],
+  "files": [
+    {
+      "path": "src/device_compile_plan.h",
+      "sha256": "294bdc7d34ce9720ac727e506cbcbcc29b47708c1191645f600d6c0badc017fd"
+    },
+    {
+      "path": "src/device_compile_plan.cpp",
+      "sha256": "3662b226135473f152568fe3397f91ba19992b9312e845be2962dbfc147363d0"
+    },
+    {
+      "path": "src/graphic_properties.h",
+      "sha256": "0c231fc09ac6e7bc724db539e72de6589fb9f039bfa9f71335422a3983f70bbb"
+    },
+    {
+      "path": "src/graphic_properties.cpp",
+      "sha256": "d873b4ba8092d58f48f534356ac321aa2ca628a3154f32d4afe7ee1f3a258e5a"
+    },
+    {
+      "path": "src/independent_downloader.cpp",
+      "sha256": "aa76cb871aac77554ce4045463ee20b97ec6b1820e11e3ec0733a0d0d148bbf0"
+    },
+    {
+      "path": "tests/stage5_compiler_tests.cpp",
+      "sha256": "0ce24072050ffb2c4cf7d7799c1f44562073be376cc30388fc9c298e652d0ea5"
+    },
+    {
+      "path": "tests/stage4_controls_tests.cpp",
+      "sha256": "60f8d1d7dfd73f746e9166973229da721dccee02752ad053953d843f188111e1"
+    }
+  ],
+  "softwareTests": {
+    "passed": 143,
+    "failed": 0,
+    "skipped": 0
+  },
+  "usbAccessed": false
+}
