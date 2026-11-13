@@ -53,6 +53,11 @@ private slots:
     void lineUnprovedFieldsPreserveOutput_data();
     void lineUnprovedFieldsPreserveOutput();
     void lineSourceAndPackageGates();
+    void freelineCanonicalFrames_data(); //20261113-15 add
+    void freelineCanonicalFrames();
+    void freelineUnprovedFieldsPreserveOutput_data();
+    void freelineUnprovedFieldsPreserveOutput();
+    void freelineSourceAndPackageGates();
 };
 
 /******************************************************************************
@@ -70,6 +75,22 @@ static HmiProject lineProject() //20261113-14 add
     object.type = QStringLiteral("line"); object.id = QStringLiteral("stage5-line"); object.name = QStringLiteral("直线");
     object.text.clear(); object.address.clear(); object.geometry = QRect(100,100,200,100);
     object.graphic.points = {QPointF(0,0),QPointF(1,1)}; project.objects = {object};
+    return project;
+}
+
+/******************************************************************************
+ * Function Name   : freelineProject
+ * Description     : Construct only the source-verified two-endpoint freeline subset, without native binary seeds.
+ * Input Parameters: None
+ * Return Value    : A bounded typed project with the canonical 180-by-100 stroke.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject freelineProject() //20261113-15 add
+{
+    HmiProject project = lineProject();
+
+    project.objects[0].type = QStringLiteral("freeline"); project.objects[0].id = QStringLiteral("stage5-freeline");
+    project.objects[0].name = QStringLiteral("自由直线"); project.objects[0].geometry = QRect(100,100,180,100);
     return project;
 }
 
@@ -320,6 +341,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiObject table; //20261113-12 add: Both static families must coexist with the five existing record families.
     HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     HmiObject line; //20261113-14 add: A fourth background family must leave the existing dynamic record count unchanged.
+    HmiObject freeline; //20261113-15 add: The fifth background family contributes no dynamic records.
     QSet<QString> found;
     QString family;
     QString error;
@@ -340,7 +362,8 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     table = tableProject().objects.first(); table.geometry.moveTopLeft(QPoint(400,200)); project.objects.append(table); //20261113-12 add
     rectangle = rectangleProject().objects.first(); rectangle.geometry.moveTopLeft(QPoint(100,300)); project.objects.append(rectangle); //20261113-13 add
     line = lineProject().objects.first(); line.geometry = QRect(400,350,100,60); project.objects.append(line); //20261113-14 add
-    QCOMPARE(project.objects.size(),9);
+    freeline = freelineProject().objects.first(); freeline.geometry = QRect(600,350,100,60); project.objects.append(freeline); //20261113-15 add
+    QCOMPARE(project.objects.size(),10);
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -971,6 +994,153 @@ void Stage5CompilerTests::lineSourceAndPackageGates() //20261113-14 add
     HmiProject project = lineProject();
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("line"));
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QJsonObject capabilities = describeProjectCapabilities(project);
+    QString error;
+
+    QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
+    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::freelineCanonicalFrames_data
+ * Description     : Bind each saved native line source and its proven endpoint geometry to a complete-frame fixture.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::freelineCanonicalFrames_data() //20261113-15 add
+{
+    QString root = QFINDTESTDATA("../docs/stage5-evidence/native/freeline");
+    QJsonObject corpus = QJsonDocument::fromJson(testFileBytes(QDir(root).filePath(QStringLiteral("B-S-M-bresenham-r2.json")))).object();
+    QJsonValue entry;
+    QJsonObject sample;
+    QJsonArray geometry;
+    QJsonArray points;
+    QString run;
+    int count = 0;
+
+    QTest::addColumn<QRect>("geometry"); QTest::addColumn<QPointF>("first"); QTest::addColumn<QPointF>("last");
+    QTest::addColumn<QString>("fixture"); QTest::addColumn<QString>("sourceSha");
+    QVERIFY(corpus.value(QStringLiteral("allCanonicalRasterComparisonsEqual")).toBool());
+    Q_FOREACH (entry,corpus.value(QStringLiteral("cases")).toArray())
+    {
+        sample = entry.toObject(); run = sample.value(QStringLiteral("run")).toString();
+        if (!run.contains(QStringLiteral("reopen")) && !run.contains(QStringLiteral("default-repeat"))) { continue; }
+        geometry = sample.value(QStringLiteral("geometry")).toArray(); points = sample.value(QStringLiteral("normalizedPoints")).toArray();
+        QTest::newRow(qPrintable(run)) << QRect(geometry[0].toInt(),geometry[1].toInt(),geometry[2].toInt(),geometry[3].toInt())
+            << QPointF(points[0].toArray()[0].toDouble(),points[0].toArray()[1].toDouble())
+            << QPointF(points[1].toArray()[0].toDouble(),points[1].toArray()[1].toDouble())
+            << sample.value(QStringLiteral("folder")).toString() << sample.value(QStringLiteral("sourceSha256")).toString();
+        ++count;
+    }
+    QCOMPARE(count,14);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::freelineCanonicalFrames
+ * Description     : Compare all 768000 product bytes with each actual source-bound native raster, including error ties and tiny strokes.
+ * Input Parameters: Qt geometry, normalized endpoints, fixture and source identity
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::freelineCanonicalFrames() //20261113-15 add
+{
+    QFETCH(QRect,geometry); QFETCH(QPointF,first); QFETCH(QPointF,last); QFETCH(QString,fixture); QFETCH(QString,sourceSha);
+    HmiProject project = freelineProject();
+    DeviceCompilePlan plan;
+    QVector<QByteArray> payloads;
+    QString root = QFINDTESTDATA("..");
+    QString folder = QDir(root).filePath(fixture);
+    QString error;
+    QByteArray native = testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
+    QByteArray source = testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
+
+    project.objects[0].geometry = geometry; project.objects[0].graphic.points = {first,last};
+    QVERIFY(!source.isEmpty()); QCOMPARE(QString::fromLatin1(QCryptographicHash::hash(source,QCryptographicHash::Sha256).toHex()),sourceSha);
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error)); QCOMPARE(plan.staticFreelineCount,1); QCOMPARE(plan.staticPolylineCount,0);
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10);
+    QCOMPARE(decodeTestFrame(native).size(),768000); QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native));
+    QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0); QCOMPARE(payloads[5].size(),2400);
+    QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::freelineUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate meaningful style, coordinate, rounded-zero, clipping and overlap failures.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::freelineUnprovedFieldsPreserveOutput_data() //20261113-15 add
+{
+    int variant;
+
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<20;++variant) { QTest::newRow(qPrintable(QString::number(variant))) << variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::freelineUnprovedFieldsPreserveOutput
+ * Description     : Preserve both plan and output when an unproved line or an oblique polyline is rejected.
+ * Input Parameters: Qt variant
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::freelineUnprovedFieldsPreserveOutput() //20261113-15 add
+{
+    QFETCH(int,variant);
+    HmiProject project = freelineProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+
+    plan.staticFreelineCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.endArrow=1; }
+    if (variant==5) { project.objects[0].graphic.endCap=1; }
+    if (variant==6) { project.objects[0].graphic.points={QPointF(0,0),QPointF(0.333,1)}; }
+    if (variant==7) { project.objects[0].geometry.moveLeft(620); }
+    if (variant==8) { project.objects[0].geometry.moveTop(380); }
+    if (variant==9) { peer=project.objects[0]; peer.id=QStringLiteral("overlap"); project.objects.append(peer); }
+    if (variant==10) { project.objects[0].graphic.points={QPointF(0,0),QPointF(1e-11,0)}; }
+    if (variant==11) { project.objects[0].type=QStringLiteral("polyline"); }
+    if (variant==12) { project.objects[0].graphic.points={QPointF(0,0),QPointF(0,0)}; }
+    if (variant==13) { project.objects[0].geometry.moveLeft(-1); }
+    if (variant==14) { project.objects[0].geometry=QRect(100,100,39,39); }
+    if (variant==15) { project.objects[0].geometry=QRect(100,100,39,1); project.objects[0].graphic.points={QPointF(0,0),QPointF(1,0)}; }
+    if (variant==16) { project.objects[0].geometry=QRect(100,100,1,39); project.objects[0].graphic.points={QPointF(0,0),QPointF(0,1)}; }
+    if (variant==17) { project.objects[0].graphic.points={QPointF(0,0),QPointF(.5,.3),QPointF(1,1)}; }
+    if (variant==18) { project.objects[0].geometry.moveLeft(0); }
+    if (variant==19) { project.objects[0].geometry.moveTop(0); }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticFreelineCount,77);
+    QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::freelineSourceAndPackageGates
+ * Description     : Publish and revalidate a real straight-line package while keeping full SM and legacy single-text export blocked.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::freelineSourceAndPackageGates() //20261113-15 add
+{
+    HmiProject project = freelineProject();
+    QTemporaryDir temporary;
+    QString target = temporary.filePath(QStringLiteral("freeline"));
     QByteArray source = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     QJsonObject manifest;

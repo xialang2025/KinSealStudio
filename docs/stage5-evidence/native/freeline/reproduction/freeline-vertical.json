@@ -1,0 +1,44 @@
+[
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        180,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_freeline"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      100,
+      100
+    ],
+    "to": [
+      100,
+      300
+    ]
+  },
+  {
+    "op": "scene-read",
+    "label": "freeline-vertical"
+  },
+  {
+    "op": "save",
+    "output": "freeline-vertical.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

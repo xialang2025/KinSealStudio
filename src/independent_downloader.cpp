@@ -1033,7 +1033,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
             ++controlCount;
             pictureCount += sprites.lengthRecords.size() / 12; //20261109-0 change: Flashing states add one text-free sprite each.
         }
-        else if (object.type == QStringLiteral("line")) //20261113-14 add: Device pixels use the sampled integer raster rather than the Qt6 preview's line ties.
+        else if (object.type == QStringLiteral("line") || object.type == QStringLiteral("freeline")) //20261113-15 change: The source-bound two-endpoint families share the proven integer raster, without admitting sampled freehand paths.
         {
             paintDeviceStraightLine(&painter,object);
         }

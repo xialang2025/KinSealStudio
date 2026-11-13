@@ -104,7 +104,7 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             ++prepared.staticTableCount;
             continue;
         }
-        if (object.type != QStringLiteral("polyline") && object.type != QStringLiteral("line")) //20261113-14 change
+        if (object.type != QStringLiteral("polyline") && object.type != QStringLiteral("line") && object.type != QStringLiteral("freeline")) //20261113-15 change
         { return compilationIssue(project,object,QStringLiteral("type"),object.type,QStringLiteral("该类型尚未恢复独立设备编码。"),error,issue); }
         if (object.graphic.lineStyle != 1) { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("本切片只开放已核实线。"),error,issue); }
         if (object.graphic.lineWidth != 1) { return compilationIssue(project,object,QStringLiteral("graphic.lineWidth"),object.graphic.lineWidth,QStringLiteral("本切片只开放宽度1。"),error,issue); }
@@ -122,8 +122,12 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             absolute = QPointF(object.geometry.x()+point.x()*object.geometry.width(),object.geometry.y()+point.y()*object.geometry.height());
             if (std::abs(absolute.x()-std::round(absolute.x())) > 1e-8 || std::abs(absolute.y()-std::round(absolute.y())) > 1e-8 || absolute.x() > 799 || absolute.y() > 479 || (object.type == QStringLiteral("polyline") && !first && absolute.x() != previous.x() && absolute.y() != previous.y())) //20261113-14 change: Oblique straight lines do not relax the orthogonal polyline contract.
             { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("只开放屏内整数像素端点；折线仍只支持水平或垂直线段。"),error,issue); }
-            if (object.type == QStringLiteral("line") && !first && qRound(absolute.x()) == qRound(previous.x()) && qRound(absolute.y()) == qRound(previous.y())) //20261113-14 add: Distinct normalized doubles may collapse to one device pixel.
+            if (object.type != QStringLiteral("polyline") && !first && qRound(absolute.x()) == qRound(previous.x()) && qRound(absolute.y()) == qRound(previous.y())) //20261113-15 change: Both admitted two-point families require distinct device pixels.
             { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("直线取整后端点不能重合。"),error,issue); }
+            if (object.type == QStringLiteral("freeline") && !first && qMax(qAbs(qRound(absolute.x())-qRound(previous.x())),qAbs(qRound(absolute.y())-qRound(previous.y()))) < 40) //20261113-15 add
+            { return compilationIssue(project,object,QStringLiteral("graphic.sampledSpan"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("自由直线本切片保守开放主轴跨度至少40像素；小尺寸有效原厂路径未核。"),error,issue); }
+            if (object.type == QStringLiteral("freeline") && (absolute.x() < 1 || absolute.y() < 1)) //20261113-15 add: The native boundary source retains a fractional item translation outside this identity-transform slice.
+            { return compilationIssue(project,object,QStringLiteral("graphic.sceneBoundary"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("自由直线本切片仅开放端点X/Y至少1像素；贴上/左边界的原厂小数场景变换待恢复。"),error,issue); }
             previous = absolute; first = false;
         }
         Q_FOREACH (peer,prepared.objects)
@@ -131,7 +135,8 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             if (peer.id != object.id && peer.geometry.intersects(object.geometry))
             { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("线段与其它对象重叠的设备合成尚未核定。"),error,issue); } //20261113-14 change
         }
-        if (object.type == QStringLiteral("line")) { ++prepared.staticLineCount; } //20261113-14 change
+        if (object.type == QStringLiteral("line")) { ++prepared.staticLineCount; } //20261113-15 change
+        else if (object.type == QStringLiteral("freeline")) { ++prepared.staticFreelineCount; }
         else { ++prepared.staticPolylineCount; }
     }
     prepared.sourceSnapshot = project.toJson();

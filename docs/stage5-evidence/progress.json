@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "完成G01提交/便携交付后，继续G02两点自由直线重复与变体探针",
-  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线",
+  "active": "完成G02便携交付，继续其它图形像素、新动态记录及多页配置最小探针",
+  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -14,22 +14,22 @@
     {
       "id": "S05-02",
       "state": "passed_selected_corpus_with_open_nondeterminism",
-      "scope": "G04六组、G10十二组、G08八组、G01十二个独立场景/十四份canonical夹具；非确定区未知且无忽略掩码。"
+      "scope": "G04六组、G10十二组、G08八组、G01十二组、G02十二组；G02另保留28空路径和2场景变换拒绝样本，非确定区无忽略掩码。"
     },
     {
       "id": "S05-03",
       "state": "passed_bounded_single_page_projection",
-      "scope": "共享不可变单页计划、四类静态图形守卫；完整多页IR未恢复。"
+      "scope": "共享不可变单页计划、五类静态图形守卫；完整多页IR未恢复。"
     },
     {
       "id": "S05-04",
       "state": "existing_five_revalidated_static_slice_has_no_new_record",
-      "scope": "复用五类控制记录，四类图形只烘背景；26个新动态类型未恢复。"
+      "scope": "五类控制记录和五类静态背景；26个新动态类型未恢复。"
     },
     {
       "id": "S05-05",
       "state": "passed_six_canonical_background_cases",
-      "scope": "38个独立原厂整帧场景；本批直线14份夹具实际编译全相等，未扩大为全部样式/重叠。"
+      "scope": "50个独立类型/场景整帧对照；G02十四份canonical实际编译全等，不扩大为全部样式/变换/重叠。"
     },
     {
       "id": "S05-06",
@@ -49,16 +49,16 @@
     {
       "id": "S05-09",
       "state": "passed_selected_regression_and_review",
-      "scope": "最新191/0/0，核心183与直线编辑器8；历史基线及回归分别保留。"
+      "scope": "最新226/0/0，核心218与自由直线编辑器8；历史回归分别保留。"
     },
     {
       "id": "S05-10",
       "state": "passed_owned_cleanup",
-      "scope": "本批直线750文件/523976833逻辑字节，初探180文件/125761933逻辑字节；构建保留供后续。"
+      "scope": "本批56原始进程记录归档回解核SHA，1666文件/1173592830逻辑字节定向清理；构建供后续保留。"
     }
   ],
   "softwareTests": {
-    "passed": 191,
+    "passed": 226,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 38,
+  "nativeCanonicalPixelCases": 50,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -81,7 +81,10 @@
     "Q-S04-G04-003",
     "Q-S04-G01-001",
     "Q-S04-G01-002",
-    "Q-S04-G01-003"
+    "Q-S04-G01-003",
+    "Q-S04-G02-001",
+    "Q-S04-G02-002",
+    "Q-S04-G02-003"
   ],
   "latestDelivery": {
     "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage5-compile-slice4-r1",
@@ -130,6 +133,26 @@
     "cleanupFiles": 750,
     "cleanupLogicalBytes": 523976833,
     "report": "docs/阶段5_普通直线独立背景编译与差分验收.md",
+    "usbAccessed": false,
+    "E": false
+  },
+  "freelineSlice": {
+    "containerCompilations": 55,
+    "passiveMappingProcesses": 1,
+    "admittedCompilations": 25,
+    "excludedEmptyPaths": 28,
+    "excludedNonidentityTransforms": 2,
+    "canonicalFixtures": 14,
+    "independentCanonicalFrameCases": 12,
+    "softwareTests": {
+      "passed": 226,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 1666,
+    "cleanupLogicalBytes": 1173592830,
+    "sampledMinimumMajorSpan": 40,
+    "report": "docs/阶段5_自由直线两端点背景编译与差分验收.md",
     "usbAccessed": false,
     "E": false
   }
