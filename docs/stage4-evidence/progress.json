@@ -864,7 +864,7 @@
         "R_PC": "slice",
         "C": "blocked",
         "T": "native_reference_transport_passed_independent_encoder_blocked",
-        "E": "unobserved"
+        "E": "native_default_diagnostic_display_confirmed_full_E_unverified"
       },
       "unresolved": [
         "Q-S04-G05-001",
@@ -872,7 +872,9 @@
         "Q-S04-G05-003"
       ],
       "hardwareEvidence": "docs/stage4-evidence/roundrect/physical/roundrect-baseline-r1/run.json",
-      "report": "docs/圆角矩形图形实现与验收.md"
+      "report": "docs/圆角矩形图形实现与验收.md",
+      "screenObservation": "docs/stage4-evidence/roundrect/physical/roundrect-baseline-r1/screen-result.json",
+      "screenObservationScope": "native_reference_default_diagnostic_only"
     },
     {
       "id": "G06",
@@ -888,7 +890,7 @@
         "R_PC": "slice",
         "C": "blocked",
         "T": "native_reference_transport_passed_independent_encoder_blocked",
-        "E": "unobserved"
+        "E": "native_default_diagnostic_display_confirmed_full_E_unverified"
       },
       "unresolved": [
         "Q-S04-G06-001",
@@ -896,7 +898,9 @@
         "Q-S04-G06-003"
       ],
       "hardwareEvidence": "docs/stage4-evidence/ellipse/physical/ellipse-baseline-r2/run.json",
-      "report": "docs/圆与椭圆图形实现与验收.md"
+      "report": "docs/圆与椭圆图形实现与验收.md",
+      "screenObservation": "docs/stage4-evidence/ellipse/physical/ellipse-baseline-r2/screen-result.json",
+      "screenObservationScope": "native_reference_default_diagnostic_only"
     },
     {
       "id": "G07",
@@ -1015,11 +1019,15 @@
     "lifecycleScope": "C06-C31 and G01/G08, 28/28 older UI-only runs revalidated with complete commit/reset/read. C01-C05 retain earlier independent evidence."
   },
   "latestDelivery": {
-    "evidence": "docs/stage4-evidence/delivery-C26/package-manifest.json",
-    "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage4-C26-0.10.1",
+    "evidence": "docs/stage4-evidence/delivery-final-r3/package-manifest.json",
+    "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage4-41items-0.10.1-final-r3",
     "sourceTree": "isolated_verified_committed_checkout",
-    "sourceCommit": "6a3c1eb88dceba42c3319b3ae448e660086dddf4",
-    "processed": 26,
+    "sourceCommit": "c59104459db38e038f4e6cc0d72f09cbc03418f3",
+    "processed": 41,
+    "editorSlicesIncludingExisting": 40,
+    "geometryBlocked": [
+      "G03"
+    ],
     "total": 41,
     "completeStage4": false,
     "mainUnacceptedStage3Failures": 2
@@ -1042,5 +1050,13 @@
     "evidence": "docs/stage4-evidence/lifecycle-backfill/audit.json"
   },
   "investigationSlicesRecorded": 1,
-  "processedIncludingExisting": 41
+  "processedIncludingExisting": 41,
+  "iterationState": "bounded_editor_iteration_closed_with_recorded_gaps",
+  "completionAudit": "docs/stage4-evidence/delivery-final-r3/completion-audit.json",
+  "hardwareEvidenceSummary": {
+    "retainedEarlierIndependent": 5,
+    "nativeReferenceWithFullLifecycle": 36,
+    "defaultDiagnosticHumanObservations": 6
+  },
+  "nextWork": "阶段5独立源/设备格式恢复；按各控件Q-ID接续；G03真实曲率与G02/G07缺口保持登记"
 }
