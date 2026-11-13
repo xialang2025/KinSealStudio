@@ -99,7 +99,7 @@ bool ScreenCanvas::graphicPress(QMouseEvent *event, const QPointF &point) //2026
     int index;
 
     if (!m_hasPending || !graphicUsesVertices(m_pendingObject.type)) { return false; }
-    if (m_pendingObject.type == QStringLiteral("polyline")) //20261113-2 add: Left clicks add vertices; only the observed right-click gesture commits the path.
+    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) //20261113-2 add: Left clicks add vertices; only the observed right-click gesture commits the path.
     {
         if (event->button() == Qt::RightButton)
         {
@@ -143,10 +143,11 @@ bool ScreenCanvas::graphicMove(QMouseEvent *event, const QPointF &point) //20261
 
     if (!m_drawing || m_graphicDraft == nullptr) { return false; }
     m_graphicEnd = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
-    if (m_pendingObject.type == QStringLiteral("polyline")) //20261113-2 add: A rubber-band tail is transient and never silently serialized.
+    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) //20261113-2 add: A rubber-band tail is transient and never silently serialized.
     {
         path.moveTo(m_graphicVertices.first()); for (index = 1; index < m_graphicVertices.size(); ++index) { path.lineTo(m_graphicVertices[index]); }
-        path.lineTo(m_graphicEnd); m_graphicDraft->setPath(path); event->accept(); return true;
+        path.lineTo(m_graphicEnd); if (m_pendingObject.type == QStringLiteral("polygon")) { path.closeSubpath(); } //20261113-4 add: The closing preview edge is transient.
+        m_graphicDraft->setPath(path); event->accept(); return true;
     }
     path.moveTo(m_dragOrigin); path.lineTo(m_graphicEnd); m_graphicDraft->setPath(path); event->accept();
     return true;
@@ -167,7 +168,7 @@ bool ScreenCanvas::graphicRelease(QMouseEvent *event) //20261113-2 add
     QPointF point;
 
     if (event->button() != Qt::LeftButton || !m_drawing || m_graphicDraft == nullptr) { return false; }
-    if (m_pendingObject.type == QStringLiteral("polyline")) { event->accept(); return true; } //20261113-2 add: Releasing one click does not create a separate object or undo entry.
+    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) { event->accept(); return true; } //20261113-2 add: Releasing one click does not create a separate object or undo entry.
     point = mapToScene(event->position().toPoint());
     m_graphicEnd = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
     object = m_pendingObject;

@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline"); //20261113-2 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon"); //20261113-2 change
 }
 
 /******************************************************************************
@@ -41,7 +41,19 @@ bool isSupportedGraphic(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicUsesVertices(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("polyline"); //20261113-2 change: Each polyline vertex keeps its ordered role.
+    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon"); //20261113-2 change: Each polyline vertex keeps its ordered role.
+}
+
+/******************************************************************************
+ * Function Name   : graphicStrokeOnly
+ * Description     : Separate open stroke styling from closed vertex topology.
+ * Input Parameters: type
+ * Return Value    : True when the family has arrows and no fill.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+bool graphicStrokeOnly(const QString &type) //20261113-4 add
+{
+    return type == QStringLiteral("line") || type == QStringLiteral("polyline");
 }
 
 /******************************************************************************
@@ -57,6 +69,7 @@ QString graphicName(const QString &type) //20261113-2 add
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
     if (type == QStringLiteral("roundrect")) { return QStringLiteral("圆角矩形"); } //20261113-2 add
+    if (type == QStringLiteral("polygon")) { return QStringLiteral("多边形"); } //20261113-4 add
     if (type == QStringLiteral("polyline")) { return QStringLiteral("折线"); } //20261113-2 add
     return QString();
 }
@@ -79,7 +92,11 @@ QJsonObject GraphicProperties::toJson(const QString &type) const //20261113-2 ch
     if (graphicUsesVertices(type))
     {
         Q_FOREACH (point, points) { vertices.append(QJsonArray{point.x(), point.y()}); }
-        json.insert(QStringLiteral("points"), vertices); json.insert(QStringLiteral("endArrow"), endArrow); json.insert(QStringLiteral("endCap"), endCap);
+        json.insert(QStringLiteral("points"), vertices);
+    }
+    if (graphicStrokeOnly(type)) //20261113-4 change: Topology and fill are independent for polygons.
+    {
+        json.insert(QStringLiteral("endArrow"), endArrow); json.insert(QStringLiteral("endCap"), endCap);
     }
     else
     {
@@ -123,7 +140,6 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
     candidate.alpha = json.value(QStringLiteral("alpha")).toInt(); candidate.lineColor = QColor(json.value(QStringLiteral("lineColor")).toString());
     if (graphicUsesVertices(type))
     {
-        candidate.endArrow = json.value(QStringLiteral("endArrow")).toInt(); candidate.endCap = json.value(QStringLiteral("endCap")).toInt();
         vertices = json.value(QStringLiteral("points")).toArray();
         if (vertices.size() < 2 || vertices.size() > 4096) { return graphicError(error, QStringLiteral("图形点数超出本地资源限制。")); }
         candidate.points.clear();
@@ -134,6 +150,8 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
             candidate.points.append(QPointF(coordinates[0].toDouble(), coordinates[1].toDouble()));
         }
     }
+    if (graphicStrokeOnly(type)) //20261113-4 change: Parse fill on closed vertex objects instead of arrows.
+    { candidate.endArrow = json.value(QStringLiteral("endArrow")).toInt(); candidate.endCap = json.value(QStringLiteral("endCap")).toInt(); }
     else { candidate.fillStyle = json.value(QStringLiteral("fillStyle")).toInt(); candidate.foreground = QColor(json.value(QStringLiteral("foreground")).toString()); candidate.background = QColor(json.value(QStringLiteral("background")).toString()); }
     if (type == QStringLiteral("roundrect")) //20261113-2 add: Preserve both independent radius values across resize.
     {
@@ -159,18 +177,19 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
 
     if (!isSupportedGraphic(type) || lineStyle < 0 || lineStyle > 5 || lineWidth < 1 || lineWidth > 9 || endArrow < 0 || endArrow > 5 || endCap < 0 || endCap > 1 || alpha < 0 || alpha > 255 || !lineColor.isValid() || lineColor.alpha() != 255)
     { return graphicError(error, QStringLiteral("图形线型、线宽、颜色、箭头、端点或透明度无效。")); }
-    if (!graphicUsesVertices(type))
+    if (!graphicStrokeOnly(type)) //20261113-4 change: Polygon vertices still carry independent fill drafts.
     {
         if (fillStyle < 0 || fillStyle > 12 || !foreground.isValid() || !background.isValid() || foreground.alpha() != 255 || background.alpha() != 255 || endArrow != 0 || endCap != 0) { return graphicError(error, QStringLiteral("封闭图形填充样式或颜色无效。")); }
         if (type == QStringLiteral("roundrect") && (radiusX < 0 || radiusX > 99 || radiusY < 0 || radiusY > 99)) { return graphicError(error, QStringLiteral("圆角X/Y半径必须为0到99。")); } //20261113-2 add
-        return true;
+        if (!graphicUsesVertices(type)) { return true; }
     }
+    if (type == QStringLiteral("polygon") && (points.size() < 3 || points.size() > 4096 || points.first() == points.last())) { return graphicError(error, QStringLiteral("多边形需要3到4096个顶点，末点不重复首点。")); } //20261113-4 add: This is an explicit local resource/closure policy.
     if (type == QStringLiteral("line") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
     if (type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
     Q_FOREACH (point, points)
     {
         if (!std::isfinite(point.x()) || !std::isfinite(point.y()) || point.x() < 0 || point.x() > 1 || point.y() < 0 || point.y() > 1) { return graphicError(error, QStringLiteral("图形归一坐标超出有限范围。")); }
-        if (type == QStringLiteral("polyline") && hasPrevious && point == previous) { return graphicError(error, QStringLiteral("折线相邻顶点不能重合。")); } //20261113-2 add
+        if ((type == QStringLiteral("polyline") || type == QStringLiteral("polygon")) && hasPrevious && point == previous) { return graphicError(error, QStringLiteral("折线相邻顶点不能重合。")); } //20261113-2 add
         previous = point; hasPrevious = true;
     }
     return true;
@@ -209,10 +228,11 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
     if (type == QStringLiteral("rect")) { path.addRect(rect); return path; }
     if (type == QStringLiteral("ellipse")) { path.addEllipse(rect); return path; }
     if (type == QStringLiteral("roundrect")) { path.addRoundedRect(rect, properties.radiusX, properties.radiusY, Qt::AbsoluteSize); return path; } //20261113-2 add: Default native raster indicates equal absolute radii on a non-square box; extreme clipping remains a local rule.
-    if (type == QStringLiteral("polyline")) //20261113-2 add: Every stored point contributes a genuine segment, without automatic closure.
+    if (type == QStringLiteral("polyline") || type == QStringLiteral("polygon")) //20261113-4 change: Every stored point contributes a genuine segment, without automatic closure.
     {
         if (vertices.size() < 2) { return path; }
         path.moveTo(vertices.first()); for (index = 1; index < vertices.size(); ++index) { path.lineTo(vertices[index]); }
+        if (type == QStringLiteral("polygon")) { path.closeSubpath(); } //20261113-4 add: Closure is explicit and never substitutes the enclosing box.
         return path;
     }
     if (vertices.size() != 2) { return path; }
@@ -235,7 +255,7 @@ static QPainterPath graphicArrow(const QString &type, const QRectF &rect, const 
     double size = 6.0 + properties.lineWidth;
     QPointF delta;
 
-    if (!graphicUsesVertices(type) || vertices.size() < 2 || properties.endArrow == 0) { return path; }
+    if (!graphicStrokeOnly(type) || vertices.size() < 2 || properties.endArrow == 0) { return path; }
     delta = vertices.last() - vertices[vertices.size() - 2]; transform.translate(vertices.last().x(), vertices.last().y()); //20261113-2 change: Polyline arrows follow the final segment, not the overall box diagonal.
     transform.rotate(std::atan2(delta.y(), delta.x()) * 180.0 / 3.14159265358979323846);
     if (properties.endArrow == 5) { path.addEllipse(QRectF(-size, -size / 2, size, size)); }
@@ -269,7 +289,7 @@ QPainterPath graphicHitPath(const QString &type, const QRectF &rect, const Graph
 
     stroker.setWidth(qMax(6, properties.lineWidth));
     stroker.setCapStyle(properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
-    if (!graphicUsesVertices(type)) { return stroker.createStroke(graphicPath(type, rect, properties)).united(graphicPath(type, rect, properties)); }
+    if (!graphicStrokeOnly(type)) { return stroker.createStroke(graphicPath(type, rect, properties)).united(graphicPath(type, rect, properties)); }
     return stroker.createStroke(graphicPath(type, rect, properties)).united(graphicArrow(type, rect, properties));
 }
 
@@ -318,7 +338,7 @@ void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, co
 
     if (painter == nullptr || !properties.validate(type)) { return; }
     color.setAlpha(properties.alpha); pen = QPen(color, properties.lineWidth, styles[properties.lineStyle], properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
-    painter->save(); painter->setRenderHint(QPainter::Antialiasing, type == QStringLiteral("ellipse")); painter->setPen(pen); painter->setBrush(graphicUsesVertices(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
+    painter->save(); painter->setRenderHint(QPainter::Antialiasing, type == QStringLiteral("ellipse")); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
     painter->drawPath(graphicPath(type, rect, properties));
     if (properties.lineStyle != 0) { painter->setPen(Qt::NoPen); painter->setBrush(color); painter->drawPath(graphicArrow(type, rect, properties)); }
     painter->restore();

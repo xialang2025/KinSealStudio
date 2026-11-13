@@ -1,0 +1,17 @@
+{
+  "mode": "read_only_review",
+  "checkedAtUtc": "2026-11-13T00:12:08.566381+00:00",
+  "checks": [
+    "Separated ordered vertex topology from stroke-only fields in JSON, dialogs, renderer and hit-testing",
+    "Closed polygon commits once on right click; moving tail is transient; insufficient points cancel locally",
+    "Fill fields/point fields remain atomic with strict shape isolation; all intermediate handles are retained",
+    "Existing straight/polyline and ordinary filled shapes keep their previous serialization and behavior",
+    "Native default white foreground/black background comes from retained per-family evidence; no arbitrary device type or SM body introduced"
+  ],
+  "blockingFindings": [],
+  "limits": [
+    "3..4096 points, adjacent repeats and repeated closing point rejection are local constraints",
+    "Odd-even self-intersection fill and custom colors/dash pixels have not been established as native-equal",
+    "No native insertion/deletion commands claimed"
+  ]
+}

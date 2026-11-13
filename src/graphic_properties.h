@@ -32,6 +32,7 @@ struct GraphicProperties
 
 bool isSupportedGraphic(const QString &type);
 bool graphicUsesVertices(const QString &type);
+bool graphicStrokeOnly(const QString &type); //20261113-4 add
 QString graphicName(const QString &type);
 QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);
 QPainterPath graphicHitPath(const QString &type, const QRectF &rect, const GraphicProperties &properties);

@@ -1,0 +1,31 @@
+[1/8] Automatic MOC and UIC for target KinSealStudioLite
+[2/7] Automatic MOC and UIC for target KinSealStage4ControlTests
+[3/6] Building CXX object CMakeFiles/KinSealStage4ControlTests.dir/src/graphic_dialog.cpp.obj
+[4/6] Building CXX object CMakeFiles/KinSealStudioLite.dir/src/graphic_dialog.cpp.obj
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp: In constructor 'GraphicDialog::GraphicDialog(const HmiObject&, QWidget*)':
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:114:101: warning: 'leftPane' may be used uninitialized [-Wmaybe-uninitialized]
+  114 |         grid->setContentsMargins(10,20,9,9); grid->setHorizontalSpacing(19); leftPane->setFixedWidth(281); rightPane->setFixedWidth(181);
+      |                                                                              ~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:39:14: note: 'leftPane' was declared here
+   39 |     QWidget *leftPane;
+      |              ^~~~~~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:114:132: warning: 'rightPane' may be used uninitialized [-Wmaybe-uninitialized]
+  114 |         grid->setContentsMargins(10,20,9,9); grid->setHorizontalSpacing(19); leftPane->setFixedWidth(281); rightPane->setFixedWidth(181);
+      |                                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:40:14: note: 'rightPane' was declared here
+   40 |     QWidget *rightPane;
+      |              ^~~~~~~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:115:103: warning: 'leftLayout' may be used uninitialized [-Wmaybe-uninitialized]
+  115 |         grid->setColumnMinimumWidth(0,281); grid->setColumnMinimumWidth(1,181); leftLayout->setSpacing(19); rightLayout->setSpacing(19);
+      |                                                                                 ~~~~~~~~~~~~~~~~~~~~~~^~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:41:18: note: 'leftLayout' was declared here
+   41 |     QVBoxLayout *leftLayout;
+      |                  ^~~~~~~~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:115:132: warning: 'rightLayout' may be used uninitialized [-Wmaybe-uninitialized]
+  115 |         grid->setColumnMinimumWidth(0,281); grid->setColumnMinimumWidth(1,181); leftLayout->setSpacing(19); rightLayout->setSpacing(19);
+      |                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~^~~~
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/src/graphic_dialog.cpp:42:18: note: 'rightLayout' was declared here
+   42 |     QVBoxLayout *rightLayout;
+      |                  ^~~~~~~~~~~
+[5/6] Linking CXX executable KinSealStage4ControlTests.exe
+[6/6] Linking CXX executable KinSealStudioLite.exe

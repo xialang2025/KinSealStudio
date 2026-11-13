@@ -158,7 +158,7 @@ void ScreenCanvas::mouseDoubleClickEvent(QMouseEvent *event) //20261108-14 add
 {
     HmiControlItem *item;
 
-    if (m_hasPending && m_pendingObject.type == QStringLiteral("polyline") && graphicPress(event,mapToScene(event->position().toPoint()))) { return; } //20261113-2 add: Do not open an existing object's properties while a multi-click draft owns the gesture.
+    if (m_hasPending && (m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon")) && graphicPress(event,mapToScene(event->position().toPoint()))) { return; } //20261113-2 add: Do not open an existing object's properties while a multi-click draft owns the gesture.
     item = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
     if (event->button() == Qt::LeftButton && item != nullptr)
     {

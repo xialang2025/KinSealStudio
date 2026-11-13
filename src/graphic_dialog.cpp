@@ -45,7 +45,8 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     int index;
 
     setWindowTitle(graphicName(object.type)); setObjectName(QStringLiteral("GraphicDialog")); resize(600, 480);
-    if (graphicUsesVertices(object.type) || object.type == QStringLiteral("roundrect")) { setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }")); } //20261113-2 change: Native rounded-rectangle inputs retain the observed green style.
+    if (object.type == QStringLiteral("polygon")) { resize(600,500); } //20261113-4 add: Retain the observed native polygon client dimensions.
+    if (graphicStrokeOnly(object.type) || object.type == QStringLiteral("roundrect")) { setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:#cce8cf; }")); } //20261113-2 change: Native rounded-rectangle inputs retain the observed green style.
     outer = new QVBoxLayout(this); tabs = new QTabWidget(this); page = new QWidget(tabs); grid = new QGridLayout(page);
     tabs->addTab(page, graphicName(object.type)); outer->addWidget(tabs, 1);
     stroke = new QGroupBox(QStringLiteral("属性"), page); form = new QFormLayout(stroke);
@@ -71,7 +72,7 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     grid->setColumnMinimumWidth(0, 280); grid->setColumnStretch(2, 1); grid->setRowStretch(3, 1);
     Q_FOREACH (combo, page->findChildren<QComboBox *>()) { combo->setFixedWidth(160); }
     Q_FOREACH (label, page->findChildren<QLabel *>()) { if (label != m_preview) { label->setMinimumWidth(60); } }
-    if (!graphicUsesVertices(object.type)) //20261113-2 add: Filled graphics have no endpoint or arrow fields.
+    if (!graphicStrokeOnly(object.type)) //20261113-2 add: Filled graphics have no endpoint or arrow fields.
     {
         form = qobject_cast<QFormLayout *>(fill->layout());
         m_foreground = new QPushButton(fill); m_foreground->setObjectName(QStringLiteral("Fore_Color")); form->addRow(QStringLiteral("前景色："), m_foreground);
@@ -106,6 +107,20 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
             m_foreground->setObjectName(QStringLiteral("m_FrontColorBtn")); m_background->setObjectName(QStringLiteral("m_BackColorBtn")); m_pattern->setObjectName(QStringLiteral("m_Pattern")); m_alpha->setObjectName(QStringLiteral("m_Alpha"));
             connect(m_radiusX,&QSpinBox::valueChanged,this,&GraphicDialog::refreshPreview); connect(m_radiusY,&QSpinBox::valueChanged,this,&GraphicDialog::refreshPreview);
         }
+        if (object.type == QStringLiteral("polygon")) //20261113-4 add: Reproduce measured native group and field geometry without changing other families.
+        {
+            setFont(QFont(QStringLiteral("SimSun"),9)); setStyleSheet(QStringLiteral("QComboBox, QSpinBox { background-color:white; }"));
+            grid->setContentsMargins(10,20,9,9); grid->setHorizontalSpacing(19); leftPane->setFixedWidth(281); rightPane->setFixedWidth(181);
+            grid->setColumnMinimumWidth(0,281); grid->setColumnMinimumWidth(1,181); leftLayout->setSpacing(19); rightLayout->setSpacing(19);
+            stroke->setFixedHeight(91); fill->setFixedHeight(151); preview->setFixedHeight(171); opacity->setFixedHeight(71);
+            qobject_cast<QFormLayout *>(stroke->layout())->setContentsMargins(10,2,30,19); qobject_cast<QFormLayout *>(stroke->layout())->setVerticalSpacing(8);
+            qobject_cast<QFormLayout *>(fill->layout())->setContentsMargins(10,2,30,19); qobject_cast<QFormLayout *>(fill->layout())->setVerticalSpacing(8);
+            Q_FOREACH (combo, page->findChildren<QComboBox *>()) { combo->setFixedSize(161,22); }
+            Q_FOREACH (label, leftPane->findChildren<QLabel *>()) { label->setMinimumWidth(74); }
+            m_color->setFixedSize(161,22); m_foreground->setFixedSize(161,22); m_background->setFixedSize(161,22);
+            m_alpha->setFixedSize(141,30); opacity->layout()->setContentsMargins(10,13,10,10);
+            m_preview->setFixedSize(161,141); m_preview->setStyleSheet(QStringLiteral("border:1px solid #808a99;")); preview->layout()->setContentsMargins(10,2,10,10);
+        }
     }
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GraphicButtons")); outer->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
@@ -137,7 +152,8 @@ void GraphicDialog::refreshPreview() //20261113-2 add
     if (m_pattern != nullptr) { m_draft.fillStyle = m_pattern->currentIndex(); m_foreground->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.foreground.name())); m_background->setStyleSheet(QStringLiteral("background:%1").arg(m_draft.background.name())); }
     if (m_radiusX != nullptr) { m_draft.radiusX = m_radiusX->value(); m_draft.radiusY = m_radiusY->value(); } //20261113-2 add: Preview and committed object share the same bounded radius draft.
     preview = m_draft; preview.points = {QPointF(0, 0), QPointF(1, 1)};
-    pixels = QPixmap(m_preview->size()); pixels.fill(graphicUsesVertices(m_original.type) || m_original.type == QStringLiteral("roundrect") ? QColor(QStringLiteral("#cce8cf")) : QColor(Qt::white)); painter.begin(&pixels); paintGraphic(&painter, m_original.type, graphicUsesVertices(m_original.type) ? QRectF(15,35,100,100) : m_original.type == QStringLiteral("roundrect") ? QRectF(25,10,100,100) : QRectF(30,20,100,100), preview); painter.end(); //20261113-2 change: Match the rounded-rectangle native preview inset and background.
+    if (m_original.type == QStringLiteral("polygon")) { preview.points = {QPointF(0,0), QPointF(1,0), QPointF(.75,1)}; } //20261113-4 add: Canonical triangle preview does not overwrite the object vertices.
+    pixels = QPixmap(m_preview->size()); pixels.fill(graphicStrokeOnly(m_original.type) || m_original.type == QStringLiteral("roundrect") ? QColor(QStringLiteral("#cce8cf")) : QColor(Qt::white)); painter.begin(&pixels); paintGraphic(&painter, m_original.type, graphicStrokeOnly(m_original.type) ? QRectF(15,35,100,100) : m_original.type == QStringLiteral("roundrect") ? QRectF(25,10,100,100) : QRectF(30,20,100,100), preview); painter.end(); //20261113-2 change: Match the rounded-rectangle native preview inset and background.
     m_preview->setPixmap(pixels);
 }
 

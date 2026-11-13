@@ -1,0 +1,19 @@
+{
+  "mode": "read_only_review_before_delivery",
+  "findings": [
+    "只读复核顶点拓扑与开放线样式解耦，polygon保留点和填充而不串入箭头/端帽JSON。",
+    "右键一次闭合且临时移动尾段不落盘；逐顶点编辑保留其余点，取消/换页/历史隔离。",
+    "原厂逐项字段、默认色和闭合手势来自本家族证据；SM及独立设备门槛不变。",
+    "首轮构建发现测试直接调用受保护accept的接口访问错误；改成点击实际确定按钮，保留失败构建日志并重跑。",
+    "实际窗口截图对照后修正600x500、分组/字段尺寸、白底/宋体和预览边框；修正Qt6组框内边距叠加导致的裁切，并将布局代码置于已创建面板的分支，最终构建没有warning/error。字体/组合框图标等全部UI像素未宣称零差异。"
+  ],
+  "finalRun": "docs/stage4-evidence/polygon/windows-r4/run.json",
+  "tests": {
+    "passed": 283,
+    "failed": 0,
+    "skipped": 0
+  },
+  "deviceAndSourceGateVerified": true,
+  "nativePixelEqualityClaimed": false,
+  "userStage3EditsIncluded": false
+}
