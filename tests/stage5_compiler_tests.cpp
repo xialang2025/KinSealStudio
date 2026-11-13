@@ -42,6 +42,11 @@ private slots:
     void tableUnprovedFieldsPreserveOutput_data();
     void tableUnprovedFieldsPreserveOutput();
     void tablePackageAndSourceGates();
+    void rectangleCanonicalFrames_data(); //20261113-13 add
+    void rectangleCanonicalFrames();
+    void rectangleUnprovedFieldsPreserveOutput_data();
+    void rectangleUnprovedFieldsPreserveOutput();
+    void rectangleSourceAndPackageGates();
 };
 
 /******************************************************************************
@@ -79,6 +84,23 @@ static HmiProject tableProject() //20261113-12 add
     object.text.clear(); object.address.clear(); object.geometry = QRect(100,100,200,100);
     object.graphic.background = QColor(QStringLiteral("#e0e0e0"));
     project.objects = {object};
+    return project;
+}
+
+/******************************************************************************
+ * Function Name   : rectangleProject
+ * Description     : Construct a typed closed rectangle without native seeds or retained binary fields.
+ * Input Parameters: None
+ * Return Value    : One ordinary page with a black outline and opaque white fill.
+ * Date            : 2026.11.13
+ ******************************************************************************/
+static HmiProject rectangleProject() //20261113-13 add
+{
+    HmiProject project;
+    HmiObject object;
+
+    object.type = QStringLiteral("rect"); object.id = QStringLiteral("stage5-rectangle"); object.name = QStringLiteral("矩形");
+    object.text.clear(); object.address.clear(); object.geometry = QRect(100,100,200,100); project.objects = {object};
     return project;
 }
 
@@ -209,7 +231,7 @@ void Stage5CompilerTests::unprovedFieldsPreservePlanAndPayload() //20261113-11 a
     if (variant == 7) { project.objects[0].graphic.points = {QPointF(0,0),QPointF(0.333,0),QPointF(0.333,1)}; }
     if (variant == 8) { project.objects[0].geometry.moveLeft(750); }
     if (variant == 9) { peer = project.objects[0]; peer.id = QStringLiteral("overlap"); project.objects.append(peer); }
-    if (variant == 10) { project.objects[0].type = QStringLiteral("rect"); }
+    if (variant == 10) { project.objects[0].type = QStringLiteral("ellipse"); } //20261113-13 change: Rectangles now have their own independently proven static slice.
     if (variant == 11) { project.objects[0].geometry = QRect(650,100,150,100); }
     QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticPolylineCount,77);
     QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
@@ -272,6 +294,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiPage page;
     HmiObject object;
     HmiObject table; //20261113-12 add: Both static families must coexist with the five existing record families.
+    HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     QSet<QString> found;
     QString family;
     QString error;
@@ -290,6 +313,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
         }
     }
     table = tableProject().objects.first(); table.geometry.moveTopLeft(QPoint(400,200)); project.objects.append(table); //20261113-12 add
+    rectangle = rectangleProject().objects.first(); rectangle.geometry.moveTopLeft(QPoint(100,300)); project.objects.append(rectangle); //20261113-13 add
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -416,6 +440,125 @@ void Stage5CompilerTests::tablePackageAndSourceGates() //20261113-12 add
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
     QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
+    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::rectangleCanonicalFrames_data
+ * Description     : Bind saved-source geometry, all binary line/fill switches and two-object composition to native full frames.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::rectangleCanonicalFrames_data() //20261113-13 add
+{
+    QTest::addColumn<QRect>("geometry"); QTest::addColumn<int>("lineStyle"); QTest::addColumn<int>("fillStyle"); QTest::addColumn<bool>("twoObjects"); QTest::addColumn<QString>("fixture");
+    QTest::newRow("default") << QRect(100,100,200,100) << 1 << 1 << false << QStringLiteral("rect-default-repeat-r1");
+    QTest::newRow("small-drag-produces-native-default-size") << QRect(100,100,100,100) << 1 << 1 << false << QStringLiteral("rect-minimum-reopen-r1");
+    QTest::newRow("shifted-sized") << QRect(75,65,160,120) << 1 << 1 << false << QStringLiteral("rect-shifted-reopen-r1");
+    QTest::newRow("screen-edge") << QRect(0,0,200,100) << 1 << 1 << false << QStringLiteral("rect-screen-edge-reopen-r1");
+    QTest::newRow("invisible-retained-object") << QRect(100,100,200,100) << 0 << 0 << false << QStringLiteral("rect-options-0-0-reopen-r1");
+    QTest::newRow("fill-without-outline") << QRect(100,100,200,100) << 0 << 1 << false << QStringLiteral("rect-options-0-1-reopen-r1");
+    QTest::newRow("outline-without-fill") << QRect(100,100,200,100) << 1 << 0 << false << QStringLiteral("rect-options-1-0-reopen-r1");
+    QTest::newRow("two-nonoverlapping-rectangles") << QRect(100,100,200,100) << 1 << 1 << true << QStringLiteral("rect-two-objects-reopen-r1");
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::rectangleCanonicalFrames
+ * Description     : Compare every RGB565 byte through the real project compiler and verify the rectangle emits no dynamic record.
+ * Input Parameters: Qt fixture geometry, lineStyle, fillStyle, twoObjects, fixture
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::rectangleCanonicalFrames() //20261113-13 add
+{
+    QFETCH(QRect,geometry); QFETCH(int,lineStyle); QFETCH(int,fillStyle); QFETCH(bool,twoObjects); QFETCH(QString,fixture);
+    HmiProject project = rectangleProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QString root = QFINDTESTDATA("../docs/stage5-evidence/native/rect");
+    QByteArray native = testFileBytes(QDir(root).filePath(fixture+QStringLiteral("/compiled/fresh-process-3/SheetPixel.dat")));
+    QVector<QByteArray> payloads;
+    QString error;
+
+    project.objects[0].geometry = geometry; project.objects[0].graphic.lineStyle = lineStyle; project.objects[0].graphic.fillStyle = fillStyle;
+    if (twoObjects) { peer=project.objects[0]; peer.id=QStringLiteral("rectangle-peer"); peer.geometry=QRect(400,100,100,100); project.objects.append(peer); }
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error)); QCOMPARE(plan.staticRectCount,twoObjects?2:1);
+    QCOMPARE(decodeTestFrame(native).size(),768000); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
+    QCOMPARE(payloads.size(),10); QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native)); QCOMPARE(payloads[5].size(),2400);
+    QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::rectangleUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate unsupported rectangle rendering and geometric boundaries.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::rectangleUnprovedFieldsPreserveOutput_data() //20261113-13 add
+{
+    int variant;
+
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<12;++variant) { QTest::newRow(qPrintable(QString::number(variant))) << variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::rectangleUnprovedFieldsPreserveOutput
+ * Description     : Reject unproved styles, small sizes, edge clipping and overlap before changing caller output.
+ * Input Parameters: Qt fixture variant
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::rectangleUnprovedFieldsPreserveOutput() //20261113-13 add
+{
+    QFETCH(int,variant);
+    HmiProject project = rectangleProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QString error;
+
+    plan.staticRectCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.fillStyle=2; }
+    if (variant==5) { project.objects[0].graphic.background=Qt::red; }
+    if (variant==6) { project.objects[0].graphic.foreground=Qt::red; }
+    if (variant==7) { project.objects[0].geometry=QRect(100,100,99,100); }
+    if (variant==8) { project.objects[0].geometry.moveLeft(600); }
+    if (variant==9) { project.objects[0].geometry.moveTop(380); }
+    if (variant==10) { peer=project.objects[0]; peer.id=QStringLiteral("overlap"); project.objects.append(peer); }
+    if (variant==11) { peer=project.objects[0]; peer.id=QStringLiteral("touching"); peer.geometry.moveLeft(300); project.objects.append(peer); }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticRectCount,77);
+    QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::rectangleSourceAndPackageGates
+ * Description     : Revalidate a rectangle device package while retaining native-SM and legacy text rejection.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.13
+ ******************************************************************************/
+void Stage5CompilerTests::rectangleSourceAndPackageGates() //20261113-13 add
+{
+    HmiProject project = rectangleProject();
+    QTemporaryDir temporary;
+    QString target = temporary.filePath(QStringLiteral("rectangle"));
+    QByteArray source = QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QString error;
+
     QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));

@@ -1,0 +1,42 @@
+{
+  "mode": "read_only_after_implementation",
+  "businessLogicChangedDuringReview": false,
+  "softwareTests": {
+    "passed": 161,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": [
+    "closed path and 0/1 line/fill",
+    "static zero-record and zero-sprite layout",
+    "stroke extent and touching edges",
+    "source and legacy gates",
+    "old five plus three static mixed indexes",
+    "no USB calls"
+  ],
+  "remaining": [
+    "sub100 geometry",
+    "other colors/styles/alpha",
+    "overlaps",
+    "SM and multi-page/configuration"
+  ],
+  "files": [
+    {
+      "path": "src/device_compile_plan.h",
+      "sha256": "596996158a2280a42c802e08f53ff5c4fa074f5a4120e7fca08dbdba57a8edff"
+    },
+    {
+      "path": "src/device_compile_plan.cpp",
+      "sha256": "3dffd46c548f90e08d522001d7f2650431e19a7ed1764c3059118a56b250e0d3"
+    },
+    {
+      "path": "src/independent_downloader.cpp",
+      "sha256": "5f18960920a8278a8252da0d1d1549d55a9c75b51c50d82400a4d6533fb7d00c"
+    },
+    {
+      "path": "tests/stage5_compiler_tests.cpp",
+      "sha256": "1894c27714389473dc54d515a50bd9a8fc5f1e7ac113c646460c9e99fb7e14b6"
+    }
+  ],
+  "usbAccessed": false
+}

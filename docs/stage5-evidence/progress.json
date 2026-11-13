@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "G08矩形：保存重开已采样，待C实现",
-  "selectedSlice": "G04正交折线 + G10受限整数静态表格",
+  "active": "继续其它图形/动态记录、重叠与多页配置的最小原厂探针",
+  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -14,22 +14,22 @@
     {
       "id": "S05-02",
       "state": "passed_selected_corpus_with_open_nondeterminism",
-      "scope": "三次同源新进程、空白基线、6组保存重开栅格；原厂非确定区保持未知，未设忽略掩码。"
+      "scope": "G04六组、G10十二组、G08八组独立保存重开背景；同源新进程及非确定差异保留，无忽略掩码。"
     },
     {
       "id": "S05-03",
       "state": "passed_bounded_single_page_projection",
-      "scope": "共享不可变单页计划、稳定顺序及页/对象/属性诊断；没有完整多页IR。"
+      "scope": "共享不可变单页计划、稳定顺序及三类静态图形属性拒绝；完整多页IR仍未恢复。"
     },
     {
       "id": "S05-04",
       "state": "existing_five_revalidated_static_slice_has_no_new_record",
-      "scope": "复用五类编码器；折线烘SheetPixel，无新增ControlPara类型。其他26类未恢复。"
+      "scope": "复用已有五类控制记录；三类图形只有背景、无新ControlPara；其余26动态类型尚未恢复。"
     },
     {
       "id": "S05-05",
       "state": "passed_six_canonical_background_cases",
-      "scope": "默认、改宽、改位置尺寸、1像素、屏边及双对象整帧RGB565逐字节相等。"
+      "scope": "26组独立原厂整帧RGB565编译场景通过；不代表所有样式或重叠组合。"
     },
     {
       "id": "S05-06",
@@ -49,16 +49,16 @@
     {
       "id": "S05-09",
       "state": "passed_selected_regression_and_review",
-      "scope": "107项关联回归；253项基线分开；初始失败及修复链保留，未访问USB通信。"
+      "scope": "最新161/0/0（核心154与受影响编辑器7）；旧253基线及107/143回归保留历史，不重复相加。"
     },
     {
       "id": "S05-10",
       "state": "passed_owned_cleanup",
-      "scope": "原始gzip与唯一源/段已保存；清理1124文件，主目录用户build及原件/SDK未动。"
+      "scope": "每切片分别归档和定向清理；当前矩形541文件/398054767逻辑字节，构建仍供后续使用。"
     }
   ],
   "softwareTests": {
-    "passed": 143,
+    "passed": 161,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 18,
+  "nativeCanonicalPixelCases": 26,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -100,5 +100,19 @@
     "report": "docs/阶段5_静态表格设备背景编译与差分验收.md",
     "complete": false,
     "usbAccessed": false
+  },
+  "rectangleSlice": {
+    "nativeCompilations": 17,
+    "independentCanonicalFrameCases": 8,
+    "softwareTests": {
+      "passed": 161,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 541,
+    "cleanupLogicalBytes": 398054767,
+    "report": "docs/阶段5_矩形设备背景编译与差分验收.md",
+    "usbAccessed": false,
+    "smallGeometryVerified": false
   }
 }

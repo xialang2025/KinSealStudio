@@ -1,0 +1,14 @@
+In file included from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qglobal.h:56,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtGui/qtguiglobal.h:8,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtGui/qcolor.h:8,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include\QtGui/QColor:1,
+                 from ..\kinseal-stage4-20261112\worktree\src\graphic_properties.h:4,
+                 from ..\kinseal-stage4-20261112\worktree\src\graphic_properties.cpp:1:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qforeach.h: In instantiation of 'QtPrivate::QForeachContainer<typename std::decay<_Tp>::type> QtPrivate::qMakeForeachContainer(T&&) [with T = QJsonArray&; typename std::decay<_Tp>::type = QJsonArray]':
+..\kinseal-stage4-20261112\worktree\src\graphic_properties.cpp:165:9:   required from here
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qforeach.h:52:61: warning: 'void QtPrivate::warnIfContainerIsNotShared(...) [with T = QJsonArray]' is deprecated: Do not use foreach/Q_FOREACH with containers which are not implicitly shared. Prefer using a range-based for loop with these containers: `for (const auto &it : container)`, keeping in mind that range-based for doesn't copy the container as Q_FOREACH does [-Wdeprecated-declarations]
+   52 |     warnIfContainerIsNotShared<typename std::decay<T>::type>(0);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qforeach.h:46:13: note: declared here
+   46 | inline void warnIfContainerIsNotShared(...) {}
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~

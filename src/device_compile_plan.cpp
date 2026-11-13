@@ -52,6 +52,31 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
+        if (object.type == QStringLiteral("rect")) //20261113-13 add: Gate the sampled closed rectangle, including the independently observed line/fill switches.
+        {
+            if (object.graphic.lineStyle != 0 && object.graphic.lineStyle != 1)
+            { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("矩形只开放已核无线/实线。"),error,issue); }
+            if (object.graphic.fillStyle != 0 && object.graphic.fillStyle != 1)
+            { return compilationIssue(project,object,QStringLiteral("graphic.fillStyle"),object.graphic.fillStyle,QStringLiteral("矩形只开放已核无填充/纯色填充。"),error,issue); }
+            if (object.graphic.lineWidth != 1)
+            { return compilationIssue(project,object,QStringLiteral("graphic.lineWidth"),object.graphic.lineWidth,QStringLiteral("矩形本切片只开放宽度1。"),error,issue); }
+            if (object.graphic.alpha != 255)
+            { return compilationIssue(project,object,QStringLiteral("graphic.alpha"),object.graphic.alpha,QStringLiteral("矩形本切片只开放不透明颜色。"),error,issue); }
+            if (object.graphic.lineColor != QColor(Qt::black) || object.graphic.foreground != QColor(Qt::black) || object.graphic.background != QColor(Qt::white))
+            { return compilationIssue(project,object,QStringLiteral("graphic.colors"),QJsonArray{object.graphic.lineColor.name(QColor::HexArgb),object.graphic.foreground.name(QColor::HexArgb),object.graphic.background.name(QColor::HexArgb)},QStringLiteral("矩形本切片只开放已核黑边/黑前景/白背景草稿。"),error,issue); }
+            if (object.geometry.width() < 100 || object.geometry.height() < 100)
+            { return compilationIssue(project,object,QStringLiteral("geometry.sampledSize"),QJsonArray{object.geometry.width(),object.geometry.height()},QStringLiteral("矩形本切片只开放已采样宽高至少100的范围；更小尺寸待核。"),error,issue); }
+            if (object.geometry.x()+object.geometry.width() > 799 || object.geometry.y()+object.geometry.height() > 479)
+            { return compilationIssue(project,object,QStringLiteral("geometry.strokeExtent"),QJsonArray{object.geometry.x()+object.geometry.width(),object.geometry.y()+object.geometry.height()},QStringLiteral("矩形外框端点必须完整位于800×480画面内。"),error,issue); }
+            Q_FOREACH (peer,prepared.objects)
+            {
+                // Include the closed outline's final right/bottom pixels, even when dormant line/fill fields are retained.
+                if (peer.id != object.id && peer.geometry.adjusted(0,0,1,1).intersects(object.geometry.adjusted(0,0,1,1)))
+                { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("矩形与其它对象相交或边缘接触的设备合成尚未核定。"),error,issue); }
+            }
+            ++prepared.staticRectCount;
+            continue;
+        }
         if (object.type == QStringLiteral("table")) //20261113-12 add: Admit only the canonical opaque static-table raster contract.
         {
             if (object.graphic.lineStyle != 0 && object.graphic.lineStyle != 1)

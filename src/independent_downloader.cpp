@@ -994,6 +994,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         {
             paintDeviceTableGraphic(&painter,QRectF(object.geometry),object.graphic);
         }
+        else if (object.type == QStringLiteral("rect")) //20261113-13 add: Canonical closed-path pixels reuse the shared rectangle renderer.
+        {
+            paintGraphic(&painter,object.type,QRectF(object.geometry),object.graphic);
+        }
         else
         {
             if (error != nullptr)

@@ -1,0 +1,44 @@
+[
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_rect"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      100,
+      100
+    ],
+    "to": [
+      101,
+      101
+    ]
+  },
+  {
+    "op": "scene-read",
+    "label": "rect-minimum"
+  },
+  {
+    "op": "save",
+    "output": "rect-minimum.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]
