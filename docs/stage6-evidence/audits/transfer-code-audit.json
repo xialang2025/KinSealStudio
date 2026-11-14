@@ -1,0 +1,540 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-11-14",
+  "baselineRevision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9",
+  "scope": "Read-only source audit captured before S06 root integration; subsequent engine implementation separately authorized.",
+  "restrictions": {
+    "referenceProgramRead": false,
+    "nativeProgramOrDllUsed": false,
+    "guiUsed": false,
+    "usbAccessed": false,
+    "plcAccessed": false,
+    "gitUsed": false
+  },
+  "plans": [
+    {
+      "payloadBlocks": 10,
+      "plannedSegmentSteps": 12,
+      "commandsHex": "0a0c0e16151912140d1e0f11",
+      "emptyDataCommands": [
+        "16",
+        "19"
+      ],
+      "commandWrites": 30,
+      "payloadWrites": 10,
+      "legacyReplyReads": 29,
+      "newQualifiedPostResetReadAdditionalCalls": 1,
+      "source": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+        "line": 23,
+        "endLine": 34,
+        "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+      }
+    },
+    {
+      "payloadBlocks": 12,
+      "plannedSegmentSteps": 14,
+      "commandsHex": "0a0b0c0e16151912140d1e100f11",
+      "emptyDataCommands": [
+        "16",
+        "19"
+      ],
+      "commandWrites": 34,
+      "payloadWrites": 12,
+      "legacyReplyReads": 33,
+      "newQualifiedPostResetReadAdditionalCalls": 1,
+      "source": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+        "line": 23,
+        "endLine": 34,
+        "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+      }
+    },
+    {
+      "payloadBlocks": 14,
+      "plannedSegmentSteps": 16,
+      "commandsHex": "0a0b0c361d0e16151912140d1e100f11",
+      "emptyDataCommands": [
+        "16",
+        "19"
+      ],
+      "commandWrites": 38,
+      "payloadWrites": 14,
+      "legacyReplyReads": 37,
+      "newQualifiedPostResetReadAdditionalCalls": 1,
+      "source": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+        "line": 23,
+        "endLine": 34,
+        "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+      }
+    }
+  ],
+  "framing": {
+    "commandBytes": 32,
+    "prefix": "KinSealStudioKiss",
+    "prefixBytes": 17,
+    "commandOffset": 17,
+    "optionsOffset": 18,
+    "unusedBytesZero": true,
+    "sourceUploadOuterLength": "BE32 compressed file byte count",
+    "sourceUploadInnerLength": "Existing qCompress BE32 decompressed count; separate layer",
+    "programCommandOptions": "LE32 payload byte count",
+    "endpoints": {
+      "out": 1,
+      "in_": 129
+    },
+    "interface": 0,
+    "legacyPerCallTimeoutMs": 10000
+  },
+  "findings": [
+    {
+      "id": "S06-CODE-001",
+      "severity": "high",
+      "title": "C++ reset tail ends before post-reset read",
+      "baselineFact": "transferTestPayload sends 1B/O then full 1A write and returns true. sendUsbCommand(replyLength=0) never invokes a read. The later Python lifecycle fix does not alter this C++ path.",
+      "recommendation": "Use the injected engine to retain commitAccepted/resetWritten and require the already observed post-reset read return before releasing ownership. Do not require a new reset ACK; accept -5 only after the matched AMT start/all segments/commit/reset sequence.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 428,
+          "endLine": 450,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 557,
+          "endLine": 603,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\usb_transfer_completion.py",
+          "line": 80,
+          "endLine": 87,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\usb_transfer_completion.py",
+          "line": 125,
+          "endLine": 130,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\实屏宽度提示与下载生命周期排查.md",
+          "line": 13,
+          "endLine": 27,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-002",
+      "severity": "high",
+      "title": "Boolean result discards commit uncertainty",
+      "baselineFact": "writeUsbBytes/readUsbReply retain only one localized QString; transferTestPayload combines commit/reset using &&. A fully written 1B with bad/missing ACK and an accepted commit followed by short reset both return false without structured distinctions. CLI emits only ok/message and exit 14 for every transfer failure.",
+      "recommendation": "Retain the first failure plus all milestones and written/acknowledged segment names. Fully written 1B without valid ACK is commit_status_unknown; commit ACK with reset failure is committed_reset_not_written. Do not auto-retry or claim rollback.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 374,
+          "endLine": 418,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 598,
+          "endLine": 602,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+          "line": 34,
+          "endLine": 43,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+          "line": 332,
+          "endLine": 346,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-003",
+      "severity": "high",
+      "title": "Start-option bytes differ between legacy C++ and later native verification",
+      "baselineFact": "Active legacy C++ sends 34 options 010101. The later native lifecycle classifier accepts 000000 for runs with all four clear/update UI fields false. The old phase6 plan still documents 010101 and says full parameter semantics remain unknown.",
+      "recommendation": "Record actual option bytes in contract/result. Root has selected the observed 000000 product default, with 010101 retained only as an explicit legacy choice. Permit these two observed values only; do not invent names or semantics for unproven individual bits.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 569,
+          "endLine": 576,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\usb_transfer_completion.py",
+          "line": 66,
+          "endLine": 71,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\实屏宽度提示与下载生命周期排查.md",
+          "line": 9,
+          "endLine": 9,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\07_阶段6_USB上传与介质下载.md",
+          "line": 25,
+          "endLine": 38,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-004",
+      "severity": "medium",
+      "title": "No injectable seam or I/O fault tests in current plan target",
+      "baselineFact": "UsbFunctions is private and Q_OS_WIN-only inside the compiler-heavy independent_downloader.cpp. KinSealDeviceTransferTests links only device_transfer_plan.cpp and checks ordering/framing, so it cannot exercise open/claim, partial writes, wrong ACK, timeouts, or reset completion.",
+      "recommendation": "Extract QtCore-only device_transfer_engine.h/.cpp accepting std::function callbacks for open/claim/write/read/release/close. Keep native discovery/library ownership in root adapter. Add app-less engine tests, with no driver loading or hardware discovery.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 248,
+          "endLine": 307,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 316,
+          "endLine": 364,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_transfer_tests.cpp",
+          "line": 5,
+          "endLine": 14,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\CMakeLists.txt",
+          "line": 340,
+          "endLine": 344,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-005",
+      "severity": "medium",
+      "title": "UI owns one worker but has no actual cancellation transaction",
+      "baselineFact": "downloadToDevice stores a private KSP and hidden same-executable QProcess; its progress dialog has no cancel button. No cancellation signal/IPC or worker token is wired. Removing the button does not implement a cancel state machine.",
+      "recommendation": "Keep immutable input ownership. Add only an explicit cancellation protocol with safe sampling boundaries; allow no-write exit after open/claim and stop between segment data/status before commit. Once full commit frame is written, ignore cancellation until ACK/reset/read cleanup completes. Never label a started transfer rolled back.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1114,
+          "endLine": 1155,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1157,
+          "endLine": 1173,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1198,
+          "endLine": 1238,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-006",
+      "severity": "medium",
+      "title": "Duplicate-launch guard covers one MainWindow only",
+      "baselineFact": "m_downloadProcess is assigned before start, action_USBdownload is disabled for Starting/Running/finalization and finalize checks captured process identity. This is a useful existing guard. Separate GUI instances and independent CLI processes have no shared lock; USB discovery selects the first matching VID/PID.",
+      "recommendation": "Retain the existing local guard. Add an adapter-level named process/device lock before open, reject multiple matching devices or bind an explicit identity, and release the lock only after the worker exits/driver cleanup. A lock protects app instances, not unrelated vendor processes; claim errors must remain explicit.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1114,
+          "endLine": 1119,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1172,
+          "endLine": 1185,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_workflow.cpp",
+          "line": 569,
+          "endLine": 570,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 1470,
+          "endLine": 1507,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-007",
+      "severity": "medium",
+      "title": "Parent close waits for owner but cannot recover a hung worker",
+      "baselineFact": "closeEvent ignores close while m_downloadProcess is non-null. QProcess finished/FailedToStart finalizes once, cleans temporary input and restores actions. There is no application-level worker deadline or cancel path. Other QProcess errors are only handled indirectly through finished; no streaming progress is parsed.",
+      "recommendation": "Preserve close refusal during active side effects. Introduce an owned session/controller for start, progress, cancellation request, finish, and cleanup; retain final result before deleting temporary input. A watchdog must report unknown device state instead of silently killing/retrying after commit. Tests should cover FailedToStart/crash/close/repeated completion without real QProcess USB execution.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1174,
+          "endLine": 1235,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1613,
+          "endLine": 1629,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-008",
+      "severity": "medium",
+      "title": "Acquisition and cleanup have weak diagnostics",
+      "baselineFact": "resolveUsbFunctions correctly loads system libusb0.dll and verifies symbols. downloadPreparedPayload opens first matching 7365:616C and claims interface 0; discovery return counts are ignored. release/close are called after transfer but their results are discarded.",
+      "recommendation": "Keep library/handle in the native adapter, inject every acquisition/cleanup call, retain opened/interfaceClaimed and release/close results, and preserve the original protocol error if cleanup fails. Do not issue release if claim failed; close every successful open.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 316,
+          "endLine": 364,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 1466,
+          "endLine": 1520,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-009",
+      "severity": "low",
+      "title": "24-byte identity checks are limited and fragmented reads are rejected",
+      "baselineFact": "readUsbReply asks for capacity32 for expected24, or capacity4 for expected1; it makes one read and accepts exact returned length plus first byte only. All remaining reply bytes are discarded. Its timeout is fixed10000ms per call, not a proved firmware maximum.",
+      "recommendation": "Preserve full short reply bytes and raw requested/returned values separately from expected reply length. Keep exact single-read rejection for this engine slice; retry/reassembly needs separate protocol evidence. Retain firmware identity as unverified beyond existing first-byte scope.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 400,
+          "endLine": 418,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\AMT070W124-L800X480R_USB下载协议_已验证部分.md",
+          "line": 50,
+          "endLine": 61,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-010",
+      "severity": "low",
+      "title": "Plan length bound is checked before the additional upload wire prefix",
+      "baselineFact": "buildDeviceTransferPlan rejects payload sizes above INT_MAX but appends four more bytes to upLoad.knr. An original upload block at the signed driver size limit would produce an oversized wire buffer; this is a theoretical bound issue, not a demonstrated supported-project failure.",
+      "recommendation": "Check upload source size <= INT_MAX-4 before building the framed plan, and check all final wire lengths/options before any open. Do not allocate gigabytes solely to test this bound.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+          "line": 38,
+          "endLine": 49,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+          "line": 64,
+          "endLine": 75,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 380,
+          "endLine": 380,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-011",
+      "severity": "info",
+      "title": "Compile-first and immutable snapshot safeguards already exist",
+      "baselineFact": "downloadProject builds all supported compiler payloads before downloadPreparedPayload. The latter builds a valid transfer plan before driver resolution/open. UI cancels in-flight canvas interaction and saves a private KSP, so later editor changes do not change this worker input.",
+      "recommendation": "Preserve these safeguards and do not move compile or plan validation behind device open. Do not claim unsupported controls/multipage are enabled by the transport engine.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 1457,
+          "endLine": 1463,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+          "line": 1551,
+          "endLine": 1555,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1121,
+          "endLine": 1155,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    },
+    {
+      "id": "S06-CODE-012",
+      "severity": "info",
+      "title": "Plan fixtures prove ordering, not real ACK/firmware behavior",
+      "baselineFact": "The four existing slots cover static, dynamic and macro plan order and incomplete input preserving the previous plan. Macro host-order evidence is explicitly not a hardware ACK claim. Stage2 workflow test only checks download action re-enables when a document reopens.",
+      "recommendation": "Reuse all four plan slots unchanged. Add engine fault tests and separate controller tests. Keep real USB T and screen/PLC E as independent later acceptance.",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_transfer_tests.cpp",
+          "line": 5,
+          "endLine": 14,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_transfer_tests.cpp",
+          "line": 40,
+          "endLine": 174,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage2_workflow_tests.cpp",
+          "line": 638,
+          "endLine": 649,
+          "revision": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9; before S06 integration edits"
+        }
+      ]
+    }
+  ],
+  "engineInterface": {
+    "header": "src/device_transfer_engine.h",
+    "source": "src/device_transfer_engine.cpp",
+    "tests": "tests/device_transfer_engine_tests.cpp",
+    "run": "runDeviceTransfer(payloads, io, options) -> DeviceTransferResult",
+    "callbacks": [
+      "bool open(QString*)",
+      "int claim(int interfaceNumber)",
+      "int write(int endpoint,const QByteArray&,int timeoutMs)",
+      "int read(int endpoint,char*,int maximum,int timeoutMs)",
+      "int release(int interfaceNumber)",
+      "int close()"
+    ],
+    "options": [
+      "startOptions:000000 default; only000000/010101 accepted",
+      "timeoutMs>0",
+      "cancelRequested callback",
+      "onEvent synchronous observer, no event pumping"
+    ],
+    "requiredMilestones": [
+      "planValidated",
+      "opened",
+      "interfaceClaimed",
+      "startAccepted",
+      "transferAccepted",
+      "commitCommandWritten",
+      "commitAccepted",
+      "resetWritten",
+      "postResetReadReturned",
+      "postResetReadCompleted",
+      "releaseAttempted/interfaceReleased",
+      "closeAttempted/closed",
+      "screenDisplayAndTouchConfirmed=false"
+    ],
+    "evidence": [
+      "firstError phase/kind/command/segment/requested/returned/expectedReplyLength",
+      "writtenSegments (full payload write only)",
+      "acknowledgedSegments (segment status ACK)",
+      "modelReply/parametersReply raw hex",
+      "actual startOptionsHex/timeoutMs",
+      "events:32B raw command hex; bounded replies; payload only length/SHA256"
+    ]
+  },
+  "suggestedSplit": [
+    {
+      "file": "src/device_transfer_plan.h/.cpp",
+      "owner": "existing/root",
+      "responsibility": "Pure10/12/14 framing and ordering; preserve tests."
+    },
+    {
+      "file": "src/device_transfer_engine.h/.cpp",
+      "owner": "sector_analysis",
+      "responsibility": "Platform-free injected execution, state/result serialization, cancellation boundaries, first-error preservation."
+    },
+    {
+      "file": "src/independent_downloader.cpp",
+      "owner": "root",
+      "responsibility": "Compiler remains compile-only; native adapter keeps system DLL/device enumeration/handle and maps engine callbacks. No original/vendor DLL dependence."
+    },
+    {
+      "file": "src/main.cpp",
+      "owner": "root",
+      "responsibility": "Emit structured engine result including partial state; preserve existing exit/ok compatibility or explicitly version changes."
+    },
+    {
+      "file": "src/main_window.cpp or a small download_session_controller.h/.cpp",
+      "owner": "root",
+      "responsibility": "Own hidden worker/temp snapshot, one active session, progress/cancel IPC/close semantics and immutable final result."
+    },
+    {
+      "file": "tests/device_transfer_engine_tests.cpp",
+      "owner": "sector_analysis",
+      "responsibility": "QtCore app-less callbacks only, independent of Windows USB."
+    },
+    {
+      "file": "tests/download_session_controller_tests.cpp",
+      "owner": "root future",
+      "responsibility": "Fake process/session factory; repeat start, failed start/crash, cancel/close/finalize exactly once without hardware."
+    }
+  ],
+  "testBoundary": {
+    "existingPlanSlots": 4,
+    "existingTestTargetTotalsIncludeFixtureHooks": 6,
+    "engineCases": [
+      "10/12/14 and both observed start option byte sequences",
+      "invalid counts/empty data/missing callbacks/options/timeout rejected before open",
+      "missing-driver/open failure, busy claim and exact cleanup ownership",
+      "partial/negative command or payload writes stop without retry",
+      "identity/parameter wrong length/model, wrong/long/zero ACK, timeout",
+      "ordinary precommit -5 is failure",
+      "full commit write plus wrong/missing ACK -> commit_status_unknown/no reset",
+      "commit ACK plus short reset -> committed_reset_not_written",
+      "postreset -5 only with complete prior milestones; other results remain incomplete",
+      "cancel before open/after open/after claim/before data/before status/before commit",
+      "cancel after commit write ignored through ACK/reset/read",
+      "first protocol failure survives failed release/close",
+      "bounded JSON bytes and no screen acceptance claim"
+    ],
+    "excluded": [
+      "Real Windows driver discovery/claim",
+      "Actual USB transfer or firmware persistence",
+      "GUI/native download dialog behavior",
+      "Screen display/touch/PLC E",
+      "New source/compile/control format support"
+    ]
+  }
+}

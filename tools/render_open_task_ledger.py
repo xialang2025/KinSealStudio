@@ -72,7 +72,9 @@ def render(data):
 
     line("# KinSealStudio 未完成任务总台账")
     line()
-    line("更新：" + data["updatedAt"] + "。已发布源码基线：`" + data["sourceCommit"] + "`。本次为文档核对，未执行构建、原厂UI、USB、PLC或实屏测试。")
+    # //20261114-5 change: Describe the current execution without rewriting the retained audit history.
+    activity = data.get("activitySummary", "本次为文档核对，未执行构建、原厂UI、USB、PLC或实屏测试。")
+    line("更新：" + data["updatedAt"] + "。源码基线：`" + data["sourceCommit"] + "`。" + activity)
     line()
     line("本文件是未完成事项的统一查看入口；同名JSON为逐条维护源。旧报告、原CSV和机器执行历史继续作为证据保留。任务编号、问题编号、原始候选和历史视图分别计数，不能相加计算任务总数或完成率。")
     line()

@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "review": "stage6-review-r2",
+  "mode": "只检查不改逻辑",
+  "reviewer": "polygon_gate",
+  "workingTree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "sourceBaseline": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9",
+  "result": "no_remaining_blocker_found_in_reviewed_snapshot",
+  "activeBlockingFindings": [],
+  "activeNonblockingFindings": [],
+  "resolvedFindings": [
+    {
+      "id": "S6-R1-CONTRACT-SOURCE-ALIAS",
+      "severityBeforeFix": "P2",
+      "status": "resolved_by_root_verified_readonly",
+      "previousRisk": "仅大小写敏感absoluteFilePath判断输入输出，可让Windows大小写/链接同文件绕过独立输出守卫。",
+      "currentEvidence": "transferContractWouldReplaceInput使用canonical/absolute清理路径、Windows大小写不敏感比较及volume+fileIndex身份；若已有文件无法辨识则拒绝。main在读前与写前各调用一次。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_contract.cpp",
+          "line": 23,
+          "endLine": 63
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+          "line": 363,
+          "endLine": 364
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+          "line": 412,
+          "endLine": 418
+        }
+      ]
+    },
+    {
+      "id": "S6-R1-CONTRACT-INPUT-TOCTOU",
+      "severityBeforeFix": "P2",
+      "status": "resolved_by_root_verified_readonly",
+      "previousRisk": "先加载编译，再重开用户源求hash，编译期间源变化会把旧payload绑定新源hash。",
+      "currentEvidence": "先读transferSourceBytes并关闭原文件，原子写入独立临时source.sm/ksp，再从该冻结副本加载编译；sourceSha256来自同一transferSourceBytes，另存modelSha256。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+          "line": 369,
+          "endLine": 401
+        }
+      ]
+    },
+    {
+      "id": "S6-R2-SESSION-CMAKE",
+      "severityBeforeFix": "P1",
+      "status": "resolved_during_review_by_root",
+      "previousRisk": "MainWindow已引用会话类，但初次检查CMake尚未注册类实现。",
+      "currentEvidence": "当前CMake已将device_download_session.cpp/.h纳入主目标，并创建独立QtCore/Test会话测试目标。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\CMakeLists.txt",
+          "line": 72,
+          "endLine": 73
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\CMakeLists.txt",
+          "line": 361,
+          "endLine": 366
+        }
+      ]
+    },
+    {
+      "id": "S6-R2-CANCEL-MARKER-RETRY",
+      "severityBeforeFix": "P2",
+      "status": "resolved_during_review_by_root",
+      "previousRisk": "取消标记写失败后仍移除UI取消按钮，丢失可见重试入口。",
+      "currentEvidence": "主窗口现在仅在requestCancel返回true时移除取消按钮；失败保留按钮并显示lastError。Session写标记失败不设置m_cancelRequested，允许后续重试。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1289,
+          "endLine": 1300
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 230,
+          "endLine": 247
+        }
+      ]
+    }
+  ],
+  "checkedBoundaries": [
+    {
+      "boundary": "开USB前失败与协议编码",
+      "finding": "静态读取未发现新阻断；静态/动态/宏复用既有plan，1E外层BE32、11选项LE32；引擎在打开回调前检查段数/非空/长度、参数和回调。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+          "line": 20,
+          "endLine": 92
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 402,
+          "endLine": 469
+        }
+      ]
+    },
+    {
+      "boundary": "提交、重启及-5",
+      "finding": "完整写出1B后停止接受取消；必须取得1B的O、完整写1A，再单独read返回-5才把postResetReadCompleted设真。其它阶段-5仍是错误，未见把断连泛化成功。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 58,
+          "endLine": 76
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 206,
+          "endLine": 227
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 283,
+          "endLine": 318
+        }
+      ]
+    },
+    {
+      "boundary": "错误/资源生命周期",
+      "finding": "引擎保留首错，已claim才release，已open才close；会话等worker退出/最终drain后才删临时输入；启动/崩溃/无最终JSON/输出超限不计成功。未运行任何真实I/O。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 329,
+          "endLine": 368
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 181,
+          "endLine": 206
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 320,
+          "endLine": 350
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 533,
+          "endLine": 602
+        }
+      ]
+    },
+    {
+      "boundary": "owner销毁与同步progress回调",
+      "finding": "存活worker在owner析构时脱离父对象，保留输入到进程结束；stdout/parser/final-drain使用QPointer防同步progress槽删除owner后的继续访问。会话r4源码SHA与实现agent freeze一致。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 28,
+          "endLine": 56
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 98,
+          "endLine": 108
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 320,
+          "endLine": 350
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 533,
+          "endLine": 547
+        }
+      ]
+    },
+    {
+      "boundary": "取消、重复启动及窗口关闭",
+      "finding": "Session拒绝重复start且使用唯一私有取消路径；提交开始后拒绝取消。MainWindow下载使能和closeEvent均用downloadInProgress；创建快照后异步worker持有，不因取消点击销毁输入。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 124,
+          "endLine": 180
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 230,
+          "endLine": 247
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1251,
+          "endLine": 1354
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1728,
+          "endLine": 1742
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_workflow.cpp",
+          "line": 568,
+          "endLine": 571
+        }
+      ]
+    },
+    {
+      "boundary": "不误报屏E",
+      "finding": "引擎/owner输出都固定screenDisplayAndTouchConfirmed=false；主窗口仅称USB传输完成并要求核对实物屏。未见把SDK、mock、历史原厂或新传输里程碑当实屏通过。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+          "line": 564
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 486,
+          "endLine": 523
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+          "line": 578,
+          "endLine": 586
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1328,
+          "endLine": 1342
+        }
+      ]
+    }
+  ],
+  "sourceManifest": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\CMakeLists.txt",
+      "sha256": "6b7b4672f7f75df7da30a8c1f02754bb179fe2bec96408f63c293c6924c8497d",
+      "lineCount": 463
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main.cpp",
+      "sha256": "8b741a166d38b4e69f32ae498682fdaa2ea883fea645e04bdccbfcc0b4c0bd70",
+      "lineCount": 580
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+      "sha256": "5c0d96aa15218d4246a71f7bdb94d412a5cb2761680609882ae7a090fecd5bbb",
+      "lineCount": 1745
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_workflow.cpp",
+      "sha256": "7f9f2dcce6daee49545a6f1207213579c89f30cc9d1323913becf0dcf1b76f7d",
+      "lineCount": 726
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.h",
+      "sha256": "6b483ad7dc83c704ef54ad09a59195545124996547f85016fd4b6eebaf2c2ce0",
+      "lineCount": 159
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_contract.cpp",
+      "sha256": "709405ec50ddc81937a63f96166671b013c26db9093e201a5a0638f67391e039",
+      "lineCount": 194
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_contract.h",
+      "sha256": "cfb35919639e7f8323823edeac7e0c06c44421e25980e0040d02b36c57ed4255",
+      "lineCount": 30
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.cpp",
+      "sha256": "83acabaf3f2e2831f95866f163f35e736c5c950913b94c525d432f8275458335",
+      "lineCount": 603
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_download_session.h",
+      "sha256": "cffac01965dab999ff283c5f7d2e77a7ed4a1807820ec3a8e8b6f8314065a664",
+      "lineCount": 56
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.cpp",
+      "sha256": "8bf9858d85aff970dd59afd338ba2ca3e9f3fb9d9ef165616aa3ade2981edb06",
+      "lineCount": 592
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_engine.h",
+      "sha256": "1e4afab7fbf47faea26e5f70f3da1da76b52861563ac7575c83ddbadb65df93c",
+      "lineCount": 130
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_download_session_tests.cpp",
+      "sha256": "521f73eb4aaacbc7b650aef79f6635aeb73464983fb0ff30294ff536731338af",
+      "lineCount": 696
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_transfer_tests.cpp",
+      "sha256": "d5422364f8c3db49849825fec6221f9559a5d944ba6ac30f5da39eec2398fc67",
+      "lineCount": 297
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_plan.cpp",
+      "sha256": "de2cead4354569f52d3bc2ce762669208f0122a1e9780e323cfa6a0f7a570e03",
+      "lineCount": 92
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.cpp",
+      "sha256": "f5e5e08fd428c6db2f2da40befe5ffd8cbe6f7b8dca90253ec8bde21cd560d05",
+      "lineCount": 1790
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\independent_downloader.h",
+      "sha256": "9009628b18f2d38313e3b4aab47f89e137a610b2a3a4f66243350056d97e80b4",
+      "lineCount": 92
+    }
+  ],
+  "freezeVerification": {
+    "sessionCppExpected": "83acabaf3f2e2831f95866f163f35e736c5c950913b94c525d432f8275458335",
+    "sessionHeaderExpected": "cffac01965dab999ff283c5f7d2e77a7ed4a1807820ec3a8e8b6f8314065a664",
+    "sessionTestsExpected": "521f73eb4aaacbc7b650aef79f6635aeb73464983fb0ff30294ff536731338af",
+    "sourceHashesMatched": true
+  },
+  "remainingValidation": [
+    "本复核是源码静态检查，不替代主程序完整构建与相关回归；root需继续完成当前冻结源码的构建/测试。",
+    "独立引擎/会话mock结果不替代新产物T；真实AMT提交/重启/read及E仍按本次实际输入版本分别记录。",
+    "原厂上载和介质功能仍按Q-S06-001/002/003保留未恢复范围；本次下载生命周期集成不会自动关闭。"
+  ],
+  "onlyWrittenOutput": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\stage6-review-r2.json",
+  "executionScope": {
+    "businessSourceModified": false,
+    "gitMutated": false,
+    "buildRun": false,
+    "testsRun": false,
+    "guiStarted": false,
+    "usbOrPlcAccessed": false,
+    "onlyReviewJsonWritten": true
+  }
+}

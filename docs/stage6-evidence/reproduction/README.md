@@ -1,0 +1,1 @@
+本轮原始verify_stage6.py按任务根布局保留，source-map.json记录其冻结身份。可迁移复验用verify_stage6-portable.py，显式传--work-root <源码根> --exe <冻结EXE> --expected-sha <SHA> --output <全新目录>；缺省仅离线。仅在具备实物授权时另加--hardware，--plans可选单独样例。默认外部SDK路径来自本机既有安装，复用者应先核对或修改该环境输入，不安装工具链。私有桌面帮助器来自源码docs/stage1-evidence/gui-portable/probe.py，不切换桌面或前置窗口。

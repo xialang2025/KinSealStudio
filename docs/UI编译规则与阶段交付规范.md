@@ -402,3 +402,52 @@ sector严格使用七键graphic；不写角度、半径、points或endArrow/endC
 阶段5九类背景C只在各专项允许范围通过；26新动态类型C、完整SM、多页/窗口/活动配置、G03真实曲率、范围外样式和新产物T/E继续开放。历史原厂基线传输、早期五类独立下载及六个默认图形人工观察保持原身份，不核销新编译产物T/E。用户已要求以后每个完成控件都实物下载：新输入/EXE须完成提交确认、重启write和后续read退出，E另记实际显示、触控和PLC观察；条件暂不具备时如实留待验。
 
 本轮仅统一登记与复核，未改业务逻辑、未新增编译或硬件通过。定向清理本批可再生临时物、白名单提交并推送后再推进依赖任务。修改标记：`//20261114-4 add（文档）`。
+
+## 20. 阶段6下载事务、上载与介质边界（2026-11-14）
+
+本轮实现标记`//20261114-5 add/change`；[实施验收](阶段6传输与介质实现及验收.md)、[逐项进度](阶段6逐项进度.md)、[机器进度](stage6-evidence/progress.json)为当前恢复点。下面明确输入、UI状态、编译产物和设备副作用的转换关系。
+
+### 20.1 工程输入与离线编译
+
+下载入口先取消未完成画布手势，以currentEditorProject取得当前编辑器值快照；不要求覆盖用户源文件，也不把成功下载当保存。单页/目标/对象/活动配置守卫通过后，把完整JSON经QSaveFile原子保存为独有临时目录的LiteDownload.ksp，再启动隐藏后台worker。snapshotSha256绑定该次实际字节，取消文件也位于同一独有目录，不复用上次取消状态。重复启动拒绝；父窗关闭在运行期间继续阻止，worker退出后才清临时目录。
+
+`--transfer-contract 输入 新.json`不加载USB适配器：先完整读取最多128MiB输入，冻结临时源，再由相同字节加载/编译/结构复读并计算sourceSha256。modelSha256另记规范模型值，不能替代原始字节身份。输出前后检查规范路径、Windows大小写和卷号/文件索引，拒绝源路径及硬链接别名；QSaveFile发布，失败保留旧输出。10/12/14段分别列41/47/53个操作，包含32B帧、payload wire SHA、应答长度/首字节、下一序号。KNR wire SHA包括外BE32，协议11长度是LE32。未知目标、缺段、空段、坏结构及未支持对象均在open前拒绝。
+
+### 20.2 原厂字段真值与产品现状
+
+[完整字段字典](stage6-evidence/audits/native-ui-media-audit.json)保留原厂V5.1对象名、标签、值、visible/enabled和来源身份；这是特定工程及历史持久化状态，不能推为全新安装默认。
+
+| 原厂字段 | 此次实际观测 | Lite当前行为/待恢复 |
+|---|---|---|
+| radioUSB / radioUdisk | USB下载false、下载到U盘true | 现下载动作执行USB；完整原厂模式选择窗未复刻 |
+| clear_recipe_CB / clear_hisData_CB / clear_hisAlarm_CB | 三项可见enabled、checked=true | 不开放三个独立清除开关；单变量字节映射未闭合 |
+| update_CB / isDownLoadWord | 强制更新底层/是否下载汉字库，false | 不实现固件/汉字库写入 |
+| edit_path / btn_destDir | 空路径、浏览... | 介质校验工具显式传入已有目录，尚未接完整下载窗 |
+| m_progress / m_table | 0..100初值0、日志0行0列 | Lite用阶段文本/不定进度，不伪造百分比 |
+| 串口/COM1..20/超时200..65535、自动次数/间隔/停止 | 此快照隐藏 | 保持未开放，不能按存在对象名认为支持 |
+
+原厂三清除勾选默认与本轮产品默认有差异。仅允许已观察的原始三字节000000或010101，实际CLI默认000000，沿用原厂诊断不清除选项下的观测；不据此断言五个UI勾选逐位编码。未见下载机型/时钟输入，不补造。
+
+### 20.3 后台会话、取消与错误呈现
+
+下载QProgressDialog对象名deviceDownloadProgress，起始为准备私有工程/编译，进度取transfer-event的phase与segment。取消仅原子写cancel.request；worker在受控USB操作边界检查，不kill、不自动重试，不承诺恢复原屏工程。标记落盘失败显示lastError并保留可重试按钮；已请求成功或收到commit/reset/post-reset-read事件后取消入口关闭。1B写尝试开始后，引擎继续提交确认和重启收尾，即使父进程迟收到事件也不会中断提交事务。
+
+会话逐行解析NDJSON，兼容flat或event/result包装，允许最后无换行，累计stdout上限1MiB，stderr仅保留末4096B。启动失败、崩溃、无最终结果、重复/坏JSON、事件失败却最终ok、非零退出均拒绝成功。只有NormalExit/0、最终ok和compiled/transferAccepted/commitAccepted/resetWritten/postResetReadCompleted全部true且无前序错误才显示USB传输完成。所有层均强制screenDisplayAndTouchConfirmed=false。取消、部分传输、提交状态未知、已提交但重启失败分别呈现；最先错误与已写/已确认段列表保留。finish仅一次；私有工程退出后清理，异常owner析构不主动杀worker，仍需存活事件循环负责收尾。
+
+### 20.4 设备完成条件
+
+目标限AMT070W124-L800X480R、800×480、VID7365/PID616C、interface0、OUT01/IN81。编译/结构验证先于driver/open/claim。识别回复24B和普通1B O均精确校验；短写、错长、错ACK、超时即停，无自动续传。1B完整写并收到O后1A必须完整写出，再执行4B容量read；仅该完整上下文下实际返回-5算此次已证结束。普通读-5仍失败；其它重启后返回值保留未确认。release/close独立检查，不能掩盖首个错误。设备24B剩余字段未解释为固件版本，firmwareVersion仍not-observed。
+
+### 20.5 上载和介质
+
+已在阻断硬件的私有桌面观察上载窗：QUpLoadDlgEx/上载工程，型号仅AMZ/AMT、index0，空edit_path，.../上载文件/关闭，progress0..100=0。保存过滤器、覆盖/密码流程、当前AMT请求和完整可编辑源未恢复。DownT导出面向5345:1234、OUT02/IN81，不能套用于7365:616C；IsLock/setLock是宿主字节，不能当密码保护。保持不可用入口，不生成伪上载文件。
+
+三轮原厂离线介质均生成compile/14文件；load.kns是13成员deflate ZIP，CRC/内容逐一等于同轮散文件。load.bin233B稳定，但Usbload.bin1704B及其它段有跨进程变化；等长QString变量没有改变SheetPixel，不能称已证可见文字变量。当前`tools/stage6_media_bundle.py validate/publish`只严格校验、复制已有原字节到全新目录，manifest标copy-only/generatorAuthenticated=false；不编译、不合成未知元数据、不承诺固件接受。严格检查名单、成员顺序/CRC/头尾、路径与reparse、64MiB单文件/流和128MiB总量、KNR的BE32+单zlib。Windows发布前复查源哈希、验证暂存副本、rename不覆盖；失败仅清理本调用暂存，清理失败报告保留路径。源/目标和时间及全部文件/成员SHA写入manifest。独立生成/介质升级T/E保持Q-S06-003开放。
+
+### 20.6 实际验证与待验
+
+宏编译仍依赖外部完整ARM SDK，通过工具菜单或KINSEAL_ARM_SDK指定，本便携包不包含SDK。首轮干净环境未设SDK时14段在离线编译阶段拒绝，保留offline-r1失败；显式使用本机既有SDK后offline-r2通过。包内Qt依赖验证不代表宏SDK也来自包内，没有安装或绕过工具链校验。
+
+合同9、注入引擎58、后台会话27共94项Qt通过；媒体29通过/1符号链接权限跳过，3原厂包校验及1次新目录复制通过。离线CLI13、便携13通过，运行Qt DLL仅来自新包。三类新样例10/12/14已实际USB下载，所有wire payload哈希等于本轮契约，提交O、1A、后read -5、release/close0均完整。首轮12段在前页重启重新枚举期间open前失败、无write；保留失败后独立核设备在线，另开会话成功，没有传输内重试。
+
+用户确认宏14底标和按钮显示、无宽度提示，仅关闭该页显示局部；触控、宏执行与PLC仍待验。静态10的“显示字符，没有表格”反馈因未确认页面标识而未归属，用户要求先跳过，保留待验，不判定缺陷或通过。完整下载原厂窗口、上载和独立介质生成尚未完成。原厂自有5目录201文件408211366逻辑字节清理被自动审批拒绝，0删除；会话代理另清3个旧测试exe762628B，范围独立。C盘未新增任务TEMP。

@@ -371,6 +371,7 @@ static bool resolveUsbFunctions(QLibrary *library, UsbFunctions *usb,
  * Return Value    : True when the system driver wrote every byte.
  * Date            : 2026.11.08
  ******************************************************************************/
+#if 0 //20261114-5 del: Preserve the previous immediate-close transport; use the tested injectable engine below.
 static bool writeUsbBytes(const UsbFunctions &usb, void *handle,
                           const QByteArray &bytes, const QString &stage,
                           QString *error) //20261108-10 add
@@ -601,6 +602,7 @@ static bool transferTestPayload(const UsbFunctions &usb, void *handle,
            sendUsbCommand(usb, handle, 0x1a, QByteArray(), 0, -1,
                            QStringLiteral("设备重启"), error);
 }
+#endif //20261114-5 del
 #endif
 }
 
@@ -1438,6 +1440,7 @@ bool verifyFixedTestPayload(QString *error) //20261108-10 add
  * Return Value    : True after acknowledged transfer and reset request, not display readback.
  * Date            : 2026.11.08
  ******************************************************************************/
+#if 0 //20261114-5 del: Keep the former bool-only owner for versioned comparison.
 static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString *error) //20261109-0 change
 {
     QVector<HmiDownloadStep> plan;
@@ -1526,6 +1529,104 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
     return false;
 #endif
 }
+#endif //20261114-5 del
+
+/******************************************************************************
+ * Function Name   : downloadPreparedPayload
+ * Description     : Adapt the system driver to the checked engine without using vendor DLLs.
+ * Input Parameters: payloads, error, details, options
+ * Return Value    : True after commit, reset, post-reset read, and owned-handle cleanup.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString *error,
+                                     QJsonObject *details = nullptr,
+                                     const DeviceTransferOptions &options = DeviceTransferOptions()) //20261114-5 add
+{
+    DeviceTransferIo io;
+    DeviceTransferResult result;
+    QJsonObject summary;
+#ifdef Q_OS_WIN
+    QLibrary library;
+    UsbFunctions usb = {};
+    void *handle = nullptr;
+#endif
+
+    if (!validateDevicePayloadStructure(payloads, error))
+    {
+        summary = deviceTransferResultToJson(result);
+        summary.insert(QStringLiteral("compiled"), false);
+        summary.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("设备数据结构不完整。"));
+        summary.insert(QStringLiteral("outcome"), QStringLiteral("preflight_rejected"));
+        if (details != nullptr) { *details = summary; }
+        return false;
+    }
+#ifdef Q_OS_WIN
+    io.open = [&library, &usb, &handle](QString *openError) {
+        UsbBus *bus;
+        UsbDevice *device;
+        UsbDevice *target = nullptr;
+        int busCount = 0;
+        int deviceCount;
+
+        if (!resolveUsbFunctions(&library, &usb, openError)) { return false; }
+        usb.init();
+        if (usb.findBusses() < 0 || usb.findDevices() < 0)
+        {
+            if (openError != nullptr) { *openError = QStringLiteral("系统USB枚举失败，尚未写入设备。"); }
+            return false;
+        }
+        bus = usb.getBusses();
+        while (bus != nullptr && busCount < 64 && target == nullptr)
+        {
+            device = bus->devices;
+            deviceCount = 0;
+            while (device != nullptr && deviceCount < 256)
+            {
+                if (device->descriptor.vendorId == 0x7365 && device->descriptor.productId == 0x616c)
+                {
+                    target = device;
+                    break;
+                }
+                device = device->next;
+                ++deviceCount;
+            }
+            bus = bus->next;
+            ++busCount;
+        }
+        if (target == nullptr)
+        {
+            if (openError != nullptr) { *openError = QStringLiteral("未发现7365:616C USB下载设备，尚未写入。"); }
+            return false;
+        }
+        handle = usb.open(target);
+        if (handle == nullptr)
+        {
+            if (openError != nullptr) { *openError = QStringLiteral("无法打开触摸屏USB设备，可能被其它进程占用。"); }
+            return false;
+        }
+        return true;
+    };
+    io.claim = [&usb, &handle](int interfaceNumber) { return usb.claim(handle, interfaceNumber); };
+    io.write = [&usb, &handle](int endpoint, const QByteArray &bytes, int timeoutMs) {
+        return usb.write(handle, endpoint, const_cast<char *>(bytes.constData()), int(bytes.size()), timeoutMs);
+    };
+    io.read = [&usb, &handle](int endpoint, char *bytes, int capacity, int timeoutMs) {
+        return usb.read(handle, endpoint, bytes, capacity, timeoutMs);
+    };
+    io.release = [&usb, &handle](int interfaceNumber) { return usb.release(handle, interfaceNumber); };
+    io.close = [&usb, &handle]() { return usb.close(handle); };
+    result = runDeviceTransfer(payloads, io, options);
+#else
+    Q_UNUSED(options);
+    result.message = QStringLiteral("独立USB下载当前仅支持Windows。");
+    result.outcome = QStringLiteral("unsupported_platform");
+#endif
+    summary = deviceTransferResultToJson(result);
+    summary.insert(QStringLiteral("compiled"), true);
+    if (details != nullptr) { *details = summary; }
+    if (error != nullptr) { *error = result.message; }
+    return result.success;
+}
 
 /******************************************************************************
  * Function Name   : downloadSingleTextProject
@@ -1550,9 +1651,32 @@ bool downloadSingleTextProject(const HmiProject &project, QString *error) //2026
  ******************************************************************************/
 bool downloadProject(const HmiProject &project, QString *error) //20261109-0 add
 {
-    QVector<QByteArray> payloads;
+    return downloadProjectDetailed(project, nullptr, error); //20261114-5 change: Preserve the existing API while sharing the checked lifecycle.
+}
 
-    return buildProjectPayload(project, &payloads, error) && downloadPreparedPayload(payloads, error);
+/******************************************************************************
+ * Function Name   : downloadProjectDetailed
+ * Description     : Reject unsupported input before driver loading and preserve a structured result.
+ * Input Parameters: project, result, error, options
+ * Return Value    : True only for the supported completed transport lifecycle; E remains false.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QString *error,
+                             const DeviceTransferOptions &options) //20261114-5 add
+{
+    QVector<QByteArray> payloads;
+    QJsonObject rejected;
+
+    if (!buildProjectPayload(project, &payloads, error))
+    {
+        rejected = deviceTransferResultToJson(DeviceTransferResult());
+        rejected.insert(QStringLiteral("compiled"), false);
+        rejected.insert(QStringLiteral("outcome"), QStringLiteral("compile_rejected"));
+        rejected.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("工程编译失败。"));
+        if (result != nullptr) { *result = rejected; }
+        return false;
+    }
+    return downloadPreparedPayload(payloads, error, result, options);
 }
 
 /******************************************************************************

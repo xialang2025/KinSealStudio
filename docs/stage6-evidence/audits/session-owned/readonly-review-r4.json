@@ -1,0 +1,46 @@
+{
+  "sourceSha256": {
+    "src\\device_download_session.h": "cffac01965dab999ff283c5f7d2e77a7ed4a1807820ec3a8e8b6f8314065a664",
+    "src\\device_download_session.cpp": "83acabaf3f2e2831f95866f163f35e736c5c950913b94c525d432f8275458335",
+    "tests\\device_download_session_tests.cpp": "521f73eb4aaacbc7b650aef79f6635aeb73464983fb0ff30294ff536731338af"
+  },
+  "logicChangedDuringReview": false,
+  "blockingFindings": [],
+  "checked": [
+    "start writes one immutable private snapshot atomically before starting the hidden process",
+    "file-write failure closes an uncommitted QSaveFile before removing its private directory",
+    "duplicate starts are rejected while the worker is starting, running or finalizing",
+    "FailedToStart and finished converge once through guarded process ownership",
+    "cancellation writes a unique marker; it never kills or retries the worker",
+    "commit progress and final milestones close the session cancellation entry",
+    "JSONL parsing supports partial records, final unterminated lines and nested or flat typed records",
+    "stdout size is bounded at 1 MiB; malformed, duplicate, unordered and unknown records reject success",
+    "worker success requires normal exit 0 and all five explicit final milestones",
+    "known first failure, segment milestones and snapshot identity survive final-result merging",
+    "worker-reported screen E is ignored and the public field remains false",
+    "private files are removed only after actual process exit",
+    "owner destruction retains a live worker and input until actual exit",
+    "QPointer guards prevent use-after-free when a direct progress slot deletes the owner",
+    "all test workers use the same QtCore test executable without native DLL, GUI, USB or PLC access",
+    "English function headers, function-entry variable declarations and 20261114-5 date tags retained"
+  ],
+  "tests": {
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "buildLogBytes": 0,
+    "compilerOptions": [
+      "-Wall",
+      "-Wextra",
+      "-Wconversion"
+    ]
+  },
+  "remainingLimits": [
+    "the engine commit gate remains authoritative if a session-side progress event is delayed in IPC",
+    "a detached process after owner destruction needs the application event loop to continue; UI close guarding is integrated by root",
+    "there is no automatic retry, timeout kill or crash recovery",
+    "marker creation failure is retryable; root owns UI error display and button availability",
+    "fake-worker tests do not establish actual device persistence or screen/touch acceptance",
+    "root owns CMake, CLI/controller integration, external process locking, protocol/UI compilation docs, physical T/E and Git"
+  ]
+}

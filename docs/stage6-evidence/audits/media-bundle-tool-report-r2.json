@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "taskId": "S06-05",
+  "revision": "r2",
+  "status": "two-review-findings-fixed",
+  "description": "对严格离线copy-only介质校验工具补齐ZIP构造前内存边界和不支持版本错误处理；未改变原厂文件复制范围。",
+  "marker": "20261114-5 add/change",
+  "sourceFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+      "bytes": 23757,
+      "sha256": "426b19b11fc419ca1507692ed38d49f29e6bc4392e976691ee9b9c49565a9316"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+      "bytes": 34108,
+      "sha256": "ea73970c3d25aaf0ed94898f1a8f87f3be4d3268e4d0017196598fe393366a08"
+    }
+  ],
+  "findings": [
+    {
+      "id": "MEDIA-R2-001",
+      "before": "94022字节伪中央目录虽EOCD声明13条，旧版先构造ZipFile，实际创建2000个ZipInfo后才以重复名拒绝。",
+      "fix": "创建ZipFile前，中央目录必须恰为749字节；最多预解析固定13条，检查签名、边界、精确名字顺序、无extra/comment、单磁盘和required_version20，之后才进入通用解析器。",
+      "after": "原恶意输入在中央目录大小检查即拒绝；监测到ZipFile调用0次、ZipInfo构造0个。",
+      "peakResidentMemoryMeasured": false,
+      "status": "fixed"
+    },
+    {
+      "id": "MEDIA-R2-002",
+      "before": "required extract_version=64由ZipFile构造抛出NotImplementedError，旧CLI未处理。",
+      "fix": "构造前明确仅允许已观察required_version20；公共validate_bundle额外捕获NotImplementedError并转换为BundleError。",
+      "after": "版本64输入在调用通用解析器前返回JSON refused、exit2；另有库层NotImplementedError注入测试证明兜底处理不输出traceback。",
+      "status": "fixed"
+    }
+  ],
+  "verification": {
+    "testsRun": 30,
+    "passed": 29,
+    "skipped": 1,
+    "skipReason": "真实符号链接创建仍缺Windows权限WinError1314；重解析属性注入和ZIP链接拒绝测试通过。",
+    "nativeBundlesValidated": 3,
+    "filesPerNativeBundle": 14,
+    "zipMembersPerNativeBundle": 13,
+    "nativeCopyPublication": "passed",
+    "publishedManifestSha256": "82d693ce2a775b0a6c91d5dbc7d27b5d9f099ad7670e7aec9645354d46152a7a",
+    "nativeSourceHashesRecheckedUnchanged": true,
+    "syntaxAndWhitespace": "两文件AST/compile通过，无行尾空白",
+    "finalReadOnlyReview": "passed",
+    "testCasesCleanedWithinNewOwnedRoot": true,
+    "testRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\test-temp",
+    "tempTmpTmpdir": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\host-temp",
+    "pycacheDisabled": true,
+    "deviceTransferExecuted": false,
+    "userRealMediaWritten": false
+  },
+  "evidenceRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2",
+  "evidenceFiles": [
+    "pre-fix/reproduction.json",
+    "pre-fix/overlarge-central.zip",
+    "pre-fix/unsupported-extract-version.zip",
+    "post-fix-reproduction.json",
+    "unittest-result.json",
+    "unittest.txt",
+    "read-only-review.json",
+    "native-integration.json",
+    "baseline-r1b-validation.json",
+    "baseline-r2-validation.json",
+    "text-r1-validation.json",
+    "native-copy-only/manifest.json"
+  ],
+  "commandsUnchanged": [
+    "python tools/stage6_media_bundle.py validate <source-compile-dir>",
+    "python tools/stage6_media_bundle.py publish <source-compile-dir> <new-destination-dir>"
+  ],
+  "remainingBoundaries": [
+    "仅copy-only；调用方声明输入原厂来源，工具不能认证生成者。",
+    "load.bin和Usbload.bin身份/长度仍限定此前已观察样本，不生成未知元数据。",
+    "真实U盘/SD/FAT32及触摸屏升级T/E未验证，S06-05仍不能作为全功能完成核销。",
+    "Windows支持原子不覆盖发布；其他平台仅校验。",
+    "未修改r1失败/测试证据，也未重试此前被自动审批拒绝的旧目录清理。"
+  ],
+  "otherCodeDocsOrGitModifiedByThisSubtask": false
+}

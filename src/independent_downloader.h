@@ -2,6 +2,7 @@
 #define INDEPENDENT_DOWNLOADER_H
 
 #include "project_model.h"
+#include "device_transfer_engine.h" //20261114-5 add
 
 #include <QString>
 #include <QVector> //20261108-11 add
@@ -57,6 +58,16 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
                           QString *error); //20261109-0 add
 bool downloadProject(const HmiProject &project, QString *error); //20261109-0 add
+
+/******************************************************************************
+ * Function Name   : downloadProjectDetailed
+ * Description     : Compile before USB and retain cancellation, commit, reset, and cleanup results.
+ * Input Parameters: project, result, error, options
+ * Return Value    : True only after the observed transport lifecycle has completed.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QString *error,
+                             const DeviceTransferOptions &options = DeviceTransferOptions()); //20261114-5 add
 
 /******************************************************************************
  * Function Name   : exportSingleTextPayload

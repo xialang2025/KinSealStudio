@@ -23,6 +23,7 @@ class ScreenCanvas;
 class QComboBox;
 class QAction; //20261110-7 add: Share command instances across all main-window surfaces.
 class QMenu;
+class DeviceDownloadSession; //20261114-5 add
 
 class MainWindow : public QMainWindow
 {
@@ -82,6 +83,7 @@ private:
     bool m_dirty;
     QProcess *m_downloadProcess; //20261108-8 add
     QTemporaryDir *m_downloadTemp; //20261108-8 add
+    DeviceDownloadSession *m_downloadSession = nullptr; //20261114-5 add
     QTabWidget *m_pageTabs;
     ScreenCanvas *m_canvas;
     QTreeWidget *m_projectTree;
@@ -140,6 +142,7 @@ private:
     void rebuildSystemSettings();
     void dispatchEditCommand(const QString &command);
     void updateCommandStates();
+    bool downloadInProgress() const; //20261114-5 add
     void resetProjectHistory();
     void recordProjectHistory();
     bool projectIsModified() const;

@@ -65,6 +65,12 @@ qt_add_executable(KinSealStudioLite WIN32
     src/independent_downloader.h
     src/device_transfer_plan.cpp #20261109-0 add
     src/device_transfer_plan.h
+    src/device_transfer_contract.cpp #20261114-5 add: Freeze wire operations without opening USB.
+    src/device_transfer_contract.h
+    src/device_transfer_engine.cpp #20261114-5 add: Share checked real and mock I/O execution.
+    src/device_transfer_engine.h
+    src/device_download_session.cpp #20261114-5 add: Own the cancellable worker and immutable input snapshot.
+    src/device_download_session.h
     src/text_payload_compiler.cpp #20261108-11 add
     src/text_payload_compiler.h
     src/static_text_properties.cpp #20261108-14 add
@@ -339,9 +345,25 @@ target_compile_definitions(KinSealBitButtonRendererTests PRIVATE QT_NO_CAST_FROM
 
 #20261109-0 add: Verify recorded transfer ordering without opening a USB device or a window.
 qt_add_executable(KinSealDeviceTransferTests
-    src/device_transfer_plan.cpp src/device_transfer_plan.h tests/device_transfer_tests.cpp)
+    src/device_transfer_plan.cpp src/device_transfer_plan.h
+    src/device_transfer_contract.cpp src/device_transfer_contract.h tests/device_transfer_tests.cpp)
 target_include_directories(KinSealDeviceTransferTests PRIVATE src)
 target_link_libraries(KinSealDeviceTransferTests PRIVATE Qt6::Core Qt6::Test)
+
+#20261114-5 add: Exercise side-effect boundaries with deterministic injected bulk callbacks.
+qt_add_executable(KinSealDeviceTransferEngineTests
+    src/device_transfer_plan.cpp src/device_transfer_plan.h
+    src/device_transfer_engine.cpp src/device_transfer_engine.h tests/device_transfer_engine_tests.cpp)
+target_include_directories(KinSealDeviceTransferEngineTests PRIVATE src)
+target_link_libraries(KinSealDeviceTransferEngineTests PRIVATE Qt6::Core Qt6::Test)
+target_compile_definitions(KinSealDeviceTransferEngineTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+
+#20261114-5 add: Run worker lifecycle and cancellation tests without USB hardware.
+qt_add_executable(KinSealDeviceDownloadSessionTests
+    src/device_download_session.cpp src/device_download_session.h tests/device_download_session_tests.cpp)
+target_include_directories(KinSealDeviceDownloadSessionTests PRIVATE src)
+target_link_libraries(KinSealDeviceDownloadSessionTests PRIVATE Qt6::Core Qt6::Test)
+target_compile_definitions(KinSealDeviceDownloadSessionTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261109-0 add: Native record oracles exclude uninitialized bytes in the vendor writer.
 qt_add_executable(KinSealNativeControlTests

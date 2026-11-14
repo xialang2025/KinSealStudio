@@ -6,6 +6,7 @@
 #include "native_project_codec.h" //20261109-0 add
 #include "device_macro_compiler.h" //20261109-0 add
 #include "stage2_project_dialogs.h" //20261110-7 add
+#include "device_download_session.h" //20261114-5 add
 #include <QSettings>
 #include <QSaveFile>
 #include "static_text_dialog.h" //20261108-14 add
@@ -1101,6 +1102,7 @@ void MainWindow::refreshDeviceState() //20261107-6 add
  * Return Value    : None
  * Date            : 2026.11.08
  ******************************************************************************/
+#if 0 //20261114-5 del: Retain the old non-cancellable child-process owner for comparison.
 void MainWindow::downloadToDevice() //20261108-10 change
 {
     QString device;
@@ -1236,6 +1238,119 @@ void MainWindow::downloadToDevice() //20261108-10 change
             });
     statusBar()->showMessage(QStringLiteral("正在后台下载到触摸屏…"));
     process->start();
+}
+#endif //20261114-5 del
+
+/******************************************************************************
+ * Function Name   : MainWindow::downloadInProgress
+ * Description     : Protect every command and close path while the transfer owner is active.
+ * Input Parameters: None
+ * Return Value    : True from worker startup until its temporary files are released.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool MainWindow::downloadInProgress() const //20261114-5 add
+{
+    return m_downloadProcess != nullptr || (m_downloadSession != nullptr && m_downloadSession->isRunning());
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::downloadToDevice
+ * Description     : Start a private snapshot worker and request cancellation only at checked boundaries.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void MainWindow::downloadToDevice() //20261114-5 add
+{
+    HmiProject snapshot;
+    QByteArray bytes;
+    QString error;
+    QProgressDialog *progress;
+
+    if (downloadInProgress())
+    {
+        QMessageBox::information(this, QStringLiteral("下载中"), QStringLiteral("当前下载任务仍在进行。"));
+        return;
+    }
+    m_canvas->cancelInteraction();
+    snapshot = currentEditorProject();
+    if (!snapshot.validateSinglePageBackend(&error))
+    {
+        QMessageBox::warning(this, QStringLiteral("工程暂不支持下载"), error);
+        return;
+    }
+    if (m_downloadSession == nullptr) { m_downloadSession = new DeviceDownloadSession(this); }
+    progress = new QProgressDialog(QStringLiteral("正在准备私有工程并编译…"), QStringLiteral("取消下载"), 0, 0, this);
+    progress->setObjectName(QStringLiteral("deviceDownloadProgress"));
+    progress->setAutoClose(false);
+    progress->setAutoReset(false);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setMinimumDuration(0);
+    connect(progress, &QProgressDialog::canceled, progress, [this, progress]() {
+        bool requested;
+
+        requested = m_downloadSession->requestCancel();
+        if (requested) //20261114-5 change: Keep cancellation retry available when its marker could not be saved.
+        {
+            progress->setCancelButton(nullptr);
+        }
+        progress->setLabelText(requested
+            ? QStringLiteral("正在等待当前USB调用结束并停止；设备内状态尚未确认。")
+            : m_downloadSession->lastError());
+        progress->show();
+    });
+    connect(m_downloadSession, &DeviceDownloadSession::progress, progress,
+            [progress](const QJsonObject &event) {
+        QString phase;
+        QString segment;
+
+        phase = event.value(QStringLiteral("phase")).toString();
+        segment = event.value(QStringLiteral("segment")).toString();
+        if (phase == QStringLiteral("commit") || phase == QStringLiteral("reset") || phase == QStringLiteral("post-reset-read"))
+        {
+            progress->setCancelButton(nullptr);
+            progress->setLabelText(QStringLiteral("提交已开始，正在等待重启收尾；此时不能取消。"));
+        }
+        else if (!phase.isEmpty())
+        {
+            progress->setLabelText(QStringLiteral("USB下载：%1 %2").arg(phase, segment));
+        }
+    });
+    connect(m_downloadSession, &DeviceDownloadSession::finished, progress,
+            [this, progress](bool success, const QJsonObject &result) {
+        QString detail;
+
+        detail = result.value(QStringLiteral("message")).toString();
+        progress->close();
+        progress->deleteLater();
+        updateCommandStates();
+        refreshDeviceState();
+        if (success)
+        {
+            statusBar()->showMessage(QStringLiteral("USB传输收尾已完成；请核对实物屏。"), 10000);
+            QMessageBox::information(this, QStringLiteral("USB传输完成"), detail);
+        }
+        else if (result.value(QStringLiteral("cancelled")).toBool())
+        {
+            statusBar()->showMessage(QStringLiteral("下载已停止，设备内状态尚未确认。"), 10000);
+            QMessageBox::information(this, QStringLiteral("下载已停止"), detail);
+        }
+        else
+        {
+            statusBar()->showMessage(QStringLiteral("USB下载未完成。"), 10000);
+            QMessageBox::critical(this, QStringLiteral("下载失败"), detail);
+        }
+    });
+    bytes = QJsonDocument(snapshot.toJson()).toJson(QJsonDocument::Compact);
+    if (!m_downloadSession->start(bytes))
+    {
+        progress->deleteLater();
+        QMessageBox::critical(this, QStringLiteral("下载失败"), m_downloadSession->lastError());
+        return;
+    }
+    updateCommandStates();
+    statusBar()->showMessage(QStringLiteral("正在后台编译并下载到触摸屏…"));
+    progress->show();
 }
 
 /******************************************************************************
@@ -1612,7 +1727,7 @@ QString MainWindow::connectedDownloadDevice() const //20261107-6 add
  ******************************************************************************/
 void MainWindow::closeEvent(QCloseEvent *event) //20261107-6 add
 {
-    if (m_downloadProcess != nullptr) //20261108-8 change: Keep the private transfer owner alive until the bridge exits.
+    if (downloadInProgress()) //20261114-5 change: Keep the checked session and its snapshot alive until the worker exits.
     {
         QMessageBox::information(this, QStringLiteral("下载进行中"),
                                  QStringLiteral("请等待当前 USB 下载任务结束。"));

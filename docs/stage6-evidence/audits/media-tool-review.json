@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "mode": "只读代码复核；未重跑测试",
+  "reviewer": "polygon_gate",
+  "task": "S06-05 copy-only介质包工具",
+  "workingTree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "result": "two_validation_issues_require_followup",
+  "copyOnlyBoundaryAccurate": true,
+  "activeFindings": [
+    {
+      "id": "MEDIA-R1-ZIP-PREFLIGHT-BOUND",
+      "priority": "P2",
+      "area": "验证/资源上限",
+      "title": "先构造ZipFile，后核13成员，中央目录对象分配未受预期成员数保护",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 176,
+          "endLine": 195
+        },
+        {
+          "path": "C:\\Users\\lenovo\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\zipfile\\__init__.py",
+          "line": 1458,
+          "endLine": 1495
+        }
+      ],
+      "trigger": "外层14文件及load.bin身份可满足检查；load.kns在64MiB上限内，让EOCD声称13成员但给出大量小中央目录记录，并保持目录offset+size=endOffset。",
+      "effect": "ZipFile._RealGetContents按中央目录size_cd循环创建ZipInfo，不按EOCD成员13限制；自身infolist/13成员检查要等标准库分配完成才执行。攻击性结构输入可在拒绝前放大内存/CPU，MemoryError等也不在当前拒绝处理内。该风险是解析资源保护，未执行任何攻击样本。",
+      "evidence": "工具line181～184只检查EOCD计数和总界；line189立即ZipFile；标准库line1459 while total<size_cd，line1495 self.filelist.append。",
+      "minimumFix": "既定13 ASCII文件名、无extra/comment的中央目录长度应固定为749B；在构造ZipFile之前核这项长度，或先严格有界解析恰13条中央目录。继续保留之后的名称/内容/CRC/本地头检查。",
+      "testGap": "现有tests覆盖包大小和声明解压长度，但没有EOCD计数13而实际中央目录大量记录的前置拒绝用例。"
+    },
+    {
+      "id": "MEDIA-R1-ZIP-VERSION-EXCEPTION",
+      "priority": "P2",
+      "area": "验证/错误格式",
+      "title": "不支持的ZIP提取版本可在标准库构造阶段抛未捕获异常",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 189
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 209,
+          "endLine": 213
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 303,
+          "endLine": 306
+        },
+        {
+          "path": "C:\\Users\\lenovo\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\zipfile\\__init__.py",
+          "line": 1485,
+          "endLine": 1487
+        }
+      ],
+      "trigger": "原本结构范围内的load.kns，把中央目录extract_version改为64（高于标准库MAX_EXTRACT_VERSION=63）；其余成员和散文件可不变。",
+      "effect": "ZipFile构造先抛NotImplementedError，自有version20拒绝分支尚未到达；validate_bundle未捕获该异常，main仅捕获BundleError，因此CLI会产生traceback而不是status=refused JSON。publish在初始validate时也会绕过统一错误类型，虽此时尚无stage且不会覆盖源。",
+      "minimumFix": "构造前有界验证版本字段；并将标准库不支持版本的NotImplementedError转为BundleError，保留具体诊断。",
+      "testGap": "test_zip_unsupported_method_or_flags覆盖method/flags，缺extract_version超标准库上限的无traceback拒绝用例。"
+    }
+  ],
+  "verifiedScope": [
+    {
+      "topic": "copy-only边界",
+      "conclusion": "声明准确。只读取调用者提供的原厂14文件，校验后按同字节复制；不生成load.bin/Usbload、无设备/介质发现或写盘API。manifest明确generatorAuthenticated=false、powerLossDurabilityVerified=false以及未验固件消费者。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 1,
+          "endLine": 6
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 285,
+          "endLine": 301
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 365,
+          "endLine": 392
+        }
+      ]
+    },
+    {
+      "topic": "散文件与解压数据界限",
+      "conclusion": "每文件/单流64MiB、总散文件128MiB；_read_file限制实际读取并比较读取前、句柄、读取后和最终路径身份；zlib检查精确长度、eof和无余流。上面两项ZIP构造前保护仍需补。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 35,
+          "endLine": 36
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 92,
+          "endLine": 109
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 130,
+          "endLine": 138
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 148,
+          "endLine": 166
+        }
+      ]
+    },
+    {
+      "topic": "格式一致性",
+      "conclusion": "除构造阶段风险外，后置核对13成员名称顺序、flags/method/version、无目录/链接/extra/comment、local/central/descriptor边界、CRC、散文件SHA，以及KNR BE32+单zlib流。不会从仅扩展名假定介质格式。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 196,
+          "endLine": 245
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 267,
+          "endLine": 284
+        }
+      ]
+    },
+    {
+      "topic": "事务/不覆盖",
+      "conclusion": "仅Windows发布；目标不得已存在或位于源内；在目标同父随机stage写新文件、fsync、完整复读验证后no-replace rename。Windows最终rename不覆盖竞态出现的目标。未发现静态路径上主动写入源或覆盖旧目标的行为。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 345,
+          "endLine": 392
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 316,
+          "endLine": 320
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 443,
+          "endLine": 457
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 545,
+          "endLine": 566
+        }
+      ]
+    },
+    {
+      "topic": "失败清理/源保留",
+      "conclusion": "清理限本调用新建stage，核同父和inode/dev且拒绝reparse；清理失败保留路径/原错误并转BundleError。来源只读，copy前重核原哈希，stage完整对照，失败无发布。未证明抵御恶意并发重定向所有路径的保证，也未声称断电持久性。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 62,
+          "endLine": 70
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 330,
+          "endLine": 335
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+          "line": 365,
+          "endLine": 406
+        }
+      ]
+    },
+    {
+      "topic": "测试脚本边界",
+      "conclusion": "显式KINSEAL_STAGE6_TEST_ROOT下创建逐例TemporaryDirectory，设置dont_write_bytecode；合成夹具明确不是硬件证据。已存在缺项/路径/ZIP/KNR/大小/不覆盖/失败清理/源变化用例；本次未重跑。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 1,
+          "endLine": 6
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 26,
+          "endLine": 28
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 67,
+          "endLine": 85
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+          "line": 503,
+          "endLine": 597
+        }
+      ]
+    }
+  ],
+  "producerReport": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-report.json",
+    "claimedTests": {
+      "run": 27,
+      "passed": 26,
+      "skipped": 1
+    },
+    "independentlyRerun": false,
+    "sourceHashesMatchedAtRead": true
+  },
+  "sourceManifest": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+      "sha256": "e2ace17e1fdd382f7b62e858cc9dbdf40b9597e9293003277dbcf7d32b531320",
+      "lineCount": 439
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+      "sha256": "6316db17c17027e304ed3d925e5c3699a86535336e4f53692379ec51679ff442",
+      "lineCount": 601
+    }
+  ],
+  "executionScope": {
+    "productionSourceModified": false,
+    "testsModified": false,
+    "documentsModified": false,
+    "testsRun": false,
+    "buildRun": false,
+    "usbOrPlcAccessed": false,
+    "guiStarted": false,
+    "onlyOwnedReviewJsonWritten": true
+  }
+}

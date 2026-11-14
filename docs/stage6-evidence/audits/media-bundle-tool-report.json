@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "taskId": "S06-05",
+  "revision": "r2",
+  "r2DetailedReport": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-report-r2.json",
+  "implementationStatus": "copy-only-tool-complete-stage-not-fully-accepted",
+  "description": "严格校验原厂已有 compile/14 文件，并在新目录事务发布原字节副本；不编译工程、不合成介质元数据、不声明实物升级兼容。",
+  "sourceFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+      "sha256": "426b19b11fc419ca1507692ed38d49f29e6bc4392e976691ee9b9c49565a9316"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+      "sha256": "ea73970c3d25aaf0ed94898f1a8f87f3be4d3268e4d0017196598fe393366a08"
+    }
+  ],
+  "marker": "20261114-5 add/change",
+  "dependencies": "Python标准库；当前测试Python3.11；Windows支持发布，其他平台仅校验",
+  "commands": {
+    "validate": "python tools/stage6_media_bundle.py validate <source-compile-dir>",
+    "publish": "python tools/stage6_media_bundle.py publish <source-compile-dir> <new-destination-dir>",
+    "tests": "显式设置 KINSEAL_STAGE6_TEST_ROOT 为任务Z盘目录、PYTHONDONTWRITEBYTECODE=1，运行 python tests/stage6_media_bundle_tests.py"
+  },
+  "refusalBoundaries": [
+    "散文件必须严格14项：缺失、未知项、同名目录、链接或Windows重解析点均拒绝；路径祖先也检查链接和重解析属性。",
+    "load.bin仅接受已观察233字节和SHA256 2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303；Usbload.bin仅接受已观察1704字节。",
+    "load.kns必须为已观察13成员顺序、deflate8、flags8、签名数据描述符、单盘ZIP；禁止未知/重复/绝对/穿越名称、目录/链接、附加前缀/尾部/注释/extra和不一致边界。",
+    "构造ZipFile前中央目录必须恰为749字节，并最多预解析13个固定名字和required_version20的记录；库层NotImplementedError也转换为JSON拒绝。",
+    "每个ZIP成员长度、CRC和SHA256必须与对应散文件完全一致；本地头、中央目录和描述符必须一致，解压不得包含额外流或尾部。",
+    "upLoad.knr必须为BE32解压长度与单zlib流包络；每文件及单解压流上限64MiB，总散文件上限128MiB。",
+    "目标必须不存在、父目录必须存在且为普通目录；拒绝目标置于源目录中。Windows最终rename不覆盖任何既存目标，包括竞态出现的空目录。",
+    "复制前源哈希复查、暂存副本完整校验后发布；失败仅清理本调用新建暂存目录，清理失败明确报告保留路径和原始错误。"
+  ],
+  "manifest": {
+    "location": "<new-destination-dir>/manifest.json；其同级compile/保留14个文件原字节",
+    "coverage": "14文件完整SHA256、长度，13 ZIP成员SHA256/CRC/长度，已观察load.bin身份、源路径、目标路径、时间、范围和限制；CLI另给manifest文件SHA256。",
+    "mode": "copy-only",
+    "generatorAuthenticated": false,
+    "provenanceBoundary": "调用方声明输入为原厂生成；结构校验和单个已知load.bin哈希不能认证生成者，也不能保证固件消费者接受。"
+  },
+  "verification": {
+    "testsRun": 30,
+    "passed": 29,
+    "skipped": 1,
+    "skipReason": "真实符号链接创建缺Windows权限，WinError1314；额外重解析属性注入拒绝测试和ZIP链接拒绝测试已通过。",
+    "testResult": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\unittest-result.json",
+    "testLog": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\unittest.txt",
+    "nativeIntegration": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\native-integration.json",
+    "nativeBundlesValidated": 3,
+    "nativeFilesPerBundle": 14,
+    "zipMembersPerBundle": 13,
+    "nativeSourceFilesHashRecheckedUnchangedAfterPublication": true,
+    "publishedCopyManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\native-copy-only\\manifest.json",
+    "publishedManifestSha256": "82d693ce2a775b0a6c91d5dbc7d27b5d9f099ad7670e7aec9645354d46152a7a",
+    "syntaxAndWhitespaceReview": "两个新增Python文件AST/compile通过，无行尾空白；未生成pycache。",
+    "sourceCodeReview": "首轮暂存清理错误格式已修复。第二轮独立复核发现中央目录构造前无界和版本64异常未处理；均已最小复现并修复，增加3项测试，最终只读复核通过。",
+    "preFixReproduction": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\pre-fix\\reproduction.json",
+    "postFixReproduction": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\media-bundle-tool-results-r2\\post-fix-reproduction.json",
+    "deviceTransferExecuted": false,
+    "userRealMediaWritten": false
+  },
+  "remaining": [
+    "独立介质元数据生成仍未实现；load.bin后续字段、Usbload.bin变化字节和固件消费者未知。",
+    "尚未进行真实U盘/SD/FAT32或触摸屏升级T/E验证，不能将本工具完成核销为S06-05全功能完成。",
+    "Linux/macOS发布尚未实现原子不覆盖语义，当前明确拒绝发布操作。"
+  ],
+  "priorNativeInvestigationCleanup": {
+    "receipt": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\cleanup-receipt.json",
+    "status": "blocked-by-policy",
+    "filesDeleted": 0,
+    "newTestStagesAreSeparate": true
+  }
+}

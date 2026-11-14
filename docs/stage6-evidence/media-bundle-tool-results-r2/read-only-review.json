@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "mode": "read-only",
+  "codeFindings": [
+    "Central-directory length is checked before ZipFile construction; preparse has exactly thirteen iterations and rejects unproved names, extras, comments, disks and required versions.",
+    "The ordinary parser sees only a fully bounded 749-byte central directory; no attacker-controlled entry-count allocation precedes the bound.",
+    "NotImplementedError from the library is converted into BundleError by the public validation API.",
+    "Existing source hashing, CRC checks and Windows no-overwrite publication are retained."
+  ],
+  "remaining": [
+    "Real source symlink creation test is skipped due to Windows privilege; reparse-attribute and ZIP-link rejection branches pass.",
+    "Scope remains native-artifact copy-only; independent metadata generation and device/media acceptance remain unproved."
+  ],
+  "sourceChecks": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tools\\stage6_media_bundle.py",
+      "sha256": "426b19b11fc419ca1507692ed38d49f29e6bc4392e976691ee9b9c49565a9316",
+      "syntax": "passed",
+      "trailingWhitespace": "none"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\stage6_media_bundle_tests.py",
+      "sha256": "ea73970c3d25aaf0ed94898f1a8f87f3be4d3268e4d0017196598fe393366a08",
+      "syntax": "passed",
+      "trailingWhitespace": "none"
+    }
+  ],
+  "remainingTestCaseDirectories": 0
+}

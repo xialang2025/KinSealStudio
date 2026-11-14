@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "stage": 6,
+  "date": "2026-11-14",
+  "completeStage6": false,
+  "totalTasks": 6,
+  "closedInDefinedScope": [
+    "S06-01",
+    "S06-03",
+    "S06-06"
+  ],
+  "partial": [
+    "S06-02",
+    "S06-04",
+    "S06-05"
+  ],
+  "tests": {
+    "qtPassed": 94,
+    "qtFailed": 0,
+    "qtSkipped": 0,
+    "mediaPassed": 29,
+    "mediaFailed": 0,
+    "mediaSkipped": 1
+  },
+  "offlineCliChecks": 13,
+  "portableCliChecks": 13,
+  "onlyBundledQtDllsObserved": true,
+  "hardware": {
+    "static10": {
+      "evidence": "docs/stage6-evidence/physical-r1/run.json",
+      "download": "static-10-download-stdout.txt",
+      "passed": true
+    },
+    "dynamic12": {
+      "evidence": "docs/stage6-evidence/physical-r2/run.json",
+      "download": "dynamic-12-download-stdout.txt",
+      "passed": true
+    },
+    "macro14": {
+      "evidence": "docs/stage6-evidence/physical-r2/run.json",
+      "download": "macro-14-download-stdout.txt",
+      "passed": true
+    },
+    "firstDynamicAttempt": "重启重新枚举期间设备未发现，open前失败、无write；独立核Pnp在线后新会话成功，无传输内自动重试。"
+  },
+  "firmwareVersion": "not-observed",
+  "screenEvidence": "docs/stage6-evidence/screen-observations.json",
+  "screenDisplayAndTouchConfirmed": false,
+  "uploadImplemented": false,
+  "independentMediaGenerationImplemented": false,
+  "mediaCopyOnlyImplemented": true,
+  "package": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/dist/KinSealStudioLite-Stage6-transfer-r1",
+  "executableSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+  "cleanup": "docs/stage6-evidence/native/cleanup-receipt.json"
+}

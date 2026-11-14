@@ -1,0 +1,29 @@
+{
+  "sourceSha256": {
+    "src\\device_transfer_engine.h": "1e4afab7fbf47faea26e5f70f3da1da76b52861563ac7575c83ddbadb65df93c",
+    "src\\device_transfer_engine.cpp": "8bf9858d85aff970dd59afd338ba2ca3e9f3fb9d9ef165616aa3ade2981edb06",
+    "tests\\device_transfer_engine_tests.cpp": "440898ee786ad72fa29c9eea278be2e7b7122f445a7e20e38efb284a8b5923d1"
+  },
+  "logicChangedDuringReview": false,
+  "blockingFindings": [],
+  "checked": [
+    "all validation precedes open; callbacks and post-framing limits checked",
+    "explicit cancellation after open and claim can exit without writes",
+    "partial/negative writes and malformed replies stop without retry",
+    "first failure preserved across release/close errors",
+    "commit write attempt versus full write and ACK remain distinct",
+    "cancel cannot truncate full commit ACK/reset/read tail",
+    "post-reset -5 accepted only after the complete matching sequence",
+    "ordinary -5 before commit is an error",
+    "raw command32B and actual read capacity/expected length retained separately",
+    "payload logged only by length/digest; screenE serializer always false",
+    "callback observers do not pump events; no native driver or GUI code linked",
+    "C++ declarations at function entry and required English function headers/date tags present"
+  ],
+  "remainingLimits": [
+    "mock tests do not prove actual driver behavior or USB/firmware persistence",
+    "callbacks are synchronous/non-throwing; cancellation is sampled between operations and cannot interrupt one blocking driver call",
+    "only the observed 000000/010101 options and post-reset -5 are admitted",
+    "root owns cross-process lock, unique target binding, adapter resource management, CLI/controller integration, CMake, docs and real T/E"
+  ]
+}

@@ -1,6 +1,17 @@
 #include "device_transfer_plan.h"
+#include "device_transfer_contract.h" //20261114-5 add
 
 #include <QtTest>
+#include <QJsonArray>
+#include <QCryptographicHash>
+#include <QTemporaryDir>
+#include <QFile>
+#ifdef Q_OS_WIN
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 
 //20261109-0 add: Expected orders come from recorded native transfers, not USB hardware in tests.
 class DeviceTransferTests : public QObject
@@ -11,6 +22,9 @@ private slots:
     void nativeBitButtonOrder();
     void nativeMacroHostOrder(); //20261109-0 add
     void incompletePayloadIsRejected();
+    void offlineContracts(); //20261114-5 add
+    void rejectedContractPreservesOutput();
+    void contractSourceAliases(); //20261114-5 add
 };
 
 /******************************************************************************
@@ -155,6 +169,128 @@ void DeviceTransferTests::nativeMacroHostOrder() //20261109-0 add
     QCOMPARE(commands.toHex(), QByteArray("0a0b0c361d0e16151912140d1e100f11"));
     QCOMPARE(steps.at(3).bytes, payloads.at(12));
     QCOMPARE(steps.at(4).bytes, payloads.at(13));
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferTests::offlineContracts
+ * Description     : Match all three packet schedules, framing digests, and post-reset completion.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void DeviceTransferTests::offlineContracts() //20261114-5 add
+{
+    QVector<QByteArray> payloads;
+    QJsonObject identity;
+    QJsonObject contract;
+    QJsonArray operations;
+    QJsonObject row;
+    QByteArray expected;
+    QString error;
+    int count;
+    int payloadCount;
+    int index;
+
+    identity.insert(QStringLiteral("targetModel"), QStringLiteral("AMT070W124-L800X480R"));
+    for (count = 10; count <= 14; count += 2)
+    {
+        payloads = markerPayloads(count);
+        QVERIFY2(buildDeviceTransferContract(payloads, identity, &contract, &error), qPrintable(error));
+        QCOMPARE(contract.value(QStringLiteral("payloadCount")).toInt(), count);
+        QVERIFY(!contract.value(QStringLiteral("usbAccessed")).toBool());
+        operations = contract.value(QStringLiteral("operations")).toArray();
+        QCOMPARE(operations.size(), 3 * count + 11);
+        QCOMPARE(operations.first().toObject().value(QStringLiteral("frameHex")).toString(),
+                 QStringLiteral("4b696e5365616c53747564696f4b697373310200000000000000000000000000"));
+        QCOMPARE(operations.at(2).toObject().value(QStringLiteral("optionsHex")).toString(), QStringLiteral("000000"));
+        payloadCount = 0;
+        for (index = 0; index < operations.size(); ++index)
+        {
+            row = operations.at(index).toObject();
+            QCOMPARE(row.value(QStringLiteral("sequence")).toInt(), index + 1);
+            QCOMPARE(row.value(QStringLiteral("nextSequence")).toInt(), index + 1 == operations.size() ? 0 : index + 2);
+            if (row.value(QStringLiteral("kind")).toString() != QStringLiteral("payload"))
+            {
+                continue;
+            }
+            ++payloadCount;
+            if (row.value(QStringLiteral("name")).toString() == QStringLiteral("upLoad.knr"))
+            {
+                expected = payloads.at(7);
+                expected.prepend(QByteArray::fromHex("00000108"));
+                QCOMPARE(row.value(QStringLiteral("wireSha256")).toString(), QString::fromLatin1(QCryptographicHash::hash(expected, QCryptographicHash::Sha256).toHex()));
+            }
+        }
+        QCOMPARE(payloadCount, count);
+        QCOMPARE(operations.at(operations.size() - 2).toObject().value(QStringLiteral("commandHex")).toString(), QStringLiteral("1a"));
+        QCOMPARE(operations.last().toObject().value(QStringLiteral("observedReturn")).toInt(), -5);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferTests::rejectedContractPreservesOutput
+ * Description     : Keep previous output intact for invalid target, options, or missing segments.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void DeviceTransferTests::rejectedContractPreservesOutput() //20261114-5 add
+{
+    QJsonObject identity;
+    QJsonObject output;
+    QJsonObject before;
+    QString error;
+
+    identity.insert(QStringLiteral("targetModel"), QStringLiteral("AMT070W124-L800X480R"));
+    output.insert(QStringLiteral("old"), true);
+    before = output;
+    QVERIFY(!buildDeviceTransferContract(markerPayloads(11), identity, &output, &error));
+    QCOMPARE(output, before);
+    QVERIFY(!buildDeviceTransferContract(markerPayloads(10), identity, &output, &error, QByteArray::fromHex("020000")));
+    QCOMPARE(output, before);
+    identity.insert(QStringLiteral("targetModel"), QStringLiteral("other"));
+    QVERIFY(!buildDeviceTransferContract(markerPayloads(10), identity, &output, &error));
+    QCOMPARE(output, before);
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferTests::contractSourceAliases
+ * Description     : Reject Windows case aliases and hard links while permitting separate destinations.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void DeviceTransferTests::contractSourceAliases() //20261114-5 add
+{
+    QTemporaryDir directory;
+    QString source;
+    QString separate;
+    QString alias;
+    QFile file;
+
+    QVERIFY(directory.isValid());
+    source = directory.filePath(QStringLiteral("source.json"));
+    separate = directory.filePath(QStringLiteral("output.json"));
+    alias = directory.filePath(QStringLiteral("linked.json"));
+    file.setFileName(source);
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    QCOMPARE(file.write("source"), qint64(6));
+    file.close();
+    QVERIFY(transferContractWouldReplaceInput(source, source));
+    QVERIFY(transferContractWouldReplaceInput(source, directory.filePath(QStringLiteral("./source.json"))));
+    QVERIFY(!transferContractWouldReplaceInput(source, separate));
+    file.setFileName(separate);
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    QCOMPARE(file.write("other"), qint64(5));
+    file.close();
+    QVERIFY(!transferContractWouldReplaceInput(source, separate));
+#ifdef Q_OS_WIN
+    QVERIFY(transferContractWouldReplaceInput(source, directory.filePath(QStringLiteral("SOURCE.JSON"))));
+    QVERIFY(CreateHardLinkW(reinterpret_cast<LPCWSTR>(alias.utf16()), reinterpret_cast<LPCWSTR>(source.utf16()), nullptr) != 0);
+    QVERIFY(transferContractWouldReplaceInput(source, alias));
+#endif
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    QCOMPARE(file.readAll(), QByteArray("other"));
 }
 
 QTEST_APPLESS_MAIN(DeviceTransferTests)

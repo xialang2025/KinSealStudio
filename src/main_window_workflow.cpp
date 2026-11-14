@@ -567,7 +567,7 @@ void MainWindow::updateCommandStates() //20261110-7 add
             enabled = true;
         } else if (id == QStringLiteral("action_save")) { enabled = m_hasProject && m_dirty; }
         else if (id == QStringLiteral("action_USBdownload")) {
-            enabled = m_hasProject && m_downloadProcess == nullptr; //20261110-7 change: Cover Starting and finalization as well as Running.
+            enabled = m_hasProject && !downloadInProgress(); //20261114-5 change: Cover the owned session from snapshot publication through final cleanup.
         } else if (!command.isEmpty()) {
             enabled = m_hasProject && (command == QStringLiteral("undo") ? m_projectHistoryIndex > 0 :
                 command == QStringLiteral("redo") ? m_projectHistoryIndex + 1 < m_projectHistory.size() :

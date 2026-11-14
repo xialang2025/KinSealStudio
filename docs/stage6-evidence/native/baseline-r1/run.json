@@ -1,0 +1,160 @@
+{
+  "run": "baseline-r1",
+  "status": "partial-or-error",
+  "task": "S06-02/S06-05",
+  "privateDesktop": true,
+  "globalInput": false,
+  "usbTransferAuthorized": false,
+  "userMediaAccessed": false,
+  "target": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\baseline-r1\\media-target",
+  "startedEpoch": 1794630432.5400367,
+  "steps": [],
+  "snapshots": [],
+  "hardwareBlockers": [
+    {
+      "original": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\libusb0.dll",
+      "originalSha256": "00caca07869b19d10b370552ac7cc2f6f2ee246fc15db11650f6cd3f4ef9b666",
+      "private": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\baseline-r1\\runtime\\libusb0.dll",
+      "privateSha256": "262f5cd9360a36486789a84521a57232858a9a9157fb6bb556550279926ce8db",
+      "patches": [
+        {
+          "name": "usb_bulk_read",
+          "rva": 20334,
+          "fileOffset": 17262,
+          "before": "8bff558becff",
+          "after": "b8fbffffffc3",
+          "result": -5
+        },
+        {
+          "name": "usb_bulk_write",
+          "rva": 20292,
+          "fileOffset": 17220,
+          "before": "8bff558becff",
+          "after": "b8fbffffffc3",
+          "result": -5
+        },
+        {
+          "name": "usb_control_msg",
+          "rva": 16469,
+          "fileOffset": 13397,
+          "before": "8bff558bec83",
+          "after": "b8fbffffffc3",
+          "result": -5
+        },
+        {
+          "name": "usb_find_busses",
+          "rva": 20912,
+          "fileOffset": 17840,
+          "before": "8bff55",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "usb_find_devices",
+          "rva": 21218,
+          "fileOffset": 18146,
+          "before": "8bff55",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "usb_get_busses",
+          "rva": 20884,
+          "fileOffset": 17812,
+          "before": "a164e4",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "usb_init",
+          "rva": 20376,
+          "fileOffset": 17304,
+          "before": "8bff56",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "usb_open",
+          "rva": 20430,
+          "fileOffset": 17358,
+          "before": "8bff55",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "usb_submit_async",
+          "rva": 14496,
+          "fileOffset": 11424,
+          "before": "8bff558bec56",
+          "after": "b8fbffffffc3",
+          "result": -5
+        }
+      ],
+      "abi": "cdecl; original usb_open/bulk/control and DownT wrapper RET instructions verified before harness preparation",
+      "scope": "Hardware-blocking test interposition, not native production behavior"
+    },
+    {
+      "original": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\DownT.dll",
+      "originalSha256": "4023b1b1c339b99aa711e99595861c43bf98c2a099d68641943e2ed93f254758",
+      "private": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\baseline-r1\\runtime\\DownT.dll",
+      "privateSha256": "83b54e09772f02b41ec40297c085a024773a7f85d39ee0491afe915eb5bb916e",
+      "patches": [
+        {
+          "name": "Usb_connect",
+          "rva": 4208,
+          "fileOffset": 1136,
+          "before": "c705b4",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "Usb_init",
+          "rva": 4416,
+          "fileOffset": 1344,
+          "before": "c705b4",
+          "after": "31c0c3",
+          "result": 0
+        },
+        {
+          "name": "Usb_readRaw",
+          "rva": 4448,
+          "fileOffset": 1376,
+          "before": "558beca1b428",
+          "after": "b8fbffffffc3",
+          "result": -5
+        },
+        {
+          "name": "Usb_writeRaw",
+          "rva": 4528,
+          "fileOffset": 1456,
+          "before": "558bec8b0db4",
+          "after": "b8fbffffffc3",
+          "result": -5
+        }
+      ],
+      "abi": "cdecl; original usb_open/bulk/control and DownT wrapper RET instructions verified before harness preparation",
+      "scope": "Hardware-blocking test interposition, not native production behavior"
+    }
+  ],
+  "input": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\baseline-r1\\runtime\\NativePages.sm",
+    "bytes": 3887,
+    "sha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422",
+    "retainedPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\evidence\\inputs\\native-aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422.sm",
+    "retainedSha256": "aadec3da23d8bb5cf473504f57a79026e9a6e7707a2c498b76a46ef9244f9422"
+  },
+  "pid": 19880,
+  "loadedHardwareModules": [
+    {
+      "name": "libusb0.dll",
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage6-20261114\\native-ui-media\\baseline-r1\\runtime\\libusb0.dll"
+    }
+  ],
+  "error": "AssertionError([{'name': 'libusb0.dll', 'path': 'Z:\\\\Project\\\\vscode_prj_temp\\\\REA\\\\.scratch\\\\kinseal-stage6-20261114\\\\native-ui-media\\\\baseline-r1\\\\runtime\\\\libusb0.dll'}])",
+  "ownedProcessTerminated": true,
+  "ownMruCleanup": {
+    "removed": 1,
+    "otherEntriesPreserved": 1
+  },
+  "endedEpoch": 1794630436.4575021
+}

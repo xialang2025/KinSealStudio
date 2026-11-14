@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14",
+  "updatedAt": "2026-11-14T13:16:16+08:00",
   "sourceCommit": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
     "stageTasks": 90,
-    "activeOpenTasks": 79,
-    "closedDefinedScopeTasks": 11,
+    "activeOpenTasks": 76,
+    "closedDefinedScopeTasks": 14,
     "families": 41,
     "currentQuestions": 202,
     "aggregateItems": 42,
@@ -18,7 +18,7 @@
       "historyEntryIssues": 195,
       "historyFieldIssues": 1521
     },
-    "extensions": 14
+    "extensions": 15
   },
   "interpretationRules": [
     "已发布范围：五类既有控制记录＋九类受限静态背景C；阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
@@ -5380,14 +5380,20 @@
       "id": "S06-01",
       "stage": 6,
       "title": "S06-01 · 固定输入并核对只读计划",
-      "status": "仍有欠项/未完整闭环",
-      "activeOpen": true,
-      "completedScope": "10/12/14段纯传输计划及原厂限定USB命令契约已有，阶段5最新包已检查完整性。",
-      "remaining": "尚未按阶段6当前切片交付逐步命令/payload哈希/应答/下一状态的transfer-contract；新增编译输出不能继承历史T。",
-      "blockers": [
-        "阶段5当前C有效包及目标身份"
+      "status": "既定范围已过：complete_in_scope",
+      "activeOpen": false,
+      "completedScope": [
+        "三类逐步契约及事务输入保护已过；10/12/14真实契约与编译包可复读。"
       ],
-      "nextAction": "对最新有效包生成无USB的逐步transfer-contract，核10/12/14三类及缺段/坏长度/未知目标的开USB前拒绝。",
+      "remaining": [
+        "仅阶段5已允许的单页/目标/对象；新增切片须新契约，不继承本轮T。"
+      ],
+      "blockers": [
+        "新增段/目标没有证据时仍拒绝。"
+      ],
+      "nextAction": [
+        "复用本批contract/manifest，输入变化重新冻结验证。"
+      ],
       "acceptance": [
         "TR-01/02：正常顺序/端序/长度正确；空/缺/坏段及不支持输入均open调用0且旧包不变。",
         {
@@ -5420,6 +5426,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -5489,21 +5499,27 @@
             "text": "| TR-02 / S06-01 | 少段、多段、空段、非法目标/对象/配置 | 全工程失败在打开USB之前，旧输出保持；不出现擦除/开始命令 | C；错误及open调用次数=0的mock记录 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S06-02",
       "stage": 6,
       "title": "S06-02 · 补齐下载窗口交互与取消事务",
-      "status": "仍有欠项/未完整闭环",
+      "status": "部分完成，仍有欠项/未完整闭环",
       "activeOpen": true,
-      "completedScope": "下载入口、独立编译/下载子进程、验证先USB已存在；历史修复提交后重启流程可复用指定范围。",
-      "remaining": "完整原生下载窗口字段/默认/enabled/帮助、保存和运行中取消、重复点击/关闭父窗/崩溃资源归属尚未闭合。",
-      "blockers": [
-        "原厂下载窗口D",
-        "现有下载父子进程链"
+      "completedScope": [
+        "后台私有快照、取消marker、重复启动/关闭保护、崩溃/JSON及寿命验证已过；原厂字段有字典。"
       ],
-      "nextAction": "后台无设备核原厂窗口与保存取消；用mock把保存、编译、开始前、段中及提交前后取消记录成事务状态。",
+      "remaining": [
+        "完整原厂下载窗、保存/取消/帮助、持久化默认及五个勾选逐位映射、原厂传输中取消仍未闭合。"
+      ],
+      "blockers": [
+        "缺原厂模式/保存取消/选项独立变量证据。"
+      ],
+      "nextAction": [
+        "无设备阻断环境逐项补窗口交互，再扩UI与对应协议；现进度窗继续明确限制。"
+      ],
       "acceptance": [
         "TR-06/07：取消/保存失败不传输且旧文件不变；开始后取消有最后发送步骤和恢复入口，不虚称屏已回滚。",
         {
@@ -5536,6 +5552,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -5606,21 +5626,27 @@
             "text": "| TR-07 / S06-02 | mock段中取消、提交前取消、父窗关闭 | 停止时机符合已核取消契约；不承诺回滚；临时工程/子进程归属清楚 | U/状态机；取消请求与最后写步骤 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S06-03",
       "stage": 6,
       "title": "S06-03 · 错误注入与完成判定",
-      "status": "仍有欠项/未完整闭环",
-      "activeOpen": true,
-      "completedScope": "限定USB ACK/提交/重启链已有历史实机结果，纯计划6项在最新核心测试中通过。",
-      "remaining": "短写、错长度/错ACK、超时/缺驱动/占用、1B成功1A失败等全错误矩阵及分层结果字段未闭合；现有CLI ok/message不足。",
-      "blockers": [
-        "S06-01 transfer-contract",
-        "可mock的bulk读写"
+      "status": "既定范围已过：complete_in_scope",
+      "activeOpen": false,
+      "completedScope": [
+        "58项引擎故障/边界、27会话及9契约共94通过；分层结果与完整USB三计划T已过。"
       ],
-      "nextAction": "先mock逐副作用边界注错，记录首错、已写段、commitAccepted/resetWritten；修复前先核错误/停止契约。",
+      "remaining": [
+        "故障注入通过不等于真实拔线/断电或所有固件容错；完整E另验。"
+      ],
+      "blockers": [
+        "不得在真实屏上用未知故障或自动重试替代mock结论。"
+      ],
+      "nextAction": [
+        "按新增边界追加故障例；保留最先失败和提交/重启/关闭身份。"
+      ],
       "acceptance": [
         "TR-03～05/08/09：首错立即停止、资源释放、不自动重试；真实T与屏E分记，未观察E保持待验。",
         {
@@ -5671,6 +5697,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -5762,21 +5792,27 @@
             "text": "| TR-09 / S06-03 | 将来授权后对既有最小有效工程执行真实下载 | 核对实际每段/ACK、提交与重启；随后现场独立检查显示。各层分开判 | T和特定E；真实回执/屏证据 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S06-04",
       "stage": 6,
       "title": "S06-04 · 工程上载独立恢复",
-      "status": "仍有欠项/未完整闭环",
+      "status": "部分完成，仍有欠项/未完整闭环",
       "activeOpen": true,
-      "completedScope": "已知action_upload入口及帮助流程；下载中的upLoad.knr是Lite JSON快照，有来源限定。",
-      "remaining": "通用原厂上载握手/长度校验/合法密码/错误取消、读回落盘、完整原厂可编辑源还原都未恢复。",
-      "blockers": [
-        "原厂上载窗口/调用链",
-        "有效可恢复工程及合法密码场景"
+      "completedScope": [
+        "上载窗AMZ/AMT/路径/按钮/进度有D；DownT的5345:1234和OUT02等不适用边界已查。"
       ],
-      "nextAction": "先后台读取上载窗口和DownT导出调用参数，再mock读请求/文件写出；同一源做读回后原厂复开重编译对照。",
+      "remaining": [
+        "AMT上载命令/长度/校验、合法密码流程、读回事务与完整原厂可编辑源恢复未实现。"
+      ],
+      "blockers": [
+        "主EXE冷导入超时；现DownT不是本设备协议，不能猜码或把快照当上载。"
+      ],
+      "nextAction": [
+        "从已知QUpLoadDlgEx/OnCreatUploadDlg定点跟踪合法工程的无设备请求/保存行为。"
+      ],
       "acceptance": [
         "TR-10/11：无/正确/错误密码及禁止上载行为有证据，读回能原厂重编辑；错误取消断开不覆盖旧文件，不绕过保护。",
         {
@@ -5813,6 +5849,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -5887,21 +5927,27 @@
             "text": "| TR-11 / S06-04 | 路径框取消、已有文件、无权限、上传中止/断开 | 采用已核覆盖/取消行为；完整性前不覆盖既有文件，差异要记录 | U/P/T；旧文件hash、临时/最终状态 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S06-05",
       "stage": 6,
       "title": "S06-05 · U盘/SD卡包",
-      "status": "仍有欠项/未完整闭环",
+      "status": "部分完成，仍有欠项/未完整闭环",
       "activeOpen": true,
-      "completedScope": "帮助提供介质模式与升级流程种子，USB散段/纯离线包已有；尚不等于介质包。",
-      "remaining": "U盘/SD文件布局、容器/压缩/校验/型号绑定、选项窗口及写入失败事务与屏端升级未闭合。",
-      "blockers": [
-        "同源原厂介质输出",
-        "隔离目录/测试介质"
+      "completedScope": [
+        "三轮原厂14文件/13ZIP成员与CRC/容器有证据；严格copy-only校验/复制工具及事务测试已过。"
       ],
-      "nextAction": "让原厂向隔离目录输出同源两次，随后单改型号/文字/语言/宏/上传选项；比.kns/.laz/load.bin/Usbload.bin与散段。",
+      "remaining": [
+        "独立load.bin/Usbload.bin元数据、型号/选项绑定、语言/宏等变量、真实介质升级T/E未恢复。"
+      ],
+      "blockers": [
+        "仅静态TEST窄样本；等长QString变量未改变像素，非稳定字节语义和固件消费者未知。"
+      ],
+      "nextAction": [
+        "继续受控单变量原厂目录导出恢复未知字段；独立生成前保持copy-only/不开放升级宣称。"
+      ],
       "acceptance": [
         "TR-12/13：格式/稳定差分可解释、只读/空间不足/取消保全旧文件；TR-14实际屏识别升级/恢复另记T/E。",
         {
@@ -5943,6 +5989,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6023,20 +6073,27 @@
             "text": "| TR-14 / S06-05 | 将来授权后介质屏端升级/重启 | 目标固件识别并正常运行；与PC包检查分开；恢复结果单列 | T/E；介质manifest/现场结果 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S06-06",
       "stage": 6,
       "title": "S06-06 · 收口与交接",
-      "status": "仍有欠项/未完整闭环",
-      "activeOpen": true,
-      "completedScope": "USB下载已有局部契约和历史T；上载/介质未知已在稳定Q登记。",
-      "remaining": "三类能力行及当前版本D/U/P/R/C/T/E、故障/取消/恢复证据还未统一收口；上载或介质未知不能被USB下载通过替代。",
-      "blockers": [
-        "S06-01～05对应支持范围"
+      "status": "既定范围已过：complete_in_scope",
+      "activeOpen": false,
+      "completedScope": [
+        "已输出USB/上载/介质三能力行、各层边界、契约/失败/恢复/当前交付与Q-S06剩余，完成本批交接。"
       ],
-      "nextAction": "汇总USB下载/上载/介质三行，逐层填当前hash、已验证范围、未恢复Q及下一探针。",
+      "remaining": [
+        "全阶段仍未完成，02/04/05和T之外完整E继续开放；DOC-CLEANUP-002由自动审批阻塞。"
+      ],
+      "blockers": [
+        "上载/介质未知不能以USB T或文档收口替代。"
+      ],
+      "nextAction": [
+        "从完整下载窗、合法上载链及介质变量继续；用户暂缓的静态页E等后续明确输入再验。"
+      ],
       "acceptance": [
         "全部声明能力有TR结果/恢复点和限制；N/A有理由，历史结果身份不混；阶段6完整只在声明范围全闭合后通过。",
         {
@@ -6085,6 +6142,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/07_阶段6_USB上传与介质下载.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6172,7 +6233,8 @@
             "text": "| CLN-02 / 各阶段结束 | 清理后检查留存文件/链接/哈希与磁盘 | 归档可读、后续只靠保留资料可继续；磁盘减量真实记录 | 路径/前后字节/链接hash结果 |"
           }
         ]
-      }
+      },
+      "currentEvidence": "docs/stage6-evidence/progress.json"
     },
     {
       "id": "S07-01",
@@ -10121,7 +10183,17 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_specific_static_text_display_confirmed_only",
@@ -10297,7 +10369,17 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -10467,7 +10549,17 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -10636,7 +10728,17 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -10805,7 +10907,17 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -15283,7 +15395,17 @@
               "endLine": 5,
               "quote": "第四个静态C切片G01已接入。当前为既有五类控制记录加四类受限背景，阶段5共10项任务仍按切片推进，整个阶段尚未完成。本批严格纯离线，没有USB通信或实物下载。\n\n## 本次开放范围"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -15449,7 +15571,17 @@
               "endLine": 5,
               "quote": "第五个静态C切片G02已接入：既有五类控制记录+五类受限背景，整个阶段5仍未完成。这里的freeline仅是已证的两端点直线切片，不宣称恢复自由手绘、多点采样或平滑。严格纯离线，没有USB通信。\n\n## 支持范围"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_default_reference_display_confirmed_only",
@@ -15776,7 +15908,17 @@
               "endLine": 5,
               "quote": "本批在既有五类设备编译器上增加有边界的G04背景编译，并把离线输出改为核验后发布。阶段5整体未完成；其它新控件、复杂图形样式、多页及活动配置仍拒绝。没有进行本批实物下载，T/E由阶段6/10接续，历史ACK没有转用于本批。\n\n## 实际支持范围"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -15942,7 +16084,17 @@
               "endLine": 5,
               "quote": "第六个静态背景C切片G05已完成受限实现，当前为五类控制记录+六类静态背景。阶段5共10项主任务仍未全部完成；其它动态记录、多页、配置和未核样式继续推进。本轮严格纯离线，没有USB通信，新产物deviceAcknowledged=false。\n\n## 支持范围及编码"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_default_reference_display_confirmed_only",
@@ -16109,7 +16261,17 @@
               "endLine": 5,
               "quote": "维护日期：2026-11-14。本报告使用G06及稳定家族名`ellipse/action_ellipse`绑定圆/椭圆，记录已完成的第八类静态背景受限C切片，当前五类控制记录加八类静态背景。正式原厂27次有效、15份canonical、13个独立场景的r2完整帧及结构/覆盖检查均相等，产品回归574/0/0；r1舍入失败保留，证据归档和定向清理完成。版本同步及第八批便携包另作独立交付步骤，阶段5整体仍未完成。\n\n本轮纯离线，无USB或PLC通信，新包`deviceAcknowledged=false`。阶段4用户对原厂基线反馈“能看到椭圆，没有宽度提示”，仅归属于那份原厂输入和旧传输流程；本轮独立输出的T/E仍分开验收。"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_default_reference_display_confirmed_only",
@@ -16276,7 +16438,17 @@
               "endLine": 5,
               "quote": "维护日期：2026-11-14。G07及模型`sector`、原厂`action_ArcItem`分别为清单编号、模型类型和菜单命令，不是设备ControlPara类型字节。本批已完成固定45°起角/90°扫角的受限背景C：27次正式编译、15份canonical/13独立场景完整帧相等，最终产品回归620/0/0。仅本报告限定的默认角度/黑白/正方形切片开放，完整角度/SM/T/E及阶段5整体仍未完成。\n\n本轮保持纯离线，无USB或PLC通信，新产物`deviceAcknowledged=false`。阶段4只记录原厂基线传输完成，没有新增扇形实屏显示确认；本批独立输出T/E继续分开验收。"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -16442,7 +16614,17 @@
               "endLine": 5,
               "quote": "第三个C切片G08增加独立静态矩形背景。与既有五类、折线、表格构成8类受限设备编译范围；完整阶段5仍未完成，本轮不访问USB通信。\n\n## 开放范围"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "full_field_unverified",
@@ -16608,7 +16790,17 @@
               "endLine": 5,
               "quote": "维护日期：2026-11-14。本报告记录G09多边形已完成的独立设备背景受限编译切片，为第七个静态背景C家族；当前五类控制记录加七类静态背景。37次有效原厂编译及产品canonical均完整RGB565帧相等，真实Windows回归530/0/0、只读复核无阻断，证据归档和定向清理已完成。版本同步及便携包另作独立交付步骤，阶段5整体仍未完成。\n\n本轮保持纯离线，只触发原厂编译，不执行USB传输。`usbAccessed=false`；新产物的`deviceAcknowledged=false`。阶段4用户确认原厂基线“已显示黑色三角形，没有宽度提示”，仍只属于那份原厂输入的历史E证据，不转作本轮独立编译器的T/E通过。"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_default_reference_display_confirmed_only",
@@ -16775,7 +16967,17 @@
               "endLine": 5,
               "quote": "第二批增加G10纯图像表格的受限独立C编译。它没有单元格数据、PLC地址、配方或历史数据语义；完整阶段5仍未完成。本轮不调用下载入口或USB通信，T/E分别交阶段6/10。\n\n## 已开放范围"
             }
-          ]
+          ],
+          "stage6Supplement": {
+            "status": "new_bounded_independent_transport_proven",
+            "boundary": "本轮三类计划中受限混合或静态样例实际USB T；不扩展该族全部属性/变体，也不关闭完整E。",
+            "sources": [
+              {
+                "path": "docs/stage6-evidence/progress.json",
+                "line": 1
+              }
+            ]
+          }
         },
         "E": {
           "status": "historical_default_reference_display_confirmed_only",
@@ -16793,7 +16995,8 @@
               "endLine": 12,
               "quote": "| 实物证据 | 36项原厂基线已核查完整提交/重启/后续read；5类保留早期独立下载；6份默认诊断页人工显示确认，完整E仍未验 |"
             }
-          ]
+          ],
+          "stage6DeferredObservation": "静态10答复显示字符无表格，页面标识未归属，用户要求先跳过；不判缺陷或通过。"
         }
       },
       "stage5LatestReport": "docs/阶段5_静态表格设备背景编译与差分验收.md",
@@ -21944,7 +22147,7 @@
     {
       "id": "Q-S06-001",
       "title": "原厂上载握手、长度/校验/取消/合法密码流程；T/U",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证，仍开放",
       "scope": "阶段5～11",
       "remaining": "原厂上载握手、长度/校验/取消/合法密码流程；T/U",
       "blockers": [
@@ -21967,14 +22170,19 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 159
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "上载窗和不适用DownT导出已查；协议和原厂源未恢复。"
     },
     {
       "id": "Q-S06-002",
       "title": "回读快照能否恢复原厂完整可编辑源；P/C",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证，仍开放",
       "scope": "阶段5～11",
       "remaining": "回读快照能否恢复原厂完整可编辑源；P/C",
       "blockers": [
@@ -21997,23 +22205,25 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 160
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "上载窗和不适用DownT导出已查；协议和原厂源未恢复。"
     },
     {
       "id": "Q-S06-003",
       "title": "U盘/SD包容器、文件布局/校验、型号绑定；C/T",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证，仍开放",
       "scope": "阶段5～11",
       "remaining": "U盘/SD包容器、文件布局/校验、型号绑定；C/T",
       "blockers": [
-        "同源原厂介质输出",
-        "隔离目录/测试介质",
-        "S06-01～05对应支持范围",
-        "恢复工装/可恢复工程",
-        "上载/介质命令格式恢复",
-        "中断断电的授权"
+        "非稳定元数据与固件消费者未知",
+        "单变量型号/语言/宏/选项绑定不足",
+        "真实介质T/E未验"
       ],
       "nextAction": "同一源分别离线目录与原厂介质输出，清点文件/容器头/稳定差异；实际设备读取另立T/E，不能按扩展名转换",
       "acceptance": "同一源的离线目录与原厂介质输出建立文件布局/容器头/校验/型号绑定对照；声明可用的介质包有设备实际读取T记录，屏端结果另记E，未知容器不按扩展名转换。",
@@ -22027,9 +22237,14 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 161
+        },
+        {
+          "path": "docs/阶段6传输与介质实现及验收.md",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "三轮原厂14文件/13ZIP成员布局和校验已证；copy-only工具通过，不是独立生成。"
     },
     {
       "id": "Q-S07-001",
@@ -176265,6 +176480,24 @@
         }
       ],
       "countsTowardAmtStages": false
+    },
+    {
+      "id": "DOC-CLEANUP-002",
+      "stage": "阶段6",
+      "title": "阶段6自有原厂运行副本清理待处理",
+      "status": "blocked_by_automatic_approval",
+      "completedScope": "唯一原厂输入、三轮媒体、阻断DLL归档、脚本/日志与清单/拒绝回执完整保留。",
+      "remaining": "5个任务自有目录201文件408211366逻辑字节，自动审批拒绝，0删除；硬链接字节不代表独占物理空间。",
+      "blockers": "原生PowerShell Remove-Item -LiteralPath清单调用被自动审批blocked by policy拒绝，不使用替代删除通道。",
+      "nextAction": "仅在后续允许清理的条件下核对固定绝对路径/归档SHA/无引用，再处理同清单。",
+      "acceptance": "逐目标真实删除/保留及字节数有回执，三轮唯一证据不丢失。",
+      "sources": [
+        {
+          "path": "docs/stage6-evidence/native/cleanup-receipt.json",
+          "line": 1
+        }
+      ],
+      "countsTowardAmtStages": false
     }
   ],
   "aliases": {
@@ -176284,507 +176517,633 @@
   "sourceManifest": [
     {
       "path": "design_plan/00_复刻执行总入口.md",
-      "sha256": "60581f0209d6454fb86eca1543d89a3c8432252df3012c4dfa45775a93bcc719"
+      "sha256": "60581f0209d6454fb86eca1543d89a3c8432252df3012c4dfa45775a93bcc719",
+      "currentSha256": "b01f769a91937e72322d4fc9d3859f1e70ed11d6963d251f05b529b4c0952134"
     },
     {
       "path": "design_plan/01_阶段0_基线范围与证据管理.md",
-      "sha256": "f939eb70086af91e7980f748754dd41081ab63e70dffa1859db66f2b8adc97e9"
+      "sha256": "f939eb70086af91e7980f748754dd41081ab63e70dffa1859db66f2b8adc97e9",
+      "currentSha256": "f939eb70086af91e7980f748754dd41081ab63e70dffa1859db66f2b8adc97e9"
     },
     {
       "path": "design_plan/02_阶段1_工程模型与文件格式.md",
-      "sha256": "75d19654cd96c6c56e4f59dd61221bd836af1af519e5724f2d7fef98662c513c"
+      "sha256": "75d19654cd96c6c56e4f59dd61221bd836af1af519e5724f2d7fef98662c513c",
+      "currentSha256": "75d19654cd96c6c56e4f59dd61221bd836af1af519e5724f2d7fef98662c513c"
     },
     {
       "path": "design_plan/03_阶段2_主窗口与工程配置.md",
-      "sha256": "884c6b280fa36ecb653805198aaaf1f064a607a102273e6a272d5c7a7076e199"
+      "sha256": "884c6b280fa36ecb653805198aaaf1f064a607a102273e6a272d5c7a7076e199",
+      "currentSha256": "884c6b280fa36ecb653805198aaaf1f064a607a102273e6a272d5c7a7076e199"
     },
     {
       "path": "design_plan/04_阶段3_画布资源与一致渲染.md",
-      "sha256": "359302413fa842c756d6854c7f576884531a6bf167db58661b92e5e9156a479e"
+      "sha256": "359302413fa842c756d6854c7f576884531a6bf167db58661b92e5e9156a479e",
+      "currentSha256": "359302413fa842c756d6854c7f576884531a6bf167db58661b92e5e9156a479e"
     },
     {
       "path": "design_plan/05_阶段4_控件逐项复刻.md",
-      "sha256": "74d22cf9a189bb005be8a5deb9c08865fbf98236f29127205fc73a7cc90a3922"
+      "sha256": "74d22cf9a189bb005be8a5deb9c08865fbf98236f29127205fc73a7cc90a3922",
+      "currentSha256": "74d22cf9a189bb005be8a5deb9c08865fbf98236f29127205fc73a7cc90a3922"
     },
     {
       "path": "design_plan/06_阶段5_设备编译与格式差分.md",
-      "sha256": "1f19d1b519fa0dda7409810bd0871afddec9bbab31aa0ad2551da101eacf2b03"
+      "sha256": "1f19d1b519fa0dda7409810bd0871afddec9bbab31aa0ad2551da101eacf2b03",
+      "currentSha256": "1f19d1b519fa0dda7409810bd0871afddec9bbab31aa0ad2551da101eacf2b03"
     },
     {
       "path": "design_plan/07_阶段6_USB上传与介质下载.md",
-      "sha256": "d32a378d94e5f2872a580d5aa59b21396bcaffe590cefdf956a1e7e1b8b13b14"
+      "sha256": "d32a378d94e5f2872a580d5aa59b21396bcaffe590cefdf956a1e7e1b8b13b14",
+      "currentSha256": "b07307834daaee00232433adfe7f55319deed9b1b9c90727b30f88533478bea5"
     },
     {
       "path": "design_plan/08_阶段7_离线与在线模拟.md",
-      "sha256": "c36ee94368931629cdf634d5646b608ccdd47f3830e0331d5c576006bdeb4ee5"
+      "sha256": "c36ee94368931629cdf634d5646b608ccdd47f3830e0331d5c576006bdeb4ee5",
+      "currentSha256": "c36ee94368931629cdf634d5646b608ccdd47f3830e0331d5c576006bdeb4ee5"
     },
     {
       "path": "design_plan/09_阶段8_宏系统与调度.md",
-      "sha256": "21e967ed60061cf96e9423c8e7df207134680b0036cdd54528cd406308cd2546"
+      "sha256": "21e967ed60061cf96e9423c8e7df207134680b0036cdd54528cd406308cd2546",
+      "currentSha256": "21e967ed60061cf96e9423c8e7df207134680b0036cdd54528cd406308cd2546"
     },
     {
       "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
-      "sha256": "196bc5fa32e4ac5c5fbefc9a32360a876bd9afd1412acc82dd09f9bd1aeaf9d7"
+      "sha256": "196bc5fa32e4ac5c5fbefc9a32360a876bd9afd1412acc82dd09f9bd1aeaf9d7",
+      "currentSha256": "196bc5fa32e4ac5c5fbefc9a32360a876bd9afd1412acc82dd09f9bd1aeaf9d7"
     },
     {
       "path": "design_plan/11_阶段10_设备运行兼容与性能验收.md",
-      "sha256": "d8c3510b6d0c50aec0494f43e70f48edf71a08808cfb7220d67c8da3ed532ab5"
+      "sha256": "d8c3510b6d0c50aec0494f43e70f48edf71a08808cfb7220d67c8da3ed532ab5",
+      "currentSha256": "d8c3510b6d0c50aec0494f43e70f48edf71a08808cfb7220d67c8da3ed532ab5"
     },
     {
       "path": "design_plan/12_阶段11_部署帮助与发布.md",
-      "sha256": "b5dfce9396a7fa118055fccc8d787a5fcf2f61c76c06f33bed7be286da4e5193"
+      "sha256": "b5dfce9396a7fa118055fccc8d787a5fcf2f61c76c06f33bed7be286da4e5193",
+      "currentSha256": "b5dfce9396a7fa118055fccc8d787a5fcf2f61c76c06f33bed7be286da4e5193"
     },
     {
       "path": "design_plan/A01_公共属性与事务规范.md",
-      "sha256": "63f2fe965c1ac585da70beb4fdcc816482219fb54e12b698e735775dfae185ba"
+      "sha256": "63f2fe965c1ac585da70beb4fdcc816482219fb54e12b698e735775dfae185ba",
+      "currentSha256": "63f2fe965c1ac585da70beb4fdcc816482219fb54e12b698e735775dfae185ba"
     },
     {
       "path": "design_plan/A02_全局入口与工程配置规范.md",
-      "sha256": "25b084985525309b557231b81603cddd566d4521d649798f50fdbb933b8646f7"
+      "sha256": "25b084985525309b557231b81603cddd566d4521d649798f50fdbb933b8646f7",
+      "currentSha256": "25b084985525309b557231b81603cddd566d4521d649798f50fdbb933b8646f7"
     },
     {
       "path": "design_plan/A03_基础图形与表格规范.md",
-      "sha256": "c89ac65f23f3a0b707d215f09fc28e8e642ebc33195ae3ba70f110c71b9b9989"
+      "sha256": "c89ac65f23f3a0b707d215f09fc28e8e642ebc33195ae3ba70f110c71b9b9989",
+      "currentSha256": "c89ac65f23f3a0b707d215f09fc28e8e642ebc33195ae3ba70f110c71b9b9989"
     },
     {
       "path": "design_plan/A04_31控件实施索引.md",
-      "sha256": "06b12a25ed1ca272ed3b06bcdfe8d1063a404bf0fe1fb2a4cec8b4e56e7e40c8"
+      "sha256": "06b12a25ed1ca272ed3b06bcdfe8d1063a404bf0fe1fb2a4cec8b4e56e7e40c8",
+      "currentSha256": "06b12a25ed1ca272ed3b06bcdfe8d1063a404bf0fe1fb2a4cec8b4e56e7e40c8"
     },
     {
       "path": "design_plan/A05_源格式与设备编译契约.md",
-      "sha256": "0d3a8a29e617114c911b9ca141b20d4c46fc5d270965d44be149e8c804b441bb"
+      "sha256": "0d3a8a29e617114c911b9ca141b20d4c46fc5d270965d44be149e8c804b441bb",
+      "currentSha256": "0d3a8a29e617114c911b9ca141b20d4c46fc5d270965d44be149e8c804b441bb"
     },
     {
       "path": "design_plan/A06_运行与发布验收用例.md",
-      "sha256": "cf04e264e67fe787024707a7605ec33fcbfe8021d932cfcc8b4fd8b7f4743e6a"
+      "sha256": "cf04e264e67fe787024707a7605ec33fcbfe8021d932cfcc8b4fd8b7f4743e6a",
+      "currentSha256": "cf04e264e67fe787024707a7605ec33fcbfe8021d932cfcc8b4fd8b7f4743e6a"
     },
     {
       "path": "design_plan/ASCII显示功能与交互复刻手册.md",
-      "sha256": "fb278e8c271ab6b861843cdf309393c32accb402f677f9e272acd0453733aeb9"
+      "sha256": "fb278e8c271ab6b861843cdf309393c32accb402f677f9e272acd0453733aeb9",
+      "currentSha256": "fb278e8c271ab6b861843cdf309393c32accb402f677f9e272acd0453733aeb9"
     },
     {
       "path": "design_plan/GIF显示功能与交互复刻手册.md",
-      "sha256": "94f7bdc4fbc19564d96271d5e6467d1f7ab3d47fbb80ef7e327e295db020c2bb"
+      "sha256": "94f7bdc4fbc19564d96271d5e6467d1f7ab3d47fbb80ef7e327e295db020c2bb",
+      "currentSha256": "94f7bdc4fbc19564d96271d5e6467d1f7ab3d47fbb80ef7e327e295db020c2bb"
     },
     {
       "path": "design_plan/X-Y曲线功能与交互复刻手册.md",
-      "sha256": "2345a0f9f4f0854ec00b3464e4284bb5a0094c2452a67a5d1c4df59107bc22b5"
+      "sha256": "2345a0f9f4f0854ec00b3464e4284bb5a0094c2452a67a5d1c4df59107bc22b5",
+      "currentSha256": "2345a0f9f4f0854ec00b3464e4284bb5a0094c2452a67a5d1c4df59107bc22b5"
     },
     {
       "path": "design_plan/下拉框功能与交互复刻手册.md",
-      "sha256": "1fba4bcdbe45d1c7e5e848430cb85665166b9919c7403af5b2fe78bdd8ade7df"
+      "sha256": "1fba4bcdbe45d1c7e5e848430cb85665166b9919c7403af5b2fe78bdd8ade7df",
+      "currentSha256": "1fba4bcdbe45d1c7e5e848430cb85665166b9919c7403af5b2fe78bdd8ade7df"
     },
     {
       "path": "design_plan/二维码功能与交互复刻手册.md",
-      "sha256": "d117f3ec28c752a358532d493c2081fd6ba37cac4c9ab9deac8ca7974c11d497"
+      "sha256": "d117f3ec28c752a358532d493c2081fd6ba37cac4c9ab9deac8ca7974c11d497",
+      "currentSha256": "d117f3ec28c752a358532d493c2081fd6ba37cac4c9ab9deac8ca7974c11d497"
     },
     {
       "path": "design_plan/位按钮功能与交互复刻手册.md",
-      "sha256": "a42915ac9e53c08a6c6d0c2c58babdcfc4376230c70a47f42af63e4782e78bf0"
+      "sha256": "a42915ac9e53c08a6c6d0c2c58babdcfc4376230c70a47f42af63e4782e78bf0",
+      "currentSha256": "a42915ac9e53c08a6c6d0c2c58babdcfc4376230c70a47f42af63e4782e78bf0"
     },
     {
       "path": "design_plan/刻度功能与交互复刻手册.md",
-      "sha256": "0fbc26af5c058d5e1f2794b9d929e7468bd0ee92787b2bb49ec281096b8ca1f0"
+      "sha256": "0fbc26af5c058d5e1f2794b9d929e7468bd0ee92787b2bb49ec281096b8ca1f0",
+      "currentSha256": "0fbc26af5c058d5e1f2794b9d929e7468bd0ee92787b2bb49ec281096b8ca1f0"
     },
     {
       "path": "design_plan/功能复刻说明书模板.md",
-      "sha256": "6a74d10113d5fa95e94814bc28a00b10f93b221777e3b9da4e7ded77b2f9a607"
+      "sha256": "6a74d10113d5fa95e94814bc28a00b10f93b221777e3b9da4e7ded77b2f9a607",
+      "currentSha256": "6a74d10113d5fa95e94814bc28a00b10f93b221777e3b9da4e7ded77b2f9a607"
     },
     {
       "path": "design_plan/功能按钮功能与交互复刻手册.md",
-      "sha256": "bb645e6437d5f8ee6ae76435219a2aa746e1c63d2f8388c5f06f0d16c8dc11a6"
+      "sha256": "bb645e6437d5f8ee6ae76435219a2aa746e1c63d2f8388c5f06f0d16c8dc11a6",
+      "currentSha256": "bb645e6437d5f8ee6ae76435219a2aa746e1c63d2f8388c5f06f0d16c8dc11a6"
     },
     {
       "path": "design_plan/动态报警条功能与交互复刻手册.md",
-      "sha256": "7783b6cf54d803243ea2dec4f11e7daab139ef318d312a3ab5b1ccf9b7a57075"
+      "sha256": "7783b6cf54d803243ea2dec4f11e7daab139ef318d312a3ab5b1ccf9b7a57075",
+      "currentSha256": "7783b6cf54d803243ea2dec4f11e7daab139ef318d312a3ab5b1ccf9b7a57075"
     },
     {
       "path": "design_plan/历史报警显示功能与交互复刻手册.md",
-      "sha256": "adce98046ccfb6cd2e0897ef99daac9142233fc877a00cab790c6fd694328cd1"
+      "sha256": "adce98046ccfb6cd2e0897ef99daac9142233fc877a00cab790c6fd694328cd1",
+      "currentSha256": "adce98046ccfb6cd2e0897ef99daac9142233fc877a00cab790c6fd694328cd1"
     },
     {
       "path": "design_plan/历史数据显示器功能与交互复刻手册.md",
-      "sha256": "6e594e22374e5165fbb06c8b191b3abeb8680d6ace9b7917b3129946f4d38605"
+      "sha256": "6e594e22374e5165fbb06c8b191b3abeb8680d6ace9b7917b3129946f4d38605",
+      "currentSha256": "6e594e22374e5165fbb06c8b191b3abeb8680d6ace9b7917b3129946f4d38605"
     },
     {
       "path": "design_plan/历史趋势图功能与交互复刻手册.md",
-      "sha256": "16453ca24add470a15d0dbadc6f3d9b5197df5529690a008ff631b8c948d018f"
+      "sha256": "16453ca24add470a15d0dbadc6f3d9b5197df5529690a008ff631b8c948d018f",
+      "currentSha256": "16453ca24add470a15d0dbadc6f3d9b5197df5529690a008ff631b8c948d018f"
     },
     {
       "path": "design_plan/原生软件复刻补充分析_20261110.md",
-      "sha256": "b3e8aeab37b7cf5e358c23340975dc75507912e78375bdee421786bd12ef0647"
+      "sha256": "b3e8aeab37b7cf5e358c23340975dc75507912e78375bdee421786bd12ef0647",
+      "currentSha256": "b3e8aeab37b7cf5e358c23340975dc75507912e78375bdee421786bd12ef0647"
     },
     {
       "path": "design_plan/图片显示功能与交互复刻手册.md",
-      "sha256": "d7e098154174787b8cf5dd54e46f3d8d744b2e33cb4f7cad65986ed051997db1"
+      "sha256": "d7e098154174787b8cf5dd54e46f3d8d744b2e33cb4f7cad65986ed051997db1",
+      "currentSha256": "d7e098154174787b8cf5dd54e46f3d8d744b2e33cb4f7cad65986ed051997db1"
     },
     {
       "path": "design_plan/图表功能与交互复刻手册.md",
-      "sha256": "fd51d5fcd24cbce27efe55db088778fd5bb0b91dc114ea36149936b99b8e3796"
+      "sha256": "fd51d5fcd24cbce27efe55db088778fd5bb0b91dc114ea36149936b99b8e3796",
+      "currentSha256": "fd51d5fcd24cbce27efe55db088778fd5bb0b91dc114ea36149936b99b8e3796"
     },
     {
       "path": "design_plan/复刻待验核销记录.md",
-      "sha256": "d6aeed4b57a59ebd681f2db2dfe4d34d76dc83296ef3871b977b1f9eb7d994d5"
+      "sha256": "d6aeed4b57a59ebd681f2db2dfe4d34d76dc83296ef3871b977b1f9eb7d994d5",
+      "currentSha256": "e43e62ac2f1e373d583c5850609e6344e2d94702205bbe48811dce1b197913de"
     },
     {
       "path": "design_plan/多功能按钮功能与交互复刻手册.md",
-      "sha256": "f8988e5f8b48753e3b10c2c0127cc8c9695d8a8c95c2fad6d1778e98d2dcb152"
+      "sha256": "f8988e5f8b48753e3b10c2c0127cc8c9695d8a8c95c2fad6d1778e98d2dcb152",
+      "currentSha256": "f8988e5f8b48753e3b10c2c0127cc8c9695d8a8c95c2fad6d1778e98d2dcb152"
     },
     {
       "path": "design_plan/多态按钮功能与交互复刻手册.md",
-      "sha256": "f1ec273a764c5b065011473dd1953f8eeefb7c581058d1d651526fdfedee4e35"
+      "sha256": "f1ec273a764c5b065011473dd1953f8eeefb7c581058d1d651526fdfedee4e35",
+      "currentSha256": "f1ec273a764c5b065011473dd1953f8eeefb7c581058d1d651526fdfedee4e35"
     },
     {
       "path": "design_plan/字按钮功能与交互复刻手册.md",
-      "sha256": "354abbd5140db06db6431311ec027b04a2b5794428577b67eb2e926b59838311"
+      "sha256": "354abbd5140db06db6431311ec027b04a2b5794428577b67eb2e926b59838311",
+      "currentSha256": "354abbd5140db06db6431311ec027b04a2b5794428577b67eb2e926b59838311"
     },
     {
       "path": "design_plan/完整复刻路线图.md",
-      "sha256": "f7c643ff62df7d58a940850da237f0d5e1322269ed758de63a7be61cbe505e14"
+      "sha256": "f7c643ff62df7d58a940850da237f0d5e1322269ed758de63a7be61cbe505e14",
+      "currentSha256": "f7c643ff62df7d58a940850da237f0d5e1322269ed758de63a7be61cbe505e14"
     },
     {
       "path": "design_plan/工具箱控件复刻总览.md",
-      "sha256": "630c9e32143f899c49dae8387723fd752eca3d50a1176b1135d648e939314b94"
+      "sha256": "630c9e32143f899c49dae8387723fd752eca3d50a1176b1135d648e939314b94",
+      "currentSha256": "630c9e32143f899c49dae8387723fd752eca3d50a1176b1135d648e939314b94"
     },
     {
       "path": "design_plan/报警显示功能与交互复刻手册.md",
-      "sha256": "df64b5881778294ab3daef71f6e4c40185a5104f88aa66dee0609a73557b1a5b"
+      "sha256": "df64b5881778294ab3daef71f6e4c40185a5104f88aa66dee0609a73557b1a5b",
+      "currentSha256": "df64b5881778294ab3daef71f6e4c40185a5104f88aa66dee0609a73557b1a5b"
     },
     {
       "path": "design_plan/指示灯功能与交互复刻手册.md",
-      "sha256": "170f9fc548c9dfd6365d9bf41261b31341f09c94aeac0d09bc748575c6c52055"
+      "sha256": "170f9fc548c9dfd6365d9bf41261b31341f09c94aeac0d09bc748575c6c52055",
+      "currentSha256": "170f9fc548c9dfd6365d9bf41261b31341f09c94aeac0d09bc748575c6c52055"
     },
     {
       "path": "design_plan/控件文档与实施覆盖矩阵.md",
-      "sha256": "42347cfeba21897d35a3df07e919f3b3d9db14691eddc79351b733971796e19a"
+      "sha256": "42347cfeba21897d35a3df07e919f3b3d9db14691eddc79351b733971796e19a",
+      "currentSha256": "42347cfeba21897d35a3df07e919f3b3d9db14691eddc79351b733971796e19a"
     },
     {
       "path": "design_plan/数值显示功能与交互复刻手册.md",
-      "sha256": "21d19d4593a0462b8acebd4a9125c46c49d3fd965fb48d399c6072753b7b589c"
+      "sha256": "21d19d4593a0462b8acebd4a9125c46c49d3fd965fb48d399c6072753b7b589c",
+      "currentSha256": "21d19d4593a0462b8acebd4a9125c46c49d3fd965fb48d399c6072753b7b589c"
     },
     {
       "path": "design_plan/数据群组功能与交互复刻手册.md",
-      "sha256": "92ec9ec0ae63ef528db1545154bbe18243135baebe2fd71eef03592d74a750d7"
+      "sha256": "92ec9ec0ae63ef528db1545154bbe18243135baebe2fd71eef03592d74a750d7",
+      "currentSha256": "92ec9ec0ae63ef528db1545154bbe18243135baebe2fd71eef03592d74a750d7"
     },
     {
       "path": "design_plan/时间显示功能与交互复刻手册.md",
-      "sha256": "e6177860e5fbac5d478a0fcb874fa22f41acde537b0058ecc7c25bb5525892dc"
+      "sha256": "e6177860e5fbac5d478a0fcb874fa22f41acde537b0058ecc7c25bb5525892dc",
+      "currentSha256": "e6177860e5fbac5d478a0fcb874fa22f41acde537b0058ecc7c25bb5525892dc"
     },
     {
       "path": "design_plan/流动块功能与交互复刻手册.md",
-      "sha256": "e4e57a9f3902199def91a7d390902e277055bd0e480c1a6236d55bb8d2ff19b5"
+      "sha256": "e4e57a9f3902199def91a7d390902e277055bd0e480c1a6236d55bb8d2ff19b5",
+      "currentSha256": "e4e57a9f3902199def91a7d390902e277055bd0e480c1a6236d55bb8d2ff19b5"
     },
     {
       "path": "design_plan/消息显示功能与交互复刻手册.md",
-      "sha256": "dc62232cc99bd77fac67d04d5db0b7b37d0a9a664da52682f28c5587734b6495"
+      "sha256": "dc62232cc99bd77fac67d04d5db0b7b37d0a9a664da52682f28c5587734b6495",
+      "currentSha256": "dc62232cc99bd77fac67d04d5db0b7b37d0a9a664da52682f28c5587734b6495"
     },
     {
       "path": "design_plan/滑动开关功能与交互复刻手册.md",
-      "sha256": "9d00536009769b49cc449604a53a0bcd6f2a60e082475c3a4c6a18723b676cdb"
+      "sha256": "9d00536009769b49cc449604a53a0bcd6f2a60e082475c3a4c6a18723b676cdb",
+      "currentSha256": "9d00536009769b49cc449604a53a0bcd6f2a60e082475c3a4c6a18723b676cdb"
     },
     {
       "path": "design_plan/滚轮功能与交互复刻手册.md",
-      "sha256": "2a4576d6fce677ee82ce8337c3126b52454b6832d9989f8286e7481c7f4d7b90"
+      "sha256": "2a4576d6fce677ee82ce8337c3126b52454b6832d9989f8286e7481c7f4d7b90",
+      "currentSha256": "2a4576d6fce677ee82ce8337c3126b52454b6832d9989f8286e7481c7f4d7b90"
     },
     {
       "path": "design_plan/画面按钮功能与交互复刻手册.md",
-      "sha256": "1e0b85f29c1e1b08563e918a2a572bb9954c445462c43df86c6fdbd026e82c12"
+      "sha256": "1e0b85f29c1e1b08563e918a2a572bb9954c445462c43df86c6fdbd026e82c12",
+      "currentSha256": "1e0b85f29c1e1b08563e918a2a572bb9954c445462c43df86c6fdbd026e82c12"
     },
     {
       "path": "design_plan/移动轨迹功能与交互复刻手册.md",
-      "sha256": "10c459e57fa4cb441f20cfc9cb5ee10dbb16daf2426c9ba4e551d5df246e555f"
+      "sha256": "10c459e57fa4cb441f20cfc9cb5ee10dbb16daf2426c9ba4e551d5df246e555f",
+      "currentSha256": "10c459e57fa4cb441f20cfc9cb5ee10dbb16daf2426c9ba4e551d5df246e555f"
     },
     {
       "path": "design_plan/趋势图功能与交互复刻手册.md",
-      "sha256": "530884ce05aef09cca6d8e847a1fca449711a9b941b01ce315fe78e3c15485b0"
+      "sha256": "530884ce05aef09cca6d8e847a1fca449711a9b941b01ce315fe78e3c15485b0",
+      "currentSha256": "530884ce05aef09cca6d8e847a1fca449711a9b941b01ce315fe78e3c15485b0"
     },
     {
       "path": "design_plan/配方显示器功能与交互复刻手册.md",
-      "sha256": "bd3aabced70798ca3355ac76075b471c0298ffb80c099c784cc2127645842591"
+      "sha256": "bd3aabced70798ca3355ac76075b471c0298ffb80c099c784cc2127645842591",
+      "currentSha256": "bd3aabced70798ca3355ac76075b471c0298ffb80c099c784cc2127645842591"
     },
     {
       "path": "design_plan/静态文本功能与交互复刻手册.md",
-      "sha256": "9113da9baba95e5225130cf3958d592ba66ea038d4ba8cb44d5f5b8c5f0cc329"
+      "sha256": "9113da9baba95e5225130cf3958d592ba66ea038d4ba8cb44d5f5b8c5f0cc329",
+      "currentSha256": "9113da9baba95e5225130cf3958d592ba66ea038d4ba8cb44d5f5b8c5f0cc329"
     },
     {
       "path": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md",
-      "sha256": "73b9904f7c587a343c5e7487f54f0adad3275b65f564f63f36095c273443e53b"
+      "sha256": "73b9904f7c587a343c5e7487f54f0adad3275b65f564f63f36095c273443e53b",
+      "currentSha256": "630373de14540fad65f80511a2d0d6cf3a75983c711d9639ec3441fa63de060e"
     },
     {
       "path": "docs/ASCII显示手册实现与验收.md",
-      "sha256": "5bdc1a4603a448d0e1f11363a6f5d18d11d54cb1a843dcbe2e5f0fead2e53952"
+      "sha256": "5bdc1a4603a448d0e1f11363a6f5d18d11d54cb1a843dcbe2e5f0fead2e53952",
+      "currentSha256": "5bdc1a4603a448d0e1f11363a6f5d18d11d54cb1a843dcbe2e5f0fead2e53952"
     },
     {
       "path": "docs/GIF显示手册实现与验收.md",
-      "sha256": "71d35d5af32c15f69d7d0b7da0d817b8c5dc6d0f42d2f22bb363c48d20eb11db"
+      "sha256": "71d35d5af32c15f69d7d0b7da0d817b8c5dc6d0f42d2f22bb363c48d20eb11db",
+      "currentSha256": "71d35d5af32c15f69d7d0b7da0d817b8c5dc6d0f42d2f22bb363c48d20eb11db"
     },
     {
       "path": "docs/UI编译规则与阶段交付规范.md",
-      "sha256": "a51f829a874ad71b4c4e3012f96fe508b74f5f4892ed986e4cd27d816956c900"
+      "sha256": "a51f829a874ad71b4c4e3012f96fe508b74f5f4892ed986e4cd27d816956c900",
+      "currentSha256": "0ac9ac9c20b38fe913445d63ba86f7a589909d2db63816359e80ce78e84a124f"
     },
     {
       "path": "docs/X-Y曲线手册实现与验收.md",
-      "sha256": "e423f369dc0ce53ef8213e9aa6e3ab10dce7d8efa0f93f34fa0ac51da3fab0d5"
+      "sha256": "e423f369dc0ce53ef8213e9aa6e3ab10dce7d8efa0f93f34fa0ac51da3fab0d5",
+      "currentSha256": "e423f369dc0ce53ef8213e9aa6e3ab10dce7d8efa0f93f34fa0ac51da3fab0d5"
     },
     {
       "path": "docs/下拉框手册实现与验收.md",
-      "sha256": "d249ff53fea6944b749d1bda6bb35d3aec0c3b743a30f9a3fd0fda32461f79a0"
+      "sha256": "d249ff53fea6944b749d1bda6bb35d3aec0c3b743a30f9a3fd0fda32461f79a0",
+      "currentSha256": "d249ff53fea6944b749d1bda6bb35d3aec0c3b743a30f9a3fd0fda32461f79a0"
     },
     {
       "path": "docs/下载链路差异.md",
-      "sha256": "75c9077892dfb7ce570b0f7394bcb26be21b1b7854e620a3807c0c85971e5d41"
+      "sha256": "75c9077892dfb7ce570b0f7394bcb26be21b1b7854e620a3807c0c85971e5d41",
+      "currentSha256": "75c9077892dfb7ce570b0f7394bcb26be21b1b7854e620a3807c0c85971e5d41"
     },
     {
       "path": "docs/主窗口外观复刻验收.md",
-      "sha256": "a37a1bbefc982af7fcaf64160384cad424dcbcba6aa59d6db838c0e63d4ad823"
+      "sha256": "a37a1bbefc982af7fcaf64160384cad424dcbcba6aa59d6db838c0e63d4ad823",
+      "currentSha256": "a37a1bbefc982af7fcaf64160384cad424dcbcba6aa59d6db838c0e63d4ad823"
     },
     {
       "path": "docs/二维码手册实现与验收.md",
-      "sha256": "1c7ab3cfac468c78058c4d6f92c92d95dfdc6598b4f6304bf86969283919c6c6"
+      "sha256": "1c7ab3cfac468c78058c4d6f92c92d95dfdc6598b4f6304bf86969283919c6c6",
+      "currentSha256": "1c7ab3cfac468c78058c4d6f92c92d95dfdc6598b4f6304bf86969283919c6c6"
     },
     {
       "path": "docs/位按钮手册实现与验收.md",
-      "sha256": "ba0a79361b8e42c6d827d1cd9bf1856ce6204c5bf255f2eb54d756f3faa1f7b6"
+      "sha256": "ba0a79361b8e42c6d827d1cd9bf1856ce6204c5bf255f2eb54d756f3faa1f7b6",
+      "currentSha256": "ba0a79361b8e42c6d827d1cd9bf1856ce6204c5bf255f2eb54d756f3faa1f7b6"
     },
     {
       "path": "docs/位按钮设备编译实现.md",
-      "sha256": "98351273cb4c093a8033cfaee56811096806b6a38a2ada21e14c6eee10ce230b"
+      "sha256": "98351273cb4c093a8033cfaee56811096806b6a38a2ada21e14c6eee10ce230b",
+      "currentSha256": "98351273cb4c093a8033cfaee56811096806b6a38a2ada21e14c6eee10ce230b"
     },
     {
       "path": "docs/刻度手册实现与验收.md",
-      "sha256": "cdaddd836fe9fd044efad8a249bb4748d08e43d07026a9d188c59aab067cc923"
+      "sha256": "cdaddd836fe9fd044efad8a249bb4748d08e43d07026a9d188c59aab067cc923",
+      "currentSha256": "cdaddd836fe9fd044efad8a249bb4748d08e43d07026a9d188c59aab067cc923"
     },
     {
       "path": "docs/功能按钮手册实现与验收.md",
-      "sha256": "fef9ca574ff2dea3ea902a09c08377e3859923b6e917c30e78d2f140deb804e7"
+      "sha256": "fef9ca574ff2dea3ea902a09c08377e3859923b6e917c30e78d2f140deb804e7",
+      "currentSha256": "fef9ca574ff2dea3ea902a09c08377e3859923b6e917c30e78d2f140deb804e7"
     },
     {
       "path": "docs/动态报警条手册实现与验收.md",
-      "sha256": "520e5a350e5f1fc1e1388199ace9fd9f9fae0d2dfbe2982bccaeada7b997c26c"
+      "sha256": "520e5a350e5f1fc1e1388199ace9fd9f9fae0d2dfbe2982bccaeada7b997c26c",
+      "currentSha256": "520e5a350e5f1fc1e1388199ace9fd9f9fae0d2dfbe2982bccaeada7b997c26c"
     },
     {
       "path": "docs/历史报警显示手册实现与验收.md",
-      "sha256": "dbef8a8b3a97eab9a25f1aff98b0669b8e42569aa80fbcfc5781561c43ce304d"
+      "sha256": "dbef8a8b3a97eab9a25f1aff98b0669b8e42569aa80fbcfc5781561c43ce304d",
+      "currentSha256": "dbef8a8b3a97eab9a25f1aff98b0669b8e42569aa80fbcfc5781561c43ce304d"
     },
     {
       "path": "docs/历史控件实物下载补验汇总.md",
-      "sha256": "82721905447d381e927d323660633d07f26116a08e950d2893524c227b978e2f"
+      "sha256": "82721905447d381e927d323660633d07f26116a08e950d2893524c227b978e2f",
+      "currentSha256": "82721905447d381e927d323660633d07f26116a08e950d2893524c227b978e2f"
     },
     {
       "path": "docs/历史数据显示器手册实现与验收.md",
-      "sha256": "e5061b2af8a16fd85d25d44f0a2b841afb89136cb81be8cf4c7f95ecea4cba13"
+      "sha256": "e5061b2af8a16fd85d25d44f0a2b841afb89136cb81be8cf4c7f95ecea4cba13",
+      "currentSha256": "e5061b2af8a16fd85d25d44f0a2b841afb89136cb81be8cf4c7f95ecea4cba13"
     },
     {
       "path": "docs/历史趋势图手册实现与验收.md",
-      "sha256": "6695d4b0ea054d526abd5ad948e7c677f7d1e49e3b6b35b9c418ace74ffc6e3f"
+      "sha256": "6695d4b0ea054d526abd5ad948e7c677f7d1e49e3b6b35b9c418ace74ffc6e3f",
+      "currentSha256": "6695d4b0ea054d526abd5ad948e7c677f7d1e49e3b6b35b9c418ace74ffc6e3f"
     },
     {
       "path": "docs/图片显示手册实现与验收.md",
-      "sha256": "425042f24254bfd1ab423038f8ff22bb502b78e359473d696f5704699271bfde"
+      "sha256": "425042f24254bfd1ab423038f8ff22bb502b78e359473d696f5704699271bfde",
+      "currentSha256": "425042f24254bfd1ab423038f8ff22bb502b78e359473d696f5704699271bfde"
     },
     {
       "path": "docs/图表手册实现与验收.md",
-      "sha256": "028d5f9ebf0e020387018f20d90f4815824ea67ecf190ccaaedd8372ad09a132"
+      "sha256": "028d5f9ebf0e020387018f20d90f4815824ea67ecf190ccaaedd8372ad09a132",
+      "currentSha256": "028d5f9ebf0e020387018f20d90f4815824ea67ecf190ccaaedd8372ad09a132"
     },
     {
       "path": "docs/圆与椭圆图形实现与验收.md",
-      "sha256": "8360164fa955c6a40dd408cdf20cff38a8d657256ba0507f7a3e25a9e0d470e7"
+      "sha256": "8360164fa955c6a40dd408cdf20cff38a8d657256ba0507f7a3e25a9e0d470e7",
+      "currentSha256": "8360164fa955c6a40dd408cdf20cff38a8d657256ba0507f7a3e25a9e0d470e7"
     },
     {
       "path": "docs/圆角矩形图形实现与验收.md",
-      "sha256": "55acaf23dd7c90ef7f2044e954e210ba0077a877a86da2fb0d04bfed7cf71cca"
+      "sha256": "55acaf23dd7c90ef7f2044e954e210ba0077a877a86da2fb0d04bfed7cf71cca",
+      "currentSha256": "55acaf23dd7c90ef7f2044e954e210ba0077a877a86da2fb0d04bfed7cf71cca"
     },
     {
       "path": "docs/多功能按钮手册实现与验收.md",
-      "sha256": "b77fde2e87ce939795b619d46bf62d30858e544ccaf8001b1b64ad6b4d434902"
+      "sha256": "b77fde2e87ce939795b619d46bf62d30858e544ccaf8001b1b64ad6b4d434902",
+      "currentSha256": "b77fde2e87ce939795b619d46bf62d30858e544ccaf8001b1b64ad6b4d434902"
     },
     {
       "path": "docs/多态按钮手册实现与验收.md",
-      "sha256": "930b89ed8815b11293f7ee35eb0509c67950c3b9019df1e1bf50b0df0b2785ed"
+      "sha256": "930b89ed8815b11293f7ee35eb0509c67950c3b9019df1e1bf50b0df0b2785ed",
+      "currentSha256": "930b89ed8815b11293f7ee35eb0509c67950c3b9019df1e1bf50b0df0b2785ed"
     },
     {
       "path": "docs/多边形图形实现与验收.md",
-      "sha256": "92d0dd5306a3fdd0ed67f797d62a8d9107f0814cf21e503d0874b5f15e1278b4"
+      "sha256": "92d0dd5306a3fdd0ed67f797d62a8d9107f0814cf21e503d0874b5f15e1278b4",
+      "currentSha256": "92d0dd5306a3fdd0ed67f797d62a8d9107f0814cf21e503d0874b5f15e1278b4"
     },
     {
       "path": "docs/字按钮手册实现与验收.md",
-      "sha256": "e5f5ac3aa4805b81a82189a8c5aeb05ad168501d545739e70a83ebbb535c733c"
+      "sha256": "e5f5ac3aa4805b81a82189a8c5aeb05ad168501d545739e70a83ebbb535c733c",
+      "currentSha256": "e5f5ac3aa4805b81a82189a8c5aeb05ad168501d545739e70a83ebbb535c733c"
     },
     {
       "path": "docs/实屏宽度提示与下载生命周期排查.md",
-      "sha256": "71a575682b87485f3b5224171d098e114624f575f4388395055495a890af3414"
+      "sha256": "71a575682b87485f3b5224171d098e114624f575f4388395055495a890af3414",
+      "currentSha256": "71a575682b87485f3b5224171d098e114624f575f4388395055495a890af3414"
     },
     {
       "path": "docs/扇形默认角度切片实现与验收.md",
-      "sha256": "b8c30e6863d4e8120570144096c9d43f40fde705e7b3235be27ac776ddc9984f"
+      "sha256": "b8c30e6863d4e8120570144096c9d43f40fde705e7b3235be27ac776ddc9984f",
+      "currentSha256": "b8c30e6863d4e8120570144096c9d43f40fde705e7b3235be27ac776ddc9984f"
     },
     {
       "path": "docs/折线图形实现与验收.md",
-      "sha256": "dbf71fa2e6ce8d712836548e827c827904587e7e48162bcfd0e63ddd41792738"
+      "sha256": "dbf71fa2e6ce8d712836548e827c827904587e7e48162bcfd0e63ddd41792738",
+      "currentSha256": "dbf71fa2e6ce8d712836548e827c827904587e7e48162bcfd0e63ddd41792738"
     },
     {
       "path": "docs/报警显示手册实现与验收.md",
-      "sha256": "c87dc46d041c9f4fd01fcefacd859b9f01eeefcc4db80a27e9f475781d2069f6"
+      "sha256": "c87dc46d041c9f4fd01fcefacd859b9f01eeefcc4db80a27e9f475781d2069f6",
+      "currentSha256": "c87dc46d041c9f4fd01fcefacd859b9f01eeefcc4db80a27e9f475781d2069f6"
     },
     {
       "path": "docs/指示灯手册实现与验收.md",
-      "sha256": "4ee1f624bf2205326ac0f33e3c1b4d7f821b202cce8d6983025cf63cedbc7922"
+      "sha256": "4ee1f624bf2205326ac0f33e3c1b4d7f821b202cce8d6983025cf63cedbc7922",
+      "currentSha256": "4ee1f624bf2205326ac0f33e3c1b4d7f821b202cce8d6983025cf63cedbc7922"
     },
     {
       "path": "docs/指示灯程序修改记录.md",
-      "sha256": "16b68e1da75fb2a90d20714ef4a27056049fd9e33551467b8a50dcad73d20363"
+      "sha256": "16b68e1da75fb2a90d20714ef4a27056049fd9e33551467b8a50dcad73d20363",
+      "currentSha256": "16b68e1da75fb2a90d20714ef4a27056049fd9e33551467b8a50dcad73d20363"
     },
     {
       "path": "docs/数值显示手册实现与验收.md",
-      "sha256": "96d194b82206697f3aef4020c5dc3778668ade3bf8702ebe2741869e5b529733"
+      "sha256": "96d194b82206697f3aef4020c5dc3778668ade3bf8702ebe2741869e5b529733",
+      "currentSha256": "96d194b82206697f3aef4020c5dc3778668ade3bf8702ebe2741869e5b529733"
     },
     {
       "path": "docs/数据群组手册实现与验收.md",
-      "sha256": "6ff5a355513e774595fd96ae9742fc807a18b041305c9e69b0dad4691a57c66e"
+      "sha256": "6ff5a355513e774595fd96ae9742fc807a18b041305c9e69b0dad4691a57c66e",
+      "currentSha256": "6ff5a355513e774595fd96ae9742fc807a18b041305c9e69b0dad4691a57c66e"
     },
     {
       "path": "docs/时间显示手册实现与验收.md",
-      "sha256": "945d427b18ff2f22ed03399149f4f7624cb1a1c66a98ad37941b797752ae3541"
+      "sha256": "945d427b18ff2f22ed03399149f4f7624cb1a1c66a98ad37941b797752ae3541",
+      "currentSha256": "945d427b18ff2f22ed03399149f4f7624cb1a1c66a98ad37941b797752ae3541"
     },
     {
       "path": "docs/曲线圆弧调查与阻塞记录.md",
-      "sha256": "8946e457b39ba113e20e2cc2dead8ec4f39a3b9f03cd35a6494b4561f3724164"
+      "sha256": "8946e457b39ba113e20e2cc2dead8ec4f39a3b9f03cd35a6494b4561f3724164",
+      "currentSha256": "8946e457b39ba113e20e2cc2dead8ec4f39a3b9f03cd35a6494b4561f3724164"
     },
     {
       "path": "docs/流动块手册实现与验收.md",
-      "sha256": "df08494807415c2fb17ca54a3809f619c55c6c5514c0046cb5fd12de03b4cee7"
+      "sha256": "df08494807415c2fb17ca54a3809f619c55c6c5514c0046cb5fd12de03b4cee7",
+      "currentSha256": "df08494807415c2fb17ca54a3809f619c55c6c5514c0046cb5fd12de03b4cee7"
     },
     {
       "path": "docs/消息显示手册实现与验收.md",
-      "sha256": "df6a2b7a0a3b3bf3f511738e6b20dadd0d7d877942eaf97728e741103484e9bd"
+      "sha256": "df6a2b7a0a3b3bf3f511738e6b20dadd0d7d877942eaf97728e741103484e9bd",
+      "currentSha256": "df6a2b7a0a3b3bf3f511738e6b20dadd0d7d877942eaf97728e741103484e9bd"
     },
     {
       "path": "docs/滑动开关手册实现与验收.md",
-      "sha256": "a7bfcc1232b7f4a05749b2600d1682eabbc2e6d1d8b56a03f2291c1583ebe7e9"
+      "sha256": "a7bfcc1232b7f4a05749b2600d1682eabbc2e6d1d8b56a03f2291c1583ebe7e9",
+      "currentSha256": "a7bfcc1232b7f4a05749b2600d1682eabbc2e6d1d8b56a03f2291c1583ebe7e9"
     },
     {
       "path": "docs/滚轮手册实现与验收.md",
-      "sha256": "77a7958902a9706c28d114072e6c996932d601363f36c352c7f56180fdf1eb0d"
+      "sha256": "77a7958902a9706c28d114072e6c996932d601363f36c352c7f56180fdf1eb0d",
+      "currentSha256": "77a7958902a9706c28d114072e6c996932d601363f36c352c7f56180fdf1eb0d"
     },
     {
       "path": "docs/画面按钮手册实现与验收.md",
-      "sha256": "eccc7bfddc6d6bc2c26bb93e06aaf5fecc81e37a9c31703be9b818c050769a58"
+      "sha256": "eccc7bfddc6d6bc2c26bb93e06aaf5fecc81e37a9c31703be9b818c050769a58",
+      "currentSha256": "eccc7bfddc6d6bc2c26bb93e06aaf5fecc81e37a9c31703be9b818c050769a58"
     },
     {
       "path": "docs/直线图形实现与验收.md",
-      "sha256": "77cc5259d9547d080a963c80a9df9a3fae054fa2b16487e73ff80864be1a23e4"
+      "sha256": "77cc5259d9547d080a963c80a9df9a3fae054fa2b16487e73ff80864be1a23e4",
+      "currentSha256": "77cc5259d9547d080a963c80a9df9a3fae054fa2b16487e73ff80864be1a23e4"
     },
     {
       "path": "docs/矩形图形实现与验收.md",
-      "sha256": "fe69ea4486221595871ea8874a109f454a7053c087c40b7f2654df7ac1f72c0a"
+      "sha256": "fe69ea4486221595871ea8874a109f454a7053c087c40b7f2654df7ac1f72c0a",
+      "currentSha256": "fe69ea4486221595871ea8874a109f454a7053c087c40b7f2654df7ac1f72c0a"
     },
     {
       "path": "docs/移动轨迹手册实现与验收.md",
-      "sha256": "fcdf3dbc9b03c67a393c9e738b5412aa550507c793d69725630f451fdea7e676"
+      "sha256": "fcdf3dbc9b03c67a393c9e738b5412aa550507c793d69725630f451fdea7e676",
+      "currentSha256": "fcdf3dbc9b03c67a393c9e738b5412aa550507c793d69725630f451fdea7e676"
     },
     {
       "path": "docs/纯图像表格实现与验收.md",
-      "sha256": "7a8eef53c0c494e59ae0868a8ec66266eb6e2e06d1e884354b79fbaefa5e98f6"
+      "sha256": "7a8eef53c0c494e59ae0868a8ec66266eb6e2e06d1e884354b79fbaefa5e98f6",
+      "currentSha256": "7a8eef53c0c494e59ae0868a8ec66266eb6e2e06d1e884354b79fbaefa5e98f6"
     },
     {
       "path": "docs/自由直线首尾切片实现与验收.md",
-      "sha256": "b994d7ddfb2d915e67530279f1b1a1b76558272dc826234be01cfb56a0ab7eb2"
+      "sha256": "b994d7ddfb2d915e67530279f1b1a1b76558272dc826234be01cfb56a0ab7eb2",
+      "currentSha256": "b994d7ddfb2d915e67530279f1b1a1b76558272dc826234be01cfb56a0ab7eb2"
     },
     {
       "path": "docs/趋势图手册实现与验收.md",
-      "sha256": "2cfe964e8e386fb3b01c1bf0fb9ad303a8020a1b345d99f3dc1e5ac57f6b2d11"
+      "sha256": "2cfe964e8e386fb3b01c1bf0fb9ad303a8020a1b345d99f3dc1e5ac57f6b2d11",
+      "currentSha256": "2cfe964e8e386fb3b01c1bf0fb9ad303a8020a1b345d99f3dc1e5ac57f6b2d11"
     },
     {
       "path": "docs/配方显示器手册实现与验收.md",
-      "sha256": "98efd6a5c84c3825ee1082d736e3c80b91d1e26fc4fa8e54841d39ceb64673f2"
+      "sha256": "98efd6a5c84c3825ee1082d736e3c80b91d1e26fc4fa8e54841d39ceb64673f2",
+      "currentSha256": "98efd6a5c84c3825ee1082d736e3c80b91d1e26fc4fa8e54841d39ceb64673f2"
     },
     {
       "path": "docs/阶段0基线与验收.md",
-      "sha256": "b534c1bb72ae96a2d631801ac92f6c4e1291a8f04ac77de2ba1fd3ee1896368c"
+      "sha256": "b534c1bb72ae96a2d631801ac92f6c4e1291a8f04ac77de2ba1fd3ee1896368c",
+      "currentSha256": "b534c1bb72ae96a2d631801ac92f6c4e1291a8f04ac77de2ba1fd3ee1896368c"
     },
     {
       "path": "docs/阶段1工程模型与验收.md",
-      "sha256": "34babcf32728505141178c40873e48196d3e02f86f1a9651b3956fcb5cedc753"
+      "sha256": "34babcf32728505141178c40873e48196d3e02f86f1a9651b3956fcb5cedc753",
+      "currentSha256": "34babcf32728505141178c40873e48196d3e02f86f1a9651b3956fcb5cedc753"
     },
     {
       "path": "docs/阶段2主窗口与工程配置验收.md",
-      "sha256": "16078da2924b7f71897c8f60fffb9cb336e237a0391f4aac012f7effce0bcb05"
+      "sha256": "16078da2924b7f71897c8f60fffb9cb336e237a0391f4aac012f7effce0bcb05",
+      "currentSha256": "16078da2924b7f71897c8f60fffb9cb336e237a0391f4aac012f7effce0bcb05"
     },
     {
       "path": "docs/阶段3主目录兼容残留_20261112.md",
-      "sha256": "58137c4b50a9192ff77c9a43ad23e732ef6c6fe33941693da1d7ba7239e08408"
+      "sha256": "58137c4b50a9192ff77c9a43ad23e732ef6c6fe33941693da1d7ba7239e08408",
+      "currentSha256": "58137c4b50a9192ff77c9a43ad23e732ef6c6fe33941693da1d7ba7239e08408"
     },
     {
       "path": "docs/阶段3画布资源与一致渲染验收.md",
-      "sha256": "a57c45d0e83881cf960d95a7be04eede55471f50119008422ca25c13f497da3f"
+      "sha256": "a57c45d0e83881cf960d95a7be04eede55471f50119008422ca25c13f497da3f",
+      "currentSha256": "a57c45d0e83881cf960d95a7be04eede55471f50119008422ca25c13f497da3f"
     },
     {
       "path": "docs/阶段4_41项本轮交付.md",
-      "sha256": "7280f6deb8d92ee40a981a38a6fe04c24d2bb6fe31e9391c17d3e87a4ed6ac06"
+      "sha256": "7280f6deb8d92ee40a981a38a6fe04c24d2bb6fe31e9391c17d3e87a4ed6ac06",
+      "currentSha256": "7280f6deb8d92ee40a981a38a6fe04c24d2bb6fe31e9391c17d3e87a4ed6ac06"
     },
     {
       "path": "docs/阶段4_C21增量包交付.md",
-      "sha256": "5a41e11111b0b11b262fae3a27df5f6d88aef110fb47fccc5abe8675e93eef46"
+      "sha256": "5a41e11111b0b11b262fae3a27df5f6d88aef110fb47fccc5abe8675e93eef46",
+      "currentSha256": "5a41e11111b0b11b262fae3a27df5f6d88aef110fb47fccc5abe8675e93eef46"
     },
     {
       "path": "docs/阶段4_C23增量包交付.md",
-      "sha256": "c7c81abdd3883755e255fe0a7b4d0f9e24eeea7b030c733fd990698178c58b5a"
+      "sha256": "c7c81abdd3883755e255fe0a7b4d0f9e24eeea7b030c733fd990698178c58b5a",
+      "currentSha256": "c7c81abdd3883755e255fe0a7b4d0f9e24eeea7b030c733fd990698178c58b5a"
     },
     {
       "path": "docs/阶段4_C26增量包交付.md",
-      "sha256": "8c18993da34f69ecfb8a54aba1e385ef1e2e9b3f88387c7432c75b8469efeb51"
+      "sha256": "8c18993da34f69ecfb8a54aba1e385ef1e2e9b3f88387c7432c75b8469efeb51",
+      "currentSha256": "8c18993da34f69ecfb8a54aba1e385ef1e2e9b3f88387c7432c75b8469efeb51"
     },
     {
       "path": "docs/阶段4逐控件进度.md",
-      "sha256": "bfba1b4272ee183d7f24f8778680a27a83cb563720c02446617c1211da580427"
+      "sha256": "bfba1b4272ee183d7f24f8778680a27a83cb563720c02446617c1211da580427",
+      "currentSha256": "2e7fb890b094111c8b342a194c798a840faf8a0a44d94a75a7281d9c23679b7b"
     },
     {
       "path": "docs/阶段5_圆角矩形定点背景编译与差分验收.md",
-      "sha256": "a06df5588591f1d63ce520e2b821783448319da4284abdf805385b02b4fc0607"
+      "sha256": "a06df5588591f1d63ce520e2b821783448319da4284abdf805385b02b4fc0607",
+      "currentSha256": "a06df5588591f1d63ce520e2b821783448319da4284abdf805385b02b4fc0607"
     },
     {
       "path": "docs/阶段5_多边形单元格背景编译与差分验收.md",
-      "sha256": "5bb65efd1352ad3f1cd5674e138f9822ab12e5ba34775f45cb34f00c40d39c4f"
+      "sha256": "5bb65efd1352ad3f1cd5674e138f9822ab12e5ba34775f45cb34f00c40d39c4f",
+      "currentSha256": "5bb65efd1352ad3f1cd5674e138f9822ab12e5ba34775f45cb34f00c40d39c4f"
     },
     {
       "path": "docs/阶段5_扇形默认角度背景编译与差分验收.md",
-      "sha256": "0eed01805a6a303737af3d558ddf6d0480b3b142e21b9c4bf05b5c3adc86b85d"
+      "sha256": "0eed01805a6a303737af3d558ddf6d0480b3b142e21b9c4bf05b5c3adc86b85d",
+      "currentSha256": "0eed01805a6a303737af3d558ddf6d0480b3b142e21b9c4bf05b5c3adc86b85d"
     },
     {
       "path": "docs/阶段5_普通直线独立背景编译与差分验收.md",
-      "sha256": "ab102ec3b2693ded1c2305a39552373d0bad23fa5b84aa9a6f3ccc91891d97f3"
+      "sha256": "ab102ec3b2693ded1c2305a39552373d0bad23fa5b84aa9a6f3ccc91891d97f3",
+      "currentSha256": "ab102ec3b2693ded1c2305a39552373d0bad23fa5b84aa9a6f3ccc91891d97f3"
     },
     {
       "path": "docs/阶段5_椭圆定点细分背景编译与差分验收.md",
-      "sha256": "943a6aae28e7e7e81a6b8ad9fe487a7219adb8e219a351e3ae6cd0d303c2e74a"
+      "sha256": "943a6aae28e7e7e81a6b8ad9fe487a7219adb8e219a351e3ae6cd0d303c2e74a",
+      "currentSha256": "943a6aae28e7e7e81a6b8ad9fe487a7219adb8e219a351e3ae6cd0d303c2e74a"
     },
     {
       "path": "docs/阶段5_正交折线编译与离线包验收.md",
-      "sha256": "a4a3b9d9d66b0fad4b9fea1722c8abef517eee2fc2ad29849208a1084637512b"
+      "sha256": "a4a3b9d9d66b0fad4b9fea1722c8abef517eee2fc2ad29849208a1084637512b",
+      "currentSha256": "a4a3b9d9d66b0fad4b9fea1722c8abef517eee2fc2ad29849208a1084637512b"
     },
     {
       "path": "docs/阶段5_矩形设备背景编译与差分验收.md",
-      "sha256": "8d4d6eab47ba9045dad4c8511c0abf4be787a361ee0cb4d1809926984e8840f6"
+      "sha256": "8d4d6eab47ba9045dad4c8511c0abf4be787a361ee0cb4d1809926984e8840f6",
+      "currentSha256": "8d4d6eab47ba9045dad4c8511c0abf4be787a361ee0cb4d1809926984e8840f6"
     },
     {
       "path": "docs/阶段5_自由直线两端点背景编译与差分验收.md",
-      "sha256": "4817e6d9ff992d670b815be1e2526a21262dc42d73873119812cc2783e62243e"
+      "sha256": "4817e6d9ff992d670b815be1e2526a21262dc42d73873119812cc2783e62243e",
+      "currentSha256": "4817e6d9ff992d670b815be1e2526a21262dc42d73873119812cc2783e62243e"
     },
     {
       "path": "docs/阶段5_静态表格设备背景编译与差分验收.md",
-      "sha256": "cc6140fb7205d713d0a93b88a9e6b5de16c6c345cb4b168207f22ad7b44f5d73"
+      "sha256": "cc6140fb7205d713d0a93b88a9e6b5de16c6c345cb4b168207f22ad7b44f5d73",
+      "currentSha256": "cc6140fb7205d713d0a93b88a9e6b5de16c6c345cb4b168207f22ad7b44f5d73"
     },
     {
       "path": "docs/阶段5逐项进度.md",
-      "sha256": "2c85c64bf43877f78dbc349e59327e9212732e89eb17af0b1df05010a230e783"
+      "sha256": "2c85c64bf43877f78dbc349e59327e9212732e89eb17af0b1df05010a230e783",
+      "currentSha256": "a79df46347fc9993a60ae8441f6c02c9635a56d63d9fe70cbba03e240c4f7cc6"
     },
     {
       "path": "docs/静态文本手册实现与验收.md",
-      "sha256": "b562176185acff703c91e46775f8f764fc8bdc9613807d9d7cac0f2b4846c82d"
+      "sha256": "b562176185acff703c91e46775f8f764fc8bdc9613807d9d7cac0f2b4846c82d",
+      "currentSha256": "b562176185acff703c91e46775f8f764fc8bdc9613807d9d7cac0f2b4846c82d"
     },
     {
       "path": "docs/验证报告.md",
-      "sha256": "a13205db60307bad3764944fe6bdd503ceee98d6b4a9ab4bfe82700a3e243a81"
+      "sha256": "a13205db60307bad3764944fe6bdd503ceee98d6b4a9ab4bfe82700a3e243a81",
+      "currentSha256": "a13205db60307bad3764944fe6bdd503ceee98d6b4a9ab4bfe82700a3e243a81"
     }
   ],
   "auditInputManifest": [
@@ -176834,5 +177193,100 @@
   "auditLimitations": [
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
+  ],
+  "activitySummary": "本次实际实施阶段6，94项Qt、媒体29通过/1权限跳过；10/12/14段新版独立产物USB下载成功，完整上载/独立介质生成/完整原厂窗及E仍有欠项。",
+  "stage6Executions": [
+    {
+      "progress": "docs/stage6-evidence/progress.json",
+      "sourceBaseline": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9",
+      "previousStageTaskStates": [
+        {
+          "id": "S06-01",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        },
+        {
+          "id": "S06-02",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        },
+        {
+          "id": "S06-03",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        },
+        {
+          "id": "S06-04",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        },
+        {
+          "id": "S06-05",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        },
+        {
+          "id": "S06-06",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true
+        }
+      ],
+      "observed": {
+        "schemaVersion": 1,
+        "stage": 6,
+        "date": "2026-11-14",
+        "completeStage6": false,
+        "totalTasks": 6,
+        "closedInDefinedScope": [
+          "S06-01",
+          "S06-03",
+          "S06-06"
+        ],
+        "partial": [
+          "S06-02",
+          "S06-04",
+          "S06-05"
+        ],
+        "tests": {
+          "qtPassed": 94,
+          "qtFailed": 0,
+          "qtSkipped": 0,
+          "mediaPassed": 29,
+          "mediaFailed": 0,
+          "mediaSkipped": 1
+        },
+        "offlineCliChecks": 13,
+        "portableCliChecks": 13,
+        "onlyBundledQtDllsObserved": true,
+        "hardware": {
+          "static10": {
+            "evidence": "docs/stage6-evidence/physical-r1/run.json",
+            "download": "static-10-download-stdout.txt",
+            "passed": true
+          },
+          "dynamic12": {
+            "evidence": "docs/stage6-evidence/physical-r2/run.json",
+            "download": "dynamic-12-download-stdout.txt",
+            "passed": true
+          },
+          "macro14": {
+            "evidence": "docs/stage6-evidence/physical-r2/run.json",
+            "download": "macro-14-download-stdout.txt",
+            "passed": true
+          },
+          "firstDynamicAttempt": "重启重新枚举期间设备未发现，open前失败、无write；独立核Pnp在线后新会话成功，无传输内自动重试。"
+        },
+        "firmwareVersion": "not-observed",
+        "screenEvidence": "docs/stage6-evidence/screen-observations.json",
+        "screenDisplayAndTouchConfirmed": false,
+        "uploadImplemented": false,
+        "independentMediaGenerationImplemented": false,
+        "mediaCopyOnlyImplemented": true,
+        "package": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/dist/KinSealStudioLite-Stage6-transfer-r1",
+        "executableSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+        "cleanup": "docs/stage6-evidence/native/cleanup-receipt.json"
+      },
+      "historyPolicy": "旧sourceAssessment及history2515记录保留原状态；只更新当前任务和关联范围，不据新USB T批量关闭全部历史字段。"
+    }
   ]
 }

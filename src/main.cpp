@@ -7,6 +7,7 @@
 #include "device_package.h" //20261113-11 add //20261108-10 add
 #include "text_payload_compiler.h" //20261108-11 add
 #include "project_capabilities.h" //20261110-5 add
+#include "device_transfer_contract.h" //20261114-5 add
 
 #include <QApplication>
 #include <QSettings> //20261111-1 add: Keep automated captures out of the user recent-file preferences.
@@ -38,6 +39,22 @@ static void writeDownloadResult(bool ok, const QString &message) //20261108-10 a
 
     result.insert(QStringLiteral("ok"), ok);
     result.insert(QStringLiteral("message"), message);
+    bytes = QJsonDocument(result).toJson(QJsonDocument::Compact) + '\n';
+    std::fwrite(bytes.constData(), 1, size_t(bytes.size()), stdout);
+    std::fflush(stdout);
+}
+
+/******************************************************************************
+ * Function Name   : writeStructuredTransferResult
+ * Description     : Emit a bounded event or final milestone record for the private worker owner.
+ * Input Parameters: result
+ * Return Value    : None
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static void writeStructuredTransferResult(const QJsonObject &result) //20261114-5 add
+{
+    QByteArray bytes;
+
     bytes = QJsonDocument(result).toJson(QJsonDocument::Compact) + '\n';
     std::fwrite(bytes.constData(), 1, size_t(bytes.size()), stdout);
     std::fflush(stdout);
@@ -180,6 +197,18 @@ int main(int argc, char *argv[]) //20261107-6 add
     QJsonObject inspectObject;
     QJsonObject inspectField;
     QJsonArray inspectFields;
+    QVector<QByteArray> transferPayloads; //20261114-5 add
+    QJsonObject transferContract;
+    QJsonObject transferIdentity;
+    QJsonObject transferResult;
+    DeviceTransferOptions transferOptions;
+    QFile transferSource;
+    QByteArray transferSourceBytes;
+    std::unique_ptr<QTemporaryDir> transferSnapshotDirectory;
+    QSaveFile transferFrozenSource;
+    QString transferFrozenPath;
+    QString cancelPath;
+    int cancelIndex;
 
     arguments = application.arguments();
     if (arguments.size() >= 4 &&
@@ -329,20 +358,108 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeDownloadResult(true, QStringLiteral("工程已验证并原子保存；保留页面与引用，尚未访问USB。"));
         return 0;
     }
+    if (arguments.size() >= 4 && arguments.at(1) == QStringLiteral("--transfer-contract")) //20261114-5 add: This entry never initializes the USB adapter.
+    {
+        if (QFileInfo(arguments.at(3)).suffix().compare(QStringLiteral("json"), Qt::CaseInsensitive) != 0 ||
+            transferContractWouldReplaceInput(arguments.at(2), arguments.at(3)))
+        {
+            writeDownloadResult(false, QStringLiteral("传输契约必须写入独立.json文件。"));
+            return 24;
+        }
+        transferSource.setFileName(arguments.at(2));
+        if (!transferSource.open(QIODevice::ReadOnly) || transferSource.size() > 128 * 1024 * 1024)
+        {
+            writeDownloadResult(false, QStringLiteral("无法冻结源输入，或超过128MiB读取保护。"));
+            return 24;
+        }
+        transferSourceBytes = transferSource.readAll();
+        if (transferSource.error() != QFileDevice::NoError)
+        {
+            writeDownloadResult(false, transferSource.errorString());
+            return 24;
+        }
+        transferSource.close();
+        transferSnapshotDirectory.reset(new QTemporaryDir());
+        transferFrozenPath = transferSnapshotDirectory->filePath(
+            QFileInfo(arguments.at(2)).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0
+                ? QStringLiteral("source.sm") : QStringLiteral("source.ksp"));
+        transferFrozenSource.setFileName(transferFrozenPath);
+        if (!transferSnapshotDirectory->isValid() || !transferFrozenSource.open(QIODevice::WriteOnly) ||
+            transferFrozenSource.write(transferSourceBytes) != transferSourceBytes.size() || !transferFrozenSource.commit())
+        {
+            writeDownloadResult(false, QStringLiteral("无法保存本次不可变编译输入。"));
+            return 24;
+        }
+        if (!HmiProject::load(transferFrozenPath, &validation_project, &validation_error) ||
+            !buildProjectPayload(validation_project, &transferPayloads, &validation_error) ||
+            !validateDevicePayloadStructure(transferPayloads, &validation_error))
+        {
+            writeDownloadResult(false, validation_error);
+            return 24;
+        }
+        transferIdentity.insert(QStringLiteral("sourceSha256"), QString::fromLatin1(QCryptographicHash::hash(transferSourceBytes, QCryptographicHash::Sha256).toHex()));
+        transferIdentity.insert(QStringLiteral("modelSha256"), QString::fromLatin1(QCryptographicHash::hash(QJsonDocument(validation_project.toJson()).toJson(QJsonDocument::Compact), QCryptographicHash::Sha256).toHex()));
+        transferIdentity.insert(QStringLiteral("targetModel"), validation_project.targetModel);
+        transferIdentity.insert(QStringLiteral("width"), validation_project.pageWidth);
+        transferIdentity.insert(QStringLiteral("height"), validation_project.pageHeight);
+        transferIdentity.insert(QStringLiteral("firmwareVersion"), QStringLiteral("not-observed"));
+        transferIdentity.insert(QStringLiteral("compiled"), true);
+        if (!buildDeviceTransferContract(transferPayloads, transferIdentity, &transferContract, &validation_error))
+        {
+            writeDownloadResult(false, validation_error);
+            return 24;
+        }
+        nativeFile.setFileName(arguments.at(3));
+        capabilityBytes = QJsonDocument(transferContract).toJson(QJsonDocument::Indented);
+        if (transferContractWouldReplaceInput(arguments.at(2), arguments.at(3)) ||
+            !nativeFile.open(QIODevice::WriteOnly) || nativeFile.write(capabilityBytes) != capabilityBytes.size() || !nativeFile.commit())
+        {
+            writeDownloadResult(false, nativeFile.errorString());
+            return 24;
+        }
+        writeDownloadResult(true, QStringLiteral("逐步传输契约已生成；未打开USB，未执行下载。"));
+        return 0;
+    }
     if (arguments.size() >= 3 &&
         arguments.at(1) == QStringLiteral("--download-project")) //20261109-0 add
     {
+        transferResult = deviceTransferResultToJson(DeviceTransferResult());
+        transferResult.insert(QStringLiteral("compiled"), false);
+        transferResult.insert(QStringLiteral("kind"), QStringLiteral("transfer-result"));
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error))
         {
-            writeDownloadResult(false, validation_error);
+            transferResult.insert(QStringLiteral("message"), validation_error);
+            transferResult.insert(QStringLiteral("outcome"), QStringLiteral("source_rejected"));
+            writeStructuredTransferResult(transferResult);
             return 13;
         }
-        if (!downloadProject(validation_project, &validation_error))
+        cancelIndex = arguments.indexOf(QStringLiteral("--cancel-file"));
+        if (cancelIndex >= 0)
         {
-            writeDownloadResult(false, validation_error);
+            if (cancelIndex + 1 >= arguments.size())
+            {
+                transferResult.insert(QStringLiteral("message"), QStringLiteral("缺少本次下载取消标记路径，未访问USB。"));
+                writeStructuredTransferResult(transferResult);
+                return 14;
+            }
+            cancelPath = arguments.at(cancelIndex + 1);
+            transferOptions.cancelRequested = [cancelPath]() { return QFileInfo::exists(cancelPath); };
+        }
+        transferOptions.onEvent = [](const DeviceTransferEvent &event) {
+            QJsonObject record;
+
+            record = deviceTransferEventToJson(event);
+            record.insert(QStringLiteral("kind"), QStringLiteral("transfer-event"));
+            writeStructuredTransferResult(record);
+        };
+        if (!downloadProjectDetailed(validation_project, &transferResult, &validation_error, transferOptions))
+        {
+            transferResult.insert(QStringLiteral("kind"), QStringLiteral("transfer-result"));
+            writeStructuredTransferResult(transferResult);
             return 14;
         }
-        writeDownloadResult(true, QStringLiteral("工程数据段和提交命令均获设备确认，重启命令已发送；请核对屏端显示与触控行为。"));
+        transferResult.insert(QStringLiteral("kind"), QStringLiteral("transfer-result"));
+        writeStructuredTransferResult(transferResult);
         return 0;
     }
     if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--verify-compiled-package")) //20261113-11 add: No USB access is involved in artifact verification.
