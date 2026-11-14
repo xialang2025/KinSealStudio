@@ -657,7 +657,12 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("alarm-bit") || role == QStringLiteral("alarm-condition")) { configureAlarmRegistration(role == QStringLiteral("alarm-bit") ? 0 : 1); } //20261113-2 add
         else if (role == QStringLiteral("recipe")) { configureRecipe(pageId); } //20261113-2 add
         else if (role == QStringLiteral("dataCollection")) { configureDataCollection(pageId); } //20261112-1 add
-        else if (role == QStringLiteral("macros")) { showGlobalTool(3); }
+        else if (role == QStringLiteral("macros")) //20261114-7 change: Keep unimplemented scheduler nodes separate from the ordinary editor.
+        {
+            if (label == QStringLiteral("宏指令编辑器")) { manageMacros(); }
+            else if (label == QStringLiteral("全局宏")) { m_commands.value(QStringLiteral("action_GlobalMacro"))->trigger(); }
+            else { m_commands.value(QStringLiteral("action_InitMacro"))->trigger(); }
+        }
         else if (role == QStringLiteral("unsupported")) {
             QMessageBox::information(this, label, QStringLiteral("此配置尚未开放编辑。现有工程数据会保留；下载前会校验支持范围。"));
         }

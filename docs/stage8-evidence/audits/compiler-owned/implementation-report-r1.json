@@ -1,0 +1,532 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "task": "阶段8SDK宏编译切片",
+  "marker": "20261114-7",
+  "baselineCommit": "654f3d75",
+  "workingTree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "status": "implemented-prototype-passed-awaiting-root-formal-build-and-independent-review",
+  "ownedFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_macro_compiler.h",
+      "bytes": 2946,
+      "lineCount": 67,
+      "sha256": "fa818ee2076537a07570851f1c1bbbdcc7cbdca62e49e722c2242ea45fe28d5a"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_macro_compiler.cpp",
+      "bytes": 50117,
+      "lineCount": 942,
+      "sha256": "2847403edf84e16f95026bb553dc89f597abb92faf22eb23b46836a6a92d3f79"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_macro_tests.cpp",
+      "bytes": 25822,
+      "lineCount": 503,
+      "sha256": "5ce7b258b0eefe0cdaa73ab445d9a2ccb48e1affeaf7729c411d2372bcf7e107"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\macro_process_fixture.cpp",
+      "bytes": 4799,
+      "lineCount": 114,
+      "sha256": "19cd88114e9df23ab7560d2c0233022970424fa9d7b499a525d9cc1080081f1d"
+    }
+  ],
+  "api": {
+    "legacy": "compileDeviceMacros(project,sdk,package,error)保留，通过默认options调用新重载。",
+    "new": "compileDeviceMacros(project,sdk,package,error,options,report)",
+    "options": {
+      "processTimeoutMs": 30000,
+      "totalTimeoutMs": 120000,
+      "startTimeoutMs": 5000,
+      "cleanupTimeoutMs": 2000,
+      "maxProcessOutputBytes": 262144,
+      "maxTotalOutputBytes": 1048576,
+      "temporaryRoot": "显式目录；空值沿用调用进程TEMP根。root产品入口选择Z目录。",
+      "isCancellationRequested": "快速无事件循环的可选bool回调；异常成为结构化失败。"
+    },
+    "package": "只在全宏成功、SDK重新核对、临时目录清理成功后替换；marcoRun/marcoVar/macroIndices/diagnostics旧字段保留，新增compileManifest和structuredDiagnostics。",
+    "independentFailureReport": "失败依然写出report，firstError保留首错；report不得别名既有package.compileManifest，以免破坏事务。"
+  },
+  "manifest": {
+    "format": "KinSealLite-device-macro-compilation-v1",
+    "sdk": "15个既有required文件的长度/SHA256、六PE32/64与固定版本资源（缺失明确false）、完整hash后再核不变；名称/路径不认证供应商；许可证仅长度/hash。",
+    "sources": "每宏QMap次序name/index、QString原UTF16LE无BOM字节SHA/UTF8长度与SHA、实际toLocal8Bit长度/SHA、ACP和可逆性；编译字节不正规化换行。",
+    "mappings": "每macroName→compiledIndex→RO/RW→rawBytes/rawSha256/linkedElfSha256；地址变量0。",
+    "stages": "每次实际program/argv/工作目录、PID、耗时、退出码/正常状态、自有kill/清理确认、截断/保留字节和capturedOutputSHA/文本。",
+    "reproducibilityKeySha256": "绑定SDK文件身份、目标、源字节身份/ACP、映射、固定头与两运行包SHA；排除随机工作目录和耗时。",
+    "limits": "每宏UTF8源≤1MiB、宏名≤1024 UTF16字符、数量≤100；单artifact按读上限read(max+1)，每阶段及总输出独立上限。",
+    "scope": "只沿用零地址变量普通宏编译；不修改离线模拟器不执行宏规则、不添加变量绑定或调度flags。"
+  },
+  "prototype": {
+    "testBinary": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\KinSealDeviceMacroPrototype.exe",
+    "testBinarySha256": "d79628a395df406657e84f812103b94940e7921df7a67263c5cbbe38ff8471ef",
+    "fixtureBinary": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\KinSealMacroProcessFixture.exe",
+    "fixtureBinarySha256": "6b049070803b19b3aa5f800bbd2b535c311a0654d7c5bf3b761181e85d29f1f2",
+    "construction": "当前拥有的编译器/测试两TU独立编译，链接只读复用既有KinSealDeviceMacroTests目标领域对象。未改CMake或既有build输出；不是全工程正式构建的替代。",
+    "compiler": "既有MinGW13.1.0 / Qt6.12.0；-std=c++17 -Wall -Wextra -Wconversion，QT_NO_CAST_FROM_ASCII/TO_ASCII。",
+    "compilerAndFixtureAndLinkDiagnosticsBytes": 0,
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "testLog": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\prototype-r1.txt",
+    "testXml": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\prototype-r1.xml",
+    "systemOrUserPermanentPathChanged": false,
+    "validationChildPathOverride": "仅独立验证子进程PATH前置既有MinGW/Qt bin，root已授权；产品SDK子进程PATH保持继承。",
+    "allConfiguredTempRoots": "Z盘compiler-owned；每个SDK子进程TEMP/TMP/TMPDIR为其本次新建工作目录。"
+  },
+  "sdkManifestPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\sdk-manifest-r1.json",
+  "sdkIndependentPostTestHashes": [
+    {
+      "relativePath": "armcc.exe",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "armcc.dll",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "armlink.exe",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "armlink.dll",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "fromelf.exe",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "fromelf.dll",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Include/macrolib.h",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Include/glib.h",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Include/math.h",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Include/stdio.h",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Include/stdlib.h",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "script_amzlib.a",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "guilib70_amz.a",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "licenses/LICENSE.DAT",
+      "hashMatched": true
+    },
+    {
+      "relativePath": "Lib/armlib/c_a__un.l",
+      "hashMatched": true
+    }
+  ],
+  "realSdkResults": {
+    "firstRawBytes": 24,
+    "firstRawSha256": "d6e4f44119b03071a0dea0e8066f084054da6736f8ba5aeb74d443fff914e5da",
+    "repeatRawEqual": true,
+    "repeatReproducibilityKeyEqual": true,
+    "changedConstant": "LocalBit[1] = 1改为0",
+    "changedRawBytes": 24,
+    "changedRawSha256": "bca281a0413f5ac532a7a9e41ac2b7c2730acebee9bfd4a528ea57ec3dc4026a",
+    "sourceACP": 936,
+    "sdkPeMachine": "0x014c",
+    "sdkPeBits": 32,
+    "sdkDllFixedFileVersion": "1.2.0.805",
+    "all15RequiredHashesIndependentlyRecheckedUnchanged": true,
+    "negative": "真实语法错误返回armcc.exe退出1及macro_000.c结构化首错，旧成功包不变。"
+  },
+  "evidence": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-constant-changed.json",
+      "bytes": 11663,
+      "sha256": "083738387c296ad82daf243ab42f741b375b84a820386ce37b65eece47f18853",
+      "ok": true,
+      "firstError": null,
+      "elapsedMs": 273,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“SetLB1” 编译",
+          "ok": true,
+          "elapsedMs": 63,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 链接",
+          "ok": true,
+          "elapsedMs": 59,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 提取",
+          "ok": true,
+          "elapsedMs": 55,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-oracle-first.json",
+      "bytes": 11663,
+      "sha256": "85d3ac9711f4b86c1433d027216fbb14d9a0291079aca2e89ed5b3d5e4c5759b",
+      "ok": true,
+      "firstError": null,
+      "elapsedMs": 295,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“SetLB1” 编译",
+          "ok": true,
+          "elapsedMs": 71,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 链接",
+          "ok": true,
+          "elapsedMs": 66,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 提取",
+          "ok": true,
+          "elapsedMs": 65,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-oracle-repeat.json",
+      "bytes": 11663,
+      "sha256": "d0d734a79531c7f18c36130b1e73efd193c11f8ed4595b5d0ca6d518a216a8aa",
+      "ok": true,
+      "firstError": null,
+      "elapsedMs": 267,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“SetLB1” 编译",
+          "ok": true,
+          "elapsedMs": 59,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 链接",
+          "ok": true,
+          "elapsedMs": 59,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“SetLB1” 提取",
+          "ok": true,
+          "elapsedMs": 54,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-syntax-rejected.json",
+      "bytes": 9452,
+      "sha256": "4afd9ce42ab6991c2fc11cae96cff1b02ee8df93290bc1477496865e64268edd",
+      "ok": false,
+      "firstError": {
+        "code": "sdk-stage-failed",
+        "compiledIndex": 0,
+        "macroName": "SetLB1",
+        "message": "宏“SetLB1” 编译：armcc.exe失败（退出码1）。\n\"macro_000.c\", line 1: Error: C2456E: undeclared name, inventing 'extern int invalid'\r\n\"macro_000.c\", line 1: Serious error: C2291E: <expression> expected but found ';'\r\nmacro_000.c: 0 warnings, 1 error, 1 serious error\r\n",
+        "severity": "error",
+        "stage": "宏“SetLB1” 编译"
+      },
+      "elapsedMs": 104,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“SetLB1” 编译",
+          "ok": false,
+          "elapsedMs": 57,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 221,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-cancel.json",
+      "bytes": 8650,
+      "sha256": "4a33be13a2f2e443294401fcea378968abd50d26c611b1fe1a2d4fe298f9516d",
+      "ok": false,
+      "firstError": {
+        "code": "cancelled",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏编译已取消。",
+        "severity": "error",
+        "stage": "宏“synthetic” 编译"
+      },
+      "elapsedMs": 142,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": false,
+          "elapsedMs": 119,
+          "ownedProcessKilled": true,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-fail.json",
+      "bytes": 8951,
+      "sha256": "1b656a13af902bf2778a29188afd2695e75598fc4f7b18387253675e7bd941a7",
+      "ok": false,
+      "firstError": {
+        "code": "sdk-stage-failed",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏“synthetic” 编译：armcc.exe失败（退出码7）。\nSYNTHETIC PROCESS FIXTURE; NOT ADS OR ARM ORACLE\r\nsynthetic requested failure\r\n",
+        "severity": "error",
+        "stage": "宏“synthetic” 编译"
+      },
+      "elapsedMs": 130,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": false,
+          "elapsedMs": 106,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 79,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-flood.json",
+      "bytes": 10055,
+      "sha256": "8ebd11197bbcbefe737a1506b2cd68bebbc15e953e669eaa5f596d3ce7621175",
+      "ok": false,
+      "firstError": {
+        "code": "diagnostic-output-limit",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏编译诊断输出超过单阶段或累计字节保护。",
+        "severity": "error",
+        "stage": "宏“synthetic” 编译"
+      },
+      "elapsedMs": 130,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": false,
+          "elapsedMs": 106,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 1024,
+          "outputTruncated": true
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-invalid-elf.json",
+      "bytes": 10645,
+      "sha256": "7ddc38eb60881456472641cf5d27022ed81d33722d5d679f2e2db94e8eaa6e4d",
+      "ok": false,
+      "firstError": {
+        "code": "missing-entry",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏“synthetic”：ARM镜像缺少首地址Macro_Entry；辅助函数定义应放在入口之后。",
+        "severity": "error",
+        "stage": "linked-image-validation"
+      },
+      "elapsedMs": 234,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": true,
+          "elapsedMs": 102,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“synthetic” 链接",
+          "ok": true,
+          "elapsedMs": 106,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-raw-overflow.json",
+      "bytes": 11749,
+      "sha256": "c498c0c721afa5a9099798be987c655393c4168166a430c7d6d5ba53497dc939",
+      "ok": false,
+      "firstError": {
+        "code": "raw-image-read-failed",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏编译产物 macro_000.bin 长度无效：65536 字节。",
+        "severity": "error",
+        "stage": "raw-image-validation"
+      },
+      "elapsedMs": 347,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": true,
+          "elapsedMs": 108,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“synthetic” 链接",
+          "ok": true,
+          "elapsedMs": 106,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        },
+        {
+          "stage": "宏“synthetic” 提取",
+          "ok": true,
+          "elapsedMs": 105,
+          "ownedProcessKilled": false,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 50,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-sleep.json",
+      "bytes": 8678,
+      "sha256": "81c70a9da9748049695dec4c3ee3b889e4ee4feab296f209e8346bd7a1d4f415",
+      "ok": false,
+      "firstError": {
+        "code": "stage-timeout",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏“synthetic” 编译：编译进程单阶段超时。",
+        "severity": "error",
+        "stage": "宏“synthetic” 编译"
+      },
+      "elapsedMs": 110,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": false,
+          "elapsedMs": 86,
+          "ownedProcessKilled": true,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        }
+      ]
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-total.json",
+      "bytes": 8640,
+      "sha256": "5e0da58c81bace89cd9e05963cd71a6c0a522ce36cd4e6b2d02bc5643e1f778f",
+      "ok": false,
+      "firstError": {
+        "code": "total-timeout",
+        "compiledIndex": 0,
+        "macroName": "synthetic",
+        "message": "宏编译超过本次总耗时保护。",
+        "severity": "error",
+        "stage": "宏“synthetic” 编译"
+      },
+      "elapsedMs": 107,
+      "cleanup": true,
+      "stages": [
+        {
+          "stage": "宏“synthetic” 编译",
+          "ok": false,
+          "elapsedMs": 84,
+          "ownedProcessKilled": true,
+          "ownedProcessCleanupFinished": true,
+          "capturedBytes": 0,
+          "outputTruncated": false
+        }
+      ]
+    }
+  ],
+  "remainingBoundaries": [
+    "尚需root正式全工程/GUI/tests构建与独立交叉复核。",
+    "命名required集15文件全部有hash；不声称枚举了Windows加载器全部传递依赖，更不认证SDK来源。",
+    "SDK/许可证保持原安装位置只读使用；未打包SDK，未写用户或系统PATH，未改C盘许可证。",
+    "取消只调用本次QProcess.kill；不按进程名或PID清理他人进程，不声称管理SDK可能自行启动的任意后代。",
+    "OS若未确认自有子进程退出，QProcess最终析构可能额外等待；配置总deadline不是这种终止失败下的严格墙钟上限，已先反馈root。",
+    "无新USB下载/真实触摸屏宏执行证据；hardwareExecutionVerified/nativeRuntimeCompatibilityVerified=false。"
+  ],
+  "modifiedOtherCodeDocsGit": false,
+  "cleanupReceiptPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\cleanup-r1.json",
+  "cleanupSummary": {
+    "freedBytes": 3231095,
+    "removedIntermediateFiles": 6,
+    "keptEvidenceManifests": 11,
+    "prototypeBinaryKept": true,
+    "sdkUntouched": true
+  }
+}

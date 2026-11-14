@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "stage": 8,
+  "reviewedAtUtc": "2026-11-14T09:13:07.940477+00:00",
+  "mode": "independent-read-only-no-business-logic-change",
+  "baselineCommit": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
+  "status": "candidate-corrections-inspected-formal-r2-pending",
+  "scope": [
+    "src/macro_manager_dialog.h",
+    "src/macro_manager_dialog.cpp",
+    "src/macro_compiler_cli.h",
+    "src/macro_compiler_cli.cpp",
+    "src/main_window_macros.cpp",
+    "src/main_window.h",
+    "src/main_window.cpp",
+    "src/native_shell_ui.cpp",
+    "src/main_window_workflow.cpp",
+    "src/main.cpp",
+    "CMakeLists.txt",
+    "tests/macro_ui_tests.cpp",
+    "resources/macro-library/examples.json",
+    "macro_library.qrc",
+    "src/bit_button_dialog.cpp",
+    "src/device_transfer_contract.cpp"
+  ],
+  "sourceIdentity": {
+    "src/macro_manager_dialog.h": {
+      "sha256": "6328b8e4266973ea40dfe590a81f763fed51a186d37d0c9ff5648eb5b7c889bb",
+      "bytes": 2451
+    },
+    "src/macro_manager_dialog.cpp": {
+      "sha256": "2eaf1b602a5e2d58b7384313470da589c9211bb053289c21d89806055eac61b8",
+      "bytes": 32888
+    },
+    "src/macro_compiler_cli.h": {
+      "sha256": "0628ee66e2aab2b389aab6deb33372f74be7ae4a29596c2468513811a1099fb2",
+      "bytes": 641
+    },
+    "src/macro_compiler_cli.cpp": {
+      "sha256": "c4ba4d179165c1e8fd27850412e76bf68df49c5b45a2eee552f6e6263275cfa8",
+      "bytes": 5350
+    },
+    "src/main_window_macros.cpp": {
+      "sha256": "1586357eb1114dccf30209beb3c904a924acabba2e68f69ab4375a887edf6472",
+      "bytes": 1241
+    },
+    "src/main_window.h": {
+      "sha256": "e3f15069875a1d69792604dc682dbd373484190abdbd618811b6de15a083dd64",
+      "bytes": 7190
+    },
+    "src/main_window.cpp": {
+      "sha256": "36f43383e180247818d7158b5a25137bbeb78cbcace1bafb23d76e51661c3e19",
+      "bytes": 94687
+    },
+    "src/native_shell_ui.cpp": {
+      "sha256": "9260b1f7956691b0785a31bc161efe52b1b7a04cd0ba71e05641bf3c4960efd0",
+      "bytes": 42354
+    },
+    "src/main_window_workflow.cpp": {
+      "sha256": "7172eccbe82405563d6a0d05b923a851e485559be59e5667be66564efced4ce6",
+      "bytes": 34979
+    },
+    "src/main.cpp": {
+      "sha256": "7f96a5ed4d87f850d8ed055bdf8f35063c1a87ff3cc921c1b4c6b322269c2533",
+      "bytes": 27265
+    },
+    "CMakeLists.txt": {
+      "sha256": "5dd312d925485d5ae1add2d6f016c68735bfbc5f5ec28d3be649da628d492ed9",
+      "bytes": 30817
+    },
+    "tests/macro_ui_tests.cpp": {
+      "sha256": "7b903780586e78908487eed304cd36bc8bb1006a7de99431b4bd791fb538cb7f",
+      "bytes": 21854
+    },
+    "resources/macro-library/examples.json": {
+      "sha256": "a6a5cc44d72778cc31aff94e6e7a4b9eda67647c019274f8edf4e53bbecb3e43",
+      "bytes": 10781
+    },
+    "macro_library.qrc": {
+      "sha256": "0e037464f8579f46d9bcc410ba4795d138da45ad913d08fbfbc864b7b7e49e88",
+      "bytes": 148
+    },
+    "src/bit_button_dialog.cpp": {
+      "sha256": "c7a1fc5bf6a382db504aee9658b81769855d9344bc59d7efb6cb04d28034fd69",
+      "bytes": 117147
+    },
+    "src/device_transfer_contract.cpp": {
+      "sha256": "709405ec50ddc81937a63f96166671b013c26db9093e201a5a0638f67391e039",
+      "bytes": 9784
+    }
+  },
+  "sourceIdentityTiming": "Captured after root candidate corrections. Initial unguarded version SHA was not captured; no hash is invented for it.",
+  "initialFindings": [
+    {
+      "id": "S08-UI-REVIEW-001",
+      "priority": "P2",
+      "title": "Nested modal return could access a destroyed macro manager; parented stack menu could be deleted by its owner",
+      "file": "src/macro_manager_dialog.cpp",
+      "originalSites": [
+        "promptNew",
+        "promptCopy",
+        "promptRename",
+        "promptImport:both dialogs",
+        "promptExport",
+        "findSource",
+        "library customContextMenuRequested"
+      ],
+      "evidence": "Initial code resumed with raw this after static QInputDialog/QFileDialog calls. The library used QMenu menu(this) on the stack during exec. Main manageMacros had QPointer, but these nested methods did not.",
+      "trigger": "While a nested input is active, accept it and destroy the manager in the same queued callback before getText returns; or destroy owner during the parented stack menu exec.",
+      "impact": "Returning code could dereference destroyed members; QObject owner destruction could attempt to delete a stack QMenu.",
+      "reproductionExecutedByReviewer": false,
+      "candidateCorrection": "Root added QPointer owner guards after each nested input/file call and made the stack menu unparented.",
+      "candidateStaticInspection": {
+        "guardCount": 6,
+        "parentedStackMenuRemoved": true,
+        "newOwnerDestructionRegressionPresent": true
+      },
+      "status": "candidate-static-fix-inspected-formal-regression-pending"
+    },
+    {
+      "id": "S08-UI-REVIEW-002",
+      "priority": "P3",
+      "title": "Unified binding capability helper initially had no production caller",
+      "evidence": "Initial rg found macroBindable only in workspace tests; existing disabled UI/model guards remained, but the planned direct-slot gate had not been wired.",
+      "candidateCorrection": "Root now checks MacroWorkspace::macroBindable at the start of BitButtonDialog::editMacro.",
+      "status": "candidate-static-fix-inspected",
+      "scopeNote": "Legacy bit/slider/dropdown local editors remain independent QMap source editors. They do not inherit manager collision/100-new-source/UTF8-byte/stable-ID transaction behavior."
+    }
+  ],
+  "checks": [
+    {
+      "topic": "source switching and failure recovery",
+      "result": "no-independent-blocker-seen",
+      "evidence": "Selection applies old text first; failed selection restores list row without rebuild, retaining invalid buffer. textChanged invalidates report; successful create/rename/remove/import rebuild the correct source."
+    },
+    {
+      "topic": "detached project and main-window commit",
+      "result": "no-independent-blocker-seen",
+      "evidence": "Manager owns project value; root wrapper uses QPointer for owner/dialog around exec and commits one complete project only after Accepted. Cancel does not commit."
+    },
+    {
+      "topic": "strict .c import and atomic export",
+      "result": "no-independent-blocker-seen",
+      "evidence": "Case-insensitive .c suffix, bounded complete read, strict UTF8 through shared workspace; export uses QSaveFile and only commits full encoded bytes. Existing file is preserved on open/write/commit failure."
+    },
+    {
+      "topic": "thread lifetime and cancellation",
+      "result": "no-independent-blocker-seen-in-tested-event-loop-scope",
+      "evidence": "Worker captures values/shared job, not QWidget. Destructor sets atomic cancellation; QThread has no dialog parent and self-deleteLater on finished. UI callback has QObject context, so owner destruction disconnects it. Save refuses while compiling; reject waits cancellation before closing."
+    },
+    {
+      "topic": "CLI input/output identity and budget",
+      "result": "no-independent-blocker-seen",
+      "evidence": "Dedicated verb, fixed arguments, <=16MiB complete Lite JSON input, independent .json output guard before compile and before QSaveFile open, Windows canonical/case/file-ID helper rejects aliases and hardlinks. Failure does not open output; report <=8MiB, error message bounded8192 and compiler detail <=2MiB."
+    },
+    {
+      "topic": "successful package publication",
+      "result": "no-independent-blocker-seen-at-UI-CLI-layer",
+      "evidence": "CLI consumes DeviceMacroPackage only after compiler true; complete MarcoRun/MarcoVar plus QMap index and source SHA emitted. HardwareIo/HMI-execution false. Compiler internals/SDK process behavior are separately reviewed."
+    },
+    {
+      "topic": "command wiring and inactive features",
+      "result": "defined-scope",
+      "evidence": "action_script opens manager, action_macro_admin remains usage tool. Tree ordinary editor routed separately from init/global placeholders. New action enabled only with project/no download. Address-variable tab is read-only scope text; no guessed scheduler/address-variable export."
+    },
+    {
+      "topic": "embedded library",
+      "result": "all-36-text-and-provenance-hashes-match",
+      "evidence": "36 unique names, 28 function/8 graphic fragments. Each resource UTF8 digest and both native evidence file digests match; every fragment equals a successful native insertedText. These are source fragments, not math/compile/device oracles."
+    }
+  ],
+  "library": {
+    "count": 36,
+    "uniqueNames": 36,
+    "groupCounts": {
+      "函数库": 28,
+      "图形库": 8
+    },
+    "sourceEvidence": [
+      {
+        "path": "native-macro/examples-r2/library-examples.json",
+        "sha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+        "declaredSha256Matched": true
+      },
+      {
+        "path": "native-macro/examples-r3/library-examples.json",
+        "sha256": "adc8b0c98a2fecd52c45509172f020d810bd813365f2fbffcf4dda678fe61eca",
+        "declaredSha256Matched": true
+      }
+    ],
+    "checks": [
+      {
+        "name": "ADDSUM",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "ASCII2DEC",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "ASCII2FLOAT",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "ASCII2HEX",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "BCD2BIN",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "BIN2BCD",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "CRC",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DEC2ASCII",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "FLOAT2ASCII",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "GETBIT",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "GETCHARS",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "HEX2ASCII",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "HIBYTE",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "HIWORD",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "INVBIT",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "LOBYTE",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "LOWORD",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "PUTCHARS",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "SWAPB",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "SWAPW",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "SETBIT",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "XORSUM",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DELAY",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "GETBUFFERLENGTH",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "CLEARBUFFER",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "ScreenOpen",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DISABLELCD",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "ENABLELCD",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "PutPixel",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DrawLine",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DrawHLine",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "DrawVLine",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "Rectangle",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "FilledRectangle",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "Circle",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      },
+      {
+        "name": "Fill_Circle",
+        "ownUtf8HashMatched": true,
+        "nativeTextMatched": true,
+        "nativeHashMatched": true
+      }
+    ],
+    "allMatched": true
+  },
+  "priorFormalEvidence": {
+    "path": "docs/stage8-evidence/windows-r1/run.json",
+    "passed": true,
+    "workspace": [
+      81,
+      0,
+      0
+    ],
+    "ui": [
+      10,
+      0,
+      0
+    ],
+    "compiler": [
+      19,
+      0,
+      0
+    ],
+    "total": [
+      110,
+      0,
+      0
+    ],
+    "coverageBoundary": "Prior run does not establish the later library/owner-guard candidate. Do not transfer these counts to current source identity."
+  },
+  "notExecutedByReviewer": [
+    "No GUI, SDK, compiler process, USB, PLC or independent destructive modal reproduction was started.",
+    "No source or cleanup path was modified; only this report is written."
+  ],
+  "remainingValidation": [
+    "Root rebuild/run-r2 must bind exact source/EXE hashes and execute new library golden/selection/undo/budget and accept-then-delete-owner tests.",
+    "Nested file dialog and context-menu owner destruction are statically guarded but still need their own runtime cases if complete lifecycle coverage is claimed.",
+    "Abrupt application/process shutdown is outside owner-destruction-with-running-event-loop evidence; do not call all possible shutdown paths verified.",
+    "Existing bit/slider/dropdown local macro editors remain separate and retain old source-map limits; document this rather than claim every macro entry uses the new manager.",
+    "PC SDK compilation does not verify HMI execution, original editor template/naming equality, unknown scheduling or address variables."
+  ],
+  "businessLogicModifiedByReviewer": false,
+  "cleanupAttemptedByReviewer": false,
+  "hardwareIoByReviewer": false
+}

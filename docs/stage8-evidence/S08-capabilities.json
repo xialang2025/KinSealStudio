@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "stage": 8,
+  "date": "2026-11-14",
+  "completeStage8": false,
+  "identity": {
+    "baselineCommit": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
+    "marker": "20261114-7",
+    "codeCommit": null,
+    "deliveryManifest": "docs/stage8-evidence/portable-r1/package.json",
+    "codeCommitBindingPending": true
+  },
+  "definitions": {
+    "D": "原厂帮助、真实UI和静态契约；Lite策略单列",
+    "U": "本批产品UI在声明范围内的实现/测试",
+    "P": "Lite源码、稳定ID、跨页引用与保存/取消事务；原厂SM互通单列",
+    "R": "宏编辑文本不等于图形API运行画面",
+    "C": "固定目标及实际供应SDK的零地址变量编译；合成SDK仅用于异常过程测试",
+    "T": "本批没有新增HMI下载；不能继承PC工具执行为设备传输",
+    "E": "编辑、SDK机器码或PC测试均不升级固件宏执行证据"
+  },
+  "formalTests": {
+    "evidence": "docs/stage8-evidence/windows-r3/run.json + docs/stage8-evidence/windows-r2/run.json",
+    "evidenceSha256": null,
+    "passed": 263,
+    "failed": 0,
+    "skipped": 0,
+    "macroPassed": 148,
+    "stage7RegressionPassed": 115,
+    "targets": [
+      {
+        "name": "KinSealMacroWorkspaceTests",
+        "passed": 81,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "7cc4ae6e2f32e4f45c6b74622e1ce511585acd5a6d8b695ae20db4249456e5bd",
+        "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealMacroWorkspaceTests"
+      },
+      {
+        "name": "KinSealMacroUiTests",
+        "passed": 48,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "0242624b30c61fea2734c00c468725ea05025583bf373d7c3ab348705641c0a7",
+        "evidence": "docs/stage8-evidence/windows-r3/run.json#KinSealMacroUiTests"
+      },
+      {
+        "name": "KinSealStage8CompilerTests",
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "b7cf8611aa84169a5a6735030983dfef69ae5e559984f425a19d5af8c5ef11c8",
+        "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealStage8CompilerTests"
+      },
+      {
+        "name": "KinSealSimulationRuntimeTests",
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "e085ed5f2cf4b911dd2afe9a2f8d97b7c564daa0dd77226e1d69528e91d48002",
+        "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationRuntimeTests"
+      },
+      {
+        "name": "KinSealSimulationUiTests",
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "6740ed7e2cb3666abd14d681f2a46df37e9a73596bb65158fca1192c01cc66bf",
+        "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationUiTests"
+      },
+      {
+        "name": "KinSealSimulationWorkflowTests",
+        "passed": 23,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "87ef4661ab05a4707c556f6556f4994366b6b495d6857c26f6512c9b961eacdd",
+        "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationWorkflowTests"
+      }
+    ],
+    "formalSuiteConfirmed": true,
+    "finalDeliveryConfirmed": false,
+    "uiCaptureR3Pending": false,
+    "scopeNote": "最终UI48使用r3，其余215使用r2，合263；构建CLI24/31、便携CLI24/31和最新smoke-r3 2/4均通过；截图smoke-r2 3/4保留历史，不并入Qt263。",
+    "rounds": [
+      {
+        "path": "docs/stage8-evidence/windows-r2/run.json",
+        "sha256": "566e409912a2c30cb6b8d8150ba2dcd19740b941e0d3552da72cfdca3c6e899f",
+        "usedPassedCount": 215
+      },
+      {
+        "path": "docs/stage8-evidence/windows-r3/run.json",
+        "sha256": "72e33ac19b36d0a8aaa673ca582a5ead5b95c83f79c9dabc3eb0d543836180cf",
+        "usedPassedCount": 48
+      }
+    ],
+    "screenshots": [
+      {
+        "path": "docs/stage8-evidence/windows-r3/macro-editor.png",
+        "bytes": 17331,
+        "sha256": "d4f2b4f933d166f0a4e4456f414b4bf9005bcc69f9df1b49a31d11d458ed0da3",
+        "rootVisuallyReviewed": true
+      },
+      {
+        "path": "docs/stage8-evidence/windows-r3/macro-library.png",
+        "bytes": 34324,
+        "sha256": "d750e820e67bae91e01d26fef671d60a0af737b8771b55fa088750b179c1c1eb",
+        "rootVisuallyReviewed": true
+      }
+    ],
+    "validationCompleteInDeclaredScope": true,
+    "finalDeliveryPendingReason": "仅真实程序codeCommit及包metadata绑定待主任务实际提交；本批UI/CLI/便携验证已完成。"
+  },
+  "rows": [
+    {
+      "id": "S08-ORDINARY-WORKSPACE",
+      "feature": "普通宏源码管理",
+      "status": "delivered-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-ui",
+        "U": "r3-tested-defined-subset",
+        "P": "lite-transactions-tested",
+        "R": "source-text-only",
+        "C": "separate-zero-variable-path",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "productRules": [
+        "新增/复制最多100，旧101..128可修正",
+        "名称1..256字符、Unicode区分大小写、首尾无空白、无控制字符",
+        "复制名_copy/_copyN是Lite策略",
+        "严格UTF-8内容1MiB、BOM显式",
+        "草稿接受形成一次主工程历史，取消保留主工程"
+      ],
+      "limits": [
+        "原厂完整布局/工具和导入导出格式未复刻",
+        "QScintilla全行为未恢复",
+        "完整原厂名字校验/引用变更未验"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/windows-r2/run.json#KinSealMacroWorkspaceTests",
+        "docs/stage8-evidence/windows-r3/run.json#KinSealMacroUiTests",
+        "docs/stage8-evidence/audits/native-macro-audit.json"
+      ]
+    },
+    {
+      "id": "S08-LIBRARY-36",
+      "feature": "28函数和8图形库插入例子",
+      "status": "native-text-catalogue-delivered-product-ui-implemented",
+      "layers": {
+        "D": "native-current-ui-36-of-36",
+        "U": "r3-tested-36-library-cases",
+        "P": "source-insertion-only",
+        "R": "not-graphics-runtime",
+        "C": "not-a-compile-or-math-oracle",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "nativeScope": {
+        "cursor": [
+          0,
+          0
+        ],
+        "selection": false,
+        "functionCount": 28,
+        "graphicsCount": 8
+      },
+      "productRules": [
+        "resources/macro-library/examples.json由macro_library.qrc嵌入",
+        "按原组和顺序显示，真实原厂文本保留拼写/注释/换行"
+      ],
+      "limits": [
+        "不宣称36示例编译通过或数学结果正确",
+        "选区/非零光标/缩进/撤销的原厂全等价仍待核"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/audits/native-macro/native-library-examples.json",
+        "docs/stage8-evidence/audits/native-macro-audit.json"
+      ]
+    },
+    {
+      "id": "S08-REFERENCES",
+      "feature": "跨页11载体与稳定ID事务",
+      "status": "delivered-in-defined-lite-scope",
+      "layers": {
+        "D": "native-committed-migration-unknown",
+        "U": "workspace-entry-implemented",
+        "P": "all-page-live-dormant-and-stable-id-tested",
+        "R": "not-applicable",
+        "C": "index-order-is-lite-policy",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "productRules": [
+        "改名保持稳定ID并迁移活动/休眠名称载体",
+        "复制分配独立ID",
+        "删除拒绝名称/稳定ID引用及未知不透明源消费者",
+        "原厂源快照不擅改"
+      ],
+      "limits": [
+        "原厂三宏树保持创建序，Lite按QMap名称序",
+        "原厂包序、失败/禁用过滤和按钮索引尚未核"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/windows-r2/run.json#KinSealMacroWorkspaceTests",
+        "docs/stage8-evidence/audits/native-macro-audit.json"
+      ]
+    },
+    {
+      "id": "S08-BINDING-GUARD",
+      "feature": "宏绑定能力门禁",
+      "status": "partial-finite-matrix",
+      "layers": {
+        "D": "per-control-partial-evidence",
+        "U": "four-families-enabled-others-refused",
+        "P": "dormant-carriers-preserved-for-reference-protection",
+        "R": "not-applicable",
+        "C": "per-existing-exporter-gates",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "enabledFamilies": [
+        "位按钮",
+        "字按钮",
+        "滑动开关",
+        "下拉框"
+      ],
+      "disabledIncludes": [
+        "指示灯",
+        "功能按钮",
+        "画面按钮",
+        "多态按钮",
+        "多功能按钮",
+        "数值控件",
+        "ASCII控件",
+        "未知控件"
+      ],
+      "limits": [
+        "名称载体被保护不代表允许活动绑定",
+        "四家族UI绑定不推广为所有设备编码已支持"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/windows-r2/run.json#KinSealMacroWorkspaceTests"
+      ]
+    },
+    {
+      "id": "S08-ZERO-VARIABLE-COMPILER",
+      "feature": "可重复零地址变量ADS编译",
+      "status": "delivered-in-defined-zero-address-variable-scope",
+      "layers": {
+        "D": "fixed-target-package-contract-partial",
+        "U": "background-job-cancellation-r3-ui-tested",
+        "P": "frozen-input-and-complete-package-publication",
+        "R": "not-applicable",
+        "C": "supplied-sdk-zero-address-variable-subset",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "productRules": [
+        "六参API和旧四参兼容",
+        "SDK15文件身份、ANSI/ACP/argv/RAW/索引报告",
+        "失败/取消保留旧包，首个结构化错误",
+        "显式Z临时根、拥有进程回收",
+        "QMap名称排序和零调度flag为当前Lite受限契约"
+      ],
+      "limits": [
+        "SDK哈希不构成发行方认证或再发行授权",
+        "OS未确认终止时QProcess析构可能额外等待",
+        "地址变量和其它调度拒绝",
+        "其它目标/SDK及原厂全部包序未核；便携已按限定范围通过，提交身份待绑定"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/windows-r2/run.json#KinSealStage8CompilerTests",
+        "docs/stage8-evidence/compiler-actual-r2/real-oracle-first.json",
+        "docs/stage8-evidence/compiler-actual-r2/real-oracle-repeat.json",
+        "docs/stage8-evidence/compiler-actual-r2/real-constant-changed.json",
+        "docs/stage8-evidence/cli-r1/run.json",
+        "docs/stage8-evidence/audits/core-owned/readonly-review-r1.json",
+        "docs/stage8-evidence/audits/compiler-owned/readonly-self-review-r1.json",
+        "docs/stage8-evidence/portable-r1/cli-r1/run.json",
+        "docs/stage8-evidence/portable-r1/smoke-r3/run.json",
+        "docs/stage8-evidence/audits/stage8-ui-cli-readonly-review-r2.json"
+      ]
+    },
+    {
+      "id": "S08-ADDRESS-VARIABLES",
+      "feature": "地址变量",
+      "status": "ui-evidence-only-product-refused",
+      "layers": {
+        "D": "eight-native-types-and-defaults-only",
+        "U": "0-of-25-read-only-scope-label",
+        "P": "ordinary-source-kind-gate-refuses",
+        "R": "not-applicable",
+        "C": "nonzero-variable-package-not-supported",
+        "T": "not-run",
+        "E": "unknown"
+      },
+      "limits": [
+        "25标签不是实际强制边界实证",
+        "904/36B非零变量布局和交换时序未知",
+        "不填零槽伪装有变量宏"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/audits/native-macro-audit.json"
+      ]
+    },
+    {
+      "id": "S08-SCHEDULING",
+      "feature": "初始化/全局/画面/周期/事件调度",
+      "status": "partial-native-ui-product-unavailable",
+      "layers": {
+        "D": "init-and-global-fields-only",
+        "U": "unrecovered-prompt",
+        "P": "not-implemented",
+        "R": "not-applicable",
+        "C": "unknown-flags-not-generated",
+        "T": "not-run",
+        "E": "unknown"
+      },
+      "nativeUiFacts": {
+        "initAdvertisedCount": "0/16",
+        "globalAdvertisedCount": "0/64",
+        "globalRateDefault": 1,
+        "globalRateRange": [
+          1,
+          65535
+        ],
+        "globalRateUnitLabel": "x100MS",
+        "globalCountDefault": 0,
+        "globalCountRange": [
+          0,
+          65535
+        ],
+        "zeroCountLabel": "0表示一直执行",
+        "controlledDefault": false,
+        "controlledDefaultAddress": "LB0"
+      },
+      "limits": [
+        "计数标签和字段范围不证明设备执行",
+        "周期可能为全局条件，不先造独立类型",
+        "画面源/触发/重入/排队/断电未知"
+      ],
+      "evidence": [
+        "docs/stage8-evidence/audits/native-macro-audit.json"
+      ]
+    },
+    {
+      "id": "S08-OFFLINE-MACRO",
+      "feature": "离线模拟宏",
+      "status": "remains-disabled",
+      "layers": {
+        "D": "existing-help-boundary",
+        "U": "macro-skipped-warning",
+        "P": "source-retained",
+        "R": "not-executed",
+        "C": "sdk-compile-is-separate",
+        "T": "no-new-hmi-transfer",
+        "E": "not-upgraded"
+      },
+      "limits": [
+        "本阶段普通编辑和编译不自动开放离线执行",
+        "ARM设备宏不直接作为x64函数调用"
+      ],
+      "evidence": [
+        "docs/阶段7离线模拟实现与验收.md",
+        "docs/阶段8宏编辑编译与验收.md"
+      ]
+    }
+  ],
+  "completeTasksRemainOpen": [
+    "S08-01",
+    "S08-02",
+    "S08-03",
+    "S08-04",
+    "S08-05",
+    "S08-06"
+  ],
+  "cleanupOpenItem": "DOC-CLEANUP-004",
+  "testHistory": [
+    {
+      "round": "windows-r1",
+      "evidence": "docs/stage8-evidence/windows-r1/run.json",
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "finalDeliveryConfirmed": false,
+      "scopeNote": "正式r1结果，后续UI/CLI修整需最终回填"
+    },
+    {
+      "round": "windows-r2-complete-suite",
+      "sameProductionCodeAsR3": true,
+      "evidence": "docs/stage8-evidence/windows-r2/run.json",
+      "evidenceSha256": "566e409912a2c30cb6b8d8150ba2dcd19740b941e0d3552da72cfdca3c6e899f",
+      "passed": 263,
+      "failed": 0,
+      "skipped": 0,
+      "macroPassed": 148,
+      "stage7RegressionPassed": 115,
+      "targets": [
+        {
+          "name": "KinSealMacroWorkspaceTests",
+          "passed": 81,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "7cc4ae6e2f32e4f45c6b74622e1ce511585acd5a6d8b695ae20db4249456e5bd",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealMacroWorkspaceTests"
+        },
+        {
+          "name": "KinSealMacroUiTests",
+          "passed": 48,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "e1805bd10fcfd7e1105cb4610c92c8c33678eaa575d7843beacbb0ec3ece6587",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealMacroUiTests"
+        },
+        {
+          "name": "KinSealStage8CompilerTests",
+          "passed": 19,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "b7cf8611aa84169a5a6735030983dfef69ae5e559984f425a19d5af8c5ef11c8",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealStage8CompilerTests"
+        },
+        {
+          "name": "KinSealSimulationRuntimeTests",
+          "passed": 79,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "e085ed5f2cf4b911dd2afe9a2f8d97b7c564daa0dd77226e1d69528e91d48002",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationRuntimeTests"
+        },
+        {
+          "name": "KinSealSimulationUiTests",
+          "passed": 13,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "6740ed7e2cb3666abd14d681f2a46df37e9a73596bb65158fca1192c01cc66bf",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationUiTests"
+        },
+        {
+          "name": "KinSealSimulationWorkflowTests",
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "sha256": "87ef4661ab05a4707c556f6556f4994366b6b495d6857c26f6512c9b961eacdd",
+          "evidence": "docs/stage8-evidence/windows-r2/run.json#KinSealSimulationWorkflowTests"
+        }
+      ],
+      "formalSuiteConfirmed": true,
+      "finalDeliveryConfirmed": false,
+      "uiCaptureR3Pending": true,
+      "scopeNote": "r2全部6组通过；r3仅UI48截图轮次正在补跑，不与r2重复计数。CLI与便携包尚待主任务结果。"
+    }
+  ],
+  "evidenceArchive": {
+    "manifest": "docs/stage8-evidence/audits/sources.json",
+    "fileCount": 152,
+    "bytes": 3354942,
+    "deletions": 0,
+    "containsSdkExeDllSandboxBmp": false,
+    "sourcesSha256": "0222a63e3fda1edc4e88728cb6ee8f61deb6bcf413673cc99027d15e9391f379"
+  },
+  "cli": {
+    "evidence": "docs/stage8-evidence/cli-r1/run.json",
+    "evidenceSha256": "29ff9b52b86b0588174790cdf4d16b13f364d5cca48d1d4fdd3941714a229678",
+    "processes": 24,
+    "semanticChecks": 31,
+    "passed": true,
+    "executableSha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91",
+    "scriptSha256": "f18584242b69f3570ae7d76e67edc3ba0b8f5132de9a286771087f94a91eb561",
+    "scriptScope": "Final harness includes supplemental readonly-existing-output preservation case; batch-start harness identity retained in run.json",
+    "qtTestTotalIncludesTheseChecks": false,
+    "hardwareIo": false,
+    "hmiExecutionConfirmed": false,
+    "temporaryFilesRemaining": []
+  },
+  "cleanupSummary": {
+    "successfulDeletedFiles": 8,
+    "successfulDeletedBytes": 36785529,
+    "historicalRejectedDeletionsRetried": false,
+    "openItem": "DOC-CLEANUP-004"
+  },
+  "portable": {
+    "evidence": "docs/stage8-evidence/portable-r1/package.json",
+    "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
+    "codeCommit": null,
+    "codeCommitBindingPending": true,
+    "manifestSha256AtAcceptance": "e70a23e79c225d729db44011b578579d2d77b7c7d2fe0a3587c264271241fcc9",
+    "sourceContentSha256": "4be9f6b775e6117ac445a50f17858ee16fcc21751f7a595f585c30c7a2a85cf0",
+    "fileCountIncludingManifest": 191,
+    "sampleCount": 164,
+    "executableSha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91",
+    "packageOnlyQtCleanPathPassed": true,
+    "cli": {
+      "evidence": "docs/stage8-evidence/portable-r1/cli-r1/run.json",
+      "evidenceSha256": "c5880967322e72c43d44f130f6e181cedc0dfed2f6eb0f80ade4596f6365faff",
+      "processes": 24,
+      "semanticChecks": 31,
+      "passed": true
+    },
+    "smoke": {
+      "evidence": "docs/stage8-evidence/portable-r1/smoke-r3/run.json",
+      "evidenceSha256": "a94c1e4f5bc8a63fd3690ff7d0a936154844f8dfcebfd19de276f6267e7c4719",
+      "processes": 2,
+      "semanticChecks": 4,
+      "passed": true,
+      "rawLengths": [
+        24,
+        24
+      ],
+      "marcoRunBytes": 1072,
+      "marcoVarBytes": 1808,
+      "marcoVarAllZero": true,
+      "productionExecutableChanged": false,
+      "sampleAmendment": "英文函数头注释补记，源身份变化、机器码和容器身份不变",
+      "historicalScreenshot": "docs/stage8-evidence/portable-r1/smoke-r2/main-window.png"
+    },
+    "historicalFirstSmoke": {
+      "evidence": "docs/stage8-evidence/portable-r1/run.json",
+      "retained": true,
+      "processesExitedZero": 3,
+      "assertionFailed": true,
+      "cause": "验收脚本把每宏都假定为完整头部，smoke-r2改为唯一1024B头+连续RAW独立解析；生产未改"
+    },
+    "mainWindowScreenshot": {
+      "path": "docs/stage8-evidence/portable-r1/smoke-r2/main-window.png",
+      "sha256": "b24f5ea96abf27df59bc5bc90c306a51abf793d999dc6f421c3023f719a0ef7a",
+      "rootVisuallyReviewed": true
+    },
+    "hardwareUsbTransfer": false,
+    "plcIo": false,
+    "hmiExecutionConfirmed": false,
+    "mainWindowMayReadOnlyEnumerateDevices": true,
+    "cleanup": {
+      "evidence": "docs/stage8-evidence/portable-r1/cleanup-result.json",
+      "deletedFiles": 1,
+      "deletedBytes": 16777217,
+      "historicalRejectedDeletionRetried": false
+    },
+    "historicalSmokeR2": {
+      "evidence": "docs/stage8-evidence/portable-r1/smoke-r2/run.json",
+      "evidenceSha256": "db5c755e0c8c0967071efe0a6b5ea7f4b44555fc671b3137b3735ffeae01e2d5",
+      "processes": 3,
+      "semanticChecks": 4,
+      "passed": true,
+      "rawLengths": [
+        24,
+        24
+      ],
+      "marcoRunBytes": 1072,
+      "marcoVarBytes": 1808,
+      "marcoVarAllZero": true
+    },
+    "manifestHistory": [
+      {
+        "evidence": "docs/stage8-evidence/portable-r1/smoke-r2/run.json",
+        "manifestSha256AtTest": "b65f57143cc827f5319dc688247487622501c091e770055abeb1cf2a72fb11c7"
+      }
+    ],
+    "latestSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json"
+  },
+  "review": {
+    "evidence": "docs/stage8-evidence/audits/stage8-ui-cli-readonly-review-r2.json",
+    "sha256": "2af8597caf0fdcced16afcb502ed7a51cdd3126618f0f2f3b5209e161a6b4917",
+    "status": "no-active-independent-finding-in-declared-slice",
+    "activeFindings": [],
+    "scope": "declared ordinary-source/zero-address-variable slice; full stage8 remains open"
+  }
+}

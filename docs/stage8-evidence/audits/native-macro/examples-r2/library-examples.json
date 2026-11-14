@@ -1,0 +1,1087 @@
+{
+  "sourceRun": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\run.json",
+  "examples": [
+    {
+      "name": "ADDSUM",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11012710,
+          "actions": [
+            {
+              "pointer": "0xefe7180",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char data[5];\n short checksum;\n data[0] =0x1;\n data[1] =0x2;\n data[2] =0x3; \n data[3] =0x4;\n data[4] =0x20; \n checksum=ADDSUM(data, 5); //checksum=0x2a;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "7738e9c72d56b2c5c13785db68ccd98a3f8aca8612c67285e10116334a5d0d22",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char data[5];\n short checksum;\n data[0] =0x1;\n data[1] =0x2;\n data[2] =0x3; \n data[3] =0x4;\n data[4] =0x20; \n checksum=ADDSUM(data, 5); //checksum=0x2a;",
+      "insertedTextUtf8Sha256": "a2beed8aedb089494d7900d7a87d8d421b5994d8a98812696de04186bcae45ae"
+    },
+    {
+      "name": "ASCII2DEC",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11078246,
+          "actions": [
+            {
+              "pointer": "0xefe7040",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char source[4];\n  short result;\n source[0] ='2'; \n source[1] ='3';\n source[2] ='4';\n source[3] ='5'; \n  result=ASCII2DEC(source , 4);//  result=2345;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "b62557a91072638790a54c4ff88314891cc7e542b9e7f075736b953e1ef42b4e",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char source[4];\n  short result;\n source[0] ='2'; \n source[1] ='3';\n source[2] ='4';\n source[3] ='5'; \n  result=ASCII2DEC(source , 4);//  result=2345;",
+      "insertedTextUtf8Sha256": "cfa3e9c8862004fbd06bccd0384fbf061a3a97537acc459fa5d53d9e24f0f609"
+    },
+    {
+      "name": "ASCII2FLOAT",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11143782,
+          "actions": [
+            {
+              "pointer": "0x121b3940",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char source[4];\n  float result;\n source[0] ='5'; \n source[1] ='.';\n source[2] ='7';\n source[3] ='8';\n  result=ASCII2FLOAT(source,4);//  result = 5.78;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "eccd49c0100b8ccd063870a88eff37358b94a0a5c7b15e46fee54025caf59c4c",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char source[4];\n  float result;\n source[0] ='5'; \n source[1] ='.';\n source[2] ='7';\n source[3] ='8';\n  result=ASCII2FLOAT(source,4);//  result = 5.78;",
+      "insertedTextUtf8Sha256": "a00bf8b18ec2edd255f11a39989b00bad32d20acf623542bf01532849e0e3ca7"
+    },
+    {
+      "name": "ASCII2HEX",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11209318,
+          "actions": [
+            {
+              "pointer": "0x121b3a70",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char source[4]; \n  short result; \n source[0] ='1'; \n source[1] ='6';\n source[2] ='3';\n source[3] ='4';   \n  result=ASCII2HEX(source,4);//  result = 0x1634;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "746f76fc9ec2ea433ded538010fe79b1475e0db0591083c55a7e58b99b89a655",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char source[4]; \n  short result; \n source[0] ='1'; \n source[1] ='6';\n source[2] ='3';\n source[3] ='4';   \n  result=ASCII2HEX(source,4);//  result = 0x1634;",
+      "insertedTextUtf8Sha256": "6c23ec5be24bfae7140dcdd977bbe601c5837b45e90a8eaa140e4ad595825ebc"
+    },
+    {
+      "name": "BCD2BIN",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11274854,
+          "actions": [
+            {
+              "pointer": "0x121b3a80",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x2648;  \n  short result;   \n  result=BCD2BIN(source);//  result = 2648;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "111a6f132e0cd64a55901b464aa076839f4dd42c0e41ba75868d8a04d7a765c2",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x2648;  \n  short result;   \n  result=BCD2BIN(source);//  result = 2648;",
+      "insertedTextUtf8Sha256": "8983bf9f20dce18872e1c575441de197d6c882f0fb3bf5061ccde99128ca2476"
+    },
+    {
+      "name": "BIN2BCD",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11340390,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 1234;   \n  short result;   \n  result=BIN2BCD(source);//  result = 0x1234;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "549ba4200a5697c286a25147fbc17b8bb3611e7ed03fcee1ed13f9c7955ffb30",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 1234;   \n  short result;   \n  result=BIN2BCD(source);//  result = 0x1234;",
+      "insertedTextUtf8Sha256": "d19cc8e31761384fcb5d2d8509a565e5f4daeb59f755cc6d81337845179c7af9"
+    },
+    {
+      "name": "CRC",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11405926,
+          "actions": [
+            {
+              "pointer": "0x121b3a60",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char source[5]; \n  short bit_CRC; \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x4;\n source[4] =0x5;\n  bit_CRC=CRC(source,5);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "8783d47292b440ae3344090a4d7e2e26c68b44d96e52b8f01346f056dc54592c",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char source[5]; \n  short bit_CRC; \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x4;\n source[4] =0x5;\n  bit_CRC=CRC(source,5);",
+      "insertedTextUtf8Sha256": "ef492ec79de9a5f10c7df11f4a403c636c9a122d7fb558bf44a1920e8d69f267"
+    },
+    {
+      "name": "DEC2ASCII",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11471462,
+          "actions": [
+            {
+              "pointer": "0x121b3a10",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 5678; \n  char result[4]; \n  DEC2ASCII(result,source,4); \n  //result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "232c532ea190f9ebca7b7de4d5571895fbc58bb6a718eb987295c8d391a09abf",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 5678; \n  char result[4]; \n  DEC2ASCII(result,source,4); \n  //result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';",
+      "insertedTextUtf8Sha256": "40885959517ad65ef4c0e09620c7587817f778c3ed9e41d67ea2167a43e2ed22"
+    },
+    {
+      "name": "FLOAT2ASCII",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11536998,
+          "actions": [
+            {
+              "pointer": "0x121b38e0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "float source = 56.8;\n  unsigned char result[10];\n  FLOAT2ASCII(source,result); \n//result[0] = '5',result[1] = '6',result[2] = '.',result[3] = '8';/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "59f42c77379ab2bedce48d92634ff10a23a292f2049be73fc236cd8402770e12",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "float source = 56.8;\n  unsigned char result[10];\n  FLOAT2ASCII(source,result); \n//result[0] = '5',result[1] = '6',result[2] = '.',result[3] = '8';",
+      "insertedTextUtf8Sha256": "bb879e3b7cc91a071a4f0a741eaf1120c1721ad67aa21f034c35b859fc17b2a1"
+    },
+    {
+      "name": "GETBIT",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11602534,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x5, bit_pos = 0 ,result; \n  result = GETBIT(source,bit_pos);//  result = 1;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "f6dd51e71d7fff30891b29a9e672d1d903c3291545e782910690ce00398626a1",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x5, bit_pos = 0 ,result; \n  result = GETBIT(source,bit_pos);//  result = 1;",
+      "insertedTextUtf8Sha256": "31172f3049e9c9fe83438c7538b70bab7a66b736d485e094c1da1b32c30a2d3a"
+    },
+    {
+      "name": "GETCHARS",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11668070,
+          "actions": [
+            {
+              "pointer": "0x121b3980",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char Data[20]; \n  char PortID,Result; \n  PortID=0; \n  Result=GETCHARS(PortID,Data);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "5e4a569c54baaac3c1d413dbd977a3ca995ef427483f3dfbc0b0aac653f14643",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char Data[20]; \n  char PortID,Result; \n  PortID=0; \n  Result=GETCHARS(PortID,Data);",
+      "insertedTextUtf8Sha256": "e79b24dc66667ffd1980410da51c6d1fc9abc5339fe6e9ac7d7322ff46663d96"
+    },
+    {
+      "name": "HEX2ASCII",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11733606,
+          "actions": [
+            {
+              "pointer": "0x121b38d0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x5678; \n  char result[4]; \n  HEX2ASCII(source,result);  \n//result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "1446807646e4a2d60acebb5c29ba4c7de6ab7bea21d45457861541886df54c75",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x5678; \n  char result[4]; \n  HEX2ASCII(source,result);  \n//result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';",
+      "insertedTextUtf8Sha256": "1667422faf8ed7e963349096ed16fb77daa75eb75691c3cba9bc5d108a610daa"
+    },
+    {
+      "name": "HIBYTE",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11799142,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x1234,result; \n  result=HIBYTE(source);//  result = 0x12;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "3753e659ed317416cf242e78f9b768fc4094cca90b94ca9ecc5f1c1070d49bec",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x1234,result; \n  result=HIBYTE(source);//  result = 0x12;",
+      "insertedTextUtf8Sha256": "9e6d3f1bd4738d4a108aa06b6d77e9e22b082a8fe1eb87aaf895bec30d916fa3"
+    },
+    {
+      "name": "HIWORD",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11864678,
+          "actions": [
+            {
+              "pointer": "0x121b3a20",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int source = 0x12345678,result; \n  result=HIWORD(source);//  result = 0x1234;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "ac1272a8ccd548382e99233dd8bb76abca4303852f72bae79286429eea54ab6d",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int source = 0x12345678,result; \n  result=HIWORD(source);//  result = 0x1234;",
+      "insertedTextUtf8Sha256": "fcd4dcd4d768864702c7da0df4603ad52b83576c5d5af3be15d426877b97d7fa"
+    },
+    {
+      "name": "INVBIT",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 11930214,
+          "actions": [
+            {
+              "pointer": "0x121b38d0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x6,  bit_pos =1 ,result; \n  result=INVBIT(source, bit_pos);//  result = 4;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "3098d8ea0a2bf89425aa17fef219420a788264f382c7d617bc873ddec345bb19",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x6,  bit_pos =1 ,result; \n  result=INVBIT(source, bit_pos);//  result = 4;",
+      "insertedTextUtf8Sha256": "37a8ed695a49b2d1093c1e145c0c91380ec5980f52771632a0105d5ff9e48319"
+    },
+    {
+      "name": "LOBYTE",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [],
+      "status": "partial-or-error",
+      "error": "AssertionError({'item': {'pointer': '0x623de00', 'text': 'LOBYTE', 'rect': [40, 272, 134, 288]}, 'popups': []})"
+    },
+    {
+      "name": "LOWORD",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [],
+      "status": "partial-or-error",
+      "error": "AssertionError({'item': {'pointer': '0x623dec8', 'text': 'LOWORD', 'rect': [40, 289, 134, 305]}, 'popups': []})"
+    },
+    {
+      "name": "PUTCHARS",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12126822,
+          "actions": [
+            {
+              "pointer": "0x121b3a80",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char Data[5],PortID; \n  unsigned char Length; \n Data[0] = 0x02;\n Data[1] = 0x30;\n Data[2] = 0x31;\n Data[3] = 0x4d;\n Data[4] = 0x5e; \n  Length=5;    \n  PortID=0;   \n  PUTCHARS(PortID,Data, Length);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "28dd3373969de5b2bb3993615995baa2349ad64977c1a5aac4bdea4feb9b1261",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char Data[5],PortID; \n  unsigned char Length; \n Data[0] = 0x02;\n Data[1] = 0x30;\n Data[2] = 0x31;\n Data[3] = 0x4d;\n Data[4] = 0x5e; \n  Length=5;    \n  PortID=0;   \n  PUTCHARS(PortID,Data, Length);",
+      "insertedTextUtf8Sha256": "07f58ec3733d4087826c2a932a50812541a1fe63116e093809f01d083f1ac52f"
+    },
+    {
+      "name": "SWAPB",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12192358,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short source = 0x1234,result;   \n  result=SWAPB(source);//  result = 0x3412;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "8837f13219d39767d1218b3b123a50a8e24e3f6a1bf435781d38b51b36c2ec75",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short source = 0x1234,result;   \n  result=SWAPB(source);//  result = 0x3412;",
+      "insertedTextUtf8Sha256": "6b80757334a873e3d451be9bba02f745fc9c36965a596def54ea464858085f0c"
+    },
+    {
+      "name": "SWAPW",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12257894,
+          "actions": [
+            {
+              "pointer": "0x121b3ba0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int  source = 0x12345678;  \n  int  result;   \n  result=SWAPW(source);//  result = 0x56781234;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "521ef9e9c45c67aa58aa24cb809fddf71be18008ea3c85f0e5937bf26db381e1",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int  source = 0x12345678;  \n  int  result;   \n  result=SWAPW(source);//  result = 0x56781234;",
+      "insertedTextUtf8Sha256": "a4693aae0422ab5ef534c1edeeb83ab93fb9c67a63ac3b500ff5ba5d73cb7f9d"
+    },
+    {
+      "name": "SETBIT",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12323430,
+          "actions": [
+            {
+              "pointer": "0x121b3a20",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short  source = 0x4;   \n  short bit_pos = 2, result;  \n  result = SETBIT(source,bit_pos,1);//  result = 4;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "8c4452093f036b2f5bf3be6a32cfe3f2072e72d6ca8d7c038d4507981d21a8af",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short  source = 0x4;   \n  short bit_pos = 2, result;  \n  result = SETBIT(source,bit_pos,1);//  result = 4;",
+      "insertedTextUtf8Sha256": "c51b6e21161f78416b8e54fc991f381fa2cd1780784fdaeebf0bee97b9b22907"
+    },
+    {
+      "name": "XORSUM",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12388966,
+          "actions": [
+            {
+              "pointer": "0x121b3900",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "char source[5];\n  short checksum;   \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x48;\n source[4] =0x5;    \n  checksum = XORSUM(source, 5); //checksum =0x4d;/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "ce53d0344be303ac19d483cd956844f38e421e484d27129e7bba95779edef63e",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "char source[5];\n  short checksum;   \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x48;\n source[4] =0x5;    \n  checksum = XORSUM(source, 5); //checksum =0x4d;",
+      "insertedTextUtf8Sha256": "19a0ce53d7d33e02d6a1635855f236a0bab5e5a976809d3a51be5ebbecf44ffd"
+    },
+    {
+      "name": "DELAY",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12454502,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int millsec = 100;   \n  DELAY(millsec);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "54f819646fdb1672a07472a03706ab5988990a361de7c813207d21cdf9b79c3c",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int millsec = 100;   \n  DELAY(millsec);",
+      "insertedTextUtf8Sha256": "9dadebba5e2daba19b8939433d8d6e28e97a236cd6115b91fb197af5ac0c2df6"
+    },
+    {
+      "name": "GETBUFFERLENGTH",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12520038,
+          "actions": [
+            {
+              "pointer": "0x121b3a50",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int bufferlen,PortID;  \n  PortID=0;    \n  bufferlen=GETBUFFERLENGTH(PortID);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "577f381427f533a9728ceefecddfb4682be3ef9fbb379945ad997108d1d6d573",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int bufferlen,PortID;  \n  PortID=0;    \n  bufferlen=GETBUFFERLENGTH(PortID);",
+      "insertedTextUtf8Sha256": "3a6ee4e3ace9c40599ddfeea314487d2db423edaffe2d8dfb2a88b67c9e436dd"
+    },
+    {
+      "name": "CLEARBUFFER",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12585574,
+          "actions": [
+            {
+              "pointer": "0x121b3aa0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int Clearresult,PortID;   \n  PortID=0;  \n  Clearresult=CLEARBUFFER(PortID);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "d65b285a08d9e0028f8866fc9a3fad767f75f1743854e2f5a2d51b78ab61cda7",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int Clearresult,PortID;   \n  PortID=0;  \n  Clearresult=CLEARBUFFER(PortID);",
+      "insertedTextUtf8Sha256": "bdfe77ff2e6dffdf00003ca9394a3e92dd88fba8c6a1071bcf0c40dfc8a3c3ef"
+    },
+    {
+      "name": "ScreenOpen",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12651110,
+          "actions": [
+            {
+              "pointer": "0x121b3a90",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "short screenindex;\n screenindex = 1;\n ScreenOpen(screenindex);\n/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "06cbbdd65a79de38119ebac09368bc0dd149e28d133b17735d80c1cf27645e2d",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "short screenindex;\n screenindex = 1;\n ScreenOpen(screenindex);\n",
+      "insertedTextUtf8Sha256": "a178dab6d807732e8c74f65cd196fba8fbf25b86909f3124e11a12afc758fdc9"
+    },
+    {
+      "name": "DISABLELCD",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12716646,
+          "actions": [
+            {
+              "pointer": "0x121b3a20",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "DISABLELCD();\n/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "cb80126f687847beb4e75d4fe90f2c13d3e86f301ad2845d803a64ef3943d851",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "DISABLELCD();\n",
+      "insertedTextUtf8Sha256": "6d4f796fc68de07a44f8ef888731eb179029712a6678249715b29130811a8009"
+    },
+    {
+      "name": "ENABLELCD",
+      "group": "函数库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12782182,
+          "actions": [
+            {
+              "pointer": "0x121b3a90",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "ENABLELCD();\n/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "43da339f53076c381ac17ab6fe9280ac29a79c5215cf5bd6556b74b3f60201ec",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "ENABLELCD();\n",
+      "insertedTextUtf8Sha256": "7d05ffcb4ad5426cbde4d4fb6b164452c35e75cef6b47bd6987ddfd19ea03e3c"
+    },
+    {
+      "name": "PutPixel",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12847718,
+          "actions": [
+            {
+              "pointer": "0x121b38e0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x = 2;\n int y= 4;\n int c = COLOR_BLACK;\n PutPixel(x,y,c);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "7859b071144e0b0941a0430b14d0668922d20a2f5e2aa670cf4d135904ecfdea",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x = 2;\n int y= 4;\n int c = COLOR_BLACK;\n PutPixel(x,y,c);",
+      "insertedTextUtf8Sha256": "57b2b39c1f5360e66c84b3e9ae4d45d343da99df22cecb7cf1f09ed8ce5014b3"
+    },
+    {
+      "name": "DrawLine",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12913254,
+          "actions": [
+            {
+              "pointer": "0x121b3a90",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_NAVY;\n DrawLine(x1,y1,x2,y2,color  );/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "410bb173aea2d2f2b04ccd0ab458d4f9f617b4987d920e2f6b0d56d6558fe047",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_NAVY;\n DrawLine(x1,y1,x2,y2,color  );",
+      "insertedTextUtf8Sha256": "7adff2695bdb9c9760342f99c3eba89355647a4de7433a487bb51764b9a0e2b7"
+    },
+    {
+      "name": "DrawHLine",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 12978790,
+          "actions": [
+            {
+              "pointer": "0x121b39d0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x1 =2,x2=3;\n int y= 4;\n int color = COLOR_DCYAN;\n DrawHLine(x1,x2,y,color);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "201c3b6261afed226b8518e6a78097b95bd5a9f8646764857fe8e8ce63a0fb60",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x1 =2,x2=3;\n int y= 4;\n int color = COLOR_DCYAN;\n DrawHLine(x1,x2,y,color);",
+      "insertedTextUtf8Sha256": "cce1e9ccd09dc57d3c72709ca1f0488744ae981380b6c6445c8ee677205fd2ca"
+    },
+    {
+      "name": "DrawVLine",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 13044326,
+          "actions": [
+            {
+              "pointer": "0x121b3900",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int y1 =2,y2=3;\n int x= 4;\n int color = COLOR_DGREEN;\n DrawVLine(y1,y2,x,color);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "30877d50c3d3049045646b9288b7ec5e26a1bf4dbf01e98718bd24c7700d41fb",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int y1 =2,y2=3;\n int x= 4;\n int color = COLOR_DGREEN;\n DrawVLine(y1,y2,x,color);",
+      "insertedTextUtf8Sha256": "7c5378e4fef0c5f40741c1805aecfe65eb8e5dd2c3c9d1edfc11a85e8f43e5f6"
+    },
+    {
+      "name": "Rectangle",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 13109862,
+          "actions": [
+            {
+              "pointer": "0x121b3980",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n Rectangle(x1,y1,x2,y2,color);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "e716f0120a9466874c6ba1a29ea4e9a1b1e0a440b6e2b60876a779ee025a4527",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n Rectangle(x1,y1,x2,y2,color);",
+      "insertedTextUtf8Sha256": "b8d000cdcce2f75d01e804639626c86ea72f522658ecb893bdd01052269c7393"
+    },
+    {
+      "name": "FilledRectangle",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 13175398,
+          "actions": [
+            {
+              "pointer": "0x121b3900",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n FilledRectangle(x1,y1,x2,y2,color  );/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "32e7a6fbfe0bf6c983361a88f29b641262e7533d5d24104ddfc71f25026b7a32",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n FilledRectangle(x1,y1,x2,y2,color  );",
+      "insertedTextUtf8Sha256": "24f90a7eb6d57c33e8eb4e78e6330c6744bff5827663015789d2649fb1408352"
+    },
+    {
+      "name": "Circle",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 13240934,
+          "actions": [
+            {
+              "pointer": "0x121b3980",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "unsigned int x0 =2;\n unsigned int y0= 4;\n unsigned int r=2;\n int color = COLOR_DGREEN;\n Circle(x0,y0,r,color);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "4b14241104e6c6bba260e598c67d2da797b578929b6931caf67e11f46238a110",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "unsigned int x0 =2;\n unsigned int y0= 4;\n unsigned int r=2;\n int color = COLOR_DGREEN;\n Circle(x0,y0,r,color);",
+      "insertedTextUtf8Sha256": "0ddb07cfe028cbe3bcb274f8b60adf8aa2b19af66077648059d19b08dcd027cc"
+    },
+    {
+      "name": "Fill_Circle",
+      "group": "图形库",
+      "seed": "/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "seedSha256": "112d0709f1b5e144e6e7c749c2d83893f620133da2508bb4df6cadf0b7b9871e",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "menus": [
+        {
+          "hwnd": 13306470,
+          "actions": [
+            {
+              "pointer": "0x121b3ca0",
+              "objectName": "",
+              "text": "插入例子",
+              "enabled": 1,
+              "children": []
+            }
+          ]
+        }
+      ],
+      "after": "int x0=2; \n int y0=3; \n int r0= 2; \n int color =COLOR_YELLOW;\n Fill_Circle(x0,y0,r0,color);/*KS-STAGE8-EXAMPLE-SENTINEL*/\n",
+      "afterSha256": "a80dc762bc53bbdf38ad59a8dd1a3dd9095260ddd103a44c64dee53527968031",
+      "seedPreserved": true,
+      "status": "inserted",
+      "insertedText": "int x0=2; \n int y0=3; \n int r0= 2; \n int color =COLOR_YELLOW;\n Fill_Circle(x0,y0,r0,color);",
+      "insertedTextUtf8Sha256": "8a017b20f9bec02ff58e750c52701c6e8ed94a220c62129f6ada450895fe7645"
+    }
+  ]
+}

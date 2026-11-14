@@ -3,6 +3,7 @@
 #include "kvg_library.h" //20261109-0 add
 #include "hmi_property_widgets.h"
 #include "stage3_resources.h" //20261112-0 add
+#include "macro_workspace.h" //20261114-7 add
 #include <QBuffer>
 #include <QButtonGroup> //20261110-0 add
 #include <QCheckBox>
@@ -1239,6 +1240,7 @@ void BitButtonDialog::editMacro() //20261108-15 add
     QDialogButtonBox *buttons;
     QString initial;
 
+    if (!MacroWorkspace::macroBindable(m_working)) { return; } //20261114-7 add: Keep disabled families blocked even when the old editor slot is invoked directly.
     dialog.setObjectName(QStringLiteral("BitMacroEditor")); dialog.setWindowTitle(QStringLiteral("宏指令编辑器")); dialog.resize(760, 540);
     layout = new QVBoxLayout(&dialog); name = new QLineEdit(&dialog); name->setObjectName(QStringLiteral("MacroName"));
     initial = m_macroList->currentText(); name->setText(initial.isEmpty() ? QStringLiteral("Macro%1").arg(m_project.macros.size() + 1) : initial);

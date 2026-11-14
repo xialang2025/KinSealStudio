@@ -535,3 +535,66 @@ QMap名称排序是Lite设计，编译索引与按钮索引同源；原厂创建
 既有编译器仅输出QStringList，无失败独立manifest；SDK只查文件存在，未自动记录全部工具/库哈希；日志readAll及最后输出的边界需要补测；取消、拥有进程回收、显式临时根与源码/ANSI/索引身份需新增结构化证据。普通宏24B机器码有历史对照，本轮尚未重跑，不迁移为新通过。
 
 初始化/全局/画面/周期以及25项地址变量尚未恢复完整输入和执行时序，不为通过界面而造flag或零变量槽。阶段8六项任务按独立D/U/P/C/T/E记录。当前421个可再生对象文件约90,977,068B删除请求被自动审批以blocked by policy拒绝，实际0删除，见[本轮清理回执](stage8-evidence/cleanup-result.json)；后续临时目录全部指定Z盘。
+
+
+## 23. 阶段8普通宏工作区与可重复编译报告（2026-11-14）
+
+本节为本批实现规则，接续第22节的历史补记。入口为`MainWindow::manageMacros`、`MacroManagerDialog`、`MacroWorkspace`、`compileDeviceMacros`和`handleMacroCompilerCli`。当前只开放零地址变量的普通C源码；变量/调度的原厂UI取证属于D，不等于P/C/T/E恢复。完整范围和差异见[阶段8报告](阶段8宏编辑编译与验收.md)、[逐项进度](阶段8逐项进度.md)。标记`//20261114-7 add/change`。
+
+### 23.1 入口、模型与事务
+
+| UI或模型字段 | 本批规则 | 失败、取消与原厂差异 |
+|---|---|---|
+| `action_script`、工程树“宏指令编辑器” | 有工程且未下载时读取`currentEditorProject()`值快照，先取消画布交互，再打开独立模态工作区 | 接受时完整验证并`commitProjectDraft`一次；取消不改dirty、工程和撤销历史 |
+| `action_macro_admin` | 接现有宏使用/查找工具 | 原厂为MarcoUseDisplay使用一览表；当前工具尚不是原厂窗口完整克隆 |
+| `macros[name]`、`macroIds[name]` | 源码与稳定ID分开；复制创建新ID；重命名保留ID | ID不是编译槽；编辑清工作区报告，不把临时报告写为SM已编译状态 |
+| 新建、复制、改名、删除 | 候选副本先验证，成功整体替换；新增/复制最多100；旧101..128仍可列表、修正/删除 | `_copy`/`_copyN`和默认Macro_Entry模板是Lite策略；原厂右键只见编辑/删除/改名，整宏复制未观察 |
+| 跨页引用 | 11类序列化宏载体，含活动/休眠字段，一并改名；删除有引用宏拒绝 | 含opaque snapshot时删除保守拒绝；其它模型编辑保留snapshot原字节，原厂源导出另校验 |
+| 绑定门禁 | `macroBindable`限定已核类型；灯/功能按钮不开放宏 | 旧位/字、slider/dropdown局部“写宏”仍保留原事务；未全部替换为工作区，局部改名不宣称跨页迁移 |
+
+Core名称最多256个QString单元，拒绝空白首尾、控制字符、NUL和冲突；这是产品保护，与原厂探针64 ASCII边界、旧编译API最多1024个QString单元各自独立。每次新写源≤1MiB UTF-8，完整模型保留8Mi UTF16单元总保护；本批编译器同时检查每源QString单元数与UTF-8字节均≤1Mi，名称≤1024单元，计量不能混写。所有事务失败不留半引用迁移或半删除。
+
+### 23.2 源码文件、编辑和库插例
+
+| 动作 | 转换与校验 | 可逆边界 |
+|---|---|---|
+| `.c`导入 | 普通SourceKind、严格UTF-8，拒绝非法序列/NUL/损坏Unicode；BOM用Allow/Reject/Require显式控制 | 不解释SM/地址变量/调度；同名不静默覆盖 |
+| `.c`导出 | 已验证工作草稿→UTF-8，可显式带BOM，QSaveFile原子发布 | 失败保留旧输出；`.sm`伪后缀拒绝；原厂全部导入导出格式待核 |
+| 切换宏 | 先将当前有效文本写到其自身身份再切换 | 无效文本只回退列表选中，保留输入供修正，不重载旧文本覆盖 |
+| 撤销/恢复/查找 | QPlainTextEdit源码栈，从光标查找并回绕一次，不改宏ID | 工作区外层取消丢所有草稿；不完全等同原厂保存/不保存/取消三选关闭 |
+| 函数/图形库 | 嵌入28函数+8图形原厂插例，每项文本SHA与来源SHA可复核 | 真值只覆盖原厂光标0/无选区；原注释错误不修作数学或运行oracle |
+| 插例 | 原文插入，不额外补换行/缩进，一次undo，先检1MiB预算 | 替换选区是Lite规则，原厂该分支未核；片段不保证可独立作为完整程序编译 |
+
+左宏/函数库、底部信息输出/变量设定(0/25)对应已观察分区；变量页本批只给未开放说明。源码框用系统等宽字体、禁折行、Tab宽4空格；原厂完整格式化、快捷键、着色及像素布局仍未恢复。嵌套名称/文件输入返回先用QPointer检查owner；右键栈QMenu无parent，避免嵌套事件销毁owner导致重复析构。
+
+### 23.3 后台编译、取消与结果接纳
+
+编译前冻结完整草稿；QThread只持值快照和共享job，不跨线程访问QWidget。运行期间冻结名称/源码/库插入；完成回调仅在owner存活时接纳report。失败可独立显示诊断，`DeviceMacroPackage`仅全部宏成功后整体替换；编译不隐式保存工程或确认HMI运行。
+
+停止只设共享atomic取消。取消/关闭等待拥有步骤结束并清理后再退出；直接销毁owner只请求取消，线程无widget parent、完成deleteLater。默认单步30s/总120s/启动5s/清理2s；每步输出256KiB/全调用1MiB，边读边限并标截断，完成瞬间复查deadline/cancel。OS无法确认终止时QProcess析构可能额外等待，不承诺极端分支绝对墙钟上界。
+
+临时根由调用参数指定；UI默认程序旁`macro-temp`，CLI用`KINSEAL_MACRO_TEMP_ROOT`否则QDir::tempPath。根下仅创建本调用拥有目录，子工具TEMP/TMP/TMPDIR指向它；不改系统PATH、SDK、许可证或用户全局设置。验证全部置Z盘。`temporaryCleanupSucceeded`记录实际清理结果，拒绝/失败不报释放。
+
+### 23.4 SDK身份、编码与复现键
+
+除第22.2节15文件存在性之外，逐项记录大小/SHA256；6个PE EXE/DLL记录位数/machine，3个DLL记录版本；编译前后复核SDK哈希。当前真实环境PE32、DLL 1.2.0.805、ACP936是采集身份，`vendorAuthenticated=false`/`sdkAuthenticated=false`，不代表供应商认证或其它版本已支持。合成fixture不作ADS真值。
+
+冻结源码分别记录UTF16LE/UTF-8/实际ANSI SHA。Core可保存的emoji若无法ACP无损往返，调用工具前拒绝。每步记录工具/独立argv/退出/耗时/截断/取消/首错；每宏记录name→compiledIndex、RO/RW、ELF/RAW SHA和长。源、header、SDK、ANSI和产物组成复现键；耗时/随机临时路径不是重现判据。
+
+真实SetLB1 RAW24B SHA `d6e4f44119b03071a0dea0e8066f084054da6736f8ba5aeb74d443fff914e5da`；重复RAW/复现键一致，单改常数RAW改变。布局沿第22.2节；QMap排序与按钮indices必须同源，原厂创建序不证明包序。详见[真实manifest](stage8-evidence/compiler-actual-r2/real-oracle-first.json)。
+
+### 23.5 CLI与输出保护
+
+`KinSealStudioLite.exe --compile-macros 工程.ksp 报告.json`只读完整Lite JSON（≤16MiB）；SDK沿第22.2节选择。输出独立`.json`，规范路径/大小写/硬链接别名不得覆盖输入。全部宏成功后，发布源SHA、compiler manifest、MarcoRun/MarcoVar base64和indices，8MiB上限及QSaveFile完整提交后返回0。失败返回26，旧输出保持；stdout给≤8192字符错误及≤2MiB独立compiler诊断。始终`hardwareIo=false`、`hmiExecutionConfirmed=false`。
+
+报告不是USB容器或SM源码；完整设备包仍经现有型号/能力校验和`--compile-project`，不能绕过变量、页或活动配置门禁。SDK放外部，不在便携包附带SDK/许可证。CLI实际24进程/31语义检查通过，包括只读输出发布失败保留、KSP/SM全包宏段与绑定索引一致，见[CLI实测](stage8-evidence/cli-r1/run.json)。
+
+### 23.6 验证、证据与剩余项
+
+正式r2 Core81/UI48/compiler19=148、阶段7runtime79/UI13/workflow23=115，合263/0/0。随后仅UI测试加私有桌面截图并跑r3 UI48/0/0；生产未变，最终UI身份用r3，其余r2。已实际查看[编辑器](stage8-evidence/windows-r3/macro-editor.png)和[库](stage8-evidence/windows-r3/macro-library.png)。真实ADS与synthetic故障分开，故障覆盖不证明其它工具版本/设备行为。
+
+原厂22轮UI/36插例/8变量类型/初始化0/16/全局0/64字段已归档；904B/36B变量编码、寄存器宽度/字序、原厂包索引、初始化/全局/画面flag与重入错误传播仍开放。PC离线继续不执行宏。本批无新控件或设备编码、无HMI下载，不增加T/E；后续新增控件仍实物下载。全部剩余项见[统一台账](../design_plan/未完成任务总台账.md)，六个完整任务未关闭。
+
+便携版191文件/164样例，实际smoke3进程/4检查及完整CLI24进程/31检查通过，Qt仅从包内加载，外部SDK15文件前后不变。首轮smoke辅助脚本错把双宏包长预计为错误值，失败原记录保留，纠正独立解析后MarcoRun1072B（1024头+24+24）、MarcoVar1808B（2×904零变量）通过；没有修改生产代码来迁就断言。源码/资源、EXE、真实代码提交与包manifest另绑定，见[便携复核](stage8-evidence/portable-r1/readonly-review.json)。本批成功删除8个新/自有中间文件36785529B，旧拒绝项仍保留，逐项回执和统一台账可查。
+
+样例随后只补英文函数头和日期注释，增量替换3份源码/嵌入源；smoke-r3实际2进程/4检查通过，2×24B RAW、1072/1808B包与注释修改前逐字相同。最终样例身份使用[smoke-r3](stage8-evidence/portable-r1/smoke-r3/run.json)，r2截图和完整24/31保留各自已跑身份；不将重复检查叠加到263项Qt总数。

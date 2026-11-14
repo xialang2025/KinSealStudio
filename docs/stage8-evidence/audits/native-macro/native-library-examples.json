@@ -1,0 +1,624 @@
+{
+  "schema": "kinseal-native-library-examples-v1",
+  "createdEpoch": 1794646930.027929,
+  "nativeExecutableSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "privateExecutableSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "count": 36,
+  "functionCount": 28,
+  "graphicsCount": 8,
+  "semantics": "Exact current V5.1 UI insertion text at cursor (0,0), no selected range. Preserve native spelling and comments; this catalogue is not a compile or correctness oracle.",
+  "examples": [
+    {
+      "name": "ADDSUM",
+      "group": "函数库",
+      "text": "char data[5];\n short checksum;\n data[0] =0x1;\n data[1] =0x2;\n data[2] =0x3; \n data[3] =0x4;\n data[4] =0x20; \n checksum=ADDSUM(data, 5); //checksum=0x2a;",
+      "utf8Sha256": "a2beed8aedb089494d7900d7a87d8d421b5994d8a98812696de04186bcae45ae",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "ASCII2DEC",
+      "group": "函数库",
+      "text": "char source[4];\n  short result;\n source[0] ='2'; \n source[1] ='3';\n source[2] ='4';\n source[3] ='5'; \n  result=ASCII2DEC(source , 4);//  result=2345;",
+      "utf8Sha256": "cfa3e9c8862004fbd06bccd0384fbf061a3a97537acc459fa5d53d9e24f0f609",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "ASCII2FLOAT",
+      "group": "函数库",
+      "text": "char source[4];\n  float result;\n source[0] ='5'; \n source[1] ='.';\n source[2] ='7';\n source[3] ='8';\n  result=ASCII2FLOAT(source,4);//  result = 5.78;",
+      "utf8Sha256": "a00bf8b18ec2edd255f11a39989b00bad32d20acf623542bf01532849e0e3ca7",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "ASCII2HEX",
+      "group": "函数库",
+      "text": "char source[4]; \n  short result; \n source[0] ='1'; \n source[1] ='6';\n source[2] ='3';\n source[3] ='4';   \n  result=ASCII2HEX(source,4);//  result = 0x1634;",
+      "utf8Sha256": "6c23ec5be24bfae7140dcdd977bbe601c5837b45e90a8eaa140e4ad595825ebc",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "BCD2BIN",
+      "group": "函数库",
+      "text": "short source = 0x2648;  \n  short result;   \n  result=BCD2BIN(source);//  result = 2648;",
+      "utf8Sha256": "8983bf9f20dce18872e1c575441de197d6c882f0fb3bf5061ccde99128ca2476",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "BIN2BCD",
+      "group": "函数库",
+      "text": "short source = 1234;   \n  short result;   \n  result=BIN2BCD(source);//  result = 0x1234;",
+      "utf8Sha256": "d19cc8e31761384fcb5d2d8509a565e5f4daeb59f755cc6d81337845179c7af9",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "CRC",
+      "group": "函数库",
+      "text": "char source[5]; \n  short bit_CRC; \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x4;\n source[4] =0x5;\n  bit_CRC=CRC(source,5);",
+      "utf8Sha256": "ef492ec79de9a5f10c7df11f4a403c636c9a122d7fb558bf44a1920e8d69f267",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DEC2ASCII",
+      "group": "函数库",
+      "text": "short source = 5678; \n  char result[4]; \n  DEC2ASCII(result,source,4); \n  //result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';",
+      "utf8Sha256": "40885959517ad65ef4c0e09620c7587817f778c3ed9e41d67ea2167a43e2ed22",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "FLOAT2ASCII",
+      "group": "函数库",
+      "text": "float source = 56.8;\n  unsigned char result[10];\n  FLOAT2ASCII(source,result); \n//result[0] = '5',result[1] = '6',result[2] = '.',result[3] = '8';",
+      "utf8Sha256": "bb879e3b7cc91a071a4f0a741eaf1120c1721ad67aa21f034c35b859fc17b2a1",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "GETBIT",
+      "group": "函数库",
+      "text": "short source = 0x5, bit_pos = 0 ,result; \n  result = GETBIT(source,bit_pos);//  result = 1;",
+      "utf8Sha256": "31172f3049e9c9fe83438c7538b70bab7a66b736d485e094c1da1b32c30a2d3a",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "GETCHARS",
+      "group": "函数库",
+      "text": "char Data[20]; \n  char PortID,Result; \n  PortID=0; \n  Result=GETCHARS(PortID,Data);",
+      "utf8Sha256": "e79b24dc66667ffd1980410da51c6d1fc9abc5339fe6e9ac7d7322ff46663d96",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "HEX2ASCII",
+      "group": "函数库",
+      "text": "short source = 0x5678; \n  char result[4]; \n  HEX2ASCII(source,result);  \n//result[0] = '5', result[1] = '6', result[2] = '7', result[3] = '8';",
+      "utf8Sha256": "1667422faf8ed7e963349096ed16fb77daa75eb75691c3cba9bc5d108a610daa",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "HIBYTE",
+      "group": "函数库",
+      "text": "short source = 0x1234,result; \n  result=HIBYTE(source);//  result = 0x12;",
+      "utf8Sha256": "9e6d3f1bd4738d4a108aa06b6d77e9e22b082a8fe1eb87aaf895bec30d916fa3",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "HIWORD",
+      "group": "函数库",
+      "text": "int source = 0x12345678,result; \n  result=HIWORD(source);//  result = 0x1234;",
+      "utf8Sha256": "fcd4dcd4d768864702c7da0df4603ad52b83576c5d5af3be15d426877b97d7fa",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "INVBIT",
+      "group": "函数库",
+      "text": "short source = 0x6,  bit_pos =1 ,result; \n  result=INVBIT(source, bit_pos);//  result = 4;",
+      "utf8Sha256": "37a8ed695a49b2d1093c1e145c0c91380ec5980f52771632a0105d5ff9e48319",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "LOBYTE",
+      "group": "函数库",
+      "text": "short source = 0x1234,result; \n  result= LOBYTE(source);//  result = 0x34;",
+      "utf8Sha256": "f9985a76a72f88e018be0fde5647b05a9d64710fe78672d093b877cc2058d252",
+      "sourceRun": "examples-r3",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r3\\library-examples.json",
+      "sourceSha256": "adc8b0c98a2fecd52c45509172f020d810bd813365f2fbffcf4dda678fe61eca",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "LOWORD",
+      "group": "函数库",
+      "text": "int source = 0x12345678,result;  \n  result=LOWORD(source);//  result = 0x5678;",
+      "utf8Sha256": "d287aaf67ffdf285354a2b58e22d1e8782fbae860143535e7497e49ab2fbbeda",
+      "sourceRun": "examples-r3",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r3\\library-examples.json",
+      "sourceSha256": "adc8b0c98a2fecd52c45509172f020d810bd813365f2fbffcf4dda678fe61eca",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "PUTCHARS",
+      "group": "函数库",
+      "text": "char Data[5],PortID; \n  unsigned char Length; \n Data[0] = 0x02;\n Data[1] = 0x30;\n Data[2] = 0x31;\n Data[3] = 0x4d;\n Data[4] = 0x5e; \n  Length=5;    \n  PortID=0;   \n  PUTCHARS(PortID,Data, Length);",
+      "utf8Sha256": "07f58ec3733d4087826c2a932a50812541a1fe63116e093809f01d083f1ac52f",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "SWAPB",
+      "group": "函数库",
+      "text": "short source = 0x1234,result;   \n  result=SWAPB(source);//  result = 0x3412;",
+      "utf8Sha256": "6b80757334a873e3d451be9bba02f745fc9c36965a596def54ea464858085f0c",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "SWAPW",
+      "group": "函数库",
+      "text": "int  source = 0x12345678;  \n  int  result;   \n  result=SWAPW(source);//  result = 0x56781234;",
+      "utf8Sha256": "a4693aae0422ab5ef534c1edeeb83ab93fb9c67a63ac3b500ff5ba5d73cb7f9d",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "SETBIT",
+      "group": "函数库",
+      "text": "short  source = 0x4;   \n  short bit_pos = 2, result;  \n  result = SETBIT(source,bit_pos,1);//  result = 4;",
+      "utf8Sha256": "c51b6e21161f78416b8e54fc991f381fa2cd1780784fdaeebf0bee97b9b22907",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "XORSUM",
+      "group": "函数库",
+      "text": "char source[5];\n  short checksum;   \n source[0] =0x1; \n source[1] =0x2;\n source[2] =0x3;\n source[3] =0x48;\n source[4] =0x5;    \n  checksum = XORSUM(source, 5); //checksum =0x4d;",
+      "utf8Sha256": "19a0ce53d7d33e02d6a1635855f236a0bab5e5a976809d3a51be5ebbecf44ffd",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DELAY",
+      "group": "函数库",
+      "text": "int millsec = 100;   \n  DELAY(millsec);",
+      "utf8Sha256": "9dadebba5e2daba19b8939433d8d6e28e97a236cd6115b91fb197af5ac0c2df6",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "GETBUFFERLENGTH",
+      "group": "函数库",
+      "text": "int bufferlen,PortID;  \n  PortID=0;    \n  bufferlen=GETBUFFERLENGTH(PortID);",
+      "utf8Sha256": "3a6ee4e3ace9c40599ddfeea314487d2db423edaffe2d8dfb2a88b67c9e436dd",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "CLEARBUFFER",
+      "group": "函数库",
+      "text": "int Clearresult,PortID;   \n  PortID=0;  \n  Clearresult=CLEARBUFFER(PortID);",
+      "utf8Sha256": "bdfe77ff2e6dffdf00003ca9394a3e92dd88fba8c6a1071bcf0c40dfc8a3c3ef",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "ScreenOpen",
+      "group": "函数库",
+      "text": "short screenindex;\n screenindex = 1;\n ScreenOpen(screenindex);\n",
+      "utf8Sha256": "a178dab6d807732e8c74f65cd196fba8fbf25b86909f3124e11a12afc758fdc9",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DISABLELCD",
+      "group": "函数库",
+      "text": "DISABLELCD();\n",
+      "utf8Sha256": "6d4f796fc68de07a44f8ef888731eb179029712a6678249715b29130811a8009",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "ENABLELCD",
+      "group": "函数库",
+      "text": "ENABLELCD();\n",
+      "utf8Sha256": "7d05ffcb4ad5426cbde4d4fb6b164452c35e75cef6b47bd6987ddfd19ea03e3c",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "PutPixel",
+      "group": "图形库",
+      "text": "int x = 2;\n int y= 4;\n int c = COLOR_BLACK;\n PutPixel(x,y,c);",
+      "utf8Sha256": "57b2b39c1f5360e66c84b3e9ae4d45d343da99df22cecb7cf1f09ed8ce5014b3",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DrawLine",
+      "group": "图形库",
+      "text": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_NAVY;\n DrawLine(x1,y1,x2,y2,color  );",
+      "utf8Sha256": "7adff2695bdb9c9760342f99c3eba89355647a4de7433a487bb51764b9a0e2b7",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DrawHLine",
+      "group": "图形库",
+      "text": "int x1 =2,x2=3;\n int y= 4;\n int color = COLOR_DCYAN;\n DrawHLine(x1,x2,y,color);",
+      "utf8Sha256": "cce1e9ccd09dc57d3c72709ca1f0488744ae981380b6c6445c8ee677205fd2ca",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "DrawVLine",
+      "group": "图形库",
+      "text": "int y1 =2,y2=3;\n int x= 4;\n int color = COLOR_DGREEN;\n DrawVLine(y1,y2,x,color);",
+      "utf8Sha256": "7c5378e4fef0c5f40741c1805aecfe65eb8e5dd2c3c9d1edfc11a85e8f43e5f6",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "Rectangle",
+      "group": "图形库",
+      "text": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n Rectangle(x1,y1,x2,y2,color);",
+      "utf8Sha256": "b8d000cdcce2f75d01e804639626c86ea72f522658ecb893bdd01052269c7393",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "FilledRectangle",
+      "group": "图形库",
+      "text": "int x1 =2,x2=3;\n int y1=4,y2=5; \n int color = COLOR_MAROON;\n FilledRectangle(x1,y1,x2,y2,color  );",
+      "utf8Sha256": "24f90a7eb6d57c33e8eb4e78e6330c6744bff5827663015789d2649fb1408352",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "Circle",
+      "group": "图形库",
+      "text": "unsigned int x0 =2;\n unsigned int y0= 4;\n unsigned int r=2;\n int color = COLOR_DGREEN;\n Circle(x0,y0,r,color);",
+      "utf8Sha256": "0ddb07cfe028cbe3bcb274f8b60adf8aa2b19af66077648059d19b08dcd027cc",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    },
+    {
+      "name": "Fill_Circle",
+      "group": "图形库",
+      "text": "int x0=2; \n int y0=3; \n int r0= 2; \n int color =COLOR_YELLOW;\n Fill_Circle(x0,y0,r0,color);",
+      "utf8Sha256": "8a017b20f9bec02ff58e750c52701c6e8ed94a220c62129f6ada450895fe7645",
+      "sourceRun": "examples-r2",
+      "sourcePath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\native-macro\\examples-r2\\library-examples.json",
+      "sourceSha256": "bb0f1fbb8befc4a14d669e78874dbbbed09396edd228c196b2829063d7a54c6c",
+      "cursor": [
+        0,
+        0
+      ],
+      "selection": false,
+      "operation": "owned native tree right click -> real QAction 插入例子",
+      "compilerValidated": false,
+      "deviceExecuted": false
+    }
+  ]
+}

@@ -35,6 +35,7 @@ class MainWindow : public QMainWindow
     friend class Stage3IntegrationTests; //20261110-8 add: Verify resource placement and project clipboard transactions.
     friend class Stage4ControlTests; //20261112-0 add: Exercise real control actions and transaction history.
     friend class SimulationUiTests; //20261114-6 add: Verify snapshot isolation through the actual shell actions.
+    friend class MacroUiTests; //20261114-7 add: Verify accepted macro edits as one editor transaction.
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -73,6 +74,7 @@ private slots:
     void configureLanguages();
     void configureConnections(); //20261109-0 add
     void configureMacroSdk(); //20261109-0 add
+    void manageMacros(); //20261114-7 add
     void createBitButton(); //20261108-15 add
     void createWordButton(); //20261109-6 add
     void createLamp(); //20261109-8 add

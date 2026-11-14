@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "baselineCommit": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
+  "reviewMode": "read-only-no-logic-change",
+  "scope": [
+    "src/macro_workspace.h",
+    "src/macro_workspace.cpp",
+    "tests/macro_workspace_tests.cpp"
+  ],
+  "sourceIdentity": {
+    "src/macro_workspace.h": {
+      "sha256": "ba0d788a8234377e6a92a1bd55bbb71be9029584987c4d533f1bdf6e0cb32c06",
+      "bytes": 2519
+    },
+    "src/macro_workspace.cpp": {
+      "sha256": "5849ccef8d90702a6aed0b9ffbdc2772b6e5bef0b4e7f18a44ce3f40e8ef2346",
+      "bytes": 27924
+    },
+    "tests/macro_workspace_tests.cpp": {
+      "sha256": "fc67b45fe75d326029194673efd3435a057d9e55f1fa810e45c24e9907444f30",
+      "bytes": 39738
+    }
+  },
+  "verdict": "no-independent-blocker-in-defined-ordinary-source-scope",
+  "checks": [
+    {
+      "topic": "all-page references",
+      "result": "pass",
+      "detail": "All persisted bit/lamp/function, slider/dropdown, screen/multistate/multifunction common, number and ascii name carriers scanned regardless enabled; generic stable-ID inbound references scanned."
+    },
+    {
+      "topic": "existing rename gap",
+      "result": "known-existing-gap-compensated-in-owned-wrapper",
+      "detail": "Existing HmiProject.renameMacro omits five independent dormant carriers. Wrapper reuses existing rename then updates these on active and inactive pages; original model source unchanged."
+    },
+    {
+      "topic": "identities and transactions",
+      "result": "pass",
+      "detail": "Every mutation validates original and candidate. Existing IDs retained; missing legacy IDs allocated only on mutation. Copies get a fresh ID; all failures preserve caller model/output."
+    },
+    {
+      "topic": "limits",
+      "result": "pass",
+      "detail": "New additions forbidden above 100; model-valid 101..128 legacy items remain inspectable/updatable/removable. New source content <=1MiB strict UTF8, model keeps aggregate 8Mi UTF16-unit budget."
+    },
+    {
+      "topic": "input encoding",
+      "result": "pass",
+      "detail": "Stateless strict UTF8, explicit Allow/Reject/Require BOM; duplicate BOM/NUL/unpaired surrogate/overflow rejected; CRLF and valid U+FFFD preserved."
+    },
+    {
+      "topic": "opaque snapshot",
+      "result": "conservative-defined-boundary",
+      "detail": "Raw snapshot bytes preserved for create/update/copy/rename. Removal refuses nonempty snapshot because hidden consumers remain unverified; no reinterpretation or metadata deletion."
+    },
+    {
+      "topic": "unsupported kind and binding",
+      "result": "pass",
+      "detail": "AddressVariables/UnverifiedScheduling/unknown enum import/export rejected. Binding guard permits bit/word/slider/dropdown only; disabled names do not grant capability."
+    },
+    {
+      "topic": "files/hardware",
+      "result": "pass",
+      "detail": "Core performs no file I/O, compilation, scheduling or endpoint I/O; UI owns .c path checks and atomic publication."
+    }
+  ],
+  "tests": {
+    "independent": "run-r1.json",
+    "passed": 81,
+    "failed": 0,
+    "skipped": 0,
+    "formalCmake": "parent-managed-pending"
+  },
+  "compilation": {
+    "core": {
+      "log": "compile-step-1-r2.log",
+      "exitCode": 0,
+      "logBytes": 0
+    },
+    "tests": {
+      "log": "compile-step-2-r3.log",
+      "exitCode": 0,
+      "logBytes": 0
+    },
+    "flags": [
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Wconversion",
+      "QT_NO_CAST_FROM_ASCII",
+      "QT_NO_CAST_TO_ASCII"
+    ]
+  },
+  "failureHistory": [
+    {
+      "kind": "environment",
+      "file": "compile-r1.json",
+      "detail": "Initial compiler PATH omitted MinGW dependency directory: core exit1 with empty log; corrected explicit compiler+Qt PATH gives clean compile."
+    },
+    {
+      "kind": "test-compilation",
+      "file": "compile-step-2-r2.log",
+      "detail": "Four QChar(char) expressions rejected under QT_NO_CAST_FROM_ASCII; changed tests to QLatin1Char; core logic unaffected."
+    },
+    {
+      "kind": "private-link-harness",
+      "files": [
+        "link-r1.json",
+        "link-r2.json",
+        "link-r3.json",
+        "link-r4.json"
+      ],
+      "detail": "Old per-target model object paths unavailable, then resource path and two pre-existing Qt dialog metaobjects/renderer dependencies missing. Private support mocs plus current read-only model shared objects linked at r5."
+    }
+  ],
+  "remaining": [
+    "Ordinary source is an editable draft, not proof of C compiler success or HMI macro execution.",
+    "Original factory template/copy naming and source file codec remain separately auditable; template and _copy/_copyN are explicit Lite rules.",
+    "Global scheduling and address-variable export formats are intentionally unavailable.",
+    "Native snapshot deletion remains refused until hidden consumers are recovered.",
+    "Formal integration tests and CMake changes are parent-owned."
+  ],
+  "guiUsed": false,
+  "sdkStarted": false,
+  "hardwareIo": false,
+  "sharedBuildModified": false,
+  "gitUsed": false
+}

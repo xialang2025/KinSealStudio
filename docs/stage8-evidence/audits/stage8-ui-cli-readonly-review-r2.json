@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "stage": 8,
+  "reviewedAtUtc": "2026-11-14T09:38:06.774581+00:00",
+  "reviewMode": "independent-read-only-integration-review",
+  "businessLogicModified": false,
+  "status": "no-active-independent-finding-in-declared-slice",
+  "productionExecutable": {
+    "path": "build/KinSealStudioLite.exe",
+    "sha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91",
+    "frozenAcrossCliRuns": true
+  },
+  "sourceIdentity": {
+    "src/macro_manager_dialog.h": {
+      "sha256": "6328b8e4266973ea40dfe590a81f763fed51a186d37d0c9ff5648eb5b7c889bb",
+      "bytes": 2451
+    },
+    "src/macro_manager_dialog.cpp": {
+      "sha256": "2eaf1b602a5e2d58b7384313470da589c9211bb053289c21d89806055eac61b8",
+      "bytes": 32888
+    },
+    "src/macro_compiler_cli.h": {
+      "sha256": "0628ee66e2aab2b389aab6deb33372f74be7ae4a29596c2468513811a1099fb2",
+      "bytes": 641
+    },
+    "src/macro_compiler_cli.cpp": {
+      "sha256": "c4ba4d179165c1e8fd27850412e76bf68df49c5b45a2eee552f6e6263275cfa8",
+      "bytes": 5350
+    },
+    "src/main_window_macros.cpp": {
+      "sha256": "1586357eb1114dccf30209beb3c904a924acabba2e68f69ab4375a887edf6472",
+      "bytes": 1241
+    },
+    "src/main_window.h": {
+      "sha256": "e3f15069875a1d69792604dc682dbd373484190abdbd618811b6de15a083dd64",
+      "bytes": 7190
+    },
+    "src/main_window.cpp": {
+      "sha256": "36f43383e180247818d7158b5a25137bbeb78cbcace1bafb23d76e51661c3e19",
+      "bytes": 94687
+    },
+    "src/native_shell_ui.cpp": {
+      "sha256": "9260b1f7956691b0785a31bc161efe52b1b7a04cd0ba71e05641bf3c4960efd0",
+      "bytes": 42354
+    },
+    "src/main_window_workflow.cpp": {
+      "sha256": "7172eccbe82405563d6a0d05b923a851e485559be59e5667be66564efced4ce6",
+      "bytes": 34979
+    },
+    "src/main.cpp": {
+      "sha256": "7f96a5ed4d87f850d8ed055bdf8f35063c1a87ff3cc921c1b4c6b322269c2533",
+      "bytes": 27265
+    },
+    "CMakeLists.txt": {
+      "sha256": "5dd312d925485d5ae1add2d6f016c68735bfbc5f5ec28d3be649da628d492ed9",
+      "bytes": 30817
+    },
+    "tests/macro_ui_tests.cpp": {
+      "sha256": "4f7c4e085881e53ef7859e4ef592cba3172789ed2e89152cd71bf2b5f9d0efdc",
+      "bytes": 22534
+    },
+    "resources/macro-library/examples.json": {
+      "sha256": "a6a5cc44d72778cc31aff94e6e7a4b9eda67647c019274f8edf4e53bbecb3e43",
+      "bytes": 10781
+    },
+    "macro_library.qrc": {
+      "sha256": "0e037464f8579f46d9bcc410ba4795d138da45ad913d08fbfbc864b7b7e49e88",
+      "bytes": 148
+    },
+    "src/bit_button_dialog.cpp": {
+      "sha256": "c7a1fc5bf6a382db504aee9658b81769855d9344bc59d7efb6cb04d28034fd69",
+      "bytes": 117147
+    },
+    "src/device_transfer_contract.cpp": {
+      "sha256": "709405ec50ddc81937a63f96166671b013c26db9093e201a5a0638f67391e039",
+      "bytes": 9784
+    },
+    "tools/run_stage8_cli_checks.py": {
+      "sha256": "f18584242b69f3570ae7d76e67edc3ba0b8f5132de9a286771087f94a91eb561",
+      "bytes": 23061
+    }
+  },
+  "initialReview": {
+    "path": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage8-20261114/stage8-ui-cli-readonly-review-r1.json",
+    "note": "Preserved initial findings and candidate status; not rewritten into an initially clean review."
+  },
+  "findings": [
+    {
+      "id": "S08-UI-REVIEW-001",
+      "priority": "P2",
+      "initial": "Nested modal raw-owner returns and parented stack QMenu lifetime risk",
+      "status": "resolved-in-declared-modal-owner-slice",
+      "codeEvidence": "Six QPointer manager lifetime guards cover every input/file return; stack QMenu is unparented.",
+      "runtimeEvidence": [
+        "docs/stage8-evidence/windows-r2/run.json",
+        "docs/stage8-evidence/windows-r3/run.json"
+      ],
+      "verified": "Accept-then-delete-owner name-dialog regression passes with the guarded source; no stale member access observed.",
+      "residualBoundary": "File-dialog/menu-specific owner-destruction cases were statically inspected but not independently executed by this reviewer; do not claim all possible application shutdown paths."
+    },
+    {
+      "id": "S08-UI-REVIEW-002",
+      "priority": "P3",
+      "initial": "Binding capability helper lacked a production caller",
+      "status": "resolved-slot-guard-wired",
+      "codeEvidence": "BitButtonDialog::editMacro now checks MacroWorkspace::macroBindable before opening the legacy editor.",
+      "residualBoundary": "Existing bit/slider/dropdown source editors remain independent QMap editors; full workspace source-byte/count/conflict/ID transaction semantics are not retroactively claimed for them."
+    }
+  ],
+  "activeFindings": [],
+  "formalEvidence": {
+    "r2": {
+      "path": "docs/stage8-evidence/windows-r2/run.json",
+      "passed": true,
+      "targets": [
+        {
+          "name": "KinSealMacroWorkspaceTests",
+          "sha256": "7cc4ae6e2f32e4f45c6b74622e1ce511585acd5a6d8b695ae20db4249456e5bd",
+          "totals": {
+            "passed": 81,
+            "failed": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "name": "KinSealMacroUiTests",
+          "sha256": "e1805bd10fcfd7e1105cb4610c92c8c33678eaa575d7843beacbb0ec3ece6587",
+          "totals": {
+            "passed": 48,
+            "failed": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "name": "KinSealStage8CompilerTests",
+          "sha256": "b7cf8611aa84169a5a6735030983dfef69ae5e559984f425a19d5af8c5ef11c8",
+          "totals": {
+            "passed": 19,
+            "failed": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "name": "KinSealSimulationRuntimeTests",
+          "sha256": "e085ed5f2cf4b911dd2afe9a2f8d97b7c564daa0dd77226e1d69528e91d48002",
+          "totals": {
+            "passed": 79,
+            "failed": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "name": "KinSealSimulationUiTests",
+          "sha256": "6740ed7e2cb3666abd14d681f2a46df37e9a73596bb65158fca1192c01cc66bf",
+          "totals": {
+            "passed": 13,
+            "failed": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "name": "KinSealSimulationWorkflowTests",
+          "sha256": "87ef4661ab05a4707c556f6556f4994366b6b495d6857c26f6512c9b961eacdd",
+          "totals": {
+            "passed": 23,
+            "failed": 0,
+            "skipped": 0
+          }
+        }
+      ],
+      "stage8Totals": {
+        "passed": 148,
+        "failed": 0,
+        "skipped": 0
+      },
+      "stage7RegressionTotals": {
+        "passed": 115,
+        "failed": 0,
+        "skipped": 0
+      },
+      "allR2Totals": {
+        "passed": 263,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "r3": {
+      "path": "docs/stage8-evidence/windows-r3/run.json",
+      "passed": true,
+      "targets": [
+        {
+          "name": "KinSealMacroUiTests",
+          "sha256": "0242624b30c61fea2734c00c468725ea05025583bf373d7c3ab348705641c0a7",
+          "totals": {
+            "passed": 48,
+            "failed": 0,
+            "skipped": 0
+          }
+        }
+      ],
+      "note": "Final UI identity includes screenshot capture only; 48/0/0 repeats UI and is not added to r2 as 48 new coverage items. Root reports actually viewing the image; this reviewer did not claim an original-vs-Lite pixel match."
+    }
+  },
+  "cliEvidence": {
+    "path": "docs/stage8-evidence/cli-r1/run.json",
+    "passed": true,
+    "mainExecutableProcessRuns": 24,
+    "semanticChecks": 31,
+    "allExecutedExitsMatched": true,
+    "allChecksPassed": true,
+    "initialBatchScriptSha256": "a96b1f3e69ed1628be4ca8877ba711032020fdb6d2037d855d2cfcf698fbebfd",
+    "finalReusableScriptSha256": "f18584242b69f3570ae7d76e67edc3ba0b8f5132de9a286771087f94a91eb561",
+    "supplementalProcess": "One readonly-existing-output process appended to the initial 23-run batch; the final reusable runner includes the identical case.",
+    "scope": [
+      "zero macros without SDK",
+      "one macro matches independent 24-byte ARM oracle",
+      "multiple macro source/name/index mapping",
+      "repeat reproducibility key and constant-change differences",
+      "actual SDK identity and source UTF8/UTF16LE hashes",
+      "invalid source/no SDK/bad/missing/oversized input",
+      "normalization/case/hardlink input alias refusal",
+      "prior output retained on compilation failure and unwritable existing target",
+      "KSP/SM source export, package compilation/verification and encoded macro index"
+    ],
+    "physicalIo": false,
+    "hmiExecutionConfirmed": false
+  },
+  "independentMultiMacroLayout": {
+    "passed": true,
+    "source": "docs/stage8-evidence/cli-r1/multi-result.json",
+    "count": 2,
+    "marcoRunBytes": 1072,
+    "headerBytes": 1024,
+    "rawLengths": [
+      24,
+      24
+    ],
+    "marcoVarBytes": 1808,
+    "addressVariableCount": 0,
+    "zeroSchedulingFlags": true,
+    "zeroUnusedHeader": true,
+    "entries": [
+      {
+        "index": 0,
+        "name": "Alpha",
+        "bytes": 24,
+        "rawSha256": "d6e4f44119b03071a0dea0e8066f084054da6736f8ba5aeb74d443fff914e5da",
+        "manifestHashMatched": true,
+        "compiledIndexMatched": true,
+        "nameMapMatched": true
+      },
+      {
+        "index": 1,
+        "name": "Zulu",
+        "bytes": 24,
+        "rawSha256": "92fbba2cbf8e83a00e00002076490a03e6dcea6d35cc2e6f81b4fbf76d9a52bf",
+        "manifestHashMatched": true,
+        "compiledIndexMatched": true,
+        "nameMapMatched": true
+      }
+    ],
+    "rule": "One 1024B header plus sum of raw lengths, not macroCount times a whole package; variable records are 904B each in the zero-variable slice."
+  },
+  "libraryEvidence": {
+    "count": 36,
+    "all36TextAndSourceHashesMatched": true,
+    "newUiTests": "36 data rows plus selection/undo/budget cases in final 48-item UI suite",
+    "boundary": "Verbatim inserted source fragments do not verify mathematical correctness, compilation of each example or device execution."
+  },
+  "cleanupEvidence": {
+    "path": "docs/stage8-evidence/cli-r1/cleanup-result.json",
+    "status": "completed",
+    "logicalBytesFreed": 16777217,
+    "temporaryFilesRemaining": [],
+    "history": "Only this fresh generated 16MiB+1 size-guard fixture was removed. Previously denied core/SDK/native scopes were not retried."
+  },
+  "limits": [
+    "No HMI USB transfer, screen/touch observation or firmware macro execution is performed or upgraded.",
+    "Address variables and global/init/periodic scheduling remain unavailable; no guessed metadata export.",
+    "Legacy local control source editors remain distinct and retain their older limits.",
+    "Owned-child cancellation/cleanup covers tested conditions. If OS termination is not confirmed, QProcess destruction may wait beyond configured cleanup timeout; no universal kill deadline is asserted.",
+    "SDK hashes identify supplied files but do not authenticate their vendor or authorize redistribution.",
+    "Independent .c export is transactional, while complete arbitrary-path races and abrupt OS/application shutdown are outside this acceptance.",
+    "Full stage8/original ordering, scheduling and original UI lifecycle completeness is not inferred from PC compilation success."
+  ],
+  "reviewerActions": {
+    "createdProductionCode": false,
+    "modifiedBusinessLogic": false,
+    "guiOrSdkExecutionForThisReview": false,
+    "cliAcceptanceRecordedSeparately": true,
+    "hardwareIo": false
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {"op":"entry","name":"action_script"},
+  {"op":"source-text","kind":"QsciScintillaEx","value":"#include \"macro.h\"\nvoid Macro_Entry(void)\n{\n    LocalBit[1] = 2;\n}\n"},
+  {"op":"invoke","kind":"MacroEdit","slot":"close"},
+  {"op":"click","kind":"QPushButton","windowKind":"QMessageBox","text":"取消","label":"cancel-keeps-editor"},
+  {"op":"read","label":"draft-after-cancel"},
+  {"op":"invoke","kind":"MacroEdit","slot":"close"},
+  {"op":"click","kind":"QPushButton","windowKind":"QMessageBox","text":"不保存","label":"discard-closes-editor"},
+  {"op":"entry","name":"action_script"},
+  {"op":"read","label":"source-after-discard-reopen"}
+]

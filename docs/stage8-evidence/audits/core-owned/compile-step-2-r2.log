@@ -1,0 +1,137 @@
+tests\macro_workspace_tests.cpp: In member function 'void MacroWorkspaceTests::invalidNames_data()':
+tests\macro_workspace_tests.cpp:289:56: error: no matching function for call to 'QChar::QChar(char)'
+  289 |     QTest::newRow("oversize") << QString(257, QChar('A')); QTest::newRow("surrogate") << QString(QChar(0xd800));
+      |                                                        ^
+In file included from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qstring.h:15,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qobject.h:12,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qabstractanimation.h:8,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/QtCore:21,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtTest/QtTestDepends:3,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include\QtTest/QtTest:3,
+                 from tests\macro_workspace_tests.cpp:1:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, char32_t>, std::conjunction<std::is_same<Char, wchar_t>, std::integral_constant<bool, false> >, std::is_same<Char, int>, std::is_same<Char, unsigned int> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  134 |     constexpr explicit QChar(const Char ch) noexcept
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:133:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  133 |     template <typename Char, if_explicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, short unsigned int>, std::is_same<Char, short int>, std::is_same<Char, QChar::SpecialCharacter>, std::is_same<Char, QLatin1Char>, std::conjunction<std::is_same<Char, wchar_t>, std::negation<std::integral_constant<bool, false> > >, std::is_same<Char, char16_t> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  132 |     constexpr Q_IMPLICIT QChar(const Char ch) noexcept : ucs(char16_t(ch)) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:131:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  131 |     template <typename Char, if_implicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note: candidate: 'constexpr QChar::QChar(uchar, uchar)'
+  119 |     constexpr explicit QChar(uchar c, uchar r) noexcept : ucs(char16_t((r << 8) | c)) {}
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note:   candidate expects 2 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note: candidate: 'constexpr QChar::QChar()'
+  115 |     constexpr Q_IMPLICIT QChar() noexcept : ucs(0) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note:   candidate expects 0 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(const QChar&)'
+   48 | class QT6_ONLY(Q_CORE_EXPORT) QChar {
+      |                               ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'const QChar&'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(QChar&&)'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'QChar&&'
+tests\macro_workspace_tests.cpp: In member function 'void MacroWorkspaceTests::sourceAndAggregateBudgets()':
+tests\macro_workspace_tests.cpp:396:70: error: no matching function for call to 'QChar::QChar(char)'
+  396 |     boundary = QString(MacroWorkspace::kMaximumSourceBytes, QChar('x'));
+      |                                                                      ^
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, char32_t>, std::conjunction<std::is_same<Char, wchar_t>, std::integral_constant<bool, false> >, std::is_same<Char, int>, std::is_same<Char, unsigned int> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  134 |     constexpr explicit QChar(const Char ch) noexcept
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:133:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  133 |     template <typename Char, if_explicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, short unsigned int>, std::is_same<Char, short int>, std::is_same<Char, QChar::SpecialCharacter>, std::is_same<Char, QLatin1Char>, std::conjunction<std::is_same<Char, wchar_t>, std::negation<std::integral_constant<bool, false> > >, std::is_same<Char, char16_t> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  132 |     constexpr Q_IMPLICIT QChar(const Char ch) noexcept : ucs(char16_t(ch)) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:131:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  131 |     template <typename Char, if_implicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note: candidate: 'constexpr QChar::QChar(uchar, uchar)'
+  119 |     constexpr explicit QChar(uchar c, uchar r) noexcept : ucs(char16_t((r << 8) | c)) {}
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note:   candidate expects 2 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note: candidate: 'constexpr QChar::QChar()'
+  115 |     constexpr Q_IMPLICIT QChar() noexcept : ucs(0) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note:   candidate expects 0 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(const QChar&)'
+   48 | class QT6_ONLY(Q_CORE_EXPORT) QChar {
+      |                               ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'const QChar&'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(QChar&&)'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'QChar&&'
+In file included from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtTest/qtesteventloop.h:8,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtTest/qsignalspy.h:10,
+                 from G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include\QtTest/QtTest:10:
+tests\macro_workspace_tests.cpp:399:116: error: no matching function for call to 'QChar::QChar(char)'
+  399 |     before = project.toJson(); QVERIFY(!MacroWorkspace::update(&project, QStringLiteral("M0"), boundary + QChar('x'), &error)); QCOMPARE(project.toJson(), before);
+      |                                                                                                                    ^
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, char32_t>, std::conjunction<std::is_same<Char, wchar_t>, std::integral_constant<bool, false> >, std::is_same<Char, int>, std::is_same<Char, unsigned int> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  134 |     constexpr explicit QChar(const Char ch) noexcept
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:133:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  133 |     template <typename Char, if_explicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, short unsigned int>, std::is_same<Char, short int>, std::is_same<Char, QChar::SpecialCharacter>, std::is_same<Char, QLatin1Char>, std::conjunction<std::is_same<Char, wchar_t>, std::negation<std::integral_constant<bool, false> > >, std::is_same<Char, char16_t> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  132 |     constexpr Q_IMPLICIT QChar(const Char ch) noexcept : ucs(char16_t(ch)) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:131:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  131 |     template <typename Char, if_implicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note: candidate: 'constexpr QChar::QChar(uchar, uchar)'
+  119 |     constexpr explicit QChar(uchar c, uchar r) noexcept : ucs(char16_t((r << 8) | c)) {}
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note:   candidate expects 2 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note: candidate: 'constexpr QChar::QChar()'
+  115 |     constexpr Q_IMPLICIT QChar() noexcept : ucs(0) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note:   candidate expects 0 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(const QChar&)'
+   48 | class QT6_ONLY(Q_CORE_EXPORT) QChar {
+      |                               ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'const QChar&'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(QChar&&)'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'QChar&&'
+tests\macro_workspace_tests.cpp: In member function 'void MacroWorkspaceTests::copyNameIsBoundedAndCaseSensitive()':
+tests\macro_workspace_tests.cpp:629:34: error: no matching function for call to 'QChar::QChar(char)'
+  629 |     name = QString(250, QChar('x')) + QStringLiteral("😀😀😀"); QCOMPARE(name.size(), 256);
+      |                                  ^
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, char32_t>, std::conjunction<std::is_same<Char, wchar_t>, std::integral_constant<bool, false> >, std::is_same<Char, int>, std::is_same<Char, unsigned int> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  134 |     constexpr explicit QChar(const Char ch) noexcept
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:134:24: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:133:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  133 |     template <typename Char, if_explicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note: candidate: 'template<class Char, typename std::enable_if<std::disjunction<std::is_same<Char, short unsigned int>, std::is_same<Char, short int>, std::is_same<Char, QChar::SpecialCharacter>, std::is_same<Char, QLatin1Char>, std::conjunction<std::is_same<Char, wchar_t>, std::negation<std::integral_constant<bool, false> > >, std::is_same<Char, char16_t> >::value, bool>::type <anonymous> > constexpr QChar::QChar(Char)'
+  132 |     constexpr Q_IMPLICIT QChar(const Char ch) noexcept : ucs(char16_t(ch)) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:132:26: note:   template argument deduction/substitution failed:
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:131:66: error: no type named 'type' in 'struct std::enable_if<false, bool>'
+  131 |     template <typename Char, if_implicit_conversion_char<Char> = true>
+      |                                                                  ^~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note: candidate: 'constexpr QChar::QChar(uchar, uchar)'
+  119 |     constexpr explicit QChar(uchar c, uchar r) noexcept : ucs(char16_t((r << 8) | c)) {}
+      |                        ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:119:24: note:   candidate expects 2 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note: candidate: 'constexpr QChar::QChar()'
+  115 |     constexpr Q_IMPLICIT QChar() noexcept : ucs(0) {}
+      |                          ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:115:26: note:   candidate expects 0 arguments, 1 provided
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(const QChar&)'
+   48 | class QT6_ONLY(Q_CORE_EXPORT) QChar {
+      |                               ^~~~~
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'const QChar&'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note: candidate: 'constexpr QChar::QChar(QChar&&)'
+G:\01_Professional\QT6\Installed\6.12.0\mingw_64\include/QtCore/qchar.h:48:31: note:   no known conversion for argument 1 from 'char' to 'QChar&&'

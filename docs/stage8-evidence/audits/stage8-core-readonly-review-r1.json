@@ -1,0 +1,484 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "reviewer": "/root/polygon_gate",
+  "reviewMode": "独立只读检查，不改逻辑，不重复执行测试",
+  "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "requestedBaselineCommit": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
+  "headObservedAtReview": "f57d5f5094207a4b47a9b8ed618282cdd858a063",
+  "verdict": "限定普通宏源码事务范围内未发现独立阻断",
+  "activeFindings": [],
+  "scope": [
+    "src/macro_workspace.h",
+    "src/macro_workspace.cpp",
+    "tests/macro_workspace_tests.cpp"
+  ],
+  "supportingScope": [
+    "src/project_model.cpp",
+    "src/native_project_codec.cpp",
+    "src/device_macro_compiler.cpp"
+  ],
+  "sourceIdentity": {
+    "src/macro_workspace.h": {
+      "sha256": "ba0d788a8234377e6a92a1bd55bbb71be9029584987c4d533f1bdf6e0cb32c06",
+      "bytes": 2519,
+      "lines": 51
+    },
+    "src/macro_workspace.cpp": {
+      "sha256": "5849ccef8d90702a6aed0b9ffbdc2772b6e5bef0b4e7f18a44ce3f40e8ef2346",
+      "bytes": 27924,
+      "lines": 501
+    },
+    "tests/macro_workspace_tests.cpp": {
+      "sha256": "fc67b45fe75d326029194673efd3435a057d9e55f1fa810e45c24e9907444f30",
+      "bytes": 39738,
+      "lines": 687
+    },
+    "src/project_model.cpp": {
+      "sha256": "7599c366cd4fdee679218563884c97759b61356674f1f4bf506273708cc28ea3",
+      "bytes": 134061,
+      "lines": 2060
+    },
+    "src/native_project_codec.cpp": {
+      "sha256": "1a588ed9ddb44e7743506ced4a1d8276220b2a3f89c82a0ff8cbf274052a92f2",
+      "bytes": 214641,
+      "lines": 3794
+    },
+    "src/device_macro_compiler.cpp": {
+      "sha256": "2847403edf84e16f95026bb553dc89f597abb92faf22eb23b46836a6a92d3f79",
+      "bytes": 50117,
+      "lines": 942
+    }
+  },
+  "checks": [
+    {
+      "topic": "所有页面的持久化宏名与删除依赖",
+      "result": "通过",
+      "detail": "扫描11类控件语义：位/字/灯/功能按钮共享bitButton.macroName，另有slider、dropdown、screen common、multistate common、multifunction common、number、ascii common七种carrier；不依赖enabled。allPages涵盖当前页与隐藏页；generic inbound reference按稳定macro ID识别。删除对活动引用、禁用草稿引用和稳定ID引用均拒绝。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 85,
+          "endLine": 137
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 47,
+          "endLine": 103
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 226,
+          "endLine": 274
+        }
+      ]
+    },
+    {
+      "topic": "跨页改名与稳定身份",
+      "result": "通过",
+      "detail": "现有HmiProject::renameMacro处理bitButton、slider、dropdown；workspace补齐screen、multistate、multifunction、number、ascii五种独立禁用carrier，并遍历当前页及全部inactivePages。改名不改源码文本，不改既有稳定ID或generic targetId。测试15组（11 dormant+4 allowed live）验证跨页改名与序列化。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 147,
+          "endLine": 153
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 371,
+          "endLine": 389
+        },
+        {
+          "file": "src/project_model.cpp",
+          "startLine": 1708,
+          "endLine": 1750
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 164,
+          "endLine": 217
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 318,
+          "endLine": 329
+        }
+      ]
+    },
+    {
+      "topic": "原子事务与legacy ID",
+      "result": "通过",
+      "detail": "list仅发布完整验证结果，不迁移ID。create/update/copy在候选副本中补齐缺失ID；真实改名由既有模型补齐缺失ID；既有ID保持，copy独立分配。各mutation均验证原模型和候选，最终一次赋回。失败保持工程与各自输出list/QString/QByteArray；error作为失败诊断允许改变。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 62,
+          "endLine": 75
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 290,
+          "endLine": 414
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 112,
+          "endLine": 154
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 338,
+          "endLine": 351
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 534,
+          "endLine": 549
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 666,
+          "endLine": 683
+        }
+      ]
+    },
+    {
+      "topic": "名称、UTF-8与BOM",
+      "result": "通过",
+      "detail": "新名称为1..256个UTF16 code units，有效Unicode，区分大小写，首尾必须已trimmed，拒绝Other_Control；名称只是显示key，不等同C入口符号。新源码先限制QString长度再限制UTF8为1MiB，拒绝NUL、起始内嵌U+FEFF及不可无损编码的surrogate。Stateless UTF8 decoder严格拒绝畸形编码；Allow/Reject/Require单个UTF8 BOM，拒绝重复BOM；合法U+FFFD、emoji、CRLF和空源码保持。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 29,
+          "endLine": 39
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 164,
+          "endLine": 175
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 424,
+          "endLine": 463
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 283,
+          "endLine": 308
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 414,
+          "endLine": 467
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 534,
+          "endLine": 549
+        }
+      ]
+    },
+    {
+      "topic": "数量与预算不混同",
+      "result": "通过",
+      "detail": "create/copy最多新增至100。已通过原模型验证的101..128项仍能list/update/rename/remove以供恢复；不表示可设备编译。单条新源码严格UTF8限1MiB；原模型总量上限保持8Mi UTF16 code units，并非8MiB UTF8。恢复旧数据时list不强加新的名称与UTF8字节限制。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.h",
+          "startLine": 10,
+          "endLine": 12
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 315,
+          "endLine": 344
+        },
+        {
+          "file": "src/project_model.cpp",
+          "startLine": 1438,
+          "endLine": 1454
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 361,
+          "endLine": 405
+        }
+      ]
+    },
+    {
+      "topic": "opaque snapshot保留",
+      "result": "保守边界通过",
+      "detail": "create/update/copy/rename仅修改Lite模型，nativeSourceSnapshot原始字节保持。只要snapshot非空，remove即拒绝，即使删除对象是后来新建的宏。该保护不证明原厂源导出可以接受任意Lite编辑；原厂patchSourceMacros仍有独立更窄的名称、数量、QString长度及未知启动/依赖/变量/标志拒绝门限。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 399,
+          "endLine": 414
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 2946,
+          "endLine": 3021
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 642,
+          "endLine": 656
+        }
+      ]
+    },
+    {
+      "topic": "支持种类、绑定分类与复制命名",
+      "result": "限定范围通过",
+      "detail": "普通源码以外的AddressVariables、UnverifiedScheduling和未知枚举拒绝导入导出。macroBindable只接受位/字按钮、slider、dropdown四类，拒绝灯/功能/其他以及歧义carrier；bindingCapabilities有12行，前4 bindable，全部sourceOnly=true、hardwareExecutionVerified=false。此Core分类不证明UI、模型、原厂源、SDK与调度全层等价。_copy/_copyN为明确Lite规则，截断避开半个surrogate pair。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 185,
+          "endLine": 242
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 264,
+          "endLine": 280
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 473,
+          "endLine": 500
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 500,
+          "endLine": 529
+        },
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 559,
+          "endLine": 632
+        }
+      ]
+    },
+    {
+      "topic": "边界外的文件与设备副作用",
+      "result": "通过",
+      "detail": "Core只接收/返回模型、QString与QByteArray；不执行文件I/O、编译、调度、GUI或设备访问。.c路径检查与原子写文件属于UI层，编译/SDK与硬件执行由父代理其他验收覆盖，不借本报告宣称通过。",
+      "sources": [
+        {
+          "file": "src/macro_workspace.h",
+          "startLine": 7,
+          "endLine": 49
+        },
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 473,
+          "endLine": 500
+        }
+      ],
+      "tests": [
+        {
+          "file": "tests/macro_workspace_tests.cpp",
+          "startLine": 477,
+          "endLine": 490
+        }
+      ]
+    }
+  ],
+  "constraintComparison": [
+    {
+      "dimension": "名称",
+      "core": "1..256 UTF16 code units，有效Unicode、exact trimmed、Other_Control拒绝；显示key",
+      "sdkCompiler": "非空trimmed检查，最多1024 UTF16 code units，保留直接/legacy调用较宽门限；临时文件用编译索引",
+      "nativeSourceExport": "修改宏表时1..64位ASCII C identifier",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 164,
+          "endLine": 175
+        },
+        {
+          "file": "src/device_macro_compiler.cpp",
+          "startLine": 772,
+          "endLine": 774
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 2954,
+          "endLine": 2970
+        }
+      ]
+    },
+    {
+      "dimension": "条数",
+      "core": "新增最多100；模型合法旧101..128可恢复编辑",
+      "sdkCompiler": "最多100",
+      "nativeSourceExport": "修改宏表最多100，未修改宏表可原样保留",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 319,
+          "endLine": 321
+        },
+        {
+          "file": "src/project_model.cpp",
+          "startLine": 1438,
+          "endLine": 1454
+        },
+        {
+          "file": "src/device_macro_compiler.cpp",
+          "startLine": 763,
+          "endLine": 765
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 2961,
+          "endLine": 2966
+        }
+      ]
+    },
+    {
+      "dimension": "源码",
+      "core": "严格UTF8最多1MiB，不含NUL/起始内嵌BOM/失配surrogate",
+      "sdkCompiler": "QString与UTF8均最多1MiB，并要求当前ACP toLocal8Bit可逆",
+      "nativeSourceExport": "MaximumStringBytes=1MiB；源码最多524288 UTF16 code units",
+      "sources": [
+        {
+          "file": "src/macro_workspace.cpp",
+          "startLine": 29,
+          "endLine": 39
+        },
+        {
+          "file": "src/device_macro_compiler.cpp",
+          "startLine": 772,
+          "endLine": 793
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 21,
+          "endLine": 21
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 2968,
+          "endLine": 2970
+        }
+      ]
+    },
+    {
+      "dimension": "成功语义",
+      "core": "只证明源码模型事务成功；例如可保存emoji或中文显示key",
+      "sdkCompiler": "受ACP与普通零地址变量宏编译边界约束；ACP936下emoji仍会拒绝",
+      "nativeSourceExport": "未知启动/依赖/变量/校验/运行标志继续拒绝；中文显示key不满足ASCII标识符门限",
+      "sources": [
+        {
+          "file": "src/device_macro_compiler.cpp",
+          "startLine": 792,
+          "endLine": 793
+        },
+        {
+          "file": "src/native_project_codec.cpp",
+          "startLine": 2964,
+          "endLine": 2984
+        }
+      ]
+    }
+  ],
+  "testEvidence": {
+    "executionByThisReviewer": false,
+    "formalCurrentR2": {
+      "run": "docs/stage8-evidence/windows-r2/run.json",
+      "log": "docs/stage8-evidence/windows-r2/KinSealMacroWorkspaceTests.txt",
+      "suite": "KinSealMacroWorkspaceTests",
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "executable": "build/KinSealMacroWorkspaceTests.exe",
+      "sha256": "7cc4ae6e2f32e4f45c6b74622e1ce511585acd5a6d8b695ae20db4249456e5bd",
+      "actualExecutableShaVerified": true,
+      "logTotalsRead": true,
+      "usbAccessed": false,
+      "desktopSwitched": false,
+      "systemInput": false,
+      "foregroundActivationCalled": false
+    },
+    "formalHistoricalR1": {
+      "run": "docs/stage8-evidence/windows-r1/run.json",
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "ca99f4961a37444afd039c702c2b40aa92c33767aad43b241427cc0a6c5c2960",
+      "status": "历史执行记录；build位置已由r2重建，不把r1绑定到当前EXE"
+    },
+    "independentCoreOwned": {
+      "root": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned",
+      "run": "run-r1.json",
+      "xml": "test-r1.xml",
+      "log": "test-r1.txt",
+      "executable": "MacroWorkspaceCoreTests-r5.exe",
+      "sha256": "5e426a52c089ab867a8e19ccaf8dae0a90a269c173741d66ee433bc5a11fb42b",
+      "passed": 81,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "actualExecutableShaVerified": true,
+      "xmlIncidentsParsed": {
+        "pass": 81
+      },
+      "review": "readonly-review-r1.json",
+      "finalStatus": "final-status-r1.json",
+      "recordedStrictCompilationFlags": [
+        "-Wall",
+        "-Wextra",
+        "-Wconversion"
+      ],
+      "recordedStrictCompilationLogs": [
+        {
+          "file": "compile-step-1-r2.log",
+          "bytes": 0
+        },
+        {
+          "file": "compile-step-2-r3.log",
+          "bytes": 0
+        }
+      ]
+    },
+    "interpretation": "读取并核对既有执行证据和当前文件身份；本次未构建、未执行测试。81项含QtTest init/cleanup，不额外累加r1/r2或独立重复运行。"
+  },
+  "limits": [
+    "本报告只审查普通源码Core事务，不宣称C源码一定可编译、原厂导出一定成功、宏运行或调度已验证。",
+    "Core、SDK、原厂源导出的有意不同门限应分别记录，不为对齐而放宽Core。",
+    "宏模板Macro_Entry与_copy/_copyN命名为明确Lite规则，不声明与原厂逐字等价。",
+    "UI生命周期与guard接线、CLI输出、真实SDK编译和硬件运行属于其他独立复核与验收范围。",
+    "仅写本报告；无源码修改、无构建/测试、无GUI/USB/PLC、无清理。"
+  ],
+  "actions": {
+    "sourceModified": false,
+    "buildRun": false,
+    "testRun": false,
+    "guiUsed": false,
+    "sdkStarted": false,
+    "usbAccessed": false,
+    "plcAccessed": false,
+    "cleanupAttempted": false,
+    "gitMutation": false,
+    "writtenFiles": [
+      "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\stage8-core-readonly-review-r1.json"
+    ]
+  }
+}

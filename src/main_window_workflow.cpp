@@ -570,6 +570,8 @@ void MainWindow::updateCommandStates() //20261110-7 add
             enabled = m_hasProject && !downloadInProgress(); //20261114-5 change: Cover the owned session from snapshot publication through final cleanup.
         } else if (id == QStringLiteral("action_offline_simulation")) { //20261114-6 add
             enabled = m_hasProject && !downloadInProgress();
+        } else if (id == QStringLiteral("action_script")) { //20261114-7 add
+            enabled = m_hasProject && !downloadInProgress();
         } else if (!command.isEmpty()) {
             enabled = m_hasProject && (command == QStringLiteral("undo") ? m_projectHistoryIndex > 0 :
                 command == QStringLiteral("redo") ? m_projectHistoryIndex + 1 < m_projectHistory.size() :

@@ -170,6 +170,10 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                     else { delete dialog; }
                 });
             }
+            else if (id == QStringLiteral("action_script")) //20261114-7 add: The native editor and usage list are distinct commands.
+            { connect(action, &QAction::triggered, this, &MainWindow::manageMacros); }
+            else if (id == QStringLiteral("action_macro_admin"))
+            { connect(action, &QAction::triggered, this, [this]() { showGlobalTool(3); }); }
             else if (id == QStringLiteral("action_qrcode")) //20261112-0 add
             {
                 connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("qrcode")); });

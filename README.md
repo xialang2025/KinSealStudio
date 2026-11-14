@@ -1,6 +1,10 @@
 # KinSealStudio Lite
 
-当前新增便携版为**阶段6下载事务版**（代码提交`76def3c3`） `dist/KinSealStudioLite-Stage6-transfer-r1/KinSealStudioLite.exe`：10/12/14段独立产物均已实际下载，具逐步契约、后台取消和完整提交/重启收尾。宏样例标识与按钮已确认显示，无宽度提示；完整触控/宏运行仍待验。上载协议、独立介质包生成与完整原厂下载窗口未完成；已有严格copy-only介质校验工具。详见[阶段6进度](docs/阶段6逐项进度.md)和[统一剩余台账](design_plan/未完成任务总台账.md)。下文阶段5包为上一交付基线。
+当前新增便携版为**阶段8普通宏编辑编译版**：`dist/KinSealStudioLite-Stage8-macro-r1/KinSealStudioLite.exe`。可从工具菜单/工程树打开独立宏编辑器，管理普通源码、跨页安全改名、导入导出UTF-8源码、插入36项原厂函数/图形示例，并后台编译或停止。真实AMT ARM SDK须外部配置；包不附SDK/许可证。支持`--compile-macros 工程.ksp 报告.json`，示例在`samples/stage8/ordinary-two-macros.ksp`。
+
+本批最终PC测试263/0/0；地址变量交换、初始化/全局/画面调度与设备宏执行尚未完成，阶段8六个完整任务继续开放。PC离线仍不执行宏。详见[阶段8进度](docs/阶段8逐项进度.md)、[实现与验收](docs/阶段8宏编辑编译与验收.md)、[详细UI编译规则](docs/UI编译规则与阶段交付规范.md)及[统一未完成台账](design_plan/未完成任务总台账.md)。
+
+此前阶段6便携版为**阶段6下载事务版**（代码提交`76def3c3`） `dist/KinSealStudioLite-Stage6-transfer-r1/KinSealStudioLite.exe`：10/12/14段独立产物均已实际下载，具逐步契约、后台取消和完整提交/重启收尾。宏样例标识与按钮已确认显示，无宽度提示；完整触控/宏运行仍待验。上载协议、独立介质包生成与完整原厂下载窗口未完成；已有严格copy-only介质校验工具。详见[阶段6进度](docs/阶段6逐项进度.md)和[统一剩余台账](design_plan/未完成任务总台账.md)。下文阶段5包为上一交付基线。
 
 上一可运行包为 **阶段5第九批** `dist/KinSealStudioLite-Stage5-compile-slice9-r1/KinSealStudioLite.exe`，源码基线`b73a3cf`。已交付五类控制记录和九类受限静态背景C，阶段4已处理41族编辑切片，完整阶段4/5尚未闭环。剩余事项统一见[未完成任务总台账](design_plan/未完成任务总台账.md)：12阶段90项主任务、41族及全部历史候选/问题；原厂下载成功不能替代新版独立产物T或屏显/触控E。[阶段5进度](docs/阶段5逐项进度.md)列出各批实际范围；下文旧版记录保留其历史边界。
 

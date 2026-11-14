@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "frozen": true,
+  "sourceIdentity": {
+    "src/macro_workspace.h": "ba0d788a8234377e6a92a1bd55bbb71be9029584987c4d533f1bdf6e0cb32c06",
+    "src/macro_workspace.cpp": "5849ccef8d90702a6aed0b9ffbdc2772b6e5bef0b4e7f18a44ce3f40e8ef2346",
+    "tests/macro_workspace_tests.cpp": "fc67b45fe75d326029194673efd3435a057d9e55f1fa810e45c24e9907444f30"
+  },
+  "independentTest": {
+    "evidence": "run-r1.json",
+    "passed": 81,
+    "failed": 0,
+    "skipped": 0
+  },
+  "strictCompilation": {
+    "coreLog": "compile-step-1-r2.log",
+    "testsLog": "compile-step-2-r3.log",
+    "logBytes": 0,
+    "flags": [
+      "-Wall",
+      "-Wextra",
+      "-Wconversion"
+    ]
+  },
+  "readOnlyReview": "readonly-review-r1.json",
+  "parentFormalTest": {
+    "status": "parent-message-confirmed",
+    "passed": 81,
+    "failed": 0,
+    "skipped": 0,
+    "evidencePath": "parent-managed"
+  },
+  "cleanup": {
+    "evidence": "cleanup-r1.json",
+    "status": "denied-by-automatic-review",
+    "reason": "blocked by policy",
+    "requestedObjectFiles": 4,
+    "requestedLogicalBytes": 4170091,
+    "deletedFiles": 0,
+    "alternateDeletionAttempted": false,
+    "issueId": "DOC-CLEANUP-004"
+  },
+  "guiUsed": false,
+  "sdkStarted": false,
+  "hardwareIo": false,
+  "sharedBuildModified": false,
+  "gitUsed": false
+}

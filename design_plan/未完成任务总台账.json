@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14（阶段8前置规则补记）",
+  "updatedAt": "2026-11-14 Asia/Shanghai",
   "sourceCommit": "7b2ac087f28fe3c2a05c6d14058c003dd521725e",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -7067,15 +7067,15 @@
       "id": "S08-01",
       "stage": 8,
       "title": "S08-01 · 宏管理器和编辑器完整规格",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "普通宏源码/按钮绑定及SDK选择有基础；帮助25函数和图形函数仅调查种子。",
-      "remaining": "完整宏管理/编辑器字段、名称冲突/递增、导入导出/查找/插例、dirty与取消事务、引用重命名/删除及调度矩阵待核。",
+      "completedScope": "22轮原厂UI；普通源码工作区；36/36插例；关闭改稿取消/不保存证据",
+      "remaining": "原厂完整布局和工具；名称正则及冲突规则；导入导出格式；提交重命名和删除引用行为；旧位/字/slider/dropdown局部写宏入口未全部统一新事务；macro_admin使用一览布局仍有差异；原厂选区插例未核",
       "blockers": [
         "原厂宏树/菜单/编辑器/帮助",
         "既有普通宏模型"
       ],
-      "nextAction": "后台枚举真实嵌套窗口，普通无变量宏逐字段记录默认/边界/顺序；对引用宏执行重命名/删除/取消并核源差分。",
+      "nextAction": "名称和引用各做一个owned单变量探针，保留源码前后身份。",
       "acceptance": [
         "MAC-01：全部本次声明管理动作、插例光标/撤销、确定取消、引用和保存重开与原厂相符；禁用宏控件仍禁用。",
         {
@@ -7165,21 +7165,30 @@
             "text": "| MAC-01 / S08-01 | 新建/复制粘贴/重命名/删除/查找，变量表和函数/图形库插例 | 字段/顺序/引用/光标插入、确定/取消按V5.1；旧帮助只作种子 | D/U/P；关键窗口/前后源 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
       "id": "S08-02",
       "stage": 8,
       "title": "S08-02 · SDK配置与可重复编译",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "ADS armcc→armlink→fromelf真编译、ANSI往返、RAW保护与普通零变量10项回归通过；24B SetLB1已有原厂对照。",
-      "remaining": "完整路径/缺文件/错误版本位数、ANSI不可表示、语法错/超时/取消和多宏失败事务全矩阵未按阶段8当前身份收口。",
+      "completedScope": "六参数API兼容旧四参数；15项SDK哈希；ANSI/ACP/argv/RAW/索引；首错/取消/完整包事务；r2编译测试19项；Core及UI/CLI最终只读复核无活动发现，CLI24/31通过，KSP/SM宏段/绑定索引一致。",
+      "remaining": "其它SDK/型号/错误位数版本及未覆盖路径分支；OS未确认终止时析构额外等待的实际范围；更完整的编译内存边界证据",
       "blockers": [
-        "指定AMT SDK完整身份/授权外部路径",
-        "普通宏源"
+        "其它SDK/型号实证",
+        "OS未确认终止极端清理范围"
       ],
-      "nextAction": "固定工具/库/ANSI源码hash，零/一/两宏重复编译并单改常数；补尚未覆盖的工具/编码/取消失败输入。",
+      "nextAction": "针对未核SDK/型号、内存边界及OS无法确认终止分支补独立单变量证据；普通零变量实测已归档。",
       "acceptance": [
         "MAC-02～04：AXF/RAW/包头/索引可对照，失败不替换旧包或绑定且终止自有进程；零宏无SDK可用，C不记E。",
         {
@@ -7295,21 +7304,29 @@
             "text": "| MAC-04 / S08-02 | 入口不在RO起点、RW/ZI越槽、RAW或总包越保护值 | 当前保护明确拒绝；不能当原生全部极限 | C；AXF段/被拒边界 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
       "id": "S08-03",
       "stage": 8,
       "title": "S08-03 · 名称、索引与编译状态",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "本版QMap按名称排序并同步macroIndices是明确产品策略；普通按钮索引已实现。",
-      "remaining": "原厂创建序/列表序/重命名/启停过滤/失败宏的真实编译排序、flag全语义与引用迁移未闭合。",
+      "completedScope": "Lite稳定ID及活动/休眠引用事务；原厂创建序保存新进程重开；LiteQMap策略差异明示",
+      "remaining": "原厂重命名/禁用/编译失败/删除后包序；MarcoRun/MarcoVar与按钮索引映射；原厂提交引用迁移及撤销",
       "blockers": [
-        "普通宏源/包/按钮绑定",
-        "S08-02可重复编译"
+        "原厂有效编译包序/flag及引用变更样例"
       ],
-      "nextAction": "两宏不同代码交换创建/列表/名称，依次禁用、插失败宏、删中间项；同步比源MD5、MarcoRun/Var和按钮索引。",
+      "nextAction": "独立SDK通道制作两个不同代码宏和一个失败宏，分开记录树序、源引用和有效包序。",
       "acceptance": [
         "MAC-05：编辑选择、源引用、有效编译索引及RAW入口逐项对应；失败/禁用不使后续按钮错调用，未知flag不写。",
         {
@@ -7403,21 +7420,30 @@
             "text": "| MAC-05 / S08-03 | 交换名称/创建序、禁用一宏、插编译失败宏 | 源引用/编译索引/RAW地址/按钮索引对应，不错调用；原生顺序未知先补 | P/C；映射表/代表包 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
       "id": "S08-04",
       "stage": 8,
       "title": "S08-04 · 地址变量表",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "MarcoVar每宏904B/25×36B槽结构有局部证据；当前仅零地址变量实现并明确拒绝非零。",
-      "remaining": "变量类型/读写/宽度/字序/索引ABI、shared slot与macrogetData关系、读前同步/写后提交及设备交换未恢复。",
+      "completedScope": "原厂8种类型、读写项和默认字段；产品0/25只读说明，实际变量拒绝",
+      "remaining": "每类型/长度/地址族/读写/0..25边界；904B块与36B槽编码；变量交换时序和Local寄存器访问冲突",
       "blockers": [
         "原厂变量源/904B块",
         "阶段9地址扫描/字序"
       ],
-      "nextAction": "每种原厂实际变量类型仅增1项，分别改地址/读写/长度并测0/1/25/超界；对照源/MarcoVar/入口参数。",
+      "nextAction": "一次只新增一个关联变量，先源差分后独立编译，再安排受控设备验证。",
       "acceptance": [
         "MAC-06：每种变量有源/槽/宿主与ARM设备分层结果，外部扫描和跨字正确；非零未恢复前继续拒绝。",
         {
@@ -7513,22 +7539,31 @@
             "text": "| MAC-06 / S08-04 | 每种变量类型/读写属性、内部/外部地址、0/1/25/超界变量 | 当前零变量以外先拒绝；恢复后904B块/36B项和变量交换分别验 | P/C/E；单变量矩阵 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
       "id": "S08-05",
       "stage": 8,
       "title": "S08-05 · 初始化、全局、周期和事件调度",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "帮助列全局/初始化/画面/按钮；本版普通按钮绑定可编译，不能据此证明调度执行。",
-      "remaining": "触发/周期单位/使能、忙时重入丢弃排队、画面切换/断电/关闭、优先级和错误传播全契约及设备行为未闭合。",
+      "completedScope": "原厂初始化0/16、全局0/64及100ms频率/次数/受控默认字段；产品未开放调度",
+      "remaining": "初始化/全局/画面源字段和编译flag；启用/频率/重入/排队/优先级/断电；周期是否独立类型的完整语义",
       "blockers": [
         "原厂真实调度字段/flag",
         "变量/普通宏对应C",
         "可观察运行计数"
       ],
-      "nextAction": "每次仅启一种写专用计数的合法宏，先核原厂触发规则再mock可控时钟；设备触发/执行计数另验。",
+      "nextAction": "对真实存在的每种调度做单字段源差分，未知flag保持不生成。",
       "acceptance": [
         "MAC-07：各实际调度类型/连续重入/退出有独立计数和证据；离线兼容仍不执行宏，ARM RAW不当x64函数直接运行。",
         {
@@ -7625,21 +7660,30 @@
             "text": "| MAC-07 / S08-05 | 启动/全局/画面/按钮触发、连续/重入/退出 | 调度依据实证，离线兼容仍不执行；未恢复flag/顺序不猜 | D/C/E；触发/执行独立计数 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
       "id": "S08-06",
       "stage": 8,
       "title": "S08-06 · 统一权限和发布边界",
-      "status": "仍有欠项/未完整闭环",
+      "status": "本批普通宏切片已实现；完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "指示灯/功能按钮宏组禁用和编译守卫已有；无宏工程可不用SDK。",
-      "remaining": "全类型macroBindable、直接文件/源导出/编译四层一致性及帮助对编辑/编译/下载/运行区分待全范围核对。",
+      "completedScope": "四绑定家族门禁、灯/功能禁用、离线宏不执行、分层文档和清理拒绝记账；UI148宏项及阶段7回归115项、CLI24/31、便携24/31+smoke3/4通过；新包191文件164样例，不含SDK。",
+      "remaining": "完整变量/调度权限和出口一致性；未恢复功能后续HMI传输/宏执行；旧局部宏入口兼容边界；DOC-CLEANUP-004",
       "blockers": [
         "各控件macroBindable矩阵",
         "发布支持/SDK外部策略"
       ],
-      "nextAction": "汇总已声明控件的绑定入口及文件校验，逐一手工文件启用宏做拒绝；同步实际能力帮助与外部SDK选择说明。",
+      "nextAction": "冻结本批源/EXE/包身份后，先推进原厂单变量编码与调度源差分，再逐项安排真实下载及执行验证。",
       "acceptance": [
         "MAC-08：禁用控件UI/直接文件/导出/编译一致，SDK缺失只阻塞含宏场景；没有未知授权SDK入发布包。",
         {
@@ -7729,6 +7773,15 @@
             "text": "| MAC-08 / S08-06 | 指示灯/功能按钮UI与手工文件启用宏 | 禁用组保持；直接文件在导出/编译拒绝，不被公共组件意外开放 | U/P/C；拒绝结果 |"
           }
         ]
+      },
+      "stage8Evidence": {
+        "progress": "docs/stage8-evidence/progress.json",
+        "capabilities": "docs/stage8-evidence/S08-capabilities.json",
+        "report": "docs/阶段8宏编辑编译与验收.md",
+        "rules": "docs/UI编译规则与阶段交付规范.md#23",
+        "tests": "148宏测试+115阶段7回归=263/0/0，UI最终r3，其余r2",
+        "hardwareDownloadPerformed": false,
+        "hmiExecutionConfirmed": false
       }
     },
     {
@@ -22504,7 +22557,9 @@
           "line": 165
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "新增原厂8变量类型/默认读写/LB0/长度1字段D，当前产品仍零地址变量，904B/36B及交换未恢复。",
+      "stage8Evidence": "docs/阶段8宏编辑编译与验收.md"
     },
     {
       "id": "Q-S08-002",
@@ -22538,7 +22593,9 @@
           "line": 166
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "原厂初始化0/16、全局0/64、频率1..65535×100ms/次数0无限/受控默认字段D；普通源C和引用事务已补，调度/设备E未恢复。",
+      "stage8Evidence": "docs/阶段8宏编辑编译与验收.md"
     },
     {
       "id": "Q-S09-001",
@@ -176750,12 +176807,12 @@
     },
     {
       "id": "DOC-CLEANUP-004",
-      "title": "阶段8前置构建对象清理被拒绝",
-      "status": "自动审批拒绝；0删除",
-      "completedScope": "核定421个可再生成对象文件，排除主程序和共享增量构建。",
-      "remaining": "90977068B构建对象仍保留；历史被拒绝目录未重试。",
+      "title": "阶段8临时文件清理实际结果与审批拒绝",
+      "status": "部分清理完成；拒绝项仍保留",
+      "completedScope": "编译通道6自有中间文件3231095B，CLI与便携新生成尺寸边界文件各16777217B，实际共8文件36785529B；新TEMP/TMP根指向Z；唯一/小证据压缩归档。",
+      "remaining": "421旧构建对象90977068B与core4.o 4170091B删除被拒绝，各0删除；原厂462候选逻辑577046246B含硬链接，仅计划未删除。",
       "blockers": [
-        "逐个Remove-Item请求被自动审批以blocked by policy拒绝。"
+        "Remove-Item自动审批blocked by policy；历史被拒绝路径不重试或换通道。"
       ],
       "nextAction": "保留明确清理清单；仅在审批条件改变后处理，禁止换通道绕过。",
       "acceptance": [
@@ -176764,6 +176821,26 @@
       "sources": [
         {
           "path": "docs/stage8-evidence/cleanup-result.json",
+          "line": 1
+        },
+        {
+          "path": "docs/stage8-evidence/audits/compiler-owned/cleanup-r1.json",
+          "line": 1
+        },
+        {
+          "path": "docs/stage8-evidence/audits/core-owned/cleanup-r1.json",
+          "line": 1
+        },
+        {
+          "path": "docs/stage8-evidence/audits/native-macro/cleanup-candidates.json",
+          "line": 1
+        },
+        {
+          "path": "docs/stage8-evidence/cli-r1/cleanup-result.json",
+          "line": 1
+        },
+        {
+          "path": "docs/stage8-evidence/portable-r1/cleanup-result.json",
           "line": 1
         }
       ]
@@ -177463,7 +177540,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段8前置补记已完成；本批421个可再生对象文件清理被自动审批拒绝0删除。阶段8代码实施进行中，尚无新测试通过声明。",
+  "activitySummary": "阶段8普通源码事务、36插例、可重复ADS编译及分层文档已实施；最终263项PC测试通过；变量/调度等六完整任务仍开放。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178333,7 +178410,28 @@
       "baseline": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
       "rules": "docs/UI编译规则与阶段交付规范.md#22",
       "cleanup": "DOC-CLEANUP-004",
-      "implementationInProgress": true
+      "implementationInProgress": false
+    },
+    {
+      "kind": "ordinary-macro-workspace-compile-r1",
+      "marker": "//20261114-7",
+      "progress": "docs/stage8-evidence/progress.json",
+      "uiRules": "docs/UI编译规则与阶段交付规范.md#23",
+      "protocol": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md#96",
+      "formalTests": "263/0/0",
+      "uiFinal": "docs/stage8-evidence/windows-r3/run.json",
+      "otherTests": "docs/stage8-evidence/windows-r2/run.json",
+      "cleanup": "DOC-CLEANUP-004",
+      "completeStage8": false,
+      "newControls": 0,
+      "hardwareDownloadPerformed": false,
+      "hmiExecutionConfirmed": false,
+      "cli": "docs/stage8-evidence/cli-r1/run.json：24进程/31检查通过",
+      "portable": "docs/stage8-evidence/portable-r1/cli-r1/run.json：24进程/31检查；smoke-r2：3进程/4检查",
+      "readonlyReview": "docs/stage8-evidence/audits/stage8-ui-cli-readonly-review-r2.json",
+      "cleanupDeletedFiles": 8,
+      "cleanupDeletedBytes": 36785529,
+      "portableLatestSampleSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json：注释更新后2进程/4检查通过"
     }
   ]
 }

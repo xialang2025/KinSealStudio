@@ -1,0 +1,18 @@
+[
+  {"op":"entry","name":"action_script","label":"macro-editor"},
+  {"op":"tab","kind":"QTabWidget","tabTitles":["宏","函数库"],"value":1,"label":"function-library-tab"},
+  {"op":"invoke","kind":"QTreeWidget","treeRoot":"函数库","slot":"expandAll","label":"expanded-functions"},
+  {"op":"read","label":"expanded-library-full"},
+  {"op":"tab","kind":"QTabWidget","tabTitles":["宏","函数库"],"value":0},
+  {"op":"click","kind":"QToolButton","text":"\n新建","label":"new-macro-dialog"},
+  {"op":"validator","kind":"QLineEdit","windowKind":"AddLib"},
+  {"op":"text","kind":"QLineEdit","windowKind":"AddLib","value":"zeta"},
+  {"op":"click","kind":"QPushButton","windowKind":"AddLib","text":"确定","label":"created-zeta"},
+  {"op":"read","label":"zeta-source-and-list"},
+  {"op":"click","kind":"QToolButton","text":"\n新建"},
+  {"op":"text","kind":"QLineEdit","windowKind":"AddLib","value":"Alpha"},
+  {"op":"click","kind":"QPushButton","windowKind":"AddLib","text":"确定","label":"created-Alpha"},
+  {"op":"read","label":"zeta-then-Alpha-list-order"},
+  {"op":"tree-context","kind":"QTreeWidget","treeRoot":"宏","entry":"Alpha","label":"macro-context-menu"},
+  {"op":"read","label":"macro-context-actions"}
+]

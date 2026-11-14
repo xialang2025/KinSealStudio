@@ -1,0 +1,44 @@
+{
+  "activeLanguage": "中文",
+  "activePageId": "page-1",
+  "animations": {},
+  "configurationNodes": [],
+  "format": "KinSealStudio-Prototype",
+  "languages": [
+    "中文"
+  ],
+  "macroIds": {
+    "ClearLB1": "s08-clear-lb1",
+    "SetLB1": "s08-set-lb1"
+  },
+  "macros": {
+    "ClearLB1": "#include \"macro.h\"\n\n/******************************************************************************\n * Function Name   : Macro_Entry\n * Description     : Clear the internal LB1 value when invoked by the target macro runtime.\n * Input Parameters: None\n * Return Value    : None\n * Date            : 2026.11.14\n ******************************************************************************/\nvoid Macro_Entry(void) /* //20261114-7 add */\n{\n    LocalBit[1] = 0; /* Access the internal bit bank without an address-variable table. */\n}\n",
+    "SetLB1": "#include \"macro.h\"\n\n/******************************************************************************\n * Function Name   : Macro_Entry\n * Description     : Set the internal LB1 value when invoked by the target macro runtime.\n * Input Parameters: None\n * Return Value    : None\n * Date            : 2026.11.14\n ******************************************************************************/\nvoid Macro_Entry(void) /* //20261114-7 add */\n{\n    LocalBit[1] = 1; /* Access the internal bit bank without an address-variable table. */\n}\n"
+  },
+  "pageOrder": [
+    "page-1"
+  ],
+  "pages": [
+    {
+      "height": 480,
+      "id": "page-1",
+      "kind": "normal",
+      "name": "画面1",
+      "objects": [],
+      "width": 800
+    }
+  ],
+  "pictures": {},
+  "projectId": "stage8-ordinary-two-macros",
+  "projectName": "Stage8 ordinary zero-variable macro sources",
+  "references": [],
+  "resolution": {
+    "height": 480,
+    "width": 800
+  },
+  "schemaVersion": 12,
+  "startupLanguage": "中文",
+  "startupPageId": "page-1",
+  "targetModel": "AMT070W124-L800X480R",
+  "connections": []
+}

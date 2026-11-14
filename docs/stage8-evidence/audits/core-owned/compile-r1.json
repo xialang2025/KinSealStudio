@@ -1,0 +1,50 @@
+{
+  "linkedOrExecuted": false,
+  "guiUsed": false,
+  "steps": [
+    {
+      "program": "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\bin\\moc.exe",
+      "logBytes": 0,
+      "logPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned\\compile-step-0-r1.log",
+      "arguments": [
+        "-Isrc",
+        "-IG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include",
+        "-IG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtCore",
+        "-IG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtTest",
+        "tests\\macro_workspace_tests.cpp",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned\\macro_workspace_tests.moc"
+      ],
+      "exitCode": 0
+    },
+    {
+      "program": "G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+      "logBytes": 0,
+      "logPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned\\compile-step-1-r1.log",
+      "arguments": [
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Wconversion",
+        "-DQT_NO_CAST_FROM_ASCII",
+        "-DQT_NO_CAST_TO_ASCII",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtCore",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtGui",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtTest",
+        "-Isrc",
+        "-IZ:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned",
+        "-c",
+        "src\\macro_workspace.cpp",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\core-owned\\macro_workspace-r1.o"
+      ],
+      "exitCode": 1
+    }
+  ],
+  "hardwareIo": false
+}

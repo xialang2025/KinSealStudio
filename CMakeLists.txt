@@ -19,6 +19,11 @@ qt_add_executable(KinSealStudioLite WIN32
     src/main_window.h
     src/main_window_workflow.cpp #20261110-7 add: Share command state and whole-project transactions.
     src/main_window_simulation.cpp #20261114-6 add
+    src/main_window_macros.cpp #20261114-7 add
+    src/macro_manager_dialog.cpp src/macro_manager_dialog.h
+    src/macro_compiler_cli.cpp src/macro_compiler_cli.h
+    src/macro_workspace.cpp src/macro_workspace.h
+    macro_library.qrc #20261114-7 add: Verbatim library examples are separate from executable SDK inputs.
     src/native_shell_ui.cpp #20261111-1 add: Reproduce the original desktop shell using retained native icons and layout.
     native_shell.qrc
     src/stage3_project_edits.h #20261110-8 add
@@ -279,6 +284,18 @@ qt_add_executable(KinSealSimulationModbusTests
     src/simulation_modbus_transport.cpp src/simulation_modbus_transport.h tests/simulation_modbus_transport_tests.cpp)
 target_include_directories(KinSealSimulationModbusTests PRIVATE src)
 target_link_libraries(KinSealSimulationModbusTests PRIVATE Qt6::Core Qt6::Test)
+#20261114-7 add: Reuse editor objects; keep the synthetic SDK process separate from the proprietary tools.
+qt_add_executable(KinSealMacroWorkspaceTests tests/macro_workspace_tests.cpp)
+target_include_directories(KinSealMacroWorkspaceTests PRIVATE src)
+target_link_libraries(KinSealMacroWorkspaceTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealMacroUiTests tests/macro_ui_tests.cpp)
+target_include_directories(KinSealMacroUiTests PRIVATE src)
+target_link_libraries(KinSealMacroUiTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealStage8CompilerTests tests/device_macro_tests.cpp)
+target_include_directories(KinSealStage8CompilerTests PRIVATE src)
+target_link_libraries(KinSealStage8CompilerTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealMacroProcessFixture tests/macro_process_fixture.cpp)
+target_link_libraries(KinSealMacroProcessFixture PRIVATE Qt6::Core)
 #20261110-5 add: Exercise schema migration and the actual download backend without accessing USB.
 qt_add_executable(KinSealProjectModelTests ${KINSEAL_TEST_SOURCES} tests/project_model_stage1_tests.cpp)
 target_include_directories(KinSealProjectModelTests PRIVATE src third_party/lzokay)

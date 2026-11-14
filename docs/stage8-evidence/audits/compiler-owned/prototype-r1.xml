@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="DeviceMacroTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0581"/>
+  </TestFunction>
+  <TestFunction name="emptyProjectNeedsNoSdk">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.6801"/>
+  </TestFunction>
+  <TestFunction name="invalidSdkIsTransactional">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="1.7578"/>
+  </TestFunction>
+  <TestFunction name="projectLimitsFailBeforeCompilation">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.9971"/>
+  </TestFunction>
+  <TestFunction name="realCompilerBuildsNativePackage">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="421.85"/>
+  </TestFunction>
+  <TestFunction name="realCompilerRejectsSyntaxError">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="103.537"/>
+  </TestFunction>
+  <TestFunction name="realCompilerRequiresEntry">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="167.586"/>
+  </TestFunction>
+  <TestFunction name="realCompilerRejectsOverlappingRw">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="172.048"/>
+  </TestFunction>
+  <TestFunction name="realCompilerKeepsUnicodeNamesOutOfPaths">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="458.608"/>
+  </TestFunction>
+  <TestFunction name="optionsAndIndependentReport">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.1678"/>
+  </TestFunction>
+  <TestFunction name="syntheticProcessFailures">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-nonzero]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-output-flood]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-stage-timeout]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-total-timeout]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-cancel]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-invalid-elf]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[synthetic-raw-overflow]]></DataTag>
+    </Incident>
+    <Duration msecs="1309.18"/>
+  </TestFunction>
+  <TestFunction name="realManifestRepeatabilityAndConstantChange">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="949.372"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0116"/>
+  </TestFunction>
+  <Duration msecs="3588.39"/>
+</TestCase>

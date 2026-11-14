@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "root": "Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage8-20261114/core-owned",
+  "status": "denied-by-automatic-review",
+  "action": "Remove-Item -LiteralPath <four explicit owned .o files> -Force (nonrecursive)",
+  "reason": "blocked by policy",
+  "requestedFiles": [
+    {
+      "name": "animation_resources-moc.o",
+      "bytes": 439887
+    },
+    {
+      "name": "stage2_system_settings-moc.o",
+      "bytes": 440170
+    },
+    {
+      "name": "macro_workspace-r1.o",
+      "bytes": 1562354
+    },
+    {
+      "name": "macro_workspace_tests-r2.o",
+      "bytes": 1727680
+    }
+  ],
+  "logicalBytesRequested": 4170091,
+  "deletedFiles": 0,
+  "logicalBytesFreed": 0,
+  "alternateDeletionAttempted": false,
+  "wholeCommandRejectedBeforeExecution": true,
+  "sharedBuildTouched": false,
+  "preserved": [
+    "source-r1",
+    "MacroWorkspaceCoreTests-r5.exe",
+    "test-r1.xml",
+    "test-r1.txt",
+    "run-r1.json",
+    "readonly-review-r1.json",
+    "all failed compilation and link logs"
+  ],
+  "note": "Read-only Get-ChildItem established four object sizes. Per-file hashes and deletion-plan generation were in the rejected command and therefore were not executed."
+}

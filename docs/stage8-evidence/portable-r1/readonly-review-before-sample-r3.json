@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "reviewer": "/root/polygon_gate",
+  "mode": "便携包与验收证据只读复核；未改生产逻辑",
+  "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
+  "verdict": "现有包内容、私有桌面启动与普通宏外部SDK编译通过；真实代码提交绑定待父代理提供SHA",
+  "activeFindings": [],
+  "codeCommitState": "awaiting-parent-verified-commit",
+  "executable": {
+    "file": "KinSealStudioLite.exe",
+    "bytes": 49664718,
+    "sha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91"
+  },
+  "packageBeforeCommitBinding": {
+    "files": 191,
+    "bytes": 122102985,
+    "samples": 164,
+    "runtimeDependenciesAndLicenses": 23,
+    "inheritedTool": "tools/stage6_media_bundle.py",
+    "manifestSha256": "b65f57143cc827f5319dc688247487622501c091e770055abeb1cf2a72fb11c7",
+    "sourceFiles": 6331,
+    "sourceContentSha256": "4be9f6b775e6117ac445a50f17858ee16fcc21751f7a595f585c30c7a2a85cf0",
+    "fileContentSha256": "4824300e2d0e9066bc0e96251f5de5953d98685823f68126510f58059666bc92"
+  },
+  "checks": [
+    {
+      "topic": "输入与复制身份",
+      "result": "通过",
+      "detail": "创建前记录6331项生产源/资源以及选定输入SHA。只复制Stage7包已核23项DLL/许可、当前生产EXE、全部当前样例及既有介质脚本。4个新增stage8样例通过增量刷新加入；未复制旧EXE、旧manifest或旧说明。"
+    },
+    {
+      "topic": "包清单完整性",
+      "result": "通过",
+      "detail": "当前包191文件集合与manifest190项+manifest自身完全相同；逐项大小/SHA及nlink=1通过。唯一EXE为KinSealStudioLite.exe。没有SDK或原厂EXE，不复制全部docs，不创建链接。"
+    },
+    {
+      "topic": "后台启动与Qt来源",
+      "result": "通过",
+      "evidence": "smoke-r2/run.json",
+      "detail": "私有桌面实际--capture-preview成功，1353x708截图已目视检查，无错误弹窗。观察到的Qt6Core/Gui/Svg/Widgets及qsvgicon/qwindows/styles均来自包路径。PATH仅包+System32+Windows，未包含安装Qt。无桌面切换、前置激活或系统输入。"
+    },
+    {
+      "topic": "新样例与真实SDK",
+      "result": "通过",
+      "evidence": "smoke-r2/ordinary-two-macros-report.json",
+      "detail": "包内ordinary-two-macros.ksp实际校验及外部SDK编译exit0。ClearLB1=0、SetLB1=1；独立解析唯一1024B头+24B+24B RAW，MarcoRun1072B；MarcoVar1808B全零。SetLB1 RAW保持已核oracle哈希。外部SDK15文件编译前后SHA一致，编译临时目录为空。"
+    },
+    {
+      "topic": "完整CLI契约",
+      "result": "通过",
+      "evidence": "cli-r1/run.json",
+      "detail": "冻结脚本f18584242b69f3570ae7d76e67edc3ba0b8f5132de9a286771087f94a91eb561在包EXE执行，实际24进程/31语义全部通过：零/一/多宏、重复重现、常数变化、真实语法错误、无SDK、大小写/路径/硬链接覆盖保护、既有只读目标提交失败保护、KSP/SM设备包宏索引与字节。"
+    },
+    {
+      "topic": "说明与能力边界",
+      "result": "通过",
+      "detail": "中文说明写明普通源码工作区、36项函数/图形库插例、外部ARMCC SDK、KINSEAL_ARM_SDK与KINSEAL_MACRO_TEMP_ROOT，地址变量/初始化/全局/画面调度和HMI宏执行未完成，以及前期局部写宏不能作为完整宏系统或离线C宏执行证明。"
+    },
+    {
+      "topic": "真实提交绑定",
+      "result": "待父代理提供真实提交SHA",
+      "detail": "codeCommit当前为null，未伪造。package_stage8.py --bind-code-commit只读rev-parse与cat-file --batch，将逐项校验6331源/资源和包输出；文本仅允许Git EOL归一，成功后更新自有manifest与commit-binding.json，不执行Git提交/推送。"
+    }
+  ],
+  "failureHistory": [
+    {
+      "evidence": "run.json",
+      "kind": "辅助验收长度预期错误",
+      "detail": "首轮validate/capture/compile三个实际进程均exit0；辅助脚本错误假定每个宏重复整个包头，导致语义汇总false。保留首轮原记录；smoke-r2改用唯一1024B头和各长度表独立解析后3进程/4语义通过。未改生产EXE或业务源码。"
+    },
+    {
+      "kind": "使用说明修正",
+      "evidence": "inputs.json.contentAmendments",
+      "detail": "初稿SDK工具名错误写为GCC；在正式验收前修正为实际armcc/armlink/fromelf与Include/配套库，刷新包说明及manifest并保留修订记录。"
+    }
+  ],
+  "testCounts": {
+    "smokeCurrent": {
+      "processes": 3,
+      "semanticChecks": 4,
+      "failed": 0
+    },
+    "cli": {
+      "processes": 24,
+      "semanticChecks": 31,
+      "failed": 0
+    },
+    "interpretation": "不把进程次数/语义数与QtTest263项相加，不累计历史重复运行。"
+  },
+  "screenshot": {
+    "path": "smoke-r2/main-window.png",
+    "bytes": 119215,
+    "width": 1353,
+    "height": 708,
+    "sha256": "b24f5ea96abf27df59bc5bc90c306a51abf793d999dc6f421c3023f719a0ef7a"
+  },
+  "remaining": [
+    {
+      "kind": "代码提交绑定",
+      "state": "awaiting parent real commit"
+    },
+    {
+      "kind": "可再生size-guard样例",
+      "path": "cli-temporary-root/stage8-cli-6q_ymi_7/oversized.ksp",
+      "bytes": 16777217,
+      "state": "按本子任务禁止删除路径的约束保留；未尝试清理，可交父代理按明确范围处理"
+    }
+  ],
+  "limits": [
+    "本批未执行USB/PLC下载、实物显示/触摸或HMI宏调用。",
+    "source hash是可追溯输入身份，不等同二进制可重现构建证明。",
+    "SDK清单身份不构成供应商认证或再分发授权；包没有SDK。"
+  ],
+  "actions": {
+    "productionSourceModified": false,
+    "gitMutated": false,
+    "deletedPaths": false,
+    "usbTransfer": false,
+    "plcIo": false,
+    "foregroundActivation": false,
+    "desktopSwitched": false,
+    "systemInput": false,
+    "temporaryRootDrive": "Z:"
+  },
+  "builder": {
+    "path": "tools/package_stage8.py",
+    "sha256": "15bf98ad05defdf3c374ff70670875c219330679ed26b00502bb488022337147",
+    "syntaxParsed": true
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "reviewer": "polygon_gate",
+  "mode": "实现完成后的只读自复核",
+  "businessLogicChangedDuringReview": false,
+  "sourceManifest": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_macro_compiler.h",
+      "bytes": 2946,
+      "lineCount": 67,
+      "sha256": "fa818ee2076537a07570851f1c1bbbdcc7cbdca62e49e722c2242ea45fe28d5a"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_macro_compiler.cpp",
+      "bytes": 50117,
+      "lineCount": 942,
+      "sha256": "2847403edf84e16f95026bb553dc89f597abb92faf22eb23b46836a6a92d3f79"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\device_macro_tests.cpp",
+      "bytes": 25822,
+      "lineCount": 503,
+      "sha256": "5ce7b258b0eefe0cdaa73ab445d9a2ccb48e1affeaf7729c411d2372bcf7e107"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\macro_process_fixture.cpp",
+      "bytes": 4799,
+      "lineCount": 114,
+      "sha256": "19cd88114e9df23ab7560d2c0233022970424fa9d7b499a525d9cc1080081f1d"
+    }
+  ],
+  "result": "normal_paths_and_prototype_passed_one_unverified_process_finalization_boundary_reported",
+  "verified": [
+    "旧4参API和所有旧宏测试保持通过；空宏不要求SDK。",
+    "调用一开始按值冻结宏表/目标，源到ANSI字节可逆性和三类hash记录准确。",
+    "保持原QMap索引、RO按1KiB推进、每宏RW槽1KiB、MarcoRun总128KiB、MarcoVar每宏904B全0。",
+    "候选包只在全部验证/清理成功后一次赋值；独立report失败仍保留首错，别名report明确拒绝。",
+    "每阶段exe/argv记录、阶段结束瞬间也复查deadline/取消；输出每次最多64KiB读取且保留上限和累计上限均有效。",
+    "SDK15required全部前后hash；PE位数和固定版本资源只读记录，许可内容未进入报告。",
+    "真实24B两次一致、改常数不同、语法错误旧包保持；合成进程七类失败均明确非ADS oracle。",
+    "源/测试/fixture三编译与链接诊断0B，原型19/0/0，git diff --check通过。"
+  ],
+  "openRisks": [
+    {
+      "id": "SDK-PROCESS-FINALIZER-BOUNDARY",
+      "severity": "需交叉复核/验收边界确认",
+      "state": "unverified-not-reproduced",
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_macro_compiler.cpp",
+      "description": "kill后waitForFinished(cleanupTimeoutMs)若未确认退出，栈上QProcess析构器可能再次等待默认超时；未实测OS终止失败，因此不把所配deadline表述为绝对墙钟保证。",
+      "reportedToRoot": true,
+      "normalCaseEvidence": "短时stage/total/cancel假进程均确认退出且工作目录清理通过。"
+    }
+  ],
+  "exclusions": {
+    "gui": false,
+    "usb": false,
+    "plc": false,
+    "hardwareMacroExecution": false,
+    "sourceVariablesOrSchedulerExpanded": false
+  },
+  "evidence": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-constant-changed.json",
+      "sha256": "083738387c296ad82daf243ab42f741b375b84a820386ce37b65eece47f18853",
+      "ok": true,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-oracle-first.json",
+      "sha256": "85d3ac9711f4b86c1433d027216fbb14d9a0291079aca2e89ed5b3d5e4c5759b",
+      "ok": true,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-oracle-repeat.json",
+      "sha256": "d0d734a79531c7f18c36130b1e73efd193c11f8ed4595b5d0ca6d518a216a8aa",
+      "ok": true,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\real-syntax-rejected.json",
+      "sha256": "4afd9ce42ab6991c2fc11cae96cff1b02ee8df93290bc1477496865e64268edd",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-cancel.json",
+      "sha256": "4a33be13a2f2e443294401fcea378968abd50d26c611b1fe1a2d4fe298f9516d",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-fail.json",
+      "sha256": "1b656a13af902bf2778a29188afd2695e75598fc4f7b18387253675e7bd941a7",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-flood.json",
+      "sha256": "8ebd11197bbcbefe737a1506b2cd68bebbc15e953e669eaa5f596d3ce7621175",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-invalid-elf.json",
+      "sha256": "7ddc38eb60881456472641cf5d27022ed81d33722d5d679f2e2db94e8eaa6e4d",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-raw-overflow.json",
+      "sha256": "c498c0c721afa5a9099798be987c655393c4168166a430c7d6d5ba53497dc939",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-sleep.json",
+      "sha256": "81c70a9da9748049695dec4c3ee3b889e4ee4feab296f209e8346bd7a1d4f415",
+      "ok": false,
+      "cleanup": true
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage8-20261114\\compiler-owned\\evidence-r1\\synthetic-total.json",
+      "sha256": "5e0da58c81bace89cd9e05963cd71a6c0a522ce36cd4e6b2d02bc5643e1f778f",
+      "ok": false,
+      "cleanup": true
+    }
+  ]
+}
