@@ -244,6 +244,8 @@ def validate(data):
         raw = gzip.decompress(packed)
         assert len(raw) == item["rawBytes"] and hashlib.sha256(raw).hexdigest() == item["rawSha256"]
         assert len(packed) == item["archiveBytes"] and hashlib.sha256(packed).hexdigest() == item["archiveSha256"]
+        if item["path"].endswith("/candidate-index.json.gz"):
+            assert json.loads(raw)["rows"] == [candidate["row"] for candidate in candidates], "Preserve every original CSV field, including its source path"
     return {"stageTasks": len(tasks), "families": len(families), "currentRecords": len(questions), "historicalRecords": len(history_ids), "candidateRows": len(candidates), "archives": len(data["auditInputManifest"])}
 
 
