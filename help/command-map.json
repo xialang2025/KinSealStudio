@@ -1,0 +1,967 @@
+{
+  "schemaVersion": 1,
+  "productVersion": "0.11.0",
+  "coverageNote": "显式命令路由与有限F1/WhatsThis上下文；保留原有部分帮助按钮。未审全右键/双击/嵌套字段/错误入口，不声明全D/U。",
+  "topics": {
+    "start": {
+      "file": "index.html",
+      "title": "开始使用"
+    },
+    "project": {
+      "file": "project.html",
+      "title": "工程、型号与画面"
+    },
+    "controls": {
+      "file": "controls.html",
+      "title": "控件与属性"
+    },
+    "files": {
+      "file": "files.html",
+      "title": "保存、格式与备份"
+    },
+    "compile": {
+      "file": "compile.html",
+      "title": "设备编译与宏"
+    },
+    "usb": {
+      "file": "usb.html",
+      "title": "下载、上载、介质与恢复"
+    },
+    "simulation": {
+      "file": "simulation.html",
+      "title": "离线模拟与PC串口"
+    },
+    "limits": {
+      "file": "limits.html",
+      "title": "限制与常见提示"
+    }
+  },
+  "commands": {
+    "ShellQuickProperties": {
+      "label": "ShellQuickProperties",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "actionCompress": {
+      "label": "解压V31标准组态",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_36": {
+      "label": "标准工具栏",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_37": {
+      "label": "扩展工具栏",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_40": {
+      "label": "标准状态栏",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_41": {
+      "label": "信息输出窗口",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_42": {
+      "label": "工程管理器",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_ArcItem": {
+      "label": "扇形",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_Auxi": {
+      "label": "辅助功能",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_DatagroupDisplay": {
+      "label": "历史趋势图",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_GIFoutput": {
+      "label": "GIF显示器",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_GlobalMacro": {
+      "label": "全局宏",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_H": {
+      "label": "帮助(&H)",
+      "topic": "start",
+      "capability": "打开本地帮助目录或当前版本说明；并非全入口完成证明。",
+      "coverage": "chapter-summary"
+    },
+    "action_InitMacro": {
+      "label": "初始化宏",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_KinSeal": {
+      "label": "关于",
+      "topic": "start",
+      "capability": "打开本地帮助目录或当前版本说明；并非全入口完成证明。",
+      "coverage": "chapter-summary"
+    },
+    "action_MFbtn": {
+      "label": "多功能按钮开关",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_RoundedRect": {
+      "label": "圆角矩形",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_Size": {
+      "label": "优化控件尺寸坐标",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_Slider": {
+      "label": "滑动开关",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_TextView": {
+      "label": "文本\n一览表",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_USBdownload": {
+      "label": "下载工程(&D)",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_X_Y": {
+      "label": "XY曲线",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_address_find": {
+      "label": "查找替换",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_address_table": {
+      "label": "地址一览表",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_arlamcontrol": {
+      "label": "报警控件",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_asciiDisplay": {
+      "label": "ASCII显示",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_bitBtn": {
+      "label": "位按钮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_blight_circle": {
+      "label": "曲线/圆弧(&A)",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_bringforward": {
+      "label": "移到上一层",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_bringtop": {
+      "label": "移到最上层(&F)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_checkall": {
+      "label": "全选(&A)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_chinese": {
+      "label": "中文",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_close": {
+      "label": "关闭",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_conalarm": {
+      "label": "添加条件报警",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_connections": {
+      "label": "action_connections",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_copy": {
+      "label": "复制(&C)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_copym": {
+      "label": "多重复制(&D)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_cut": {
+      "label": "剪切(&T)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_dataDisplay": {
+      "label": "数值显示",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_dataGroup": {
+      "label": "数据群组",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_datasamp": {
+      "label": "添加数据采集",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_delete": {
+      "label": "删除(&D)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_delock": {
+      "label": "解锁",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_detect_device": {
+      "label": "action_detect_device",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_droplist": {
+      "label": "下拉框",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_dynamicarlarm": {
+      "label": "动态报警条",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_ellipse": {
+      "label": "椭圆(&E)",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_english": {
+      "label": "English",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_export_native": {
+      "label": "action_export_native",
+      "topic": "files",
+      "capability": "KSP保存及受支持原厂源格式导出；schema与未知结构按校验，不改变扩展名冒充格式。",
+      "coverage": "chapter-summary"
+    },
+    "action_flow_block": {
+      "label": "流动块",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_foldline": {
+      "label": "折线(&B)",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_freeline": {
+      "label": "自由直线",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_funbutton": {
+      "label": "功能按钮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_grid": {
+      "label": "网格",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_group": {
+      "label": "组合",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_h": {
+      "label": "水平翻转",
+      "topic": "start",
+      "capability": "打开本地帮助目录或当前版本说明；并非全入口完成证明。",
+      "coverage": "chapter-summary"
+    },
+    "action_hcenter": {
+      "label": "垂直居中",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_heightsame": {
+      "label": "高度相同",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_historyrecord": {
+      "label": "历史数据显示器",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_histotyarlarm": {
+      "label": "历史报警显示器",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_horizontal": {
+      "label": "水平等间距",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_items_table": {
+      "label": "控件一览表",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_lamp": {
+      "label": "指示灯",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_languages": {
+      "label": "action_languages",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_left": {
+      "label": "左对齐",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_line": {
+      "label": "直线(&L)",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_lock": {
+      "label": "锁定",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_macro_admin": {
+      "label": "宏指令\n管理器",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_macro_find": {
+      "label": "宏指令\n查找",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_macro_sdk": {
+      "label": "action_macro_sdk",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_mark": {
+      "label": "刻度",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_messagedisplay": {
+      "label": "消息显示",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_moveTrack": {
+      "label": "移动轨迹",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_new_pro": {
+      "label": "新建工程(&N)...",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_new_screen": {
+      "label": "新建画面",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_nextscreen": {
+      "label": "下一幅画面",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_offline_simulation": {
+      "label": "离线\n模拟",
+      "topic": "simulation",
+      "capability": "内部地址快照离线模拟与显式PC Modbus RTU工具；不自动联动工程画面，不代替实物PLC。",
+      "coverage": "chapter-summary"
+    },
+    "action_online_simulation": {
+      "label": "在线模拟",
+      "topic": "simulation",
+      "capability": "内部地址快照离线模拟与显式PC Modbus RTU工具；不自动联动工程画面，不代替实物PLC。",
+      "coverage": "chapter-summary"
+    },
+    "action_open_pro": {
+      "label": "打开工程(&O)...",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_openpropertiset": {
+      "label": "属性设置",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_panview": {
+      "label": "平移视图",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_paste": {
+      "label": "粘贴(&P)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_polyBtn": {
+      "label": "多态按钮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_polygon": {
+      "label": "多边形(&Y)",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_project_pictures": {
+      "label": "工程图库",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_project_settings": {
+      "label": "action_project_settings",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_qrcode": {
+      "label": "二维码",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_quit": {
+      "label": "退出(&Q)",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_recipetable": {
+      "label": "配方显示器",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_rect": {
+      "label": "矩形(&R)",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_redo": {
+      "label": "恢复",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_rep": {
+      "label": "添加配方",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_reverse_selection": {
+      "label": "反向选择",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_right": {
+      "label": "右对齐",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_save": {
+      "label": "保存(&S)",
+      "topic": "files",
+      "capability": "KSP保存及受支持原厂源格式导出；schema与未知结构按校验，不改变扩展名冒充格式。",
+      "coverage": "chapter-summary"
+    },
+    "action_save_as": {
+      "label": "另存为",
+      "topic": "files",
+      "capability": "KSP保存及受支持原厂源格式导出；schema与未知结构按校验，不改变扩展名冒充格式。",
+      "coverage": "chapter-summary"
+    },
+    "action_screenbutton": {
+      "label": "画面按钮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_script": {
+      "label": "打开宏指令编辑器",
+      "topic": "compile",
+      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "coverage": "chapter-summary"
+    },
+    "action_sendbackward": {
+      "label": "移到下一层(&B)",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_sendtoback": {
+      "label": "移到最下层",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_table": {
+      "label": "表格",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_text": {
+      "label": "文字",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_timeDisplay": {
+      "label": "时间显示",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_tool": {
+      "label": "组态工具箱",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_top": {
+      "label": "上对齐",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_trendchart": {
+      "label": "趋势图",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_under": {
+      "label": "下对齐",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_undo": {
+      "label": "撤销",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_ungroup": {
+      "label": "取消组合",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_upgrade": {
+      "label": "升级",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_upgrade2": {
+      "label": "升级底层",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_upload": {
+      "label": "上载数据",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_upscreen": {
+      "label": "上一幅画面",
+      "topic": "project",
+      "capability": "工程/页面/连接/语言编辑与定位；确认与取消按工程事务；设备能力仍单独检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_usbdriver": {
+      "label": "安装usb驱动",
+      "topic": "usb",
+      "capability": "普通工程下载与依赖检测；上载/固件升级/介质及自动回滚未提供完整交付承诺。",
+      "coverage": "chapter-summary"
+    },
+    "action_v": {
+      "label": "垂直翻转",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_vcenter": {
+      "label": "水平居中",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_version": {
+      "label": "底层版本号",
+      "topic": "start",
+      "capability": "打开本地帮助目录或当前版本说明；并非全入口完成证明。",
+      "coverage": "chapter-summary"
+    },
+    "action_vertcal": {
+      "label": "垂直等间距",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_waring": {
+      "label": "添加数位地址报警",
+      "topic": "limits",
+      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
+      "coverage": "routing-only"
+    },
+    "action_wheelView": {
+      "label": "滚轮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_widthheightsame": {
+      "label": "宽度高度都相同",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_widthsame": {
+      "label": "宽度相同",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_wordbutton": {
+      "label": "字按钮",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "action_zoonbig": {
+      "label": "放大",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_zoonfit": {
+      "label": "图像复原",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "action_zoonsmall": {
+      "label": "缩小",
+      "topic": "controls",
+      "capability": "画布选择、几何、层次、属性及撤销工作流；原生组节点、锁定/镜像等仍按已有范围检查。",
+      "coverage": "chapter-summary"
+    },
+    "graphicsitem": {
+      "label": "图表",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    },
+    "pictruedisplay": {
+      "label": "图片显示",
+      "topic": "controls",
+      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "coverage": "chapter-summary"
+    }
+  },
+  "contexts": [
+    {
+      "objectName": "BitButtonDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "StaticTextDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "MessageDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "ScaleDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "QrCodeDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "GifDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "NumberDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "AsciiDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "TimeDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "ScreenButtonDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "MultiStateButtonDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "MultiFunctionButtonDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "DropdownDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "FlowBlockDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "SliderDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "WheelDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "MoveTrackDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "ChartDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "TrendDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "HistoryTrendDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "XyCurveDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "DataGroupDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "AlarmBarDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "AlarmDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "HistoryDataDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "RecipeDisplayDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "GraphicDialog",
+      "topic": "controls"
+    },
+    {
+      "objectName": "PlcOnlineDialog",
+      "topic": "simulation"
+    },
+    {
+      "objectName": "MacroManagerDialog",
+      "topic": "compile"
+    },
+    {
+      "titleContains": "图库",
+      "topic": "controls"
+    },
+    {
+      "titleContains": "图片",
+      "topic": "controls"
+    },
+    {
+      "titleContains": "宏",
+      "topic": "compile"
+    },
+    {
+      "titleContains": "PLC",
+      "topic": "simulation"
+    },
+    {
+      "titleContains": "地址输入",
+      "topic": "project"
+    },
+    {
+      "titleContains": "工程",
+      "topic": "project"
+    },
+    {
+      "titleContains": "画面",
+      "topic": "project"
+    },
+    {
+      "titleContains": "语言",
+      "topic": "project"
+    },
+    {
+      "titleContains": "下载",
+      "topic": "usb"
+    },
+    {
+      "titleContains": "设备",
+      "topic": "usb"
+    }
+  ]
+}

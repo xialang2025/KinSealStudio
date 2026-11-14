@@ -1,0 +1,64 @@
+[
+  {
+    "name": "configure",
+    "executable": "G:\\01_Professional\\QT6\\Installed\\Tools\\CMake_64\\bin\\cmake.exe",
+    "arguments": [
+      "-S",
+      "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114",
+      "-B",
+      "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\build",
+      "-G",
+      "Ninja",
+      "-DCMAKE_MAKE_PROGRAM=G:\\01_Professional\\QT6\\Installed\\Tools\\Ninja\\ninja.exe",
+      "-DCMAKE_CXX_COMPILER=G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+      "-DCMAKE_RC_COMPILER=G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\windres.exe",
+      "-DCMAKE_PREFIX_PATH=G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64",
+      "-DCMAKE_BUILD_TYPE=Release"
+    ],
+    "startedAtUtc": "2026-11-14T15:41:09.0685176+00:00",
+    "exitCode": 0
+  },
+  {
+    "name": "build",
+    "executable": "G:\\01_Professional\\QT6\\Installed\\Tools\\CMake_64\\bin\\cmake.exe",
+    "arguments": [
+      "--build",
+      "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\build",
+      "--target",
+      "KinSealStudioLite",
+      "KinSealLocalHelpTests",
+      "--parallel",
+      "4"
+    ],
+    "startedAtUtc": "2026-11-14T15:41:26.0817485+00:00",
+    "exitCode": 0
+  },
+  {
+    "name": "local-help-tests",
+    "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\build\\KinSealLocalHelpTests.exe",
+    "arguments": [
+      "-o",
+      "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\docs\\stage11-evidence\\build-final-r1\\local-help-qt.txt,txt"
+    ],
+    "startedAtUtc": "2026-11-14T15:42:07.5900606+00:00",
+    "exitCode": 0
+  },
+  {
+    "name": "self-test",
+    "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\build\\KinSealStudioLite.exe",
+    "arguments": [
+      "--self-test"
+    ],
+    "startedAtUtc": "2026-11-14T15:42:08.0118735+00:00",
+    "exitCode": 0
+  },
+  {
+    "name": "embedded-payload",
+    "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\build\\KinSealStudioLite.exe",
+    "arguments": [
+      "--verify-independent-payload"
+    ],
+    "startedAtUtc": "2026-11-14T15:42:08.9081547+00:00",
+    "exitCode": 0
+  }
+]

@@ -1,0 +1,155 @@
+{
+  "format": "KinSealLite-publication-readonly-review-r5-final",
+  "reviewMode": "read-only frozen-source review; no application/package change or real main publication",
+  "sourceFiles": [
+    {
+      "path": "tools/publish_stage11.py",
+      "bytes": 30854,
+      "sha256": "7148be31bb56355338cf412d217c1c4e068d0c37f7e3d799e5792f60080b1802"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "bytes": 18859,
+      "sha256": "422d3962bb1a75e785b357ed1d6fa32f8a9d5fd889483146ce222e9b880102a4"
+    }
+  ],
+  "testCount": 16,
+  "passed": 16,
+  "seconds": 30.036,
+  "log": "unittest-r5.log",
+  "logSha256": "111d8082ee1ed3f2d80ebab258b60be5df186ba6e978497bd8bd53bcbbb55db0",
+  "tests": [
+    {
+      "test": "test_candidate_containing_user_edit_rejected",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_conflict_rejected_before_main_write",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_failure_after_ref_update_restores_index_ref_and_files",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rolled_back"
+      ]
+    },
+    {
+      "test": "test_foreign_edit_during_failure_is_preserved_and_marked_unknown",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "state_unknown_manual_recovery_required"
+      ]
+    },
+    {
+      "test": "test_main_head_change_rejected",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_main_index_change_rejected",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_preflight_two_disjoint_overlaps_changes_nothing",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "preflight_passed"
+      ]
+    },
+    {
+      "test": "test_protected_user_bytes_change_rejected",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_protection_snapshot_can_publish_later_metadata_commit",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "published",
+        "published"
+      ]
+    },
+    {
+      "test": "test_publish_retains_user_delta_and_bom_crlf",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "published"
+      ]
+    },
+    {
+      "test": "test_scan_budgets_cover_status_working_diff_and_cached_diff",
+      "fixtureRemoved": true,
+      "outcomes": []
+    },
+    {
+      "test": "test_snapshot_and_allowlist_identity_guards",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write",
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_unicode_diff_content_tamper_rejected_despite_valid_input_hash",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_unicode_prior_declared_quotepath_is_not_silently_changed",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_unicode_quoted_frozen_diff_keeps_full_headers_and_chain",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "published"
+      ]
+    },
+    {
+      "test": "test_unicode_unquoted_frozen_diff_keeps_utf8_headers",
+      "fixtureRemoved": true,
+      "outcomes": [
+        "published"
+      ]
+    }
+  ],
+  "gitTimeoutPolicySeconds": {
+    "status": 600,
+    "workingTreeDiff": 600,
+    "cachedAndCommitDiff": 120,
+    "writes": 120
+  },
+  "checks": [
+    "Only status and explicit working_tree_diff calls receive600s; writes keep120s.",
+    "No retry, ignored output, or skipped post-publication verification has been introduced.",
+    "Complete quotepath-matched diff and1891 raw-byte protections remain unchanged.",
+    "Conditional target writes/index/ref checks and checked rollback remain unchanged.",
+    "No read-tree -m or main index refresh introduced; failed optimization only ran on private index."
+  ],
+  "findings": [],
+  "ownedFixturesRemaining": 0,
+  "realMainPublicationPerformed": false,
+  "supersedesFinalSourceIdentity": "readonly-review-r3.json; r4 retained as historical status-only fix",
+  "actualTimeoutFailureReceipt": "root-owned publication-actual archive; original receipt remains in publications/publication-70c119cb51de4c53be21ea50844e6fe8",
+  "diagnostics": "status-cache-diagnostic/",
+  "privateIndexCleanupBytes": 9741412
+}

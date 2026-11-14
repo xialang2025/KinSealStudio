@@ -1,0 +1,58 @@
+{
+  "format": "KinSealLite-stage11-delivery-v1",
+  "state": "tests_complete_awaiting_actual_git_binding",
+  "codeCommit": null,
+  "version": "0.11.0",
+  "releaseChannel": "restricted_internal_validation",
+  "package": "dist/KinSealStudioLite-Stage11-release-r2",
+  "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+  "sourceContentSha256": "dd8335aa179d2534b04fc4ea4c98fc9aae5d8e44b91dcff7534b321d48b03831",
+  "fileContentSha256": "2b5c50d36a5d5729547fac9527f8eda0fe96c41b095f46a7632cec739cff6bfc",
+  "sourceFiles": 6355,
+  "fileCountIncludingManifest": 109,
+  "samples": 7,
+  "manifestSha256BeforeCommitBinding": "1a726d8a917640e7b7b0423db71382042a34025f94f47f246f4a3af66f811df9",
+  "tests": {
+    "helpQt": {
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "build-final-r1/local-help-qt.txt"
+    },
+    "packageTool": {
+      "passed": 31,
+      "evidence": "package-owned/unit-results.json"
+    },
+    "publicationTool": {
+      "passed": 16,
+      "evidence": "publication-owned/unittest-r5.log",
+      "review": "publication-owned/readonly-review-r5.json",
+      "priorRunsRetained": true
+    },
+    "dependencyPEs": 23,
+    "dependencyPolicyChecks": 87,
+    "portableProcessCount": 80,
+    "portableSemanticChecks": 25,
+    "portableExitObserved": 79,
+    "portableGuardedStartupTerminated": 1,
+    "portableDeviceCompiledSamples": 6,
+    "portableExportedSources": 2,
+    "sampleSecondSaveIdempotent": true,
+    "packageUnchangedByRuntime": true
+  },
+  "evidence": {
+    "build": "build-final-r1/steps.json",
+    "runtime": "portable-owned/run-r2/run.json",
+    "screenshots": "portable-owned/run-r2/root-visual-review.json",
+    "repeatability": "package-owned/repeatability-r2.json",
+    "dependencies": "dependencies-owned/stage11-r2",
+    "review": "package-owned/integration-readonly-review.json"
+  },
+  "fullReplicaCertified": false,
+  "installerProvided": false,
+  "publicRedistribution": false,
+  "hardwareIo": false,
+  "mainUserProtection": "initial 1891 file snapshot, actual publication receipt pending",
+  "publicationDiffRepresentationFix": "strict full diff matching with explicit Git quotepath true/false; frozen input unchanged",
+  "publicationTimeoutFix": "status and working-tree binary diff bounded at600s; other Git120s; first actual timeout confirmed rolled back"
+}

@@ -1,0 +1,35 @@
+{
+  "format": "KinSealLite-stage11-package-readonly-review-v1",
+  "dateAsiaShanghai": "2026-11-14",
+  "scope": ["tools/package_stage11.py", "tests/test_stage11_package.py"],
+  "reviewMode": "只检查不改逻辑；本报告检查最终冻结版本",
+  "toolSha256": "58eab76d5e1795aa79f2ae048a1b52afc383a15f45d24b47d355c2bf7db0af83",
+  "testSha256": "3f24fccdc405b4feb8d0bb739e1b71a2929491459d6eb5a123987e84b8821a87",
+  "checks": [
+    {"id": "P11-01", "subject": "CLI子命令解析及--help-dir保留参数", "result": "pass"},
+    {"id": "P11-02", "subject": "22 DLL + 2 MIT许可固定白名单和旧manifest长度/SHA匹配", "result": "pass"},
+    {"id": "P11-03", "subject": "新EXE必须来自本工作树build且显式哈希匹配", "result": "pass"},
+    {"id": "P11-04", "subject": "用户包与源码身份清单分离；资源不直接复制", "result": "pass"},
+    {"id": "P11-05", "subject": "默认7份Lite样例及opaque/native元数据拒绝", "result": "pass"},
+    {"id": "P11-06", "subject": "帮助/许可扩展白名单与必要角色完整性", "result": "pass"},
+    {"id": "P11-07", "subject": "受限发行策略、旧runtime基线与完整licenseFiles绑定", "result": "pass"},
+    {"id": "P11-08", "subject": "父级reparse、硬链接、大小写、ADS、保留名与交叠门禁", "result": "pass"},
+    {"id": "P11-09", "subject": "新目录/新文件独占写入，失败保留诊断，不清理旧输入", "result": "pass"},
+    {"id": "P11-10", "subject": "复制后逐字与最终全部源身份再核", "result": "pass"},
+    {"id": "P11-11", "subject": "manifest完整文件枚举、缺失/额外/篡改报告", "result": "pass"},
+    {"id": "P11-12", "subject": "确定性清单与包外UTC执行元数据", "result": "pass"},
+    {"id": "P11-13", "subject": "外部manifest SHA绑定与自洽校验边界", "result": "pass"},
+    {"id": "P11-14", "subject": "真实Git blob检查、只允许文本CRLF/LF差异、保留旧manifest", "result": "pass"},
+    {"id": "P11-15", "subject": "无assert门禁，不依赖Python优化级别", "result": "pass"},
+    {"id": "P11-16", "subject": "未初始化分支/重复定义/参数名错位/语法编译风险", "result": "pass"}
+  ],
+  "blockingFindings": [],
+  "limitations": [
+    "单元测试为合成微型包；真实生产EXE打包及私有桌面启动由主任务独立验证",
+    "manifest为未签名身份清单，完整发布者真实性须外部可信SHA或签名机制",
+    "输入/输出门禁针对本地普通并发使用，不声称抵抗具有同等写权限的恶意进程持续TOCTOU替换",
+    "包内既有内嵌原厂资源授权依据及Qt正式公开发行安排未知，保持restricted_internal_validation",
+    "bind-commit只证明冻结源与真实提交相符，不能仅凭该项证明二进制构建的可重现性"
+  ],
+  "hardwareIo": false
+}

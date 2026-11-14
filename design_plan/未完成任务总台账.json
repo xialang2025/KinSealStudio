@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14 Asia/Shanghai",
+  "updatedAt": "2026-11-15 Asia/Shanghai",
   "sourceCommit": "daefcdb5287f97ec3190263d991881f3de9e1933",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -18,7 +18,7 @@
       "historyEntryIssues": 195,
       "historyFieldIssues": 1521
     },
-    "extensions": 18
+    "extensions": 19
   },
   "interpretationRules": [
     "已发布范围：五类既有控制记录＋九类受限静态背景C；阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
@@ -9537,15 +9537,15 @@
       "id": "S11-01",
       "stage": 11,
       "title": "S11-01 · 冻结版本和声明",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "多版便携包、README与当前sourceCommit已有；最新第九批manifest与受限声明可复用。",
-      "remaining": "正式版本号/资源/样例/帮助hash的一致冻结、全阶段支持表与未验/差异收口未完整完成；旧文“无Git仓库”已过期。",
+      "completedScope": "0.11.0 CMake/运行时/PE版本一致，受限发布支持表和源/资源/EXE/帮助/样例分别冻结；保留旧包，隔离构建未混1891用户文件。",
+      "remaining": "全阶段完整支持认证、实际固件/唯一号和阶段10余项未闭合；当前仅受限内部验证版。",
       "blockers": [
-        "各阶段实际能力/问题ID",
-        "冻结程序版本与资源"
+        "阶段10语言/通知组合和第二恢复待续",
+        "完整能力/现场身份待证"
       ],
-      "nextAction": "从当前真实Git/CMake/EXE版本和manifest汇总本次支持范围，保留T/E待验；准备新输出目录并核既存改动。",
+      "nextAction": "以后续真实现场结果逐项扩支持表；不能把版本统一当作全功能发布。",
       "acceptance": [
         "REL-01：版本/hash/支持表/程序守卫一致，输入迁移与拒绝明确；不覆盖旧发布，不混历史测试或用户既存改动。",
         {
@@ -9572,6 +9572,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -9635,21 +9639,26 @@
             "text": "| REL-01 / S11-01 | 发布manifest与程序/支持表/版本逐项核对 | 版本/hash一致，历史结果不混，新输入迁移与拒绝准确 | manifest、支持表、差异/限制 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     },
     {
       "id": "S11-02",
       "stage": 11,
       "title": "S11-02 · 依赖和许可盘点",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "Qt/MinGW部署、系统libusb0、外部SDK策略及lzokay许可证有基础；便携能在受控环境运行。",
-      "remaining": "按编辑/渲染/编译/USB/宏区分的完整缺失依赖矩阵、字体资源损坏、各组件版本/hash/来源/分发依据表未闭合。",
+      "completedScope": "17组依赖、22 runtime、64许可618734B；实际r2 23PE和全部许可核验，导入表与基线一致、PE版本0.11.0；内嵌资源权利单列。",
+      "remaining": "内嵌原厂材料授权、Qt SBOM/对应源码、D3D/Mesa条件待核；真实无驱动/字体等目标环境未验。",
       "blockers": [
-        "PE/动态加载/Qt/资源实际依赖",
-        "第三方来源与许可"
+        "第三方/内嵌原厂资源再分发依据",
+        "真实目标环境"
       ],
-      "nextAction": "从实际包导入/加载/资源列依赖；逐场景隔离移除Qt安装PATH/编译器/原厂/驱动/SDK/字体并记录首错，许可疑点如实待核。",
+      "nextAction": "先核权利或替换资源重编，再在专用目标环境补缺驱动/字体；不得改系统环境伪造缺失。",
       "acceptance": [
         "REL-02/06：不依赖开发机运行普通编辑，缺失只影响对应能力且错误明确；包逐文件对照依赖/许可证，无无依据SDK原厂文件。",
         {
@@ -9684,6 +9693,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -9756,21 +9769,25 @@
             "text": "| REL-06 / S11-06 | 依赖/来源/许可与真实包文件逐项核对 | 组件去向清楚、许可证相符，不混调查缓存或无依据SDK/原厂文件 | 包清单/依赖表/许可证 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     },
     {
       "id": "S11-03",
       "stage": 11,
       "title": "S11-03 · 可重复打包与干净环境",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "Build.ps1/windeployqt/便携基础已实现，最新第九批136项实际包检查，包内Qt/10-12-14段及门禁通过。",
-      "remaining": "完整用户包/规格包白名单、普通用户/只读安装/DPI/多显示器/中文空格长路径、全部依赖缺失和所有声明样例矩阵未由136项全部覆盖。",
+      "completedScope": "实际新r2用户白名单包109文件/7样例，与相同输入duplicate内容/manifest完全一致；固定runtime、许可证和帮助入包；便携实际运行结果独立归档。",
+      "remaining": "独立干净Windows、普通账户、真实只读ACL、长路径、DPI/多显示器仍待验；未覆盖依赖负向不外推。",
       "blockers": [
-        "现有Build/Deploy流程",
-        "冻结支持表/发布白名单"
+        "独立目标Windows及权限/DPI环境"
       ],
-      "nextAction": "按最新manifest复用已测项，列未覆盖环境；在隔离进程PATH/私有后台中验证路径权限DPI及错误取消，无法后台可靠复现列外部待验。",
+      "nextAction": "复用本次manifest核已测项，在专用环境补未验矩阵；组装确定性不等于二进制可重复构建。",
       "acceptance": [
         "REL-02/03：冻结hash可重建、无开发机绝对路径，保存/导出/编译有效；错误无半工程、用户数据不写安装目录、宏缺SDK不阻塞无宏。",
         {
@@ -9805,6 +9822,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -9877,22 +9898,25 @@
             "text": "| REL-03 / S11-03 | 中文空格路径、只读安装、普通用户、DPI；打开/取消/另存 | 包内路径可解析，用户数据不写进安装目录；无截断/半保存 | 输入/输出hash与环境 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     },
     {
       "id": "S11-04",
       "stage": 11,
       "title": "S11-04 · 安装器、升级与卸载",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "便携交付已存在；当前不能据此计安装/升级/卸载完成。",
-      "remaining": "安装器入口/目录/快捷方式/文件关联/驱动选项、升级迁移、旧版拒绝新schema、卸载取消/保留工程完整行为未提供验证。",
+      "completedScope": "本次范围明确为便携；安装器、关联/快捷方式、驱动安装、自动升级/卸载未提供，用户说明含并列目录与工程副本恢复。",
+      "remaining": "未来如提供安装器，原生安装调查/迁移/旧schema拒绝/卸载取消和保留工程尚待实现及沙盒验证。",
       "blockers": [
-        "安装器是否纳入发布的明确范围",
-        "专用安装沙盒",
-        "schema迁移策略"
+        "后续安装器范围与专用安装沙盒"
       ],
-      "nextAction": "若仍只发布便携则能力行明确未提供；若纳入安装器先核原厂安装行为，再在专用沙盒验证应用/设置/工程/SDK分离。",
+      "nextAction": "本版安装器行保持未提供/REL-04本轮N/A；后续另按任务书执行，不借便携关闭安装器行为。",
       "acceptance": [
         "REL-04：升级迁移可追溯、旧版拒绝新schema，卸载取消/完成不误删工程/独立SDK/驱动；只便携时安装器N/A附范围理由。",
         {
@@ -9921,6 +9945,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -9987,22 +10015,25 @@
             "text": "| REL-04 / S11-04 | 沙盒升级旧设置/工程、新schema交旧版、卸载取消/完成 | 迁移可追溯，旧版拒绝新schema，卸载不误删工程；安装器未提供则N/A说明 | 沙盒前后清单/迁移记录 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     },
     {
       "id": "S11-05",
       "stage": 11,
       "title": "S11-05 · 本地帮助与用户操作说明",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "实现规格/多控件手册/UI编译规则已较详尽；这不能替代面向用户的全入口帮助映射。",
-      "remaining": "commandId→helpTopic→用户章节→能力全映射、包内相对链接、嵌套帮助/断网坏目标、完整用户操作流程与原生坏链接差异表未闭合。",
+      "completedScope": "8章本地用户帮助、128命令路由/39有限上下文、真实菜单入口/F1/WhatsThis、本地边界和错误提示；最终Qt29/0/0。",
+      "remaining": "部分属性帮助仍短提示；全右键/双击/嵌套字段/错误入口尚未逐项对账；不宣称全D/U。",
       "blockers": [
-        "阶段0全入口台账",
-        "实际发布能力",
-        "包内本地帮助"
+        "阶段0全入口对账及剩余属性帮助映射"
       ],
-      "nextAction": "从真实已开放入口先建帮助映射并在运行包断网检查，写建工程至下载/模拟的实际支持流程，未知功能保留范围提示。",
+      "nextAction": "逐项将剩余真实入口映射到当前章节/能力并验证，保留原生差异，不把128路由说成128功能完成。",
       "acceptance": [
         "REL-05：每入口本地帮助可达且章节对应发布能力，取消/加载错误不死锁；用户页无偏移逆向细节，旧帮助限制不直接承诺。",
         {
@@ -10029,6 +10060,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -10093,21 +10128,26 @@
             "text": "| REL-05 / S11-05 | 每个实际入口帮助、断网/坏目标、嵌套窗口帮助 | 本地帮助可达、章节对应发布能力，错误不死锁；修坏链接记录差异 | command→topic映射/检查摘要 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     },
     {
       "id": "S11-06",
       "stage": 11,
       "title": "S11-06 · 发布审查与交付",
-      "status": "仍有欠项/未完整闭环",
+      "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
-      "completedScope": "最新受限便携manifest/检查与多个阶段报告可作为实际来源；未完成阶段不能自动过发布审查。",
-      "remaining": "正式全套manifest/用户手册/变更差异限制/样例索引/恢复说明、逐功能task/field/case追溯及许可/干净环境/现场范围统一审查未完成。",
+      "completedScope": "本轮实际构建/29帮助Qt、31打包工具、16发布保护测试及便携/静态依赖证据；规则26/协议99、支持限制/说明/样例/清理归档。",
+      "remaining": "公开分发资格、全环境/全入口/设备验收仍未完成；Git及包代码绑定仅以最终实际回执为准。",
       "blockers": [
-        "S11-01～05",
-        "阶段10当前E范围及公开限制"
+        "上述S11环境/许可/全帮助欠项",
+        "阶段10硬件身份/语言通知及第二恢复"
       ],
-      "nextAction": "按支持守卫→格式迁移→错误取消→环境→帮助→依赖许可→设备限制→hash顺序复核，只纳入本次实际证据。",
+      "nextAction": "核最终只读审查与真实提交/包绑定/推送回执；只发布受限版本，继续按台账补完整范围。",
       "acceptance": [
         "REL-01～06：冻结包所有声明有可追溯任务/字段/用例，原始代表证据与恢复点齐全；无新T/E必须明确，受限版不称完整复刻。",
         {
@@ -10180,6 +10220,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/12_阶段11_部署帮助与发布.md",
           "line": 7
+        },
+        {
+          "kind": "阶段11实际实施",
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "sourceAssessment": {
@@ -10296,7 +10340,12 @@
             "text": "| CLN-02 / 各阶段结束 | 清理后检查留存文件/链接/哈希与磁盘 | 归档可读、后续只靠保留资料可继续；磁盘减量真实记录 | 路径/前后字节/链接hash结果 |"
           }
         ]
-      }
+      },
+      "executionEvidence": [
+        "docs/阶段11部署帮助与发布验收.md",
+        "docs/stage11-evidence/progress.json"
+      ],
+      "executionMarker": "//20261114-10"
     }
   ],
   "families": [
@@ -22899,21 +22948,15 @@
     {
       "id": "Q-S11-001",
       "title": "正式安装/升级/卸载与干净环境依赖是否完整；发布",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "开放，受限便携切片已实际验证",
       "scope": "阶段5～11",
-      "remaining": "正式安装/升级/卸载与干净环境依赖是否完整；发布",
+      "remaining": "受限0.11.0包及本地帮助已实现；公开分发资源权利/Qt对应源码、完整目标环境/字体驱动、安装器/迁移/卸载和全入口帮助仍欠。",
       "blockers": [
-        "PE/动态加载/Qt/资源实际依赖",
-        "第三方来源与许可",
-        "现有Build/Deploy流程",
-        "冻结支持表/发布白名单",
-        "安装器是否纳入发布的明确范围",
-        "专用安装沙盒",
-        "schema迁移策略",
-        "S11-01～05",
-        "阶段10当前E范围及公开限制"
+        "第三方/内嵌资源授权与Qt对应源码",
+        "独立目标Windows/权限/DPI/缺字体驱动环境",
+        "安装器未来范围与全入口对账"
       ],
-      "nextAction": "从冻结manifest在干净环境验证依赖/字体/驱动/SDK缺失路径；只测已有便携包不能关闭安装器行为",
+      "nextAction": "按阶段11最终manifest复用实际证据；优先核分发依据和独立目标环境，安装器本版未提供。",
       "acceptance": "冻结manifest下的干净环境实际安装/升级/卸载及依赖、字体、驱动、SDK缺失路径可复现，保留结果与诊断；便携包检查不核销尚未测试的安装器行为。",
       "relatedIds": [
         "S11-02",
@@ -22926,6 +22969,9 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 172
+        },
+        {
+          "path": "docs/阶段11部署帮助与发布验收.md"
         }
       ],
       "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
@@ -176998,6 +177044,30 @@
           "line": 1
         }
       ]
+    },
+    {
+      "id": "DOC-CLEANUP-006",
+      "title": "阶段11重复验证包和构建对象清理被拒",
+      "status": "开放，自动审批拒绝后保留",
+      "completedScope": "本轮自有测试副本/夹具累计逻辑删除252103126B，最终便携TEMP0文件；失败/最终证据保留，全部新临时输出在Z。",
+      "remaining": "duplicate117435743B及139构建对象16400746B被自动审批blocked by policy，0删除；旧r1候选包保留。",
+      "blockers": [
+        "自动审批拒绝 exact task-owned duplicate 和显式对象删除；无更细理由"
+      ],
+      "nextAction": "不换通道或重试拒绝目标；保留逐文件SHA/大小及真实失败回执，后续仅在外部条件改变后重新评估。",
+      "acceptance": "清理只允许本轮明确自有目标，核边界/身份、归档证据后记录实际删除及保留字节；历史拒绝不重试。",
+      "sources": [
+        {
+          "path": "docs/stage11-evidence/cleanup-result.json"
+        },
+        {
+          "path": "docs/stage11-evidence/root-build-cleanup-result.json"
+        },
+        {
+          "path": "docs/stage11-evidence/package-owned/duplicate-r2/cleanup-rejected.json"
+        }
+      ],
+      "countsTowardAmtStages": false
     }
   ],
   "aliases": {
@@ -177694,7 +177764,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段10交付内部位/字/灯及安全功能页现场切片、已知宏14测试页恢复、105进程PC单轴测量和37项证据工具回归。完整八项继续开放，严格发布闸exit3；真实PLC、配置/上载/保持及HMI长期性能仍欠。",
+  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除252103126B，审批拒绝133836489B保留/该项释放0。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178656,6 +178726,47 @@
       "stage10EvidenceCommit": "a1571988b9ce41d158623a6738a723cf35afc670",
       "sourceMilestonePushed": true,
       "delivery": "docs/stage10-evidence/delivery-milestone-r1.json"
+    }
+  ],
+  "stage11Executions": [
+    {
+      "kind": "restricted-portable-local-help-release-r1",
+      "marker": "//20261114-10",
+      "progress": "docs/stage11-evidence/progress.json",
+      "report": "docs/阶段11部署帮助与发布验收.md",
+      "uiRules": "docs/UI编译规则与阶段交付规范.md#26",
+      "protocol": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md#99",
+      "completeStage11": false,
+      "version": "0.11.0",
+      "releaseChannel": "restricted_internal_validation",
+      "publicRedistribution": false,
+      "installerProvided": false,
+      "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+      "packageFiles": 109,
+      "samples": 7,
+      "helpQtTests": 29,
+      "packageToolTests": 31,
+      "publicationToolTests": 16,
+      "dependencyPEs": 23,
+      "licenseFiles": 64,
+      "newControls": 0,
+      "deviceEncodingChanged": false,
+      "hardwareIo": false,
+      "currentScreen": "S10-FUNC-LOCAL-1114",
+      "pendingFieldSteps": [
+        "language/notification human observation",
+        "second macro14 restore and marker confirmation"
+      ],
+      "cleanup": "docs/stage11-evidence/cleanup-result.json",
+      "cleanupDeniedBytes": 133836489,
+      "oldCleanupDenialsRetried": false,
+      "portableProcessCount": 80,
+      "portableSemanticChecks": 25,
+      "portableObservedExitCount": 79,
+      "portableGuardedTerminationCount": 1,
+      "logicalCleanupBytes": 252103126,
+      "allSevenSecondSaveIdempotent": true,
+      "publicationTimeoutRollbackRetained": true
     }
   ]
 }

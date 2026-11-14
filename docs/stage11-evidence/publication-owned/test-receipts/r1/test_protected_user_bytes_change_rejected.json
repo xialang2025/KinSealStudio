@@ -1,0 +1,39 @@
+{
+  "test": "test_protected_user_bytes_change_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T15:53:21.494036+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\candidate",
+      "baseline": "91ed3ffb3c072850be32f57e303fe6d57049aeee",
+      "candidate": "a1e38ab7071aaa20173f837d3287f756f5d7d65a",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\runs\\publication-51a230a08d274890ac14478461cec282",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\protection.json",
+        "snapshotSha256": "66afc58630bd049aff0e72e9f0cef857900cc2b7cf3daef4653c68331802540f",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "error": "PublicationError: Protected user bytes changed: a.txt",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T15:53:21.950035+00:00"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "reviewMode": "只检查不改业务逻辑",
+  "revision": "最终r3，源码冻结后检查",
+  "blockingFindings": [],
+  "checks": [
+    {
+      "check": "所有页面和命令来自本地相对help根；未包含开发机绝对路径",
+      "pass": true
+    },
+    {
+      "check": "应用内QDialog/QTextBrowser；无QDesktopServices/QProcess/网络对象/系统浏览器调用",
+      "pass": true
+    },
+    {
+      "check": "loadResource覆写并无QTextBrowser基类资源fallback",
+      "pass": true
+    },
+    {
+      "check": "F1先接受ShortcutOverride，有限上下文后再打开；不消费其他owner窗口事件",
+      "pass": true,
+      "evidence": "tests-r3.txt: scopedF1AndWhatsThis,contextF1PrecedesMainAction"
+    },
+    {
+      "check": "真实junction根与子目录跳转均拒绝，目录与外部/远程/遍历/未知文件拒绝",
+      "pass": true,
+      "evidence": "tests-r3.txt: junctionEscapeIsRejected,unsafeNavigation数据行"
+    },
+    {
+      "check": "未知topic、缺文件、损坏/过大索引及页面不产生虚假内容成功",
+      "pass": true,
+      "evidence": "tests-r3.txt: unknownAndOversizedIdentifiers,missingAndMalformedMap,oversizedAndMissingFiles,tamperedMapCannotEscape"
+    },
+    {
+      "check": "帮助关闭取消只隐藏帮助；owner/nested销毁安全回收并可重建",
+      "pass": true,
+      "evidence": "tests-r3.txt: closeReopenAndOwnerDestruction,nestedDialogOwnsHelp"
+    },
+    {
+      "check": "所有映射均含能力说明，且不声明全入口覆盖",
+      "pass": true
+    },
+    {
+      "check": "编译无warning/error；最终离屏QtTest29通过0失败0跳过",
+      "pass": true
+    }
+  ],
+  "nonBlockingLimits": [
+    "F1/WhatsThis仅有限对象名/标题/显式property映射；未枚举所有右键、双击、嵌套字段或错误入口。",
+    "已有部分属性帮助按钮仍保留原简短MessageBox，本批不拦截或替换其业务信号。",
+    "不依赖网络/外部浏览器；只允许help根直属HTML及PNG/JPEG/BMP/CSS，拒绝子目录及其他类型。",
+    "29项Qt离屏验证覆盖帮助边界，不能替代Windows目标字体/DPI/多显示器部署验收或设备T/E。",
+    "用户手册保留阶段10通知/语言组合待答和第二次恢复未执行状态，后续有新现场结果应同步更新。"
+  ],
+  "catalogCounts": {
+    "topics": 8,
+    "commands": 128,
+    "contexts": 39,
+    "coverage": {
+      "chapter-summary": 109,
+      "routing-only": 19
+    }
+  },
+  "artifacts": {
+    "src/local_help.h": {
+      "bytes": 2040,
+      "sha256": "e4f720a7093bda5d39067fcaa2c660594d0076a2d76d2bb6543d8b6593318a07"
+    },
+    "src/local_help.cpp": {
+      "bytes": 27587,
+      "sha256": "40a8d808799e304262daae6781ed52580c9ca701b98b2d5751ec39a1423f0a84"
+    },
+    "tests/local_help_tests.cpp": {
+      "bytes": 25077,
+      "sha256": "7e2091c2c20750182f903e5df9d5d7cb084b90f5ba412ec3aacb6a212105c15e"
+    },
+    "help/command-map.json": {
+      "bytes": 39026,
+      "sha256": "a9bd134097a1dd3f99cfc257e4a934ffb8f34baedc739d68c1a4486368c8f6de"
+    },
+    "help/compile.html": {
+      "bytes": 1999,
+      "sha256": "783f05c91db0b5847b1a54618b774d8d5e373ddb05db423590c7a01b6d269aff"
+    },
+    "help/controls.html": {
+      "bytes": 3119,
+      "sha256": "b958bf84f49d7b1b05c120a8c46d8d10a504401fb397970a8f9dbe9b0079b56f"
+    },
+    "help/files.html": {
+      "bytes": 1962,
+      "sha256": "9d8429874aa206309be45e2a350765a8fdb4190d138e6b119a843a83a7168814"
+    },
+    "help/index.html": {
+      "bytes": 1811,
+      "sha256": "f69a5919244e3abc075c10ef62428f9583279aaadda1b6a90b87251bd266dbb4"
+    },
+    "help/limits.html": {
+      "bytes": 2328,
+      "sha256": "95ad8b084180b5ecb21ba18e461274fa3b3c8f3421ff12647f599441bd9fa434"
+    },
+    "help/project.html": {
+      "bytes": 1987,
+      "sha256": "eb9ad0487c26cf09877cb125a5c2edf832b2d675eb9bf0450ae1a0919a5bc181"
+    },
+    "help/simulation.html": {
+      "bytes": 2066,
+      "sha256": "4f76b6eb03b415152e5f493704ca9390e788090ea5eace5910237be9d3fb7474"
+    },
+    "help/usb.html": {
+      "bytes": 2404,
+      "sha256": "911adf22dcda340cc4f1e19dc9476bbbff100d53b0ef923c919212f6396ab53a"
+    }
+  },
+  "allChecksPass": true
+}

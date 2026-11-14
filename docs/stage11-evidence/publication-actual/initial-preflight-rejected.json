@@ -1,0 +1,37 @@
+{
+  "format": "KinSealLite-stage11-publication-v1",
+  "startedAtUtc": "2026-11-14T16:29:49.487404+00:00",
+  "mode": "preflight",
+  "phase": "preflight-user-protection",
+  "outcome": "rejected_before_main_write",
+  "mainMutated": false,
+  "rollback": {
+    "attempted": false,
+    "confirmed": false
+  },
+  "changedFiles": [],
+  "overlaps": [],
+  "main": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio",
+  "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114",
+  "baseline": "48314f2e38f7f5888a575f034a26f09fed7fd250",
+  "candidate": "c113175a561e5cdacf7bba1a9cb8179b629f6489",
+  "expectedUserCount": 1891,
+  "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publications\\publication-6a97012b5a3e48a995273d0874385f06",
+  "inputs": {
+    "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\main-user-changes-at-task-start.json",
+    "snapshotSha256": "40a95b5c08d271c65db8866b1bec25206eff2d7f7d86efc7b2ddc91c941d4ac7",
+    "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\main-user-changes-at-task-start.diff",
+    "snapshotDiffSha256": "394960a5fb04720f6a81667091a4ddb806797f82e77aa16ca2edd6f70a8f29b6",
+    "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\code-allowlist.json",
+    "allowlistSha256": "66c102e3e63e38a7a9710ab0badc9cbb65d8a307445fcb1773eb8b1622aaccfa"
+  },
+  "before": {
+    "head": "48314f2e38f7f5888a575f034a26f09fed7fd250",
+    "protectedUserFiles": 1891,
+    "statusCount": 1891,
+    "allProtectedBytesMatch": true
+  },
+  "error": "PublicationError: Protected tracked user diff differs from frozen input",
+  "failedPhase": "preflight-user-protection",
+  "finishedAtUtc": "2026-11-14T16:29:56.035972+00:00"
+}

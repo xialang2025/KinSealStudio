@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "reviewMode": "最终runner与真实结论只读复核，无业务逻辑更改",
+  "scriptSha256": "92487ddc2a4b04f5750a978e13a2fefc1dd29c8d706cb9809496c1f7c52f7359",
+  "runSha256": "c19772f928fb08f046f88f648f7f78496817e417d5bf7b59cb77a2994ea054c4",
+  "blockingFindings": [],
+  "checks": [
+    {
+      "check": "真实最终r2包与EXE均先按完整SHA核验，且109文件前后精确身份一致",
+      "pass": true
+    },
+    {
+      "check": "80次全部由PrivateDesktop.run后台启动，无桌面切换/前置/全局输入",
+      "pass": true
+    },
+    {
+      "check": "仅固定SAFE_VERBS；无硬件下载/串口命令路径，MainWindow只读设备枚举单独披露",
+      "pass": true
+    },
+    {
+      "check": "清洁进程PATH/插件路径及全部TEMP位于Z，无安装Qt/编译器/原厂路径模块观测",
+      "pass": true
+    },
+    {
+      "check": "七例实际加载/保存/复验，二次保存全幂等；两例仅精确空容器与最小schema归一化，无任意差异白名单",
+      "pass": true
+    },
+    {
+      "check": "源导出按真实2成功/5拒绝分列，设备编译按6成功且verify/1缺SDK19分列",
+      "pass": true
+    },
+    {
+      "check": "真实MainWindow action_H输出/帮助PNG；独立内部仿真6事件LB0=true LW10=5 English，未升级为HMI E",
+      "pass": true
+    },
+    {
+      "check": "缺SDK编译宏26、缺help28、缺Qt有符号退出对应C0000135；缺plugin保留真实超时并明确限时终止，未改成正常退出",
+      "pass": true
+    },
+    {
+      "check": "中文空格副本身份与恢复身份逐次相同，实际从中文路径执行与保存",
+      "pass": true
+    },
+    {
+      "check": "只清理fresh临时根内已确认ordinary子路径；原包/旧发布与拒绝清理路径不在目标；最终TEMP空",
+      "pass": true
+    },
+    {
+      "check": "真实环境未执行项有独立清单，不把清洁PATH当成全新系统或多权限/DPI/字体测试",
+      "pass": true
+    },
+    {
+      "check": "复核时runner哈希仍等于最终执行哈希，run保留首轮失败且不覆盖",
+      "pass": true
+    }
+  ],
+  "nonBlockingLimits": [
+    "缺平台插件时Qt启动失败输出明确诊断，但没有观察到正常退出，10秒后终止私有进程；该项为已界定阻塞场景。",
+    "全过程属于清洁进程环境便携验证，不是干净VM、普通用户、只读目录、多DPI/显示器或真实硬件测试。",
+    "MainWindow右侧画面在当前1353×708窗口中可水平滚动，截图视口裁剪不作为HMI几何裁剪结论。"
+  ],
+  "allChecksPass": true
+}

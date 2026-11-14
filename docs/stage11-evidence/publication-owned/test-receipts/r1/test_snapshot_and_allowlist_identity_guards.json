@@ -1,0 +1,68 @@
+{
+  "test": "test_snapshot_and_allowlist_identity_guards",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T15:53:28.605641+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\candidate",
+      "baseline": "1a2fff679cd01dece5bd4165cf337a83f66c5655",
+      "candidate": "371756550a584d23a0aec59df00bbed63cfccbe2",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\runs\\publication-06cd061b21a64d30b75eeeef92e8d1fd",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\protection.json",
+        "snapshotSha256": "481829d33f6a859a44ff893390e92cdb98bde1248c73ccca27664a502580b5f8",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\allow.json",
+        "allowlistSha256": "8999139495bef7a8c63bab2a614b38919352d575413d68dad07dfe4cee8a018a"
+      },
+      "before": {
+        "head": "1a2fff679cd01dece5bd4165cf337a83f66c5655",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "error": "PublicationError: Candidate changed-path set differs from exact allowlist",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T15:53:29.169328+00:00"
+    },
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T15:53:28.518720+00:00",
+      "mode": "publish",
+      "phase": "initialization",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\candidate",
+      "baseline": "1a2fff679cd01dece5bd4165cf337a83f66c5655",
+      "candidate": "371756550a584d23a0aec59df00bbed63cfccbe2",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\runs\\publication-58d1402f08d74aa8a49b60e065e70b7b",
+      "error": "PublicationError: Input hash mismatch: Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\protection.json",
+      "failedPhase": "initialization",
+      "finishedAtUtc": "2026-11-14T15:53:28.529713+00:00"
+    }
+  ]
+}

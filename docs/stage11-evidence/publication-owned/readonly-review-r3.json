@@ -1,0 +1,168 @@
+{
+  "format": "KinSealLite-stage11-publication-readonly-review-v3",
+  "reviewMode": "read-only final frozen-source review and actual diff guard read; no main publication",
+  "supersedesFinalSourceIdentity": [
+    "readonly-review.json",
+    "readonly-review-r2.json",
+    "final-review.json"
+  ],
+  "files": [
+    {
+      "path": "tools/publish_stage11.py",
+      "bytes": 30247,
+      "sha256": "7d8e2df07a57477d9f854f499ecf779d99d9270710811bcbfa4ecb073cd3fd99"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "bytes": 17309,
+      "sha256": "593d071c20b19c687851fc796e6ec332ffc33872c839e628ac508e2610a597cd"
+    }
+  ],
+  "tests": {
+    "count": 15,
+    "passed": 15,
+    "seconds": 27.738,
+    "log": "unittest-r3.log",
+    "logSha256": "7694e273aed807c677785ac99a9a09f0f96606cdd7ea15371978e6125e505ac5",
+    "cases": [
+      {
+        "test": "test_candidate_containing_user_edit_rejected",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_conflict_rejected_before_main_write",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_failure_after_ref_update_restores_index_ref_and_files",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rolled_back"
+        ]
+      },
+      {
+        "test": "test_foreign_edit_during_failure_is_preserved_and_marked_unknown",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "state_unknown_manual_recovery_required"
+        ]
+      },
+      {
+        "test": "test_main_head_change_rejected",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_main_index_change_rejected",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_preflight_two_disjoint_overlaps_changes_nothing",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "preflight_passed"
+        ]
+      },
+      {
+        "test": "test_protected_user_bytes_change_rejected",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_protection_snapshot_can_publish_later_metadata_commit",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "published",
+          "published"
+        ]
+      },
+      {
+        "test": "test_publish_retains_user_delta_and_bom_crlf",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "published"
+        ]
+      },
+      {
+        "test": "test_snapshot_and_allowlist_identity_guards",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write",
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_unicode_diff_content_tamper_rejected_despite_valid_input_hash",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_unicode_prior_declared_quotepath_is_not_silently_changed",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "rejected_before_main_write"
+        ]
+      },
+      {
+        "test": "test_unicode_quoted_frozen_diff_keeps_full_headers_and_chain",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "published"
+        ]
+      },
+      {
+        "test": "test_unicode_unquoted_frozen_diff_keeps_utf8_headers",
+        "fixtureRemoved": true,
+        "outcomes": [
+          "published"
+        ]
+      }
+    ]
+  },
+  "actualMainReadOnlyDiffGuard": {
+    "selectedQuotepath": "true",
+    "matchingQuotepathValues": [
+      "true"
+    ],
+    "declaredByPriorSnapshot": null,
+    "comparison": "entire actual git diff; headers and content retained; only BOM/CRLF normalized",
+    "variantSha256": {
+      "false": "a0f8ceed19db79a3691227e75fb278bc435cbae6015451bd027f47fa5afe4b86",
+      "true": "394960a5fb04720f6a81667091a4ddb806797f82e77aa16ca2edd6f70a8f29b6"
+    },
+    "initialSnapshotAndDiffUnmodified": true
+  },
+  "afterSnapshotChain": {
+    "field": "snapshotDiffQuotepath",
+    "values": [
+      "true",
+      "false"
+    ],
+    "receiptField": "protectedDiffRepresentation",
+    "subsequentDiffUsesSelectedMode": true,
+    "priorDeclaredModeMustMatch": true
+  },
+  "findings": [],
+  "ownedFixturesRemaining": 0,
+  "realMainPublicationPerformed": false,
+  "limits": [
+    "1891 file SHA and original input hashes remain mandatory.",
+    "Only complete actual Git diff variants may match; no path header is discarded.",
+    "Existing concurrency/storage/unsupported-file restrictions remain unchanged."
+  ]
+}

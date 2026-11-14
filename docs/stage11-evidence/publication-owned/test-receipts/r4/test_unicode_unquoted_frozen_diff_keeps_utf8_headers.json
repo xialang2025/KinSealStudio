@@ -1,0 +1,161 @@
+{
+  "test": "test_unicode_unquoted_frozen_diff_keeps_utf8_headers",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:55:23.346080+00:00",
+      "mode": "publish",
+      "phase": "complete",
+      "outcome": "published",
+      "mainMutated": true,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "other": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [
+        {
+          "path": "a.txt",
+          "change": "M",
+          "overlap": true,
+          "beforeSha256": "4948955cd852e6e71da1c1c8e60610c3b216316e25e6e616fe15c8b4d3660fef",
+          "afterSha256": "5d683d405b0f8a158503c1d78bd2a5b74b6c8b46040952f4a4f1ab4174e70e58",
+          "bytes": 226
+        },
+        {
+          "path": "b-中文.txt",
+          "change": "M",
+          "overlap": true,
+          "beforeSha256": "2b788fc450ea8d3a8f5506df288726d63e3f6efbed63a61fe4c2c6925f666c2d",
+          "afterSha256": "cde62cf12fb905060f6a31ba9d9b121c832be54af265141e5f72d27b0f97cb74",
+          "bytes": 207
+        },
+        {
+          "path": "docs/stage11-new.txt",
+          "change": "A",
+          "overlap": false,
+          "beforeSha256": null,
+          "afterSha256": "6edd6755cf2663e7e418a57b4ae73bbbf9af6f2504d8016f4464a448c3ed3e2c",
+          "bytes": 27
+        }
+      ],
+      "overlaps": [
+        {
+          "path": "a.txt",
+          "userRawSha256": "4948955cd852e6e71da1c1c8e60610c3b216316e25e6e616fe15c8b4d3660fef",
+          "baseBlobSha256": "2c4649462d25df2989597cc7fc397d4260d417e59ea37dd90b5453602663d1e2",
+          "candidateRawSha256": "42af7e27738ab2d846f2b2cf71619909ff47b96347d4aac378098d6fdcdf3a05",
+          "mergedRawSha256": "5d683d405b0f8a158503c1d78bd2a5b74b6c8b46040952f4a4f1ab4174e70e58",
+          "userEnvelope": {
+            "bom": true,
+            "eol": "CRLF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "baseEnvelope": {
+            "bom": true,
+            "eol": "CRLF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "candidateEnvelope": {
+            "bom": true,
+            "eol": "CRLF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "normalization": "UTF-8 BOM recorded; LF merge only; original user BOM/EOL restored",
+          "reverseTaskRestoresUserRawExactly": true,
+          "reverseUserRestoresCandidateNormalizedExactly": true,
+          "orderedUserDeltaUnchanged": true,
+          "userDeltaSha256": "867f15e601f33ab5b4ef957db34dc94456f9c6df7568408740dfae376f46874b",
+          "userDeltaChunkCount": 1
+        },
+        {
+          "path": "b-中文.txt",
+          "userRawSha256": "2b788fc450ea8d3a8f5506df288726d63e3f6efbed63a61fe4c2c6925f666c2d",
+          "baseBlobSha256": "7cd1eaae3b094835ba3b85544629efc082c345c410a1a3a683c4c58e62da9c8c",
+          "candidateRawSha256": "f8296a30f3dc0140cd49545f5605d9f7d9ab98168ce3e4d478d444a83f0fc765",
+          "mergedRawSha256": "cde62cf12fb905060f6a31ba9d9b121c832be54af265141e5f72d27b0f97cb74",
+          "userEnvelope": {
+            "bom": false,
+            "eol": "LF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "baseEnvelope": {
+            "bom": false,
+            "eol": "LF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "candidateEnvelope": {
+            "bom": false,
+            "eol": "LF",
+            "lineCount": 16,
+            "endsWithNewline": true
+          },
+          "normalization": "UTF-8 BOM recorded; LF merge only; original user BOM/EOL restored",
+          "reverseTaskRestoresUserRawExactly": true,
+          "reverseUserRestoresCandidateNormalizedExactly": true,
+          "orderedUserDeltaUnchanged": true,
+          "userDeltaSha256": "4ce9db8d445204e3c09723b19a7b203599b3fc0649a645a5722747bce6aaf4a5",
+          "userDeltaChunkCount": 1
+        }
+      ],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\candidate",
+      "baseline": "1d4b853b905c2dd8fe19855025c281adcf5fbc2e",
+      "candidate": "227260cd978520a39ddbf590aa0ea9d0fab37192",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\runs\\publication-46114975f7a14f039ec7d52938f00c8c",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\protection.json",
+        "snapshotSha256": "79d59eccb48df1f8740cfddbad8b80b90ddf39212ac6919a8fc3698e4574895f",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\protection.diff",
+        "snapshotDiffSha256": "503fb8b4752c64f1afe92fe519ac8f920c7ba5f0dc5566d5163de8486a87af88",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\allow.json",
+        "allowlistSha256": "266e902868d3ac3cc10842c7e2a07791ddcb08199f6d92708f1527bac0d929dc"
+      },
+      "before": {
+        "head": "1d4b853b905c2dd8fe19855025c281adcf5fbc2e",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "protectedDiffRepresentation": {
+        "selectedQuotepath": "false",
+        "matchingQuotepathValues": [
+          "false"
+        ],
+        "declaredByPriorSnapshot": null,
+        "comparison": "entire actual git diff; headers and content retained; only BOM/CRLF normalized",
+        "variantSha256": {
+          "false": "503fb8b4752c64f1afe92fe519ac8f920c7ba5f0dc5566d5163de8486a87af88",
+          "true": "c731ceeda8749d1b419f204f187fca0a59f815cfd1ba5cc26ac79ef93ac3c1f5"
+        }
+      },
+      "beforeIndexSha256": "66dfe6261ce0c6c4c8f7b8f6956de68f457dd354c6146c0dcc4cc1883b246568",
+      "afterIndexSha256": "38ad5388c76aa4a951d772fac9522fc648ae8a7507fee62be17d243c03cb6555",
+      "after": {
+        "head": "227260cd978520a39ddbf590aa0ea9d0fab37192",
+        "protectedUserFiles": 3,
+        "overlapFiles": 2,
+        "nonoverlapUserBytesUnchanged": true,
+        "overlapDeltaProvedPreserved": true,
+        "snapshotPath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\runs\\publication-46114975f7a14f039ec7d52938f00c8c\\after-protection-snapshot.json",
+        "snapshotSha256": "fe54fce08cb9aa542718d0799f5728104621af4c531347e64174e46e97732b43",
+        "diffPath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-4a66fga9\\runs\\publication-46114975f7a14f039ec7d52938f00c8c\\after-protection-snapshot.diff",
+        "diffSha256": "e196d80e0c1c557bbd668c6262463a90376fb0e2c6cda719c26a94956b15e9d1",
+        "allProtectedPathsRemainUncommitted": true
+      },
+      "finishedAtUtc": "2026-11-14T16:55:25.037165+00:00"
+    }
+  ]
+}

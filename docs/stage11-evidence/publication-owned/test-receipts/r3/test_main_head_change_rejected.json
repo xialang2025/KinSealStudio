@@ -1,0 +1,39 @@
+{
+  "test": "test_main_head_change_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:36:44.606084+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\candidate",
+      "baseline": "b35ae01d05a731451ab288c12888322c0a503cd8",
+      "candidate": "cde620ce1ef5b6af51059316dcaf3108cb57beed",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\runs\\publication-9724de28fde84c23a8ec19c9750b5de6",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\protection.json",
+        "snapshotSha256": "2db6a2f2a080dd9c8539a99c17b713a4f9e215b083b438da2671f6f628bf4a49",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-44_3fulj\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "error": "PublicationError: Main HEAD moved",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:36:44.979085+00:00"
+    }
+  ]
+}

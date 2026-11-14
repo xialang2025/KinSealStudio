@@ -1,0 +1,43 @@
+{
+  "test": "test_main_head_change_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:55:04.588676+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "other": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\candidate",
+      "baseline": "777713360be3ef6c5730234c825cdee980e9f44e",
+      "candidate": "43fc495b360a15f658bc10bb7f907d11d07f8589",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\runs\\publication-b332925fa436412dad9161f460fc88d0",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\protection.json",
+        "snapshotSha256": "60579b315e30837ccb2c19f406c5dc17a9a0ccf09b5f5912783ffc2030778919",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-s7hm9k91\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "error": "PublicationError: Main HEAD moved",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:55:04.971677+00:00"
+    }
+  ]
+}

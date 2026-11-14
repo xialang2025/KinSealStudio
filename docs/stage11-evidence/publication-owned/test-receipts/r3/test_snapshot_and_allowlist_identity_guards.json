@@ -1,0 +1,81 @@
+{
+  "test": "test_snapshot_and_allowlist_identity_guards",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:36:55.871891+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\candidate",
+      "baseline": "6b589d3b349a87527e3710aba2dbb6f94ba1d857",
+      "candidate": "73b4436b9e422e9da4c17fb52b970067843656a0",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\runs\\publication-3f0b6402458e470c9a2459789bd45e13",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\protection.json",
+        "snapshotSha256": "2c6aa6b75cb40631f2bf294fad314dfc9cca444b7cc78dd224ab3340505ecba0",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\allow.json",
+        "allowlistSha256": "8999139495bef7a8c63bab2a614b38919352d575413d68dad07dfe4cee8a018a"
+      },
+      "before": {
+        "head": "6b589d3b349a87527e3710aba2dbb6f94ba1d857",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "protectedDiffRepresentation": {
+        "selectedQuotepath": "false",
+        "matchingQuotepathValues": [
+          "false",
+          "true"
+        ],
+        "declaredByPriorSnapshot": null,
+        "comparison": "entire actual git diff; headers and content retained; only BOM/CRLF normalized",
+        "variantSha256": {
+          "false": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+          "true": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225"
+        }
+      },
+      "error": "PublicationError: Candidate changed-path set differs from exact allowlist",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:36:56.447361+00:00"
+    },
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:36:55.785623+00:00",
+      "mode": "publish",
+      "phase": "initialization",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\candidate",
+      "baseline": "6b589d3b349a87527e3710aba2dbb6f94ba1d857",
+      "candidate": "73b4436b9e422e9da4c17fb52b970067843656a0",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\runs\\publication-ef34d5e300b0435485521afc0fba0a4b",
+      "error": "PublicationError: Input hash mismatch: Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-jc5qh70c\\protection.json",
+      "failedPhase": "initialization",
+      "finishedAtUtc": "2026-11-14T16:36:55.796623+00:00"
+    }
+  ]
+}

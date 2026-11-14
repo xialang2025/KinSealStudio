@@ -1,0 +1,45 @@
+{
+  "test": "test_candidate_containing_user_edit_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T15:53:09.341187+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\candidate",
+      "baseline": "4e0d692cac994c2329bcb888b6a974ead6763d07",
+      "candidate": "98201015c308336e60b293754058bd7071a6ae01",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\runs\\publication-372bb8d488324490a900e342c308396a",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\protection.json",
+        "snapshotSha256": "b655327eaf549ffbbfb570607f20ac7221c6d3fad377d592d414681b08d20d7c",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "before": {
+        "head": "4e0d692cac994c2329bcb888b6a974ead6763d07",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "error": "PublicationError: Reverse task merge did not recover the exact original user bytes",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T15:53:10.210255+00:00"
+    }
+  ]
+}

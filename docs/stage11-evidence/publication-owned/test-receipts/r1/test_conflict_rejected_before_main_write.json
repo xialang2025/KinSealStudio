@@ -1,0 +1,45 @@
+{
+  "test": "test_conflict_rejected_before_main_write",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T15:53:11.129536+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\candidate",
+      "baseline": "b4474cf90049756d7b3b1e65d6867e7c37fc174c",
+      "candidate": "7d0520c0feda148070dab30b9d6c700c333e4250",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\runs\\publication-58b8db4ef88e457eacc9f9cfc9d54346",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\protection.json",
+        "snapshotSha256": "abbb06d77cf631a1d495bb66eb64cd36fe8416091a778435d471d86842f09806",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "before": {
+        "head": "b4474cf90049756d7b3b1e65d6867e7c37fc174c",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "error": "PublicationError: Three-way merge conflict/failure: 0-forward: ",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T15:53:11.866839+00:00"
+    }
+  ]
+}

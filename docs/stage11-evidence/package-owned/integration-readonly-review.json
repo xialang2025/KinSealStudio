@@ -1,0 +1,183 @@
+{
+  "format": "KinSealLite-stage11-integration-readonly-review-v1",
+  "dateAsiaShanghai": "2026-11-15",
+  "reviewMode": "Independent read-only inspection of stable production/build integration; no production or package mutation",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 33954,
+      "sha256": "2b48dc4d53fadb0ede3c9220063fe4970a203d3bb8ddfff907183396dde0b617",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "Build.ps1",
+      "bytes": 29363,
+      "sha256": "68a51e6504e3684e5b14ffa352f32796e2393ce715d088899f792af9f4952855",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "tools/BuildStage11.ps1",
+      "bytes": 7524,
+      "sha256": "a0675f7fd93a61587a834fa034feeafd224c2a394c0c0daa3b30e96082dffefd",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/main.cpp",
+      "bytes": 32752,
+      "sha256": "8c38876673a91933d0a1f17c0b03cc445ff8069354f3f102d4dff0fab6dcb358",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/main_window.cpp",
+      "bytes": 97225,
+      "sha256": "e9c50d922b484e4f0ecdaa0d183f4193e9de59e3883162eb57c1346d5dd4a522",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/main_window.h",
+      "bytes": 7525,
+      "sha256": "58a391396ca8d8338641ab212eb9ba9ab141cf134c81dd9b56ef9be68fb60f7b",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/release_version.rc",
+      "bytes": 843,
+      "sha256": "5fbad5d17ba0173ada59305959f25f60311cb7a8b77c52b4957f6d6fd703d001",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/local_help.cpp",
+      "bytes": 27587,
+      "sha256": "40a8d808799e304262daae6781ed52580c9ca701b98b2d5751ec39a1423f0a84",
+      "matchesPackagedSource": true
+    },
+    {
+      "path": "src/local_help.h",
+      "bytes": 2040,
+      "sha256": "e4f720a7093bda5d39067fcaa2c660594d0076a2d76d2bb6543d8b6593318a07",
+      "matchesPackagedSource": true
+    }
+  ],
+  "actualPeFileVersion": "0.11.0",
+  "actualPeProductVersion": "0.11.0",
+  "actualPeProductName": "KinSealStudio Lite",
+  "reviewedPackageManifestSha256": "1a726d8a917640e7b7b0423db71382042a34025f94f47f246f4a3af66f811df9",
+  "existingBuildSteps": {
+    "path": "docs/stage11-evidence/build-final-r1/steps.json",
+    "sha256": "f6b2a19f5d3d03774a2713a235bf956e205085e40d66b44e97d7353fd042f0a9",
+    "steps": 5,
+    "allExitZero": true,
+    "existingHelpTests": {
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0
+    },
+    "reexecuted": false
+  },
+  "checks": [
+    {
+      "id": "I11-01",
+      "subject": "版本一致性",
+      "result": "pass",
+      "evidence": "CMake project=0.11.0；应用专用KINSEAL_RELEASE_VERSION编译定义；runtime由applicationVersion读取；实读PE FileVersion/ProductVersion均0.11.0。"
+    },
+    {
+      "id": "I11-02",
+      "subject": "编译与链接",
+      "result": "pass",
+      "evidence": "src/main.cpp仅应用目标使用；RC仅WIN32应用加入；补充local_help.cpp/.h给所有直接含src/main_window.cpp的既有target，包括共享SimulationTestSupport，避免App或全窗口测试未解析符号。"
+    },
+    {
+      "id": "I11-03",
+      "subject": "Qt运行依赖",
+      "result": "pass",
+      "evidence": "新增QDialog/QTextBrowser/QFontDatabase/QFontInfo均来自既有Qt Core/Gui/Widgets，不增加Qt Test用户包运行依赖；既有SVG/SerialPort仍由原配置链接。"
+    },
+    {
+      "id": "I11-04",
+      "subject": "构造与初始化",
+      "result": "pass",
+      "evidence": "m_localHelp默认nullptr且构造主体在createActionsAndMenus之前创建；安装过滤器不主动投递事件；action_H触发时controller已存在。"
+    },
+    {
+      "id": "I11-05",
+      "subject": "设置身份",
+      "result": "pass",
+      "evidence": "应用名显式设KinSealStudioLite；未更改既有显式QSettings(KinSealStudioLite,Editor/DeviceCompiler)组织与应用键。capture-help仅自身进程切INI临时路径；release-info/help-catalog在创建主窗口之前返回。"
+    },
+    {
+      "id": "I11-06",
+      "subject": "帮助动作与生命周期",
+      "result": "pass",
+      "evidence": "action_H只连接新viewer；旧报告viewer保留在#if 0。controller以主窗为QObject父，m_dialog为QPointer；controller析构先删dialog再析构resource store；context窗口销毁后ensureDialog重建browser/status。"
+    },
+    {
+      "id": "I11-07",
+      "subject": "上下文与外部I/O",
+      "result": "pass",
+      "evidence": "F1/WhatsThis过滤器仅处理owner控件树；帮助viewer拒绝外部自动导航，索引/正文走本地有限大小读取；新增元数据分支不启动设备/COM。"
+    },
+    {
+      "id": "I11-08",
+      "subject": "参数与返回码",
+      "result": "pass",
+      "evidence": "新CLI参数名无已有分支冲突，metadata/help-catalog使用精确参数数目；capture-help错误路径分别27/28/6；帮助读取失败不会改工程模型。"
+    },
+    {
+      "id": "I11-09",
+      "subject": "构建进程",
+      "result": "pass",
+      "evidence": "BuildStage11使用ProcessStartInfo UseShellExecute=false/CreateNoWindow/Hidden，Windows参数引号按反斜线规则构造，双输出流并发读取并留档，非0步骤抛错。"
+    },
+    {
+      "id": "I11-10",
+      "subject": "部署入口",
+      "result": "pass",
+      "evidence": "Build.ps1 -Deploy默认转白名单packer；LegacyEvidenceDeploy为显式开发兼容分支。新包拒绝既有目录；当前r2由相同frozen工具创建和独立验证。"
+    },
+    {
+      "id": "I11-11",
+      "subject": "部署错误传播疑点排除",
+      "result": "pass",
+      "evidence": "仅用后台最小PowerShell调用测试child throw；实际进程exit1且未执行外层继续标识，未证实伪成功；未执行生产部署或修改脚本。"
+    },
+    {
+      "id": "I11-12",
+      "subject": "生产输入稳定性",
+      "result": "pass",
+      "evidence": "指定7文件及2个生命周期支持文件均逐字匹配r2 manifest的冻结sourceFiles；实读PE身份与源版本一致。"
+    },
+    {
+      "id": "I11-13",
+      "subject": "残留范围",
+      "result": "pass",
+      "evidence": "旧帮助正文代码有带日期#if 0标记不参与编译；原开发部署广拷贝只在显式LegacyEvidenceDeploy路径；当前新用户包无全docs/原厂EXE/SDK/编译中间物。"
+    },
+    {
+      "id": "I11-14",
+      "subject": "已有构建证据",
+      "result": "pass",
+      "evidence": "只读核对build-final-r1步骤configure/build/local-help-tests/self-test/embedded-payload均exit0，已有Qt帮助日志29 passed/0 failed/0 skipped；本复核未重跑这些测试。"
+    }
+  ],
+  "blockingFindings": [],
+  "nonblockingLimitations": [
+    "0.11.0分别写于CMake、RC与packager版本字段；当前已一致，未来升版本须同步检查，不能把当前一致当作自动生成机制。",
+    "BuildStage11固定本机Qt/MinGW/Python路径和当前Stage9 runtime基线；本轮验证本机可构建及便携运行，未证明任意干净电脑能直接重建源代码。",
+    "本轮实际构建目标为应用与LocalHelpTests，其他包含主窗口的历史目标仅做链接源清单静态复核，未为本报告全量重编。",
+    "默认DeployDirectoryName仍为r1；已存在目录会由packer拒绝，后续新交付须显式使用全新部署名，不能覆盖既有包。",
+    "没有USB/PLC新验收、安装器或公开再发行授权结论；保留阶段10和依赖策略欠项。"
+  ],
+  "productionLogicModified": false,
+  "frozenPackageModified": false,
+  "hardwareIo": false,
+  "cleanupRetryAttempted": false,
+  "targetedReadOnlyReproduction": {
+    "purpose": "Exclude suspected wrapper exception swallowing",
+    "commandShape": "outer ErrorActionPreference=Continue; child sets Stop and throws; outer continuation marker",
+    "actualExitCode": 1,
+    "outerContinuationObserved": false,
+    "filesWritten": false
+  },
+  "result": "no_blocking_findings_with_listed_scope_limits"
+}

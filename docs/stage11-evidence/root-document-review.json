@@ -1,0 +1,68 @@
+{
+  "format": "KinSealLite-stage11-root-document-review-v1",
+  "mode": "check only",
+  "checks": [
+    {
+      "id": "ledger-families",
+      "pass": true
+    },
+    {
+      "id": "ledger-closedFacts",
+      "pass": true
+    },
+    {
+      "id": "ledger-supersededComponents",
+      "pass": true
+    },
+    {
+      "id": "ledger-legacyA03Mappings",
+      "pass": true
+    },
+    {
+      "id": "ledger-earlySuperseded",
+      "pass": true
+    },
+    {
+      "id": "ledger-history",
+      "pass": true
+    },
+    {
+      "id": "ledger-candidates",
+      "pass": true
+    },
+    {
+      "id": "ledger-aliases",
+      "pass": true
+    },
+    {
+      "id": "ledger-csvIdentity",
+      "pass": true
+    },
+    {
+      "id": "ledger-sourceManifest",
+      "pass": true
+    },
+    {
+      "id": "ledger-auditInputManifest",
+      "pass": true
+    },
+    {
+      "id": "all-sourceAssessment-preserved",
+      "pass": true
+    },
+    {
+      "id": "non-stage11-tasks-preserved",
+      "pass": true
+    },
+    {
+      "id": "no-reference-program-used",
+      "pass": true,
+      "basis": "source/package work only; no files from 参考程序 opened"
+    }
+  ],
+  "allPassed": true,
+  "limits": [
+    "final portable run and package commit binding recorded independently",
+    "complete stage11 remains open"
+  ]
+}

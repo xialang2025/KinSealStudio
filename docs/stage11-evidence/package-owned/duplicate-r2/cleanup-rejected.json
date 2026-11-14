@@ -1,0 +1,23 @@
+{
+  "format": "KinSealLite-stage11-package-cleanup-result-v1",
+  "dateAsiaShanghai": "2026-11-15",
+  "target": "Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114/package-duplicate-r2",
+  "allowedTaskRoot": "Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114",
+  "inventory": "docs/stage11-evidence/package-owned/duplicate-r2/cleanup-inventory-corrected.json",
+  "fileCountArchived": 109,
+  "totalBytesArchived": 117435743,
+  "status": "blocked_by_automatic_review",
+  "attemptedAction": "PowerShell Remove-Item -LiteralPath exact task-owned duplicate-r2 directory -Recurse -Force; preceding guards revalidated absolute containment, every archived SHA/length, file count and no reparse entry",
+  "toolError": "exec_command failed: CreateProcess rejected: blocked by policy",
+  "statedReason": "blocked by policy; no more detailed reason was provided",
+  "commandExecuted": false,
+  "deletedBytes": 0,
+  "deletedFileCount": 0,
+  "duplicateRetained": true,
+  "releaseR1Retained": true,
+  "releaseR2Retained": true,
+  "historicalStageDirectoriesDeleted": false,
+  "retryAttempted": false,
+  "alternateDeletionChannelAttempted": false,
+  "nextAction": "保留完整归档与副本，主任务统一记录清理阻断；不得计入已释放空间"
+}

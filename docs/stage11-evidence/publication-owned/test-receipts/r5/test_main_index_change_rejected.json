@@ -1,0 +1,44 @@
+{
+  "test": "test_main_index_change_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:58:21.881076+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "workingTreeDiff": 600,
+        "otherIncludingWrites": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\candidate",
+      "baseline": "670d95cf9e72a63df7fe403f66a64624909ddcc5",
+      "candidate": "61de18350a5adb5a7460ce6a7d029e90dbb12c90",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\runs\\publication-6319444355bc4dd39acadd444dd52a05",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\protection.json",
+        "snapshotSha256": "8ff8e008bf33d584605e4c64bebe38d3563bb29df119d4c01b04825dac042137",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_ykm8soi\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "error": "PublicationError: Main index is not empty",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:58:22.309189+00:00"
+    }
+  ]
+}

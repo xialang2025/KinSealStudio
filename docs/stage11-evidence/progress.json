@@ -1,0 +1,111 @@
+{
+  "format": "KinSealLite-stage11-progress-v1",
+  "updatedAt": "2026-11-15 Asia/Shanghai",
+  "baselineCommit": "48314f2e38f7f5888a575f034a26f09fed7fd250",
+  "codeCommit": null,
+  "codeCommitState": "awaiting_real_commit",
+  "version": "0.11.0",
+  "taskCount": 6,
+  "completeStage11": false,
+  "releaseChannel": "restricted_internal_validation",
+  "publicRedistribution": false,
+  "installerProvided": false,
+  "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+  "package": "dist/KinSealStudioLite-Stage11-release-r2",
+  "manifestSha256BeforeCommitBinding": "1a726d8a917640e7b7b0423db71382042a34025f94f47f246f4a3af66f811df9",
+  "packageFiles": 109,
+  "sourceFiles": 6355,
+  "samples": 7,
+  "tests": {
+    "helpQt": {
+      "passed": 29,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "build-final-r1/local-help-qt.txt"
+    },
+    "packageTool": {
+      "passed": 31,
+      "evidence": "package-owned/unit-results.json"
+    },
+    "publicationTool": {
+      "passed": 16,
+      "evidence": "publication-owned/unittest-r5.log",
+      "review": "publication-owned/readonly-review-r5.json",
+      "priorRunsRetained": true
+    },
+    "dependencyPEs": 23,
+    "dependencyPolicyChecks": 87,
+    "portableProcessCount": 80,
+    "portableSemanticChecks": 25,
+    "portableExitObserved": 79,
+    "portableGuardedStartupTerminated": 1,
+    "portableDeviceCompiledSamples": 6,
+    "portableExportedSources": 2,
+    "sampleSecondSaveIdempotent": true,
+    "packageUnchangedByRuntime": true
+  },
+  "relCases": [
+    {
+      "id": "REL-01",
+      "status": "partial",
+      "completed": "0.11.0 CMake/runtime/PE一致，源/程序/帮助/样例/文件清单冻结；真实提交绑定后另记",
+      "remaining": "完整支持认证/设备固件和唯一号未知"
+    },
+    {
+      "id": "REL-02",
+      "status": "partial",
+      "completed": "清洁PATH、包内runtime、无SDK、缺帮助/Qt/插件及无外部原厂路径场景实际执行",
+      "remaining": "独立干净OS、缺系统驱动/字体/资源全矩阵未验；Qt插件缺失阻塞由测试限时终止"
+    },
+    {
+      "id": "REL-03",
+      "status": "partial",
+      "completed": "中文空格路径、7样例加载保存与幂等、源导出/编译适用或明确拒绝、模拟首帧",
+      "remaining": "真实只读ACL/普通用户/长路径/DPI/多显示器及完整取消故障矩阵未验"
+    },
+    {
+      "id": "REL-04",
+      "status": "not_applicable_to_current_portable_scope",
+      "completed": "只提供便携，安装/升级/卸载明确未提供",
+      "remaining": "后续如提供安装器需另验，不关闭完整S11-04"
+    },
+    {
+      "id": "REL-05",
+      "status": "partial",
+      "completed": "8章128命令39上下文，本地链接64、Qt29及真实菜单截图",
+      "remaining": "全右键/双击/嵌套字段/错误与部分属性帮助未对账"
+    },
+    {
+      "id": "REL-06",
+      "status": "partial",
+      "completed": "实际包白名单、22runtime/64许可/23PE与来源核对",
+      "remaining": "内嵌原厂权利、Qt对应源码/SBOM及D3D/Mesa条件待核"
+    }
+  ],
+  "hardwareIo": false,
+  "newControls": 0,
+  "deviceEncodingChanged": false,
+  "mainWindowMayReadOnlyEnumerateUsb": true,
+  "currentScreen": "S10-FUNC-LOCAL-1114",
+  "pendingFieldSteps": [
+    "language/notification human observation",
+    "second macro14 restore and marker confirmation"
+  ],
+  "oldCleanupDenialsRetried": false,
+  "cleanup": "cleanup-result.json",
+  "delivery": "delivery-r1.json",
+  "remainingEnvironments": [
+    "独立干净系统/VM",
+    "普通用户权限与只读安装目录",
+    "长路径上限",
+    "多DPI/多显示器",
+    "删除或替换系统字体",
+    "卸载/安装USB驱动与真实设备",
+    "真实PLC/COM串口",
+    "安装/升级/卸载器",
+    "设备T/E与长期性能",
+    "缺平台插件后的应用正常退出：Qt致命对话阻塞，已记录并限时终止；不能称正常拒绝返回"
+  ],
+  "publicationDiffRepresentationFix": "strict full diff matching with explicit Git quotepath true/false; frozen input unchanged",
+  "publicationTimeoutFix": "status and working-tree binary diff bounded at600s; other Git120s; first actual timeout confirmed rolled back"
+}

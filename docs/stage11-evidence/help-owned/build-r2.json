@@ -1,0 +1,73 @@
+{
+  "steps": [
+    {
+      "name": "moc-r2",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\bin\\moc.exe",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\tests\\local_help_tests.cpp",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r2\\local_help_tests.moc"
+      ],
+      "exitCode": 0,
+      "log": "moc-r2.log"
+    },
+    {
+      "name": "compile-r2",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-DQT_WIDGETS_LIB",
+        "-DQT_GUI_LIB",
+        "-DQT_CORE_LIB",
+        "-DQT_NO_CAST_FROM_ASCII",
+        "-DQT_NO_CAST_TO_ASCII",
+        "-Isrc",
+        "-IZ:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r2",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtCore",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtGui",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtWidgets",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtTest",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\src\\local_help.cpp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\tests\\local_help_tests.cpp",
+        "-LG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\lib",
+        "-lQt6Widgets",
+        "-lQt6Gui",
+        "-lQt6Test",
+        "-lQt6Core",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r2\\LocalHelpTests.exe"
+      ],
+      "exitCode": 0,
+      "log": "compile-r2.log"
+    },
+    {
+      "name": "test-r2",
+      "argv": [
+        "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r2\\LocalHelpTests.exe",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\docs\\stage11-evidence\\help-owned\\tests-r2.txt,txt"
+      ],
+      "exitCode": 0,
+      "log": "test-r2.log"
+    }
+  ],
+  "sourceHashes": {
+    "src/local_help.cpp": "3a7d4e28bdb98ff6b619fb2011577963a3f7873ed2504fe0e3ff1d8c59f9c63b",
+    "src/local_help.h": "e4f720a7093bda5d39067fcaa2c660594d0076a2d76d2bb6543d8b6593318a07",
+    "tests/local_help_tests.cpp": "d0bc00bf02963f3974c81342d85ca00cbc93aebc5fc06e1b64cc9d475c3ed3a8"
+  },
+  "physicalDevicesOpened": false,
+  "visibleWindowCreated": false,
+  "platform": "offscreen",
+  "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r2\\LocalHelpTests.exe",
+  "executableSha256": "a80e4e43f5f725df93ee6f11dd054d51a90a97ce3700502a51ee6d97b5146a3e"
+}

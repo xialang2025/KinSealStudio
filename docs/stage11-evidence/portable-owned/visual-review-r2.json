@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "method": "实际查看最终r2原始PNG，未合成或改图",
+  "reviewed": [
+    {
+      "path": "run-r2/help-mainwindow-action.png",
+      "sha256": "0083203976156f5befe39f56b4e9b5521b050f177d3de331a402b402a9ba9db8",
+      "observation": "本地目录8章链接、中文流程和限制可读，关闭按钮完整；实为action_H触发。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-1-loaded.png",
+      "sha256": "e68ebc33cdb26364dd45bda4d25919ddb9a34866b21b73eb042f932140dbd476",
+      "observation": "位四按钮、三独立灯及页标识已载入；右侧在水平滚动视口外。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-2-loaded.png",
+      "sha256": "a8210fb513ea966de96f808ead2eb4394df4309ca72cd3229f9215d29064d0ce",
+      "observation": "字按钮与独立LW20/LW30灯及标识已载入。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-3-loaded.png",
+      "sha256": "b250a379f27bf8644c55e00c8e34d6362654d1369e4742a4252628384a1a1386",
+      "observation": "功能页LANG与LB40/LB41编辑状态载入，编辑器预览不替代实屏运行显隐。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-4-loaded.png",
+      "sha256": "4ea136e63ca9989a93eae94cc64d894a90aab69e29553b18fd1d5b26d95306cd",
+      "observation": "阶段1单页基本控件载入；右侧受编辑视口裁剪。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-5-loaded.png",
+      "sha256": "bdf4d4f50f32e8f067ccc8453f32f09e085be61c2841885549a3fa6aa8ed0ee5",
+      "observation": "白填充黑框椭圆载入。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-6-loaded.png",
+      "sha256": "b24f5ea96abf27df59bc5bc90c306a51abf793d999dc6f421c3023f719a0ef7a",
+      "observation": "内部五类样例中文标题与控件载入。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/sample-7-loaded.png",
+      "sha256": "ac04f8bb7ff7a7e58d16a445b9d5f240e7fc50cead9200330583b5f7c2da526e",
+      "observation": "宏源码样例含0画布控件，空白画布与状态栏0一致；不误判加载失败。",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "run-r2/simulation-frame.png",
+      "sha256": "2d3ac4cfbec931078b1c690a6e14a168c791170c1604a374b7c0069fff8f2347",
+      "observation": "LB0相关外观变绿，标题已切换English文本；独立trace核内存值。",
+      "visuallyReviewed": true
+    }
+  ],
+  "limitations": [
+    "仅当前Windows/当前字体与1353×708主窗口；非多DPI/显示器验收。",
+    "主窗口可滚动视口右侧裁剪不代表设备页面几何裁剪。"
+  ]
+}

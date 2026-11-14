@@ -720,3 +720,58 @@ pass/fail proof绑定真实source/program/project/payload artifacts、预期来�
 37项证据工具回归、4份历史CLI导入、7个独立同行探针与实际新页C/T/用户答复分别统计，不相加制造“总功能通过”。新增工具的RED→修复涉及证据校验，不是生产协议回归。各冻结输入保存可重放小文本快照，后续追加用户答复/文档不会改变首轮artifact SHA。
 
 完整八项未完成：硬件/固件、剩余五类/权限/语言状态、工程配置、物理PLC、原生上载/保持、HMI性能/长稳及发布必需范围均进统一台账；保留sourceAssessment/candidates/history。应用未变化，不重复构建或复制整套运行库；白名单提交工具、样例、证据和规则，发布前后核1891份用户既存文件。阶段10证据、新样例及工具/测试单独设置Git -text，防止换行转换改变其绑定SHA。当前功能页只确认LB41显现/隐藏和出现后触控，通知/两组语言及第二恢复仍待续测。
+
+
+## 26. 阶段11：版本、离线帮助与白名单部署（2026-11-14～15）
+
+本节补齐发布相关UI→命令→文件→运行包规则，前25节保留编辑、控件、设备编译及传输规则。本轮标记 `//20261114-10 add/change`；跨日证据按实际时刻记录，Git提交使用当时北京时间。应用0.11.0，设备编码未新增，完整复刻未认证。
+
+### 26.1 版本与命令行身份
+
+CMake PROJECT_VERSION=0.11.0通过KINSEAL_RELEASE_VERSION仅传给主程序；QApplication设置应用名KinSealStudioLite和版本。关于窗口显示同一版本、受限验证、安装器及设备欠项；Windows release_version.rc写FileVersion/ProductVersion 0.11.0，发布时逐项对照，不能仅改README。既有设置的显式organization/application键继续使用。
+
+`--release-info`输出product/version/qtVersion、distribution=restricted_internal_validation、installerProvided=false、fullReplicaCertified=false和本命令hardwareIo=false。字体逐项输出requested/available/resolved；字族存在和fallback只描述本机，不承诺目标系统字模/像素相同。包不复制字体或修改系统字体。原厂资源内嵌事实另记依赖清单，发行标识不自动解决授权。
+
+### 26.2 帮助输入到本地文件
+
+| UI/输入 | 转换与输出 | 错误及边界 |
+|---|---|---|
+| 菜单action_H | owner所属LocalHelpController打开LocalHelpDialog；LocalHelpBrowser显示start页 | 独立用户HTML，旧开发viewer保留日期禁用标记 |
+| commandId | help/command-map.json显式映射topic和能力说明，共128路由 | 109章节摘要、19仅路由；不能把命令数当功能实现数 |
+| F1/WhatsThis | 先核本owner或嵌套owner，按就近property/有限对象名与标题映射，未知回start | 39上下文，未覆盖全字段；ShortcutOverride接受F1避免主菜单抢走上下文 |
+| topic→HTML | applicationDirPath/help规范根下直属文件 | 索引128KiB、页1MiB；拒绝空/缺失/非正规/越界、junction/符号链接、外部URL/未知类型 |
+| HTML资源 | 根内允许PNG/JPEG/BMP/CSS等已列后缀，2MiB，覆写loadResource | 不交默认网络/文件回退，无外部浏览器、QProcess或网络对象 |
+| 关闭/销毁 | 关闭帮助可重开，owner销毁回收所属对象 | 不保存工程、不写地址、不打开硬件，不消费无关owner事件 |
+| 缺失/损坏 | 窗内提示恢复同版本help目录 | 不把空白页当成功，不从开发机绝对路径或互联网补读 |
+
+`--help-catalog`检查映射、页面和链接，valid=true退出0，否则28；globalEntryCoverageComplete保持false。`--capture-help PNG`隔离QSettings/TEMP，创建真实MainWindow并触发action_H，检查实际dialog/browser再抓图并输出helpText/version。截图仅证入口可达，缺帮助的错误页截图不能当目录完整。部分旧属性帮助按钮仍保留短提示，全右键/双击/嵌套字段/错误入口待逐项对账。
+
+### 26.3 构建和用户包白名单
+
+Build.ps1默认Deploy调用tools/BuildStage11.ps1；广泛复制docs的旧路径须显式LegacyEvidenceDeploy，属开发兼容入口。Qt6.12.0/MinGW13.1、CMake/Ninja和RC路径记录实际argv，Release构建App和LocalHelpTests，运行本轮帮助测试、--self-test及--verify-independent-payload。命令用.NET ProcessStartInfo隐藏运行，Windows参数按反斜杠/引号规则编码，不拼shell；空值/空格/中文/引号/尾反斜杠等6个实际回传用例通过。TEMP/TMP/TMPDIR及宏临时根均为本轮Z目录。
+
+package_stage11.py create需显式新包/证据目录、同工作树build内EXE预期SHA、冻结阶段9runtime manifest SHA、帮助/许可/策略/说明。运行时仅固定22DLL+2MIT文本；逐文件核旧manifest的size/SHA，不扫描任意DLL。许可须与策略完整64文件集合匹配，publicRedistribution=false。默认7份代表KSP来自stage1/5/7/8/10，不复制164份历史样例及opaque/native快照。只复制选定程序/runtime/help/licenses/samples/guide/policy/verifier；内嵌QRC仍在EXE，不能声称已排除全部原厂材料。
+
+输入输出核规范绝对路径、父级reparse、硬链接、大小写/保留名/ADS和目录交叠，拒绝覆盖现有输出。逐文件独占创建，复制后重核源，失败保留首错及诊断，不清旧包。manifest枚举除自身以外全部文件，含源码资源集合、程序、角色、样例、许可和受限声明。verify重算完整集合，缺失/额外/篡改均拒绝；没有外部可信SHA时仅证自洽，不能认证发布者。
+
+相同输入重组包比较manifest和全部内容；UTC/机器绝对执行路径放包外证据。本项是组装确定性，不声称C++机器码位级可重复编译。bind-commit在真实Git提交后逐项核source blob，只允许已知文本CRLF/LF规范化；保留前manifest再更新codeCommit，不回填虚构提交号。
+
+### 26.4 运行隔离和负向路径
+
+最终包在私有Windows桌面运行，PATH仅包内及Windows/System32，移除Qt/MinGW/原厂环境，使用Z临时目录。包内qwindows是实际后台渲染后端，包无qoffscreen，不能用开发机插件证明依赖齐全。主包前后逐字不变；故障仅在任务自有副本制造，恢复后再核。中文空格路径、样例加载保存/适用导出编译/内存模拟、真实菜单帮助分别记实际进程，不用合成单测替代。
+
+缺核心Qt是Windows加载器首错；缺qwindows是Qt启动错误，应用可能没执行。缺SDK的--compile-macros返回26并保留诊断，普通编辑不强制SDK；缺help的catalog为28且窗口给恢复提示。无USB驱动/无字体不通过卸载或改名系统文件制造，条件不足记外部待验。PATH隔离不等于全新Windows，标准用户、只读ACL、长路径、DPI及多显示器各有独立未验行。
+
+### 26.5 发布保护和证据范围
+
+构建来自隔离干净树，主目录1891份既存用户文件先冻结原字节和Git二进制diff；CMakeLists和main_window同时有用户改动，不能整文件覆盖或暂存进提交。publish_stage11.py只读预检baseline/candidate、单父链、main和空index、精确白名单与快照SHA；所有目标先三方合并证明用户delta保留，再条件写文件、read-tree和CAS update-ref。反向证明、BOM/CRLF及并发漂移失败即拒绝；回滚只处理仍等于工具所写内容，外来变更保留state_unknown。成功另生成after-protection快照供元数据子提交，原快照不覆盖；工具不自动push。
+
+较大修改分别只读复核帮助/打包/发布工具，发现后再修并定向回归。Qt29、打包31、发布16均为各自实际测试范围，不能合成设备通过数。完整stage11和REL仍有许可/环境/全入口/现场欠项，安装器明确未提供。当前屏S10-FUNC-LOCAL-1114，语言通知组合和第二宏14恢复待续；本版不借旧T/E声称新EXE已现场认证。后续新增控件仍逐项实物下载并独立核显示/触控。
+
+清理仅本轮自有、已归档的重复包/测试副本/可再生构建物，先逐路径size/SHA再记实际删除字节；不重试历史拒绝清理，不扫用户C盘临时目录。新临时输出全部引至Z，旧失败、许可、样例、最终包和源保留，详见cleanup-result及统一台账。
+
+
+阶段11发布工具最终r3补记：首次真实预检因Git强制core.quotepath=false而冻结输入采用true，中文路径的3个diff头表示不同而拒绝；1891文件SHA均未变，主仓0写入。保留首次候选c113175a和拒绝回执后，只修发布工具：分别由Git真实生成true/false完整diff，仅全文匹配才接纳并把选定表示写入receipt及后继snapshotDiffQuotepath，不删头或模糊比较。新中文路径两种表示、内容篡改及后继快照测试通过，最终15/15；程序/帮助/编译器/包源输入未变，无需重复其已通过测试。最终正式候选保持原baseline单父，先前候选与真实失败继续保留。
+
+
+阶段11发布最终r5补记：第二候选90ebab首次同步后的只读status超120秒，工具确认完整回滚（publication-actual/second-publish-rolled-back.json）。原索引32940条仅19条空mtime，plain read-tree后33605条全部空mtime，需重哈希约829MB；原有缓存下同一main只读status仅0.266秒，HEAD/index/1891文件均未变。最小修复只给status及工作区binary diff完整核验600秒，其他Git/写操作仍120秒，不跳校验、不采用未经通过的read-tree -m。最终16/16回归及只读复核通过，保留前两候选和失败。本轮诊断索引另清9741412字节，累计逻辑删除261844538字节；拒绝清理133836489字节仍保留且不重试。应用与包输入未变。

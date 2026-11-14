@@ -1,0 +1,66 @@
+{
+  "format": "KinSealLite-stage11-package-unit-results-v1",
+  "executionDateAsiaShanghai": "2026-11-14",
+  "command": "C:/Users/lenovo/AppData/Local/Programs/Python/Python311/python.exe -B -m unittest discover -s tests -p test_stage11_package.py -v",
+  "workingDirectory": "Z:/Project/vscode_prj_temp/REA/.worktrees/kinseal-stage11-20261114",
+  "tempRoot": "Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114/package-temp",
+  "toolSha256": "58eab76d5e1795aa79f2ae048a1b52afc383a15f45d24b47d355c2bf7db0af83",
+  "testSha256": "3f24fccdc405b4feb8d0bb739e1b71a2929491459d6eb5a123987e84b8821a87",
+  "testsRun": 31,
+  "successful": 31,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "exitCode": 0,
+  "elapsedSecondsReportedByUnittest": 25.688,
+  "stdoutFinalSummary": "Ran 31 tests in 25.688s\n\nOK\n",
+  "testResultSource": "实际functions.exec/exec_command与write_stdin回执；本JSON汇总实际标准unittest输出，不是新的执行器输出",
+  "residualFilesAfterRun": [],
+  "symlinkCase": {
+    "symlinkCreation": "WinError 1314: privilege unavailable",
+    "fallback": "cmd.exe /d /c mklink /J，后台创建测试根内junction",
+    "junctionAncestorRejected": true,
+    "skipped": false
+  },
+  "coverage": [
+    "新EXE白名单与旧EXE/SDK/源码排除",
+    "相同输入两次打包的manifest及文件清单一致",
+    "既有包与证据保护",
+    "EXE与旧runtime manifest/DLL逐字身份",
+    "缺失runtime拒绝",
+    "样例路径穿越、opaque/native源和非Lite格式拒绝",
+    "帮助树可执行文件拒绝",
+    "缺失、篡改许可及公开发行策略拒绝",
+    "依赖策略与runtime manifest绑定",
+    "输入输出树包含及包/证据交叠拒绝",
+    "工作树外EXE拒绝",
+    "payload篡改/缺失/额外文件报告",
+    "独立manifest期望哈希拒绝协调替换",
+    "重复JSON键、NaN和溢出指数拒绝",
+    "Windows ADS/保留名/大小写别名拒绝",
+    "输入与输出硬链接拒绝",
+    "实际junction父级拒绝",
+    "注入复制失败后保留新诊断与既有输入",
+    "真实Git提交绑定与源变更拒绝",
+    "CLI校验不符返回3"
+  ],
+  "earlierRuns": [
+    {
+      "testsRun": 28,
+      "errors": 1,
+      "skipped": 1,
+      "finding": "argparse保留--help与帮助目录参数冲突",
+      "resolution": "目录参数改为--help-dir；symlink权限不足后使用实际junction覆盖同一reparse门禁"
+    },
+    {
+      "testsRun": 28,
+      "errors": 0,
+      "skipped": 0,
+      "finding": "后续只读复核发现许可清单与目录需要完整语义绑定",
+      "resolution": "增加受限策略、runtime基线与licenseFiles精确匹配及3项测试，最终31项全通过"
+    }
+  ],
+  "syntheticFixturesOnly": true,
+  "hardwareIo": false,
+  "productionExecutableExecuted": false
+}

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(KinSealStudioLite VERSION 0.10.1 LANGUAGES CXX) #20261111-1 change: Publish the native main-window shell independently.
+project(KinSealStudioLite VERSION 0.11.0 LANGUAGES CXX) #20261114-10 change: Bind the restricted release, runtime and PE version.
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -476,7 +476,14 @@ target_compile_definitions(KinSealNativeSourceTests PRIVATE QT_NO_CAST_FROM_ASCI
 target_compile_definitions(KinSealStudioLite PRIVATE
     QT_NO_CAST_FROM_ASCII
     QT_NO_CAST_TO_ASCII
+    KINSEAL_RELEASE_VERSION="${PROJECT_VERSION}" #20261114-10 add
 )
+
+#20261114-10 add: Publish an inspectable Windows file version without changing device capabilities.
+if(WIN32)
+    enable_language(RC)
+    target_sources(KinSealStudioLite PRIVATE src/release_version.rc)
+endif()
 
 #20261109-0 add: Share the recovered pure address catalog with every project/model consumer.
 foreach(KINSEAL_CODEC_TARGET KinSealStudioLite KinSealProjectModelTests KinSealStage1BackendTests KinSealStage2DialogsTests KinSealStage2GlobalToolsTests KinSealStage2WorkflowTests KinSealStage3CanvasTests KinSealStage3ProjectEditsTests KinSealStage3IntegrationTests KinSealStaticTextTests KinSealWordButtonDialogTests KinSealLampDialogTests KinSealFunctionButtonDialogTests KinSealDeviceMacroTests KinSealPlcAddressTests KinSealNativeSourceTests) #20261110-8 change
@@ -536,3 +543,17 @@ qt_add_executable(KinSealStage9OnlineUiTests tests/stage9_online_ui_tests.cpp
     src/simulation_modbus_transport.cpp src/plc_address.cpp src/plc_native_catalog.cpp plc_catalog.qrc)
 target_include_directories(KinSealStage9OnlineUiTests PRIVATE src)
 target_link_libraries(KinSealStage9OnlineUiTests PRIVATE Qt6::Widgets Qt6::Test Qt6::SerialPort)
+
+#20261114-10 add: Link the local manual in the application and every existing full-window test consumer.
+get_property(KINSEAL_HELP_TARGETS DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
+foreach(KINSEAL_HELP_TARGET IN LISTS KINSEAL_HELP_TARGETS)
+    get_target_property(KINSEAL_HELP_SOURCES ${KINSEAL_HELP_TARGET} SOURCES)
+    if("src/main_window.cpp" IN_LIST KINSEAL_HELP_SOURCES)
+        target_sources(${KINSEAL_HELP_TARGET} PRIVATE src/local_help.cpp src/local_help.h)
+    endif()
+endforeach()
+
+qt_add_executable(KinSealLocalHelpTests tests/local_help_tests.cpp src/local_help.cpp src/local_help.h)
+target_include_directories(KinSealLocalHelpTests PRIVATE src)
+target_link_libraries(KinSealLocalHelpTests PRIVATE Qt6::Widgets Qt6::Test)
+target_compile_definitions(KinSealLocalHelpTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)

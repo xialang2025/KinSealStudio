@@ -1,0 +1,26 @@
+{
+  "format": "KinSealLite-stage11-publication-readonly-review-v3-before-tests",
+  "readOnly": true,
+  "scope": "explicit Git quotepath representation fix only",
+  "findings": [],
+  "checks": [
+    "Every comparison still checks the complete actual binary diff, including all three path header lines.",
+    "Only two real Git outputs with explicit core.quotepath=false/true may match; no path/header stripping or fuzzy parsing.",
+    "Prior snapshot representation, if present, must match exactly and cannot silently switch.",
+    "Selected representation is recorded in receipt and after-protection snapshot; after.diff uses the same explicit setting.",
+    "All existing 1891 raw byte/index/head/merge/rollback checks remain in place.",
+    "New Chinese tracked filename tests cover both actual representations, altered content with correctly recomputed input hash, and prior-declaration mismatch."
+  ],
+  "files": [
+    {
+      "path": "tools/publish_stage11.py",
+      "sha256": "7d8e2df07a57477d9f854f499ecf779d99d9270710811bcbfa4ecb073cd3fd99"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "sha256": "593d071c20b19c687851fc796e6ec332ffc33872c839e628ac508e2610a597cd"
+    }
+  ],
+  "behaviorTestsR3": "not_run_yet",
+  "realMainPublicationPerformed": false
+}

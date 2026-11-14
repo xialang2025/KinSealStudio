@@ -1,0 +1,61 @@
+{
+  "steps": [
+    {
+      "name": "moc-r1",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\bin\\moc.exe",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\tests\\local_help_tests.cpp",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r1\\local_help_tests.moc"
+      ],
+      "exitCode": 0,
+      "log": "moc-r1.log"
+    },
+    {
+      "name": "compile-r1",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-DQT_WIDGETS_LIB",
+        "-DQT_GUI_LIB",
+        "-DQT_CORE_LIB",
+        "-DQT_NO_CAST_FROM_ASCII",
+        "-DQT_NO_CAST_TO_ASCII",
+        "-Isrc",
+        "-IZ:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r1",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtCore",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtGui",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtWidgets",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtTest",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\src\\local_help.cpp",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage11-20261114\\tests\\local_help_tests.cpp",
+        "-LG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\lib",
+        "-lQt6Widgets",
+        "-lQt6Gui",
+        "-lQt6Test",
+        "-lQt6Core",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\help-owned\\build-r1\\LocalHelpTests.exe"
+      ],
+      "exitCode": 1,
+      "log": "compile-r1.log"
+    }
+  ],
+  "sourceHashes": {
+    "src/local_help.cpp": "56152114607d00ae24362404936d74644c5c22009ef8bf0f71e59d04f6c81cd3",
+    "src/local_help.h": "e4f720a7093bda5d39067fcaa2c660594d0076a2d76d2bb6543d8b6593318a07",
+    "tests/local_help_tests.cpp": "d99c1e68423f89cf2712990a55c077765e5e8334d1ab8bf4bf51ad0a1abe61b8"
+  },
+  "physicalDevicesOpened": false,
+  "visibleWindowCreated": false,
+  "platform": "offscreen"
+}

@@ -1,0 +1,964 @@
+{
+  "format": "KinSealLite-stage11-dependency-policy-v1",
+  "scope": "阶段11受限内部验证包，非公开完整发行授权",
+  "releaseChannel": "restricted_internal_validation",
+  "publicRedistribution": false,
+  "appliesTo": "Stage9 runtime baseline inventory plus unchanged resource inputs; Stage11 final EXE identity is frozen by its own release manifest",
+  "baselineExecutableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+  "baselineManifestSha256": "2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da",
+  "inventory": {
+    "path": "docs/stage11-evidence/dependencies-owned/inventory.json",
+    "sha256": "0cb21788e16291449f748c2fbea11f56475f0b490a818ac715cb736e862875df"
+  },
+  "components": [
+    {
+      "id": "APP-OWN",
+      "component": "KinSealStudioLite 自主开发 C++/工具部分",
+      "deliveryPolicy": "内部验证包交付；发布包整体仍含下列受限资源",
+      "permissionState": "仓库未提供整体公开发行许可证；不为用户推定新的开源授权",
+      "scenarios": [
+        "编辑",
+        "保存",
+        "导出",
+        "编译",
+        "模拟",
+        "下载"
+      ],
+      "publicLicenseChosen": false
+    },
+    {
+      "id": "QT-6.12",
+      "component": "Qt6.12.0 动态库及插件",
+      "deliveryPolicy": "随受限便携包复制经哈希冻结的 DLL 和许可文本",
+      "permissionState": "本机文件版本及来源已观察；LGPL/替换/对应源码提供安排待正式发行核实",
+      "scenarios": [
+        "编辑",
+        "保存",
+        "渲染",
+        "编译",
+        "串口",
+        "模拟"
+      ],
+      "files": [
+        {
+          "relativePath": "generic/qtuiotouchplugin.dll",
+          "bytes": 104296,
+          "sha256": "2e26e55a037f4f443e275853994f52a842b95dfe7af04cb25e5daefc18deda21",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "iconengines/qsvgicon.dll",
+          "bytes": 76136,
+          "sha256": "616366d6294299bedefe64a91995be8b1ac0af438399d5a3d730dcd3e3267838",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "imageformats/qgif.dll",
+          "bytes": 48488,
+          "sha256": "6c2a2c460f6a9ec7298f8357cdb6013e6f270d239887a9b492dcf087c4a0baec",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "imageformats/qico.dll",
+          "bytes": 50536,
+          "sha256": "6c3dc3da8f7d6127993d72aec5bd63284ad46d52caddf6b48055538e26f30bbe",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "imageformats/qjpeg.dll",
+          "bytes": 709992,
+          "sha256": "e40def8f71aa180b008e3fe0ff9ea62e91bc09d87a28d8f2ba01f50d57e45787",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "imageformats/qsvg.dll",
+          "bytes": 40296,
+          "sha256": "01e31bf83a9c9cf0376596ab688219e940120bdc86c3e25b193d98971c0dca40",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "networkinformation/qnetworklistmanager.dll",
+          "bytes": 102248,
+          "sha256": "a6d1ff4c5692d04033f7e1c07ed4dbb364a80e246c37b149f44213ac1a8781eb",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "platforms/qwindows.dll",
+          "bytes": 1338216,
+          "sha256": "fe1a2405d400664d53faaa8eb1575db4630ea08a9b529ad0efd482f14c9d58f6",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6Core.dll",
+          "bytes": 11812192,
+          "sha256": "6adc4c9cfdf7a5bc56b35750c990c32473f697776fccc30ff3c08910f1514961",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6Gui.dll",
+          "bytes": 12598104,
+          "sha256": "e13833669112a9b3f7409c8f232838daf8f8cae546e979f43b0377e315eeab29",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6Network.dll",
+          "bytes": 2083672,
+          "sha256": "348eef53a687bf1f67e691c67a395c2a6866df251948772450a064f820777ffd",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6SerialPort.dll",
+          "bytes": 146264,
+          "sha256": "2f33da419eeddcc35897a1b282fa38835256366940629e13d8746daadfc4aaab",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6Svg.dll",
+          "bytes": 658264,
+          "sha256": "02bbb292f7989e4c8b189fea978847a330621ec81ca825cc28a7b64f600e14d2",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "Qt6Widgets.dll",
+          "bytes": 7531352,
+          "sha256": "73a62be5829de338e13315f6e218a0724bd02f4dd898d02f35051eb5dd6c23f1",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "styles/qmodernwindowsstyle.dll",
+          "bytes": 269672,
+          "sha256": "b4ed47afcb2df3d2756b492f9373df79ad10b083d94d7a26f554861c2f1f25a7",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "tls/qcertonlybackend.dll",
+          "bytes": 115048,
+          "sha256": "c8c30cbe0d22ba66d25e70c9fdf7bba3e5c897a6c365a950249801b2047d6c39",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "tls/qschannelbackend.dll",
+          "bytes": 292712,
+          "sha256": "27df29799ebb736baae00877fde7ab1f482130b233cf72239f7947ce94ca6dd5",
+          "architecture": "x86_64"
+        }
+      ],
+      "observedVersion": "6.12.0.0",
+      "linkMode": "dynamic",
+      "localSpdxDeclaredLicense": "LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "sbomHashMatchedCount": 0,
+      "sbomCandidateFileCount": 17,
+      "sbomMismatchExplanation": "原因未知；有效数字签名不自动解释 SBOM SHA1 差异",
+      "obligations": [
+        "保留版权、LGPLv3及其引用GPLv3文本和适用第三方声明",
+        "正式发行前为实际Qt二进制提供相应源码/有效提供方式并核实来源",
+        "允许用户替换/调试修改Qt库；动态链接只说明方式，不等于全部义务已满足"
+      ]
+    },
+    {
+      "id": "MINGW-RUNTIME",
+      "component": "MinGW GCC C++/SEH/winpthreads 运行库",
+      "deliveryPolicy": "只复制运行DLL及适用声明，不带g++/构建工具",
+      "permissionState": "本机候选文件SHA256一致；GCC GPLv3+Runtime Exception及MinGW/winpthreads声明已保留",
+      "scenarios": [
+        "所有启动场景"
+      ],
+      "files": [
+        {
+          "relativePath": "libgcc_s_seh-1.dll",
+          "bytes": 109056,
+          "sha256": "5e27589147caa6d7a30f4cc058a14c455dc62233901ffff9a1797ede425e9f86",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "libstdc++-6.dll",
+          "bytes": 2243072,
+          "sha256": "8013488c5528bad7966ca07f3ea2e7a9b743cacb258fe76b46a326f821cc83b0",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "libwinpthread-1.dll",
+          "bytes": 53248,
+          "sha256": "c7c7dced65fff71c7bb61f80c771c562f533d26d72722d9d6091129a3b03d5ce",
+          "architecture": "x86_64"
+        }
+      ],
+      "toolchainDirectory": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64",
+      "runtimeFileVersionNotComplete": true
+    },
+    {
+      "id": "D3D-COMPILER",
+      "component": "Microsoft D3Dcompiler_47.dll",
+      "deliveryPolicy": "现有受限包保留已部署文件，不单独另行散发",
+      "permissionState": "微软有效签名/本机Qt候选hash已观察；该具体binary的可再分发依据未定位",
+      "scenarios": [
+        "Qt图形后端按需"
+      ],
+      "files": [
+        {
+          "relativePath": "D3Dcompiler_47.dll",
+          "bytes": 4173928,
+          "sha256": "e994847e01a6f1e4cbdc5a864616ac262f67ee4f14db194984661a8d927ab7f4",
+          "architecture": "x86_64"
+        }
+      ],
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "MESA-SW",
+      "component": "opengl32sw.dll / Mesa llvmpipe及LLVM归属",
+      "deliveryPolicy": "受限包保留已部署文件及本机Qt归属文本",
+      "permissionState": "本机Qt候选hash一致；MIT/Boost/LLVM/NCSA等归属文档已找到，具体构建成分仍待核",
+      "scenarios": [
+        "Qt软件OpenGL按需"
+      ],
+      "files": [
+        {
+          "relativePath": "opengl32sw.dll",
+          "bytes": 20639888,
+          "sha256": "b04de4541863bc7d8879040a78889c4849c1b1da2784c4630f734c146c2998ce",
+          "architecture": "x86_64"
+        }
+      ],
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "LZOKAY-MIT",
+      "component": "lzokay",
+      "deliveryPolicy": "编译入应用，随包保留原MIT文本",
+      "permissionState": "源码LICENSE明确MIT",
+      "scenarios": [
+        "原生源格式编解码",
+        "编译"
+      ],
+      "source": "third_party/lzokay/LICENSE",
+      "notice": "licenses/LZO-MIT-LICENSE.txt",
+      "sourceFiles": [
+        {
+          "path": "third_party/lzokay/lzokay.cpp",
+          "bytes": 21205,
+          "sha256": "e91260d96d0cfb3455d7647414aa9fecef9bba692cc6955d024cf9ce1d022e60"
+        },
+        {
+          "path": "third_party/lzokay/lzokay.hpp",
+          "bytes": 2558,
+          "sha256": "ba0f86b87040bfb3efc3d1e905d5fa1a0cbef707f862394125f944f0718e5544"
+        },
+        {
+          "path": "third_party/lzokay/LICENSE",
+          "bytes": 1097,
+          "sha256": "55bd2b211fc02473b895c9996af9ba1c8a7e5d600c6aff702a169ef38a4cc4f1"
+        }
+      ]
+    },
+    {
+      "id": "QRCODE-MIT",
+      "component": "Project Nayuki QR Code generator",
+      "deliveryPolicy": "编译入应用，保留源码版权和QR-MIT文本",
+      "permissionState": "源码文件头明确MIT；包已有同源说明",
+      "scenarios": [
+        "二维码渲染"
+      ],
+      "source": "third_party/qrcodegen/qrcodegen.cpp",
+      "notice": "licenses/QR-MIT-LICENSE.txt",
+      "sourceFiles": [
+        {
+          "path": "third_party/qrcodegen/qrcodegen.cpp",
+          "bytes": 28152,
+          "sha256": "e23b357340ce4c8f1255a827e60087052ad29c708f7677c96b629ad9f437696c"
+        },
+        {
+          "path": "third_party/qrcodegen/qrcodegen.hpp",
+          "bytes": 20980,
+          "sha256": "fed28fcb3ec50f6da4374b18905525cf7dbd19567acf153a76a6e655059fa176"
+        },
+        {
+          "path": "third_party/qrcodegen/provenance.json",
+          "bytes": 578,
+          "sha256": "b2dc90b16a6595dcb36e80072ad673cb57387adebba4087f65e561f0bb4b9097"
+        }
+      ]
+    },
+    {
+      "id": "EMBEDDED-NATIVE_SHELL",
+      "component": "native_shell.qrc",
+      "deliveryPolicy": "当前程序已内嵌，限内部验证；不把无外部文件等同于自主拥有或已获公开分发权",
+      "permissionState": "技术来源可追溯；原厂图库/图标/宏例/seed payload或派生元数据分发依据未核",
+      "scenarios": [
+        "按该qrc定义加载"
+      ],
+      "qrcSha256": "f82f2f32996026ea836dedc2172a90694d3c6fe35ca2da5d06269d0445df2d3a",
+      "resourceInputSetSha256": "95a12630890ea7a52a49ae893b7d0c7f656d19fbf9f2d9630105b9504c424b0a",
+      "fileCount": 363,
+      "sourceBytes": 306408,
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "EMBEDDED-SYSTEM_GALLERY",
+      "component": "system_gallery.qrc",
+      "deliveryPolicy": "当前程序已内嵌，限内部验证；不把无外部文件等同于自主拥有或已获公开分发权",
+      "permissionState": "技术来源可追溯；原厂图库/图标/宏例/seed payload或派生元数据分发依据未核",
+      "scenarios": [
+        "按该qrc定义加载"
+      ],
+      "qrcSha256": "6e5ce2d6d560b471a00c2564ed3fa45adf7b6bba3b7159c25f51bd89d80c74a7",
+      "resourceInputSetSha256": "1d08df9d5cee30b155cef63b0430fa89bcb5eab7b691b07fd05ff36bda8369b3",
+      "fileCount": 5648,
+      "sourceBytes": 60474542,
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "EMBEDDED-MACRO_LIBRARY",
+      "component": "macro_library.qrc",
+      "deliveryPolicy": "当前程序已内嵌，限内部验证；不把无外部文件等同于自主拥有或已获公开分发权",
+      "permissionState": "技术来源可追溯；原厂图库/图标/宏例/seed payload或派生元数据分发依据未核",
+      "scenarios": [
+        "按该qrc定义加载"
+      ],
+      "qrcSha256": "0e037464f8579f46d9bcc410ba4795d138da45ad913d08fbfbc864b7b7e49e88",
+      "resourceInputSetSha256": "3b1f81f35b0c0fc592f2b640b29c1f10cd72acc68644a854d105be1a1bbc4f31",
+      "fileCount": 1,
+      "sourceBytes": 10781,
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "EMBEDDED-NATIVE_TEST_TEMPLATE",
+      "component": "native_test_template.qrc",
+      "deliveryPolicy": "当前程序已内嵌，限内部验证；不把无外部文件等同于自主拥有或已获公开分发权",
+      "permissionState": "技术来源可追溯；原厂图库/图标/宏例/seed payload或派生元数据分发依据未核",
+      "scenarios": [
+        "按该qrc定义加载"
+      ],
+      "qrcSha256": "2005d599aa2c0f8f095c452b0f49d4058e085119a1ccdb52c6696ad8b955a7ef",
+      "resourceInputSetSha256": "1246c44138bf1e16c9d0bcbc611c264c120761c2fd23381d1c4ef8b344eb10ab",
+      "fileCount": 15,
+      "sourceBytes": 95670,
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "EMBEDDED-PLC_CATALOG",
+      "component": "plc_catalog.qrc",
+      "deliveryPolicy": "当前程序已内嵌，限内部验证；不把无外部文件等同于自主拥有或已获公开分发权",
+      "permissionState": "技术来源可追溯；原厂图库/图标/宏例/seed payload或派生元数据分发依据未核",
+      "scenarios": [
+        "按该qrc定义加载"
+      ],
+      "qrcSha256": "18ebd92ea77f7405e98cc202f532bd7ac95f9cdfc808b4f56bbd6154b8d782ac",
+      "resourceInputSetSha256": "51ba8a1ee426a8fc6820e6ed5bdc267becbc18e9a1096a43fba5fecc4d9d9749",
+      "fileCount": 2,
+      "sourceBytes": 1436635,
+      "publicRedistributionCleared": false
+    },
+    {
+      "id": "USB-SYSTEM",
+      "component": "Windows系统 libusb0.dll / libusb-win32驱动",
+      "deliveryPolicy": "外部提供，不复制DLL/驱动，不自动安装",
+      "permissionState": "现有系统端点及库可观察；未核分发条件，外置",
+      "scenarios": [
+        "USB下载",
+        "USB上载"
+      ],
+      "systemCandidates": [
+        {
+          "path": "C:/Windows/System32/libusb0.dll",
+          "bytes": 85256,
+          "sha256": "f20de27bf55d1097e4678800ab8292037256efa6e7632f031c3562187637ced2",
+          "sha1": "44d9bc7d2ec65d10b37cde20f941d63bfd0cc63a",
+          "machine": "0x8664",
+          "architecture": "x86_64",
+          "regularImports": [
+            "msvcrt.dll",
+            "SETUPAPI.dll",
+            "KERNEL32.dll",
+            "ADVAPI32.dll",
+            "USER32.dll",
+            "GDI32.dll"
+          ],
+          "delayImports": [],
+          "inspection": "static PE headers only; no DLL loaded",
+          "redistributed": false,
+          "policy": "Use compatible preinstalled system driver/runtime; no copy or driver installation"
+        },
+        {
+          "path": "C:/Windows/SysWOW64/libusb0.dll",
+          "bytes": 76560,
+          "sha256": "968f5a66212c851fe27aa208c786a69d1d6afe600662329f8f0551abd1102db6",
+          "sha1": "a1a696b4e620ff89cc5e86a38a1a2127e63ffe97",
+          "machine": "0x14c",
+          "architecture": "x86",
+          "regularImports": [
+            "msvcrt.dll",
+            "SETUPAPI.dll",
+            "KERNEL32.dll",
+            "ADVAPI32.dll",
+            "USER32.dll",
+            "GDI32.dll"
+          ],
+          "delayImports": [],
+          "inspection": "static PE headers only; no DLL loaded",
+          "redistributed": false,
+          "policy": "Use compatible preinstalled system driver/runtime; no copy or driver installation"
+        }
+      ],
+      "loader": "GetSystemDirectoryW + /libusb0.dll"
+    },
+    {
+      "id": "ARM-SDK",
+      "component": "外部ARM宏工具链/头文件/库/许可文件",
+      "deliveryPolicy": "用户在工具中选择自有完整SDK或设置KINSEAL_ARM_SDK，不入便携包",
+      "permissionState": "安装不等于再分发许可；许可证真实性/范围未由程序认证",
+      "scenarios": [
+        "设备宏编译"
+      ],
+      "sdkRedistributed": false,
+      "selectionOrder": [
+        "KINSEAL_ARM_SDK",
+        "QSettings armSdkDirectory",
+        "applicationDir/arm-sdk"
+      ],
+      "requiredFiles": [
+        "armcc.exe",
+        "armcc.dll",
+        "armlink.exe",
+        "armlink.dll",
+        "fromelf.exe",
+        "fromelf.dll",
+        "Include/macrolib.h",
+        "Include/glib.h",
+        "Include/math.h",
+        "Include/stdio.h",
+        "Include/stdlib.h",
+        "script_amzlib.a",
+        "guilib70_amz.a",
+        "licenses/LICENSE.DAT",
+        "Lib/armlib/c_a__un.l"
+      ]
+    },
+    {
+      "id": "HOST-FONTS",
+      "component": "系统字体和用户工程指定字体",
+      "deliveryPolicy": "不分发系统/原厂字体；缺字族由系统解析，需人工核实际字形",
+      "permissionState": "字体文件授权未核，不复制",
+      "scenarios": [
+        "文字渲染",
+        "设备字模编译"
+      ],
+      "fontFilesInBaselinePackage": [],
+      "observedRequestedFamilies": [
+        "宋体/SimSun",
+        "Microsoft YaHei",
+        "Microsoft YaHei UI",
+        "Arial",
+        "Times New Roman",
+        "DigifaceWide",
+        "方正中等线简体"
+      ],
+      "rendererDiagnostic": "requestedFamily/resolvedFamily/exactMatch；不能承诺缺字族像素一致"
+    },
+    {
+      "id": "VENDOR-RUNTIME-EXTERNAL",
+      "component": "原厂EXE/PLC DLL/固件/安装包",
+      "deliveryPolicy": "不作为应用运行依赖复制；独立设备SDK按上项显式配置",
+      "permissionState": "未核再分发依据，禁止将本盘存在解释为授权",
+      "scenarios": [
+        "原厂对照独立环境"
+      ],
+      "vendorExecutableRedistributed": false,
+      "nativePlcDllRedistributed": false,
+      "firmwareRedistributed": false
+    },
+    {
+      "id": "WINDOWS-OS",
+      "component": "Windows系统API/API-set及系统图形/串口组件",
+      "deliveryPolicy": "由目标Windows提供，不从开发机复制系统DLL",
+      "permissionState": "系统条件；PE imports只列名称不证明所有目标OS版本均可启动",
+      "scenarios": [
+        "所有场景"
+      ],
+      "architecture": "x86_64",
+      "targetOsVersionMustBeVerified": true
+    }
+  ],
+  "licenseFiles": [
+    {
+      "path": "licenses/Qt-GPL3-LGPL3-LICENSE.txt",
+      "bytes": 44738,
+      "sha256": "2004ee3ef8282a85f7dbd035dfacf63cf03d569537bc08655ffeb140ea3671c5",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Licenses/LICENSE"
+    },
+    {
+      "path": "licenses/Qt-Documentation-FDL.txt",
+      "bytes": 23016,
+      "sha256": "c256483c2d1e8a51b62fc7a44a58f21cb4ef23fa840c7d33e3658035fd8cf62f",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Licenses/LICENSE.FDL"
+    },
+    {
+      "path": "licenses/GCC-GPL3.txt",
+      "bytes": 35821,
+      "sha256": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/licenses/gcc/COPYING3"
+    },
+    {
+      "path": "licenses/GCC-Runtime-Exception-3.1.txt",
+      "bytes": 3397,
+      "sha256": "90077ba306ee9d8ed966cab1b4abd69b6e728acf08777283cc50283cd9503fa6",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/licenses/gcc/COPYING.RUNTIME"
+    },
+    {
+      "path": "licenses/MinGW-w64-runtime.txt",
+      "bytes": 11158,
+      "sha256": "e7a33fd8d164abd188ee629bbe3b07912419b29192a6bbfdce29de0ad4f0e7fb",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/licenses/mingw-w64/COPYING.MinGW-w64-runtime.txt"
+    },
+    {
+      "path": "licenses/winpthreads-COPYING.txt",
+      "bytes": 2940,
+      "sha256": "1c8d23063c3772b9435831410b31b51fef3d9cf2138a442dc367ef5d72239f67",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/licenses/winpthreads/COPYING"
+    },
+    {
+      "path": "licenses/LZO-MIT-LICENSE.txt",
+      "bytes": 1097,
+      "sha256": "55bd2b211fc02473b895c9996af9ba1c8a7e5d600c6aff702a169ef38a4cc4f1",
+      "localSourcePath": "Z:/Project/vscode_prj_temp/REA/.worktrees/kinseal-stage11-20261114/third_party/lzokay/LICENSE"
+    },
+    {
+      "path": "licenses/QR-MIT-LICENSE.txt",
+      "bytes": 1176,
+      "sha256": "d72e098f9b5d7c1e12ec3fe9da75ea14e75ad0ae839f315cefbc0ec4c7a2be0a",
+      "localSourcePath": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/dist/KinSealStudioLite-Stage9-plc-r2/QR-MIT-LICENSE.txt"
+    },
+    {
+      "path": "licenses/qtcore-attribution-android-gradle-wrapper.html",
+      "bytes": 27197,
+      "sha256": "981eea963ae6410b56407cc8b077bc759e2b4a19fceb2c67bebda7e94cc77962",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-android-gradle-wrapper.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-blake2.html",
+      "bytes": 22024,
+      "sha256": "a732065fd7010ad6032e53a078ac114e96ae8238a4e521c66d2c82023b24c5eb",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-blake2.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-doubleconversion.html",
+      "bytes": 4931,
+      "sha256": "3a4471b44bc4e0f1dcdab57ed79bbe63413d65c2413612bf8c96accf7765562a",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-doubleconversion.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-easing.html",
+      "bytes": 4553,
+      "sha256": "a3bdc1d2914d6327c880f53f7e762f046ee6e125e3619512d3c7ca6231a4f3ab",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-easing.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-extra-cmake-modules.html",
+      "bytes": 4340,
+      "sha256": "588ad144c6407d9116e4c02ad6ecca8065b7de1a3556c1df93e322e26f0388b8",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-extra-cmake-modules.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-forkfd.html",
+      "bytes": 4077,
+      "sha256": "10e74d81c5d4de82db25ba673a50558181599e7942614f66a94804660f91120b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-forkfd.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-kwin.html",
+      "bytes": 4494,
+      "sha256": "2706285bcec295e0640805a0774f8221b45cdde0b7e4541eebb1881696ae5cb0",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-kwin.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-md4.html",
+      "bytes": 10222,
+      "sha256": "6bc366a37becc672d426317be4cb6647f5c45b70ccd5deb1360d7bfe8a8740c8",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-md4.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-md5.html",
+      "bytes": 10094,
+      "sha256": "4ec474b59333cf686010832fc4d6eda3c0c7f5ee07f2661bf05e3252b62f6718",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-md5.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-pcre2-sljit.html",
+      "bytes": 4797,
+      "sha256": "740000ae813b5d2e39a5e2587de4f3b3b21de50b442429c1a23b9063112470e8",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-pcre2-sljit.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-pcre2.html",
+      "bytes": 7489,
+      "sha256": "e06f49397ddd365a6ba650fc9facee6600980009e75b5985e7bd90be0ebd9f6b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-pcre2.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-qeventdispatcher-cf.html",
+      "bytes": 4578,
+      "sha256": "b8fce544635e40a5c7d6092ddc75bcdab697ae56959a7135702b49e7c61536c6",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-qeventdispatcher-cf.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-rfc6234.html",
+      "bytes": 4789,
+      "sha256": "9a67b389eb97301d8f4e03dc24a91521b45c998f9ad16b979e5860ac7a5877ac",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-rfc6234.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-sha1.html",
+      "bytes": 3128,
+      "sha256": "5a1b218339dc548d9795e54be5393f972e39c2223437efc340bd2ac5e764247a",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-sha1.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-sha3-endian.html",
+      "bytes": 3812,
+      "sha256": "2a76889ab620fbfbb913f8f8c17b3a516705473a8da3bb439dce3e5bcf32f524",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-sha3-endian.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-sha3-keccak.html",
+      "bytes": 10924,
+      "sha256": "930ab12cd8335ce1801562253d083dccea13435dc359e5a7cd9def65f9c36a1b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-sha3-keccak.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-siphash.html",
+      "bytes": 10320,
+      "sha256": "cf28918400386230c7dc800a6fb0f806e79a8ea92a794fa54e4466777d261f81",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-siphash.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-tika-mimetypes.html",
+      "bytes": 14225,
+      "sha256": "d64ca92476feca64d3fc2fd6d0bec56c9ce555330a19d2eb1097b82473dccd7d",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-tika-mimetypes.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-tinycbor.html",
+      "bytes": 4232,
+      "sha256": "f7abc84f562edc68ecd5aa9f0a5c3c6df10c39de430dfbc3d16481009703770d",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-tinycbor.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-tlexpected.html",
+      "bytes": 10689,
+      "sha256": "f065f3871da368c5437a44902f464afc6f64668eab4202d6753f06258c53b604",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-tlexpected.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-unicode-character-database.html",
+      "bytes": 5373,
+      "sha256": "ba441631788d07a4ab818994cde79f55af2436644fa6f822e904d9db80eefc17",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-unicode-character-database.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-unicode-cldr.html",
+      "bytes": 5650,
+      "sha256": "a43baff762d7e1912563815ee426e8b3ff916514965e813577311bae4483ed85",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-unicode-cldr.html"
+    },
+    {
+      "path": "licenses/qtcore-attribution-zlib.html",
+      "bytes": 4598,
+      "sha256": "4e18ff5da0856faee98d0db977023a2d9eb3d02ee8e053875b9cb66ddd0c30e9",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtcore/qtcore-attribution-zlib.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-aglfn.html",
+      "bytes": 4648,
+      "sha256": "24d207260f76ddd473947c4647a6131cdfbe8d635cdcda12bc5000b28bf60ae0",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-aglfn.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-android-native-style.html",
+      "bytes": 3387,
+      "sha256": "d46069530bb6348992aba1bf264b4ccf0d20733770a9777d0c051c8c9f54d0e9",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-android-native-style.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-cocoa-platform-plugin.html",
+      "bytes": 5025,
+      "sha256": "977f25b53509fc33218f534d0604806eb1066cf08c20b8c6241ff7ef3d73bdb8",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-cocoa-platform-plugin.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-d3d12memoryallocator.html",
+      "bytes": 4239,
+      "sha256": "4de079ab80ad3af7124dc8cf318a5e4ff0d367b809a906c3c92fc0c58636f888",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-d3d12memoryallocator.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-dejayvu.html",
+      "bytes": 12195,
+      "sha256": "6d22902db4507825f177a6a2ace1a66bd133e5d21c1f3784c84531caafb0dfc9",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-dejayvu.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-emoji-segmenter.html",
+      "bytes": 13792,
+      "sha256": "39a579c1857f95050a3247d19aef0dbe7a1f2a53041badbb343076ab37256fd0",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-emoji-segmenter.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-freetype-bdf.html",
+      "bytes": 5543,
+      "sha256": "121b2c79c661d8338bea07826cc5f1e024d62a18b76169d6339b4a95855e9475",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-freetype-bdf.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-freetype-pcf.html",
+      "bytes": 5494,
+      "sha256": "d84dd4e8e1b90cfe56ca2c74f52586d183ffafa5d354e9e84a793331b04ee0da",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-freetype-pcf.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-freetype-zlib.html",
+      "bytes": 3974,
+      "sha256": "9fe6b40965fd2d5010ab925e7b081373d16ae5da8498c39ff01853b384e579cf",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-freetype-zlib.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-freetype.html",
+      "bytes": 32053,
+      "sha256": "9e8b65f9baf47362ee072037ddd0ded4340343b13f324b5bef67932442062ebb",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-freetype.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-grayraster.html",
+      "bytes": 29960,
+      "sha256": "73a4ef94ec9d37124d2614324ccb2dc86c2a90acfccb48f3584959889be2c323",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-grayraster.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-harfbuzz-ng.html",
+      "bytes": 5916,
+      "sha256": "3038f0fad21085f4613f7a72f7ce0d5ebaf46ae352bc571ef53bf5444d1e9bbd",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-harfbuzz-ng.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-icc-srgb-color-profile.html",
+      "bytes": 3583,
+      "sha256": "b6a296b85fbe13dd53d36b11ebd68701ae4a2707c073539ecb5f5a8d2953213e",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-icc-srgb-color-profile.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-libjpeg.html",
+      "bytes": 11940,
+      "sha256": "924523065a9b917d72da8db99daa27742cff3835b7b3eabe96a7c6c6e6713110",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-libjpeg.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-libpng.html",
+      "bytes": 9436,
+      "sha256": "415740f10c8396619701c13eed2e14fca653f609885c99a78e1530b2c3becf35",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-libpng.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-md4c.html",
+      "bytes": 4141,
+      "sha256": "c7637309fadad2f0d9014e5b4e3d5c0a17a889c4f662efc5c026bfc1b63cf1e3",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-md4c.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-opengl-es2-headers.html",
+      "bytes": 4211,
+      "sha256": "ee756d14b420b325971113a25213eced8cdc9c0e793ec29ab48e10fa076aca18",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-opengl-es2-headers.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-opengl-headers.html",
+      "bytes": 4176,
+      "sha256": "21f1e19addd6dc7233a425826276f10491014c206c4b91bd6cfaafb266879bc6",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-opengl-headers.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-pixman.html",
+      "bytes": 4097,
+      "sha256": "614cd9492394278ce7dd1422e21f4dbe51f284ab8fe04ce3e04da406ae1edef9",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-pixman.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-rhi-miniengine-d3d12-mipmap.html",
+      "bytes": 4345,
+      "sha256": "e98051981d6789cb2360d5170874ba390279382c98abaa4849fbcd2e0a2e7f79",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-rhi-miniengine-d3d12-mipmap.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-smooth-scaling-algorithm.html",
+      "bytes": 6179,
+      "sha256": "153205561e05a98ef11e499ff92f75992709ff90553a5caff8ee3f0dabe6990f",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-smooth-scaling-algorithm.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-vulkan-xml-spec.html",
+      "bytes": 14747,
+      "sha256": "b4ac12f5b083d490cc91513dfb785c1f73ba1af689d87737edf165e4fd13d898",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-vulkan-xml-spec.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-vulkanmemoryallocator.html",
+      "bytes": 4245,
+      "sha256": "852e2b41a6ee05fe321b4ff69d99c90a8d333ed3b83090a314382fe4f0d83dd8",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-vulkanmemoryallocator.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-webgradients.html",
+      "bytes": 4028,
+      "sha256": "7d469aec0db8077983d3ef44d3cb3da2af26dfb18129787a037bd4356b8512e1",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-webgradients.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-wintab.html",
+      "bytes": 3009,
+      "sha256": "111bf022f3f1c062a552fe2dd13e247b001b1ecb515ca684f5a2e7e9c4ca0181",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-wintab.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-xcb-xinput.html",
+      "bytes": 4430,
+      "sha256": "e44dfe2027cad7c107a7505970c96d29d311c7a879aa7aa2ea0c37bafa4b9e3b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-xcb-xinput.html"
+    },
+    {
+      "path": "licenses/qtgui-attribution-xserverhelper.html",
+      "bytes": 5391,
+      "sha256": "1844faa6a391d298b85bc08bd0158abcf22ab8972392d18a8dcc17b11f524a8b",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtgui/qtgui-attribution-xserverhelper.html"
+    },
+    {
+      "path": "licenses/qtnetwork-attribution-libpsl.html",
+      "bytes": 5184,
+      "sha256": "967a73d437e5b712edf98159bae2d1c2aba9aaa329b8a1658e2fcb70caf02963",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtnetwork/qtnetwork-attribution-libpsl.html"
+    },
+    {
+      "path": "licenses/qtnetwork-attribution-psl-data.html",
+      "bytes": 21061,
+      "sha256": "d0cd6079ee3a2416931856d6f4e31e644cbf28db9bc02bad90e4ec6896b10d2e",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtnetwork/qtnetwork-attribution-psl-data.html"
+    },
+    {
+      "path": "licenses/qt-attribution-llvmpipe.html",
+      "bytes": 7373,
+      "sha256": "e7607df02156e17e3bc98d95cb2f53b614be2d170491649e30ed9d3c2fabd111",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtdoc/qt-attribution-llvmpipe.html"
+    },
+    {
+      "path": "licenses/qt-attribution-llvm.html",
+      "bytes": 9487,
+      "sha256": "a43273b7b62ca809c9ab541ed2a4f68371a572be46f355e8aa125421b6bc41d0",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtdoc/qt-attribution-llvm.html"
+    },
+    {
+      "path": "licenses/licenses-used-in-qt.html",
+      "bytes": 35263,
+      "sha256": "bbd70468e85da96f303331f324623b31f5c7f905be10beeadf77d561eba934e0",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtdoc/licenses-used-in-qt.html"
+    },
+    {
+      "path": "licenses/lgpl.html",
+      "bytes": 16303,
+      "sha256": "7fed63913e2c25da6aa90f3aadcfcc627ae115ad45984fafa01bfbb65923a117",
+      "localSourcePath": "G:/01_Professional/QT6/Installed/Docs/Qt-6.12.0/qtdoc/lgpl.html"
+    }
+  ],
+  "missingDependencyCases": [
+    {
+      "id": "DEP-01",
+      "scenario": "无Qt安装/无MinGW编译器",
+      "safeMethod": "清除进程PATH中开发环境路径；包内保留Qt/运行DLL",
+      "expected": "普通编辑、保存、允许范围渲染/编译/模拟应可用；不要求开发环境",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-02",
+      "scenario": "缺核心Qt DLL",
+      "safeMethod": "只在自有测试副本去除Qt6Core.dll",
+      "expected": "启动失败属于Windows加载器阶段；不能预期App自身友好弹窗；旧工程/包不变",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-03",
+      "scenario": "缺qwindows平台插件",
+      "safeMethod": "只在自有测试副本去除platforms/qwindows.dll，隔离QT_PLUGIN_PATH",
+      "expected": "Windows GUI初始化应失败；不能假称可回退offscreen，Stage9包未带qoffscreen",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-04",
+      "scenario": "无原厂安装目录",
+      "safeMethod": "清除进程PATH/SDK环境并使用完整便携包；不改外部安装",
+      "expected": "普通编辑/内嵌图库/无宏离线编译应不依赖原厂EXE；宏仍按SDK条件失败",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-05",
+      "scenario": "无USB库/驱动/设备",
+      "safeMethod": "本机已安装且设备在线；禁止重命名系统DLL/卸载驱动/拔线模拟",
+      "expected": "从源码确认缺库中文错误；真实缺失分支留外部环境待验，不向在线设备发起试探下载",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-06",
+      "scenario": "无宏SDK",
+      "safeMethod": "进程环境KINSEAL_ARM_SDK指向自有不存在目录",
+      "expected": "宏编译明确拒绝并指出完整SDK；无宏工程不受影响；不修改用户QSettings/真实SDK",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-07",
+      "scenario": "缺指定字体",
+      "safeMethod": "使用虚构字族并读取requested/resolved/exactMatch诊断，不卸载字体",
+      "expected": "保留工程请求字族，可能fallback；不得将可渲染等同于原生像素一致",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-08",
+      "scenario": "缺外部图库目录",
+      "safeMethod": "完整程序启动于无原厂图库/工作目录的自有路径",
+      "expected": "系统图库已内嵌，普通加载无需外部目录；资源本体损坏需另做拒绝案例",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-09",
+      "scenario": "工程图片/资源损坏",
+      "safeMethod": "对自有工程副本写入无效PNG，不改内嵌EXE",
+      "expected": "16MiB/4096边界与无效PNG明确拒绝；结果以实际validate/compile命令为准",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    },
+    {
+      "id": "DEP-10",
+      "scenario": "只读安装目录",
+      "safeMethod": "只在专用副本用ACL/普通账户或只读介质测试",
+      "expected": "用户工程/编译输出需指向可写目录；文件只读属性不等同普通账户权限场景",
+      "executionStatus": "not_run_by_static_audit",
+      "actualEvidence": "由本轮部署测试回执单独记录"
+    }
+  ],
+  "remainingBeforePublicDistribution": [
+    "取得或替换内嵌原厂图库/图标/宏例/模板payload等资源的可再分发依据；重编并复验受影响功能",
+    "核实Qt对应来源及SBOM签名前后hash差异，完成实际二进制对应源码/许可及替换使用安排",
+    "核实D3Dcompiler_47和opengl32sw具体版本构建的适用再分发条件",
+    "明确本项目自有代码整体公开许可证/用户分发政策，不能由MIT依赖反推整个程序MIT",
+    "在真实目标Windows/普通用户/缺驱动/缺字体条件完成尚未执行用例"
+  ],
+  "notClaims": [
+    "本清单不是法律授权文书",
+    "本机有效签名不代表再分发授权",
+    "静态imports不等于完整运行时模块跟踪",
+    "便携验证不能升级为设备E通过",
+    "内部验证标识不消除第三方许可义务"
+  ]
+}

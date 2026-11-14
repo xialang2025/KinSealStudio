@@ -1,0 +1,58 @@
+{
+  "test": "test_candidate_containing_user_edit_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:36:36.712345+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\candidate",
+      "baseline": "2e974932dd3e82182ad697dc282a6f092f505fe2",
+      "candidate": "2e1c831fb7c024d48bd739a57f736d5d60bb99c3",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\runs\\publication-1cab589834e44f3c94b0cdcdd0dfe5f9",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\protection.json",
+        "snapshotSha256": "a0461f9590f7f12b60d1efb14dff71658d32cc2b2840d514fc9b23b973fc1dd2",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-l08cruz1\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "before": {
+        "head": "2e974932dd3e82182ad697dc282a6f092f505fe2",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "protectedDiffRepresentation": {
+        "selectedQuotepath": "false",
+        "matchingQuotepathValues": [
+          "false",
+          "true"
+        ],
+        "declaredByPriorSnapshot": null,
+        "comparison": "entire actual git diff; headers and content retained; only BOM/CRLF normalized",
+        "variantSha256": {
+          "false": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+          "true": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225"
+        }
+      },
+      "error": "PublicationError: Reverse task merge did not recover the exact original user bytes",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:36:37.547208+00:00"
+    }
+  ]
+}

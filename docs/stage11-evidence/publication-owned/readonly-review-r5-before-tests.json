@@ -1,0 +1,25 @@
+{
+  "format": "KinSealLite-publication-readonly-review-r5-before-tests",
+  "readOnly": true,
+  "change": "status and explicit working_tree_diff helper use600s; cached/commit diffs and all writes keep120s",
+  "evidence": "status-cache-diagnostic/private-index-stat-comparison.json",
+  "checks": [
+    "Both frozen-diff variants and subsequent snapshot.diff use the helper.",
+    "No status/diff content is skipped or retried.",
+    "All existing conditional writes, ref CAS, rollback and1891 protection remain unchanged.",
+    "No -m optimization or main index refresh has been introduced."
+  ],
+  "findings": [],
+  "files": [
+    {
+      "path": "tools/publish_stage11.py",
+      "sha256": "7148be31bb56355338cf412d217c1c4e068d0c37f7e3d799e5792f60080b1802"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "sha256": "422d3962bb1a75e785b357ed1d6fa32f8a9d5fd889483146ce222e9b880102a4"
+    }
+  ],
+  "behaviorTestsR5": "not_run_yet",
+  "realMainPublicationPerformed": false
+}

@@ -1,0 +1,50 @@
+{
+  "format": "KinSealLite-stage11-publication-readonly-review-v1",
+  "mode": "check only; no main checkout mutation",
+  "reviewedFiles": [
+    "tools/publish_stage11.py",
+    "tests/test_stage11_publish.py"
+  ],
+  "checks": [
+    "input boundaries/reparse",
+    "candidate single parent/detached",
+    "empty index/full status/file hashes",
+    "exact path allowlist/no target collisions",
+    "UTF8 BOM/EOL and inverse merge user delta proof",
+    "conditional per-file writes/CAS ref",
+    "rollback does not overwrite foreign edits",
+    "new protection snapshot retains original chain"
+  ],
+  "findings": [
+    {
+      "id": "PUB-01",
+      "state": "fixed-before-tests",
+      "finding": "Create safe exclusive receipt before validating main/worktree so rejected valid-root requests are auditable."
+    },
+    {
+      "id": "PUB-02",
+      "state": "fixed-before-tests",
+      "finding": "Write mutation intent to receipt before each target/index/ref operation."
+    },
+    {
+      "id": "PUB-03",
+      "state": "fixed-before-tests",
+      "finding": "Reject any lexical overlap between run root and a checkout before making a run directory."
+    }
+  ],
+  "residuals": [
+    "Concurrent external writers cannot be prevented by the tool-specific lock; changed foreign bytes are preserved and the outcome becomes state_unknown.",
+    "Power loss or a storage failure preventing all receipt writes cannot be represented as confirmed rollback.",
+    "Only added/modified regular files and uniform-newline UTF8 tracked overlaps are supported; other cases stop before main writes."
+  ],
+  "files": [
+    {
+      "path": "tools/publish_stage11.py",
+      "sha256": "06acfd3b7d4945c6fb5a793f5bf96e3b1b0c4828ef61ada44d4b856e8910fd5d"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "sha256": "1195ce03d1515d0a3959f6cad2877eebf7acb2d04e53f447d9b8a2c5a1cd1e0b"
+    }
+  ]
+}

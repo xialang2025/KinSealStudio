@@ -1,0 +1,59 @@
+{
+  "format": "KinSealLite-stage11-cleanup-v1",
+  "dateAsiaShanghai": "2026-11-15",
+  "logicalDeletedBytes": 261844538,
+  "netFreeSpaceClaimed": false,
+  "successfulOwnedCleanup": [
+    {
+      "evidence": "help-owned/cleanup-r3.json",
+      "logicalDeletedBytes": 558393
+    },
+    {
+      "evidence": "publication-owned/r1-cleanup.json",
+      "logicalDeletedBytes": 116743
+    },
+    {
+      "evidence": "portable-owned/summary.json",
+      "logicalDeletedBytes": 251427990,
+      "note": "two runs, includes per-scenario deletion/restoration; not net disk growth"
+    },
+    {
+      "evidence": "publication-status-diagnostic-owned",
+      "logicalDeletedBytes": 9741412,
+      "purpose": "private diagnostic index copies"
+    }
+  ],
+  "denied": [
+    {
+      "target": "Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114/package-duplicate-r2",
+      "bytes": 117435743,
+      "deletedBytes": 0,
+      "reason": "blocked by policy",
+      "evidence": "package-owned/duplicate-r2/cleanup-rejected.json"
+    },
+    {
+      "target": "139 explicit .obj/.o under isolated stage11 build",
+      "bytes": 16400746,
+      "deletedBytes": 0,
+      "reason": "blocked by policy",
+      "evidence": "root-build-cleanup-result.json"
+    }
+  ],
+  "deniedRetainedBytes": 133836489,
+  "deniedTargetsRetried": false,
+  "historicalDenialsRetried": false,
+  "finalPortableTempFiles": 0,
+  "newTempLocation": "Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114 and task worktree/build/temp",
+  "systemTempSwept": false,
+  "retained": [
+    "final r2 package",
+    "preliminary r1 package",
+    "duplicate after cleanup denial",
+    "build objects after cleanup denial",
+    "source/samples/licenses/failure logs/final tests/screenshots"
+  ],
+  "currentFreeBytes": {
+    "C": 5995622400,
+    "Z": 20542091264
+  }
+}

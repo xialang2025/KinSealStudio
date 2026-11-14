@@ -1,0 +1,42 @@
+{
+  "format": "KinSealLite-stage11-publication-readonly-review-v2",
+  "mode": "只读核验最终冻结版本；未改程序逻辑；未重复行为测试",
+  "sourceFiles": [
+    {
+      "path": "tools/publish_stage11.py",
+      "bytes": 28877,
+      "sha256": "06acfd3b7d4945c6fb5a793f5bf96e3b1b0c4828ef61ada44d4b856e8910fd5d"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "bytes": 14584,
+      "sha256": "ce38035057253325ac47a23c32f91b0763c982990ea829d2e516d4b5e58a801a"
+    }
+  ],
+  "supersedesForFinalSourceIdentity": {
+    "path": "docs/stage11-evidence/publication-owned/readonly-review.json",
+    "sha256": "6671c5e197adfad2fcc39924b55a147e19389b9481ba82cc5e2f2fcdcbfd87fe",
+    "reason": "首轮只读复核先于Windows只读Git对象清理测试修复，旧测试SHA为历史身份，原报告保留。"
+  },
+  "finalReviewAlreadyRecorded": "docs/stage11-evidence/publication-owned/final-review.json",
+  "reviewChecks": {
+    "syntax": true,
+    "controlledReadonlyCleanupWithinOwnedFixtureOnly": true,
+    "receiptRemovedFlagSetAfterActualCleanup": true,
+    "allElevenR2FixturesRemoved": true,
+    "noProductionMainPublishDuringAgentWork": true
+  },
+  "behaviorTests": {
+    "actualRun": "unittest-r2.log",
+    "testCount": 11,
+    "result": "OK",
+    "seconds": 22.921,
+    "logSha256": "c38e9c995d24962444283fc0802d9a6d6659b569b2a31664c952c288ba062e6a"
+  },
+  "findings": [],
+  "remainingLimits": [
+    "外部并发写无法由本工具专有锁完全禁止；发现改变时保留外部字节并报告state_unknown。",
+    "不支持删除/重命名/非UTF8或混合换行重叠文件，遇到时在主仓写入前停止。"
+  ],
+  "realMainPublicationPerformed": false
+}

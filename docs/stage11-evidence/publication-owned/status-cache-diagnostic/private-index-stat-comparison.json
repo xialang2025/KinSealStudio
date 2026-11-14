@@ -1,0 +1,45 @@
+{
+  "format": "KinSealLite-publication-private-index-stat-diagnostic-v1",
+  "baseline": "48314f2e38f7f5888a575f034a26f09fed7fd250",
+  "candidate": "90ebab2b36e9a0ab2625cc3d3d1cbf23fa1ae8e3",
+  "originalEntryCount": 32940,
+  "originalZeroMtimeEntries": 19,
+  "originalCachedSizeBytes": 829099202,
+  "results": {
+    "plain": {
+      "command": [
+        "read-tree",
+        "90ebab2b36e9a0ab2625cc3d3d1cbf23fa1ae8e3"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.21899999999732245,
+      "stderr": "",
+      "entryCount": 33605,
+      "zeroMtimeEntryCount": 33605,
+      "unchangedOidCount": 32927,
+      "unchangedOidExactStatPreservedCount": 17,
+      "privateIndexSha256": "aeae20ac81fdc5f0c36e7c66628ca59035cb02bf3c8f493f6157d418ac098b5e"
+    },
+    "two-tree-merge": {
+      "command": [
+        "read-tree",
+        "-m",
+        "48314f2e38f7f5888a575f034a26f09fed7fd250",
+        "90ebab2b36e9a0ab2625cc3d3d1cbf23fa1ae8e3"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.15600000000267755,
+      "stderr": "error: Entry '.gitattributes' not uptodate. Cannot merge.\n",
+      "entryCount": 32940,
+      "zeroMtimeEntryCount": 19,
+      "unchangedOidCount": 32940,
+      "unchangedOidExactStatPreservedCount": 32940,
+      "privateIndexSha256": "560d78e9c8537c5def026584c23e82f37eddf9fc8d9a8bfcdee44da8a39358ec"
+    }
+  },
+  "realIndexShaBefore": "560d78e9c8537c5def026584c23e82f37eddf9fc8d9a8bfcdee44da8a39358ec",
+  "realIndexShaAfter": "560d78e9c8537c5def026584c23e82f37eddf9fc8d9a8bfcdee44da8a39358ec",
+  "mainFilesWritten": false,
+  "coldStatusExecuted": false,
+  "scope": "GIT_INDEX_FILE points only to owned diagnostic copies; no -u or working-tree update"
+}

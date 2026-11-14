@@ -1,0 +1,49 @@
+{
+  "test": "test_unicode_diff_content_tamper_rejected_despite_valid_input_hash",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:55:18.246855+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "other": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\candidate",
+      "baseline": "7f5aace9a4890c8d41024f10a729dcd0f01ffc85",
+      "candidate": "e91da0f9978f3476be4e39c2bd8306c516f9895d",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\runs\\publication-2f1a0af761e1441dabf8d2605ceb4267",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\protection.json",
+        "snapshotSha256": "8a20daf05a306fc489fe42993bb7d83f751522bf7ca8ebe47362d2a4d9104320",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\protection.diff",
+        "snapshotDiffSha256": "0b69a5d18c9cc1c6895add7a42aee59bd0ba1392ab3586c70111ca5f59150009",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-t1dlkjd8\\allow.json",
+        "allowlistSha256": "266e902868d3ac3cc10842c7e2a07791ddcb08199f6d92708f1527bac0d929dc"
+      },
+      "before": {
+        "head": "7f5aace9a4890c8d41024f10a729dcd0f01ffc85",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "error": "PublicationError: Protected tracked user diff differs from frozen input or declared quotepath representation",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:55:18.811819+00:00"
+    }
+  ]
+}

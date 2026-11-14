@@ -1,0 +1,44 @@
+{
+  "test": "test_protected_user_bytes_change_rejected",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:58:24.971317+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "workingTreeDiff": 600,
+        "otherIncludingWrites": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\candidate",
+      "baseline": "a31946c6e8d0d2b03b2e45774553d92c0f4527d6",
+      "candidate": "328826130850a185d23ff4e0b98b2d1059ce06be",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\runs\\publication-543508d3e3434af68c4766aa7e24bff4",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\protection.json",
+        "snapshotSha256": "4fdc9923b1f8cf6567ae5696f81b0c51c9f34f2d50597fd62011000f6c4a8a76",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\protection.diff",
+        "snapshotDiffSha256": "0cc485c12af68f66e92c6f288d97a5fe9ad7fc80015328025b31bd3e1ce27225",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-6vdn7igx\\allow.json",
+        "allowlistSha256": "32e633da883796447028185b599264696e64ffebd8455097be430521048303cf"
+      },
+      "error": "PublicationError: Protected user bytes changed: a.txt",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:58:25.453727+00:00"
+    }
+  ]
+}

@@ -11,6 +11,7 @@
 #include "simulation_cli.h" //20261114-6 add
 #include "macro_compiler_cli.h" //20261114-7 add
 #include "plc_protocol_cli.h" //20261114-8 add
+#include "local_help.h" //20261114-10 add
 
 #include <QApplication>
 #include <QSettings> //20261111-1 add: Keep automated captures out of the user recent-file preferences.
@@ -24,6 +25,11 @@
 #include <QJsonArray> //20261110-5 add
 #include <QCryptographicHash>
 #include <QTemporaryDir>
+#include <QFontDatabase> //20261114-10 add: Report missing requested fonts without changing system fonts.
+#include <QFontInfo>
+#include <QAction>
+#include <QDialog>
+#include <QTextBrowser>
 
 #include <cstdio> //20261108-10 add
 #include <memory>
@@ -213,8 +219,50 @@ int main(int argc, char *argv[]) //20261107-6 add
     QString transferFrozenPath;
     QString cancelPath;
     int cancelIndex;
+    QJsonObject releaseInfo; //20261114-10 add
+    QJsonArray releaseFonts;
+    QJsonObject releaseFont;
+    QString releaseFamily;
+    QStringList releaseRequestedFamilies;
+    QString releaseRequestedFamily;
+    int releaseFontIndex;
+    QAction *releaseHelpAction;
+    QDialog *releaseHelpDialog;
+    QTextBrowser *releaseHelpBrowser;
 
+    application.setApplicationName(QStringLiteral("KinSealStudioLite")); //20261114-10 add
+    application.setApplicationVersion(QStringLiteral(KINSEAL_RELEASE_VERSION));
     arguments = application.arguments();
+    if (arguments.size() == 2 && arguments.at(1) == QStringLiteral("--release-info")) //20261114-10 add
+    {
+        releaseInfo.insert(QStringLiteral("product"), QStringLiteral("KinSealStudio Lite"));
+        releaseInfo.insert(QStringLiteral("version"), application.applicationVersion());
+        releaseInfo.insert(QStringLiteral("qtVersion"), QString::fromLatin1(qVersion()));
+        releaseInfo.insert(QStringLiteral("distribution"), QStringLiteral("restricted_internal_validation"));
+        releaseInfo.insert(QStringLiteral("installerProvided"), false);
+        releaseInfo.insert(QStringLiteral("hardwareIo"), false);
+        releaseInfo.insert(QStringLiteral("fullReplicaCertified"), false);
+        releaseRequestedFamilies = {QStringLiteral("微软雅黑"), QStringLiteral("Arial")};
+        for (releaseFontIndex = 0; releaseFontIndex < releaseRequestedFamilies.size(); ++releaseFontIndex)
+        {
+            releaseRequestedFamily = releaseRequestedFamilies.at(releaseFontIndex);
+            releaseFamily = QFontInfo(QFont(releaseRequestedFamily)).family();
+            releaseFont = QJsonObject();
+            releaseFont.insert(QStringLiteral("requested"), releaseRequestedFamily);
+            releaseFont.insert(QStringLiteral("available"), QFontDatabase::families().contains(releaseRequestedFamily, Qt::CaseInsensitive));
+            releaseFont.insert(QStringLiteral("resolved"), releaseFamily);
+            releaseFonts.append(releaseFont);
+        }
+        releaseInfo.insert(QStringLiteral("fonts"), releaseFonts);
+        writeStructuredTransferResult(releaseInfo);
+        return 0;
+    }
+    if (arguments.size() == 2 && arguments.at(1) == QStringLiteral("--help-catalog")) //20261114-10 add: Audit shipped local files without opening a device or window.
+    {
+        releaseInfo = helpCatalogReport();
+        writeStructuredTransferResult(releaseInfo);
+        return releaseInfo.value(QStringLiteral("valid")).toBool() ? 0 : 28;
+    }
     if (handlePlcProtocolCli(arguments, &simulationExit)) { return simulationExit; } //20261114-8 add
     if (handleMacroCompilerCli(arguments, &simulationExit)) { return simulationExit; } //20261114-7 add
     if (handleSimulationCli(arguments, &simulationExit)) { return simulationExit; } //20261114-6 add
@@ -550,6 +598,44 @@ int main(int argc, char *argv[]) //20261107-6 add
         {
             return 11;
         }
+        return 0;
+    }
+    if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--capture-help")) //20261114-10 add: Exercise the actual help QAction on an owned desktop.
+    {
+        capture_path = QFileInfo(arguments.at(2)).absoluteFilePath();
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        captureSettings = std::make_unique<QTemporaryDir>();
+        if (!captureSettings->isValid())
+        {
+            return 27;
+        }
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, captureSettings->path());
+        window = std::make_unique<MainWindow>();
+        releaseHelpAction = window->findChild<QAction *>(QStringLiteral("action_H"));
+        if (releaseHelpAction == nullptr)
+        {
+            return 28;
+        }
+        releaseHelpAction->trigger();
+        application.processEvents();
+        releaseHelpDialog = window->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        releaseHelpBrowser = window->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+        if (releaseHelpDialog == nullptr || releaseHelpBrowser == nullptr)
+        {
+            return 28;
+        }
+        releaseInfo = QJsonObject();
+        releaseInfo.insert(QStringLiteral("version"), application.applicationVersion());
+        releaseInfo.insert(QStringLiteral("helpText"), releaseHelpBrowser->toPlainText());
+        releaseInfo.insert(QStringLiteral("deviceTransferPerformed"), false);
+        writeStructuredTransferResult(releaseInfo);
+        preview = releaseHelpDialog->grab().toImage();
+        if (preview.isNull() || !preview.save(capture_path))
+        {
+            return 6;
+        }
+        releaseHelpDialog->close();
+        application.processEvents();
         return 0;
     }
     if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--capture-preview"))

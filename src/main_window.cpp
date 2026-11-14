@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "simulation_window.h" //20261114-6 add
+#include "local_help.h" //20261114-10 add
 #include "bit_button_renderer.h" //20261108-15 add
 
 #include "hmi_canvas.h"
@@ -132,6 +133,8 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     QDockWidget *tool_dock;
     QTimer *device_timer;
 
+    m_localHelp = new LocalHelpController(this); //20261114-10 add: Read local user guidance independently of development reports.
+    m_localHelp->installContextHelp();
     setWindowTitle(QStringLiteral("KinSealStudio")); //20261111-1 change
     setMinimumSize(900, 480);
     resize(1353, 708); //20261111-1 change: Match the supplied native client at 96 DPI. //20261108-7 change: Match the measured vendor window dimensions.
@@ -422,6 +425,7 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
     }
     action = command(QStringLiteral("action_H"), QStringLiteral("帮助..."), QKeySequence::HelpContents);
     help->addAction(action);
+#if 0 //20261114-10 del: Preserve the historical developer-report viewer; ship a dedicated local user manual instead.
     connect(action, &QAction::triggered, this, [this]() {
         QDialog dialog(this);
         QVBoxLayout layout(&dialog);
@@ -438,10 +442,13 @@ void MainWindow::createActionsAndMenus() //20261110-7 change
         connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
         dialog.exec();
     });
+#endif
+    connect(action, &QAction::triggered, this, [this]() { m_localHelp->showCommand(QStringLiteral("action_H")); }); //20261114-10 add
     action = command(QStringLiteral("action_KinSeal"), QStringLiteral("关于 KinSealStudio Lite"));
     help->addAction(action);
     connect(action, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.10.1\n主窗口外观版\n支持的工程与设备功能以随包说明为准。"));
+        //20261114-10 del: QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite 0.10.1\n主窗口外观版\n支持的工程与设备功能以随包说明为准。"));
+        QMessageBox::about(this, QStringLiteral("关于"), QStringLiteral("KinSealStudio Lite %1\n受限验证版\n支持范围与待验项见本地帮助和发布清单。\n安装器与完整设备验收尚未提供。").arg(QCoreApplication::applicationVersion())); //20261114-10 change
     });
 }
 

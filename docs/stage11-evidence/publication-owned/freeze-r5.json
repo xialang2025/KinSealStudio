@@ -1,0 +1,29 @@
+{
+  "format": "KinSealLite-publication-freeze-r5",
+  "tool": {
+    "path": "tools/publish_stage11.py",
+    "sha256": "7148be31bb56355338cf412d217c1c4e068d0c37f7e3d799e5792f60080b1802"
+  },
+  "tests": {
+    "path": "tests/test_stage11_publish.py",
+    "sha256": "422d3962bb1a75e785b357ed1d6fa32f8a9d5fd889483146ce222e9b880102a4",
+    "methods": 16,
+    "passed": 16,
+    "seconds": 30.036,
+    "log": "unittest-r5.log"
+  },
+  "gitTimeoutPolicySeconds": {
+    "status": 600,
+    "workingTreeDiff": 600,
+    "cachedAndCommitDiff": 120,
+    "writes": 120
+  },
+  "readonlyReview": "readonly-review-r5.json",
+  "ownedFixturesRemaining": 0,
+  "realMainPublicationPerformedByThisAgent": false,
+  "remaining": [
+    "真实发布和完整后验由root执行，现有合成测试不代替实际结果。",
+    "未再次运行冷status测完整耗时，600秒是有界预算而非已证明的实际用时。",
+    "外部并发写或存储失败仍可能导致state_unknown，不能当作已恢复。"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "format": "KinSealLite-stage11-final-package-dependency-comparison-v1",
+  "checks": [
+    {
+      "check": "final manifest identity bound",
+      "passed": true
+    },
+    {
+      "check": "final EXE identity bound",
+      "passed": true
+    },
+    {
+      "check": "frozen policy unchanged",
+      "passed": true
+    },
+    {
+      "check": "same 23 PE path set",
+      "passed": true
+    },
+    {
+      "check": "all 22 runtime bytes unchanged",
+      "passed": true
+    },
+    {
+      "check": "all declared import sets unchanged",
+      "passed": true
+    },
+    {
+      "check": "resource inputs unchanged",
+      "passed": true
+    },
+    {
+      "check": "all modules x64",
+      "passed": true
+    },
+    {
+      "check": "no fonts copied",
+      "passed": true
+    },
+    {
+      "check": "all 64 deployed notices exactly match policy",
+      "passed": true
+    },
+    {
+      "check": "Qt SBOM mismatch limitation unchanged",
+      "passed": true
+    }
+  ],
+  "allPassed": true,
+  "checkCount": 11,
+  "inputPackage": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2",
+  "manifestSha256": "1a726d8a917640e7b7b0423db71382042a34025f94f47f246f4a3af66f811df9",
+  "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+  "inventorySha256": "156775be59e524ac6f532d55c0e4d69122380e199f6e4ceccd45fbb737177cda",
+  "legacyFieldNote": "inventory.stage9Manifest is the audit script legacy field name; its actual path/hash above identify Stage11 release-r2 manifest, not Stage9.",
+  "limitations": [
+    "No runtime load tracing or missing-driver environment was executed by this static audit.",
+    "Existing unknown redistribution grants and Qt SBOM mismatches remain open."
+  ],
+  "hardwareIo": false,
+  "vendorCodeExecuted": false,
+  "baselinePolicyModified": false
+}

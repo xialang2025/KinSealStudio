@@ -1,0 +1,50 @@
+{
+  "test": "test_unicode_prior_declared_quotepath_is_not_silently_changed",
+  "synthetic": true,
+  "fixturePath": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b",
+  "fixtureRemovedAfterCapture": true,
+  "receipts": [
+    {
+      "format": "KinSealLite-stage11-publication-v1",
+      "startedAtUtc": "2026-11-14T16:58:35.920715+00:00",
+      "mode": "publish",
+      "phase": "preflight-user-protection",
+      "outcome": "rejected_before_main_write",
+      "mainMutated": false,
+      "gitTimeoutPolicySeconds": {
+        "status": 600,
+        "workingTreeDiff": 600,
+        "otherIncludingWrites": 120
+      },
+      "rollback": {
+        "attempted": false,
+        "confirmed": false
+      },
+      "changedFiles": [],
+      "overlaps": [],
+      "main": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\main",
+      "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\candidate",
+      "baseline": "9a6c9a795d95345913de791a848aa314f7ec05f7",
+      "candidate": "6ea06a17ed0bfc5217e17143fc1dd21bc51f3a95",
+      "expectedUserCount": 3,
+      "operationDirectory": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\runs\\publication-14377a2e75e440478de669e865f5dff0",
+      "inputs": {
+        "snapshot": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\protection.json",
+        "snapshotSha256": "d869e40a0eb3195932ae6d2446f04c8085f025193c3752aba355644c30de8b86",
+        "snapshotDiff": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\protection.diff",
+        "snapshotDiffSha256": "503fb8b4752c64f1afe92fe519ac8f920c7ba5f0dc5566d5163de8486a87af88",
+        "allowlist": "Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vi__922b\\allow.json",
+        "allowlistSha256": "266e902868d3ac3cc10842c7e2a07791ddcb08199f6d92708f1527bac0d929dc"
+      },
+      "before": {
+        "head": "9a6c9a795d95345913de791a848aa314f7ec05f7",
+        "protectedUserFiles": 3,
+        "statusCount": 3,
+        "allProtectedBytesMatch": true
+      },
+      "error": "PublicationError: Protected tracked user diff differs from frozen input or declared quotepath representation",
+      "failedPhase": "preflight-user-protection",
+      "finishedAtUtc": "2026-11-14T16:58:36.487252+00:00"
+    }
+  ]
+}

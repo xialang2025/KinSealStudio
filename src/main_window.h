@@ -26,6 +26,7 @@ class QAction; //20261110-7 add: Share command instances across all main-window 
 class QMenu;
 class DeviceDownloadSession; //20261114-5 add
 class SimulationWindow; //20261114-6 add
+class LocalHelpController; //20261114-10 add
 
 class MainWindow : public QMainWindow
 {
@@ -90,6 +91,7 @@ private:
     QTemporaryDir *m_downloadTemp; //20261108-8 add
     DeviceDownloadSession *m_downloadSession = nullptr; //20261114-5 add
     QPointer<SimulationWindow> m_simulationWindow; //20261114-6 add
+    LocalHelpController *m_localHelp = nullptr; //20261114-10 add: One owner-scoped viewer serves menu and context help.
     QTabWidget *m_pageTabs;
     ScreenCanvas *m_canvas;
     QTreeWidget *m_projectTree;

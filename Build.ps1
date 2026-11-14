@@ -1,8 +1,15 @@
 ﻿param(
     [switch]$Deploy,
     [ValidatePattern('^[A-Za-z0-9_-]+$')]
-    [string]$DeployDirectoryName = 'KinSealStudioLite-MainWindow-0.10.1' #20261111-1 change: Publish the native shell independently of unfinished stage-3 work.
+    [string]$DeployDirectoryName = 'KinSealStudioLite-Stage11-release-r1', #20261114-10 change
+    [switch]$LegacyEvidenceDeploy #20261114-10 add: Explicit developer-only compatibility path.
 )
+
+#20261114-10 add: User deployment uses the bounded manifest packer instead of copying all investigation documents.
+if ($Deploy -and -not $LegacyEvidenceDeploy) {
+    & (Join-Path $PSScriptRoot 'tools\BuildStage11.ps1') -DeployDirectoryName $DeployDirectoryName
+    exit $LASTEXITCODE
+}
 
 # 20261107-6 add: Build the Qt editor and optionally create a self-contained deployment directory.
 $ErrorActionPreference = 'Stop'

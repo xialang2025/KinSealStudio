@@ -1,0 +1,258 @@
+test_candidate_containing_user_edit_rejected (test_stage11_publish.PublicationTests.test_candidate_containing_user_edit_rejected) ... ERROR
+test_conflict_rejected_before_main_write (test_stage11_publish.PublicationTests.test_conflict_rejected_before_main_write) ... ERROR
+test_failure_after_ref_update_restores_index_ref_and_files (test_stage11_publish.PublicationTests.test_failure_after_ref_update_restores_index_ref_and_files) ... ERROR
+test_foreign_edit_during_failure_is_preserved_and_marked_unknown (test_stage11_publish.PublicationTests.test_foreign_edit_during_failure_is_preserved_and_marked_unknown) ... ERROR
+test_main_head_change_rejected (test_stage11_publish.PublicationTests.test_main_head_change_rejected) ... ERROR
+test_main_index_change_rejected (test_stage11_publish.PublicationTests.test_main_index_change_rejected) ... ERROR
+test_preflight_two_disjoint_overlaps_changes_nothing (test_stage11_publish.PublicationTests.test_preflight_two_disjoint_overlaps_changes_nothing) ... ERROR
+test_protected_user_bytes_change_rejected (test_stage11_publish.PublicationTests.test_protected_user_bytes_change_rejected) ... ERROR
+test_protection_snapshot_can_publish_later_metadata_commit (test_stage11_publish.PublicationTests.test_protection_snapshot_can_publish_later_metadata_commit) ... ERROR
+test_publish_retains_user_delta_and_bom_crlf (test_stage11_publish.PublicationTests.test_publish_retains_user_delta_and_bom_crlf) ... ERROR
+test_snapshot_and_allowlist_identity_guards (test_stage11_publish.PublicationTests.test_snapshot_and_allowlist_identity_guards) ... ERROR
+
+======================================================================
+ERROR: test_candidate_containing_user_edit_rejected (test_stage11_publish.PublicationTests.test_candidate_containing_user_edit_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1xqwagyh\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_conflict_rejected_before_main_write (test_stage11_publish.PublicationTests.test_conflict_rejected_before_main_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-nkccv3pd\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_failure_after_ref_update_restores_index_ref_and_files (test_stage11_publish.PublicationTests.test_failure_after_ref_update_restores_index_ref_and_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-z47jc3b0\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_foreign_edit_during_failure_is_preserved_and_marked_unknown (test_stage11_publish.PublicationTests.test_foreign_edit_during_failure_is_preserved_and_marked_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-v5s7s92j\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_main_head_change_rejected (test_stage11_publish.PublicationTests.test_main_head_change_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-chguvr_r\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_main_index_change_rejected (test_stage11_publish.PublicationTests.test_main_index_change_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-n43089rf\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_preflight_two_disjoint_overlaps_changes_nothing (test_stage11_publish.PublicationTests.test_preflight_two_disjoint_overlaps_changes_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-_xyfg509\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_protected_user_bytes_change_rejected (test_stage11_publish.PublicationTests.test_protected_user_bytes_change_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-91pudorg\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_protection_snapshot_can_publish_later_metadata_commit (test_stage11_publish.PublicationTests.test_protection_snapshot_can_publish_later_metadata_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-1nmpmka2\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_publish_retains_user_delta_and_bom_crlf (test_stage11_publish.PublicationTests.test_publish_retains_user_delta_and_bom_crlf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-5zj_8toa\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+======================================================================
+ERROR: test_snapshot_and_allowlist_identity_guards (test_stage11_publish.PublicationTests.test_snapshot_and_allowlist_identity_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage11-20261114\tests\test_stage11_publish.py", line 126, in tearDown
+    shutil.rmtree(resolved)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 759, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 617, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  [Previous line repeated 1 more time]
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 622, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\Users\lenovo\AppData\Local\Programs\Python\Python311\Lib\shutil.py", line 620, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] 拒绝访问。: 'Z:\\Project\\vscode_prj_temp\\REA\\.stage11-run-20261114\\publication-tests-owned\\case-vlq9klgn\\main\\.git\\objects\\05\\1e6bdc4e4c06eb33d4e261f626ab0db0feff39'
+
+----------------------------------------------------------------------
+Ran 11 tests in 23.191s
+
+FAILED (errors=11)

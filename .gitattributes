@@ -10,3 +10,17 @@ tools/run_stage10_samples.py -text
 tools/run_stage10_performance.py -text
 tools/stage10_acceptance.py -text
 tests/test_stage10_acceptance.py -text
+#20261114-10 add: Preserve the exact release evidence and newly hashed help/tool inputs.
+docs/stage11-evidence/** -text
+help/** -text
+release/** -text
+src/local_help.cpp -text
+src/local_help.h -text
+src/release_version.rc -text
+tests/local_help_tests.cpp -text
+tests/test_stage11_package.py -text
+tests/test_stage11_publish.py -text
+tools/BuildStage11.ps1 -text
+tools/package_stage11.py -text
+tools/publish_stage11.py -text
+tools/run_stage11_portable.py -text

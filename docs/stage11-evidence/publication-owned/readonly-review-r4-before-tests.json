@@ -1,0 +1,20 @@
+{
+  "format": "KinSealLite-publication-readonly-review-r4-before-tests",
+  "readOnly": true,
+  "cause": "plain read-tree clears stat cache for 33605 entries; actual failed afterIndex SHA reproduced in private index.",
+  "change": "Only status receives a 600s bounded process budget; other git commands remain120s; complete -z/all-untracked status verification and rollback remain unchanged.",
+  "notAdopted": "two-tree -m failed safely in private index with not-uptodate .gitattributes; no unverified index optimization was adopted.",
+  "findings": [],
+  "files": [
+    {
+      "path": "tools/publish_stage11.py",
+      "sha256": "3722b961f2a8a372fcbd4a6670703366b5922dddd360afc23f80086e74409c86"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "sha256": "69e42489101f0a1e6ad133151afba5167038cf0589fa2d72119140fded989a8b"
+    }
+  ],
+  "realMainPublicationPerformed": false,
+  "behaviorTestsR4": "not_run_yet"
+}

@@ -1,0 +1,110 @@
+{
+  "format": "KinSealLite-stage11-publication-final-review-v1",
+  "reviewMode": "read-only after tests; no business logic changes in this review",
+  "sourceFiles": [
+    {
+      "path": "tools/publish_stage11.py",
+      "sha256": "06acfd3b7d4945c6fb5a793f5bf96e3b1b0c4828ef61ada44d4b856e8910fd5d"
+    },
+    {
+      "path": "tests/test_stage11_publish.py",
+      "sha256": "ce38035057253325ac47a23c32f91b0763c982990ea829d2e516d4b5e58a801a"
+    }
+  ],
+  "syntaxParsed": true,
+  "testCount": 11,
+  "testLog": {
+    "path": "docs/stage11-evidence/publication-owned/unittest-r2.log",
+    "sha256": "c38e9c995d24962444283fc0802d9a6d6659b569b2a31664c952c288ba062e6a"
+  },
+  "tests": [
+    {
+      "test": "test_candidate_containing_user_edit_rejected",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_conflict_rejected_before_main_write",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_failure_after_ref_update_restores_index_ref_and_files",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rolled_back"
+      ]
+    },
+    {
+      "test": "test_foreign_edit_during_failure_is_preserved_and_marked_unknown",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "state_unknown_manual_recovery_required"
+      ]
+    },
+    {
+      "test": "test_main_head_change_rejected",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_main_index_change_rejected",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_preflight_two_disjoint_overlaps_changes_nothing",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "preflight_passed"
+      ]
+    },
+    {
+      "test": "test_protected_user_bytes_change_rejected",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write"
+      ]
+    },
+    {
+      "test": "test_protection_snapshot_can_publish_later_metadata_commit",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "published",
+        "published"
+      ]
+    },
+    {
+      "test": "test_publish_retains_user_delta_and_bom_crlf",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "published"
+      ]
+    },
+    {
+      "test": "test_snapshot_and_allowlist_identity_guards",
+      "fixtureRemoved": true,
+      "receiptOutcomes": [
+        "rejected_before_main_write",
+        "rejected_before_main_write"
+      ]
+    }
+  ],
+  "ownedFixturesRemaining": 0,
+  "findings": [],
+  "limits": [
+    "Tool-specific lock does not prevent unrelated external writers; conditional hashes preserve detected foreign bytes and mark state unknown.",
+    "Only add/modify regular files and uniform-newline UTF8 overlaps are supported.",
+    "Unsafe run/workspace roots cannot receive a receipt; output/storage loss cannot be called confirmed rollback."
+  ],
+  "realMainPublicationPerformed": false,
+  "realMainFilesWritten": false
+}
