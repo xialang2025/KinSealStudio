@@ -179,4 +179,4 @@ S09-01补原生连接窗口字段与枚举释义，继续按profile/型号/端�
 便携最终实际7进程/36独立语义检查通过，Qt6SerialPort实际从包内加载，已目视检查主界面及通信/能力截图。清理45个自有新中间文件共16,380,525B；废弃r1包122,439,021B删除被自动审批拒绝，0删除并保留，见cleanup-result.json。全部TEMP/TMP置Z，未重试历史拒绝路径。
 
 
-阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送因GitHub:443网络不可达失败，保留本地提交并在最终元数据提交后再次尝试；不预报推送成功。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
+阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送网络失败后已重试成功，GitHub main确认至79ccb915（含程序与验收元数据）；回执见docs/stage9-evidence/push-confirmed.json。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。

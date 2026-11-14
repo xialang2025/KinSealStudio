@@ -664,4 +664,4 @@ AddrPara.dat前200B按u8页面段数解释；每记录12B：族/route/固定0/no
 最终包为dist/KinSealStudioLite-Stage9-plc-r2，含192文件/164样例和Qt6SerialPort；源/资源6340项与EXE及真实代码提交单独绑定。自有中间文件实际清45项16,380,525B；废弃r1包122,439,021B自动审批拒绝删除，0删除且不换通道。旧拒绝项也未重试，TEMP/TMP/TMPDIR全Z。详见stage9-evidence/cleanup-result.json及交付身份记录。
 
 
-阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送因GitHub:443网络不可达失败，保留本地提交并在最终元数据提交后再次尝试；不预报推送成功。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
+阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送网络失败后已重试成功，GitHub main确认至79ccb915（含程序与验收元数据）；回执见docs/stage9-evidence/push-confirmed.json。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
