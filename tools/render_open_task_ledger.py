@@ -6,6 +6,7 @@ The frozen audit inputs remain evidence; subsequent work updates the JSON record
 
 from pathlib import Path
 import argparse
+import csv
 import gzip
 import hashlib
 import json
@@ -153,7 +154,7 @@ def render(data):
              [item.get("nextExecutableStep", "先核同范围最新证据，再补缺失分支。"), "验收：" + str(item.get("historicalExpectedObservation", "原问题所声明字段/联动/寿命/消费者有对应层新证据；部分覆盖逐分支核销。"))], sources(item.get("sources", []))]
             for item in records])
     heading(2, "原始候选与后续追加行全量")
-    line("冻结CAND-20261110原308条继续保留；现行CSV共318行，其当前SHA见JSON。下列原文不截断，保留原始状态与来源，并给出本次分流。来源SHA按每行旧快照解释，不能冒充现文件哈希。")
+    line("冻结CAND-20261110原308条继续保留；现行CSV共318行，审计快照SHA及主目录等价字节身份见JSON。下列原文不截断，保留原始状态与来源，并给出本次分流。来源SHA按每行旧快照解释，不能冒充现文件哈希。")
     table(["候选ID/模块", "原始候选全文", "原记录状态", "统一处理/关联", "下一步/核销", "来源"], [
         [item["row"]["线索ID"] + " / " + item["row"]["模块"], item["row"]["候选内容"], item["row"]["状态"],
          item["disposition"] + "；" + cell(item["relatedIds"]), item["nextAction"] + "；验收：" + item["acceptance"],
@@ -233,7 +234,11 @@ def validate(data):
         assert set(item["relatedIds"]) <= allowed, item["row"]["线索ID"]
     assert "非问题" in next(item for item in candidates if item["row"]["线索ID"] == "U-308")["disposition"]
     current_csv = ROOT / "design_plan/复刻待验线索台账.csv"
-    assert hashlib.sha256(current_csv.read_bytes()).hexdigest() == data["csvIdentity"]["sha256"]
+    # //20261114-4 change: preserve the frozen byte identity while accepting
+    # an equivalent checkout whose BOM or line endings Git has normalized.
+    if hashlib.sha256(current_csv.read_bytes()).hexdigest() != data["csvIdentity"]["sha256"]:
+        rows = list(csv.DictReader(current_csv.read_text(encoding="utf-8-sig").splitlines()))
+        assert rows == [item["row"] for item in candidates], "CSV records changed; reconcile the ledger before rendering"
     for item in data["auditInputManifest"]:
         packed = (ROOT / item["path"]).read_bytes()
         raw = gzip.decompress(packed)
