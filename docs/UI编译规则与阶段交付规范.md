@@ -1,6 +1,6 @@
 # UI编译规则与阶段交付规范
 
-维护日期：2026-11-13。适用对象：KinSealStudioLite当前AMT070W124-L800X480R后端，800×480。本文补齐阶段0～4和阶段5已交付切片的规则；后续每完成一个阶段性任务，必须在同一提交内同步维护本文和该任务专项报告。阶段5整体仍未完成。
+维护日期：2026-11-14。适用对象：KinSealStudioLite当前AMT070W124-L800X480R后端，800×480。本文补齐阶段0～7已交付切片及阶段8逐批实施的规则；后续每完成一个阶段性任务，必须在同一提交内同步维护本文和该任务专项报告。阶段5整体仍未完成。
 
 本文的“UI编译”指界面属性经过工程模型、校验、渲染及段编码成为设备数据的过程。主窗口布局属于编辑器界面规则，不会直接编成屏端控件。可编辑、可保存、可导出原厂源、可生成设备数据、可下载和实屏功能正确必须分别记录。
 
@@ -507,3 +507,31 @@ sector严格使用七键graphic；不写角度、半径、points或endArrow/endC
 在线菜单当前仅范围说明。新增可注入Modbus RTU模块读01/03、单写05/06，严格CRC/站号/地址/回显/异常/帧结束，首错、超时、断连清未发队列；无自动重试，不承诺回滚已尝试写。只有受控回放，无串口/USB/socket后端，未连接runtime扫描，S07-05继续开放。完整协议和真实端点T属于阶段9/10。
 
 正式四组Qt79+13+23+97=212/0/0；CLI与便携实际结果及失败历史见阶段7证据。首轮复核发现的输入恢复、密码诊断和大trace限制已修，生命周期新增真实widget测试；最终只读复核另留源码身份。所有未知分支在统一台账保留。
+
+## 22. 阶段8前置补记：已交付普通宏的UI与编译路径（2026-11-14）
+
+本节先补齐阶段8开始前已经存在的宏行为；它不是本轮新增宏管理器、变量或调度已经完成的证明。基线`654f3d75`，源码`device_macro_compiler.*`、`BitButtonDialog::editMacro`、`native_project_codec.cpp`，来源另见[阶段8任务书](../design_plan/09_阶段8_宏系统与调度.md)。后续每个子任务在同提交补字段/事务/编码/验证/未知范围。
+
+### 22.1 普通宏编辑和绑定的既有行为
+
+位/字按钮“写宏”打开局部源码草稿：名称、QPlainTextEdit源码、保存/取消；保存修改属性对话框自己的宏表，外层属性确认后才提交工程，外层取消应丢弃草稿。此前没有完整独立宏管理器，工程树宏节点与宏查找仅查看源码。修改名称的旧局部写宏行为是按新名插入，并不代表引用重命名事务；完整重命名必须迁移所有页的活动/休眠字段与稳定ID。
+
+`macros[name]`是QString源码，`macroIds[name]`可带稳定ID；KSP源码和原厂SM编译状态不同。原厂SM源码为UTF16BE QString；普通源码变化后导出重置已核编译完成标志和代码，保留未变记录。非零地址变量、未知依赖/启动标志继续拒绝；不把换扩展名当源格式互通。
+
+指示灯/功能按钮的宏组在原厂禁用，当前UI、模型、源与设备出口均按已核各类型门禁；普通bit/word绑定不能推广到全部控件。离线模拟始终不执行宏，phase8新增编辑/编译不自动改变该规则。
+
+### 22.2 既有ADS输入与容器规则
+
+SDK选择顺序是KINSEAL_ARM_SDK→QSettings armSdkDirectory→程序旁arm-sdk；不是原厂路径默认结论。既有required共15项：armcc.exe/.dll、armlink.exe/.dll、fromelf.exe/.dll、Include/macrolib.h、glib.h、math.h、stdio.h、stdlib.h、script_amzlib.a、guilib70_amz.a、licenses/LICENSE.DAT、Lib/armlib/c_a__un.l。缺项在运行工具前拒绝；不复制许可证到C盘，不再发行SDK。
+
+每宏将QString转当前系统ANSI并要求无损往返，临时文件名macro_000.c等不使用用户宏名。每个宏依次armcc `-O2 -g+ -cpu ARM920T -I SDK -I SDK/Include -c -o file.o file.c`；armlink指定RO/RW/entry/map/symbols/libpath与两已核库；fromelf `-c -bin -output file.bin file.axf`提RAW。AXF须ELF32 LE ARM、入口Macro_Entry在RO首地址、allocated RW/ZI均落本宏1024B槽；RAW不能是ELF，不把AXF重命名BIN。
+
+QMap名称排序是Lite设计，编译索引与按钮索引同源；原厂创建序/列表序/禁用过滤尚未全部核。目标仅当前AMT配置：RO首80520400(hex)，后续加alignUp(rawLen,400 hex)；RW=80440000(hex)+index×400(hex)。MarcoRun为1024B头：有效数u8、byte1=FF、100个flag为0、100个LE16长度，后面实际RAW连续串接，不做文件内1KiB填充。MarcoVar每宏904B且全零，仅表达零地址变量；flag未知位不制造。
+
+既有保护为最多100宏，每源1Mi QString code units、单RAW≤65535B、含头总包≤0x20000B、每宏RW/ZI≤1024B。初始产品进程默认单步30s、总120s、诊断256KiB；这些是Lite保护，不能声称原厂宏执行时限。所有宏成功才替换有效package与索引；C成功只证明已核型号和工具输入，不代表HMI执行E。
+
+### 22.3 本轮开始时发现并待闭环的缺口
+
+既有编译器仅输出QStringList，无失败独立manifest；SDK只查文件存在，未自动记录全部工具/库哈希；日志readAll及最后输出的边界需要补测；取消、拥有进程回收、显式临时根与源码/ANSI/索引身份需新增结构化证据。普通宏24B机器码有历史对照，本轮尚未重跑，不迁移为新通过。
+
+初始化/全局/画面/周期以及25项地址变量尚未恢复完整输入和执行时序，不为通过界面而造flag或零变量槽。阶段8六项任务按独立D/U/P/C/T/E记录。当前421个可再生对象文件约90,977,068B删除请求被自动审批以blocked by policy拒绝，实际0删除，见[本轮清理回执](stage8-evidence/cleanup-result.json)；后续临时目录全部指定Z盘。
