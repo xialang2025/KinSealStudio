@@ -319,7 +319,7 @@ def bind_commit(args) -> None:  #20261114-7 add
         current = Path(row["inputPath"]).read_bytes()
         if hashlib.sha256(current).hexdigest() != row["sha256"]:
             raise ValueError("Frozen production source changed: " + row["path"])
-        text_source = Path(row["path"]).suffix.lower() in (".cpp", ".c", ".h", ".qrc", ".qss", ".svg", ".json", ".txt", ".ui")
+        text_source = Path(row["path"]).suffix.lower() in (".cpp", ".c", ".h", ".qrc", ".qss", ".svg", ".json", ".txt", ".ui", ".kvg", ".xml")
         if blob != current and (not text_source or
                                 blob.replace(b"\r\n", b"\n") != current.replace(b"\r\n", b"\n")):
             raise ValueError("Commit does not match frozen production source: " + row["path"])

@@ -4,9 +4,9 @@
   "reviewer": "/root/polygon_gate",
   "mode": "便携包与验收证据只读复核；未改生产逻辑",
   "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
-  "verdict": "现有包内容、私有桌面启动与普通宏外部SDK编译通过；真实代码提交绑定待父代理提供SHA",
+  "verdict": "便携包内容、私有桌面启动与普通宏外部SDK编译通过；6331源/资源及191包文件已绑定真实程序提交",
   "activeFindings": [],
-  "codeCommitState": "awaiting-parent-verified-commit",
+  "codeCommitState": "verified-real-commit-production-source-match",
   "executable": {
     "file": "KinSealStudioLite.exe",
     "bytes": 49664718,
@@ -59,8 +59,8 @@
     },
     {
       "topic": "真实提交绑定",
-      "result": "待父代理提供真实提交SHA",
-      "detail": "codeCommit当前为null，未伪造。package_stage8.py --bind-code-commit只读rev-parse与cat-file --batch，将逐项校验6331源/资源和包输出；文本仅允许Git EOL归一，成功后更新自有manifest与commit-binding.json，不执行Git提交/推送。"
+      "result": "通过",
+      "detail": "真实应用程序提交fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8；冻结源6331项逐项核验通过，仅5791项Git EOL差异；包191文件/主EXE/当前样例再验均通过。发布工具仅修正.kvg/.xml文本EOL白名单，不改变App binary/input，回执同时保留原/新helper SHA。"
     }
   ],
   "failureHistory": [
@@ -73,6 +73,11 @@
       "kind": "使用说明修正",
       "evidence": "inputs.json.contentAmendments",
       "detail": "初稿SDK工具名错误写为GCC；在正式验收前修正为实际armcc/armlink/fromelf与Include/配套库，刷新包说明及manifest并保留修订记录。"
+    },
+    {
+      "kind": "发布工具EOL白名单遗漏",
+      "evidence": "binding-helper-attempt-r1.json",
+      "detail": "首轮保守拒绝.kvg，未写manifest；全量分析确认6331源无冻结后变化，5791个Git差异全部UTF8无NUL且仅CRLF/LF。工具仅增加.kvg/.xml白名单后全量绑定成功。原工具版本和新工具SHA分别保留，应用生产提交仍fcbc196f。"
     }
   ],
   "testCounts": {
@@ -101,12 +106,7 @@
     "height": 708,
     "sha256": "b24f5ea96abf27df59bc5bc90c306a51abf793d999dc6f421c3023f719a0ef7a"
   },
-  "remaining": [
-    {
-      "kind": "代码提交绑定",
-      "state": "awaiting parent real commit"
-    }
-  ],
+  "remaining": [],
   "limits": [
     "本批未执行USB/PLC下载、实物显示/触摸或HMI宏调用。",
     "source hash是可追溯输入身份，不等同二进制可重现构建证明。",
@@ -125,8 +125,10 @@
   },
   "builder": {
     "path": "tools/package_stage8.py",
-    "sha256": "15bf98ad05defdf3c374ff70670875c219330679ed26b00502bb488022337147",
-    "syntaxParsed": true
+    "sha256": "00280f4b33dac57751f19e246ea574e95fabf8711af9d5fe5b4586920f98b3d4",
+    "syntaxParsed": true,
+    "originalCommittedSha256": "15bf98ad05defdf3c374ff70670875c219330679ed26b00502bb488022337147",
+    "revisionScope": "仅发布工具文本EOL白名单新增.kvg/.xml；由父代理后续metadata提交，不改变App binary/input"
   },
   "cleanupPerformedByParent": {
     "evidence": "cleanup-result.json",
@@ -184,5 +186,20 @@
     "smoke": "smoke-r3/run.json",
     "passed": true
   },
-  "reviewRevision": "sample-comment-amendment-r3-final-before-commit"
+  "reviewRevision": "final-real-commit-bound",
+  "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
+  "finalPackage": {
+    "schemaVersion": 1,
+    "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
+    "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
+    "manifestSha256": "b9dbd64a1fa46459cad5f1ed3720f77b15aec16312eec16499c8f6c32cc1fd34",
+    "fileCountIncludingManifest": 191,
+    "packageBytes": 122687429,
+    "sampleCount": 164,
+    "runtimeCount": 23,
+    "executableSha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91",
+    "sourceContentSha256": "4be9f6b775e6117ac445a50f17858ee16fcc21751f7a595f585c30c7a2a85cf0",
+    "noLinksVerified": true
+  },
+  "bindingReceipt": "commit-binding.json"
 }

@@ -106,3 +106,5 @@ KinSealStudioLite.exe --download-project input.ksp
 便携包：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage7-offline-r1`。打开`samples/stage7/internal-five-family.ksp`后选择离线模拟；CLI为`KinSealStudioLite.exe --simulate-offline samples/stage7/internal-five-family.ksp samples/stage7/internal-events.json result.json`。
 
 [实现与验收](docs/阶段7离线模拟实现与验收.md) · [六项进度](docs/阶段7逐项进度.md) · [统一未完成台账](design_plan/未完成任务总台账.md)。零初值/低字优先/点动取消是Lite规则，原厂运行语义及真实在线PLC仍待完成。PC验证不能替代HMI实屏E。
+
+阶段8交付身份：程序提交`fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8`，EXE `da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91`；6331源码/资源输入身份与191包文件校验见[交付记录](docs/stage8-evidence/delivery-r1.json)。主目录1891份既存改动已保护，完整阶段8仍开放。

@@ -598,3 +598,5 @@ Core名称最多256个QString单元，拒绝空白首尾、控制字符、NUL和
 便携版191文件/164样例，实际smoke3进程/4检查及完整CLI24进程/31检查通过，Qt仅从包内加载，外部SDK15文件前后不变。首轮smoke辅助脚本错把双宏包长预计为错误值，失败原记录保留，纠正独立解析后MarcoRun1072B（1024头+24+24）、MarcoVar1808B（2×904零变量）通过；没有修改生产代码来迁就断言。源码/资源、EXE、真实代码提交与包manifest另绑定，见[便携复核](stage8-evidence/portable-r1/readonly-review.json)。本批成功删除8个新/自有中间文件36785529B，旧拒绝项仍保留，逐项回执和统一台账可查。
 
 样例随后只补英文函数头和日期注释，增量替换3份源码/嵌入源；smoke-r3实际2进程/4检查通过，2×24B RAW、1072/1808B包与注释修改前逐字相同。最终样例身份使用[smoke-r3](stage8-evidence/portable-r1/smoke-r3/run.json)，r2截图和完整24/31保留各自已跑身份；不将重复检查叠加到263项Qt总数。
+
+程序真实提交`fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8`已推送并同步主目录。6331源码/资源与Git逐项校验，5791文本仅CRLF/LF差异；发布工具首轮因缺.kvg/.xml文本白名单保守拒绝，保留失败回执后仅补这两后缀并全量重验。最终helper SHA `00280f4b33dac57751f19e246ea574e95fabf8711af9d5fe5b4586920f98b3d4`；生产EXE和样例未改，无需重复Qt/CLI。最终包metadata、191文件/164样例及源/EXE绑定见[delivery-r1](stage8-evidence/delivery-r1.json)。

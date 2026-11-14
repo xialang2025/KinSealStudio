@@ -6,9 +6,11 @@
   "identity": {
     "baselineCommit": "654f3d75b1685a89d08b8a948e2d39f98715dd64",
     "marker": "20261114-7",
-    "codeCommit": null,
+    "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
     "deliveryManifest": "docs/stage8-evidence/portable-r1/package.json",
-    "codeCommitBindingPending": true
+    "codeCommitBindingPending": false,
+    "executableSha256": "da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91",
+    "packageManifestSha256": "b9dbd64a1fa46459cad5f1ed3720f77b15aec16312eec16499c8f6c32cc1fd34"
   },
   "definitions": {
     "D": "原厂帮助、真实UI和静态契约；Lite策略单列",
@@ -78,7 +80,7 @@
       }
     ],
     "formalSuiteConfirmed": true,
-    "finalDeliveryConfirmed": false,
+    "finalDeliveryConfirmed": true,
     "uiCaptureR3Pending": false,
     "scopeNote": "最终UI48使用r3，其余215使用r2，合263；构建CLI24/31、便携CLI24/31和最新smoke-r3 2/4均通过；截图smoke-r2 3/4保留历史，不并入Qt263。",
     "rounds": [
@@ -108,7 +110,7 @@
       }
     ],
     "validationCompleteInDeclaredScope": true,
-    "finalDeliveryPendingReason": "仅真实程序codeCommit及包metadata绑定待主任务实际提交；本批UI/CLI/便携验证已完成。"
+    "finalDeliveryPendingReason": null
   },
   "rows": [
     {
@@ -266,7 +268,7 @@
         "SDK哈希不构成发行方认证或再发行授权",
         "OS未确认终止时QProcess析构可能额外等待",
         "地址变量和其它调度拒绝",
-        "其它目标/SDK及原厂全部包序未核；便携已按限定范围通过，提交身份待绑定"
+        "其它目标/SDK及原厂全部包序未核；便携已按限定范围通过，真实程序提交与包身份已绑定"
       ],
       "evidence": [
         "docs/stage8-evidence/windows-r2/run.json#KinSealStage8CompilerTests",
@@ -482,8 +484,8 @@
   "portable": {
     "evidence": "docs/stage8-evidence/portable-r1/package.json",
     "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
-    "codeCommit": null,
-    "codeCommitBindingPending": true,
+    "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
+    "codeCommitBindingPending": false,
     "manifestSha256AtAcceptance": "e70a23e79c225d729db44011b578579d2d77b7c7d2fe0a3587c264271241fcc9",
     "sourceContentSha256": "4be9f6b775e6117ac445a50f17858ee16fcc21751f7a595f585c30c7a2a85cf0",
     "fileCountIncludingManifest": 191,
@@ -556,7 +558,10 @@
         "manifestSha256AtTest": "b65f57143cc827f5319dc688247487622501c091e770055abeb1cf2a72fb11c7"
       }
     ],
-    "latestSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json"
+    "latestSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json",
+    "manifestSha256": "b9dbd64a1fa46459cad5f1ed3720f77b15aec16312eec16499c8f6c32cc1fd34",
+    "packageBytes": 122687429,
+    "bindingEvidence": "docs/stage8-evidence/portable-r1/commit-binding.json"
   },
   "review": {
     "evidence": "docs/stage8-evidence/audits/stage8-ui-cli-readonly-review-r2.json",
@@ -564,5 +569,6 @@
     "status": "no-active-independent-finding-in-declared-slice",
     "activeFindings": [],
     "scope": "declared ordinary-source/zero-address-variable slice; full stage8 remains open"
-  }
+  },
+  "deliveryEvidence": "docs/stage8-evidence/delivery-r1.json"
 }

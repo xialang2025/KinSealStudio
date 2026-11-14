@@ -98,7 +98,7 @@
         "后续HMI传输/宏执行验证",
         "DOC-CLEANUP-004"
       ],
-      "next": "真实程序提交后绑定包metadata；功能上继续按完整变量/调度及后续设备用例推进。"
+      "next": "本批程序和包真实身份已绑定；功能上继续完整变量/调度及后续设备用例。"
     }
   ],
   "scope": {
@@ -182,7 +182,7 @@
       }
     ],
     "formalSuiteConfirmed": true,
-    "finalDeliveryConfirmed": false,
+    "finalDeliveryConfirmed": true,
     "uiCaptureR3Pending": false,
     "scopeNote": "最终UI48使用r3，其余215使用r2，合263；构建CLI24/31、便携CLI24/31和最新smoke-r3 2/4均通过；截图smoke-r2 3/4保留历史，不并入Qt263。",
     "realSdkEvidenceDirectory": "docs/stage8-evidence/compiler-actual-r2",
@@ -214,7 +214,7 @@
       }
     ],
     "validationCompleteInDeclaredScope": true,
-    "finalDeliveryPendingReason": "仅真实程序codeCommit及包metadata绑定待主任务实际提交；本批UI/CLI/便携验证已完成。"
+    "finalDeliveryPendingReason": null
   },
   "nativeAudit": {
     "evidence": "docs/stage8-evidence/audits/native-macro-audit.json",
@@ -408,8 +408,8 @@
   "portable": {
     "evidence": "docs/stage8-evidence/portable-r1/package.json",
     "package": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage8-macro-r1",
-    "codeCommit": null,
-    "codeCommitBindingPending": true,
+    "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
+    "codeCommitBindingPending": false,
     "manifestSha256AtAcceptance": "e70a23e79c225d729db44011b578579d2d77b7c7d2fe0a3587c264271241fcc9",
     "sourceContentSha256": "4be9f6b775e6117ac445a50f17858ee16fcc21751f7a595f585c30c7a2a85cf0",
     "fileCountIncludingManifest": 191,
@@ -482,7 +482,10 @@
         "manifestSha256AtTest": "b65f57143cc827f5319dc688247487622501c091e770055abeb1cf2a72fb11c7"
       }
     ],
-    "latestSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json"
+    "latestSmoke": "docs/stage8-evidence/portable-r1/smoke-r3/run.json",
+    "manifestSha256": "b9dbd64a1fa46459cad5f1ed3720f77b15aec16312eec16499c8f6c32cc1fd34",
+    "packageBytes": 122687429,
+    "bindingEvidence": "docs/stage8-evidence/portable-r1/commit-binding.json"
   },
   "review": {
     "evidence": "docs/stage8-evidence/audits/stage8-ui-cli-readonly-review-r2.json",
@@ -491,8 +494,7 @@
     "activeFindings": [],
     "scope": "declared ordinary-source/zero-address-variable slice; full stage8 remains open"
   },
-  "metadataPending": [
-    "真实程序codeCommit",
-    "包manifest与交付元数据提交绑定"
-  ]
+  "metadataPending": [],
+  "codeCommit": "fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8",
+  "deliveryEvidence": "docs/stage8-evidence/delivery-r1.json"
 }
