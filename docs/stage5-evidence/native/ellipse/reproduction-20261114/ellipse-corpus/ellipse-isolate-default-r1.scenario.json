@@ -1,0 +1,67 @@
+[
+  {
+    "op": "scene-count-assert",
+    "count": 2,
+    "label": "source-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ],
+      [
+        244,
+        112,
+        150,
+        50
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        244,
+        112,
+        150,
+        50
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "isolated-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "scene-read",
+    "label": "isolated-ellipse"
+  },
+  {
+    "op": "save",
+    "output": "ellipse-default-isolated.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "op": "owned-editor-size",
+    "width": 1800,
+    "height": 1100
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "source-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        100
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 0,
+    "label": "deleted-count"
+  },
+  {
+    "op": "action",
+    "name": "action_ellipse"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      100,
+      100
+    ],
+    "to": [
+      300,
+      300
+    ]
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "created-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        200
+      ]
+    ]
+  },
+  {
+    "op": "scene-double",
+    "x": 200,
+    "y": 200
+  },
+  {
+    "op": "combo",
+    "name": "Line_Type",
+    "value": 1
+  },
+  {
+    "op": "combo",
+    "name": "Pattern",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "ellipse-properties"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-read",
+    "label": "created-target"
+  },
+  {
+    "op": "save",
+    "output": "ellipse-circle.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

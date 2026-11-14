@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "G09多边形与第七批便携交付完成；继续G05椭圆正式语料及独立曲线候选",
-  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G06圆角矩形 + G09多边形",
+  "active": "G06圆/椭圆受限C完成；准备第八批便携，继续扇形等未决",
+  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G05圆角矩形 + G09多边形 + G06圆/椭圆",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -14,22 +14,22 @@
     {
       "id": "S05-02",
       "state": "passed_selected_corpus_with_open_nondeterminism",
-      "scope": "既有61场景加多边形18独立场景；37次有效编译/20canonical，无效采样单列，非确定区无忽略掩码。"
+      "scope": "既有79场景加椭圆13独立场景；27次有效编译/15canonical；r1失败及r2修正完整保留。"
     },
     {
       "id": "S05-03",
       "state": "passed_bounded_single_page_projection",
-      "scope": "共享不可变单页计划、七类受限背景守卫；完整多页IR未恢复。"
+      "scope": "共享不可变单页计划、八类受限背景守卫；完整多页IR未恢复。"
     },
     {
       "id": "S05-04",
       "state": "existing_five_revalidated_static_slice_has_no_new_record",
-      "scope": "五类控制记录与七类静态背景；26个新动态类型未恢复。"
+      "scope": "五类控制记录与八类静态背景；26个新动态类型未恢复。"
     },
     {
       "id": "S05-05",
-      "state": "passed_seven_canonical_background_families",
-      "scope": "79个独立类型/场景；多边形20份原厂整帧夹具，椭圆默认候选不当正式支持。"
+      "state": "passed_eight_canonical_background_families",
+      "scope": "92个独立类型/场景；椭圆27次正式全帧相等，不推广其它曲线。"
     },
     {
       "id": "S05-06",
@@ -49,16 +49,16 @@
     {
       "id": "S05-09",
       "state": "passed_selected_regression_and_review",
-      "scope": "最终530/0/0：核心296与完整控件编辑器234；red2/20/0与旧批次各自保留。"
+      "scope": "最终574/0/0：核心340与完整编辑器234；先只读复核并反馈后修旧负例/入口边界并增精度测试。"
     },
     {
       "id": "S05-10",
       "state": "passed_owned_cleanup",
-      "scope": "本批定向清理2561文件/1760424262逻辑字节；原始gzip回解核SHA、全部独有证据及许可证保留。"
+      "scope": "椭圆873文件/628781756逻辑字节及180空目录定向清理；候选算法临时6918432B与生产mask6144000B分别归档清理，raw/失败帧/唯一源段保留。"
     }
   ],
   "softwareTests": {
-    "passed": 530,
+    "passed": 574,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 79,
+  "nativeCanonicalPixelCases": 92,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -194,5 +194,25 @@
       "checksPassed": 102,
       "usbAccessed": false
     }
+  },
+  "ellipseSlice": {
+    "nativeCompilations": 27,
+    "preparationCompilations": 1,
+    "failedDiagnostics": 2,
+    "canonicalFixtures": 15,
+    "independentCanonicalFrameCases": 13,
+    "negativeTests": 27,
+    "precisionGuardGroups": 1,
+    "softwareTests": {
+      "passed": 574,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 873,
+    "cleanupLogicalBytes": 628781756,
+    "report": "docs/阶段5_椭圆定点细分背景编译与差分验收.md",
+    "B_S_M": "docs/stage5-evidence/native/ellipse/B-S-M-ellipse-cell-area-r2.json",
+    "usbAccessed": false,
+    "E": false
   }
 }

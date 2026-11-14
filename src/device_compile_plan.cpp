@@ -153,6 +153,43 @@ static bool prepareDevicePolygon(const HmiProject &project, const HmiObject &obj
 }
 
 /******************************************************************************
+ * Function Name   : prepareDeviceEllipse
+ * Description     : Admit the source-bound opaque ellipse slice only where its reconstructed page patch is isolated.
+ * Input Parameters: project, object, objects, error, issue
+ * Return Value    : True for supported geometry and appearance; false identifies the rejected property.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool prepareDeviceEllipse(const HmiProject &project, const HmiObject &object, const QList<HmiObject> &objects,
+                                 QString *error, QJsonObject *issue) //20261114-2 add
+{
+    HmiObject peer;
+    QRect patch=object.geometry.adjusted(-1,-1,2,2).intersected(QRect(0,0,800,480));
+    QRect peerPatch;
+
+    if (object.geometry.x()<2 || object.geometry.y()<2 || object.geometry.width()<100 || object.geometry.height()<100 ||
+        qint64(object.geometry.x())+object.geometry.width()>698 || qint64(object.geometry.y())+object.geometry.height()>378)
+    { return compilationIssue(project,object,QStringLiteral("geometry.ellipseBounds"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("椭圆本切片要求X/Y至少2、宽高至少100，右端不超过698、下端不超过378。"),error,issue); }
+    if ((object.graphic.lineStyle!=0 && object.graphic.lineStyle!=1) || (object.graphic.fillStyle!=0 && object.graphic.fillStyle!=1))
+    { return compilationIssue(project,object,QStringLiteral("graphic.styles"),QJsonArray{object.graphic.lineStyle,object.graphic.fillStyle},QStringLiteral("椭圆仅开放已核无线/实线及无填充/纯色组合。"),error,issue); }
+    if (object.graphic.lineWidth!=1 || object.graphic.alpha!=255)
+    { return compilationIssue(project,object,QStringLiteral("graphic.stroke"),QJsonArray{object.graphic.lineWidth,object.graphic.alpha},QStringLiteral("椭圆仅开放线宽1、Alpha255，休眠草稿同样保持此限制。"),error,issue); }
+    if (object.graphic.lineColor!=QColor(Qt::black) || object.graphic.foreground!=QColor(Qt::black) || object.graphic.background!=QColor(Qt::white))
+    { return compilationIssue(project,object,QStringLiteral("graphic.colors"),QJsonArray{object.graphic.lineColor.name(QColor::HexArgb),object.graphic.foreground.name(QColor::HexArgb),object.graphic.background.name(QColor::HexArgb)},QStringLiteral("椭圆仅开放黑边/黑前景/白背景草稿，包括关闭图层。"),error,issue); }
+    if (object.graphic.endArrow!=0 || object.graphic.endCap!=0)
+    { return compilationIssue(project,object,QStringLiteral("graphic.endpoints"),QJsonArray{object.graphic.endArrow,object.graphic.endCap},QStringLiteral("椭圆没有箭头或端帽字段，结构体值须为0。"),error,issue); }
+    Q_FOREACH (peer,objects)
+    {
+        if (peer.id==object.id) { continue; }
+        peerPatch=peer.geometry.adjusted(-1,-1,2,2).intersected(QRect(0,0,800,480));
+        // The renderer rebuilds the verified page background, so even physical patch boundary contact is excluded.
+        if (patch.x()<=peerPatch.x()+peerPatch.width() && peerPatch.x()<=patch.x()+patch.width() &&
+            patch.y()<=peerPatch.y()+peerPatch.height() && peerPatch.y()<=patch.y()+patch.height())
+        { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("椭圆背景补片与其它对象扩展补片相交或接触的合成尚未核定。"),error,issue); }
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : prepareDeviceCompilePlan
  * Description     : Freeze supported ordered semantics and reject unproved graphics before allocating output segments.
  * Input Parameters: project, plan, error, issue
@@ -184,6 +221,12 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
+        if (object.type==QStringLiteral("ellipse")) //20261114-2 add: Keep curve recovery separate from the editor's Qt6 raster and complete native-source support.
+        {
+            if (!prepareDeviceEllipse(project,object,prepared.objects,error,issue)) { return false; }
+            ++prepared.staticEllipseCount;
+            continue;
+        }
         if (object.type==QStringLiteral("polygon")) //20261114-1 add: Only the proven integer simple-path slice reaches the independent background raster.
         {
             if (!prepareDevicePolygon(project,object,prepared.objects,error,issue)) { return false; }

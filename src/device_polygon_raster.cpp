@@ -4,6 +4,7 @@
 #include <QPainterPathStroker>
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <map>
 
 //20261114-1 add: Integrate straight edges independently; no original application or public-library raster code is linked.
@@ -111,13 +112,13 @@ static int polygonCoverageAlpha(qint64 signedCoverage, Qt::FillRule rule) //2026
 }
 
 /******************************************************************************
- * Function Name   : polygonPathCoverage
+ * Function Name   : polygonPathCoverageWithPrecision
  * Description     : Convert a straight closed path to coverage, rejecting curves instead of flattening unproved shapes.
- * Input Parameters: path
+ * Input Parameters: path, precision
  * Return Value    : Full-page alpha mask, or an empty array for an invalid path.
  * Date            : 2026.11.14
  ******************************************************************************/
-static QByteArray polygonPathCoverage(const QPainterPath &path) //20261114-1 add
+static QByteArray polygonPathCoverageWithPrecision(const QPainterPath &path, DeviceStraightCoveragePrecision precision) //20261114-2 change
 {
     PolygonCoverageRows cells;
     PolygonFixedPoint first={0,0};
@@ -136,7 +137,11 @@ static QByteArray polygonPathCoverage(const QPainterPath &path) //20261114-1 add
 
     for (index=0;index<path.elementCount();++index)
     {
-        element=path.elementAt(index);target={qint64(element.x*64)*4,qint64(element.y*64)*4};
+        element=path.elementAt(index);
+        // Preserve polygon rounding while allowing already-flattened ellipse points to keep all eight fraction bits.
+        target=precision==DeviceStraightCoveragePrecision::Quantized26_6
+                ?PolygonFixedPoint{qint64(element.x*64)*4,qint64(element.y*64)*4}
+                :PolygonFixedPoint{qint64(element.x*256),qint64(element.y*256)};
         if (element.type==QPainterPath::MoveToElement)
         {
             if (started) { polygonIntegrateEdge(previous,first,&cells); }
@@ -161,6 +166,60 @@ static QByteArray polygonPathCoverage(const QPainterPath &path) //20261114-1 add
         }
     }
     return mask;
+}
+
+/******************************************************************************
+ * Function Name   : deviceStraightPathCoverage
+ * Description     : Validate controlled input before applying the existing signed straight-edge integral.
+ * Input Parameters: path, precision, output, error
+ * Return Value    : True on a complete page mask; false without modifying output.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool deviceStraightPathCoverage(const QPainterPath &path, DeviceStraightCoveragePrecision precision,
+                               QByteArray *output, QString *error) //20261114-2 add
+{
+    QPainterPath::Element element;
+    QByteArray candidate;
+    qreal scaledX;
+    qreal scaledY;
+    int index;
+
+    if (output==nullptr || path.elementCount()==0 || path.elementCount()>4096
+            || (precision!=DeviceStraightCoveragePrecision::Quantized26_6
+                && precision!=DeviceStraightCoveragePrecision::Exact8Bit))
+    {
+        if (error!=nullptr) { *error=QStringLiteral("设备直边覆盖输入、精度或元素预算无效，未写输出。"); }
+        return false;
+    }
+    for (index=0;index<path.elementCount();++index)
+    {
+        element=path.elementAt(index);
+        if ((element.type!=QPainterPath::MoveToElement && element.type!=QPainterPath::LineToElement)
+                || !std::isfinite(element.x) || !std::isfinite(element.y)
+                || element.x<0 || element.x>800 || element.y<0 || element.y>480)
+        {
+            if (error!=nullptr) { *error=QStringLiteral("设备直边覆盖出现曲线、非有限或越界坐标，未写输出。"); }
+            return false;
+        }
+        if (precision==DeviceStraightCoveragePrecision::Exact8Bit)
+        {
+            scaledX=element.x*256;scaledY=element.y*256;
+            if (scaledX!=qreal(qint64(scaledX)) || scaledY!=qreal(qint64(scaledY)))
+            {
+                if (error!=nullptr) { *error=QStringLiteral("设备直边覆盖需要精确的8位子像素格点，未写输出。"); }
+                return false;
+            }
+        }
+    }
+    candidate=polygonPathCoverageWithPrecision(path,precision);
+    if (candidate.size()!=800*480)
+    {
+        if (error!=nullptr) { *error=QStringLiteral("设备直边覆盖未产生完整页掩码，未写输出。"); }
+        return false;
+    }
+    *output=candidate;
+    if (error!=nullptr) { error->clear(); }
+    return true;
 }
 
 /******************************************************************************
@@ -209,11 +268,11 @@ bool paintDevicePolygonGraphic(QPainter *painter, const QRect &geometry, const G
         if (index==0) { path.moveTo(point); } else { path.lineTo(point); }
     }
     path.closeSubpath();
-    if (properties.fillStyle==1) { fill=polygonPathCoverage(path); }
+    if (properties.fillStyle==1) { fill=polygonPathCoverageWithPrecision(path,DeviceStraightCoveragePrecision::Quantized26_6); } //20261114-2 change
     if (properties.lineStyle==1)
     {
         stroker.setWidth(1);stroker.setCapStyle(Qt::SquareCap);stroker.setJoinStyle(Qt::BevelJoin);
-        stroke=polygonPathCoverage(stroker.createStroke(path));
+        stroke=polygonPathCoverageWithPrecision(stroker.createStroke(path),DeviceStraightCoveragePrecision::Quantized26_6); //20261114-2 change
     }
     if (painter==nullptr || patch.isNull() || fill.size()!=800*480 || stroke.size()!=800*480)
     {

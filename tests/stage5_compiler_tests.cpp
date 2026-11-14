@@ -1,4 +1,5 @@
 #include "device_compile_plan.h"
+#include "device_polygon_raster.h" //20261114-2 add: Freeze the two independent path precision contracts.
 #include "device_package.h"
 #include "independent_downloader.h"
 #include "project_capabilities.h"
@@ -58,6 +59,12 @@ private slots:
     void polygonUnprovedFieldsPreserveOutput_data();
     void polygonUnprovedFieldsPreserveOutput();
     void polygonSourceAndPackageGates();
+    void ellipseCanonicalFrames_data(); //20261114-2 add
+    void ellipseCanonicalFrames();
+    void ellipseUnprovedFieldsPreserveOutput_data();
+    void ellipseUnprovedFieldsPreserveOutput();
+    void ellipseSourceAndPackageGates();
+    void ellipseSharedPrecisionGuards();
     void roundrectCanonicalFrames_data(); //20261113-16 add
     void roundrectCanonicalFrames();
     void roundrectUnprovedFieldsPreserveOutput_data();
@@ -86,6 +93,23 @@ static HmiProject polygonProject() //20261114-1 add
     object.text.clear();object.address.clear();object.geometry=QRect(100,100,200,120);
     object.graphic.foreground=Qt::white;object.graphic.background=Qt::black;
     object.graphic.points={QPointF(0,0),QPointF(1,0),QPointF(.75,1)};project.objects={object};return project;
+}
+
+/******************************************************************************
+ * Function Name   : ellipseProject
+ * Description     : Build typed ellipse defaults without retaining a native source or original pixels.
+ * Input Parameters: None
+ * Return Value    : One independently defined black-outline, white-fill ellipse.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static HmiProject ellipseProject() //20261114-2 add
+{
+    HmiProject project;
+    HmiObject object;
+
+    object.type=QStringLiteral("ellipse");object.id=QStringLiteral("stage5-ellipse");object.name=QStringLiteral("圆/椭圆");
+    object.text.clear();object.address.clear();object.geometry=QRect(100,100,200,100);
+    object.graphic.foreground=Qt::black;object.graphic.background=Qt::white;project.objects={object};return project;
 }
 
 /******************************************************************************
@@ -304,7 +328,7 @@ void Stage5CompilerTests::unprovedFieldsPreservePlanAndPayload() //20261113-11 a
     if (variant == 7) { project.objects[0].graphic.points = {QPointF(0,0),QPointF(0.333,0),QPointF(0.333,1)}; }
     if (variant == 8) { project.objects[0].geometry.moveLeft(750); }
     if (variant == 9) { peer = project.objects[0]; peer.id = QStringLiteral("overlap"); project.objects.append(peer); }
-    if (variant == 10) { project.objects[0].type = QStringLiteral("ellipse"); } //20261113-13 change: Rectangles now have their own independently proven static slice.
+    if (variant == 10) { project.objects[0].type = QStringLiteral("sector"); } //20261114-2 change: Ellipses now have their own source-verified slice; keep this unknown-type rejection meaningful.
     if (variant == 11) { project.objects[0].geometry = QRect(650,100,150,100); }
     QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticPolylineCount,77);
     QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
@@ -370,6 +394,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     HmiObject line; //20261113-14 add: A fourth background family must leave the existing dynamic record count unchanged.
     HmiObject polygon; //20261114-1 add: A seventh background family must preserve dynamic records.
+    HmiObject ellipse; //20261114-2 add: The eighth background family contributes no dynamic record.
     HmiObject roundrect; //20261113-16 add: A sixth static family must preserve all five dynamic records.
     HmiObject freeline; //20261113-15 add: The fifth background family contributes no dynamic records.
     QSet<QString> found;
@@ -395,7 +420,8 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     freeline = freelineProject().objects.first(); freeline.geometry = QRect(600,350,100,60); project.objects.append(freeline); //20261113-15 add
     roundrect = rectangleProject().objects.first(); roundrect.type = QStringLiteral("roundrect"); roundrect.id = QStringLiteral("stage5-roundrect"); roundrect.geometry.moveTopLeft(QPoint(350,80)); project.objects.append(roundrect); //20261113-16 add
     polygon=polygonProject().objects.first();polygon.geometry=QRect(590,80,100,100);project.objects.append(polygon); //20261114-1 add
-    QCOMPARE(project.objects.size(),12);
+    ellipse=ellipseProject().objects.first();ellipse.geometry=QRect(260,190,100,100);project.objects.append(ellipse); //20261114-2 add
+    QCOMPARE(project.objects.size(),13);
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -1482,6 +1508,184 @@ void Stage5CompilerTests::polygonSourceAndPackageGates() //20261114-1 add
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseCanonicalFrames_data
+ * Description     : Require every native default or reopened fixture, including both formerly failing families.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseCanonicalFrames_data() //20261114-2 add
+{
+    QString root=QFINDTESTDATA("../docs/stage5-evidence/native/ellipse");
+    QJsonObject corpus=QJsonDocument::fromJson(testFileBytes(QDir(root).filePath(QStringLiteral("B-S-M-ellipse-cell-area-r2.json")))).object();
+    QJsonArray cases=corpus.value(QStringLiteral("cases")).toArray();
+    QJsonValue value;
+    QString run;
+    int count=0;
+
+    QVERIFY(corpus.value(QStringLiteral("allRasterComparisonsEqual")).toBool());QCOMPARE(cases.size(),27);
+    QTest::addColumn<QJsonObject>("sample");
+    Q_FOREACH (value,cases)
+    {
+        run=value.toObject().value(QStringLiteral("run")).toString();
+        if (run.contains(QStringLiteral("reopen")) || run.contains(QStringLiteral("default-repeat")))
+        { QTest::newRow(qPrintable(run))<<value.toObject();++count; }
+    }
+    QCOMPARE(count,15);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseCanonicalFrames
+ * Description     : Compile fresh typed geometry and compare the complete native RGB565 background and source identity.
+ * Input Parameters: Qt sample column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseCanonicalFrames() //20261114-2 add
+{
+    QFETCH(QJsonObject,sample);
+    HmiProject project=ellipseProject();
+    HmiObject object=project.objects.first();
+    DeviceCompilePlan plan;
+    QJsonValue value;
+    QJsonArray rect;
+    QString root=QFINDTESTDATA("..");
+    QString folder=QDir(root).filePath(sample.value(QStringLiteral("folder")).toString());
+    QByteArray source=testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
+    QByteArray native=testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
+    QVector<QByteArray> payloads;
+    QString error;
+
+    object.graphic.lineStyle=sample.value(QStringLiteral("lineStyle")).toInt();object.graphic.fillStyle=sample.value(QStringLiteral("fillStyle")).toInt();project.objects.clear();
+    Q_FOREACH (value,sample.value(QStringLiteral("rects")).toArray())
+    {
+        rect=value.toArray();QCOMPARE(rect.size(),4);object.geometry=QRect(rect[0].toInt(),rect[1].toInt(),rect[2].toInt(),rect[3].toInt());
+        object.id=QStringLiteral("ellipse-%1").arg(project.objects.size());project.objects.append(object);
+    }
+    QVERIFY(!source.isEmpty());QCOMPARE(QString::fromLatin1(QCryptographicHash::hash(source,QCryptographicHash::Sha256).toHex()),sample.value(QStringLiteral("sourceSha256")).toString());
+    QCOMPARE(decodeTestFrame(native).size(),768000);
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error));QCOMPARE(plan.staticEllipseCount,project.objects.size());
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));QCOMPARE(payloads.size(),10);QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native));
+    QCOMPARE(payloads[5].size(),2400);QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0);QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate geometry, appearance, dormant drafts and composition guard boundaries.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseUnprovedFieldsPreserveOutput_data() //20261114-2 add
+{
+    int variant;
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<27;++variant) { QTest::newRow(qPrintable(QString::number(variant)))<<variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseUnprovedFieldsPreserveOutput
+ * Description     : Preserve caller plans and payloads for each unsupported ellipse configuration.
+ * Input Parameters: Qt variant column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseUnprovedFieldsPreserveOutput() //20261114-2 add
+{
+    QFETCH(int,variant);
+    HmiProject project=ellipseProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QString error;
+
+    plan.staticEllipseCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.fillStyle=2; }
+    if (variant==5) { project.objects[0].graphic.background=Qt::black; }
+    if (variant==6) { project.objects[0].graphic.foreground=Qt::white; }
+    if (variant==7) { project.objects[0].geometry.setWidth(99); }
+    if (variant==8) { project.objects[0].geometry.setHeight(99); }
+    if (variant==9) { project.objects[0].geometry.moveLeft(1); }
+    if (variant==10) { project.objects[0].geometry.moveTop(1); }
+    if (variant==11) { project.objects[0].geometry.moveLeft(499); }
+    if (variant==12) { project.objects[0].geometry.moveTop(279); }
+    if (variant==13) { project.objects[0].graphic.endArrow=1; }
+    if (variant==14) { project.objects[0].graphic.endCap=1; }
+    if (variant==15) { peer=project.objects[0];peer.id=QStringLiteral("overlap");project.objects.append(peer); }
+    if (variant==16) { peer=project.objects[0];peer.id=QStringLiteral("touching");peer.geometry.moveLeft(300);project.objects.append(peer); }
+    if (variant==17) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.background=Qt::red; }
+    if (variant==18) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==19) { project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.foreground=Qt::white; }
+    if (variant==20) { project.objects[0].geometry.moveLeft(700); }
+    if (variant==21) { project.objects[0].geometry.moveTop(400); }
+    if (variant==22) { project.targetModel=QStringLiteral("unknown"); }
+    if (variant==23) { project.pageWidth=801; }
+    if (variant==24) { peer=project.objects[0];peer.type=QStringLiteral("rect");peer.id=QStringLiteral("rectangle-peer");project.objects.append(peer); }
+    if (variant==25) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.lineWidth=2; }
+    if (variant==26) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.alpha=0; }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue));QCOMPARE(plan.staticEllipseCount,77);QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseSourceAndPackageGates
+ * Description     : Keep complete native source and the legacy compiler separate from verified device publication.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseSourceAndPackageGates() //20261114-2 add
+{
+    HmiProject project=ellipseProject();
+    QTemporaryDir temporary;
+    QString target=temporary.filePath(QStringLiteral("ellipse"));
+    QByteArray source=QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QString error;
+
+    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::ellipseSharedPrecisionGuards
+ * Description     : Preserve fractional lattice semantics and refuse malformed shared coverage inputs without output replacement.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::ellipseSharedPrecisionGuards() //20261114-2 add
+{
+    QPainterPath path;
+    QPainterPath invalid;
+    QPainterPath curve;
+    QByteArray exact;
+    QByteArray legacy;
+    QByteArray preserved=QByteArrayLiteral("keep");
+    QString error;
+
+    path.moveTo(100+1.0/256,100);path.lineTo(101+1.0/256,100);path.lineTo(101+1.0/256,101);path.lineTo(100+1.0/256,101);path.closeSubpath();
+    QVERIFY2(deviceStraightPathCoverage(path,DeviceStraightCoveragePrecision::Exact8Bit,&exact,&error),qPrintable(error));
+    QVERIFY2(deviceStraightPathCoverage(path,DeviceStraightCoveragePrecision::Quantized26_6,&legacy,&error),qPrintable(error));
+    QCOMPARE(exact.size(),800*480);QCOMPARE(legacy.size(),800*480);QVERIFY(exact!=legacy);
+    invalid.moveTo(100+1.0/512,100);invalid.lineTo(101,101);invalid.lineTo(100,101);invalid.closeSubpath();
+    QVERIFY(!deviceStraightPathCoverage(invalid,DeviceStraightCoveragePrecision::Exact8Bit,&preserved,&error));QCOMPARE(preserved,QByteArrayLiteral("keep"));
+    curve.moveTo(100,100);curve.cubicTo(120,100,150,150,200,200);
+    QVERIFY(!deviceStraightPathCoverage(curve,DeviceStraightCoveragePrecision::Exact8Bit,&preserved,&error));QCOMPARE(preserved,QByteArrayLiteral("keep"));
+    QVERIFY(!deviceStraightPathCoverage(path,static_cast<DeviceStraightCoveragePrecision>(9),&preserved,&error));QCOMPARE(preserved,QByteArrayLiteral("keep"));
+    QVERIFY(!deviceStraightPathCoverage(path,DeviceStraightCoveragePrecision::Exact8Bit,nullptr,&error));
 }
 
 QTEST_MAIN(Stage5CompilerTests)

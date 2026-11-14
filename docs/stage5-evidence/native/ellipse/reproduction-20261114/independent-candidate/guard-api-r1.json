@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "null-output",
+      "inputElements": 13,
+      "reason": "Null output, empty path or input element budget exceeded (512)."
+    },
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "empty-input",
+      "inputElements": 0,
+      "reason": "Null output, empty path or input element budget exceeded (512)."
+    },
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "negative-control-point",
+      "inputElements": 2,
+      "reason": "Control point is nonfinite or outside the nonnegative 800x480 guard."
+    },
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "outside-control-point",
+      "inputElements": 2,
+      "reason": "Control point is nonfinite or outside the nonnegative 800x480 guard."
+    },
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "input-element-budget",
+      "inputElements": 513,
+      "reason": "Null output, empty path or input element budget exceeded (512)."
+    },
+    {
+      "accepted": false,
+      "callerOutputAndStatsPreserved": true,
+      "case": "generated-element-budget",
+      "inputElements": 511,
+      "reason": "Whole cubic would exceed the generated element budget."
+    }
+  ],
+  "failed": 0
+}

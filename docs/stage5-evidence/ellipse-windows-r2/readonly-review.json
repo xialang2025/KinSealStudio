@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-14T00:39:33.541481+00:00",
+  "mode": "read_only_review_then_reported_fixes_and_final_regression",
+  "reviewed": [
+    "all control points bounded before26.6 quantization",
+    "depth0..8,input512,generated4096 with complete cubic prebudget",
+    "historical b.x+c.y cross-term retained",
+    "Exact8Bit preserves flattened1/256 grid; polygon keeps26.6",
+    "separate source/destination D(v)=(v+(v>>8)+128)>>8",
+    "all fill/stroke masks complete before patch creation or painting",
+    "plan and direct renderer match sampled bounds and endpoint policy",
+    "peer patch contact exclusion and payload transaction",
+    "13 objects preserve5 dynamic records and scan/raw offset closure"
+  ],
+  "findings": [
+    {
+      "priority": "P2",
+      "problem": "Old unknown-type test still used newly supported ellipse.",
+      "resolution": "Use unimplemented sector to retain the original rejection purpose."
+    },
+    {
+      "priority": "P3",
+      "problem": "Direct raster guard was wider than compile plan.",
+      "resolution": "Align geometry and endpoint guard with supported slice."
+    },
+    {
+      "priority": "P3",
+      "problem": "Shared precision branch needed a durable product regression.",
+      "resolution": "Add Exact8Bit vs26.6 distinction and refusal/output preservation tests."
+    }
+  ],
+  "blockingFindingsRemaining": [],
+  "finalRegression": {
+    "core": "ellipse-windows-r2/run.json",
+    "editor": "ellipse-editor-windows-r2/run.json",
+    "passed": 574,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sourceFiles": {
+    "src/device_ellipse_raster.cpp": "1f0ad36219f4510d1e93dffdaa4c25b24689ce2f2cce0d389e8d566fe68c20e0",
+    "src/device_ellipse_raster.h": "1747d8a54f903e42f2cf44efc90f03d3969c4e7f16ff90ad56114b03a746b942",
+    "src/device_polygon_raster.cpp": "1169480010406b0c4b5b98665d93cd9b0d767e3764221e17244e89cd48fa73ae",
+    "src/device_polygon_raster.h": "791aa260e605353433e2f28c16becb083c1cb894013748e993bb2827816b6131",
+    "src/device_compile_plan.cpp": "f09b78323fa1a46a1884c440083182315bd922944f3f9265bb8dadbb1aaab67b",
+    "src/device_compile_plan.h": "840af592d680cb212c46fb8a1ea7ab56c892855b7007d210a353c55c32174e1d",
+    "src/independent_downloader.cpp": "f0e12312b3d5955458d690fe1d8021fcd2f3c67107d24ab8596cc935a4e76544",
+    "tests/stage5_compiler_tests.cpp": "488c7d4a51baec0eb436bfa749f90d915f6a570719a64e5e884ee55defc069f9",
+    "CMakeLists.txt": "202f18324f258161937f54c03655ad72ba45fcef553b93b28bf4df07f327a927"
+  },
+  "remaining": [
+    "full native source body",
+    "other colors/transparency/line widths/small or touching geometry",
+    "sector and real curves require separate native variation evidence",
+    "26 dynamic families,multipage,active configuration",
+    "new product T/E stages6/10"
+  ],
+  "usbAccessed": false
+}
