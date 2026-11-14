@@ -344,3 +344,9 @@ polygon的模型结构体保留endArrow/endCap为0，但严格JSON只序列化�
 本批[原厂定向清理](stage5-evidence/native/ellipse/cleanup-ellipse-20261114.json)873文件/628781756逻辑字节（含硬链接不等于物理释放），30raw为28成功含隔离准备+2失败完整压缩回解、180空目录、跳过0；100份独立路径详情两批回解后各清86406B，候选模块另清6918432B/6144000B，范围分别登记。r1失败、12项诊断、源码/段/许可证、build/cache及用户build保留，C删除0。Z盘前后时点5797638144B→5867380736B，C结束11020840960B，时点差不冒作独占释放量。
 
 本批编码、回归、只读复核与证据清理已收尾；版本提交/主目录同步/推送及第八批便携包按后续独立步骤记录实际交付。新产物`deviceAcknowledged=false`、无USB，阶段4原厂实屏确认不转作本轮T/E。每次阶段性收尾同步本节、专项报告、协议/台账及版本清理结果。
+
+## 16. 第八批椭圆便携规则（2026-11-14）
+
+第八批便携包`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage5-compile-slice8-r1`已通过117项实际检查，源提交`304151a2e59859f46e29e5345099fcfab8b21b14`。新增圆/椭圆默认、圆形、宽椭圆和无描边白填充回归样例，以及十三对象混合。10/12/14段均实际编译并复读；Qt DLL全部来自包内，十三对象截图已实际查看。源/legacy/Alpha等负向正确拒绝且无输出残留，没有USB通信，deviceAcknowledged=false。
+
+ellipse JSON使用闭合图形线型/宽度/线色、三色/填充/Alpha字段，不增加line专用endArrow/endCap或polygon的points。几何由整数x/y/width/height生成路径；白填充与黑边独立D舍入后合成，不把raw565背景展开再混色。宽300×150和无线白填样例必须与默认一起回归，防止只默认相等漏掉加128顺序。模型/源/设备能力分别报告，完整SM仍拒绝。[证据](stage5-evidence/delivery-slice8-r1/run.json)。
