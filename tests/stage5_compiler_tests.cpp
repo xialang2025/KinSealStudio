@@ -65,6 +65,12 @@ private slots:
     void ellipseUnprovedFieldsPreserveOutput();
     void ellipseSourceAndPackageGates();
     void ellipseSharedPrecisionGuards();
+    void sectorCanonicalFrames_data(); //20261114-3 add
+    void sectorCanonicalFrames();
+    void sectorUnprovedFieldsPreserveOutput_data();
+    void sectorUnprovedFieldsPreserveOutput();
+    void sectorSourceAndPackageGates();
+
     void roundrectCanonicalFrames_data(); //20261113-16 add
     void roundrectCanonicalFrames();
     void roundrectUnprovedFieldsPreserveOutput_data();
@@ -110,6 +116,23 @@ static HmiProject ellipseProject() //20261114-2 add
     object.type=QStringLiteral("ellipse");object.id=QStringLiteral("stage5-ellipse");object.name=QStringLiteral("圆/椭圆");
     object.text.clear();object.address.clear();object.geometry=QRect(100,100,200,100);
     object.graphic.foreground=Qt::black;object.graphic.background=Qt::white;project.objects={object};return project;
+}
+
+/******************************************************************************
+ * Function Name   : sectorProject
+ * Description     : Build typed sector defaults without retaining a native source or original pixels.
+ * Input Parameters: None
+ * Return Value    : One independently defined open default-angle, white-fill sector.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static HmiProject sectorProject() //20261114-3 add
+{
+    HmiProject project;
+    HmiObject object;
+
+    object.type=QStringLiteral("sector");object.id=QStringLiteral("stage5-sector");object.name=QStringLiteral("扇形");
+    object.text.clear();object.address.clear();object.geometry=QRect(100,100,200,200);
+    object.graphic.lineStyle=0;object.graphic.foreground=Qt::black;object.graphic.background=Qt::white;project.objects={object};return project;
 }
 
 /******************************************************************************
@@ -328,7 +351,7 @@ void Stage5CompilerTests::unprovedFieldsPreservePlanAndPayload() //20261113-11 a
     if (variant == 7) { project.objects[0].graphic.points = {QPointF(0,0),QPointF(0.333,0),QPointF(0.333,1)}; }
     if (variant == 8) { project.objects[0].geometry.moveLeft(750); }
     if (variant == 9) { peer = project.objects[0]; peer.id = QStringLiteral("overlap"); project.objects.append(peer); }
-    if (variant == 10) { project.objects[0].type = QStringLiteral("sector"); } //20261114-2 change: Ellipses now have their own source-verified slice; keep this unknown-type rejection meaningful.
+    if (variant == 10) { project.objects[0].type = QStringLiteral("unrecovered-control"); } //20261114-3 change: Keep the unknown-type case independent of newly admitted graphical families.
     if (variant == 11) { project.objects[0].geometry = QRect(650,100,150,100); }
     QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue)); QCOMPARE(plan.staticPolylineCount,77);
     QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty()); QVERIFY(!error.isEmpty());
@@ -394,6 +417,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     HmiObject line; //20261113-14 add: A fourth background family must leave the existing dynamic record count unchanged.
     HmiObject polygon; //20261114-1 add: A seventh background family must preserve dynamic records.
+    HmiObject sector; //20261114-3 add: A ninth static family must preserve all existing control records.
     HmiObject ellipse; //20261114-2 add: The eighth background family contributes no dynamic record.
     HmiObject roundrect; //20261113-16 add: A sixth static family must preserve all five dynamic records.
     HmiObject freeline; //20261113-15 add: The fifth background family contributes no dynamic records.
@@ -415,13 +439,14 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
         }
     }
     table = tableProject().objects.first(); table.geometry.moveTopLeft(QPoint(400,200)); project.objects.append(table); //20261113-12 add
-    rectangle = rectangleProject().objects.first(); rectangle.geometry.moveTopLeft(QPoint(100,300)); project.objects.append(rectangle); //20261113-13 add
+    rectangle = rectangleProject().objects.first(); rectangle.geometry.moveTopLeft(QPoint(130,300)); project.objects.append(rectangle); //20261113-13 add
     line = lineProject().objects.first(); line.geometry = QRect(400,350,100,60); project.objects.append(line); //20261113-14 add
     freeline = freelineProject().objects.first(); freeline.geometry = QRect(600,350,100,60); project.objects.append(freeline); //20261113-15 add
     roundrect = rectangleProject().objects.first(); roundrect.type = QStringLiteral("roundrect"); roundrect.id = QStringLiteral("stage5-roundrect"); roundrect.geometry.moveTopLeft(QPoint(350,80)); project.objects.append(roundrect); //20261113-16 add
     polygon=polygonProject().objects.first();polygon.geometry=QRect(590,80,100,100);project.objects.append(polygon); //20261114-1 add
     ellipse=ellipseProject().objects.first();ellipse.geometry=QRect(260,190,100,100);project.objects.append(ellipse); //20261114-2 add
-    QCOMPARE(project.objects.size(),13);
+    sector=sectorProject().objects.first();sector.geometry=QRect(10,205,100,100);project.objects.append(sector); //20261114-3 add
+    QCOMPARE(project.objects.size(),14);
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -1686,6 +1711,157 @@ void Stage5CompilerTests::ellipseSharedPrecisionGuards() //20261114-2 add
     QVERIFY(!deviceStraightPathCoverage(curve,DeviceStraightCoveragePrecision::Exact8Bit,&preserved,&error));QCOMPARE(preserved,QByteArrayLiteral("keep"));
     QVERIFY(!deviceStraightPathCoverage(path,static_cast<DeviceStraightCoveragePrecision>(9),&preserved,&error));QCOMPARE(preserved,QByteArrayLiteral("keep"));
     QVERIFY(!deviceStraightPathCoverage(path,DeviceStraightCoveragePrecision::Exact8Bit,nullptr,&error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::sectorCanonicalFrames_data
+ * Description     : Require every native default or reopened fixture, including local paths mapped by their verified integer translations.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::sectorCanonicalFrames_data() //20261114-3 add
+{
+    QString root=QFINDTESTDATA("../docs/stage5-evidence/native/sector");
+    QJsonObject corpus=QJsonDocument::fromJson(testFileBytes(QDir(root).filePath(QStringLiteral("B-S-M-sector-cell-area-r1.json")))).object();
+    QJsonArray cases=corpus.value(QStringLiteral("cases")).toArray();
+    QJsonValue value;
+    QString run;
+    int count=0;
+
+    QVERIFY(corpus.value(QStringLiteral("allRasterComparisonsEqual")).toBool());QCOMPARE(cases.size(),27);
+    QTest::addColumn<QJsonObject>("sample");
+    Q_FOREACH (value,cases)
+    {
+        run=value.toObject().value(QStringLiteral("run")).toString();
+        if (run.contains(QStringLiteral("reopen")) || run.contains(QStringLiteral("default-repeat")))
+        { QTest::newRow(qPrintable(run))<<value.toObject();++count; }
+    }
+    QCOMPARE(count,15);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::sectorCanonicalFrames
+ * Description     : Compile fresh typed geometry and compare the complete native RGB565 background and source identity.
+ * Input Parameters: Qt sample column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::sectorCanonicalFrames() //20261114-3 add
+{
+    QFETCH(QJsonObject,sample);
+    HmiProject project=sectorProject();
+    HmiObject object=project.objects.first();
+    DeviceCompilePlan plan;
+    QJsonValue value;
+    QJsonArray rect;
+    QString root=QFINDTESTDATA("..");
+    QString folder=QDir(root).filePath(sample.value(QStringLiteral("folder")).toString());
+    QByteArray source=testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
+    QByteArray native=testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
+    QVector<QByteArray> payloads;
+    QString error;
+
+    object.graphic.lineStyle=sample.value(QStringLiteral("lineStyle")).toInt();object.graphic.fillStyle=sample.value(QStringLiteral("fillStyle")).toInt();project.objects.clear();
+    Q_FOREACH (value,sample.value(QStringLiteral("rects")).toArray())
+    {
+        rect=value.toArray();QCOMPARE(rect.size(),4);object.geometry=QRect(rect[0].toInt(),rect[1].toInt(),rect[2].toInt(),rect[3].toInt());
+        object.id=QStringLiteral("sector-%1").arg(project.objects.size());project.objects.append(object);
+    }
+    QVERIFY(!source.isEmpty());QCOMPARE(QString::fromLatin1(QCryptographicHash::hash(source,QCryptographicHash::Sha256).toHex()),sample.value(QStringLiteral("sourceSha256")).toString());
+    QCOMPARE(decodeTestFrame(native).size(),768000);
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error));QCOMPARE(plan.staticSectorCount,project.objects.size());
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));QCOMPARE(payloads.size(),10);QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native));
+    QCOMPARE(payloads[5].size(),2400);QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0);QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::sectorUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate geometry, appearance, dormant drafts and composition guard boundaries.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::sectorUnprovedFieldsPreserveOutput_data() //20261114-3 add
+{
+    int variant;
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<30;++variant) { QTest::newRow(qPrintable(QString::number(variant)))<<variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::sectorUnprovedFieldsPreserveOutput
+ * Description     : Preserve caller plans and payloads for each unsupported sector configuration.
+ * Input Parameters: Qt variant column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::sectorUnprovedFieldsPreserveOutput() //20261114-3 add
+{
+    QFETCH(int,variant);
+    HmiProject project=sectorProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QString error;
+
+    plan.staticSectorCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.fillStyle=2; }
+    if (variant==5) { project.objects[0].graphic.background=Qt::black; }
+    if (variant==6) { project.objects[0].graphic.foreground=Qt::white; }
+    if (variant==7) { project.objects[0].geometry.setSize(QSize(99,99)); }
+    if (variant==8) { project.objects[0].geometry.setHeight(99); }
+    if (variant==9) { project.objects[0].geometry.moveLeft(1); }
+    if (variant==10) { project.objects[0].geometry.moveTop(1); }
+    if (variant==11) { project.objects[0].geometry.moveLeft(499); }
+    if (variant==12) { project.objects[0].geometry.moveTop(179); }
+    if (variant==13) { project.objects[0].graphic.endArrow=1; }
+    if (variant==14) { project.objects[0].graphic.endCap=1; }
+    if (variant==15) { peer=project.objects[0];peer.id=QStringLiteral("overlap");project.objects.append(peer); }
+    if (variant==16) { peer=project.objects[0];peer.id=QStringLiteral("touching");peer.geometry.moveLeft(300);project.objects.append(peer); }
+    if (variant==17) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.background=Qt::red; }
+    if (variant==18) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==19) { project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.foreground=Qt::white; }
+    if (variant==20) { project.objects[0].geometry.moveLeft(700); }
+    if (variant==21) { project.objects[0].geometry.moveTop(400); }
+    if (variant==22) { project.targetModel=QStringLiteral("unknown"); }
+    if (variant==23) { project.pageWidth=801; }
+    if (variant==24) { peer=project.objects[0];peer.type=QStringLiteral("rect");peer.id=QStringLiteral("rectangle-peer");project.objects.append(peer); }
+    if (variant==25) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.lineWidth=2; }
+    if (variant==26) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.alpha=0; }
+    if (variant==27) { project.objects[0].geometry.setSize(QSize(241,241)); }
+    if (variant==28) { project.objects[0].geometry.setHeight(199); }
+    if (variant==29) { peer=project.objects[0];peer.id=QStringLiteral("patch-edge-contact");peer.geometry.moveLeft(303);project.objects.append(peer); }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue));QCOMPARE(plan.staticSectorCount,77);QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::sectorSourceAndPackageGates
+ * Description     : Keep complete native source and the legacy compiler separate from verified device publication.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::sectorSourceAndPackageGates() //20261114-3 add
+{
+    HmiProject project=sectorProject();
+    QTemporaryDir temporary;
+    QString target=temporary.filePath(QStringLiteral("sector"));
+    QByteArray source=QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QString error;
+
+    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
 }
 
 QTEST_MAIN(Stage5CompilerTests)

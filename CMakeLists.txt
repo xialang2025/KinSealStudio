@@ -57,6 +57,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/device_polygon_raster.h
     src/device_ellipse_raster.cpp #20261114-2 add: Independent fixed-point ellipse geometry.
     src/device_ellipse_raster.h
+    src/device_sector_raster.cpp #20261114-3 add: Default-angle local paths use independent fixed coverage.
+    src/device_sector_raster.h
     src/device_package.cpp
     src/device_package.h
     src/independent_downloader.cpp #20261108-10 add

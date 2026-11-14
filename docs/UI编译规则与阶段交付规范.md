@@ -350,3 +350,39 @@ polygon的模型结构体保留endArrow/endCap为0，但严格JSON只序列化�
 第八批便携包`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage5-compile-slice8-r1`已通过117项实际检查，源提交`304151a2e59859f46e29e5345099fcfab8b21b14`。新增圆/椭圆默认、圆形、宽椭圆和无描边白填充回归样例，以及十三对象混合。10/12/14段均实际编译并复读；Qt DLL全部来自包内，十三对象截图已实际查看。源/legacy/Alpha等负向正确拒绝且无输出残留，没有USB通信，deviceAcknowledged=false。
 
 ellipse JSON使用闭合图形线型/宽度/线色、三色/填充/Alpha字段，不增加line专用endArrow/endCap或polygon的points。几何由整数x/y/width/height生成路径；白填充与黑边独立D舍入后合成，不把raw565背景展开再混色。宽300×150和无线白填样例必须与默认一起回归，防止只默认相等漏掉加128顺序。模型/源/设备能力分别报告，完整SM仍拒绝。[证据](stage5-evidence/delivery-slice8-r1/run.json)。
+
+## 17. G07扇形：默认角度路径与背景编译规则
+
+2026-11-14新增。稳定身份`sector/action_ArcItem`；[专项报告](阶段5_扇形默认角度背景编译与差分验收.md)分开登记默认诊断、正式原厂及产品验证。本批固定45°起角/90°扫角的受限背景C已完成，27次原厂完整768000B相等、15canonical/13独立场景，产品620/0/0；其它角度/SM/T/E及阶段5整体仍未完成。
+
+### 17.1 属性、JSON与角度边界
+
+默认`lineStyle=0,lineWidth=1,lineColor=黑,foreground=黑,background=白,fillStyle=1,alpha=255`。严格graphic JSON仅`lineStyle,lineWidth,lineColor,alpha,fillStyle,foreground,background`七键，不增加points、angles/startAngle/spanAngle、半径或endArrow/endCap；结构体端点必须0。原厂ArcDlg无角度数值栏，两角柄虽见但实际改角语义未恢复，不虚构角度字段或控件。
+
+较长边正方形是已证创建规则；反向/页界及后续非方框缩放仍按阶段4所述本地约定。编辑层六线型、宽1..9、13填充、Alpha0..255与C精确范围独立；完整SM body及T/E另验。原厂基线下载不证明本轮独立输出或实屏通过。
+
+### 17.2 八元素路径及正确混色
+
+独立`moveTo(center);arcTo(rect,45,90)`生成8元素，默认圆心200,200、外接框100,100/200×200。填充隐式闭合；stroke必须保留原8元素，不closeSubpath补第九元素/末端径向边。原厂真实编译是局部8元素path加painter平移bbox.x/bbox.y，默认100,100，整个矩阵并非identity。准入只允许线性identity且平移等bbox，raw local/transform分别保留，另显式map scene path再核26.6元素，不重写原始观测；默认NoPen/hints3独立登记，不借用椭圆hints11。
+
+[默认舍入证据](stage5-evidence/native/sector-rounding-20261114/默认扇形舍入排查与候选规则.md)记录独立Qt6路径及保留原厂路径两路：覆盖对外部公开Qt4诊断均0差，旧混色各1像素，正确混色各0且完整帧SHA为`73653ee69d44d72a4ab9c6547c817423bdfae1e0c5da44b12da347caa5fe0251`。正确`D(v)=(v+(v>>8)+128)>>8`，源/目的分别D后相加；旧`(v+128+((v+128)>>8))>>8`保留为失败链。
+
+设备268,126处alpha11、背景红197产生目的分子48068，正确D188/旧189，白源项11后红199/200跨565阈值。RGB199223255及200223255是候选算值，不冒称直接读取原厂RGB32。只改同一覆盖图的D顺序即可消差，不硬编码像素、不忽略ROI；该结果仅支持默认NoPen白填。
+
+### 17.3 细分、补片与拟支持范围
+
+复用独立历史定点细分：26.6量化、控制点extent自适应阈值、XY交叉项/绝对位置深度、256格点整数de Casteljau及叶中点，输入512/输出4096/深度8。展开后直接Exact8Bit面积积分，不再截回26.6；填充与保留开放8元素语义的描边分别生成覆盖。公共Qt4只是外部诊断，生产不读取原厂pathstream/图帧或加载原厂绘图库。
+
+背景原始RGB197222255（上/左黑），RGB32中按正确D逐层混色后才转LE565。补片为geometry.adjusted(-1,-1,2,2)与页面交集，双方peer扩展补片物理边界相交/接触拒绝；全部准备后经活跃QPainter等尺寸绘制，不能直接改活跃主图存储。只烘SheetPixel，不新增ControlPara/ControlPixel、宏或扫描；失败保持旧计划/payload、源/legacy和事务包门禁独立。
+
+当前支持正方形边长100..240、X/Y≥2、右端≤698/下端≤378、线/填各0/1、宽1/Alpha255、黑边/黑前景/白背景（含休眠）、结构体端点0及补片隔离。非方框、其它角度/整圆/跨零、其它颜色/透明/粗线/裁剪与未知重叠拒绝。
+
+[正式B/S/M](stage5-evidence/native/sector/B-S-M-sector-cell-area-r1.json)实际27次（3默认+8几何创建重开+3样式组合创建重开+双对象创建重开），15canonical/13场景；S结构和独立Python/C++覆盖也全等。line1四份完整帧已证scene map后stroke；只共享有界曲线mask/补片主体，椭圆仍保持原绝对路径，不保留未用的strokeOutline扩展。29个原厂进程均结束，odd-r1为helper实际成功、目标浮点框绑定拒绝，odd-r2显式≤1e-8 bbox回算容差；raw保留，像素/26.6路径/源身份仍严格。三次同源的AlarmPara/SysPara及容器非确定字节仍未知，不加忽略掩码。
+
+red实际2/15/0；最终核心386与完整编辑器234共620/0/0。编辑器r1的233/1/0为旧测试把sector一律当未支持，先反馈后更新为默认C通过、非方框及SM拒绝，生产未改，r2完整234/0/0，失败日志保留。15源绑定canonical、30负向、静态10段包、SM/legacy门禁及十四对象混合（仍5×640B记录）实际通过；独立只读复核无剩余阻断。[最终回执](stage5-evidence/sector-windows-r1/run.json)。32椭圆+28扇形模块参考帧全等另计诊断，不并入原厂或产品数量。
+
+原厂定向清理856文件/607776931逻辑字节、174空目录，29raw回解及唯一源段/失败/许可证保留；采样owner另清202份mask/frame展开物，模块交叉核清理单独登记，不扫用户build/cache或无关C临时。新产物ACK=false，无USB，阶段5整体和扇形完整角度功能仍未完成。每批同步本规则、专项、协议、台账和版本/清理回执。
+
+### 17.4 共用诊断工具临时副本清理
+
+本任务共用TEMP还保留143份Frida17.6.2工具展开副本，本轮按固定taskRoot/temp/frida-32hex白名单另清1716文件/7865664664逻辑字节和572空目录，无跳过。每文件SHA与安装wheel RECORD/pyd身份核对后，保留9种唯一字节的确定性gzip共23159772B并全部回解校验，同时保留COPYING等元数据、原文件头及清理配方。仅用原生PowerShell LiteralPath按完整清单删除，不跨shell拼路径；所有目标/祖先拒绝reparse，执行前无自有原厂或temp内活跃程序。该清理独立于扇形856文件及候选mask统计，不冒作同一范围。Z空闲时点4090454016B→11958599680B，C结束11013099520B；时点差受其它活动影响，逻辑字节不等于独占物理释放量。C文件删除0，保留qgrayraster.o、用户工程、SDK/安装和增量build。 [实际回执](stage5-evidence/native/sector/reproduction-20261114/owned-frida-temp/cleanup-receipt.json)。

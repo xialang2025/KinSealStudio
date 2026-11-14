@@ -1,0 +1,110 @@
+[
+  {
+    "op": "owned-editor-size",
+    "width": 1800,
+    "height": 1100
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "source-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        200
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        200
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 0,
+    "label": "deleted-count"
+  },
+  {
+    "op": "action",
+    "name": "action_ArcItem"
+  },
+  {
+    "op": "scene-drag",
+    "from": [
+      498,
+      178
+    ],
+    "to": [
+      698,
+      378
+    ]
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "created-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        498,
+        178,
+        200,
+        200
+      ]
+    ]
+  },
+  {
+    "op": "scene-double",
+    "x": 618,
+    "y": 228
+  },
+  {
+    "op": "combo",
+    "name": "m_LineType",
+    "value": 0
+  },
+  {
+    "op": "combo",
+    "name": "m_Pattern",
+    "value": 1
+  },
+  {
+    "op": "dump",
+    "label": "sector-properties-0"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-read",
+    "label": "created-target"
+  },
+  {
+    "op": "save",
+    "output": "sector-far-edge.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

@@ -5641,16 +5641,17 @@ void Stage4ControlTests::sectorEightBoxHandlesResizeAndCancel() //20261113-7 add
 
 /******************************************************************************
  * Function Name   : Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal
- * Description     : Persist and copy thirteen mixed families while retaining native format refusal for the default-sector slice.
+ * Description     : Persist mixed families, admit the verified default background and retain complete source and unproved-shape refusal.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal() //20261113-7 add
+void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal() //20261114-3 change
 {
     HmiProject project;
     HmiProject loaded;
     HmiProject pasted;
+    HmiProject unsupported;
     HmiObject object;
     Stage3Clipboard clipboard;
     QString error;
@@ -5658,7 +5659,7 @@ void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal() //20261113
     QStringList types = {QStringLiteral("line"),QStringLiteral("rect"),QStringLiteral("ellipse"),QStringLiteral("roundrect"),QStringLiteral("polyline"),QStringLiteral("polygon"),QStringLiteral("freeline")};
     QByteArray native = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
-    object.type = QStringLiteral("sector"); object.id = QStringLiteral("sector-model"); object.name = QStringLiteral("扇形"); object.geometry = QRect(100,100,200,200); object.graphic.lineStyle = 0; project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("sector-only.ksp")),&error)); }
+    object.type = QStringLiteral("sector"); object.id = QStringLiteral("sector-model"); object.name = QStringLiteral("扇形"); object.geometry = QRect(100,100,200,200); object.graphic.lineStyle = 0; project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep")); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10); unsupported=project; unsupported.objects[0].geometry.setHeight(199); payloads={QByteArrayLiteral("keep")}; QVERIFY(!buildProjectPayload(unsupported,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("sector-only.ksp")),&error)); }
     Q_FOREACH (type,types) { object.type = type; object.id = QStringLiteral("mixed-")+type; object.graphic = GraphicProperties(); if (type==QStringLiteral("polygon")) { object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; } project.objects.append(object); } project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.size(),13); QCOMPARE(loaded.toJson(),project.toJson());
 }
 

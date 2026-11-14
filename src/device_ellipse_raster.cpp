@@ -347,17 +347,19 @@ static QRgb ellipseOpaqueCoverageOver(QRgb destination, int alpha, bool whiteSou
 }
 
 /******************************************************************************
- * Function Name   : paintDeviceEllipseGraphic
- * Description     : Prepare both guarded ellipse masks before painting a complete isolated RGB32 patch.
- * Input Parameters: painter, geometry, properties, error
+ * Function Name   : paintDeviceWhiteCurvePath
+ * Description     : Prepare both guarded curve masks before painting a complete isolated RGB32 patch.
+ * Input Parameters: painter, geometry, properties, path, error
  * Return Value    : True after painting; false before modifying the painter or its target.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
-                              const GraphicProperties &properties, QString *error) //20261114-2 add
+bool paintDeviceWhiteCurvePath(QPainter *painter, const QRect &geometry,
+                              const GraphicProperties &properties, const QPainterPath &path,
+                              QString *error) //20261114-3 change
 {
-    QPainterPath path;
     QPainterPath flattened;
+    QPainterPath strokePath;
+    QPainterPath::Element element;
     QPainterPathStroker stroker;
     QByteArray fill;
     QByteArray stroke;
@@ -370,6 +372,7 @@ bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
     int absoluteX;
     int absoluteY;
     int offset;
+    int index;
 
     // The compiler owns the sampled geometry and peer-separation policy; this guard also protects direct callers.
     if (painter==nullptr || !painter->isActive() || geometry.x()<2 || geometry.y()<2
@@ -379,13 +382,25 @@ bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
             || (properties.lineStyle!=0 && properties.lineStyle!=1)
             || properties.lineWidth!=1 || properties.alpha!=255
             || properties.lineColor!=QColor(Qt::black) || properties.foreground!=QColor(Qt::black)
-            || properties.background!=QColor(Qt::white) || properties.endArrow!=0 || properties.endCap!=0)
+            || properties.background!=QColor(Qt::white) || properties.endArrow!=0 || properties.endCap!=0
+            || path.elementCount()==0 || path.elementCount()>512)
     {
-        if (error!=nullptr) { *error=QStringLiteral("椭圆设备栅格参数超出已核范围，未绘制输出。"); }
+        if (error!=nullptr) { *error=QStringLiteral("曲线设备栅格参数超出已核范围，未绘制输出。"); }
         return false;
     }
+    // A caller may choose the audited curve shape, but cannot draw geometry outside its isolated patch.
+    for (index=0;index<path.elementCount();index++)
+    {
+        element=path.elementAt(index);
+        if (!std::isfinite(element.x) || !std::isfinite(element.y)
+                || element.x<geometry.x() || element.x>qreal(geometry.x())+geometry.width()
+                || element.y<geometry.y() || element.y>qreal(geometry.y())+geometry.height())
+        {
+            if (error!=nullptr) { *error=QStringLiteral("曲线设备栅格路径超出几何框，未绘制输出。"); }
+            return false;
+        }
+    }
     fill=QByteArray(800*480,0);stroke=QByteArray(800*480,0);
-    path.addEllipse(QRectF(geometry.x(),geometry.y(),geometry.width(),geometry.height()));
     if (properties.fillStyle==1)
     {
         if (!ellipseFlattenPath(path,&flattened,error,nullptr)
@@ -397,7 +412,19 @@ bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
     if (properties.lineStyle==1)
     {
         stroker.setWidth(1);stroker.setCapStyle(Qt::SquareCap);stroker.setJoinStyle(Qt::BevelJoin);
-        if (!ellipseFlattenPath(stroker.createStroke(path),&flattened,error,nullptr)
+        strokePath=stroker.createStroke(path);
+        for (index=0;index<strokePath.elementCount();index++)
+        {
+            element=strokePath.elementAt(index);
+            if (!std::isfinite(element.x) || !std::isfinite(element.y)
+                    || element.x<qreal(geometry.x())-1 || element.x>qreal(geometry.x())+geometry.width()+1
+                    || element.y<qreal(geometry.y())-1 || element.y>qreal(geometry.y())+geometry.height()+1)
+            {
+                if (error!=nullptr) { *error=QStringLiteral("曲线设备栅格描边超出独立缓冲范围，未绘制输出。"); }
+                return false;
+            }
+        }
+        if (!ellipseFlattenPath(strokePath,&flattened,error,nullptr)
                 || !deviceStraightPathCoverage(flattened,DeviceStraightCoveragePrecision::Exact8Bit,&stroke,error))
         {
             return false;
@@ -405,14 +432,14 @@ bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
     }
     if (fill.size()!=800*480 || stroke.size()!=800*480)
     {
-        if (error!=nullptr) { *error=QStringLiteral("椭圆设备栅格掩码不完整，未绘制输出。"); }
+        if (error!=nullptr) { *error=QStringLiteral("曲线设备栅格掩码不完整，未绘制输出。"); }
         return false;
     }
     patchRect=geometry.adjusted(-1,-1,2,2).intersected(QRect(0,0,800,480));
     patch=QImage(patchRect.size(),QImage::Format_RGB32);
     if (patch.isNull())
     {
-        if (error!=nullptr) { *error=QStringLiteral("椭圆设备栅格缓冲区无效，未绘制输出。"); }
+        if (error!=nullptr) { *error=QStringLiteral("曲线设备栅格缓冲区无效，未绘制输出。"); }
         return false;
     }
     for (y=0;y<patch.height();y++)
@@ -429,6 +456,33 @@ bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
     }
     painter->save();painter->setRenderHint(QPainter::SmoothPixmapTransform,false);
     painter->drawImage(patchRect.topLeft(),patch);painter->restore();
+    if (error!=nullptr) { error->clear(); }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : paintDeviceEllipseGraphic
+ * Description     : Preserve the verified absolute-coordinate ellipse path and delegate its unchanged stroke semantics.
+ * Input Parameters: painter, geometry, properties, error
+ * Return Value    : True after painting; false without changing the target.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool paintDeviceEllipseGraphic(QPainter *painter, const QRect &geometry,
+                              const GraphicProperties &properties, QString *error) //20261114-3 change
+{
+    QPainterPath path;
+    QString curveError;
+
+    path.addEllipse(QRectF(geometry.x(),geometry.y(),geometry.width(),geometry.height()));
+    if (!paintDeviceWhiteCurvePath(painter,geometry,properties,path,&curveError))
+    {
+        if (error!=nullptr)
+        {
+            curveError.replace(QStringLiteral("曲线设备栅格"),QStringLiteral("椭圆设备栅格"));
+            *error=curveError;
+        }
+        return false;
+    }
     if (error!=nullptr) { error->clear(); }
     return true;
 }

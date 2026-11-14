@@ -1,0 +1,63 @@
+[
+  {
+    "op": "scene-count-assert",
+    "count": 2,
+    "label": "reopened-count"
+  },
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        200
+      ],
+      [
+        400,
+        100,
+        200,
+        200
+      ]
+    ]
+  },
+  {
+    "op": "scene-double",
+    "x": 220,
+    "y": 150
+  },
+  {
+    "op": "dump",
+    "label": "sector-properties-0"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "scene-double",
+    "x": 520,
+    "y": 150
+  },
+  {
+    "op": "dump",
+    "label": "sector-properties-1"
+  },
+  {
+    "op": "invoke",
+    "text": "确定",
+    "kind": "QPushButton"
+  },
+  {
+    "op": "save-current"
+  },
+  {
+    "op": "scene-read",
+    "label": "reopened-target"
+  },
+  {
+    "op": "native-compile",
+    "label": "fresh-process-3"
+  }
+]

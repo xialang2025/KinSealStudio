@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "G06椭圆及第八批便携已交付；继续扇形等剩余编译任务",
-  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G05圆角矩形 + G09多边形 + G06圆/椭圆",
+  "active": "G07扇形默认角度受限C完成；准备第九批便携，继续其它未决",
+  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G05圆角矩形 + G09多边形 + G06圆/椭圆 + G07扇形默认角度",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -14,22 +14,22 @@
     {
       "id": "S05-02",
       "state": "passed_selected_corpus_with_open_nondeterminism",
-      "scope": "既有79场景加椭圆13独立场景；27次有效编译/15canonical；r1失败及r2修正完整保留。"
+      "scope": "既有92场景加扇形13独立场景；27次有效编译/15canonical；local路径/平移及失败链保留。"
     },
     {
       "id": "S05-03",
       "state": "passed_bounded_single_page_projection",
-      "scope": "共享不可变单页计划、八类受限背景守卫；完整多页IR未恢复。"
+      "scope": "不可变单页计划、九类受限背景守卫；完整多页IR未恢复。"
     },
     {
       "id": "S05-04",
       "state": "existing_five_revalidated_static_slice_has_no_new_record",
-      "scope": "五类控制记录与八类静态背景；26个新动态类型未恢复。"
+      "scope": "五类控制记录与九类受限静态背景；26新动态类型未恢复。"
     },
     {
       "id": "S05-05",
-      "state": "passed_eight_canonical_background_families",
-      "scope": "92个独立类型/场景；椭圆27次正式全帧相等，不推广其它曲线。"
+      "state": "passed_nine_canonical_background_families",
+      "scope": "105独立类型/场景；扇形27次正式全帧相等，不能推广可变角度或真实曲率。"
     },
     {
       "id": "S05-06",
@@ -49,16 +49,16 @@
     {
       "id": "S05-09",
       "state": "passed_selected_regression_and_review",
-      "scope": "最终574/0/0：核心340与完整编辑器234；先只读复核并反馈后修旧负例/入口边界并增精度测试。"
+      "scope": "最终620/0/0：核心386+完整编辑器234，含新增扇形完整帧、30负向、包门禁和十四对象混合；独立只读复核无剩余阻断。"
     },
     {
       "id": "S05-10",
       "state": "passed_owned_cleanup",
-      "scope": "椭圆873文件/628781756逻辑字节及180空目录定向清理；候选算法临时6918432B与生产mask6144000B分别归档清理，raw/失败帧/唯一源段保留。"
+      "scope": "扇形856文件/607776931逻辑字节定向清理，原始探针gzip回解及唯一源段/失败证据保留；build/cache保留。 另清共用Frida temp1716文件/7865664664逻辑B，9份去重gzip回解验证；与原厂范围分开统计，无跳过。"
     }
   ],
   "softwareTests": {
-    "passed": 574,
+    "passed": 620,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 92,
+  "nativeCanonicalPixelCases": 105,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -220,6 +220,32 @@
       "evidence": "docs/stage5-evidence/delivery-slice8-r1/package-manifest.json",
       "checksPassed": 117,
       "usbAccessed": false
+    }
+  },
+  "sectorSlice": {
+    "nativeCompilations": 27,
+    "canonicalFixtures": 15,
+    "independentCanonicalFrameCases": 13,
+    "negativeTests": 30,
+    "softwareTests": {
+      "passed": 620,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 856,
+    "cleanupLogicalBytes": 607776931,
+    "report": "docs/阶段5_扇形默认角度背景编译与差分验收.md",
+    "B_S_M": "docs/stage5-evidence/native/sector/B-S-M-sector-cell-area-r1.json",
+    "usbAccessed": false,
+    "E": false,
+    "sharedFridaTempCleanup": {
+      "deletedFiles": 1716,
+      "deletedLogicalBytes": 7865664664,
+      "retainedUniqueArchives": 9,
+      "retainedCompressedBytes": 23159772,
+      "receipt": "docs/stage5-evidence/native/sector/reproduction-20261114/owned-frida-temp/cleanup-receipt.json",
+      "cDriveFilesDeleted": 0,
+      "separateFromSectorRuntime": true
     }
   }
 }

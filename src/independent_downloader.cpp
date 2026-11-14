@@ -1,6 +1,7 @@
 #include "independent_downloader.h"
 #include "device_roundrect_raster.h" //20261113-16 add
 #include "device_polygon_raster.h" //20261114-1 add
+#include "device_sector_raster.h" //20261114-3 add
 #include "device_ellipse_raster.h" //20261114-2 add
 #include "device_compile_plan.h" //20261113-11 add
 #include "device_package.h"
@@ -1050,6 +1051,14 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         else if (object.type == QStringLiteral("table")) //20261113-12 add: A pure image table has no PLC state, control record or dynamic image index.
         {
             paintDeviceTableGraphic(&painter,QRectF(object.geometry),object.graphic);
+        }
+        else if (object.type==QStringLiteral("sector")) //20261114-3 add: Publish no caller payload until both open-path masks and the isolated patch succeed.
+        {
+            if (!paintDeviceSectorGraphic(&painter,object.geometry,object.graphic,error))
+            {
+                painter.end();
+                return false;
+            }
         }
         else if (object.type==QStringLiteral("ellipse")) //20261114-2 add: Refuse before publishing any caller-owned output if independent curve recovery fails.
         {
