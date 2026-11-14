@@ -1,0 +1,84 @@
+{
+  "format": "KinSealStage10-publication-runtime-followup-v1",
+  "reviewedAtUtc": "2026-11-14T14:23:41.424179+00:00",
+  "reviewer": "stage10_performance",
+  "mode": "只读核脚本与实际回执；只新增本文件，未执行merge/commit/push/回滚/删除",
+  "priorReviewPreserved": {
+    "path": "docs/stage10-evidence/performance-owned/publication-readonly-review.json",
+    "sha256": "9e18055b399f1fdb365d4c5d89d38babab23d7b96056110836723fb4456ee927"
+  },
+  "originalAttemptPreserved": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\native-publication-milestone-r1.json",
+    "sha256": "f9b30959318addb6d67d70ddbdcd304f9c2640bb044b2e1cb1e762437977e8e6",
+    "candidate": "a1571988b9ce41d158623a6738a723cf35afc670",
+    "nativeMergeExitCode": 0,
+    "publishedFlag": false,
+    "mergeStdoutFirstLines": [
+      "Updating daefcdb5..a1571988",
+      "Fast-forward",
+      " .gitattributes                                     |    10 +"
+    ],
+    "postcheckError": "FileNotFoundError(2, '文件名或扩展名太长。', None, 206, None)",
+    "actualMainHead": "a1571988b9ce41d158623a6738a723cf35afc670",
+    "actualMainBranch": "refs/heads/main",
+    "actualStagedPaths": [],
+    "postAuditUserFileCount": 1891,
+    "postAuditUserMismatches": [],
+    "postAuditComplete": true
+  },
+  "runtimeFinding": {
+    "id": "PUB-RUN-01",
+    "issue": "把508个路径拼入单条git diff argv触发Windows206；失败发生在原生FF merge已成功之后。",
+    "reviewGapAcknowledged": "先前静态复核未预见508路径合并后的Windows命令行长度限制；保留原错误，不覆盖为一次无错误发布。",
+    "resolution": "最后检查改为常量参数 git diff --name-only -z，再于Python做dirty.intersection(paths)，不传入508项argv。"
+  },
+  "confirmedReceipt": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\native-publication-milestone-r1-confirmed.json",
+    "sha256": "7ac8661a8b0cb484cdebaa847921a96d445de46656386dd34f87956c21726656",
+    "record": {
+      "publicationAttemptReceipt": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\native-publication-milestone-r1.json",
+      "initialPostcheckErrorRetained": "FileNotFoundError(2, '文件名或扩展名太长。', None, 206, None)",
+      "nativeMergeExitCode": 0,
+      "actualMainHead": "a1571988b9ce41d158623a6738a723cf35afc670",
+      "publishedAndIndependentlyVerified": true,
+      "taskPathCount": 508,
+      "changedTaskPaths": [],
+      "existingUserFilesProtected": 1891,
+      "exactStage10FilesVerified": 497,
+      "exactByteMismatches": [],
+      "correctiveCheck": "git diff --name-only without a 508-path command line, intersect paths in Python",
+      "productionCodeChanged": false
+    }
+  },
+  "peerCurrentReadOnlyVerification": {
+    "actualMainHead": "a1571988b9ce41d158623a6738a723cf35afc670",
+    "actualMainBranch": "refs/heads/main",
+    "taskPathCount": 508,
+    "changedTaskPaths": [],
+    "stagedPaths": [],
+    "userFileCount": 1891,
+    "userByteMismatches": [],
+    "exactStage10FileCount": 497,
+    "worktreeMainByteMismatches": [],
+    "allGitAndUserPreservationChecksPassed": true
+  },
+  "amendedScript": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\publish_native_stage10.py",
+    "sha256": "ab073c33d0ebed5a0eff6ad64ce6fe1c126b9492fa1e1da733db06faf6f0c780",
+    "syntaxParsed": true,
+    "longArgvRemoved": true,
+    "allPreviouslyReviewedPreconditionsPreserved": true,
+    "nativeMergeOnly": true,
+    "noCustomRollbackOrDeletion": true,
+    "blockingFindingsRemaining": [],
+    "allowedNextUse": "root后续元数据提交须重新通过全部base/candidate/1891/白名单前置检查，使用新的独占回执标签。"
+  },
+  "publicationPerformedByReviewer": false,
+  "priorReceiptModified": false,
+  "priorReviewModified": false,
+  "limits": [
+    "原回执published=false反映其最后后验命令失败；native merge exit0、actualMainHead及独立确认回执共同证明提交实际已快进。",
+    "不根据检查命令报错重复merge或自动回滚；实际HEAD/index/文件内容是恢复判断依据。",
+    "本补充没有证明push成功，也不替代下一元数据commit的独立发布回执。"
+  ]
+}

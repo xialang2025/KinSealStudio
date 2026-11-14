@@ -20,7 +20,14 @@
   "uniqueHardwareSerial": "unknown",
   "firmwareVersion": "unknown",
   "evidenceBytePolicy": "Stage10 evidence, fixtures, tools and test use -text",
-  "publication": "pending actual commit and native fast-forward",
-  "push": "pending actual network result",
-  "progress": "progress.json"
+  "publication": "native fast-forward succeeded; independent corrected post-check confirms 508 task paths clean, 497 exact Stage10 files and 1891 user files preserved",
+  "push": {
+    "sourceMilestonePushed": true,
+    "head": "a1571988b9ce41d158623a6738a723cf35afc670",
+    "receipt": "push-confirmed-r1.json",
+    "initialFailure": "push-failed-r1.json"
+  },
+  "progress": "progress.json",
+  "stage10EvidenceCommit": "a1571988b9ce41d158623a6738a723cf35afc670",
+  "postcheckNote": "Original Git merge succeeded; a 508-path postcheck command exceeded Windows argv length. Original failure receipt preserved; all-path diff plus Python intersection independently confirmed publication. No forced reset or user-file changes."
 }
