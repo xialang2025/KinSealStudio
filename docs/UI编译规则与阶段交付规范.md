@@ -292,3 +292,9 @@ r8最终汇集默认及已逐项断言有效的r4场景并补齐新变体，共3
 本切片的版本提交/主目录同步/远端推送与第七批便携包按独立交付步骤保留实际回执；它们不修改本节设备编码规则。新产物无USB确认，版本发布不代替T/E；后续每个阶段性任务继续同步精确规则、专项报告、协议与台账。
 
 本次纯离线，无USB；阶段4原厂实屏确认仍归属原始输入。本轮`deviceAcknowledged=false`，T/E按后续阶段另验。每次阶段性收尾同步本文、专项报告、协议和台账，并附定向清理、本地提交/主目录同步/远端推送结果。
+
+## 14. 第七批便携包与工程字段检查（2026-11-14）
+
+第七批便携包`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage5-compile-slice7-r2`已通过102项真实检查，源提交`4607ba7f76294475360aaaf43cf1b028005a9997`已推送GitHub。新增多边形默认/线框/凹五边形及十二对象混合；实际10/12/14段编译并复读，Qt DLL均来自包内，十二对象截图已实际查看。完整SM/旧单文本/自交等负向入口正确拒绝且无残留输出，没有USB通信。
+
+polygon的模型结构体保留endArrow/endCap为0，但严格JSON只序列化闭合家族定义的线/填充/颜色/Alpha/有序points；不能把线条专用休眠键写进polygon源文件。r1负例实际触发“图形字段缺失或未知”，r2修正样例键后全部102项通过，生产EXE保持同源SHA。复验先看project-capabilities，再compile-project与verify-compiled-package；旧目标拒绝覆盖，设备ACK始终false。[证据](stage5-evidence/delivery-slice7-r2/run.json)。
