@@ -386,3 +386,9 @@ red实际2/15/0；最终核心386与完整编辑器234共620/0/0。编辑器r1�
 ### 17.4 共用诊断工具临时副本清理
 
 本任务共用TEMP还保留143份Frida17.6.2工具展开副本，本轮按固定taskRoot/temp/frida-32hex白名单另清1716文件/7865664664逻辑字节和572空目录，无跳过。每文件SHA与安装wheel RECORD/pyd身份核对后，保留9种唯一字节的确定性gzip共23159772B并全部回解校验，同时保留COPYING等元数据、原文件头及清理配方。仅用原生PowerShell LiteralPath按完整清单删除，不跨shell拼路径；所有目标/祖先拒绝reparse，执行前无自有原厂或temp内活跃程序。该清理独立于扇形856文件及候选mask统计，不冒作同一范围。Z空闲时点4090454016B→11958599680B，C结束11013099520B；时点差受其它活动影响，逻辑字节不等于独占物理释放量。C文件删除0，保留qgrayraster.o、用户工程、SDK/安装和增量build。 [实际回执](stage5-evidence/native/sector/reproduction-20261114/owned-frida-temp/cleanup-receipt.json)。
+
+## 18. 第九批扇形便携规则（2026-11-14）
+
+第九批便携包`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage5-compile-slice9-r1`已通过136项实际检查，源提交`431658fea1cc5b73fdca699a93d68e020922e12d`。新增扇形默认、实线无填、奇数201及168/170阈值五样例和十四对象混合；10/12/14段均实际生成并复读，Qt DLL全部来自包内，混合页截图已实际查看。源/legacy/非正方形/Alpha门禁正确拒绝且无残留输出；没有USB通信，deviceAcknowledged=false。
+
+sector严格使用七键graphic；不写角度、半径、points或endArrow/endCap。固定45/90开放8元素先局部生成再整数平移，fill隐式闭合、stroke不补第九边；尺寸100..240正方形与X/Y≥2、右698/下378界限同生产。十四对象布局将矩形移到130,300，新增扇形10,205/100×100；91对扩展补片经计算全部不相交/接触，实际12段及五条640B控制记录复读通过。[回执](stage5-evidence/delivery-slice9-r1/run.json)。
