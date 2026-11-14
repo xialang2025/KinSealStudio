@@ -114,3 +114,6 @@ KinSealStudioLite.exe --download-project input.ksp
 [实现与验收](docs/阶段7离线模拟实现与验收.md) · [六项进度](docs/阶段7逐项进度.md) · [统一未完成台账](design_plan/未完成任务总台账.md)。零初值/低字优先/点动取消是Lite规则，原厂运行语义及真实在线PLC仍待完成。PC验证不能替代HMI实屏E。
 
 阶段8交付身份：程序提交`fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8`，EXE `da8fccee0e615270dfcdf638cd74133fc36a1181dec48da73f0d6a7d2c12ce91`；6331源码/资源输入身份与191包文件校验见[交付记录](docs/stage8-evidence/delivery-r1.json)。主目录1891份既存改动已保护，完整阶段8仍开放。
+
+
+阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送因GitHub:443网络不可达失败，保留本地提交并在最终元数据提交后再次尝试；不预报推送成功。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
