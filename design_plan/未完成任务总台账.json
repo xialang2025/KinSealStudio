@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-11-15 Asia/Shanghai",
-  "sourceCommit": "daefcdb5287f97ec3190263d991881f3de9e1933",
+  "sourceCommit": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
     "stageTasks": 90,
@@ -177049,7 +177049,7 @@
       "id": "DOC-CLEANUP-006",
       "title": "阶段11重复验证包和构建对象清理被拒",
       "status": "开放，自动审批拒绝后保留",
-      "completedScope": "本轮自有测试副本/夹具累计逻辑删除252103126B，最终便携TEMP0文件；失败/最终证据保留，全部新临时输出在Z。",
+      "completedScope": "本轮自有测试副本/夹具累计逻辑删除261844538B，最终便携TEMP0文件；失败/最终证据保留，全部新临时输出在Z。",
       "remaining": "duplicate117435743B及139构建对象16400746B被自动审批blocked by policy，0删除；旧r1候选包保留。",
       "blockers": [
         "自动审批拒绝 exact task-owned duplicate 和显式对象删除；无更细理由"
@@ -177764,7 +177764,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除252103126B，审批拒绝133836489B保留/该项释放0。",
+  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除261844538B，审批拒绝133836489B保留/该项释放0。 程序f05adf63已推送GitHub，6355源码/资源及最终包已绑定；1891用户差异保护通过。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178764,9 +178764,17 @@
       "portableSemanticChecks": 25,
       "portableObservedExitCount": 79,
       "portableGuardedTerminationCount": 1,
-      "logicalCleanupBytes": 252103126,
+      "logicalCleanupBytes": 261844538,
       "allSevenSecondSaveIdempotent": true,
-      "publicationTimeoutRollbackRetained": true
+      "publicationTimeoutRollbackRetained": true,
+      "codeCommit": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+      "sourceMilestonePushed": true,
+      "manifestSha256": "8221e4ac324ca27e072d71dc1f4f9ad6aa3821cf137b79525f9de182cfbdcb63",
+      "sourceFiles": 6355,
+      "protectedUserFiles": 1891,
+      "preservedOverlappingUserDeltas": 2
     }
-  ]
+  ],
+  "auditSourceCommitRetained": "daefcdb5287f97ec3190263d991881f3de9e1933",
+  "sourceCommitScope": "当前阶段11已发布程序源码；sourceAssessment/sourceManifest及审计归档保留历史身份"
 }

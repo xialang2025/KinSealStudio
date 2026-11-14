@@ -130,3 +130,6 @@ KinSealStudioLite.exe --download-project input.ksp
 
 
 阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送网络失败后已重试成功，GitHub main确认至79ccb915（含程序与验收元数据）；回执见docs/stage9-evidence/push-confirmed.json。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
+
+
+阶段11真实发布身份：程序提交 `f05adf63ef49bfdd0ffe42f735ade3158068c6ee` 已推送GitHub main，6355源码/资源逐项与Git校验，最终包manifest SHA256 `8221e4ac324ca27e072d71dc1f4f9ad6aa3821cf137b79525f9de182cfbdcb63`。提交绑定只更新manifest，原始manifest `1a726d8a…` 和运行/依赖证据继续保留，含EXE在内的108份内容文件未变，最终109文件复核通过。主目录1889非重叠用户文件逐字不变，2个重叠文件以三方合并和双反向证明保留用户delta，合计1891项仍未提交；正常Git缓存刷新前后HEAD/index tree/用户字节不变，status0.157秒。详见stage11-evidence交付/发布/包绑定回执。完整阶段11和现场欠项未因此关闭。
