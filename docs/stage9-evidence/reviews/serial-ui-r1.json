@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "review": "stage9-serial-ui-r1-independent-read-only",
+  "reviewedAt": "2026-11-14T18:54:01+08:00",
+  "reviewer": "/root/polygon_docs",
+  "changeMarker": "//20261114-8",
+  "sourceSnapshotPhase": "post-root-fix-candidate; original r1 observations preserved by quoted excerpt, original r1 file hashes were not frozen",
+  "scope": [
+    "src/plc_serial_session.h",
+    "src/plc_serial_session.cpp",
+    "src/plc_online_dialog.h",
+    "src/plc_online_dialog.cpp",
+    "src/plc_protocol_capabilities.h",
+    "src/plc_protocol_capabilities.cpp",
+    "src/simulation_modbus_transport.h",
+    "src/simulation_modbus_transport.cpp",
+    "src/main_window_simulation.cpp"
+  ],
+  "method": "只读源码、回调契约和Qt拥有关系复核；不修改生产/测试、不构建、不执行工厂或端点。",
+  "sourceSnapshots": [
+    {
+      "path": "src/plc_serial_session.h",
+      "bytes": 2156,
+      "sha256": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a"
+    },
+    {
+      "path": "src/plc_serial_session.cpp",
+      "bytes": 12069,
+      "sha256": "cf33c4198a8189107e18fe291ef8bec4136f4789553c2752e720b18dc81302d7"
+    },
+    {
+      "path": "src/plc_online_dialog.h",
+      "bytes": 1218,
+      "sha256": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2"
+    },
+    {
+      "path": "src/plc_online_dialog.cpp",
+      "bytes": 16305,
+      "sha256": "a522c3b185c5f00ad18f37f04e73f57ebcff33f1034fff7049924437d765bd60"
+    },
+    {
+      "path": "src/plc_protocol_capabilities.h",
+      "bytes": 717,
+      "sha256": "300c50eaeda1479b2be9fca861959349133b766f9b9f91df83baed48fe7a7d41"
+    },
+    {
+      "path": "src/plc_protocol_capabilities.cpp",
+      "bytes": 5962,
+      "sha256": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11"
+    },
+    {
+      "path": "src/simulation_modbus_transport.h",
+      "bytes": 9532,
+      "sha256": "8296c30efe01f7243d877baa4f817c62cade73da4f6708c8037a795678ba47df"
+    },
+    {
+      "path": "src/simulation_modbus_transport.cpp",
+      "bytes": 30147,
+      "sha256": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722"
+    },
+    {
+      "path": "src/main_window_simulation.cpp",
+      "bytes": 2312,
+      "sha256": "4c99249c8d66a0784ec96b9159275b0375f9e427e8b2799d5f33c141138b2eba"
+    }
+  ],
+  "initialFindings": [
+    {
+      "id": "SERUI-R1-01",
+      "priority": "P1",
+      "title": "close回调与core签名不匹配",
+      "initialObservation": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 89,
+        "text": "io.close = [state]() { state->port.close(); return !state->port.isOpen(); };",
+        "expected": "std::function<bool(QString *)>"
+      },
+      "impact": "r1无法编译连接到已更新的transport接口。",
+      "sourceFix": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 96,
+        "text": "io.close = [state](QString *) { state->port.close(); return !state->port.isOpen(); };"
+      },
+      "requiredTest": "完整编译serial/UI及其Qt测试目标。",
+      "status": "root-fixed-source-candidate-not-yet-runtime-tested-by-reviewer"
+    },
+    {
+      "id": "SERUI-R1-02",
+      "priority": "P1",
+      "title": "串口20ms轮询空结果被core当作无进度失败",
+      "initialObservation": {
+        "file": "src/plc_serial_session.cpp",
+        "range": "70..87",
+        "behavior": "无首字节20ms或未达gap时返回bytes空/endOfFrame=false/timedOut=false"
+      },
+      "impact": "正常慢响应或分段应答可能在总事务期限前被read_no_progress中止。",
+      "sourceFix": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 77,
+        "text": "while (true) //20261114-8 change: A polling slice is not a protocol timeout or an empty-progress chunk."
+      },
+      "requiredTest": "受控端点覆盖首字节晚于20ms、分段接收、silence边界、真实超时和取消；Qt原生适配器的实际调度留后续明确端点验证。",
+      "status": "root-fixed-source-candidate-not-yet-runtime-tested-by-reviewer"
+    },
+    {
+      "id": "SERUI-R1-03",
+      "priority": "P2",
+      "title": "会话inactive不能证明close成功释放",
+      "initialObservation": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 189,
+        "text": "closed = !transport.isConnected()"
+      },
+      "impact": "close回调失败时可能仍回报closed=true。该项root已知，复核一并核实。",
+      "sourceFix": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 207,
+        "text": "report.insert(QStringLiteral(\"closeAttempted\"), closeAttempted); report.insert(QStringLiteral(\"closeConfirmed\"), closeConfirmed);"
+      },
+      "additionalFix": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 208,
+        "text": "report.insert(QStringLiteral(\"closed\"), !opened || closeConfirmed); //20261114-8 change: Inactive state alone cannot prove a failed close released its endpoint."
+      },
+      "requiredTest": "注入close=false，同时核ok=false、sessionInactive=true、closeAttempted=true、closeConfirmed=false、closed=false；保留原始事务错误。",
+      "status": "root-fixed-source-candidate-not-yet-runtime-tested-by-reviewer"
+    },
+    {
+      "id": "SERUI-R1-04",
+      "priority": "P2",
+      "title": "真实串口回执继承controlled-replay来源",
+      "initialObservation": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 174,
+        "behavior": "保留scope=controlled-modbus-rtu-replay，同时加evidenceScope=pc-serial-response"
+      },
+      "impact": "同一回执存在相互冲突的来源标签。",
+      "sourceFix": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 191,
+        "text": "value.insert(QStringLiteral(\"scope\"), physical ? QStringLiteral(\"pc-serial-response\") : QStringLiteral(\"controlled-rtu-session\"));"
+      },
+      "requiredTest": "受控factory回执scope=controlled-rtu-session、physicalEndpointUsed=false；不得标为HMI执行；真实PC分支独立scope但本轮不运行。",
+      "status": "root-fixed-source-candidate-not-yet-runtime-tested-by-reviewer"
+    },
+    {
+      "id": "SERUI-R1-05",
+      "priority": "P2",
+      "title": "允许2000位读取却以2000文本块展示缩进JSON",
+      "initialObservation": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 75,
+        "behavior": "setMaximumBlockCount(2000)；完成时直接显示Indented JSON"
+      },
+      "impact": "values数组即超过2000块，合法最大请求回执会丢开头。",
+      "sourceFix": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 236,
+        "text": "m_output->setPlainText(lines.join(QChar(u'\\n'))); //20261114-8 change: A 2000-value read stays complete without exposing a truncated JSON fragment."
+      },
+      "requiredTest": "完整2000位值在一块人类可读输出中保留，lastReport保留完整JSON，不丢发送/接收/结果首尾。",
+      "status": "root-fixed-source-candidate-not-yet-runtime-tested-by-reviewer"
+    }
+  ],
+  "positiveStaticChecks": [
+    {
+      "check": "批次全量预验证",
+      "result": "settings、1..256项、逐项buildRequest与重复id检查均在factory构造/端口open之前；晚项无效不产生前项写入。",
+      "reference": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 159,
+        "text": "for (const SimulationModbusRequest &request : requests)"
+      }
+    },
+    {
+      "check": "线程拥有",
+      "result": "默认factory在runPlcSerialBatch调用线程内构造QSerialPort；GUI通过QThread::create调用，lambda只持有复制settings/request/factory与shared job，不捕获widget。局部state析构仍在worker。",
+      "reference": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 210,
+        "text": "m_thread = QThread::create([job, settings, station, request, factory]() { job->report = runPlcSerialBatch(settings, station, {request}, job->cancelled, factory); });"
+      }
+    },
+    {
+      "check": "取消与总期限",
+      "result": "atomic cancellation及elapsed totalTimeout闭包由worker轮询；读写等待切片20ms并由core在I/O后/接纳前再次拒绝取消结果。不是中断活动系统调用的硬实时保证。",
+      "reference": {
+        "file": "src/plc_serial_session.cpp",
+        "line": 167,
+        "text": "return (cancellation && cancellation->load()) || elapsed.elapsed() >= settings.totalTimeoutMs;"
+      }
+    },
+    {
+      "check": "已发送写不伪装回滚",
+      "result": "session保留core的writeAcknowledged/requestMayHaveReachedSlave/remoteStateUnconfirmed字段，UI呈现未确认写；自动重试为0。core具体PDU校验另由其owner复核。",
+      "reference": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 230,
+        "text": "if (result.value(QStringLiteral(\"remoteStateUnconfirmed\")).toBool()) { lines.append(QStringLiteral(\"写入可能已到达从站，状态未确认。\")); }"
+      }
+    },
+    {
+      "check": "UI owner销毁",
+      "result": "析构只设atomic，工作lambda不持widget；finished接收上下文为this，owner销毁时Qt自动断开该回调。QThread无widget parent且finished->deleteLater。普通reject先cancel并等待finished再关。需GUI测试验证事件顺序。",
+      "reference": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 212,
+        "text": "connect(m_thread, &QThread::finished, this, [this, job]() {"
+      }
+    },
+    {
+      "check": "PC/工程来源",
+      "result": "端口初始无选择、PDU地址显式零起始、参数为用户PC设置，projectAddressMapping=false；没有套用工程family/route/node或调用DLL。",
+      "reference": {
+        "file": "src/plc_online_dialog.cpp",
+        "line": 59,
+        "text": "m_port->setCurrentIndex(-1); m_port->setPlaceholderText(QStringLiteral(\"选择或输入PC串口\")); form->addRow(QStringLiteral(\"PC串口\"), m_port);"
+      }
+    },
+    {
+      "check": "能力表维度独立",
+      "result": "目录可见、地址语法、设备编译、PC工程映射、物理PLC与HMI验证分列；nativeDllAbiImplemented=false。唯一设备eligible分支锁AMT默认COM1 profile，scope限定station1/node1/单连接单页。raw RTU后端不把139目录项变成139通信驱动。",
+      "reference": {
+        "file": "src/plc_protocol_capabilities.cpp",
+        "line": 80,
+        "text": "{QStringLiteral(\"nativeDllAbiImplemented\"), false}, {QStringLiteral(\"filesObserved\"), source},"
+      }
+    }
+  ],
+  "remainingValidation": [
+    "root统一编译和专用serial/GUI受控测试后才能将source候选升级为验证通过。",
+    "core transport编码/解码/队列/重入测试由core owner负责，本复核只读其集成契约。",
+    "没有默认QSerialPort真实设备I/O、无USB/HMI下载、无PLC T/E。",
+    "系统层open/close等同步调用无法由atomic强行打断；总期限是调用返回后的接纳门槛，并依赖回调遵守有界契约。",
+    "QThread finished->deleteLater与owner销毁须在持续GUI事件循环内验证；本轮只静态确认所有权路径。"
+  ],
+  "productionModifiedByReviewer": false,
+  "testsModifiedByReviewer": false,
+  "testExecutionByReviewer": false,
+  "hardwareIoByReviewer": false,
+  "conclusion": "r1的5项发现已在root当前源看到对应修复候选；未发现新的静态集成阻断。保持待正式构建/受控测试状态。"
+}

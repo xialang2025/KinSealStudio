@@ -1,0 +1,161 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143
+Address: 0x10013af0; label: packed-bit 读改写
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+
+void FUN_10013af0(void)
+
+{
+  ushort uVar1;
+  int iVar2;
+  char *pcVar3;
+  char local_170 [11];
+  char local_165;
+  char local_159;
+  undefined4 local_90;
+  uint local_84;
+  uint local_78;
+  int local_6c;
+  int local_60;
+  int local_54;
+  uint local_48;
+  uint local_3c;
+  uint local_30;
+  uint local_24;
+  uint local_18;
+  ushort local_c;
+  
+  pcVar3 = local_170;
+  for (iVar2 = 0x5b; iVar2 != 0; iVar2 = iVar2 + -1) {
+    pcVar3[0] = -0x34;
+    pcVar3[1] = -0x34;
+    pcVar3[2] = -0x34;
+    pcVar3[3] = -0x34;
+    pcVar3 = pcVar3 + 4;
+  }
+  local_165 = '\0';
+  local_159 = '\0';
+  local_170[0] = *DAT_10033294;
+  if (local_170[0] == 'H') {
+    local_165 = '\x01';
+    local_54 = 0;
+    local_159 = '\x01';
+    local_90 = 4;
+  }
+  else if (local_170[0] == 'K') {
+    local_165 = '\x01';
+    local_54 = 0;
+    local_159 = '\x01';
+    local_90 = 3;
+  }
+  local_18 = *(uint *)(DAT_10033294 + 4);
+  local_78 = (uint)(byte)DAT_10033294[1];
+  local_84 = (uint)*(ushort *)(DAT_10033294 + 8);
+  if (*DAT_10033294 == 'K') {
+    local_18 = (int)(local_18 + ((int)local_18 >> 0x1f & 0xfU)) >> 4;
+  }
+  if (local_165 == '\0') {
+    __RTC_UninitUse("add");
+  }
+  local_18 = local_18 + local_54;
+  local_24 = (int)local_18 >> 8 & 0xff;
+  local_30 = local_18 & 0xff;
+  local_3c = (int)local_84 >> 8 & 0xff;
+  local_48 = local_84 & 0xff;
+  *DAT_1003328c = (undefined1)local_78;
+  if (local_159 == '\0') {
+    __RTC_UninitUse("t");
+  }
+  DAT_1003328c[1] = (char)local_90;
+  DAT_1003328c[2] = (undefined1)local_24;
+  DAT_1003328c[3] = (undefined1)local_30;
+  DAT_1003328c[4] = (undefined1)local_3c;
+  DAT_1003328c[5] = (undefined1)local_48;
+  local_c = thunk_FUN_10015600((int)DAT_1003328c,6);
+  local_60 = (int)(uint)local_c >> 8;
+  local_6c = (uint)local_c + local_24 * -0x100;
+  DAT_1003328c[6] = (char)local_6c;
+  DAT_1003328c[7] = (char)(local_c >> 8);
+  pcVar3 = DAT_10033294;
+  if (local_78 == 0) {
+    pcVar3[0xe] = '\b';
+    pcVar3[0xf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0xd6] = '\0';
+    pcVar3[0xd7] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x204] = '\x01';
+    pcVar3[0x205] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x206] = '\0';
+    pcVar3[0x207] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x2ce] = '\0';
+    pcVar3[0x2cf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x396] = '\0';
+    pcVar3[0x397] = '\0';
+    DAT_10033294[0x467] = '\0';
+    *(undefined4 *)(DAT_10033294 + 0x1a0) = *(undefined4 *)(DAT_10033294 + 4);
+  }
+  else {
+    pcVar3[0xe] = '\b';
+    pcVar3[0xf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0xd6] = '\0';
+    pcVar3[0xd7] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x204] = '\x02';
+    pcVar3[0x205] = '\0';
+    *(short *)(DAT_10033294 + 0x206) = (short)local_84 * 2 + 5;
+    pcVar3 = DAT_10033294;
+    pcVar3[0x2ce] = '\x03';
+    pcVar3[0x2cf] = '\0';
+    *(short *)(DAT_10033294 + 0x396) = (short)(local_84 << 1);
+    DAT_10033294[0x467] = '\0';
+    *(undefined4 *)(DAT_10033294 + 0x1a0) = *(undefined4 *)(DAT_10033294 + 4);
+  }
+  DAT_1003328c[8] = (undefined1)local_78;
+  DAT_1003328c[9] = 6;
+  DAT_1003328c[10] = (undefined1)local_24;
+  DAT_1003328c[0xb] = (undefined1)local_30;
+  DAT_1003328c[0xc] = 0;
+  DAT_1003328c[0xd] = 0;
+  uVar1 = thunk_FUN_10015600((int)(DAT_1003328c + 8),6);
+  DAT_1003328c[0xe] = (char)uVar1;
+  DAT_1003328c[0xf] = (char)(uVar1 >> 8);
+  pcVar3 = DAT_10033294;
+  pcVar3[0x10] = '\b';
+  pcVar3[0x11] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0xd8] = '\b';
+  pcVar3[0xd9] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x204] = '\x02';
+  pcVar3[0x205] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x208] = '\b';
+  pcVar3[0x209] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x2d0] = '\0';
+  pcVar3[0x2d1] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x398] = '\0';
+  pcVar3[0x399] = '\0';
+  DAT_10033294[0x467] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x1a4] = '\0';
+  pcVar3[0x1a5] = '\0';
+  pcVar3[0x1a6] = '\0';
+  pcVar3[0x1a7] = '\0';
+  pcVar3 = DAT_10033294;
+  pcVar3[0x19c] = 'd';
+  pcVar3[0x19d] = '\0';
+  return;
+}
+

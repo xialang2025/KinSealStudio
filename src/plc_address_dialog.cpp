@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QPointer> //20261114-8 add: Guard dialogs and their modal owners through nested event loops.
 #include <QRegularExpression>
 #include <QSet>
 #include <QSignalBlocker>
@@ -125,14 +126,17 @@ void populateAddressFamilies(QComboBox *kind, const QString &connectionId, bool 
  * Date            : 2026.11.09
  ******************************************************************************/
 bool editPlcConnections(QWidget *parent, const QString &modelName,
-                         QVector<PlcConnection> *connections, QString *error) //20261109-0 add
+                         QVector<PlcConnection> *connections, QString *error) //20261109-0 add //20261114-8 change
 {
     PlcCatalog catalog;
     QVector<PlcProfile> profiles;
     QVector<PlcConnection> staged;
     ConnectionControls controls[2];
     QSet<QString> ids;
-    QDialog dialog(parent);
+    QPointer<QDialog> dialog; //20261114-8 change: A parent may destroy the child while exec is still active.
+    QPointer<QWidget> guardedParent(parent);
+    bool confirmed = false;
+    int modalResult;
     QVBoxLayout *layout;
     QGroupBox *group;
     QGridLayout *grid;
@@ -174,15 +178,16 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
         controls[port].original = original;
         controls[port].hasOriginal = true;
     }
-    dialog.setWindowTitle(QStringLiteral("PLC 连接设置"));
-    dialog.setObjectName(QStringLiteral("PlcConnectionDialog"));
-    layout = new QVBoxLayout(&dialog);
-    layout->addWidget(new QLabel(QStringLiteral("型号：%1").arg(modelName), &dialog));
+    dialog = new QDialog(parent); //20261114-8 add: Allocate only after preflight validation succeeds.
+    dialog->setWindowTitle(QStringLiteral("PLC 连接设置"));
+    dialog->setObjectName(QStringLiteral("PlcConnectionDialog"));
+    layout = new QVBoxLayout(dialog.data());
+    layout->addWidget(new QLabel(QStringLiteral("型号：%1").arg(modelName), dialog.data()));
     defaultProfile = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
     for (port = 0; port < 2; ++port)
     {
         id = port == 0 ? QStringLiteral("PlcCom1") : QStringLiteral("PlcCom2");
-        group = new QGroupBox(port == 0 ? QStringLiteral("COM1") : QStringLiteral("COM2"), &dialog);
+        group = new QGroupBox(port == 0 ? QStringLiteral("COM1") : QStringLiteral("COM2"), dialog.data());
         grid = new QGridLayout(group);
         controls[port].enabled = new QCheckBox(QStringLiteral("启用连接"), group);
         controls[port].enabled->setObjectName(id + QStringLiteral("Enabled"));
@@ -216,11 +221,11 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
         grid->addWidget(controls[port].station, 2, 1);
         grid->addWidget(controls[port].capability, 3, 0, 1, 2);
         layout->addWidget(group);
-        QObject::connect(controls[port].enabled, &QCheckBox::toggled, &dialog, [&, port](bool enabled) {
+        QObject::connect(controls[port].enabled, &QCheckBox::toggled, dialog.data(), [&, port](bool enabled) {
             controls[port].profile->setEnabled(enabled);
             controls[port].station->setEnabled(enabled);
         });
-        QObject::connect(controls[port].profile, &QComboBox::currentIndexChanged, &dialog, [&, port]() {
+        QObject::connect(controls[port].profile, &QComboBox::currentIndexChanged, dialog.data(), [&, port]() {
             const PlcProfile *profile;
 
             profile = catalog.profile(controls[port].profile->currentData().toString());
@@ -233,17 +238,17 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
         selectedProfile = catalog.profile(controls[port].profile->currentData().toString());
         controls[port].capability->setText(profileCapabilities(selectedProfile)); //20261109-0 change
     }
-    validation = new QLabel(&dialog);
+    validation = new QLabel(dialog.data());
     validation->setObjectName(QStringLiteral("PlcConnectionError"));
     validation->setWordWrap(true);
     layout->addWidget(validation);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog.data());
     buttons->setObjectName(QStringLiteral("PlcConnectionButtons"));
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认"));
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
     layout->addWidget(buttons);
-    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog.data(), &QDialog::reject);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog.data(), [&]() {
         PlcConnection connection;
         QString profileId;
         int selectedPort;
@@ -290,13 +295,17 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
             }
             staged.append(connection);
         }
-        dialog.accept();
+        confirmed = true; //20261114-8 add: An external accept cannot publish an unvalidated result.
+        dialog->accept();
     });
     if (error != nullptr)
     {
         error->clear();
     }
-    if (dialog.exec() != QDialog::Accepted)
+    modalResult = dialog->exec(); //20261114-8 change: The owned child may already have been deleted by its owner.
+    if (dialog.isNull()) { return false; }
+    delete dialog.data();
+    if (modalResult != QDialog::Accepted || !confirmed || (parent != nullptr && guardedParent.isNull()))
     {
         return false;
     }
@@ -312,13 +321,16 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
  * Date            : 2026.11.09
  ******************************************************************************/
 bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &connections,
-                    QString *qualifiedText, int transferCount) //20261109-6 change
+                    QString *qualifiedText, int transferCount) //20261109-6 change //20261114-8 change
 {
     PlcCatalog catalog;
     PlcAddressContext context;
     PlcAddress initial;
     PlcAddress committed;
-    QDialog dialog(parent);
+    QPointer<QDialog> dialog; //20261114-8 change: A parent may destroy the child while exec is still active.
+    QPointer<QWidget> guardedParent(parent);
+    bool confirmed = false;
+    int modalResult;
     QGridLayout *layout;
     QComboBox *memory;
     QComboBox *kind;
@@ -337,7 +349,7 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     std::function<void()> refresh;
     std::function<void()> resetAddressValue; //20261109-0 add
     int previousRadix;
-    int delimiter;
+    qsizetype delimiter; //20261114-8 change: Keep QString offsets in their native index width.
     int index;
     int selected;
 
@@ -397,10 +409,11 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         }
         initialValue = body.mid(initialFamily.size());
     }
-    dialog.setWindowTitle(QStringLiteral("地址输入"));
-    dialog.setObjectName(QStringLiteral("PlcAddressDialog"));
-    layout = new QGridLayout(&dialog);
-    memory = new QComboBox(&dialog);
+    dialog = new QDialog(parent); //20261114-8 add: Allocate only after preflight validation succeeds.
+    dialog->setWindowTitle(QStringLiteral("地址输入"));
+    dialog->setObjectName(QStringLiteral("PlcAddressDialog"));
+    layout = new QGridLayout(dialog.data());
+    memory = new QComboBox(dialog.data());
     memory->setObjectName(QStringLiteral("PlcMemory"));
     memory->addItem(QStringLiteral("内部存储器"), QString());
     for (index = 0; index < connections.size(); ++index)
@@ -416,28 +429,29 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         selected = memory->count() - 1;
     }
     memory->setCurrentIndex(selected);
-    kind = new QComboBox(&dialog);
+    kind = new QComboBox(dialog.data());
     kind->setObjectName(QStringLiteral("PlcFamily"));
     populateAddressFamilies(kind, connectionId, bit, context, catalog, initialFamily);
-    radix = new QComboBox(&dialog);
+    radix = new QComboBox(dialog.data());
     radix->setObjectName(QStringLiteral("PlcRadix"));
     radix->addItem(QStringLiteral("十进制"), 10);
     radix->addItem(QStringLiteral("十六进制"), 16);
     previousRadix = 10;
-    number = new QLineEdit(initialValue, &dialog);
+    number = new QLineEdit(initialValue, dialog.data());
     number->setObjectName(QStringLiteral("PlcValue"));
-    range = new QLabel(&dialog);
+    range = new QLabel(dialog.data());
+    range->setObjectName(QStringLiteral("PlcAddressRange")); //20261114-8 add: Retain the explicit span in UI evidence.
     range->setWordWrap(true);
-    validation = new QLabel(error, &dialog);
+    validation = new QLabel(error, dialog.data());
     validation->setObjectName(QStringLiteral("PlcAddressError"));
     validation->setWordWrap(true);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog.data());
     buttons->setObjectName(QStringLiteral("PlcAddressButtons"));
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认"));
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    layout->addWidget(new QLabel(QStringLiteral("存储器"), &dialog), 0, 0);
+    layout->addWidget(new QLabel(QStringLiteral("存储器"), dialog.data()), 0, 0);
     layout->addWidget(memory, 0, 1, 1, 2);
-    layout->addWidget(new QLabel(QStringLiteral("地址种类"), &dialog), 1, 0);
+    layout->addWidget(new QLabel(QStringLiteral("地址种类"), dialog.data()), 1, 0);
     layout->addWidget(kind, 1, 1);
     layout->addWidget(radix, 1, 2);
     layout->addWidget(range, 2, 0, 1, 3);
@@ -451,6 +465,9 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         QString family;
         QString rangeText;
         PlcNativeFamilyRule rule; //20261109-0 add
+        PlcAddress parsed; //20261114-8 add: Use the same parser as confirmation for live draft validity.
+        QString parseError;
+        bool validDraft;
         bool supported;
         bool standardRadix;
         int familyIndex;
@@ -478,13 +495,20 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         {
             rangeText += QStringLiteral("\nA.B 表示字地址和位号；位号 0~15，始终使用十进制。");
         }
+        rangeText += QStringLiteral("\n连续传送数量：%1").arg(context.transferCount); //20261114-8 add
         range->setText(rangeText);
         number->setEnabled(supported);
         radix->setItemText(0, standardRadix ? QStringLiteral("十进制") : QStringLiteral("原生进制")); //20261109-0 change
         radix->setEnabled(supported && standardRadix);
-        buttons->button(QDialogButtonBox::Ok)->setEnabled(supported && !family.isEmpty());
-        validation->setText(supported ? QString() : QStringLiteral("此 PLC 的地址输入暂未支持，请选择其他连接或取消。"));
+        validDraft = supported && !family.isEmpty() &&
+            parsePlcAddress(family, number->text(), memory->currentData().toString(), context, catalog,
+                            &parsed, &parseError, radix->currentData().toInt()); //20261114-8 change
+        buttons->button(QDialogButtonBox::Ok)->setEnabled(validDraft);
+        validation->setText(supported ? parseError : QStringLiteral("此 PLC 的地址输入暂未支持，请选择其他连接或取消。"));
     };
+    QObject::connect(number, &QLineEdit::textChanged, dialog.data(), [&]() {
+        refresh(); //20261114-8 add: Keep malformed text editable and clear only errors the parser no longer reports.
+    });
     resetAddressValue = [&]() {
         const PlcConnection *selectedConnection;
         const PlcProfile *selectedProfile;
@@ -501,7 +525,7 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         }
         number->setText(value);
     }; //20261109-0 add: Seed native bit, bank and nonzero-minimum families with valid syntax.
-    QObject::connect(memory, &QComboBox::currentIndexChanged, &dialog, [&]() {
+    QObject::connect(memory, &QComboBox::currentIndexChanged, dialog.data(), [&]() {
         QSignalBlocker blocker(radix);
 
         radix->setCurrentIndex(0);
@@ -510,10 +534,10 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         resetAddressValue();
         refresh();
     });
-    QObject::connect(kind, &QComboBox::currentIndexChanged, &dialog, [&]() {
+    QObject::connect(kind, &QComboBox::currentIndexChanged, dialog.data(), [&]() {
         resetAddressValue(); refresh();
     }); //20261109-0 change
-    QObject::connect(radix, &QComboBox::currentIndexChanged, &dialog, [&]() {
+    QObject::connect(radix, &QComboBox::currentIndexChanged, dialog.data(), [&]() {
         QSignalBlocker blocker(radix);
         PlcAddress parsed;
         QString parseError;
@@ -531,8 +555,8 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         previousRadix = newRadix;
         refresh();
     });
-    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog.data(), &QDialog::reject);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog.data(), [&]() {
         QString parseError;
 
         if (!parsePlcAddress(kind->currentData().toString(), number->text(), memory->currentData().toString(),
@@ -541,10 +565,14 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
             validation->setText(parseError);
             return;
         }
-        dialog.accept();
+        confirmed = true; //20261114-8 add: An external accept cannot publish an unvalidated result.
+        dialog->accept();
     });
     refresh();
-    if (dialog.exec() != QDialog::Accepted)
+    modalResult = dialog->exec(); //20261114-8 change: Never access widgets or caller output after owner destruction.
+    if (dialog.isNull()) { return false; }
+    delete dialog.data();
+    if (modalResult != QDialog::Accepted || !confirmed || (parent != nullptr && guardedParent.isNull()))
     {
         return false;
     }

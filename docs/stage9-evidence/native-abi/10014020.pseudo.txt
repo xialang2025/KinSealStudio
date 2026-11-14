@@ -1,0 +1,193 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143
+Address: 0x10014020; label: 写字 FC6/16
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+
+void FUN_10014020(void)
+
+{
+  byte bVar1;
+  byte bVar2;
+  byte bVar3;
+  ushort uVar4;
+  uint uVar5;
+  uint uVar6;
+  int iVar7;
+  char *pcVar8;
+  char local_14c [200];
+  uint local_84;
+  uint local_78;
+  int local_6c;
+  int local_60;
+  int local_54;
+  uint local_48;
+  uint local_3c;
+  uint local_30;
+  uint local_24;
+  uint local_18;
+  ushort local_c;
+  
+  pcVar8 = local_14c;
+  for (iVar7 = 0x52; iVar7 != 0; iVar7 = iVar7 + -1) {
+    pcVar8[0] = -0x34;
+    pcVar8[1] = -0x34;
+    pcVar8[2] = -0x34;
+    pcVar8[3] = -0x34;
+    pcVar8 = pcVar8 + 4;
+  }
+  local_18 = *(uint *)(DAT_10033294 + 4);
+  local_84 = (uint)(byte)DAT_10033294[1];
+  local_78 = (uint)*(ushort *)(DAT_10033294 + 8);
+  local_24 = (int)local_18 >> 8 & 0xff;
+  local_30 = local_18 & 0xff;
+  if (local_78 == 1) {
+    *DAT_1003328c = DAT_10033294[1];
+    DAT_1003328c[1] = 6;
+    local_24._0_1_ = (byte)(local_18 >> 8);
+    DAT_1003328c[2] = (byte)local_24;
+    local_30._0_1_ = (byte)local_18;
+    DAT_1003328c[3] = (byte)local_30;
+    bVar1 = DAT_10033294[0x479];
+    local_3c = (uint)bVar1;
+    local_48 = (uint)(byte)DAT_10033294[0x47a];
+    DAT_1003328c[4] = DAT_10033294[0x47a];
+    DAT_1003328c[5] = bVar1;
+    local_c = thunk_FUN_10015600((int)DAT_1003328c,6);
+    local_54 = (int)(uint)local_c >> 8;
+    local_60 = (uint)local_c + local_24 * -0x100;
+    DAT_1003328c[6] = (byte)local_60;
+    DAT_1003328c[7] = (byte)(local_c >> 8);
+    pcVar8 = DAT_10033294;
+    if (local_84 == 0) {
+      pcVar8[0xe] = '\b';
+      pcVar8[0xf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0xd6] = '\0';
+      pcVar8[0xd7] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x204] = '\x01';
+      pcVar8[0x205] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x206] = '\0';
+      pcVar8[0x207] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x2ce] = '\0';
+      pcVar8[0x2cf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x396] = '\0';
+      pcVar8[0x397] = '\0';
+      DAT_10033294[0x467] = '\0';
+    }
+    else {
+      pcVar8[0xe] = '\b';
+      pcVar8[0xf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0xd6] = '\0';
+      pcVar8[0xd7] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x204] = '\x01';
+      pcVar8[0x205] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x206] = '\b';
+      pcVar8[0x207] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x2ce] = '\0';
+      pcVar8[0x2cf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x396] = '\0';
+      pcVar8[0x397] = '\0';
+      DAT_10033294[0x467] = '\0';
+    }
+  }
+  if (local_78 != 1) {
+    *DAT_1003328c = (byte)local_84;
+    DAT_1003328c[1] = 0x10;
+    DAT_1003328c[2] = (byte)local_24;
+    DAT_1003328c[3] = (byte)local_30;
+    uVar5 = (int)local_78 >> 8 & 0xff;
+    uVar6 = local_78 & 0xff;
+    local_3c._0_1_ = (byte)(local_78 >> 8);
+    DAT_1003328c[4] = (byte)local_3c;
+    local_48._0_1_ = (byte)local_78;
+    DAT_1003328c[5] = (byte)local_48;
+    DAT_1003328c[6] = (byte)(local_78 << 1);
+    local_14c[0] = *DAT_10033294;
+    local_48 = uVar6;
+    local_3c = uVar5;
+    if (local_14c[0] == 'D') {
+      for (local_6c = 0; local_6c < (int)local_78; local_6c = local_6c + 1) {
+        bVar1 = DAT_10033294[local_6c * 2 + 0x479];
+        local_3c = (uint)bVar1;
+        local_48 = (uint)(byte)DAT_10033294[local_6c * 2 + 0x47a];
+        DAT_1003328c[local_6c * 2 + 7] = DAT_10033294[local_6c * 2 + 0x47a];
+        DAT_1003328c[local_6c * 2 + 8] = bVar1;
+      }
+    }
+    else if (local_14c[0] == 'c') {
+      for (local_6c = 0; local_6c < (int)local_78 / 2; local_6c = local_6c + 1) {
+        bVar1 = DAT_10033294[local_6c * 4 + 0x479];
+        local_24 = (uint)bVar1;
+        bVar2 = DAT_10033294[local_6c * 4 + 0x47a];
+        local_30 = (uint)bVar2;
+        bVar3 = DAT_10033294[local_6c * 4 + 0x47b];
+        local_3c = (uint)bVar3;
+        local_48 = (uint)(byte)DAT_10033294[local_6c * 4 + 0x47c];
+        DAT_1003328c[local_6c * 4 + 7] = DAT_10033294[local_6c * 4 + 0x47c];
+        DAT_1003328c[local_6c * 4 + 8] = bVar3;
+        DAT_1003328c[local_6c * 4 + 9] = bVar2;
+        DAT_1003328c[local_6c * 4 + 10] = bVar1;
+      }
+    }
+    uVar4 = thunk_FUN_10015600((int)DAT_1003328c,(short)local_78 * 2 + 7);
+    DAT_1003328c[local_78 * 2 + 7] = (byte)uVar4;
+    DAT_1003328c[local_78 * 2 + 8] = (byte)(uVar4 >> 8);
+    if (local_84 == 0) {
+      *(short *)(DAT_10033294 + 0xe) = (short)local_78 * 2 + 9;
+      pcVar8 = DAT_10033294;
+      pcVar8[0xd6] = '\0';
+      pcVar8[0xd7] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x204] = '\x01';
+      pcVar8[0x205] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x206] = '\0';
+      pcVar8[0x207] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x2ce] = '\0';
+      pcVar8[0x2cf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x396] = '\0';
+      pcVar8[0x397] = '\0';
+      DAT_10033294[0x467] = '\0';
+    }
+    else {
+      *(short *)(DAT_10033294 + 0xe) = (short)local_78 * 2 + 9;
+      pcVar8 = DAT_10033294;
+      pcVar8[0xd6] = '\0';
+      pcVar8[0xd7] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x204] = '\x01';
+      pcVar8[0x205] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x206] = '\b';
+      pcVar8[0x207] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x2ce] = '\0';
+      pcVar8[0x2cf] = '\0';
+      pcVar8 = DAT_10033294;
+      pcVar8[0x396] = '\0';
+      pcVar8[0x397] = '\0';
+      DAT_10033294[0x467] = '\0';
+    }
+  }
+  pcVar8 = DAT_10033294;
+  pcVar8[0x19c] = '\0';
+  pcVar8[0x19d] = '\0';
+  return;
+}
+

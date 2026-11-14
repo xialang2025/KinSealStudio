@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-11-14 Asia/Shanghai",
-  "sourceCommit": "7b2ac087f28fe3c2a05c6d14058c003dd521725e",
+  "sourceCommit": "96912ec4dc5b8f1487cc00cf4a2443b2450d580d",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
     "stageTasks": 90,
@@ -18,7 +18,7 @@
       "historyEntryIssues": 195,
       "historyFieldIssues": 1521
     },
-    "extensions": 17
+    "extensions": 18
   },
   "interpretationRules": [
     "已发布范围：五类既有控制记录＋九类受限静态背景C；阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
@@ -33,7 +33,7 @@
   ],
   "resumeOrder": [
     "阶段7已交付单画面内部LB/LW五类离线；完整原厂运行语义、窗口/配置和真实在线继续按S07/Q-S07恢复。",
-    "阶段9优先恢复默认Modbus RTU的真实端点及runtime扫描映射；回放97项不替代真实T/E。",
+    "阶段9继续完整DLL宿主ABI、工程runtime映射、资料传输；704项PC测试/显式串口实现不替代物理PLC T/HMI E。",
     "继续阶段5：从已调查/建模的新动态控件选择最小独立C切片，或恢复多页/活动配置的明确依赖；不重复九类受限背景。",
     "对新独立编译产物完成T，再独立记录E；需实屏/触控/PLC配合的条目提前准备输入身份、刺激和期望。",
     "按Q恢复完整SM、G03真实曲率及范围外样式；同一次成果同步核销覆盖的旧候选/字段分支，保留原ID去向。",
@@ -6765,12 +6765,13 @@
       "title": "S07-05 · 在线传输与断线恢复",
       "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "新增可注入Modbus RTU01/03/05/06回放模块，CRC/地址/站号/异常/超时/断连及队列规则97项通过，无I/O。",
-      "remaining": "无真实串口/USB/socket后端，未接runtime扫描/映射；原厂在线配置/端口映射、真实PC通信及故障恢复待完成。",
+      "completedScope": "阶段9已增加标准RTU8功能、QSerialPort worker和显式PC调试窗口，受控故障/取消/释放测试已通过。",
+      "remaining": "工程画面在线runtime/扫描/地址映射和真实PC端口/PLC故障恢复未闭合；当前工具仅手工raw PDU。",
       "blockers": [
-        "阶段9真实传输与runtime映射；受控端点待接入"
+        "工程地址族/PDU映射与runtime队列",
+        "物理串口时序/专用PLC端点未验"
       ],
-      "nextAction": "阶段9恢复默认RTU接口并接受控测试端点，先完成runtime与队列映射，再按端点授权执行T。",
+      "nextAction": "继续将受控默认RTU会话接runtime地址/扫描/用户写，再按明确端点验证真实PC通信。",
       "acceptance": [
         "SIM-06/07：错误写不显示生效，已发/未发区分，退出释放端口；PC成功不关闭HMI E或USB T。",
         {
@@ -6814,6 +6815,10 @@
         },
         {
           "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
           "line": 1
         }
       ],
@@ -6896,6 +6901,11 @@
         "pcTests": "212/0/0",
         "hardwareIo": false,
         "hmiEUpgraded": false
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
@@ -7788,15 +7798,15 @@
       "id": "S09-01",
       "stage": 9,
       "title": "S09-01 · 建协议能力表而非按DLL数承诺",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "地址目录/codec和默认COM1站1/node1设备编译存在；139配置/1724族/51DLL只代表历史目录规模。",
-      "remaining": "完整协议能力表、profile→INI→driver→固件bin引用核对、默认参数原厂证据及其它协议独立四层状态待收口。",
+      "completedScope": "139源与历史presence全部匹配、444唯一引用文件/70型号适用；逐行独立能力报告、UI表和只读CLI已实现。",
+      "remaining": "串口INI未知枚举/原厂完整连接字段、其它协议模块ABI和真实PLC/HMI四层证据仍欠。",
       "blockers": [
         "目录profile/INI/driver/bin身份",
         "实际连接字段"
       ],
-      "nextAction": "从默认Modbus单行核连接通道/站/node/route/串口参数和来源，附文件hash；按需求列其它协议但不自动开放。",
+      "nextAction": "优先核默认连接未知枚举与原厂字段，按实际需求选下一profile，不按目录数量开放。",
       "acceptance": [
         "S09-01能力表：可见/可保存/可解析/可设备编译/PC通信/HMI验证分别记录；参数不猜，多站端口未恢复禁用。"
       ],
@@ -7817,6 +7827,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -7871,21 +7885,26 @@
           }
         ],
         "acceptanceCaseDefinitions": []
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
       "id": "S09-02",
       "stage": 9,
       "title": "S09-02 · 地址窗口与保存事务补齐",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "默认七类地址槽、已核非默认语法安全N子集及若干边界测试存在；U/P可复用。",
-      "remaining": "原厂picker全字段/进制/类型切换、只读族写入、批量/复制引用、连接删除重命名、尾界和取消事务完整矩阵尚未补齐。",
+      "completedScope": "修初始非法错误被清、输入不实时校验、accept绕过及嵌套owner销毁；26项地址UI通过，既有codec/目录回归通过。",
+      "remaining": "原厂picker完整矩阵、只读写权限、批量/复制引用、连接删除、多站及源/设备全切片尚未完整。",
       "blockers": [
         "现有plc_address/picker/codec",
         "原厂对应连接与地址源"
       ],
-      "nextAction": "同输入按连接→族→进制→字位→站/node确认/取消，核原厂.sm与本版模型/36B槽，并覆盖DWORD跨尾与N跨度。",
+      "nextAction": "按原厂同输入恢复连接/族切换和权限矩阵，保留已核codec与原子取消。",
       "acceptance": [
         "PLC-01/02：UI与直接文件同校验、非法不落盘；只读/连接引用正确；未核node不从station盲推。",
         {
@@ -7918,6 +7937,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -7988,21 +8011,26 @@
             "text": "| PLC-02 / S09-02 | LB/LW尾界、DWORD占2字；连接删除/重命名、只读族写入 | 上下文合法性与引用策略一致，未知node不可从station盲推 | P/C；错误/36B槽 |"
           }
         ]
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
       "id": "S09-03",
       "stage": 9,
       "title": "S09-03 · 恢复一个完整Modbus DLL ABI",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "Modbus_RTU.dll身份和部分读3/4分支静态信息已有，默认协议bin模板可用。",
-      "remaining": "七组缓冲区宽度/调用约定/生命周期/别名、CRC、写位字多字、读改写及响应解码/匹配、产物位置完整ABI未恢复。",
+      "completedScope": "原3函数外新增12定点静态函数、七槽/17字段、CRC及读1/2/3/4和写5/6/16/读改写分支，证据压缩归档。",
+      "remaining": "缓冲区容量/生命周期/宿主匹配和op2索引条件未闭合；未动态执行DLL，完整ABI仍false。",
       "blockers": [
         "既有REA三个函数证据",
         "受控x86纯函数mock环境"
       ],
-      "nextAction": "从已有三个入口逐operation/族/站/address/count建有界oracle，先纯静态再mock DLL I/O，前后边界快照并定位bin写入。",
+      "nextAction": "先静态追宿主分配/desc+467赋值与索引关系，边界恢复后再设计私有x86 mock。",
       "acceptance": [
         "PLC-03：所有本次目标分支输入/输出/CRC/元数据有原厂oracle，无越界，未知分支拒绝；纯函数结果不计串口T。",
         {
@@ -8031,6 +8059,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -8096,22 +8128,27 @@
             "text": "| PLC-03 / S09-03 | x86纯函数mock的operation/族/站/地址/数量单变量 | 缓冲区无越界，PDU/元数据/校验有原厂oracle，未知分支拒绝 | B/C；ABI和输入输出，不计串口T |"
           }
         ]
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
       "id": "S09-04",
       "stage": 9,
       "title": "S09-04 · 扫描与资料传输",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "单页AddrPara 200u8头＋12B段、默认扫描排序/间隙/位与DWORD规则37项回放已过；写通知不入读扫描。",
-      "remaining": "新控件/变量/报警采集读源、多route/node/多页拥有关系、packed bit扩展及资料传输触发/配置/源读目标写运行未闭合。",
+      "completedScope": "单页扫描37回归通过；历史Common31保留旧身份；资料传输帮助模式/类型/长度1..32/路由限制单列。",
+      "remaining": "新控件/宏/报警采集读源、多route/node、多页拥有关系、资料传输真实窗口/配置表/触发与运行未闭合。",
       "blockers": [
         "对应控件/配置读需求",
         "阶段1/2/5多页",
         "阶段9协议模板"
       ],
-      "nextAction": "先选一个新增读需求比原厂扫描；资料传输单独核V5.1触发沿/电平/长度/跨COM字段，再恢复源/配置/模板。",
+      "nextAction": "资料传输先后台核V5.1真实窗口、默认/边界与保存差分，再恢复配置表/扫描归属。",
       "acceptance": [
         "PLC-04/05：保留原算法特性，跨route/node/页不混；资料传输UI→源→扫描→运行日志一致，帮助1..32/同PLC先实证。",
         {
@@ -8148,6 +8185,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -8223,21 +8264,26 @@
             "text": "| PLC-05 / S09-04 | 资料传输计时/位触发、位/字/双字、长度边界、跨COM | 窗口/源/扫描/运行一致；帮助1..32/同PLC限制仍须V5.1核验 | D/U/P/C/E；配置与端点日志 |"
           }
         ]
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
       "id": "S09-05",
       "stage": 9,
       "title": "S09-05 · PC在线后端",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "PC与HMI通信责任已区分；未有完整PC在线收发后端通过证据。",
-      "remaining": "PC编解码/逐字节分段合帧、CRC/站功能长度过滤、异常/延迟/超时/重连/取消、读写队列/重试策略未闭环。",
+      "completedScope": "标准RTU8功能340项；串口全批预验证、FIFO/取消/总期限/close101项；显式PC窗口31项通过，QSerialPort worker后端已实现。",
+      "remaining": "实际端口时序/物理PLC未验；工程族→PDU映射、runtime扫描/写/RMW优先级和原厂完整在线窗口/恢复仍欠。",
       "blockers": [
-        "默认Modbus编解码契约",
-        "受控从站/端点"
+        "工程地址族/PDU映射与runtime队列",
+        "物理串口时序/专用PLC端点未验"
       ],
-      "nextAction": "先无物理I/O双向回放每种正常/错误字节流，再受控模拟从站读写；重试/合并采用值须有原厂观察或明确产品策略。",
+      "nextAction": "先明确工程地址与runtime队列映射；物理专用端点明确后按现场计划单读/授权scratch写/异常恢复。",
       "acceptance": [
         "PLC-06/07：无关/损坏响应拒绝、不错误确认或重放写，退出释放端点；专用端点实写结果与回放分记。",
         {
@@ -8272,6 +8318,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -8344,21 +8394,26 @@
             "text": "| PLC-07 / S09-05 | 将来专用从站/PLC端点正常读写与取消 | PC端点/协议/地址实际正确；已发写不可承诺取消回滚 | PC T；端点/寄存器/抓包 |"
           }
         ]
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
       "id": "S09-06",
       "stage": 9,
       "title": "S09-06 · 原固件解释及跨协议扩展",
-      "status": "仍有欠项/未完整闭环",
+      "status": "现场联动仍开放",
       "activeOpen": true,
-      "completedScope": "默认COM1协议模板及USB工程下载可用；尚不能推定原固件实际PLC解释正确。",
-      "remaining": "HMI读写位字/异常/32位跨字字序/恢复与资料传输现场未闭合，其它协议需要重复独立四层恢复。",
+      "completedScope": "沿用默认COM1设备模板与既有USB下载，当前不新增HMI→PLC证据。",
+      "remaining": "原固件位字/32位跨字字序/断线恢复、资料传输现场及其它协议仍欠。",
       "blockers": [
         "默认ModbusC",
         "S10-05 HMI→PLC闭环"
       ],
-      "nextAction": "先由原固件对专用Modbus从站执行单读/单写/跨字，核屏与端点寄存器，再按需要选下一协议。",
+      "nextAction": "阶段10固定HMI固件/专用从站/通道，独立观察屏与PLC寄存器，不继承PC或USB结果。",
       "acceptance": [
         "PLC-08：固件/连接/功能范围固定，双向实际寄存器与屏匹配；PC成功不代替HMI，不能按同名协议继承。",
         {
@@ -8387,6 +8442,10 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
           "line": 7
+        },
+        {
+          "path": "docs/阶段9_PLC地址模板与通信实现.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -8452,6 +8511,11 @@
             "text": "| PLC-08 / S09-06 | 同配置由AMT经原固件读写、断线重连/32位互证 | 屏端运行与真实寄存器匹配；PC成功不替代这项 | HMI E；刺激/独立寄存器/固件身份 |"
           }
         ]
+      },
+      "stage9Execution": {
+        "progress": "docs/stage9-evidence/progress.json",
+        "formalPcTests": "704/0/0",
+        "hardwareIo": false
       }
     },
     {
@@ -22600,16 +22664,16 @@
     {
       "id": "Q-S09-001",
       "title": "Modbus回调结构/读写/响应模板及产物位置的完整ABI；C",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分进展；完整问题仍开放",
       "scope": "阶段5～11",
-      "remaining": "Modbus回调结构/读写/响应模板及产物位置的完整ABI；C",
+      "remaining": "缓冲区容量/生命周期/宿主匹配和op2索引条件未闭合；未动态执行DLL，完整ABI仍false。",
       "blockers": [
         "阶段8对应宏切片",
         "阶段9对应协议/扫描切片",
         "既有REA三个函数证据",
         "受控x86纯函数mock环境"
       ],
-      "nextAction": "从已知入口逐操作建立有界输入输出oracle，区分请求、元数据、校验和未知指针；函数结果不算串口通信",
+      "nextAction": "先静态追宿主分配/desc+467赋值与索引关系，边界恢复后再设计私有x86 mock。",
       "acceptance": "已知操作的Modbus回调输入输出、参数宽度、请求/响应模板、校验及产物位置有有界oracle与调用证据；未知指针/ABI保持未知，函数结果不代替串口通信。",
       "relatedIds": [
         "S05-06",
@@ -22620,27 +22684,26 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 167
+        },
+        {
+          "path": "docs/stage9-evidence/progress.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "原3函数外新增12定点静态函数、七槽/17字段、CRC及读1/2/3/4和写5/6/16/读改写分支，证据压缩归档。"
     },
     {
       "id": "Q-S09-002",
       "title": "PC后端收发、异常码/重试/断线与读写队列；PC传输",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分进展；完整问题仍开放",
       "scope": "阶段5～11",
-      "remaining": "PC后端收发、异常码/重试/断线与读写队列；PC传输",
+      "remaining": "实际端口时序/物理PLC未验；工程族→PDU映射、runtime扫描/写/RMW优先级和原厂完整在线窗口/恢复仍欠。",
       "blockers": [
-        "S09-05默认Modbus PC后端",
-        "模拟会话事件/地址映射",
-        "S07-01～05对应能力",
-        "默认Modbus编解码契约",
-        "受控从站/端点",
-        "S09-03～06对应范围",
-        "受控从站/真实PLC专用端点",
-        "S10-01"
+        "工程runtime/PDU映射",
+        "实际物理端口与专用PLC端点未验"
       ],
-      "nextAction": "受控从站按正常/异常/短帧/延迟/断开重连刺激并保存双向日志；UI可选协议不代表后端支持",
+      "nextAction": "先明确工程地址与runtime队列映射；物理专用端点明确后按现场计划单读/授权scratch写/异常恢复。",
       "acceptance": "受控从站的正常/异常/短帧/延迟/断开重连均保留双向收发、重试及读写队列结果；同输入可复现PC后端行为，UI可选项不能证明协议后端支持。",
       "relatedIds": [
         "S07-05",
@@ -22653,16 +22716,21 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 168
+        },
+        {
+          "path": "docs/stage9-evidence/progress.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "标准RTU8功能340项；串口全批预验证、FIFO/取消/总期限/close101项；显式PC窗口31项通过，QSerialPort worker后端已实现。"
     },
     {
       "id": "Q-S09-003",
       "title": "原固件是否按生成模板正确执行读写及资料传输；E",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分进展；完整问题仍开放",
       "scope": "阶段5～11",
-      "remaining": "原固件是否按生成模板正确执行读写及资料传输；E",
+      "remaining": "原固件位字/32位跨字字序/断线恢复、资料传输现场及其它协议仍欠。",
       "blockers": [
         "阶段8对应宏切片",
         "阶段9对应协议/扫描切片",
@@ -22690,9 +22758,14 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 169
+        },
+        {
+          "path": "docs/stage9-evidence/progress.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "沿用默认COM1设备模板与既有USB下载，当前不新增HMI→PLC证据。"
     },
     {
       "id": "Q-S10-001",
@@ -176844,6 +176917,26 @@
           "line": 1
         }
       ]
+    },
+    {
+      "id": "DOC-CLEANUP-005",
+      "title": "阶段9废弃候选包清理被拒绝",
+      "status": "部分清理完成；候选包拒绝项保留",
+      "completedScope": "45个自有新构建中间文件16,380,525B已精确删除；TEMP/TMP全Z，旧拒绝项未重试。",
+      "remaining": "未验收r1候选包192文件122,439,021B仍保留，删除命令未执行。最终r2包正常交付。",
+      "blockers": [
+        "Remove-Item自动审批返回blocked by policy；不换通道重试。"
+      ],
+      "nextAction": "保留明确路径/manifest与拒绝回执，仅在审批条件变化后处理。",
+      "acceptance": [
+        "只有实际删除且证据保留均核实，才记录释放。"
+      ],
+      "sources": [
+        {
+          "path": "docs/stage9-evidence/cleanup-result.json",
+          "line": 1
+        }
+      ]
     }
   ],
   "aliases": {
@@ -177540,7 +177633,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段8普通源码事务、36插例、可重复ADS编译及分层文档已实施；最终263项PC测试通过；变量/调度等六完整任务仍开放。",
+  "activitySummary": "阶段9交付139行能力快照、地址事务修复、8功能PC RTU/显式串口窗口和静态ABI增量；正式704项PC测试通过。完整DLL ABI、runtime映射、资料传输、多页与物理PLC/HMI仍开放。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178437,6 +178530,30 @@
       "packageManifestSha256": "b9dbd64a1fa46459cad5f1ed3720f77b15aec16312eec16499c8f6c32cc1fd34",
       "sourceFilesVerified": 6331,
       "existingUserFilesProtected": 1891
+    }
+  ],
+  "stage9Executions": [
+    {
+      "kind": "protocol-audit-raw-pc-rtu-r1",
+      "marker": "//20261114-8",
+      "progress": "docs/stage9-evidence/progress.json",
+      "formalTests": "704/0/0",
+      "uiRules": "docs/UI编译规则与阶段交付规范.md#24",
+      "protocol": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md#97",
+      "completeStage9": false,
+      "nativeDllAbiImplemented": false,
+      "physicalPlcVerified": false,
+      "hmiPlcVerified": false,
+      "newControls": 0,
+      "hardwareDownloadPerformed": false,
+      "package": "dist/KinSealStudioLite-Stage9-plc-r2",
+      "oldCleanupDenialsRetried": false,
+      "cleanup": "docs/stage9-evidence/cleanup-result.json",
+      "portableProcesses": 7,
+      "portableChecks": 36,
+      "cleanupDeletedFiles": 45,
+      "cleanupDeletedBytes": 16380525,
+      "retainedRejectedBytes": 122439021
     }
   ]
 }

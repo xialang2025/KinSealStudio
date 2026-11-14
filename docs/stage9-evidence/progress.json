@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "stage": 9,
+  "title": "PLC地址模板与通信",
+  "updatedAt": "2026-11-14T19:09:37+08:00",
+  "changeMarker": "//20261114-8",
+  "status": "partial",
+  "complete": false,
+  "taskSummary": {
+    "total": 6,
+    "partial": 5,
+    "open": 1,
+    "complete": 0,
+    "note": "部分切片已交付，不将文件审计完成或代码存在换算为全阶段完成率。"
+  },
+  "scope": {
+    "model": "AMT070W124-L800X480R",
+    "nativeVersion": "KinSealStudio V5.1",
+    "baselineHeadAtStageStart": "96912ec4dc5b8f1487cc00cf4a2443b2450d580d",
+    "deviceCompileGate": {
+      "profileId": "Link/serial_amz/MODBUS/Modbus_RTU.ini",
+      "channel": "COM1",
+      "stationText": "1",
+      "nodeKnown": true,
+      "node": 1,
+      "singleConnectionSinglePage": true
+    },
+    "pcEndpoint": "显式PC串口/单播站号/零起始PDU，不自动绑定HMI连接"
+  },
+  "fileAudit": {
+    "path": "protocol-file-audit.json",
+    "sha256": "3e03085a49575ec9198e8b77d9f27a6a48958791928a89ce0b509a7138a2ac6b",
+    "profiles": 139,
+    "sourceMatches": 139,
+    "historicalPresenceMatches": 139,
+    "modelApplicableProfiles": 70,
+    "uniqueObservedFiles": 444,
+    "profileRowsWithDll": 106,
+    "profileRowsWithCom1Bin": 65,
+    "profileRowsWithCom2Bin": 65,
+    "countWarning": "DLL/bin数字为profile引用行计数，不是唯一驱动或已实现协议数。",
+    "dllExecuted": false
+  },
+  "nativeAbi": {
+    "path": "native-abi/native-abi.json",
+    "newStaticFunctions": 12,
+    "reusedPriorFunctions": 3,
+    "newXrefQueries": 4,
+    "crcInstructionBytes": 182,
+    "buffers": 7,
+    "descriptorFields": 17,
+    "status": "partial-D-static-only",
+    "completeAbi": false,
+    "nativeRuntimeExecuted": false,
+    "targetClosed": true
+  },
+  "pcRtu": {
+    "functionsDecimal": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      15,
+      16
+    ],
+    "stationRange": [
+      1,
+      247
+    ],
+    "pduAddressZeroBased": true,
+    "nativeDllAbiEquivalent": false,
+    "automaticProjectMapping": false,
+    "automaticRetries": 0,
+    "serialBackendSourceImplemented": true,
+    "physicalEndpointVerified": false,
+    "hmiExecutionConfirmed": false
+  },
+  "layers": {
+    "D": "partial; file identity and native static subset archived",
+    "U": "address/PC UI source candidate; controlled tests await Root seal; native full U pending",
+    "P": "transaction boundaries source candidate; full native source roundtrip pending",
+    "R": "protocol layer N/A",
+    "C": "existing restricted default single-page COM1 gate; no new broader claim",
+    "T": "controlled test results await Root seal; no new physical PC/PLC T",
+    "E": "no new HMI-to-PLC execution evidence"
+  },
+  "tasks": [
+    {
+      "id": "S09-01",
+      "name": "协议能力表与文件身份",
+      "status": "partial",
+      "delivered": [
+        "139源INI哈希及存在性匹配，444唯一文件只读观察",
+        "能力字段/窗口按目录、语法、设备编译、PC映射、ABI及实物层分开",
+        "纯读取--plc-capabilities [model] CLI已加入，实际7进程/36检查封存通过"
+      ],
+      "remaining": [
+        "原生全连接字段/枚举释义",
+        "其它协议/型号/端口执行能力逐行恢复",
+        "能力CLI正式源码绑定快照"
+      ],
+      "evidence": [
+        "protocol-file-audit.json",
+        "S09-protocol-capabilities.json",
+        "../../src/plc_protocol_capabilities.cpp"
+      ],
+      "complete": false
+    },
+    {
+      "id": "S09-02",
+      "name": "地址窗口与保存事务",
+      "status": "partial",
+      "delivered": [
+        "实时草稿与确认复用parser，显示显式1/2跨度",
+        "取消/无效/owner销毁/外部accept不提交",
+        "局部staged/committed在验证后一次写回，QPointer护嵌套生命周期"
+      ],
+      "remaining": [
+        "Qt受控测试正式封存",
+        "V5.1全协议UI/默认/字段及源设备单变量对照",
+        "多节点/实例/连接删除后的全引用往返范围"
+      ],
+      "evidence": [
+        "../../src/plc_address_dialog.cpp",
+        "../../tests/stage9_address_ui_tests.cpp",
+        "test-summary.json"
+      ],
+      "complete": false
+    },
+    {
+      "id": "S09-03",
+      "name": "原厂Modbus DLL ABI",
+      "status": "partial",
+      "delivered": [
+        "复用3历史函数；新增12函数、4xref、CRC精确汇编",
+        "七槽/17字段/op/请求/响应静态D表",
+        "目标已关闭，完整inline记录gzip归档"
+      ],
+      "remaining": [
+        "宿主七缓冲容量/生命周期/callback约定",
+        "desc+467响应索引与生成元数据索引",
+        "family63 bulk不对称引用与两帧宿主调度",
+        "满足边界后另行私有mock oracle；本批没有DLL执行"
+      ],
+      "evidence": [
+        "native-abi/native-abi.json",
+        "native-abi/native-abi.md",
+        "native-abi/sources.json"
+      ],
+      "complete": false
+    },
+    {
+      "id": "S09-04",
+      "name": "扫描与资料传输",
+      "status": "partial",
+      "delivered": [
+        "既有单页扫描和5类活动读源规则保持",
+        "资料传输H帮助字段与未决入口归档"
+      ],
+      "remaining": [
+        "采集/报警/宏变量/资料传输扫描归属",
+        "多页段数/扫描拥有关系",
+        "资料传输V5.1窗口/取消/保存重开/配置编译/运行",
+        "触发沿/重复周期/失败策略"
+      ],
+      "evidence": [
+        "native-abi/data-transfer-help-extract.json",
+        "native-abi/native-abi.json",
+        "../AMT070W124-L800X480R_USB下载协议_已验证部分.md#15"
+      ],
+      "complete": false
+    },
+    {
+      "id": "S09-05",
+      "name": "PC在线RTU后端",
+      "status": "partial",
+      "delivered": [
+        "独立标准FC1/2/3/4/5/6/15/16核心与有界队列",
+        "显式PC QSerialPort会话及worker窗口；先全量预验证再开口",
+        "取消/总期限/未确认写/无自动重试/关闭回执分开",
+        "r1只读复核5问题已见Root修复候选"
+      ],
+      "remaining": [
+        "正式编译与受控serial/GUI/portable回归封存",
+        "自动工程地址映射和扫描/写/读改写调度",
+        "原厂在线行为对照",
+        "明确端点后真实PC通信T，不能替代HMI E"
+      ],
+      "evidence": [
+        "../../src/simulation_modbus_transport.h",
+        "../../src/plc_serial_session.cpp",
+        "../../src/plc_online_dialog.cpp",
+        "reviews/serial-ui-r1.json",
+        "test-summary.json",
+        "portable-r2/checks-r1/run.json"
+      ],
+      "complete": false
+    },
+    {
+      "id": "S09-06",
+      "name": "HMI原固件解释与扩协议",
+      "status": "open",
+      "delivered": [],
+      "remaining": [
+        "默认AMT原固件到PLC读/写/异常/32位跨字/字序/故障恢复",
+        "完成当前默认协议闭环后按实际需求选择下一协议重新执行S09-01..05"
+      ],
+      "evidence": [
+        "../../design_plan/11_阶段10_设备运行兼容与性能验收.md"
+      ],
+      "complete": false
+    }
+  ],
+  "review": {
+    "path": "reviews/serial-ui-r1.json",
+    "initialFindings": 5,
+    "sourceFixCandidates": 5,
+    "candidateRuntimeVerifiedByThisReviewer": false,
+    "note": "只有源码复看；正式回归结果由Root独立封存。"
+  },
+  "validation": {
+    "status": "formal-pc-tests-passed",
+    "passedCount": 704,
+    "failedCount": 0,
+    "skippedCount": 0,
+    "summary": "test-summary.json",
+    "finalUi": "windows-r3/run.json",
+    "unchangedTargets": "windows-r1/run.json",
+    "capabilityReport": "S09-protocol-capabilities.json",
+    "portable": "portable-r2/checks-r1/run.json",
+    "note": "逐目标取最终身份；保留r1旧UI断言超时和独立RED，不叠加重复测试数量。PC测试不代替物理PLC/HMI。",
+    "portableActualProcesses": 7,
+    "portableChecks": 36,
+    "portablePassed": true
+  },
+  "physicalEvidence": {
+    "nativeDllOracleExecutedThisBatch": false,
+    "realPcSerialPlcVerifiedThisBatch": false,
+    "hmiToPlcVerifiedThisBatch": false,
+    "usbDownloadIsNotPlcProof": true
+  },
+  "documents": {
+    "taskBook": "../../design_plan/10_阶段9_PLC地址模板与通信.md",
+    "implementation": "../阶段9_PLC地址模板与通信实现.md",
+    "uiRules": "../UI编译规则与阶段交付规范.md#24",
+    "protocol": "../AMT070W124-L800X480R_USB下载协议_已验证部分.md#97"
+  },
+  "remainingFirstProbe": "继续静态恢复宿主desc+467索引/七槽容量；资料传输先真实窗口与单字段源设备差分；现场PLC/HMI需明确专用端点和刺激计划。",
+  "ownership": "本进度由独立文档代理写入，Root最终测试封存可追加结果；UI/USB规则、统一台账、README、程序修改记录由Root维护。",
+  "cleanup": {
+    "path": "cleanup-result.json",
+    "deletedBytes": 16380525,
+    "deletedFiles": 45,
+    "retainedRejectedCandidateBytes": 122439021,
+    "noHistoricalDenialsRetried": true
+  }
+}

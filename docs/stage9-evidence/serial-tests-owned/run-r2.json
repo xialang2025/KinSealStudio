@@ -1,0 +1,646 @@
+{
+  "stage": "S09-05",
+  "scope": "injected-controlled-serial-batch-session",
+  "generatedAt": "2026-11-14T19:03:48.601326+08:00",
+  "ownedTestFile": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\plc_serial_session_tests.cpp",
+    "bytes": 42852,
+    "sha256": "a6c8fbbda4e8ed9cd21adc4a9fa4f1563888a172a26a1a9f9126b38c6db1663c",
+    "relativePath": "tests/plc_serial_session_tests.cpp"
+  },
+  "boundProductionFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.h",
+      "bytes": 9532,
+      "sha256": "8296c30efe01f7243d877baa4f817c62cade73da4f6708c8037a795678ba47df",
+      "relativePath": "src/simulation_modbus_transport.h"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.cpp",
+      "bytes": 30147,
+      "sha256": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+      "relativePath": "src/simulation_modbus_transport.cpp"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\plc_serial_session.h",
+      "bytes": 2156,
+      "sha256": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a",
+      "relativePath": "src/plc_serial_session.h"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\plc_serial_session.cpp",
+      "bytes": 13127,
+      "sha256": "436a7cac926c8a7093be39dcf7aa514072bfa5b8093bf00fabe36dd87b727716",
+      "relativePath": "src/plc_serial_session.cpp"
+    }
+  ],
+  "sourceHashesStableDuringCompilation": true,
+  "currentHashesMatchCompiledSources": true,
+  "testExecutable": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\serial-tests-owned\\KinSealPlcSerialOwnedTests.exe",
+    "bytes": 1175933,
+    "sha256": "33a3a496e983d28619d13219eda7360abb73a637cfae1eb9f1e71a4c706f81a7"
+  },
+  "result": {
+    "pass": 101,
+    "fail": 0,
+    "skip": 0
+  },
+  "semanticRows": 99,
+  "lifecycleRows": 2,
+  "coverage": {
+    "initTestCase": 1,
+    "settingsBounds": 30,
+    "invalidBatchNeverCreatesEndpoint": 16,
+    "goldenTransactions": 16,
+    "factoryAndCallbacksStayInWorker": 1,
+    "oneOpenForFrozenBatch": 1,
+    "maximumBatch": 1,
+    "openingFailures": 5,
+    "middleFailurePreservesConfirmedReceipts": 16,
+    "closeFailureIsNotClosed": 2,
+    "cancellationBoundaries": 7,
+    "totalDeadline": 4,
+    "cleanupTestCase": 1
+  },
+  "incidents": [
+    {
+      "test": "initTestCase",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "explicit-defaults",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "baud50",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "baud4000000",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "baud49",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "baud4000001",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "data7",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "data9",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "even",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "odd",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "unsupported-parity1",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "unsupported-parity4",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "two-stops",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "zero-stops",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "three-stops",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "timeout1",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "timeout60000",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "timeout0",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "timeout60001",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "total-before-transaction",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "total120001",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "empty-port",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "leading-space",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "trailing-space",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "port-newline",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "port-del",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "port256",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "port257",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "port-nul",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "total0",
+      "type": "pass"
+    },
+    {
+      "test": "settingsBounds",
+      "row": "negative-parity",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "station0",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "station248",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-count0",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-address65536",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-wrap",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-register126",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-coil2001",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-multi-count-mismatch",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-multi-register-overflow",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-nonlogical-multi-coil",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-duplicate-id",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-empty-id",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-unsupported-function",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "empty-batch",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "batch257",
+      "type": "pass"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "invalid-settings",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "1-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "1-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "2-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "2-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "3-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "3-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "4-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "4-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "5-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "5-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "6-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "6-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "15-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "15-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "16-fragment-1",
+      "type": "pass"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "16-fragment-256",
+      "type": "pass"
+    },
+    {
+      "test": "factoryAndCallbacksStayInWorker",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "oneOpenForFrozenBatch",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "maximumBatch",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "openingFailures",
+      "row": "open-failure",
+      "type": "pass"
+    },
+    {
+      "test": "openingFailures",
+      "row": "missing-open",
+      "type": "pass"
+    },
+    {
+      "test": "openingFailures",
+      "row": "missing-write",
+      "type": "pass"
+    },
+    {
+      "test": "openingFailures",
+      "row": "missing-read",
+      "type": "pass"
+    },
+    {
+      "test": "openingFailures",
+      "row": "missing-close",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "3-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "3-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "3-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "3-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "6-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "6-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "6-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "6-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "15-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "15-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "15-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "15-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "16-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "16-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "16-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "middleFailurePreservesConfirmedReceipts",
+      "row": "16-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "closeFailureIsNotClosed",
+      "row": "close-only",
+      "type": "pass"
+    },
+    {
+      "test": "closeFailureIsNotClosed",
+      "row": "transaction-error-before-close",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "before-factory",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "factory-cancels-before-open",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "open-cancels-before-write",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "write-cancels-before-read",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "first-read-cancels",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "second-read-cancels",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "complete-prefix-without-boundary",
+      "type": "pass"
+    },
+    {
+      "test": "totalDeadline",
+      "row": "factory-exhausts-total",
+      "type": "pass"
+    },
+    {
+      "test": "totalDeadline",
+      "row": "open-exhausts-total",
+      "type": "pass"
+    },
+    {
+      "test": "totalDeadline",
+      "row": "write-exhausts-total",
+      "type": "pass"
+    },
+    {
+      "test": "totalDeadline",
+      "row": "second-response-exhausts-total",
+      "type": "pass"
+    },
+    {
+      "test": "cleanupTestCase",
+      "row": "",
+      "type": "pass"
+    }
+  ],
+  "build": {
+    "sourceUnits": [
+      "src/simulation_modbus_transport.cpp",
+      "src/plc_serial_session.cpp",
+      "tests/plc_serial_session_tests.cpp"
+    ],
+    "qtLibraries": [
+      "Qt6::Core",
+      "Qt6::Test",
+      "Qt6::SerialPort"
+    ],
+    "flags": [
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Wconversion",
+      "-DQT_NO_CAST_FROM_ASCII",
+      "-DQT_NO_CAST_TO_ASCII"
+    ],
+    "compileLog": {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\serial-tests-owned\\compile-r2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "mocLog": {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\serial-tests-owned\\moc-r2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "buildScript": {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\serial-tests-owned\\build-owned.ps1",
+      "bytes": 2814,
+      "sha256": "e808c230810559ee1c6ae640a6429875608dcd6950a44012c3671de2b3212b57"
+    },
+    "supportLibraryCopies": 0
+  },
+  "oracle": {
+    "requests": "8种功能固定完整RTU帧（含CRC）的字节vector，不调用生产构帧器生成期望。",
+    "responses": "固定完整应答及显式values；变造错误帧采用独立division式CRC循环。",
+    "fixture": "同进程注入factory，仅回放字节；一次worker测试在QThread中构造并执行。"
+  },
+  "redGreen": {
+    "r1": {
+      "passed": 66,
+      "failed": 35,
+      "realGapRows": 19,
+      "fieldSynchronizationRows": 16,
+      "report": "red-report-r1.json"
+    },
+    "parentProductionFixes": [
+      "早退初始化真实opened/sessionInactive/closed/closeAttempted/closeConfirmed/cancelled状态。",
+      "factory返回后open前重查取消与总预算。"
+    ],
+    "testOnlySynchronization": "parent将evidenceScope统一为scope后，同步黄金帧测试读取字段；不放宽受控scope语义。",
+    "r2": {
+      "passed": 101,
+      "failed": 0
+    }
+  },
+  "hardware": {
+    "physicalEndpointUsed": false,
+    "hmiExecutionConfirmed": false,
+    "serialPortOpened": false,
+    "usbUsed": false,
+    "plcOrHmiUsed": false,
+    "foregroundUiUsed": false
+  },
+  "limitations": [
+    "QThread用例证明runPlcSerialBatch在指定worker中调用时factory和callbacks保持同线程；未验证实际UI入口如何启动worker。",
+    "所有端点均为注入fixture；不验证QSerialPort真实端口、RTU物理静默间隔或真实PLC时序。",
+    "本任务只新增测试及自有证据，生产修复/CMake/文档/Git均由主代理负责。",
+    "测试没有声明原厂DLL ABI、plcFamily映射、HMI固件兼容或实际T/E通过。"
+  ]
+}

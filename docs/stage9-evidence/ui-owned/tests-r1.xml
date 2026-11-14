@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="Stage9OnlineUiTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.1361"/>
+  </TestFunction>
+  <TestFunction name="initialNoImplicitPortOrIo">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="197.866"/>
+  </TestFunction>
+  <TestFunction name="invalidRequestNeverCreatesEndpoint">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[no-port]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[untrimmed-port]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[fraction]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[coil-range]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[word-range]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[multi-coil-shape]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[multi-word-shape]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[span-crosses-end]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[uint-overflow]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[negative]]></DataTag>
+    </Incident>
+    <Duration msecs="1749.89"/>
+  </TestFunction>
+  <TestFunction name="operationControls">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[01]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[02]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[03]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[04]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[05]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[06]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[15]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[16]]></DataTag>
+    </Incident>
+    <Duration msecs="1318.06"/>
+  </TestFunction>
+  <TestFunction name="maximumReadKeepsCompleteDisplayAndReport">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="460.812"/>
+  </TestFunction>
+  <TestFunction name="successfulWorkerFreezesAndRestores">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="275.748"/>
+  </TestFunction>
+  <TestFunction name="cancelledWorkerFreezesAndRestores">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="321.548"/>
+  </TestFunction>
+  <TestFunction name="rejectWaitsForCancelledClose">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="248.674"/>
+  </TestFunction>
+  <TestFunction name="ownerDestructionFinishesWorkerWithoutWidgetAccess">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="336.401"/>
+  </TestFunction>
+  <TestFunction name="capabilitiesRemainConservative">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="762.68"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0311"/>
+  </TestFunction>
+  <Duration msecs="5674.35"/>
+</TestCase>

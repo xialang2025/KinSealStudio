@@ -1,5 +1,7 @@
 #include "main_window.h"
 #include "simulation_window.h"
+#include "plc_online_dialog.h" //20261114-8 add
+#include <QComboBox>
 
 #include <QAction>
 #include <QApplication>
@@ -31,7 +33,7 @@ private slots:
     void duplicateActionOwnsOneWindow();
     void unsupportedProjectDoesNotStart();
     void parentCloseEndsRuntime();
-    void onlineScopeHasNoConnectAction();
+    void onlineToolRequiresExplicitPort(); //20261114-8 change
     void invalidNumericInputCanRecover(); //20261114-6 add
     void directOwnerDeletionWithHeldViewport();
     void ownerDeletionInsideInputDialog();
@@ -307,13 +309,13 @@ void SimulationUiTests::parentCloseEndsRuntime() //20261114-6 add
 }
 
 /******************************************************************************
- * Function Name   : SimulationUiTests::onlineScopeHasNoConnectAction
- * Description     : Explain PC transport limits with no enabled port-connect path or project mutation.
+ * Function Name   : SimulationUiTests::onlineToolRequiresExplicitPort
+ * Description     : Open the Stage9 manual PC tool without selecting a port, starting I/O or mutating the editor.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void SimulationUiTests::onlineScopeHasNoConnectAction() //20261114-6 add
+void SimulationUiTests::onlineToolRequiresExplicitPort() //20261114-8 change
 {
     MainWindow window;
     QJsonObject before;
@@ -324,9 +326,13 @@ void SimulationUiTests::onlineScopeHasNoConnectAction() //20261114-6 add
     QTimer::singleShot(0, &window, [&explained]() {
         QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
 
-        if (dialog != nullptr && dialog->objectName() == QStringLiteral("onlineSimulationScope"))
+        if (dialog != nullptr)
         {
-            explained = dialog->findChild<QLabel *>()->text().contains(QStringLiteral("不会连接PLC"));
+            PlcOnlineDialog *online = qobject_cast<PlcOnlineDialog *>(dialog);
+            QComboBox *port = dialog->findChild<QComboBox *>(QStringLiteral("PlcPcPort"));
+
+            explained = online != nullptr && port != nullptr && port->currentIndex() == -1 &&
+                port->currentText().isEmpty() && !online->running() && online->lastReport().isEmpty();
             dialog->reject();
         }
     });

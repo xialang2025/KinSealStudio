@@ -1,0 +1,109 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143
+Address: 0x100128a0; label: 写线圈 FC5
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+
+void FUN_100128a0(void)
+
+{
+  ushort uVar1;
+  int iVar2;
+  char *pcVar3;
+  char local_134 [11];
+  undefined1 local_129;
+  uint local_60;
+  int local_54;
+  uint local_30;
+  uint local_24;
+  uint local_18;
+  
+  pcVar3 = local_134;
+  for (iVar2 = 0x4c; iVar2 != 0; iVar2 = iVar2 + -1) {
+    pcVar3[0] = -0x34;
+    pcVar3[1] = -0x34;
+    pcVar3[2] = -0x34;
+    pcVar3[3] = -0x34;
+    pcVar3 = pcVar3 + 4;
+  }
+  local_18 = *(uint *)(DAT_10033294 + 4);
+  local_60 = (uint)(byte)DAT_10033294[1];
+  local_134[0] = *DAT_10033294;
+  local_129 = local_134[0] == 'M';
+  if ((bool)local_129) {
+    local_54 = 0;
+  }
+  else {
+    __RTC_UninitUse("add");
+  }
+  local_18 = local_18 + local_54;
+  *DAT_1003328c = (undefined1)local_60;
+  DAT_1003328c[1] = 5;
+  local_24._0_1_ = (undefined1)(local_18 >> 8);
+  DAT_1003328c[2] = (undefined1)local_24;
+  local_30._0_1_ = (undefined1)local_18;
+  DAT_1003328c[3] = (undefined1)local_30;
+  if (*(double *)(DAT_10033294 + 0x470) == 1.0) {
+    DAT_1003328c[4] = 0xff;
+    DAT_1003328c[5] = 0;
+  }
+  if (*(double *)(DAT_10033294 + 0x470) == 0.0) {
+    DAT_1003328c[4] = 0;
+    DAT_1003328c[5] = 0;
+  }
+  local_30 = local_18 & 0xff;
+  local_24 = (int)local_18 >> 8 & 0xff;
+  uVar1 = thunk_FUN_10015600((int)DAT_1003328c,6);
+  DAT_1003328c[6] = (char)uVar1;
+  DAT_1003328c[7] = (char)(uVar1 >> 8);
+  pcVar3 = DAT_10033294;
+  if (local_60 == 0) {
+    pcVar3[0xe] = '\b';
+    pcVar3[0xf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0xd6] = '\0';
+    pcVar3[0xd7] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x204] = '\x01';
+    pcVar3[0x205] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x206] = '\0';
+    pcVar3[0x207] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x2ce] = '\0';
+    pcVar3[0x2cf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x396] = '\0';
+    pcVar3[0x397] = '\0';
+    DAT_10033294[0x467] = '\0';
+  }
+  else {
+    pcVar3[0xe] = '\b';
+    pcVar3[0xf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0xd6] = '\0';
+    pcVar3[0xd7] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x204] = '\x01';
+    pcVar3[0x205] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x206] = '\b';
+    pcVar3[0x207] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x2ce] = '\0';
+    pcVar3[0x2cf] = '\0';
+    pcVar3 = DAT_10033294;
+    pcVar3[0x396] = '\0';
+    pcVar3[0x397] = '\0';
+    DAT_10033294[0x467] = '\0';
+  }
+  pcVar3 = DAT_10033294;
+  pcVar3[0x19c] = '\0';
+  pcVar3[0x19d] = '\0';
+  return;
+}
+

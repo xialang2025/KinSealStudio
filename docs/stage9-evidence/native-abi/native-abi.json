@@ -1,0 +1,1289 @@
+{
+  "schemaVersion": 1,
+  "artifact": "S09-03 native Modbus ABI static subset + S09-04 scan/transfer inventory",
+  "capturedAt": "2026-11-14T18:43:40+08:00",
+  "changeMarker": "//20261114-8 add",
+  "baselineHeadAtStart": "96912ec4dc5b8f1487cc00cf4a2443b2450d580d",
+  "subject": {
+    "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\PlcDll\\Modbus_RTU.dll",
+    "sha256": "169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5",
+    "format": "PE shared-library",
+    "architecture": "x86"
+  },
+  "status": {
+    "D": "partial-static-upgrade-only",
+    "nativeDllExecuted": false,
+    "nativeOracleCalls": 0,
+    "realSerialOrPlcIo": false,
+    "usbSdkOrHmiDownload": false,
+    "completeAbi": false,
+    "newU": false,
+    "newP": false,
+    "newC": false,
+    "newT": false,
+    "newE": false,
+    "newlyRecoveredFunctions": 12,
+    "reusedPriorFunctions": 3
+  },
+  "evidence": {
+    "new": [
+      {
+        "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "operation": "batch_decompile",
+        "recordIndex": 0,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+        "operation": "batch_decompile",
+        "recordIndex": 1,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_19334548b727a68c78b7bf477a5125ad37b2f47cbde015599220e1527211cc72",
+        "operation": "xrefs",
+        "recordIndex": 2,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_7eef966579e0947ee79c72cd6ee418caa813e75bc005799ef6d3aaabea55dca3",
+        "operation": "xrefs",
+        "recordIndex": 3,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_399c4feb6b2fce336c667f9b711ccf9a96aed2a94cebfbd62fb17a6a9cf3cc0d",
+        "operation": "xrefs",
+        "recordIndex": 4,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_d9863b071bd0b00fa490b5e99151299c4a809bc426bd2e3bbc0f70fea27537a2",
+        "operation": "xrefs",
+        "recordIndex": 5,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      },
+      {
+        "evidenceId": "ev_71cb3ab683769514dbdffce01fca46a679d88bcafb7b718d2cfe40309cd5a231",
+        "operation": "read_function_instructions",
+        "recordIndex": 6,
+        "archive": "REA-stage9-modbus-static-r1.json.gz"
+      }
+    ],
+    "reused": [
+      {
+        "role": "entry",
+        "evidenceId": "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+        "source": "../../../design_plan/复刻路线图证据/REA-20261110.json",
+        "reanalysis": false
+      },
+      {
+        "role": "dispatch",
+        "evidenceId": "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "source": "../../../design_plan/复刻路线图证据/REA-20261110.json",
+        "reanalysis": false
+      },
+      {
+        "role": "readWords",
+        "evidenceId": "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129",
+        "source": "../../../design_plan/复刻路线图证据/REA-20261110.json",
+        "reanalysis": false
+      }
+    ],
+    "sourceSha256": "169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5",
+    "decompiler": "Ghidra 12.1.4 via REA",
+    "authority": "D:recovered-static-implementation",
+    "limitations": [
+      "反编译类型和符号名由工具推断。",
+      "精确CRC汇编仅覆盖0x10015600，其余新函数为定点伪码。",
+      "xref结果无kind且不排除间接用途。"
+    ]
+  },
+  "functions": [
+    {
+      "address": "0x10015600",
+      "label": "CRC16",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10015600.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10012bb0",
+      "label": "读位 FC1/2",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10012bb0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x100128a0",
+      "label": "写线圈 FC5",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "100128a0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10013af0",
+      "label": "packed-bit 读改写",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10013af0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10014020",
+      "label": "写字 FC6/16",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10014020.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10015450",
+      "label": "响应入口",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10015450.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10014670",
+      "label": "写字包装",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10014670.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x100146c0",
+      "label": "读字包装",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "100146c0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10014710",
+      "label": "分段写 FC16",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "10014710.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x100134a0",
+      "label": "分段读 FC3/4",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "pseudocode": "100134a0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x100154d0",
+      "label": "响应 CRC 校验",
+      "evidenceId": "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+      "pseudocode": "100154d0.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    },
+    {
+      "address": "0x10014e00",
+      "label": "响应原位解码/RMW 更新",
+      "evidenceId": "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+      "pseudocode": "10014e00.pseudo.txt",
+      "status": "D-static-recovered-not-executed"
+    }
+  ],
+  "entry": {
+    "name": "DllFun",
+    "recoveredCallingConvention": "__cdecl (not runtime ABI-verified)",
+    "callbackSlot": "DAT_10033304",
+    "callbackAction": "传七个全局指针槽的地址，再进入dispatch",
+    "buffers": [
+      {
+        "bufferId": "B1",
+        "callbackArgument": 1,
+        "globalSlot": "DAT_1003328c",
+        "meaning": "TX字节缓冲指针",
+        "observedAccess": "W",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B2",
+        "callbackArgument": 2,
+        "globalSlot": "DAT_100332fc",
+        "activeAlias": "DAT_10033294",
+        "meaning": "操作/帧元数据描述块指针",
+        "observedAccess": "R/W",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B3",
+        "callbackArgument": 3,
+        "globalSlot": "DAT_10033288",
+        "meaning": "RX及原位解码缓冲指针",
+        "observedAccess": "R/W",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B4",
+        "callbackArgument": 4,
+        "globalSlot": "DAT_10033280",
+        "meaning": "bulk描述与写载荷源指针",
+        "observedAccess": "R",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B5",
+        "callbackArgument": 5,
+        "globalSlot": "DAT_10033284",
+        "meaning": "未知",
+        "observedAccess": "仅见传槽地址",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_19334548b727a68c78b7bf477a5125ad37b2f47cbde015599220e1527211cc72"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B6",
+        "callbackArgument": 6,
+        "globalSlot": "DAT_10033300",
+        "meaning": "未知",
+        "observedAccess": "仅见传槽地址",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_7eef966579e0947ee79c72cd6ee418caa813e75bc005799ef6d3aaabea55dca3"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      },
+      {
+        "bufferId": "B7",
+        "callbackArgument": 7,
+        "globalSlot": "DAT_10033290",
+        "meaning": "未知",
+        "observedAccess": "仅见传槽地址",
+        "evidenceIds": [
+          "ev_38b57eab7ea6caa28c77a7176e6d57781be35b89209f898c732ff43545fda639",
+          "ev_399c4feb6b2fce336c667f9b711ccf9a96aed2a94cebfbd62fb17a6a9cf3cc0d"
+        ],
+        "argumentIs": "address-of-global-pointer-slot",
+        "pointerWidth": "x86 32-bit",
+        "capacity": null,
+        "allocationAndLifetime": "unknown-host-owned",
+        "aliasAndThreadSafety": "unknown",
+        "testId": null,
+        "status": "D-static-only"
+      }
+    ],
+    "callbackCallingConvention": "unknown",
+    "globalXrefs": [
+      {
+        "symbol": "DAT_10033284",
+        "references": [
+          "0x100123f2"
+        ],
+        "evidenceId": "ev_19334548b727a68c78b7bf477a5125ad37b2f47cbde015599220e1527211cc72"
+      },
+      {
+        "symbol": "DAT_10033300",
+        "references": [
+          "0x100123ed"
+        ],
+        "evidenceId": "ev_7eef966579e0947ee79c72cd6ee418caa813e75bc005799ef6d3aaabea55dca3"
+      },
+      {
+        "symbol": "DAT_10033290",
+        "references": [
+          "0x100123e8"
+        ],
+        "evidenceId": "ev_399c4feb6b2fce336c667f9b711ccf9a96aed2a94cebfbd62fb17a6a9cf3cc0d"
+      },
+      {
+        "symbol": "DAT_10033304",
+        "references": [
+          "0x100123e1",
+          "0x1001240b"
+        ],
+        "evidenceId": "ev_d9863b071bd0b00fa490b5e99151299c4a809bc426bd2e3bbc0f70fea27537a2"
+      }
+    ]
+  },
+  "descriptor": {
+    "structureKind": "DLL x86 process-memory descriptor, not 36-byte device address slot",
+    "allocationSize": null,
+    "arrayCapacities": "unknown; do not infer from neighboring offsets",
+    "fields": [
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x000",
+        "width": "u8",
+        "endian": "N/A",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "地址族 family",
+        "evidenceIds": [
+          "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143"
+        ],
+        "procedures": [
+          "0x10012460",
+          "0x10012bb0",
+          "0x10014020"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x001",
+        "width": "u8",
+        "endian": "N/A",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "请求站号 station",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x004",
+        "width": "u32",
+        "endian": "LE-host-x86",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "内部数值起点 numeric；到PDU的转换依族",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0",
+          "0x10013af0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x008",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "内部数量，读位分支左移3后写PDU；不可通用解释为bitCount",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0",
+          "0x10014020"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x00d",
+        "width": "u8",
+        "endian": "N/A",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "operation 分派选择",
+        "evidenceIds": [
+          "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9"
+        ],
+        "procedures": [
+          "0x10012460"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "宿主赋值来源与业务名称尚未恢复"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x00e+2*i",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "第i个生成请求长度；生成数组从i=0起记",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0",
+          "0x10014710"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "数组容量未知，不按邻接偏移推定"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x0d6+2*i",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "第i个请求在TX缓冲区的偏移",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143"
+        ],
+        "procedures": [
+          "0x10014710",
+          "0x10013af0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "数组容量未知"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x19c",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W/R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "解码模式0/1/2/99/100",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10014020",
+          "0x10014e00"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x1a0+4*i",
+        "width": "u32",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "保留的逻辑起点",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012fb0",
+          "0x100134a0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "容量/宿主消费方未知"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x204",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "生成的请求帧数",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0",
+          "0x10013af0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": null
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x206+2*i",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "第i帧预期响应总长度（含CRC）",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0",
+          "0x10014710"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "响应校验读取基址是0x204+2*j；i与j的关系待宿主确认"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x2ce+2*i",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "第i帧RX载荷偏移",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "解码读取基址0x2cc+2*j"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x396+2*i",
+        "width": "u16",
+        "endian": "LE-host-x86",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "第i帧载荷长度",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129"
+        ],
+        "procedures": [
+          "0x10012bb0",
+          "0x10012fb0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "解码读取基址0x394+2*j"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x467",
+        "width": "u8",
+        "endian": "N/A",
+        "access": "W/R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "活动响应帧索引j；部分生成流程置0，宿主后续赋值未知",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+          "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9"
+        ],
+        "procedures": [
+          "0x10012460",
+          "0x100154d0",
+          "0x10014e00"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "不能将生成数组的零起始i直接代入响应j"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x470",
+        "width": "x86 double (8B)",
+        "endian": "LE-host-x86",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "写位值，观察到仅比较0.0/1.0",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+        ],
+        "procedures": [
+          "0x100128a0",
+          "0x10013af0",
+          "0x10014e00"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "其它浮点数/NaN行为未证明合法"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x478",
+        "width": "u8",
+        "endian": "N/A",
+        "access": "W",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "响应CRC检查结果：1后解码，失败为0",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+          "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+        ],
+        "procedures": [
+          "0x10015450",
+          "0x100154d0"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "不是完整响应语义校验成功标志"
+      },
+      {
+        "bufferId": "B2/active-DAT_10033294",
+        "offset": "0x479+",
+        "width": "bytes (branch dependent)",
+        "endian": "LE source words; branch dependent",
+        "access": "R",
+        "lifetime": "宿主管理；分配/释放/容量/线程安全尚未恢复",
+        "meaning": "写字载荷；family44交换每u16，family63观察每4B逆序",
+        "evidenceIds": [
+          "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143"
+        ],
+        "procedures": [
+          "0x10014020"
+        ],
+        "testId": null,
+        "status": "D-static-only",
+        "unknown": "载荷容量/数量合法范围未恢复"
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": [
+        0,
+        10,
+        11,
+        12,
+        13
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "44",
+        "48",
+        "4b",
+        "52",
+        "63",
+        "74"
+      ],
+      "target": "0x10012fb0",
+      "behavior": "读字 FC3/4",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        0,
+        10,
+        11,
+        12,
+        13
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "4d",
+        "58"
+      ],
+      "target": "0x10012bb0",
+      "behavior": "读位 FC1/2",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        1
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "44",
+        "63"
+      ],
+      "target": "0x10014020",
+      "behavior": "FC6/16",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        1
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "4b"
+      ],
+      "target": "0x10013af0",
+      "behavior": "FC3读后修改FC6占位帧",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        1
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "4d"
+      ],
+      "target": "0x100128a0",
+      "behavior": "FC5",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        1
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "other"
+      ],
+      "target": null,
+      "behavior": "观察到清除部分请求元数据；不推定通用错误码",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        2
+      ],
+      "familySource": null,
+      "families": null,
+      "target": "0x10015450",
+      "behavior": "CRC检查后原位解码；宿主索引待恢复",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        3
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "44",
+        "63"
+      ],
+      "target": "0x10014670 -> 0x10014020",
+      "behavior": "写字包装",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        4
+      ],
+      "familySource": "B2+0",
+      "families": [
+        "44",
+        "52",
+        "63",
+        "74"
+      ],
+      "target": "0x100146c0 -> 0x10012fb0",
+      "behavior": "读字包装",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        5
+      ],
+      "familySource": "B4+3",
+      "families": [
+        "44",
+        "63"
+      ],
+      "target": "0x10014710",
+      "behavior": "bulk写 FC16",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    },
+    {
+      "operation": [
+        6
+      ],
+      "familySource": "B4+3",
+      "families": [
+        "44",
+        "52",
+        "63",
+        "74"
+      ],
+      "target": "0x100134a0",
+      "behavior": "bulk读 FC3/4",
+      "evidenceIds": [
+        "ev_e0683646c042f59e2484599c24675156c18afda780049cee6319a2bba04beaf9",
+        "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+        "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+      ],
+      "status": "D-static-not-business-ABI",
+      "testId": null
+    }
+  ],
+  "requests": [
+    {
+      "procedure": "0x10012bb0",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "familiesFc": {
+        "4d": 1,
+        "58": 2
+      },
+      "quantityOnWire": "u16(desc+8) << 3, emitted high-byte then low-byte",
+      "addressOnWire": "numeric low16 emitted high-byte then low-byte; legal input range unknown",
+      "txBytes": 8,
+      "expectedRxBytes": "station==0 ? 0 : internalQuantity+5",
+      "payloadBytes": "internalQuantity",
+      "decodeMode": 1,
+      "unknown": "不能把内部数量等同任意标准bitCount；上界/合法性待宿主恢复"
+    },
+    {
+      "procedure": "0x10012fb0",
+      "evidenceId": "ev_4eea4b584019c2390384659066da191c855609f61e28aab89c5e76ca31d9c129",
+      "familiesFc": {
+        "44": 3,
+        "4b": 3,
+        "63": 3,
+        "48": 4,
+        "52": 4,
+        "74": 4
+      },
+      "addressOnWire": "family4b/48先有符号除16截断；其它为numeric；低16BE写入",
+      "quantityOnWire": "N=u16(desc+8)",
+      "txBytes": 8,
+      "expectedRxBytes": "station==0 ? 0 : 2*N+5",
+      "payloadBytes": "2*N",
+      "decodeModeByFamily": {
+        "4b": 99,
+        "48": 99,
+        "44": 1,
+        "52": 1,
+        "63": 2,
+        "74": 2
+      },
+      "unknown": "numeric/quantity合法范围及宿主校验未恢复"
+    },
+    {
+      "procedure": "0x100128a0",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "familiesFc": {
+        "4d": 5
+      },
+      "valueOnWire": "double(desc+470)==1.0 -> FF00; ==0.0 -> 0000; other value not assigned in selected path",
+      "txBytes": 8,
+      "expectedRxBytes": "station==0 ? 0 : 8",
+      "decodeMode": 0
+    },
+    {
+      "procedure": "0x10014020",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "families": [
+        "44",
+        "63"
+      ],
+      "quantityOnWire": "N=u16(desc+8)",
+      "fc": "N==1 ? 6 : 16",
+      "txBytes": "N==1 ? 8 : 2*N+9",
+      "byteCountFc16": "2*N emitted as one byte",
+      "expectedRxBytes": "station==0 ? 0 : 8",
+      "decodeMode": 0,
+      "payloadSource": "desc+479 onward",
+      "family44": "u16源逐字交换字节后入TX",
+      "family63": "观察按N/2组将每4字节逆序入TX；N偶数约束尚未证明",
+      "unknown": "N==0、超量、数组越界及奇数N不作可调用结论"
+    },
+    {
+      "procedure": "0x10013af0",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "family": "4b",
+      "operation": 1,
+      "behavior": "首FC3读；在TX+8预建FC6；mode100响应按numeric%16与double0/1更新TX+12/+13并重算CRC",
+      "decodeEvidenceId": "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542",
+      "decodeProcedure": "0x10014e00",
+      "unknown": "两帧先后调度与首响应成功后发送条件由宿主决定，尚未恢复"
+    },
+    {
+      "procedure": "0x10014710",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "fc": 16,
+      "bulkSource": {
+        "buffer": "B4",
+        "count": "BE16+0",
+        "family": "u8+3",
+        "station": "u8+4",
+        "address": "BE32+5",
+        "payload": "+9 onward"
+      },
+      "segmentWords": 32,
+      "txStrideBytes": 73,
+      "expectedRxBytesEach": "station==0 ? 0 : 8",
+      "unknown": "family63伪码存在+0x10与+0xb/+0xa/+9不对称引用；未核汇编前不得修正或作为oracle；宿主缓冲容量未知"
+    },
+    {
+      "procedure": "0x100134a0",
+      "evidenceId": "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "fcByFamily": {
+        "44": 3,
+        "63": 3,
+        "52": 4,
+        "74": 4
+      },
+      "quantity": "active descriptor +8，所见分支clamp到5000",
+      "segmentWords": 32,
+      "txStrideBytes": 8,
+      "startIncrement": 32,
+      "decodeModeByFamily": {
+        "44": 1,
+        "52": 1,
+        "63": 2,
+        "74": 2
+      },
+      "unknown": "5000不等于描述块数组已证明可容纳；capacity/alias未恢复"
+    }
+  ],
+  "crc": {
+    "procedure": "0x10015600",
+    "evidenceIds": [
+      "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "ev_71cb3ab683769514dbdffce01fca46a679d88bcafb7b718d2cfe40309cd5a231"
+    ],
+    "initial": "FFFF",
+    "reflectedPolynomial": "A001",
+    "xorOut": "0000",
+    "algorithm": "each byte: crc ^= byte; repeat8: crc=(crc>>1)^((crc&1)?0xA001:0)",
+    "returnWidth": "u16 (AX)",
+    "lengthParameter": "u16 from stack [EBP+0xc]",
+    "requestTailOrder": "low CRC byte, then high CRC byte",
+    "instructionBody": {
+      "start": "0x10015600",
+      "endInclusive": "0x100156b5",
+      "bytes": 182,
+      "text": "10015600.instructions.txt"
+    },
+    "runtimeOracleVerified": false
+  },
+  "response": {
+    "entryProcedure": "0x10015450",
+    "crcProcedure": "0x100154d0",
+    "decodeProcedure": "0x10014e00",
+    "evidenceIds": [
+      "ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143",
+      "ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542"
+    ],
+    "indexExpression": "j=u8(desc+467)",
+    "lengthRead": "u16(desc+204+2*j)",
+    "payloadOffsetRead": "u16(desc+2cc+2*j)",
+    "payloadLengthRead": "u16(desc+394+2*j)",
+    "crcFlag": "desc+478=1 and decode if CRC matches; otherwise0",
+    "modes": {
+      "99": "每2字节交换后写回RX",
+      "1": "payload原样复制到RX开头",
+      "2": "每4字节[a,b,c,d]解码为[c,d,a,b]",
+      "100": "按位结果更新第二FC6帧并重算CRC",
+      "0": "所见解码路径无对应copy分支"
+    },
+    "indexRisk": {
+      "status": "unresolved-call-contract-not-proven-live-bug",
+      "observed": "生成首expectedRx在+206，而响应从+204+2*j读；+204是requestCount",
+      "counterexampleCondition": "if j=0 and requestCount=1",
+      "potentialResult": "length=1; RX[length-2]即RX[-1]；传CRC的length-2转u16为65535",
+      "inference": "j=1可对应生成首项，但宿主是否如此赋值尚无证据",
+      "gate": "不执行DLL响应分支；先恢复宿主index赋值、缓冲边界与调用顺序"
+    },
+    "semanticValidation": "选定链只见CRC，未见站号/功能码/byteCount/exception校验；不推定宿主其它层没有这些校验"
+  },
+  "implementableSubset": {
+    "nativeAbiIntegration": "unsupported until host buffers/index/capacities and oracle close",
+    "independentPcCandidate": "可独立实现有限标准FC1/2/3/4/5/6/16与CRC的raw PDU/RTU编码及严格响应校验；使用显式station/address/count，不自动套原厂family数量规则",
+    "nativeEquivalenceClaim": false,
+    "uiFamilyRouteStationMapping": "not automatic; three sources remain distinct",
+    "thisAgentProductionChanges": false,
+    "notCovered": [
+      "原厂DLL真实执行",
+      "宿主所有七缓冲容量与生命周期",
+      "全部operation调用者",
+      "PC串口I/O调度",
+      "USB下载",
+      "HMI固件到PLC读写",
+      "其它协议/多站/多端口"
+    ]
+  },
+  "existingScanBaseline": {
+    "level": "prior-D/C-evidence + current-source-inspection; no new oracle",
+    "sources": [
+      "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md#15",
+      "docs/位按钮设备编译实现.md",
+      "src/device_address_compiler.cpp",
+      "src/device_scan_table.cpp"
+    ],
+    "historicalTests": {
+      "scanCases": 37,
+      "commonPureFunctionOracle": 31,
+      "rerunThisInvestigation": false
+    },
+    "integrationGate": {
+      "connectionCount": 1,
+      "profile": "Link/serial_amz/MODBUS/Modbus_RTU.ini",
+      "port": "COM1",
+      "stationString": "1",
+      "nodeKnown": true,
+      "node": 1
+    },
+    "deviceAddressSlot36": {
+      "0": "route",
+      "1": "family",
+      "2": "node",
+      "5": "common0 / bit-toggle1",
+      "8": "LE32 numeric",
+      "other": "由已核调用方模板负责，不认定全0"
+    },
+    "scanHeader": "200个u8页面段数；本版仅第0页；单页段数<=255；总长200+12*N",
+    "scanRecord12": {
+      "0": "family",
+      "1": "route",
+      "2": "固定0",
+      "3": "node",
+      "4": "LE16 count",
+      "6..7": "清0padding",
+      "8": "LE32 start"
+    },
+    "familyOrderHex": [
+      "4d",
+      "58",
+      "48",
+      "4b",
+      "56",
+      "4c",
+      "52",
+      "44",
+      "74",
+      "63",
+      "65",
+      "66"
+    ],
+    "familyOrderLabels": [
+      "0x",
+      "1x",
+      "3x_bit",
+      "4x_bit",
+      "6x_bit",
+      "10x_bit",
+      "3x",
+      "4x",
+      "3x_dw",
+      "4x_dw",
+      "6x",
+      "10x"
+    ],
+    "mergeRules": [
+      "(route,node)分组按首次出现顺序；组内固定族顺序；族内保留原交换升序行为",
+      "0x/1x单位1，每段最多64；packed四族unit16、16对齐并计入前导偏移，输出count折成word",
+      "其它族默认maxReadWords32，helper上界256；合并span不超max，gap<=32*unit",
+      "gap计算基于last.start+last.count，不替换成通用区间合并",
+      "DWORD start清低位，odd count+1",
+      "历史packed-bit bulk含包含读使count再次/16缩小的原厂行为；现控件N1未生成该bulk，不据此开放任意N"
+    ],
+    "activeReadSources": [
+      "启用的文本显现条件",
+      "位按钮toggle op3",
+      "字按钮算术op>=3，按transferWordCount",
+      "启用的指示灯/监视，U32指示读2word",
+      "启用的触控或显现条件"
+    ],
+    "writeOnlyNotSubscribed": [
+      "set/reset/jog",
+      "constant/keypad",
+      "notice写地址仅校验"
+    ],
+    "unknown": [
+      "采集/报警/宏变量/资料传输扫描归属",
+      "多画面页计数/拥有关系",
+      "PC在线扫描调度"
+    ],
+    "identityBoundary": "36B槽route、node与DLL descriptor station来源独立，不能统一写同一数值"
+  },
+  "dataTransfer": {
+    "level": "H-help-only; current V5.1 U/P/C/T/E pending",
+    "helpExtract": "data-transfer-help-extract.json",
+    "topic": "Data-Transfer/Data-Transfer.htm",
+    "helpChmSha256": "f87f031d82b199d8c66de7240ee07e1553f136358ea842e5c34e0f10e80171a1",
+    "htmlSha256": "3f4281aa86fcc6156c6dc489d3dfe283df34aec96882155f88c18f77a8b750e2",
+    "entryId": "TREE.TRANSFER.NEW",
+    "openQuestion": "Q-S00-ENTRY-TREE-16",
+    "fieldsFromHelp": {
+      "mode": [
+        "计时秒周期",
+        "位为1触发"
+      ],
+      "type": [
+        "位",
+        "字",
+        "双字"
+      ],
+      "length": "1..32",
+      "sourceAndTarget": "地址类型与属性类型一致",
+      "routing": "帮助称源/目标不能同PLC；COM1→COM2需经内部寄存器两段中转"
+    },
+    "unknown": [
+      "V5.1实际QObject/字段默认/可编辑状态",
+      "长度实际UI边界",
+      "边沿或电平重复频率",
+      "失败/超时策略",
+      "确认/取消/保存重开",
+      "源格式/配置表设备编译",
+      "触发读、源读、目标写与扫描的关联"
+    ],
+    "modelKind": "src/project_model.cpp 的 dataTransfer 类别不证明运行或编译已实现",
+    "notInferred": [
+      "不把位为1表述推定为边沿",
+      "不把同PLC限制推广为所有同COM均禁止",
+      "不自动生成内部中转"
+    ]
+  },
+  "nextMinimalProbes": [
+    {
+      "id": "S09-ABI-HOST-INDEX",
+      "type": "static",
+      "task": "定位宿主填七个指针槽、分配容量和对desc+467的赋值；先闭合响应j与生成i的关系",
+      "blockedDynamic": true
+    },
+    {
+      "id": "S09-ABI-BULK-DW",
+      "type": "instruction-check",
+      "task": "核0x10014710 family63载荷+0x10引用，不猜改其伪码",
+      "blockedDynamic": true
+    },
+    {
+      "id": "S09-ABI-BOUNDS",
+      "type": "static-then-private-mock",
+      "task": "恢复数量/数组边界及调用约定；条件闭合后另行授权私有x86 mock oracle并保护缓冲边界",
+      "blockedDynamic": true
+    },
+    {
+      "id": "S09-TRANSFER-U-P-C",
+      "type": "future-background-native-ui-and-single-field-diff",
+      "task": "真实V5.1资料传输窗口，先收字段/取消/保存重开，再单变量编译源/设备差分；仍不发真实PLC",
+      "executedThisInvestigation": false
+    }
+  ],
+  "lifecycle": {
+    "exportAttempt": {
+      "status": "failed",
+      "reason": "Evidence output directory did not exist",
+      "automaticToolRetryable": true
+    },
+    "targetClosed": true,
+    "closeResult": null,
+    "reanalysisPerformed": false,
+    "recordsPreservedFromInlineToolResults": 7
+  },
+  "storagePolicy": "仅归档一个gzip完整inline证据、12个小伪码、CRC指令、帮助选段和规范；未复制DLL/SDK/沙盒；没有删除任何路径"
+}

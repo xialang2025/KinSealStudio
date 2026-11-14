@@ -1,0 +1,65 @@
+{
+  "revision": "fixed-r2",
+  "steps": [
+    {
+      "label": "compile-dialog-fixed-r2",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Wconversion",
+        "-DQT_WIDGETS_LIB",
+        "-DQT_GUI_LIB",
+        "-DQT_CORE_LIB",
+        "-DQT_NO_CAST_FROM_ASCII",
+        "-DQT_NO_CAST_TO_ASCII",
+        "-Isrc",
+        "-IZ:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtCore",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtGui",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtWidgets",
+        "-isystem",
+        "G:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\include\\QtTest",
+        "-c",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\plc_address_dialog.cpp",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\dialog-fixed-r2.o"
+      ],
+      "exitCode": 0,
+      "log": "compile-dialog-fixed-r2.log",
+      "logBytes": 0
+    },
+    {
+      "label": "link-fixed-r2",
+      "argv": [
+        "G:\\01_Professional\\QT6\\Installed\\Tools\\mingw1310_64\\bin\\g++.exe",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\core.o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\native.o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\catalog.o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\tests.o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\dialog-fixed-r2.o",
+        "-LG:\\01_Professional\\QT6\\Installed\\6.12.0\\mingw_64\\lib",
+        "-lQt6Widgets",
+        "-lQt6Gui",
+        "-lQt6Test",
+        "-lQt6Core",
+        "-o",
+        "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\Stage9AddressUiTests-fixed-r2.exe"
+      ],
+      "exitCode": 0,
+      "log": "link-fixed-r2.log",
+      "logBytes": 0
+    }
+  ],
+  "sharedBuildModified": false,
+  "vendorDllInvoked": false,
+  "hardwareIo": false,
+  "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\Stage9AddressUiTests-fixed-r2.exe",
+  "sha256": "c3a5ca96c5eb7d4f3e7bf33b0c34848feff8496c898f3c097abecb65a01808c3"
+}

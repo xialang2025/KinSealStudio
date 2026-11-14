@@ -1,0 +1,46 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542
+Address: 0x100154d0; label: 响应 CRC 校验
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+
+undefined4 FUN_100154d0(void)
+
+{
+  ushort uVar1;
+  undefined4 uVar2;
+  int iVar3;
+  undefined4 *puVar4;
+  undefined4 local_100 [58];
+  uint local_18;
+  uint local_c;
+  
+  puVar4 = local_100;
+  for (iVar3 = 0x3f; iVar3 != 0; iVar3 = iVar3 + -1) {
+    *puVar4 = 0xcccccccc;
+    puVar4 = puVar4 + 1;
+  }
+  local_18 = (uint)*(byte *)(DAT_10033288 + -1 +
+                            (uint)*(ushort *)
+                                   (DAT_10033294 + 0x204 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2
+                                   ));
+  local_c = (uint)*(byte *)(DAT_10033288 + -2 +
+                           (uint)*(ushort *)
+                                  (DAT_10033294 + 0x204 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2)
+                           );
+  uVar1 = thunk_FUN_10015600(DAT_10033288,
+                             *(short *)(DAT_10033294 + 0x204 +
+                                       (uint)*(byte *)(DAT_10033294 + 0x467) * 2) - 2);
+  if ((uVar1 >> 8 == local_18) && ((uint)uVar1 + (uint)(uVar1 >> 8) * -0x100 == local_c)) {
+    uVar2 = 1;
+  }
+  else {
+    uVar2 = 0;
+  }
+  return uVar2;
+}
+

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-14T18:43:40+08:00",
+  "evidenceLevel": "H-help-body-only",
+  "source": "design_plan/分阶段文档证据/原厂帮助正文_20261110.json",
+  "sourceChmSha256": "f87f031d82b199d8c66de7240ee07e1553f136358ea842e5c34e0f10e80171a1",
+  "topic": {
+    "path": "Data-Transfer/Data-Transfer.htm",
+    "html_sha256": "3f4281aa86fcc6156c6dc489d3dfe283df34aec96882155f88c18f77a8b750e2",
+    "declared_charset": "gb2312",
+    "decoded_encoding": "gb2312",
+    "text": "资料传输\n|\n定义\n资料传输是指同一种类型的地址上的数据传输，传输方式可以是周期性的（隔多少秒传输一次），也可以是触发型的，位地址ON时控制。\n在左侧系统参数的树形菜单栏中选择这个图标右键点击添加资料传输，会出现“资料传输”的属性对话框。\n|\n属性图\n属性概述\nn 新建按钮\n点击新建按钮，弹出资料传输对话框，如下图所示：\n|\n属性\n|\n说明\n|\n计时\n|\n设置间隔时间，单位为秒。每隔几秒传输一次。\n|\n触发\n|\n按照设定的地址控制资料传输执行，当触发位为 1 的时候执行资 料传输。\n|\n地址类型\n|\n选择要传输数据的地址类型：位/字/双字。\n|\n长度\n|\n输入要传输数据的长度。所输入的长度范围为 1~32.\n|\n源地址\n|\n传输数据的源地址。源地址的类型必须跟“属性”设置的地址 类型相同。\n|\n目标地址\n|\n传输数据的目标地址。目标地址的类型必须跟“属性”设置 的地址类型相同。\n： 目标地址和源地址不能为同一PLC。若是从触摸屏的COM1传输数据到COM2口，\n请先将数据从COM1传到内部寄存器地址，再由内部寄存器地址传到COM2。"
+  },
+  "existingEntry": {
+    "id": "TREE.TRANSFER.NEW",
+    "category": "project-tree-or-configuration",
+    "labelFromHelp": "系统参数→资料传输→右键→添加资料传输",
+    "objectName": null,
+    "exactLabel": null,
+    "window": "资料传输",
+    "entryStatus": "help-candidate-not-currently-triggered",
+    "evidenceKind": [
+      "H:help-body"
+    ],
+    "routes": [
+      {
+        "kind": "project-tree/context-or-double-click",
+        "candidatePath": "系统参数→资料传输→右键→添加资料传输"
+      }
+    ],
+    "states": {
+      "noProject": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "emptyProject": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "singleSelection": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "multipleSelection": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "withoutPrerequisiteConfiguration": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "withPrerequisiteConfiguration": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "dirtyProject": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      },
+      "readOnlyOrRunning": {
+        "status": "not-observed",
+        "enabled": null,
+        "nextAction": "在本任务私有桌面的独立同型号测试工程建立该状态，读取Qt真实状态并触发入口；记录前后状态。"
+      }
+    },
+    "sourceObject": {
+      "status": "unknown",
+      "questionId": "Q-S00-ENTRY-TREE-16"
+    },
+    "deviceConsumer": {
+      "status": "unknown",
+      "questionId": "Q-S00-ENTRY-TREE-16"
+    },
+    "questionIds": [
+      "Q-S00-ENTRY-TREE-16"
+    ],
+    "helpTopic": {
+      "path": "Data-Transfer/Data-Transfer.htm",
+      "htmlSha256": "3f4281aa86fcc6156c6dc489d3dfe283df34aec96882155f88c18f77a8b750e2"
+    }
+  },
+  "existingOpenQuestion": {
+    "id": "Q-S00-ENTRY-TREE-16",
+    "question": "系统参数→资料传输→右键→添加资料传输的V5.1精确QObject、路径、事务及源/设备影响待核。",
+    "nextAction": "在同型号独立测试工程定位系统参数→资料传输→右键→添加资料传输；先保留树模型/菜单对象与状态，再执行用户等价操作；确定/取消/保存重开并比较唯一字段源及设备段。",
+    "layers": [
+      "D",
+      "U",
+      "P",
+      "C"
+    ],
+    "status": "open"
+  },
+  "limitations": [
+    "没有本轮 V5.1 真实窗口、字段默认值或保存重开观察。",
+    "位为1执行并未说明边沿或重复频率。",
+    "同PLC限制不能推广为一切同COM连接禁止。",
+    "USB资料下载/上传不等于PLC间资料传输。"
+  ]
+}

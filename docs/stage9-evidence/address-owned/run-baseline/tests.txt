@@ -1,0 +1,12 @@
+********* Start testing of Stage9AddressUiTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : Stage9AddressUiTests::initTestCase()
+FAIL!  : Stage9AddressUiTests::initialInvalidDraft() 'visibleError' returned FALSE. ()
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_address_ui_tests.cpp(155) : failure location
+FAIL!  : Stage9AddressUiTests::correctInvalidDraft() 'errorShown' returned FALSE. ()
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_address_ui_tests.cpp(185) : failure location
+FAIL!  : Stage9AddressUiTests::unvalidatedAcceptCannotCommit() '!driveDialog(QStringLiteral("PlcAddressDialog"), [](QDialog *dialog) { if (dialog != nullptr) { dialog->accept(); } }, [&]() { return editPlcAddress(nullptr, false, connections, &text); })' returned FALSE. ()
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_address_ui_tests.cpp(495) : failure location
+PASS   : Stage9AddressUiTests::cleanupTestCase()
+Totals: 2 passed, 3 failed, 0 skipped, 0 blacklisted, 166ms
+********* Finished testing of Stage9AddressUiTests *********

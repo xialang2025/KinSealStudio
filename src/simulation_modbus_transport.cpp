@@ -26,13 +26,41 @@ bool reject(QString *error, const QString &message)
  * Function Name   : isWrite
  * Description     : Identify operations that may change a remote slave before confirmation.
  * Input Parameters: operation
- * Return Value    : True for functions 05 and 06.
+ * Return Value    : True for functions 05, 06, 0f and 10.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool isWrite(SimulationModbusOperation operation)
+bool isWrite(SimulationModbusOperation operation) //20261114-8 change
 {
     return operation == SimulationModbusOperation::WriteSingleCoil ||
-           operation == SimulationModbusOperation::WriteSingleRegister;
+           operation == SimulationModbusOperation::WriteSingleRegister ||
+           operation == SimulationModbusOperation::WriteMultipleCoils ||
+           operation == SimulationModbusOperation::WriteMultipleRegisters;
+}
+
+/******************************************************************************
+ * Function Name   : isBitRead
+ * Description     : Identify the two standard packed-bit read operations.
+ * Input Parameters: operation
+ * Return Value    : True for functions 01 and 02.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool isBitRead(SimulationModbusOperation operation) //20261114-8 add
+{
+    return operation == SimulationModbusOperation::ReadCoils ||
+           operation == SimulationModbusOperation::ReadDiscreteInputs;
+}
+
+/******************************************************************************
+ * Function Name   : isMultipleWrite
+ * Description     : Separate quantity-echo writes from single-value echo writes.
+ * Input Parameters: operation
+ * Return Value    : True for functions 0f and 10.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+bool isMultipleWrite(SimulationModbusOperation operation) //20261114-8 add
+{
+    return operation == SimulationModbusOperation::WriteMultipleCoils ||
+           operation == SimulationModbusOperation::WriteMultipleRegisters;
 }
 
 /******************************************************************************
@@ -94,11 +122,16 @@ u16 simulationModbusCrc16(const QByteArray &bytes) //20261114-6 add
  * Date            : 2026.11.14
  ******************************************************************************/
 bool buildSimulationModbusRequest(int station, const SimulationModbusRequest &request,
-                                  QByteArray *frame, QString *error) //20261114-6 add
+                                  QByteArray *frame, QString *error) //20261114-8 change
 {
     QByteArray built;
     u32 payload;
+    u32 limit;
     u16 crc;
+    u8 packed;
+    int index;
+    int bit;
+    int byteCount;
 
     if (frame == nullptr || station < 1 || station > 247)
     {
@@ -110,18 +143,39 @@ bool buildSimulationModbusRequest(int station, const SimulationModbusRequest &re
         return reject(error, QStringLiteral("请求标识、零起始地址或访问数量无效。"));
     }
     payload = request.count;
-    if (request.operation == SimulationModbusOperation::ReadCoils)
+    if (!isMultipleWrite(request.operation) && !request.values.isEmpty())
+    {
+        return reject(error, QStringLiteral("独立values容器仅用于多写，读或单写不得携带多值。"));
+    }
+    if (isBitRead(request.operation))
     {
         if (request.count > 2000U || request.value != 0)
         {
-            return reject(error, QStringLiteral("读线圈限1..2000位，且不得携带写入值。"));
+            return reject(error, QStringLiteral("读线圈/离散输入限1..2000位，且不得携带写入值。"));
         }
     }
-    else if (request.operation == SimulationModbusOperation::ReadHoldingRegisters)
+    else if (request.operation == SimulationModbusOperation::ReadHoldingRegisters ||
+             request.operation == SimulationModbusOperation::ReadInputRegisters)
     {
         if (request.count > 125U || request.value != 0)
         {
-            return reject(error, QStringLiteral("读保持寄存器限1..125字，且不得携带写入值。"));
+            return reject(error, QStringLiteral("读保持/输入寄存器限1..125字，且不得携带写入值。"));
+        }
+    }
+    else if (isMultipleWrite(request.operation))
+    {
+        limit = request.operation == SimulationModbusOperation::WriteMultipleCoils ? 1968U : 123U;
+        if (request.value != 0 || request.count > limit || request.values.size() != int(request.count))
+        {
+            return reject(error, QStringLiteral("多写数量必须匹配独立values：线圈1..1968，寄存器1..123，旧单值字段必须为0。"));
+        }
+        limit = request.operation == SimulationModbusOperation::WriteMultipleCoils ? 1U : 65535U;
+        for (index = 0; index < request.values.size(); ++index)
+        {
+            if (request.values[index] > limit)
+            {
+                return reject(error, QStringLiteral("多写值越界：线圈仅支持0/1，寄存器仅支持16位无符号值。"));
+            }
         }
     }
     else if (isWrite(request.operation))
@@ -136,12 +190,37 @@ bool buildSimulationModbusRequest(int station, const SimulationModbusRequest &re
     }
     else
     {
-        return reject(error, QStringLiteral("仅支持Modbus RTU功能01、03、05、06。"));
+        return reject(error, QStringLiteral("仅支持Modbus RTU功能01、02、03、04、05、06、0F、10。"));
     }
     built.append(char(station));
     built.append(char(request.operation));
     appendWord(&built, request.address);
     appendWord(&built, payload);
+    if (isMultipleWrite(request.operation))
+    {
+        byteCount = request.operation == SimulationModbusOperation::WriteMultipleCoils ?
+                    int((request.count + 7U) / 8U) : int(request.count * 2U);
+        built.append(char(byteCount));
+        if (request.operation == SimulationModbusOperation::WriteMultipleCoils)
+        {
+            for (index = 0; index < request.values.size(); index += 8)
+            {
+                packed = 0;                 // Unused high bits are always zero in the final byte.
+                for (bit = 0; bit < 8 && index + bit < request.values.size(); ++bit)
+                {
+                    packed = u8(packed | u8(request.values[index + bit] << bit));
+                }
+                built.append(char(packed));
+            }
+        }
+        else
+        {
+            for (index = 0; index < request.values.size(); ++index)
+            {
+                appendWord(&built, request.values[index]);
+            }
+        }
+    }
     crc = simulationModbusCrc16(built);
     built.append(char(crc & 0xffU));
     built.append(char(crc >> 8));
@@ -160,15 +239,20 @@ bool buildSimulationModbusRequest(int station, const SimulationModbusRequest &re
  * Return Value    : Controlled-replay evidence object; physical transfer and HMI flags are false.
  * Date            : 2026.11.14
  ******************************************************************************/
-QJsonObject simulationModbusResultToJson(const SimulationModbusResult &result) //20261114-6 add
+QJsonObject simulationModbusResultToJson(const SimulationModbusResult &result) //20261114-8 change
 {
     QJsonArray values;
+    QJsonArray requestedValues;
     QJsonObject object;
     int index;
 
     for (index = 0; index < result.values.size(); ++index)
     {
         values.append(int(result.values[index]));
+    }
+    for (index = 0; index < result.request.values.size(); ++index)
+    {
+        requestedValues.append(double(result.request.values[index]));
     }
     object = QJsonObject{{QStringLiteral("scope"), QStringLiteral("controlled-modbus-rtu-replay")},
                          {QStringLiteral("requestId"), result.request.id},
@@ -177,6 +261,7 @@ QJsonObject simulationModbusResultToJson(const SimulationModbusResult &result) /
                          {QStringLiteral("addressOffsetZeroBased"), double(result.request.address)},
                          {QStringLiteral("count"), double(result.request.count)},
                          {QStringLiteral("requestedValue"), double(result.request.value)},
+                         {QStringLiteral("requestedValues"), requestedValues},
                          {QStringLiteral("ok"), result.ok},
                          {QStringLiteral("errorCode"), result.errorCode},
                          {QStringLiteral("error"), result.error},
@@ -362,7 +447,7 @@ void SimulationModbusTransport::closeEndpoint()
  * Return Value    : Values or write acknowledgement only after station, length, CRC and PDU checks.
  * Date            : 2026.11.14
  ******************************************************************************/
-SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
+SimulationModbusResult SimulationModbusTransport::processNext() //20261114-8 change
 {
     SimulationModbusResult result;
     SimulationModbusReadChunk chunk;
@@ -381,6 +466,25 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
     int index;
     int maxBytes;
     bool complete;
+    // Polling runs only in the session owner; a captured atomic may be set from another thread.
+    const auto stopRequested = [this, &result]() {
+        bool cancelled;
+
+        cancelled = m_options.cancellationRequested && m_options.cancellationRequested();
+        if (m_disconnectRequested)
+        {
+            result = fail(result, QStringLiteral("disconnected_during_transaction"),
+                          QStringLiteral("事务期间会话退出，未发布数据，已尝试写入的远端状态未确认。"));
+            return true;
+        }
+        if (cancelled)
+        {
+            result = fail(result, QStringLiteral("cancelled"),
+                          QStringLiteral("Modbus事务已取消，未自动重试；已尝试写入的远端状态未确认。"));
+            return true;
+        }
+        return false;
+    };
 
     if (m_processing || m_transitioning || !m_connected || m_queue.isEmpty())
     {
@@ -399,11 +503,20 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
         return fail(result, QStringLiteral("invalid_request"), result.error);
     }
     timer.start();
-    result.requestMayHaveReachedSlave = true;   // A failed driver return cannot prove zero wire activity.
-    written = m_io.write(result.requestFrame, m_options.timeoutMs);
-    if (m_disconnectRequested)
+    if (stopRequested())
     {
-        return fail(result, QStringLiteral("disconnected_during_transaction"), QStringLiteral("事务写入后会话退出，远端执行状态未确认。"));
+        return result;
+    }
+    remaining = m_options.timeoutMs - int(timer.elapsed());
+    if (remaining <= 0)
+    {
+        return fail(result, QStringLiteral("timeout"), QStringLiteral("发送前Modbus事务期限已到，未发送请求。"));
+    }
+    result.requestMayHaveReachedSlave = true;   // A failed driver return cannot prove zero wire activity.
+    written = m_io.write(result.requestFrame, remaining);
+    if (stopRequested())
+    {
+        return result;
     }
     if (written != result.requestFrame.size())
     {
@@ -411,11 +524,15 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
     }
     complete = false;
     expectedFunction = u8(result.request.operation);
-    expectedByteCount = result.request.operation == SimulationModbusOperation::ReadCoils ?
+    expectedByteCount = isBitRead(result.request.operation) ?
                         int((result.request.count + 7U) / 8U) : int(result.request.count * 2U);
     expectedLength = isWrite(result.request.operation) ? 8 : expectedByteCount + 5;
     while (!complete)
     {
+        if (stopRequested())
+        {
+            return result;
+        }
         remaining = m_options.timeoutMs - int(timer.elapsed());
         if (remaining <= 0)
         {
@@ -428,9 +545,9 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
             return fail(result, QStringLiteral("read_contract_violation"), QStringLiteral("注入读取回调超过所请求的字节上限。"));
         }
         result.responseFrame.append(chunk.bytes);
-        if (m_disconnectRequested)
+        if (stopRequested())
         {
-            return fail(result, QStringLiteral("disconnected_during_transaction"), QStringLiteral("事务接收期间会话退出，未发布数据。"));
+            return result;
         }
         if (!chunk.error.isEmpty())
         {
@@ -494,20 +611,21 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
     }
     if (isWrite(result.request.operation))
     {
-        if (result.responseFrame != result.requestFrame)
+        // Multiwrite echoes the first six request bytes (station/function/address/quantity), not data.
+        if (result.responseFrame.left(6) != result.requestFrame.left(6))
         {
-            return fail(result, QStringLiteral("write_echo_mismatch"), QStringLiteral("单写应答的地址或写入值与请求不符。"));
+            return fail(result, QStringLiteral("write_echo_mismatch"), QStringLiteral("写应答的地址、单值或多写数量与请求不符。"));
         }
         result.writeAcknowledged = true;
     }
-    else if (result.request.operation == SimulationModbusOperation::ReadCoils)
+    else if (isBitRead(result.request.operation))
     {
         if ((result.request.count % 8U) != 0)
         {
             unusedMask = u8(0xffU << (result.request.count % 8U));
             if ((u8(result.responseFrame[expectedLength - 3]) & unusedMask) != 0)
             {
-                return fail(result, QStringLiteral("nonzero_coil_padding"), QStringLiteral("线圈应答最后一字节的未使用高位必须为零。"));
+                return fail(result, QStringLiteral("nonzero_coil_padding"), QStringLiteral("位读取应答最后一字节的未使用高位必须为零。"));
             }
         }
         for (index = 0; index < int(result.request.count); ++index)
@@ -524,6 +642,14 @@ SimulationModbusResult SimulationModbusTransport::processNext() //20261114-6 add
                         u8(result.responseFrame[4 + index * 2]));
             result.values.append(value);
         }
+    }
+    if (stopRequested())
+    {
+        return result;                        // Final gate prevents publishing a cancelled callback result.
+    }
+    if (timer.elapsed() >= m_options.timeoutMs)
+    {
+        return fail(result, QStringLiteral("timeout"), QStringLiteral("接纳前Modbus事务期限已到，未发布数据。"));
     }
     result.ok = true;
     result.remoteStateUnconfirmed = false;

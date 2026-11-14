@@ -1,0 +1,666 @@
+{
+  "review": "Stage9 在线 UI 测试只读复核 r3",
+  "date": "2026-11-14",
+  "ownedFiles": [
+    "tests/stage9_online_ui_tests.cpp",
+    "docs/stage9-evidence/ui-owned/"
+  ],
+  "productionFilesEditedByThisSubtask": false,
+  "cmakeOrGitEditedByThisSubtask": false,
+  "logicChangedDuringReadonlyReview": false,
+  "independentBlockerFound": false,
+  "revisions": {
+    "r1": {
+      "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\Stage9OnlineUiTests-r1.exe",
+      "executableSha256": "fa36fc822c8037e1a3ec45d661a0ef111c8ac76cbb23cb071ec1552fea71fe79",
+      "inputsAtBuild": {
+        "src/plc_online_dialog.cpp": "e80928571520553ba55aadbcc39aec664670e55758f6ba83d6e9e2dc267257b7",
+        "src/plc_online_dialog.h": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2",
+        "src/plc_serial_session.cpp": "436a7cac926c8a7093be39dcf7aa514072bfa5b8093bf00fabe36dd87b727716",
+        "src/plc_serial_session.h": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a",
+        "src/plc_protocol_capabilities.cpp": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11",
+        "src/plc_protocol_capabilities.h": "300c50eaeda1479b2be9fca861959349133b766f9b9f91df83baed48fe7a7d41",
+        "src/plc_address.cpp": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978",
+        "src/plc_native_catalog.cpp": "0e0460a9e9bb8587e50c7aa3e10b8b320c9f2e76667b726fdcd4dd19337bafcd",
+        "src/simulation_modbus_transport.cpp": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+        "plc_catalog.qrc": "18ebd92ea77f7405e98cc202f532bd7ac95f9cdfc808b4f56bbd6154b8d782ac",
+        "resources/plc-catalog.json": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b",
+        "resources/plc-stage9-file-audit.json": "3e03085a49575ec9198e8b77d9f27a6a48958791928a89ce0b509a7138a2ac6b",
+        "tests/stage9_online_ui_tests.cpp": "5eb8fb278d2d59c714bcddfba3f658a6b66eb4c86244177ec5192c0c4a2a7f9f"
+      },
+      "inputsUnchangedDuringBuild": true,
+      "exitCode": 0,
+      "xmlIncidents": {
+        "pass": 27,
+        "fail": 0,
+        "skip": 0,
+        "blacklisted": 0
+      },
+      "privateDesktop": "KinSealStage1Portable_18720_1794654499",
+      "physicalSerialOpened": false,
+      "controlledIoOnly": true,
+      "testTranslationUnitWarningBytes": 0,
+      "moduleEnumerationLimit": "(299, 'EnumProcessModules', '仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。')"
+    },
+    "r2-red": {
+      "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\Stage9OnlineUiTests-r2-red.exe",
+      "executableSha256": "44f7312bc6496563012c53b2d59592ad089f3d8e05dbd4bf1cd36f387a84cceb",
+      "inputsAtBuild": {
+        "src/plc_online_dialog.cpp": "e80928571520553ba55aadbcc39aec664670e55758f6ba83d6e9e2dc267257b7",
+        "src/plc_online_dialog.h": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2",
+        "src/plc_serial_session.cpp": "436a7cac926c8a7093be39dcf7aa514072bfa5b8093bf00fabe36dd87b727716",
+        "src/plc_serial_session.h": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a",
+        "src/plc_protocol_capabilities.cpp": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11",
+        "src/plc_protocol_capabilities.h": "300c50eaeda1479b2be9fca861959349133b766f9b9f91df83baed48fe7a7d41",
+        "src/plc_address.cpp": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978",
+        "src/plc_native_catalog.cpp": "0e0460a9e9bb8587e50c7aa3e10b8b320c9f2e76667b726fdcd4dd19337bafcd",
+        "src/simulation_modbus_transport.cpp": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+        "plc_catalog.qrc": "18ebd92ea77f7405e98cc202f532bd7ac95f9cdfc808b4f56bbd6154b8d782ac",
+        "resources/plc-catalog.json": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b",
+        "resources/plc-stage9-file-audit.json": "3e03085a49575ec9198e8b77d9f27a6a48958791928a89ce0b509a7138a2ac6b",
+        "tests/stage9_online_ui_tests.cpp": "283117b7de804d4346a17d2c62308d4d702dd34d7b0fc3799b6cb88535e66904"
+      },
+      "inputsUnchangedDuringBuild": true,
+      "exitCode": 3,
+      "xmlIncidents": {
+        "pass": 28,
+        "fail": 3,
+        "skip": 0,
+        "blacklisted": 0
+      },
+      "privateDesktop": "KinSealStage1Portable_21788_1794655120",
+      "physicalSerialOpened": false,
+      "controlledIoOnly": true,
+      "testTranslationUnitWarningBytes": 0,
+      "moduleEnumerationLimit": "(299, 'EnumProcessModules', '仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。')"
+    },
+    "r3-green": {
+      "executable": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\Stage9OnlineUiTests-r3-green.exe",
+      "executableSha256": "dbcfc15610fc7ade3e0e0603f65c3dbbe3b77e32636737f105731da398cc1d43",
+      "inputsAtBuild": {
+        "src/plc_online_dialog.cpp": "193ff2edab327c292642b1f3323409f72a109e259c602891ebd5bb6fc28432f1",
+        "src/plc_online_dialog.h": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2",
+        "src/plc_serial_session.cpp": "436a7cac926c8a7093be39dcf7aa514072bfa5b8093bf00fabe36dd87b727716",
+        "src/plc_serial_session.h": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a",
+        "src/plc_protocol_capabilities.cpp": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11",
+        "src/plc_protocol_capabilities.h": "300c50eaeda1479b2be9fca861959349133b766f9b9f91df83baed48fe7a7d41",
+        "src/plc_address.cpp": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978",
+        "src/plc_native_catalog.cpp": "0e0460a9e9bb8587e50c7aa3e10b8b320c9f2e76667b726fdcd4dd19337bafcd",
+        "src/simulation_modbus_transport.cpp": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+        "plc_catalog.qrc": "18ebd92ea77f7405e98cc202f532bd7ac95f9cdfc808b4f56bbd6154b8d782ac",
+        "resources/plc-catalog.json": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b",
+        "resources/plc-stage9-file-audit.json": "3e03085a49575ec9198e8b77d9f27a6a48958791928a89ce0b509a7138a2ac6b",
+        "tests/stage9_online_ui_tests.cpp": "283117b7de804d4346a17d2c62308d4d702dd34d7b0fc3799b6cb88535e66904"
+      },
+      "inputsUnchangedDuringBuild": true,
+      "exitCode": 0,
+      "xmlIncidents": {
+        "pass": 31,
+        "fail": 0,
+        "skip": 0,
+        "blacklisted": 0
+      },
+      "privateDesktop": "KinSealStage1Portable_24028_1794655441",
+      "physicalSerialOpened": false,
+      "controlledIoOnly": true,
+      "testTranslationUnitWarningBytes": 0,
+      "moduleEnumerationLimit": "(299, 'EnumProcessModules', '仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。')"
+    }
+  },
+  "redGreen": {
+    "r1": "原始 27 项全部通过；这不证明后来增加的四组非法输入。",
+    "r2Red": "28 pass / 3 fail / 0 skip，退出码3；duplicate-comma、trailing-comma、leading-plus 错误调用 factory=1，空白输入已被拒绝。",
+    "productionFixOwner": "parent；逗号 KeepEmptyParts，逐项 trim，限定 ASCII 十进制数字并检查 toUInt。",
+    "r3Green": "31 pass / 0 fail / 0 skip，退出码0，3795 ms。新增四组输入全部在 factory 前拒绝。",
+    "includesQtInitAndCleanup": true
+  },
+  "currentInputHashes": {
+    "src/plc_online_dialog.cpp": "193ff2edab327c292642b1f3323409f72a109e259c602891ebd5bb6fc28432f1",
+    "src/plc_online_dialog.h": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2",
+    "src/plc_serial_session.cpp": "1311112ff79926725f18ff01fb1a9d2c3aade21dd36e4cf583facbbedf53fd02",
+    "src/plc_serial_session.h": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a",
+    "src/plc_protocol_capabilities.cpp": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11",
+    "src/plc_protocol_capabilities.h": "300c50eaeda1479b2be9fca861959349133b766f9b9f91df83baed48fe7a7d41",
+    "src/plc_address.cpp": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978",
+    "src/plc_native_catalog.cpp": "0e0460a9e9bb8587e50c7aa3e10b8b320c9f2e76667b726fdcd4dd19337bafcd",
+    "src/simulation_modbus_transport.cpp": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+    "plc_catalog.qrc": "18ebd92ea77f7405e98cc202f532bd7ac95f9cdfc808b4f56bbd6154b8d782ac",
+    "resources/plc-catalog.json": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b",
+    "resources/plc-stage9-file-audit.json": "3e03085a49575ec9198e8b77d9f27a6a48958791928a89ce0b509a7138a2ac6b",
+    "tests/stage9_online_ui_tests.cpp": "283117b7de804d4346a17d2c62308d4d702dd34d7b0fc3799b6cb88535e66904"
+  },
+  "allFinalBuildInputsStillMatch": false,
+  "uiCoverage": [
+    "构造时端口不隐式选择，factory/open 均未调用。",
+    "14 组无效端口、数值、数量与地址跨度输入保持空回执且不创建端点；包含重复逗号、尾逗号、前导加号与纯空白。",
+    "01/02/03/04/05/06/15/16 共 8 种功能码对应数量范围、输入启用状态与边界截断。",
+    "2000 个线圈值在 lastReport 和显示文本中完整保留，成功标题、关闭提示均存在。",
+    "运行中 10 个请求输入被冻结，重复执行不启动第二个工人，程序修改禁用输入不改变已冻结请求。",
+    "成功、取消、延迟 close 后恢复正确输入状态；真实 dialog.exec/reject 在会话关闭后才返回。",
+    "活动 read 时删除 owner，QPointer 对话框消失、取消被观察、close 一次且工人线程最终删除，I/O 无 GUI 线程调用。",
+    "139 行能力表与报告逐行一致，唯一 AMT 默认 Modbus 编译资格限定 COM1/站1/节点1/单连接单页；其它型号不误获资格。",
+    "全部 profile 的 PC 映射与物理 PLC/HMI 验证维持 false；原始 PC 功能码与自动项目映射分开展示。"
+  ],
+  "executionBoundary": {
+    "privateDesktopOnly": true,
+    "desktopSwitched": false,
+    "foregroundActivationCalled": false,
+    "systemInputUsed": false,
+    "controlledInMemoryIoOnly": true,
+    "physicalSerialOpened": false,
+    "realPlcUsed": false,
+    "usbDownloadUsed": false,
+    "vendorSdkOrDllInvoked": false,
+    "temporaryFilesOnZ": true,
+    "moduleEnumerationIsNotCompleteProofOfAbsence": true
+  },
+  "visualReview": {
+    "method": "最终实际 QWidget::grab 截图后通过 view_image 目视检查",
+    "files": [
+      "docs/stage9-evidence/ui-owned/captures-r3-green/online-max-read.png",
+      "docs/stage9-evidence/ui-owned/captures-r3-green/online-capabilities.png"
+    ],
+    "result": "通过；成功标题、2000 项读取值与保守能力表均可见。"
+  },
+  "warnings": [
+    {
+      "file": "src/plc_online_dialog.cpp",
+      "lineAtBuild": 79,
+      "diagnostic": "profiles.size() 的 qsizetype 转 int；当前资源有 139 行。",
+      "owner": "parent",
+      "fixedHere": false
+    },
+    {
+      "file": "src/plc_address.cpp",
+      "lineAtBuild": 842,
+      "diagnostic": "QString::indexOf 的 qsizetype 转 int。",
+      "owner": "parent/地址模块",
+      "fixedHere": false
+    }
+  ],
+  "limitations": [
+    "覆盖注入内存 I/O 下的真实 Qt widget/session 路径，不证明真实串口、PLC、触摸屏下载或执行。",
+    "受控帧使用生产 CRC 构造，仅用于 UI 事务；CRC 独立正确性由 transport 测试套件负责。",
+    "QtSerialPort 动态库被链接与加载，但本测试从未创建或打开物理端点。",
+    "各 EXE 仅绑定自身 inputsAtBuild 哈希；后续生产变更需要正式重建重跑，不能套用旧结果。",
+    "正式 CMake 整合、全量测试、协议/UI 规则文档、Git 提交与推送由 parent 完成。"
+  ],
+  "artifacts": {
+    "docs/stage9-evidence/ui-owned/build-r1.json": {
+      "sha256": "75bf5fcaac80e9206d950b9d64aca3b16ef6e49973e7288735515a757681652a",
+      "bytes": 19238
+    },
+    "docs/stage9-evidence/ui-owned/build-r1.py": {
+      "sha256": "44426e31663785e2bd0369701da906106aa4f3b2d5d6483f9f95dc694f308169",
+      "bytes": 4561
+    },
+    "docs/stage9-evidence/ui-owned/build-r2-red.json": {
+      "sha256": "af4b66acd7fbca9518aac4aaf5e5b8c152b439a335469304d687c073359fbe09",
+      "bytes": 19490
+    },
+    "docs/stage9-evidence/ui-owned/build-r2-red.py": {
+      "sha256": "b97224e578228079485ffe4ccff168f0687dfcb670e28b0470ee27bb4649ec70",
+      "bytes": 4599
+    },
+    "docs/stage9-evidence/ui-owned/build-r3-green.json": {
+      "sha256": "283ec356c53243a1af55f04b75722b10612d6dcc622b16cdc93621fd0519bb9c",
+      "bytes": 19616
+    },
+    "docs/stage9-evidence/ui-owned/build-r3-green.py": {
+      "sha256": "bdb941fc3fc88bfc8c3828ca8a45063edae38486d684a82f3967d7159d11a905",
+      "bytes": 4617
+    },
+    "docs/stage9-evidence/ui-owned/captures-r1/online-capabilities.png": {
+      "sha256": "11ca07924444a9f759dd9d4e4653b3d50bf7ddf0f58aefb442781772ef1751a4",
+      "bytes": 69464
+    },
+    "docs/stage9-evidence/ui-owned/captures-r1/online-max-read.png": {
+      "sha256": "68160c1af814aba93444080672eac0930faedc53fca2b545f547cd9f332cc4ec",
+      "bytes": 31146
+    },
+    "docs/stage9-evidence/ui-owned/captures-r2-red/online-capabilities.png": {
+      "sha256": "11ca07924444a9f759dd9d4e4653b3d50bf7ddf0f58aefb442781772ef1751a4",
+      "bytes": 69464
+    },
+    "docs/stage9-evidence/ui-owned/captures-r2-red/online-max-read.png": {
+      "sha256": "68160c1af814aba93444080672eac0930faedc53fca2b545f547cd9f332cc4ec",
+      "bytes": 31146
+    },
+    "docs/stage9-evidence/ui-owned/captures-r3-green/online-capabilities.png": {
+      "sha256": "11ca07924444a9f759dd9d4e4653b3d50bf7ddf0f58aefb442781772ef1751a4",
+      "bytes": 69464
+    },
+    "docs/stage9-evidence/ui-owned/captures-r3-green/online-max-read.png": {
+      "sha256": "68160c1af814aba93444080672eac0930faedc53fca2b545f547cd9f332cc4ec",
+      "bytes": 31146
+    },
+    "docs/stage9-evidence/ui-owned/cleanup-owned-r3.ps1": {
+      "sha256": "677ebe5938ed9fa0fcfb1edb0c7a64fd3a3d250e21c9967c2339cb467ed0729c",
+      "bytes": 2370
+    },
+    "docs/stage9-evidence/ui-owned/cleanup-r3.json": {
+      "sha256": "240683666379abe2bf73995675a44ded6e1daa9e8b3b8ccd016819011e78b42f",
+      "bytes": 9735
+    },
+    "docs/stage9-evidence/ui-owned/compile-catalog-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-catalog-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-catalog-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-moc_dialog-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-moc_dialog-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-moc_dialog-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_address-r1.log": {
+      "sha256": "256aa3f5ce02d4ce5e0891b6049ff8fd83216ef127c78fbe9f0534826c61f12a",
+      "bytes": 548
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_address-r2-red.log": {
+      "sha256": "256aa3f5ce02d4ce5e0891b6049ff8fd83216ef127c78fbe9f0534826c61f12a",
+      "bytes": 548
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_address-r3-green.log": {
+      "sha256": "256aa3f5ce02d4ce5e0891b6049ff8fd83216ef127c78fbe9f0534826c61f12a",
+      "bytes": 548
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_native_catalog-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_native_catalog-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_native_catalog-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_online_dialog-r1.log": {
+      "sha256": "da2d59ad7b5b228e5422c3ce9af7bf3a619ecc8bbcf8017ab70d5f0548a9183f",
+      "bytes": 568
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_online_dialog-r2-red.log": {
+      "sha256": "da2d59ad7b5b228e5422c3ce9af7bf3a619ecc8bbcf8017ab70d5f0548a9183f",
+      "bytes": 568
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_online_dialog-r3-green.log": {
+      "sha256": "da2d59ad7b5b228e5422c3ce9af7bf3a619ecc8bbcf8017ab70d5f0548a9183f",
+      "bytes": 568
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_protocol_capabilities-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_protocol_capabilities-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_protocol_capabilities-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_serial_session-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_serial_session-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-plc_serial_session-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-simulation_modbus_transport-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-simulation_modbus_transport-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-simulation_modbus_transport-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-stage9_online_ui_tests-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-stage9_online_ui_tests-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/compile-stage9_online_ui_tests-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/link-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/link-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/link-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-dialog-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-dialog-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-dialog-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-tests-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-tests-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/moc-tests-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r1-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r1-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r2-red-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r2-red-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r3-green-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/online-ui-r3-green-stdout.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/rcc-r1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/rcc-r2-red.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/rcc-r3-green.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "docs/stage9-evidence/ui-owned/run-r1.json": {
+      "sha256": "10b020868c588a36a7f826eb05608cea32c50ebc4695ed89b9b55fdd4c4f5fa0",
+      "bytes": 6728
+    },
+    "docs/stage9-evidence/ui-owned/run-r1.py": {
+      "sha256": "cf1f83265d070eb6867754f932368cebf5f91b3d62f1c5a398ab4c798f262970",
+      "bytes": 2011
+    },
+    "docs/stage9-evidence/ui-owned/run-r2-red.json": {
+      "sha256": "2f4764f5c6bd6c5955ac31c161a3730aa34bda98ccd8f655194aef7d524353a5",
+      "bytes": 6508
+    },
+    "docs/stage9-evidence/ui-owned/run-r2-red.py": {
+      "sha256": "1e72d27da35d13d45bd62b397dd4c302f88fe57fe4c31f4d5f5b25f960d9f1ba",
+      "bytes": 2037
+    },
+    "docs/stage9-evidence/ui-owned/run-r3-green.json": {
+      "sha256": "3908013f30897b70266b52f0af1d00600d9d15b3a2ec007e4268bbde952ee965",
+      "bytes": 6417
+    },
+    "docs/stage9-evidence/ui-owned/run-r3-green.py": {
+      "sha256": "e3647de2a2c771bb72ff1a016dea877af4bb3e590b3eb654d0e9a9594c26795c",
+      "bytes": 2049
+    },
+    "docs/stage9-evidence/ui-owned/tests-r1.txt": {
+      "sha256": "3299fa88812e259e25321e19ad0ec3e4002140bf8f1240671173ca2dc8418ea5",
+      "bytes": 2111
+    },
+    "docs/stage9-evidence/ui-owned/tests-r1.xml": {
+      "sha256": "7eff6646c613705ad906e8ce0acf2a78088e969a8acaf76e16a6fc378b60c070",
+      "bytes": 3904
+    },
+    "docs/stage9-evidence/ui-owned/tests-r2-red.txt": {
+      "sha256": "2c454e2e9b4befb4514ef97eba88d5707ba59f754ea750a2c76066dc138916fd",
+      "bytes": 3201
+    },
+    "docs/stage9-evidence/ui-owned/tests-r2-red.xml": {
+      "sha256": "5de8e8dc6c6041a191f289c066c7219146cad3e450b0154429aa814e065c7089",
+      "bytes": 5235
+    },
+    "docs/stage9-evidence/ui-owned/tests-r3-green.txt": {
+      "sha256": "0cbac79de159d1d2616ed2fdb753363dcc499b5a7ed9e24b8d2783d7e7ae7cb2",
+      "bytes": 2439
+    },
+    "docs/stage9-evidence/ui-owned/tests-r3-green.xml": {
+      "sha256": "e5a1a95bb300fd9c1072a467fc5cdc82fefb21c0c8fc972d74462c5bb990001f",
+      "bytes": 4363
+    }
+  },
+  "cleanup": {
+    "scope": "Only newly generated online-ui-owned r1/r2-red/r3-green compile intermediates",
+    "recursiveDeletion": false,
+    "historicalArtifactsTouched": false,
+    "sharedBuildTouched": false,
+    "scriptsEvidenceScreenshotsAndTestExecutablesPreserved": true,
+    "removedCount": 36,
+    "freedBytes": 12888909,
+    "files": [
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\plc_online_dialog.o",
+        "bytes": 939999,
+        "sha256": "a108a289f9b71e07a62c228841f1a80951e341ef7c2b9a8ed21cce3a50a53ae0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\plc_serial_session.o",
+        "bytes": 384465,
+        "sha256": "973427ab8fa51810ce21485c43d803ca67d9137d87f77eaa62747c38daf4eeb3"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\plc_protocol_capabilities.o",
+        "bytes": 381993,
+        "sha256": "d41dc4e1c284dec7b3b9c2595be273adf874530dc822f749d618461d37779dd6"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\plc_address.o",
+        "bytes": 566916,
+        "sha256": "edfe452b8d6fb948f72bf804f9b8c94c85ccce19f19e9ff290834723bd7cb4a0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\plc_native_catalog.o",
+        "bytes": 361170,
+        "sha256": "429927dc359e74dd10d2536aa3205dd156a2b0d83f68cb48508ec542b1ac1596"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\simulation_modbus_transport.o",
+        "bytes": 434811,
+        "sha256": "ee8b18ce22ed4417b9bf2f7a4232def8558b0d9a572a4489a832c4a747ddc2bc"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\stage9_online_ui_tests.o",
+        "bytes": 758377,
+        "sha256": "fc85774d2789f4599e2e7e4e24824a3a17ffb3b5f4da79ae2d6e6a60a0842b96"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\moc_dialog.o",
+        "bytes": 26733,
+        "sha256": "ba957127d7c62dcf3259391ebb3e8e0427ab1fe6347890eb207e2ca2cf98ecda"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\catalog.o",
+        "bytes": 70871,
+        "sha256": "4af7c126a92731f72a71a171b3888117e04182689209ab6d61e0a168ef4554c0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\stage9_online_ui_tests.moc",
+        "bytes": 6127,
+        "sha256": "9e8d70d785a71134da54e376f4852c309ed13177ada3e0d85c7b24d96d789a19"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\moc_plc_online_dialog.cpp",
+        "bytes": 3970,
+        "sha256": "40411766d8948d8460523960827efe69033c817ebd1f50a38537b710ff686057"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r1\\qrc_plc_catalog.cpp",
+        "bytes": 357588,
+        "sha256": "20adf2d63ccc46e6772796427eb963124fe2c6cc9e2f5c0a15e4c8b2ba2eabfd"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\plc_online_dialog.o",
+        "bytes": 939999,
+        "sha256": "a108a289f9b71e07a62c228841f1a80951e341ef7c2b9a8ed21cce3a50a53ae0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\plc_serial_session.o",
+        "bytes": 384465,
+        "sha256": "973427ab8fa51810ce21485c43d803ca67d9137d87f77eaa62747c38daf4eeb3"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\plc_protocol_capabilities.o",
+        "bytes": 381993,
+        "sha256": "d41dc4e1c284dec7b3b9c2595be273adf874530dc822f749d618461d37779dd6"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\plc_address.o",
+        "bytes": 566916,
+        "sha256": "edfe452b8d6fb948f72bf804f9b8c94c85ccce19f19e9ff290834723bd7cb4a0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\plc_native_catalog.o",
+        "bytes": 361170,
+        "sha256": "429927dc359e74dd10d2536aa3205dd156a2b0d83f68cb48508ec542b1ac1596"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\simulation_modbus_transport.o",
+        "bytes": 434811,
+        "sha256": "ee8b18ce22ed4417b9bf2f7a4232def8558b0d9a572a4489a832c4a747ddc2bc"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\stage9_online_ui_tests.o",
+        "bytes": 761133,
+        "sha256": "ef35aec2ac0111ec36c6a408adf2403089e05d3810c572816a085d5add3e3921"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\moc_dialog.o",
+        "bytes": 26733,
+        "sha256": "ba957127d7c62dcf3259391ebb3e8e0427ab1fe6347890eb207e2ca2cf98ecda"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\catalog.o",
+        "bytes": 70871,
+        "sha256": "4af7c126a92731f72a71a171b3888117e04182689209ab6d61e0a168ef4554c0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\stage9_online_ui_tests.moc",
+        "bytes": 6127,
+        "sha256": "9e8d70d785a71134da54e376f4852c309ed13177ada3e0d85c7b24d96d789a19"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\moc_plc_online_dialog.cpp",
+        "bytes": 3970,
+        "sha256": "40411766d8948d8460523960827efe69033c817ebd1f50a38537b710ff686057"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r2-red\\qrc_plc_catalog.cpp",
+        "bytes": 357588,
+        "sha256": "20adf2d63ccc46e6772796427eb963124fe2c6cc9e2f5c0a15e4c8b2ba2eabfd"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\plc_online_dialog.o",
+        "bytes": 944336,
+        "sha256": "87023485da2da7a8587b7ca45e81ad0a892a57261bd2d4de53adab22213db5b2"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\plc_serial_session.o",
+        "bytes": 384465,
+        "sha256": "973427ab8fa51810ce21485c43d803ca67d9137d87f77eaa62747c38daf4eeb3"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\plc_protocol_capabilities.o",
+        "bytes": 381993,
+        "sha256": "d41dc4e1c284dec7b3b9c2595be273adf874530dc822f749d618461d37779dd6"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\plc_address.o",
+        "bytes": 566916,
+        "sha256": "edfe452b8d6fb948f72bf804f9b8c94c85ccce19f19e9ff290834723bd7cb4a0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\plc_native_catalog.o",
+        "bytes": 361170,
+        "sha256": "429927dc359e74dd10d2536aa3205dd156a2b0d83f68cb48508ec542b1ac1596"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\simulation_modbus_transport.o",
+        "bytes": 434811,
+        "sha256": "ee8b18ce22ed4417b9bf2f7a4232def8558b0d9a572a4489a832c4a747ddc2bc"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\stage9_online_ui_tests.o",
+        "bytes": 761133,
+        "sha256": "ef35aec2ac0111ec36c6a408adf2403089e05d3810c572816a085d5add3e3921"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\moc_dialog.o",
+        "bytes": 26733,
+        "sha256": "ba957127d7c62dcf3259391ebb3e8e0427ab1fe6347890eb207e2ca2cf98ecda"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\catalog.o",
+        "bytes": 70871,
+        "sha256": "4af7c126a92731f72a71a171b3888117e04182689209ab6d61e0a168ef4554c0"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\stage9_online_ui_tests.moc",
+        "bytes": 6127,
+        "sha256": "9e8d70d785a71134da54e376f4852c309ed13177ada3e0d85c7b24d96d789a19"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\moc_plc_online_dialog.cpp",
+        "bytes": 3970,
+        "sha256": "40411766d8948d8460523960827efe69033c817ebd1f50a38537b710ff686057"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\temp\\online-ui-owned-r3-green\\qrc_plc_catalog.cpp",
+        "bytes": 357588,
+        "sha256": "20adf2d63ccc46e6772796427eb963124fe2c6cc9e2f5c0a15e4c8b2ba2eabfd"
+      }
+    ]
+  },
+  "cleanupHelperNote": "实际清理 JSON 完整记录 36 个精确文件与释放字节；脚本末行仅控制台摘要字段在执行后修正，不影响删除范围或记录，未重复清理。"
+}

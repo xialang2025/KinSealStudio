@@ -1,0 +1,148 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_252bb350b00eb69f2978c95362b6e7fe2064d07067b78db63cc9b499dfd3c143
+Address: 0x100134a0; label: 分段读 FC3/4
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+/* WARNING: Removing unreachable block (ram,0x10013551) */
+/* WARNING: Removing unreachable block (ram,0x1001351a) */
+/* WARNING: Removing unreachable block (ram,0x1001357d) */
+
+void FUN_100134a0(void)
+
+{
+  byte *pbVar1;
+  int iVar2;
+  int *piVar3;
+  int local_1ac [2];
+  char local_1a1;
+  char local_195;
+  char local_189;
+  char local_17d;
+  undefined4 local_b4;
+  int local_a8;
+  int local_9c;
+  uint local_90;
+  uint local_84;
+  uint local_78;
+  int local_6c;
+  int local_60;
+  int local_54;
+  uint local_48;
+  int local_3c;
+  uint local_30;
+  uint local_24;
+  uint local_18;
+  ushort local_c;
+  
+  piVar3 = local_1ac;
+  for (iVar2 = 0x6a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *piVar3 = -0x33333334;
+    piVar3 = piVar3 + 1;
+  }
+  local_17d = '\0';
+  local_189 = '\0';
+  local_48 = (uint)*(ushort *)(DAT_10033294 + 8);
+  local_54 = *(int *)(DAT_10033294 + 4);
+  local_90 = (uint)DAT_10033294[1];
+  if (5000 < local_48) {
+    local_48 = 5000;
+  }
+  if ((local_48 & 0x8000001f) == 0) {
+    local_78 = 0x20;
+    local_6c = (int)local_48 >> 5;
+  }
+  if ((local_48 & 0x8000001f) != 0) {
+    local_6c = ((int)local_48 >> 5) + 1;
+    local_78 = local_48 & 0x8000001f;
+  }
+  local_195 = '\x01';
+  local_1ac[0] = *DAT_10033294 - 0x44;
+  switch(*DAT_10033294) {
+  case 0x44:
+  case 99:
+    local_189 = '\x01';
+    local_b4 = 3;
+    break;
+  case 0x52:
+  case 0x74:
+    local_189 = '\x01';
+    local_b4 = 4;
+  }
+  local_1a1 = local_195;
+  for (local_3c = 0; local_3c < local_6c; local_3c = local_3c + 1) {
+    local_60 = local_3c * 8;
+    local_18 = local_3c * 0x20 + local_54;
+    local_24 = (int)local_18 >> 8 & 0xff;
+    local_30 = local_18 & 0xff;
+    *(undefined1 *)(DAT_1003328c + local_60) = (undefined1)local_90;
+    if (local_189 == '\0') {
+      __RTC_UninitUse("t");
+    }
+    *(undefined1 *)(DAT_1003328c + local_60 + 1) = (undefined1)local_b4;
+    *(undefined1 *)(DAT_1003328c + local_60 + 2) = (undefined1)local_24;
+    *(undefined1 *)(DAT_1003328c + local_60 + 3) = (undefined1)local_30;
+    if (local_3c != local_6c + -1) {
+      *(undefined1 *)(DAT_1003328c + local_60 + 4) = 0;
+      *(undefined1 *)(DAT_1003328c + local_60 + 5) = 0x20;
+      local_17d = '\x01';
+      local_84 = 0x20;
+    }
+    if (local_3c == local_6c + -1) {
+      if (local_195 == '\0') {
+        __RTC_UninitUse("LastTimeWord");
+      }
+      *(char *)(DAT_1003328c + local_60 + 4) = (char)(local_78 >> 8);
+      if (local_195 == '\0') {
+        __RTC_UninitUse("LastTimeWord");
+      }
+      *(char *)(DAT_1003328c + local_60 + 5) = (char)local_78;
+      if (local_195 == '\0') {
+        __RTC_UninitUse("LastTimeWord");
+      }
+      local_17d = '\x01';
+      local_84 = local_78;
+    }
+    local_c = thunk_FUN_10015600(DAT_1003328c + local_60,6);
+    local_9c = (int)(uint)local_c >> 8;
+    local_a8 = (uint)local_c + local_24 * -0x100;
+    *(char *)(DAT_1003328c + local_60 + 6) = (char)local_a8;
+    *(char *)(DAT_1003328c + local_60 + 7) = (char)(local_c >> 8);
+    pbVar1 = DAT_10033294 + local_3c * 2 + 0xe;
+    pbVar1[0] = 8;
+    pbVar1[1] = 0;
+    *(short *)(DAT_10033294 + local_3c * 2 + 0xd6) = (short)(local_3c << 3);
+    *(int *)(DAT_10033294 + local_3c * 4 + 0x1a0) = local_3c * 0x20 + local_54;
+    if (local_17d == '\0') {
+      __RTC_UninitUse("currentlength");
+    }
+    DAT_10033294[local_3c + 0x1f0] = (byte)local_84;
+    *(short *)(DAT_10033294 + local_3c * 2 + 0x206) = (short)local_84 * 2 + 5;
+    pbVar1 = DAT_10033294 + local_3c * 2 + 0x2ce;
+    pbVar1[0] = 3;
+    pbVar1[1] = 0;
+    *(short *)(DAT_10033294 + local_3c * 2 + 0x396) = (short)(local_84 << 1);
+  }
+  if (local_1a1 == '\0') {
+    __RTC_UninitUse("SendTimes");
+  }
+  *(undefined2 *)(DAT_10033294 + 0x204) = (undefined2)local_6c;
+  DAT_10033294[0x467] = 0;
+  pbVar1 = DAT_10033294;
+  switch(*DAT_10033294) {
+  case 0x44:
+  case 0x52:
+    pbVar1[0x19c] = 1;
+    pbVar1[0x19d] = 0;
+    break;
+  case 99:
+  case 0x74:
+    pbVar1[0x19c] = 2;
+    pbVar1[0x19d] = 0;
+  }
+  return;
+}
+

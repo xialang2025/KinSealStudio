@@ -1,0 +1,42 @@
+{
+  "mode": "只读测试代码复核",
+  "ownedFile": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\plc_serial_session_tests.cpp",
+    "bytes": 42852,
+    "sha256": "a6c8fbbda4e8ed9cd21adc4a9fa4f1563888a172a26a1a9f9126b38c6db1663c",
+    "relativePath": "tests/plc_serial_session_tests.cpp"
+  },
+  "status": "no-active-independent-finding-in-declared-test-slice",
+  "checks": [
+    "全部非法项在factory/open前预校验",
+    "8功能固定vector与独立CRC无生产oracle循环论证",
+    "单开关端点与256项合法边界",
+    "worker内factory和I/O线程归属",
+    "中途首错保留前确认并丢弃未发队列",
+    "单写/多写失败的remoteStateUnconfirmed语义",
+    "关闭失败不能谎称closed；sessionInactive独立",
+    "预取消及factory后取消/总时限门禁",
+    "分片/整帧/合帧、无结束边界取消",
+    "严格编译与源码SHA绑定"
+  ],
+  "findingsClosedByParent": [
+    "SERIAL-RED-01",
+    "SERIAL-RED-02",
+    "SERIAL-RED-03"
+  ],
+  "trailingWhitespaceLines": [],
+  "productionModifiedBySubagent": false,
+  "currentSourceAndCompileIdentityStable": true,
+  "testResult": {
+    "pass": 101,
+    "fail": 0,
+    "skip": 0
+  },
+  "compileWarningLogBytes": 0,
+  "residualLimits": [
+    "QThread用例证明runPlcSerialBatch在指定worker中调用时factory和callbacks保持同线程；未验证实际UI入口如何启动worker。",
+    "所有端点均为注入fixture；不验证QSerialPort真实端口、RTU物理静默间隔或真实PLC时序。",
+    "本任务只新增测试及自有证据，生产修复/CMake/文档/Git均由主代理负责。",
+    "测试没有声明原厂DLL ABI、plcFamily映射、HMI固件兼容或实际T/E通过。"
+  ]
+}

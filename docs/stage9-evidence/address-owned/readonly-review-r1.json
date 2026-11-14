@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "reviewer": "/root/polygon_gate",
+  "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "headObserved": "96912ec4dc5b8f1487cc00cf4a2443b2450d580d",
+  "task": "S09-02 地址窗口Lite U/P事务切片",
+  "verdict": "限定地址/连接UI事务范围通过；未见独立阻断",
+  "activeFindings": [],
+  "ownedChanges": [
+    "src/plc_address_dialog.cpp",
+    "src/plc_address_dialog.h",
+    "tests/stage9_address_ui_tests.cpp"
+  ],
+  "sourceIdentity": {
+    "src/plc_address_dialog.cpp": {
+      "sha256": "14466c1ef00b25389bde5711ba7c724530842f2639b34e04e48d8540f4b1283f",
+      "bytes": 27195,
+      "lines": 581
+    },
+    "src/plc_address_dialog.h": {
+      "sha256": "dadc8dfadda7a7eddbab548cd4b018f377dd991d4618888ea492e8fbddb20226",
+      "bytes": 1553,
+      "lines": 29
+    },
+    "tests/stage9_address_ui_tests.cpp": {
+      "sha256": "e8b787fb6395efac5487f89dee6dd75d29f5d6c7cdca92a2e6ff26c174167f0c",
+      "bytes": 24548,
+      "lines": 507
+    }
+  },
+  "supportingSourceIdentity": {
+    "src/plc_address.cpp": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978",
+    "src/plc_native_catalog.cpp": "0e0460a9e9bb8587e50c7aa3e10b8b320c9f2e76667b726fdcd4dd19337bafcd",
+    "resources/plc-catalog.json": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b"
+  },
+  "baselineIdentity": {
+    "plc_address_dialog-before.cpp": "3a2d53124a9f91fb1d306784a8225fff02344a52036662754d4b3865f0884698",
+    "plc_address_dialog-before.h": "ab0cea600e3a9a737b750f68b370fcea856c4e830a1f45a7a3e7d330cfd82e1f"
+  },
+  "api": {
+    "changed": false,
+    "newPublicClass": false,
+    "functions": [
+      "editPlcAddress(QWidget*, bool, const QVector<PlcConnection>&, QString*, int transferCount=1)",
+      "editPlcConnections(QWidget*, const QString&, QVector<PlcConnection>*, QString* error=nullptr)"
+    ],
+    "integrationSources": [
+      "src/plc_address_dialog.cpp",
+      "src/plc_address.cpp",
+      "src/plc_native_catalog.cpp",
+      "plc_catalog.qrc",
+      "tests/stage9_address_ui_tests.cpp"
+    ],
+    "integrationLibraries": [
+      "Qt6::Widgets",
+      "Qt6::Test"
+    ],
+    "testMain": "QTEST_MAIN(Stage9AddressUiTests)"
+  },
+  "confirmedDefects": [
+    {
+      "id": "S09-UI-001",
+      "description": "初始化refresh不经parser无条件清空错误；初始非法LW4097没有可见错误且确认可用。",
+      "baselineTest": "initialInvalidDraft",
+      "resolution": "refresh调用相同parsePlcAddress，以实际role/radix/transferCount决定错误与确认可用性；保留原始非法draft以供修正。",
+      "sourceLines": [
+        459,
+        511
+      ]
+    },
+    {
+      "id": "S09-UI-002",
+      "description": "输入内容变更不刷新错误状态。",
+      "baselineTest": "correctInvalidDraft",
+      "resolution": "连接PlcValue.textChanged到parser驱动的refresh，非法/空白仍可编辑，纠正后清除实际已消失的错误。",
+      "sourceLines": [
+        503,
+        511
+      ]
+    },
+    {
+      "id": "S09-UI-003",
+      "description": "外部QDialog.accept绕过按钮验证后旧入口会将默认committed或空staged发布。",
+      "baselineTest": "unvalidatedAcceptCannotCommit",
+      "resolution": "只有验证按钮路径设置confirmed，exec Accepted且confirmed及owner存活才提交。",
+      "sourceLines": [
+        298,
+        313,
+        568,
+        580
+      ]
+    },
+    {
+      "id": "S09-UI-004",
+      "description": "带parent的栈上QDialog进入嵌套exec，owner销毁可提前删除栈child。该旧版风险经源码确认，本轮未主动执行旧版崩溃。",
+      "regression": "ownerDestruction四行：地址/连接 × before/confirm-button.clicked同步删除owner",
+      "resolution": "QPointer守护堆dialog与owner，owner销毁返回后不再读widget/写caller，正常结束明确删除自有dialog再检查owner。",
+      "sourceLines": [
+        136,
+        139,
+        305,
+        313,
+        330,
+        333,
+        572,
+        580
+      ]
+    }
+  ],
+  "fieldDictionary": [
+    {
+      "key": "S09.address.connection",
+      "objectName": "PlcMemory",
+      "meaning": "空连接ID为内部LB/LW；外部显式连接ID不从显示文字或station推定。"
+    },
+    {
+      "key": "S09.address.family",
+      "objectName": "PlcFamily",
+      "meaning": "依role展示目录族；保留不可用初始族为显式草稿，支持性和parser分别门禁。"
+    },
+    {
+      "key": "S09.address.radix",
+      "objectName": "PlcRadix",
+      "meaning": "data10/16仅默认Modbus与内部可切换；已核native语法显示原生进制并禁用切换。"
+    },
+    {
+      "key": "S09.address.value",
+      "objectName": "PlcValue",
+      "meaning": "实际QLineEdit保留非法文本；同一parser执行live与最终确认。bit minor仍为十进制，radix失败回滚选择而保留draft。"
+    },
+    {
+      "key": "S09.address.range",
+      "objectName": "PlcAddressRange",
+      "meaning": "目录rawRange/内部当前策略范围、bit minor说明及显式连续传送数量。目录范围展示不代替parser的跨度边界。"
+    },
+    {
+      "key": "S09.address.transferCount",
+      "source": "editPlcAddress API/PlcAddressContext",
+      "meaning": "当前API只接受显式1..2，显示为只读说明；不因_dw命名自动倍增。"
+    },
+    {
+      "key": "S09.address.error",
+      "objectName": "PlcAddressError",
+      "meaning": "parser真实错误，未核profile支持性单独拒绝。"
+    },
+    {
+      "key": "S09.address.commit",
+      "objectName": "PlcAddressButtons",
+      "meaning": "确认与取消；只发布经验证且owner/dialog均有效的一次结果。"
+    },
+    {
+      "key": "S09.address.connection.enabled",
+      "objectNames": [
+        "PlcCom1Enabled",
+        "PlcCom2Enabled"
+      ],
+      "meaning": "选择启用/移除连接；取消保持caller vector原字节语义。工程中的被引用连接删除仍由上层工程事务验证。"
+    },
+    {
+      "key": "S09.address.connection.profile",
+      "objectNames": [
+        "PlcCom1Profile",
+        "PlcCom2Profile"
+      ],
+      "meaning": "当前型号可用目录；旧不可用profile显式保留并拒绝确认。profile改变使已核node失效，未扩大设备profile门禁。"
+    },
+    {
+      "key": "S09.address.connection.station",
+      "objectNames": [
+        "PlcCom1Station",
+        "PlcCom2Station"
+      ],
+      "meaning": "十进制文本trim；站号和已核node保持独立，不制造其它站的native node。"
+    },
+    {
+      "key": "S09.address.connection.node",
+      "source": "PlcConnection existing fields",
+      "meaning": "没有新增node编辑器；保持原有profile切换失效及精确默认COM1/station1的既有oracle规则。"
+    },
+    {
+      "key": "S09.address.connection.error",
+      "objectName": "PlcConnectionError",
+      "meaning": "连接确认时校验当前型号profile和十进制station。"
+    },
+    {
+      "key": "S09.address.connection.commit",
+      "objectName": "PlcConnectionButtons",
+      "meaning": "先完整staged构建、验证确认；owner丢失/取消/外部accept均不写caller。"
+    }
+  ],
+  "productRules": {
+    "familyOrConnectionSwitch": "保持既有Lite reset逻辑：连接切换重置radix/族/值，族切换以现有已核初值重置；并未声称原厂所有picker具备相同行为。",
+    "scopePreserved": "默认7族与已核native安全N子集不变；设备COM1/default profile/station1/node1门禁未动；picker允许读取族地址不授予写只读族能力，写用途仍由现有模型/设备后端校验。",
+    "parserSemantics": "未修改plc_address或plc_native_catalog；32位跨尾和N由相同parser控制。"
+  },
+  "evidenceRead": [
+    "design_plan/10_阶段9_PLC地址模板与通信.md#S09-02",
+    "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md#15",
+    "tests/plc_address_tests.cpp",
+    "tests/plc_native_catalog_tests.cpp",
+    "docs/stage3-evidence/native/inputs/product-five-compact-all-address-roles.sm",
+    "docs/stage3-evidence/native/inputs/product-five-compact-all-address-roles.ksp"
+  ],
+  "originalPickerEvidenceLimitation": "父代理与本代理未在现存scratch找到独立历史picker UI原始封存；本批不重复大调查，不关闭原厂完整字段/全部reset行为对齐。",
+  "build": {
+    "mode": "独立moc+小TU编译，未修改共享build/CMake",
+    "flags": [
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Wconversion",
+      "QT_NO_CAST_FROM_ASCII",
+      "QT_NO_CAST_TO_ASCII"
+    ],
+    "final": "build-fixed-r2.json",
+    "dialogCompileLog": "compile-dialog-fixed-r2.log",
+    "dialogCompileLogBytes": 0,
+    "testCompileLog": "compile-tests.log",
+    "testCompileLogBytes": 0
+  },
+  "tests": {
+    "baseline": {
+      "evidence": "run-baseline/run.json",
+      "log": "run-baseline/tests.txt",
+      "executableSha256": "064bfa168756d7c580a6dba28e45f5eeaeb546ced30630c373ec80640850dc25",
+      "passed": 2,
+      "failed": 3,
+      "skipped": 0,
+      "exitCode": 3,
+      "meaning": "预期的三项真实widget缺陷复现，未把它记成通过26项。"
+    },
+    "final": {
+      "evidence": "run-fixed-r2/run.json",
+      "xml": "run-fixed-r2/tests.xml",
+      "log": "run-fixed-r2/tests.txt",
+      "executable": "Stage9AddressUiTests-fixed-r2.exe",
+      "executableSha256": "c3a5ca96c5eb7d4f3e7bf33b0c34848feff8496c898f3c097abecb65a01808c3",
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "elapsedMilliseconds": 1390
+    },
+    "coverage": [
+      "确认/取消/非法保持与更正",
+      "默认hex来回与decimal minor",
+      "Lite族/连接reset",
+      "显式N1/N2及默认1x特殊上界",
+      "_dw不隐式加倍",
+      "native radix禁用与未知profile拒绝",
+      "站号/node独立",
+      "连接profile变更/移除事务",
+      "两类modal owner-before与确认clicked同步销毁",
+      "外部accept不发布未验证结果"
+    ],
+    "interpretation": "26包含init/cleanup；独立构建与根集成正式测试分别记录，不累计重复轮次。"
+  },
+  "reviewChecks": [
+    "两个dialog与所有QDialogButtonBox/labels/layout均由堆dialog管理，所有连接context为dialog；exec返回先查QPointer，销毁路径不读widget。",
+    "正常删除自有dialog后再次检查owner，销毁回调若同步删除owner仍不发布。",
+    "confirmed只由完整验证按钮路径设置，不接受绕过路径。",
+    "live validation不改用户文字或parser语义；radix转换失败保留文字并恢复先前选择。",
+    "没有扩大profile、族、只读写、跨界、native跨度或设备支持。",
+    "最终生产和测试小TU编译日志0B，未见新警告；原有QString index窄化已在UI局部改为qsizetype。"
+  ],
+  "actions": {
+    "productionOwnedFilesOnly": true,
+    "coreModified": false,
+    "cmakeModified": false,
+    "globalDocsModified": false,
+    "gitMutated": false,
+    "usbOrPlcIo": false,
+    "vendorDllOrSdkInvoked": false,
+    "userForegroundUsed": false,
+    "desktopSwitched": false,
+    "systemInput": false,
+    "privateDesktopClosed": true,
+    "temporaryRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\address-owned\\temp",
+    "historicalCleanupRetried": false
+  },
+  "remaining": [
+    "上层控件/工程持久化、引用复制/被引用连接删除和设备槽往返由根集成另验；本次不是整个S09-02关闭。",
+    "原厂完整字段矩阵及所有协议picker差异仍开放；未执行原厂UI、PLC DLL、SDK或设备。",
+    "本任务新建中间对象清理另记cleanup.json；不重试历史拒绝路径。"
+  ],
+  "cleanup": {
+    "evidence": "cleanup.json",
+    "status": "completed",
+    "deletedFiles": 7,
+    "logicalBytesFreed": 3469852,
+    "recursive": false,
+    "historicalPathsRetried": false
+  },
+  "archivedInputIdentities": {
+    "kspSha256": "15a03bc1330f182a730d988aa11238793dff9af4beb41f43ce475a65cba66a12",
+    "smSha256": "0ac8b127d5414b922f314674ec20b3451433551a59505c34b7482c3b0de13cce",
+    "scope": "只读取存量KSP顶层模型及SM/KSP字节身份，不宣称它们给出了完整外部picker字段/reset oracle"
+  }
+}

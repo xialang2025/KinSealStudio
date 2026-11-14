@@ -1,0 +1,44 @@
+********* Start testing of Stage9OnlineUiTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : Stage9OnlineUiTests::initTestCase()
+PASS   : Stage9OnlineUiTests::initialNoImplicitPortOrIo()
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(no-port)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(untrimmed-port)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(fraction)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(coil-range)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(word-range)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(multi-coil-shape)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(multi-word-shape)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(span-crosses-end)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(uint-overflow)
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(negative)
+FAIL!  : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(duplicate-comma) Compared values are not the same
+   Actual   (state->factoryCalls.load()): 1
+   Expected (0)                         : 0
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_online_ui_tests.cpp(337) : failure location
+FAIL!  : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(trailing-comma) Compared values are not the same
+   Actual   (state->factoryCalls.load()): 1
+   Expected (0)                         : 0
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_online_ui_tests.cpp(337) : failure location
+FAIL!  : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(leading-plus) Compared values are not the same
+   Actual   (state->factoryCalls.load()): 1
+   Expected (0)                         : 0
+Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-stage4-20261112\worktree\tests\stage9_online_ui_tests.cpp(337) : failure location
+PASS   : Stage9OnlineUiTests::invalidRequestNeverCreatesEndpoint(whitespace-only)
+PASS   : Stage9OnlineUiTests::operationControls(01)
+PASS   : Stage9OnlineUiTests::operationControls(02)
+PASS   : Stage9OnlineUiTests::operationControls(03)
+PASS   : Stage9OnlineUiTests::operationControls(04)
+PASS   : Stage9OnlineUiTests::operationControls(05)
+PASS   : Stage9OnlineUiTests::operationControls(06)
+PASS   : Stage9OnlineUiTests::operationControls(15)
+PASS   : Stage9OnlineUiTests::operationControls(16)
+PASS   : Stage9OnlineUiTests::maximumReadKeepsCompleteDisplayAndReport()
+PASS   : Stage9OnlineUiTests::successfulWorkerFreezesAndRestores()
+PASS   : Stage9OnlineUiTests::cancelledWorkerFreezesAndRestores()
+PASS   : Stage9OnlineUiTests::rejectWaitsForCancelledClose()
+PASS   : Stage9OnlineUiTests::ownerDestructionFinishesWorkerWithoutWidgetAccess()
+PASS   : Stage9OnlineUiTests::capabilitiesRemainConservative()
+PASS   : Stage9OnlineUiTests::cleanupTestCase()
+Totals: 28 passed, 3 failed, 0 skipped, 0 blacklisted, 4047ms
+********* Finished testing of Stage9OnlineUiTests *********

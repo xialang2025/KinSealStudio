@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="Stage9AddressUiTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.101"/>
+  </TestFunction>
+  <TestFunction name="initialInvalidDraft">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="105.689"/>
+  </TestFunction>
+  <TestFunction name="correctInvalidDraft">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="67.3338"/>
+  </TestFunction>
+  <TestFunction name="radixAndMinorRoundTrip">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="42.1592"/>
+  </TestFunction>
+  <TestFunction name="familyAndMemoryReset">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="37.7878"/>
+  </TestFunction>
+  <TestFunction name="cancelKeepsOriginal">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="44.323"/>
+  </TestFunction>
+  <TestFunction name="boundary">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[local-last-n1]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[local-last-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[local-before-last-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[word-last-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[word-before-last-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[input-extra-n1]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[input-extra-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[packed-last-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[dword-not-implicit-n2]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[dword-explicit-n2]]></DataTag>
+    </Incident>
+    <Duration msecs="426.952"/>
+  </TestFunction>
+  <TestFunction name="nativeRadixAndUnknownProfile">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="81.9199"/>
+  </TestFunction>
+  <TestFunction name="connectionsConfirmAndCancel">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="111.731"/>
+  </TestFunction>
+  <TestFunction name="connectionProfileInvalidatesNode">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="57.2896"/>
+  </TestFunction>
+  <TestFunction name="connectionRemovalAndInvalidInput">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="80.6145"/>
+  </TestFunction>
+  <TestFunction name="ownerDestruction">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[address-before]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[address-confirm-click]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[connections-before]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[connections-confirm-click]]></DataTag>
+    </Incident>
+    <Duration msecs="237.924"/>
+  </TestFunction>
+  <TestFunction name="unvalidatedAcceptCannotCommit">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="94.2738"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.038"/>
+  </TestFunction>
+  <Duration msecs="1390.46"/>
+</TestCase>

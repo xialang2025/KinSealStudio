@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QMap>
 #include <QtTest>
+#include <atomic> //20261114-8 add
 
 //20261114-6 add: The slave below implements real RTU bytes in memory; it has no device endpoint.
 namespace
@@ -63,10 +64,36 @@ SimulationModbusRequest request(int function = 3, u32 address = 0, u32 count = 1
     return result;
 }
 
+/******************************************************************************
+ * Function Name   : extendedRequest
+ * Description     : Supply distinct multiwrite data without repurposing the single-value API.
+ * Input Parameters: function, address, count, id
+ * Return Value    : An explicit request with a separate logical-bit or word vector when needed.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+SimulationModbusRequest extendedRequest(int function, u32 address = 3, u32 count = 9,
+                                        const QString &id = QStringLiteral("extended")) //20261114-8 add
+{
+    SimulationModbusRequest result;
+    u32 index;
+
+    result = request(function, address, count, 0, id);
+    if (function == 15 || function == 16)
+    {
+        for (index = 0; index < count; ++index)
+        {
+            result.values.append(function == 15 ? index % 2U : 0xa100U + index);
+        }
+    }
+    return result;
+}
+
 struct FakeSlave
 {
     QMap<int, u16> registers;
     QMap<int, bool> coils;
+    QMap<int, u16> inputRegisters;           //20261114-8 add: Separate read-only address spaces.
+    QMap<int, bool> discreteInputs;
     QVector<QByteArray> writes;
     QVector<int> readTimeouts;
     QVector<int> readCapacities;
@@ -122,8 +149,8 @@ struct FakeSlave
             {
                 onWrite();
             }
-            if (timeoutMs < 1 || frame.size() != 8 ||
-                referenceFrame(frame.left(6)) != frame)
+            if (timeoutMs < 1 || frame.size() < 8 ||
+                referenceFrame(frame.left(frame.size() - 2)) != frame) //20261114-8 change
             {
                 return -90;
             }
@@ -135,17 +162,18 @@ struct FakeSlave
             address = (int(u8(frame[2])) << 8) | int(u8(frame[3]));
             argument = (int(u8(frame[4])) << 8) | int(u8(frame[5]));
             body.append(frame.left(2));
-            if (function == 3)
+            if (function == 3 || function == 4)
             {
                 body.append(char(argument * 2));
                 for (index = 0; index < argument; ++index)
                 {
-                    word = registers.value(address + index, u16(address + index));
+                    word = function == 3 ? registers.value(address + index, u16(address + index)) :
+                           inputRegisters.value(address + index, u16(0));
                     body.append(char(word >> 8));
                     body.append(char(word & 0xffU));
                 }
             }
-            else if (function == 1)
+            else if (function == 1 || function == 2)
             {
                 body.append(char((argument + 7) / 8));
                 for (byte = 0; byte < (argument + 7) / 8; ++byte)
@@ -153,13 +181,37 @@ struct FakeSlave
                     bits = 0;
                     for (index = 0; index < 8 && byte * 8 + index < argument; ++index)
                     {
-                        if (coils.value(address + byte * 8 + index, false))
+                        if (function == 1 ? coils.value(address + byte * 8 + index, false) :
+                            discreteInputs.value(address + byte * 8 + index, false))
                         {
                             bits |= (1 << index);
                         }
                     }
                     body.append(char(bits));
                 }
+            }
+            else if (function == 15 || function == 16) //20261114-8 add
+            {
+                byte = function == 15 ? (argument + 7) / 8 : argument * 2;
+                if (argument < 1 || address + argument > 65536 ||
+                    argument > (function == 15 ? 1968 : 123) || frame.size() != byte + 9 ||
+                    int(u8(frame[6])) != byte)
+                {
+                    return -91;
+                }
+                for (index = 0; index < argument; ++index)
+                {
+                    if (function == 15)
+                    {
+                        coils[address + index] = ((u8(frame[7 + index / 8]) >> (index % 8)) & 1U) != 0;
+                    }
+                    else
+                    {
+                        registers[address + index] = u16((u16(u8(frame[7 + 2 * index])) << 8) |
+                                                          u8(frame[8 + 2 * index]));
+                    }
+                }
+                body = frame.left(6);        // Quantity acknowledgement follows the already-applied effect.
             }
             else
             {
@@ -259,6 +311,24 @@ private slots:
     void partialThenTimeoutPublishesNothing();
     void writeExhaustsDeadlineBeforeRead();
     void queuedRequestIsSnapshot();
+    void extendedGoldenRequests_data();      //20261114-8 add
+    void extendedGoldenRequests();
+    void extendedRequestBounds_data();
+    void extendedRequestBounds();
+    void multipleWriteResponses_data();
+    void multipleWriteResponses();
+    void extendedResponseFaults_data();
+    void extendedResponseFaults();
+    void extendedExceptions_data();
+    void extendedExceptions();
+    void extendedIoFaults_data();
+    void extendedIoFaults();
+    void cancellationPhases_data();
+    void cancellationPhases();
+    void multiwriteSnapshotAndReconnect();
+    void cancellationCallbackReentry();
+    void lateCancellationPollRespectsDeadline_data();
+    void lateCancellationPollRespectsDeadline();
 };
 
 /******************************************************************************
@@ -357,7 +427,7 @@ void SimulationModbusTransportTests::requestValidation_data()
     QTest::newRow("broadcast") << 0 << 3 << u32(0) << u32(1) << u32(0) << false;
     QTest::newRow("negative-station") << -1 << 3 << u32(0) << u32(1) << u32(0) << false;
     QTest::newRow("reserved-station") << 248 << 3 << u32(0) << u32(1) << u32(0) << false;
-    QTest::newRow("unsupported-function") << 2 << 2 << u32(0) << u32(1) << u32(0) << false;
+    QTest::newRow("unsupported-function") << 2 << 17 << u32(0) << u32(1) << u32(0) << false; //20261114-8 change
     QTest::newRow("address-overflow") << 1 << 3 << u32(65536) << u32(1) << u32(0) << false;
     QTest::newRow("wrap") << 1 << 3 << u32(65535) << u32(2) << u32(0) << false;
     QTest::newRow("count-zero") << 1 << 3 << u32(0) << u32(0) << u32(0) << false;
@@ -484,6 +554,12 @@ void SimulationModbusTransportTests::validResponses_data()
     QTest::newRow("holding-maximum") << 3 << u32(125) << 11;
     QTest::newRow("write-coil") << 5 << u32(1) << 2;
     QTest::newRow("write-register") << 6 << u32(1) << 1;
+    QTest::newRow("discrete-1") << 2 << u32(1) << 256; //20261114-8 add
+    QTest::newRow("discrete-fragmented") << 2 << u32(17) << 1;
+    QTest::newRow("discrete-maximum") << 2 << u32(2000) << 7;
+    QTest::newRow("input-1") << 4 << u32(1) << 256;
+    QTest::newRow("input-fragmented") << 4 << u32(10) << 1;
+    QTest::newRow("input-maximum") << 4 << u32(125) << 11;
 }
 
 /******************************************************************************
@@ -509,6 +585,8 @@ void SimulationModbusTransportTests::validResponses()
     {
         slave.coils[index + 10] = (index % 3) == 0;
         slave.registers[index + 10] = u16(0x9000 + index);
+        slave.discreteInputs[index + 10] = (index % 3) == 1; //20261114-8 add
+        slave.inputRegisters[index + 10] = u16(0x1234 + index);
     }
     input = request(function, 10, count, function == 5 ? 1U : (function == 6 ? 0xbeefU : 0U));
     QVERIFY(transport.connectToStation(247, slave.callbacks()));
@@ -520,12 +598,15 @@ void SimulationModbusTransportTests::validResponses()
     QVERIFY(!result.remoteStateUnconfirmed);
     QVERIFY(transport.isConnected());
     QCOMPARE(slave.writes.size(), 1);
-    if (function == 1 || function == 3)
+    if (function == 1 || function == 2 || function == 3 || function == 4) //20261114-8 change
     {
         QCOMPARE(result.values.size(), int(count));
         for (index = 0; index < int(count); ++index)
         {
-            QCOMPARE(result.values[index], function == 1 ? u16(index % 3 == 0) : u16(0x9000 + index));
+            if (function == 1) { QCOMPARE(result.values[index], u16(index % 3 == 0)); }
+            if (function == 2) { QCOMPARE(result.values[index], u16(index % 3 == 1)); }
+            if (function == 3) { QCOMPARE(result.values[index], u16(0x9000 + index)); }
+            if (function == 4) { QCOMPARE(result.values[index], u16(0x1234 + index)); }
         }
     }
     if (function == 5) { QVERIFY(slave.coils[10]); }
@@ -1167,6 +1248,749 @@ void SimulationModbusTransportTests::queuedRequestIsSnapshot()
     QCOMPARE(result.request.id, QStringLiteral("r1"));
     QCOMPARE(slave.registers.value(10), u16(100));
     QVERIFY(!slave.registers.contains(20));
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedGoldenRequests_data
+ * Description     : Pin independent standard frames, including partial-byte coils and word order.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedGoldenRequests_data() //20261114-8 add
+{
+    QTest::addColumn<int>("station");
+    QTest::addColumn<int>("function");
+    QTest::addColumn<u32>("address");
+    QTest::addColumn<u32>("count");
+    QTest::addColumn<QVector<u32>>("values");
+    QTest::addColumn<QByteArray>("expected");
+    QTest::newRow("discrete22") << 17 << 2 << u32(196) << u32(22) << QVector<u32>{}
+                               << QByteArray::fromHex("110200c40016baa9");
+    QTest::newRow("input1") << 17 << 4 << u32(8) << u32(1) << QVector<u32>{}
+                           << QByteArray::fromHex("110400080001b298");
+    QTest::newRow("multi-coil10") << 17 << 15 << u32(19) << u32(10)
+                                 << QVector<u32>{1, 0, 1, 1, 0, 0, 1, 1, 1, 0}
+                                 << QByteArray::fromHex("110f0013000a02cd01bf0b");
+    QTest::newRow("multi-register2") << 17 << 16 << u32(1) << u32(2) << QVector<u32>{10, 258}
+                                    << QByteArray::fromHex("11100001000204000a0102c6f0");
+    QTest::newRow("last-register") << 1 << 16 << u32(65535) << u32(1) << QVector<u32>{65535}
+                                  << QByteArray::fromHex("0110ffff000102ffffbce0");
+    QTest::newRow("one-coil") << 1 << 15 << u32(0) << u32(1) << QVector<u32>{1}
+                             << QByteArray::fromHex("010f000000010101ef57");
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedGoldenRequests
+ * Description     : Compare all request bytes with fixed fixtures independent of production CRC.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedGoldenRequests() //20261114-8 add
+{
+    SimulationModbusRequest input;
+    QByteArray frame;
+    QString error;
+    QFETCH(int, station);
+    QFETCH(int, function);
+    QFETCH(u32, address);
+    QFETCH(u32, count);
+    QFETCH(QVector<u32>, values);
+    QFETCH(QByteArray, expected);
+
+    input = request(function, address, count);
+    input.values = values;
+    QVERIFY(buildSimulationModbusRequest(station, input, &frame, &error));
+    QCOMPARE(frame, expected);
+    QCOMPARE(frame, referenceFrame(frame.left(frame.size() - 2)));
+    QVERIFY(error.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedRequestBounds_data
+ * Description     : Exercise independent count, address-tail, value-container and scalar boundaries.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedRequestBounds_data() //20261114-8 add
+{
+    int function;
+    int maximum;
+    int mutation;
+    QByteArray name;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<u32>("address");
+    QTest::addColumn<u32>("count");
+    QTest::addColumn<int>("mutation");
+    QTest::addColumn<bool>("valid");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        maximum = function == 2 ? 2000 : (function == 4 ? 125 : (function == 15 ? 1968 : 123));
+        name = QByteArray::number(function);
+        QTest::newRow((name + "-zero").constData()) << function << u32(0) << u32(0) << 0 << false;
+        QTest::newRow((name + "-first").constData()) << function << u32(0) << u32(1) << 0 << true;
+        QTest::newRow((name + "-last").constData()) << function << u32(65535) << u32(1) << 0 << true;
+        QTest::newRow((name + "-exact-tail").constData()) << function << u32(65536 - maximum)
+                                                       << u32(maximum) << 0 << true;
+        QTest::newRow((name + "-past-tail").constData()) << function << u32(65537 - maximum)
+                                                      << u32(maximum) << 0 << false;
+        QTest::newRow((name + "-over-quantity").constData()) << function << u32(0)
+                                                          << u32(maximum + 1) << 0 << false;
+        QTest::newRow((name + "-past-address").constData()) << function << u32(65536) << u32(1) << 0 << false;
+        QTest::newRow((name + "-u32-address").constData()) << function << u32(0xffffffffU) << u32(1) << 0 << false;
+        QTest::newRow((name + "-u32-quantity").constData()) << function << u32(0) << u32(0xffffffffU) << 0 << false;
+        QTest::newRow((name + "-scalar-conflict").constData()) << function << u32(0) << u32(1) << 1 << false;
+        for (mutation = 2; mutation <= (function >= 15 ? 5 : 2); ++mutation)
+        {
+            QTest::newRow((name + "-container-" + QByteArray::number(mutation)).constData())
+                << function << u32(0) << u32(2) << mutation << false;
+        }
+    }
+    QTest::newRow("single05-vector-rejected") << 5 << u32(0) << u32(1) << 2 << false;
+    QTest::newRow("single06-vector-rejected") << 6 << u32(0) << u32(1) << 2 << false;
+    QTest::newRow("read01-vector-rejected") << 1 << u32(0) << u32(1) << 2 << false;
+    QTest::newRow("read03-vector-rejected") << 3 << u32(0) << u32(1) << 2 << false;
+    QTest::newRow("multi-coil-wirevalue-rejected") << 15 << u32(0) << u32(2) << 6 << false;
+    QTest::newRow("multi-register-65535") << 16 << u32(0) << u32(1) << 7 << true;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedRequestBounds
+ * Description     : Reject before any I/O while preserving caller output on every invalid input.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedRequestBounds() //20261114-8 add
+{
+    SimulationModbusRequest input;
+    QByteArray frame;
+    QString error;
+    QFETCH(int, function);
+    QFETCH(u32, address);
+    QFETCH(u32, count);
+    QFETCH(int, mutation);
+    QFETCH(bool, valid);
+
+    // An enormous declared quantity must fail before any proportional data allocation is needed.
+    input = extendedRequest(function, address, count > 2001U ? 0U : count);
+    input.count = count;
+    if (mutation == 1) { input.value = 1; }
+    if (mutation == 2) { input.values.append(0); }
+    if (mutation == 3) { input.values.clear(); }
+    if (mutation == 4) { input.values.removeLast(); }
+    if (mutation == 5) { input.values[0] = function == 15 ? 2U : 65536U; }
+    if (mutation == 6) { input.values[0] = 0xff00U; }
+    if (mutation == 7) { input.values[0] = 65535U; }
+    frame = QByteArray("preserved-frame");
+    QCOMPARE(buildSimulationModbusRequest(247, input, &frame, &error), valid);
+    if (valid)
+    {
+        QVERIFY(frame.size() <= 255);
+        QCOMPARE(frame, referenceFrame(frame.left(frame.size() - 2)));
+        QVERIFY(error.isEmpty());
+    }
+    else
+    {
+        QCOMPARE(frame, QByteArray("preserved-frame"));
+        QVERIFY(!error.isEmpty());
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::multipleWriteResponses_data
+ * Description     : Cover bit packing boundaries, maximum PDU sizes and last-address writes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::multipleWriteResponses_data() //20261114-8 add
+{
+    QTest::addColumn<int>("function");
+    QTest::addColumn<u32>("count");
+    QTest::addColumn<int>("fragment");
+    QTest::newRow("coil-one") << 15 << u32(1) << 1;
+    QTest::newRow("coil-seven") << 15 << u32(7) << 2;
+    QTest::newRow("coil-eight") << 15 << u32(8) << 256;
+    QTest::newRow("coil-nine") << 15 << u32(9) << 1;
+    QTest::newRow("coil-maximum") << 15 << u32(1968) << 3;
+    QTest::newRow("word-one") << 16 << u32(1) << 1;
+    QTest::newRow("word-maximum") << 16 << u32(123) << 2;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::multipleWriteResponses
+ * Description     : Verify applied slave data and quantity-only acknowledgements before publication.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::multipleWriteResponses() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusRequest input;
+    SimulationModbusResult result;
+    QJsonObject evidence;
+    int index;
+    int byteCount;
+    QFETCH(int, function);
+    QFETCH(u32, count);
+    QFETCH(int, fragment);
+
+    slave.fragmentSize = fragment;
+    input = extendedRequest(function, 65536U - count, count);
+    QVERIFY(transport.connectToStation(247, slave.callbacks()));
+    QVERIFY(transport.enqueue(input));
+    result = transport.processNext();
+    QVERIFY2(result.ok, qPrintable(result.error));
+    QVERIFY(result.writeAcknowledged);
+    QVERIFY(result.values.isEmpty());
+    QVERIFY(!result.remoteStateUnconfirmed);
+    QCOMPARE(result.responseFrame, referenceFrame(result.requestFrame.left(6)));
+    QCOMPARE(result.responseFrame.size(), 8);
+    byteCount = function == 15 ? int((count + 7U) / 8U) : int(count * 2U);
+    QCOMPARE(int(u8(result.requestFrame[6])), byteCount);
+    QCOMPARE(result.requestFrame.size(), byteCount + 9);
+    if (count == 1968 || count == 123) { QCOMPARE(result.requestFrame.size(), 255); }
+    if (function == 15 && (count % 8U) != 0)
+    {
+        QCOMPARE(u8(u8(result.requestFrame[7 + byteCount - 1]) >> (count % 8U)), u8(0));
+    }
+    for (index = 0; index < int(count); ++index)
+    {
+        if (function == 15)
+        {
+            QCOMPARE(slave.coils.value(int(input.address) + index), input.values[index] != 0);
+        }
+        else
+        {
+            QCOMPARE(slave.registers.value(int(input.address) + index), u16(input.values[index]));
+        }
+    }
+    QCOMPARE(slave.writes.size(), 1);
+    evidence = simulationModbusResultToJson(result);
+    QCOMPARE(evidence.value(QStringLiteral("requestedValues")).toArray().size(), int(count));
+    QCOMPARE(evidence.value(QStringLiteral("requestedValue")).toInt(), 0);
+    QVERIFY(!evidence.value(QStringLiteral("physicalEndpointUsed")).toBool(true));
+    QVERIFY(!evidence.value(QStringLiteral("hardwareTransferVerified")).toBool(true));
+    QVERIFY(!evidence.value(QStringLiteral("hmiBehaviorVerified")).toBool(true));
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedResponseFaults_data
+ * Description     : Cross new function codes with framing, quantity, identity, echo and CRC faults.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedResponseFaults_data() //20261114-8 add
+{
+    int function;
+    int fault;
+    QByteArray name;
+    QString code;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<int>("fault");
+    QTest::addColumn<QString>("code");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        for (fault = 0; fault <= (function >= 15 ? 8 : 7); ++fault)
+        {
+            code = fault == 0 ? QStringLiteral("wrong_station") :
+                   fault == 1 ? QStringLiteral("wrong_function") :
+                   fault == 2 ? (function >= 15 ? QStringLiteral("write_echo_mismatch") : QStringLiteral("wrong_byte_count")) :
+                   fault == 3 ? QStringLiteral("crc_mismatch") :
+                   fault == 4 ? QStringLiteral("truncated_response") :
+                   fault == 6 ? (function >= 15 ? QStringLiteral("write_echo_mismatch") :
+                                 (function == 2 ? QStringLiteral("nonzero_coil_padding") : QStringLiteral("wrong_byte_count"))) :
+                   QStringLiteral("extra_response_bytes");
+            name = QByteArray::number(function) + "-fault-" + QByteArray::number(fault);
+            QTest::newRow(name.constData()) << function << fault << code;
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedResponseFaults
+ * Description     : Suppress every partial result, preserve first error and discard unsent writes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedResponseFaults() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusResult result;
+    QFETCH(int, function);
+    QFETCH(int, fault);
+    QFETCH(QString, code);
+
+    slave.closeOk = false;
+    slave.transform = [function, fault, &slave](const QByteArray &frame) {
+        QByteArray body;
+        QByteArray result;
+
+        body = frame.left(frame.size() - 2);
+        if (fault == 0) { body[0] = char(2); }
+        if (fault == 1) { body[1] = char(17); }
+        if (fault == 2) { body[function >= 15 ? 5 : 2] = char(function >= 15 ? 8 : 1); }
+        if (fault == 6 && function >= 15) { body[3] = char(4); }
+        if (fault == 6 && function == 2) { body[body.size() - 1] = char(0x80); }
+        if (fault == 6 && function == 4) { body[2] = char(17); }
+        result = referenceFrame(body);
+        if (fault == 3) { result[result.size() - 1] = char(u8(result.back()) ^ 1U); }
+        if (fault == 4) { result.chop(1); }
+        if (fault == 5) { result.append(frame); }
+        if (fault == 7) { result.append(char(0)); }
+        if (fault == 8) { result = slave.writes.last(); }
+        return result;
+    };
+    if (fault == 7) { slave.fragmentSize = function >= 15 ? 8 : (function == 2 ? 7 : 23); }
+    QVERIFY(transport.connectToStation(1, slave.callbacks()));
+    QVERIFY(transport.enqueue(extendedRequest(function)));
+    QVERIFY(transport.enqueue(extendedRequest(16, 0, 1, QStringLiteral("must-not-send"))));
+    result = transport.processNext();
+    QVERIFY(!result.ok);
+    QCOMPARE(result.errorCode, code);
+    QVERIFY(result.values.isEmpty());
+    QVERIFY(!result.writeAcknowledged);
+    QCOMPARE(result.remoteStateUnconfirmed, function >= 15);
+    QCOMPARE(result.discardedQueuedRequests, 1);
+    QCOMPARE(transport.pendingCount(), 0);
+    QCOMPARE(slave.writes.size(), 1);
+    QCOMPARE(slave.closeCount, 1);
+    QCOMPARE(transport.firstError(), result.error);
+    QCOMPARE(transport.processNext().errorCode, QStringLiteral("not_connected"));
+    QCOMPARE(slave.writes.size(), 1);
+    if (function == 16) { QCOMPARE(slave.registers.value(3), u16(0xa100)); }
+    if (function == 15) { QVERIFY(slave.coils.value(4)); }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedExceptions_data
+ * Description     : Cover all accepted and representative invalid exceptions for each new function.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedExceptions_data() //20261114-8 add
+{
+    int function;
+    int exception;
+    int exceptionIndex;
+    const int exceptionCodes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 255};
+    QByteArray name;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<int>("exception");
+    QTest::addColumn<bool>("assigned");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        for (exceptionIndex = 0; exceptionIndex < 13; ++exceptionIndex)
+        {
+            exception = exceptionCodes[exceptionIndex];
+            name = QByteArray::number(function) + "-exception-" + QByteArray::number(exception);
+            QTest::newRow(name.constData()) << function << exception
+                << ((exception >= 1 && exception <= 6) || exception == 8 || exception == 10 || exception == 11);
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedExceptions
+ * Description     : Reject exceptions without retry or value publication, including multiwrite uncertainty.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedExceptions() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusResult result;
+    QFETCH(int, function);
+    QFETCH(int, exception);
+    QFETCH(bool, assigned);
+
+    slave.fragmentSize = 1;
+    slave.transform = [exception](const QByteArray &frame) {
+        QByteArray body;
+
+        body.append(frame[0]);
+        body.append(char(u8(frame[1]) | 0x80U));
+        body.append(char(exception));
+        return referenceFrame(body);
+    };
+    QVERIFY(transport.connectToStation(1, slave.callbacks()));
+    QVERIFY(transport.enqueue(extendedRequest(function)));
+    result = transport.processNext();
+    QCOMPARE(result.errorCode, assigned ? QStringLiteral("slave_exception") : QStringLiteral("invalid_exception_code"));
+    QCOMPARE(int(result.exceptionCode), exception);
+    QVERIFY(!result.ok);
+    QVERIFY(result.values.isEmpty());
+    QVERIFY(!result.writeAcknowledged);
+    QCOMPARE(result.remoteStateUnconfirmed, function >= 15);
+    QCOMPARE(slave.writes.size(), 1);
+    QVERIFY(!transport.isConnected());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedIoFaults_data
+ * Description     : Cross all added functions with callback errors, partial data and deadline faults.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedIoFaults_data() //20261114-8 add
+{
+    int function;
+    int fault;
+    QByteArray name;
+    QString code;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<int>("fault");
+    QTest::addColumn<QString>("code");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        for (fault = 0; fault <= 11; ++fault)
+        {
+            code = fault < 4 ? QStringLiteral("short_or_failed_write") :
+                   (fault == 4 || (fault >= 8 && fault <= 10)) ? QStringLiteral("timeout") :
+                   fault == 5 ? QStringLiteral("read_error") :
+                   fault == 7 ? QStringLiteral("read_contract_violation") : QStringLiteral("read_no_progress");
+            name = QByteArray::number(function) + "-io-" + QByteArray::number(fault);
+            QTest::newRow(name.constData()) << function << fault << code;
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::extendedIoFaults
+ * Description     : Enforce one attempt and clear pending work without hiding ambiguous write outcomes.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::extendedIoFaults() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusOptions options;
+    SimulationModbusResult result;
+    int requestLength;
+    QFETCH(int, function);
+    QFETCH(int, fault);
+    QFETCH(QString, code);
+
+    requestLength = function < 15 ? 8 : (function == 15 ? 11 : 27);
+    if (fault == 0) { slave.writeReturn = -1; }
+    if (fault == 1) { slave.writeReturn = 0; }
+    if (fault == 2) { slave.writeReturn = requestLength - 1; }
+    if (fault == 3) { slave.writeReturn = requestLength + 1; }
+    if (fault == 4) { slave.timeout = true; }
+    if (fault == 5) { slave.readError = QStringLiteral("extended-read-error"); }
+    if (fault == 6) { slave.noProgress = true; }
+    if (fault == 7) { slave.oversize = true; }
+    if (fault == 8)
+    {
+        slave.fragmentSize = 4;
+        slave.onRead = [&slave]() { if (slave.readCount == 2) { slave.timeout = true; } };
+    }
+    if (fault == 9) { options.timeoutMs = 10; slave.delayMs = 25; }
+    if (fault == 10) { options.timeoutMs = 10; slave.onWrite = []() { QTest::qWait(25); }; }
+    if (fault == 11) { slave.noBoundary = true; }
+    QVERIFY(transport.connectToStation(1, slave.callbacks(), options));
+    QVERIFY(transport.enqueue(extendedRequest(function)));
+    QVERIFY(transport.enqueue(extendedRequest(15, 0, 1, QStringLiteral("unsent"))));
+    result = transport.processNext();
+    QCOMPARE(result.errorCode, code);
+    QVERIFY(!result.ok);
+    QVERIFY(result.values.isEmpty());
+    QVERIFY(!result.writeAcknowledged);
+    QVERIFY(result.requestMayHaveReachedSlave);
+    QCOMPARE(result.remoteStateUnconfirmed, function >= 15);
+    QCOMPARE(result.discardedQueuedRequests, 1);
+    QCOMPARE(slave.writes.size(), 1);
+    QCOMPARE(slave.closeCount, 1);
+    QVERIFY(!transport.isConnected());
+    if (fault < 4 || fault == 10) { QCOMPARE(slave.readCount, 0); }
+    if (fault == 8) { QCOMPARE(result.responseFrame.size(), 4); }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::cancellationPhases_data
+ * Description     : Cancel before sending, around I/O, between fragments and at final acceptance.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::cancellationPhases_data() //20261114-8 add
+{
+    int function;
+    int phase;
+    QByteArray name;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<int>("phase");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        for (phase = 0; phase <= 5; ++phase)
+        {
+            name = QByteArray::number(function) + "-cancel-" + QByteArray::number(phase);
+            QTest::newRow(name.constData()) << function << phase;
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::cancellationPhases
+ * Description     : Observe an atomic stop request without early close, partial values or retry.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::cancellationPhases() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusOptions options;
+    SimulationModbusResult result;
+    std::atomic<bool> cancelled;
+    int polls;
+    bool closedInsideCallback;
+    QFETCH(int, function);
+    QFETCH(int, phase);
+
+    cancelled.store(phase == 0);
+    polls = 0;
+    closedInsideCallback = false;
+    slave.closeOk = false;
+    options.cancellationRequested = [&]() {
+        ++polls;
+        return cancelled.load() || (phase == 2 && polls >= 3) || ((phase == 4 || phase == 5) && polls >= 5);
+    };
+    if (phase == 1)
+    {
+        slave.onWrite = [&]() { cancelled.store(true); closedInsideCallback = slave.closeCount > 0; };
+    }
+    if (phase == 3)
+    {
+        slave.onRead = [&]() { cancelled.store(true); closedInsideCallback = slave.closeCount > 0; };
+    }
+    if (phase == 3 || phase == 5) { slave.fragmentSize = 1; }
+    QVERIFY(transport.connectToStation(1, slave.callbacks(), options));
+    QVERIFY(transport.enqueue(extendedRequest(function)));
+    QVERIFY(transport.enqueue(extendedRequest(16, 0, 1, QStringLiteral("never-send"))));
+    result = transport.processNext();
+    QCOMPARE(result.errorCode, QStringLiteral("cancelled"));
+    QVERIFY(!result.ok);
+    QVERIFY(!result.writeAcknowledged);
+    QVERIFY(result.values.isEmpty());
+    QCOMPARE(result.requestMayHaveReachedSlave, phase != 0);
+    QCOMPARE(result.remoteStateUnconfirmed, function >= 15 && phase != 0);
+    QCOMPARE(result.discardedQueuedRequests, 1);
+    QCOMPARE(slave.writes.size(), phase == 0 ? 0 : 1);
+    QCOMPARE(slave.readCount, phase <= 2 ? 0 : 1);
+    QCOMPARE(slave.closeCount, 1);
+    QVERIFY(!closedInsideCallback);
+    QCOMPARE(transport.firstError(), result.error);
+    QVERIFY(!transport.isConnected());
+    QCOMPARE(transport.processNext().errorCode, QStringLiteral("not_connected"));
+    QCOMPARE(slave.writes.size(), phase == 0 ? 0 : 1);
+    if (phase == 4) { QVERIFY(result.responseFrame.size() >= 7); }
+    if (phase == 3 || phase == 5) { QCOMPARE(result.responseFrame.size(), 1); }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::multiwriteSnapshotAndReconnect
+ * Description     : Preserve queued vectors and require explicit reconnection after an ambiguous write.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::multiwriteSnapshotAndReconnect() //20261114-8 add
+{
+    int function;
+
+    for (function = 15; function <= 16; ++function)
+    {
+        FakeSlave slave;
+        SimulationModbusTransport transport;
+        SimulationModbusRequest input;
+        SimulationModbusResult result;
+        SimulationModbusResult read;
+        QVector<u32> originalValues;
+        int index;
+
+        input = extendedRequest(function, 10, 9);
+        originalValues = input.values;
+        QVERIFY(transport.connectToStation(7, slave.callbacks()));
+        QVERIFY(transport.enqueue(input));
+        input.values[0] = function == 15 ? 1U : 17U;
+        input.values.clear();
+        input.id = QStringLiteral("modified");
+        result = transport.processNext();
+        QVERIFY(result.ok);
+        QCOMPARE(result.request.id, QStringLiteral("extended"));
+        QCOMPARE(result.request.values, originalValues);
+        QVERIFY(transport.enqueue(request(function == 15 ? 1 : 3, 10, 9)));
+        read = transport.processNext();
+        QVERIFY(read.ok);
+        QCOMPARE(read.values.size(), originalValues.size());
+        for (index = 0; index < read.values.size(); ++index)
+        {
+            QCOMPARE(read.values[index], u16(originalValues[index]));
+        }
+        slave.timeout = true;
+        QVERIFY(transport.enqueue(extendedRequest(function, 30, 9)));
+        result = transport.processNext();
+        QCOMPARE(result.errorCode, QStringLiteral("timeout"));
+        QVERIFY(result.remoteStateUnconfirmed);
+        QCOMPARE(slave.writes.size(), 3);
+        slave.timeout = false;
+        QVERIFY(transport.connectToStation(7, slave.callbacks()));
+        QVERIFY(transport.firstError().isEmpty());
+        QCOMPARE(transport.pendingCount(), 0);
+        QCOMPARE(slave.writes.size(), 3);
+        QVERIFY(transport.enqueue(request(function == 15 ? 1 : 3, 30, 9)));
+        read = transport.processNext();
+        QVERIFY(read.ok);
+        QCOMPARE(read.values.size(), 9);
+        QCOMPARE(slave.writes.size(), 4);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::cancellationCallbackReentry
+ * Description     : Treat cancel polls as guarded callbacks and retain existing disconnect semantics.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::cancellationCallbackReentry() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusOptions options;
+    SimulationModbusResult result;
+    bool reentryRejected;
+    bool closedInsideCallback;
+
+    reentryRejected = false;
+    closedInsideCallback = false;
+    options.cancellationRequested = [&]() {
+        reentryRejected = transport.processNext().errorCode == QStringLiteral("reentrant_call") &&
+                          !transport.enqueue(request()) && !transport.connectToStation(1, slave.callbacks());
+        transport.disconnectFromStation();
+        closedInsideCallback = slave.closeCount > 0;
+        return false;
+    };
+    QVERIFY(transport.connectToStation(1, slave.callbacks(), options));
+    QVERIFY(transport.enqueue(extendedRequest(16)));
+    QVERIFY(transport.enqueue(request(3, 0, 1, 0, QStringLiteral("unsent"))));
+    result = transport.processNext();
+    QCOMPARE(result.errorCode, QStringLiteral("disconnected_during_transaction"));
+    QVERIFY(reentryRejected);
+    QVERIFY(!closedInsideCallback);
+    QVERIFY(!result.requestMayHaveReachedSlave);
+    QVERIFY(!result.remoteStateUnconfirmed);
+    QCOMPARE(result.discardedQueuedRequests, 1);
+    QCOMPARE(slave.writes.size(), 0);
+    QCOMPARE(slave.closeCount, 1);
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline_data
+ * Description     : Include even a misbehaving owner poll in the whole-transaction deadline.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::lateCancellationPollRespectsDeadline_data() //20261114-8 add
+{
+    int function;
+    int latePoll;
+    QByteArray name;
+
+    QTest::addColumn<int>("function");
+    QTest::addColumn<int>("latePoll");
+    for (function = 2; function <= 16; ++function)
+    {
+        if (function != 2 && function != 4 && function != 15 && function != 16)
+        {
+            continue;
+        }
+        for (latePoll = 1; latePoll <= 5; latePoll += 4)
+        {
+            name = QByteArray::number(function) + "-late-poll-" + QByteArray::number(latePoll);
+            QTest::newRow(name.constData()) << function << latePoll;
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline
+ * Description     : Prevent post-deadline transmission or publication after a deliberately slow poll.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void SimulationModbusTransportTests::lateCancellationPollRespectsDeadline() //20261114-8 add
+{
+    FakeSlave slave;
+    SimulationModbusTransport transport;
+    SimulationModbusOptions options;
+    SimulationModbusResult result;
+    int polls;
+    QFETCH(int, function);
+    QFETCH(int, latePoll);
+
+    polls = 0;
+    options.timeoutMs = 10;
+    options.cancellationRequested = [&]() {
+        ++polls;
+        if (polls == latePoll) { QTest::qWait(25); }
+        return false;
+    };
+    QVERIFY(transport.connectToStation(1, slave.callbacks(), options));
+    QVERIFY(transport.enqueue(extendedRequest(function)));
+    result = transport.processNext();
+    QCOMPARE(result.errorCode, QStringLiteral("timeout"));
+    QVERIFY(!result.ok);
+    QVERIFY(result.values.isEmpty());
+    QVERIFY(!result.writeAcknowledged);
+    QCOMPARE(result.requestMayHaveReachedSlave, latePoll == 5);
+    QCOMPARE(result.remoteStateUnconfirmed, function >= 15 && latePoll == 5);
+    QCOMPARE(slave.writes.size(), latePoll == 1 ? 0 : 1);
+    QCOMPARE(slave.readCount, latePoll == 1 ? 0 : 1);
+    QCOMPARE(slave.closeCount, 1);
 }
 
 QTEST_GUILESS_MAIN(SimulationModbusTransportTests)

@@ -1,0 +1,119 @@
+REA / Ghidra recovered pseudocode; not original source; not a callable oracle.
+Static observation only. No native DLL execution or hardware I/O.
+Subject SHA256: 169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5
+Evidence ID: ev_c65cfd19eb390afc5f5723bab851ac9775eac610102a4b250784e6d0c884e542
+Address: 0x10014e00; label: 响应原位解码/RMW 更新
+Only line endings are normalized in this derived text.
+
+
+/* WARNING: Function: __RTC_CheckEsp replaced with injection: __RTC_CheckEsp */
+/* WARNING: Removing unreachable block (ram,0x10014f9e) */
+/* WARNING: Removing unreachable block (ram,0x10014ee4) */
+/* WARNING: Removing unreachable block (ram,0x1001519e) */
+/* WARNING: Removing unreachable block (ram,0x100150e8) */
+
+void FUN_10014e00(void)
+
+{
+  undefined1 uVar1;
+  undefined1 uVar2;
+  undefined1 uVar3;
+  int iVar4;
+  undefined4 *puVar5;
+  undefined4 local_148;
+  char local_141;
+  ushort local_78;
+  int local_60;
+  uint local_54;
+  ushort local_48;
+  undefined1 local_15;
+  int local_c;
+  
+  puVar5 = &local_148;
+  for (iVar4 = 0x51; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *puVar5 = 0xcccccccc;
+    puVar5 = puVar5 + 1;
+  }
+  local_141 = '\0';
+  if (*(short *)(DAT_10033294 + 0x19c) == 99) {
+    for (local_c = 0;
+        local_c < (int)(*(ushort *)
+                         (DAT_10033294 + 0x394 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) / 2);
+        local_c = local_c + 1) {
+      uVar1 = DAT_10033288
+              [local_c * 2 +
+               (uint)*(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2)];
+      DAT_10033288[local_c * 2] =
+           DAT_10033288
+           [local_c * 2 +
+            *(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) + 1];
+      DAT_10033288[local_c * 2 + 1] = uVar1;
+    }
+  }
+  else if (*(short *)(DAT_10033294 + 0x19c) == 1) {
+    for (local_c = 0;
+        local_c < (int)(uint)*(ushort *)
+                              (DAT_10033294 + 0x394 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2);
+        local_c = local_c + 1) {
+      DAT_10033288[local_c] =
+           DAT_10033288
+           [local_c + (uint)*(ushort *)
+                             (DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2)];
+    }
+  }
+  else if (*(short *)(DAT_10033294 + 0x19c) == 2) {
+    for (local_c = 0;
+        local_c < (int)(uint)*(ushort *)
+                              (DAT_10033294 + 0x394 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) >>
+                  2; local_c = local_c + 1) {
+      uVar1 = DAT_10033288
+              [local_c * 4 +
+               (uint)*(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2)];
+      uVar2 = DAT_10033288
+              [local_c * 4 +
+               *(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) + 1];
+      uVar3 = DAT_10033288
+              [local_c * 4 +
+               *(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) + 3];
+      DAT_10033288[local_c * 4] =
+           DAT_10033288
+           [local_c * 4 +
+            *(ushort *)(DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2) + 2];
+      DAT_10033288[local_c * 4 + 1] = uVar3;
+      DAT_10033288[local_c * 4 + 2] = uVar1;
+      DAT_10033288[local_c * 4 + 3] = uVar2;
+    }
+  }
+  else if (*(short *)(DAT_10033294 + 0x19c) == 100) {
+    for (local_c = 0;
+        local_c < (int)(uint)*(ushort *)
+                              (DAT_10033294 + 0x394 + (uint)*(byte *)(DAT_10033294 + 0x467) * 2);
+        local_c = local_c + 1) {
+      local_15 = DAT_10033288
+                 [local_c + (uint)*(ushort *)
+                                   (DAT_10033294 + 0x2cc + (uint)*(byte *)(DAT_10033294 + 0x467) * 2
+                                   )];
+      local_141 = '\x01';
+      DAT_10033288[local_c] = local_15;
+    }
+    local_48 = CONCAT11(*DAT_10033288,DAT_10033288[1]);
+    local_54 = *(uint *)(DAT_10033294 + 4) % 0x10;
+    if (*(double *)(DAT_10033294 + 0x470) == 1.0) {
+      local_48 = local_48 | (ushort)(1 << (sbyte)local_54);
+    }
+    else if (*(double *)(DAT_10033294 + 0x470) == 0.0) {
+      local_48 = local_48 & ~(ushort)(1 << (sbyte)local_54);
+    }
+    *(char *)(DAT_1003328c + 0xd) = (char)local_48;
+    *(char *)(DAT_1003328c + 0xc) = (char)(local_48 >> 8);
+    local_78 = thunk_FUN_10015600(DAT_1003328c + 8,6);
+    local_60 = (int)(uint)local_78 >> 8;
+    if (local_141 == '\0') {
+      __RTC_UninitUse("a1");
+    }
+    *(char *)(DAT_1003328c + 0xe) = (char)local_78;
+    *(char *)(DAT_1003328c + 0xf) = (char)local_60;
+  }
+  return;
+}
+

@@ -1,5 +1,11 @@
 # KinSealStudio Lite
 
+当前新增便携版为**阶段9 PLC通信验证版**：`dist/KinSealStudioLite-Stage9-plc-r2/KinSealStudioLite.exe`。从“在线模拟”进入PC串口调试与139行能力表；支持标准RTU 01/02/03/04/05/06/15/16，端口需显式选择并执行，不自动连接。工程画面联动/地址映射尚未开放，真实PLC/HMI未验；完整阶段9仍为5项partial/1项open。
+
+正式PC测试704/0/0；便携实际7进程/36检查通过，新增包内Qt6SerialPort。详见[阶段9进度](docs/阶段9逐项进度.md)、[实现说明](docs/阶段9_PLC地址模板与通信实现.md)、[UI规则24](docs/UI编译规则与阶段交付规范.md)及[统一未完成台账](design_plan/未完成任务总台账.md)。
+
+以下阶段8及更早记录保留原交付边界。
+
 当前新增便携版为**阶段8普通宏编辑编译版**：`dist/KinSealStudioLite-Stage8-macro-r1/KinSealStudioLite.exe`。可从工具菜单/工程树打开独立宏编辑器，管理普通源码、跨页安全改名、导入导出UTF-8源码、插入36项原厂函数/图形示例，并后台编译或停止。真实AMT ARM SDK须外部配置；包不附SDK/许可证。支持`--compile-macros 工程.ksp 报告.json`，示例在`samples/stage8/ordinary-two-macros.ksp`。
 
 本批最终PC测试263/0/0；地址变量交换、初始化/全局/画面调度与设备宏执行尚未完成，阶段8六个完整任务继续开放。PC离线仍不执行宏。详见[阶段8进度](docs/阶段8逐项进度.md)、[实现与验收](docs/阶段8宏编辑编译与验收.md)、[详细UI编译规则](docs/UI编译规则与阶段交付规范.md)及[统一未完成台账](design_plan/未完成任务总台账.md)。

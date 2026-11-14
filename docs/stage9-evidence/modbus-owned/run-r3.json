@@ -1,0 +1,1806 @@
+{
+  "stage": "S09-05",
+  "scope": "controlled-modbus-rtu-replay",
+  "generatedAt": "2026-11-14T18:45:28.380590+08:00",
+  "sourceFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.h",
+      "size": 9532,
+      "sha256": "8296c30efe01f7243d877baa4f817c62cade73da4f6708c8037a795678ba47df",
+      "relativePath": "src/simulation_modbus_transport.h"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.cpp",
+      "size": 30147,
+      "sha256": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+      "relativePath": "src/simulation_modbus_transport.cpp"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\simulation_modbus_transport_tests.cpp",
+      "size": 84919,
+      "sha256": "c885e7df789067bc825edd7f3c6cb2e34ad8bb685fc70611a2c3c68d024532dc",
+      "relativePath": "tests/simulation_modbus_transport_tests.cpp"
+    }
+  ],
+  "testExecutable": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\modbus-owned\\KinSealSimulationModbusOwnedTests.exe",
+    "size": 1120567,
+    "sha256": "2b8825b754c68654ed0cd64f02320a57aaf28b7838b74abfc86da54dd10ca293"
+  },
+  "testXml": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\modbus-owned\\tests-r3.xml",
+    "size": 40787,
+    "sha256": "fd084654af1cfaa5622c1760158d3b901db851f716568ab66420b37f2448cd56"
+  },
+  "buildScript": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\modbus-owned\\build-owned.ps1",
+    "size": 2098,
+    "sha256": "5fae720014bf91125ccf3f76e060084b543268ae57d8e11c22827f3127d766fb"
+  },
+  "compileLog": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\modbus-owned\\compile-r3.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "mocLog": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage9-20261114\\modbus-owned\\moc-r3.log",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "compiler": {
+    "executable": "G:/01_Professional/QT6/Installed/Tools/mingw1310_64/bin/g++.exe",
+    "qt": "6.12.0",
+    "flags": [
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Wconversion",
+      "-DQT_NO_CAST_FROM_ASCII",
+      "-DQT_NO_CAST_TO_ASCII"
+    ],
+    "dependencyCopies": 0
+  },
+  "result": {
+    "pass": 340,
+    "fail": 0,
+    "skip": 0
+  },
+  "includesQtLifecycleRows": true,
+  "baselineCount": 97,
+  "newRowsIncludingExtendedExistingData": 243,
+  "incidents": [
+    {
+      "test": "initTestCase",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "crcVectors",
+      "row": "empty",
+      "type": "pass"
+    },
+    {
+      "test": "crcVectors",
+      "row": "ascii-check",
+      "type": "pass"
+    },
+    {
+      "test": "crcVectors",
+      "row": "read-holding",
+      "type": "pass"
+    },
+    {
+      "test": "crcVectors",
+      "row": "complete-frame-zero",
+      "type": "pass"
+    },
+    {
+      "test": "goldenRequests",
+      "row": "holding10",
+      "type": "pass"
+    },
+    {
+      "test": "goldenRequests",
+      "row": "coil37",
+      "type": "pass"
+    },
+    {
+      "test": "goldenRequests",
+      "row": "coil-on",
+      "type": "pass"
+    },
+    {
+      "test": "goldenRequests",
+      "row": "coil-off",
+      "type": "pass"
+    },
+    {
+      "test": "goldenRequests",
+      "row": "register",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "lowest",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "highest",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "coils-max",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "registers-max",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "write-max",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "broadcast",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "negative-station",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "reserved-station",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "unsupported-function",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "address-overflow",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "wrap",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "count-zero",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "too-many-registers",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "too-many-coils",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "read-has-value",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "read-coil-has-value",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "write-many",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "write-value-overflow",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "nonlogical-coil",
+      "type": "pass"
+    },
+    {
+      "test": "requestValidation",
+      "row": "coil-wire-value-not-api",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "broadcast",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "station248",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "queue0",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "queue1025",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "timeout0",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "timeout60001",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "missing-open",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "missing-write",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "missing-read",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "missing-close",
+      "type": "pass"
+    },
+    {
+      "test": "connectionValidation",
+      "row": "open-failure",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "coils-1",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "coils-byte",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "coils-fragmented",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "coils-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "holding-1",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "holding-fragmented",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "holding-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "write-coil",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "write-register",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "discrete-1",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "discrete-fragmented",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "discrete-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "input-1",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "input-fragmented",
+      "type": "pass"
+    },
+    {
+      "test": "validResponses",
+      "row": "input-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "wrong-station",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "wrong-function",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "wrong-byte-count",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "crc-damaged",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "short-frame",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "extra-byte",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "empty-frame",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "coil-padding",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "wrong-echo-address",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "wrong-echo-value",
+      "type": "pass"
+    },
+    {
+      "test": "malformedResponses",
+      "row": "extra-fragment-after-complete-prefix",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "illegal-function",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "illegal-address",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "illegal-value",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "slave-failure",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "acknowledge",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "busy",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "parity",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "gateway-path",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "gateway-target",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "zero",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "reserved7",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "reserved9",
+      "type": "pass"
+    },
+    {
+      "test": "exceptions",
+      "row": "unknown255",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "negative-write",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "zero-write",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "partial-write",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "oversized-write-return",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "timeout",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "read-error",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "read-no-progress",
+      "type": "pass"
+    },
+    {
+      "test": "ioFaults",
+      "row": "read-oversized",
+      "type": "pass"
+    },
+    {
+      "test": "queueAndSessionLifecycle",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "disconnectDuringCallback",
+      "row": "write",
+      "type": "pass"
+    },
+    {
+      "test": "disconnectDuringCallback",
+      "row": "read",
+      "type": "pass"
+    },
+    {
+      "test": "remoteWriteIsNotRolledBack",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "realDeadline",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "explicitFrameBoundaryRequired",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "writeThenReadWorkflow",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "physicalEvidenceRemainsFalse",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "endpointTransitionReentry",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "destroyDiscardsUnsentQueue",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "frameBoundaryMayArriveSeparately",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "partialThenTimeoutPublishesNothing",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "writeExhaustsDeadlineBeforeRead",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "queuedRequestIsSnapshot",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "discrete22",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "input1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "multi-coil10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "multi-register2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "last-register",
+      "type": "pass"
+    },
+    {
+      "test": "extendedGoldenRequests",
+      "row": "one-coil",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-zero",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-first",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-last",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-exact-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-past-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-over-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-past-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-u32-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-u32-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-scalar-conflict",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "2-container-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-zero",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-first",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-last",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-exact-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-past-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-over-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-past-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-u32-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-u32-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-scalar-conflict",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "4-container-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-zero",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-first",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-last",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-exact-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-past-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-over-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-past-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-u32-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-u32-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-scalar-conflict",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-container-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-container-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-container-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "15-container-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-zero",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-first",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-last",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-exact-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-past-tail",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-over-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-past-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-u32-address",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-u32-quantity",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-scalar-conflict",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-container-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-container-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-container-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "16-container-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "single05-vector-rejected",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "single06-vector-rejected",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "read01-vector-rejected",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "read03-vector-rejected",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "multi-coil-wirevalue-rejected",
+      "type": "pass"
+    },
+    {
+      "test": "extendedRequestBounds",
+      "row": "multi-register-65535",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "coil-one",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "coil-seven",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "coil-eight",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "coil-nine",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "coil-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "word-one",
+      "type": "pass"
+    },
+    {
+      "test": "multipleWriteResponses",
+      "row": "word-maximum",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "2-fault-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "4-fault-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "15-fault-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedResponseFaults",
+      "row": "16-fault-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "2-exception-255",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "4-exception-255",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "15-exception-255",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedExceptions",
+      "row": "16-exception-255",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "2-io-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "4-io-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "15-io-11",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-0",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-1",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-2",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-3",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-4",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-5",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-6",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-7",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-8",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-9",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-10",
+      "type": "pass"
+    },
+    {
+      "test": "extendedIoFaults",
+      "row": "16-io-11",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-0",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-1",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-2",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-3",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-4",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "2-cancel-5",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-0",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-1",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-2",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-3",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-4",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "4-cancel-5",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-0",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-1",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-2",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-3",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-4",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "15-cancel-5",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-0",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-1",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-2",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-3",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-4",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationPhases",
+      "row": "16-cancel-5",
+      "type": "pass"
+    },
+    {
+      "test": "multiwriteSnapshotAndReconnect",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "cancellationCallbackReentry",
+      "row": "",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "2-late-poll-1",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "2-late-poll-5",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "4-late-poll-1",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "4-late-poll-5",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "15-late-poll-1",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "15-late-poll-5",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "16-late-poll-1",
+      "type": "pass"
+    },
+    {
+      "test": "lateCancellationPollRespectsDeadline",
+      "row": "16-late-poll-5",
+      "type": "pass"
+    },
+    {
+      "test": "cleanupTestCase",
+      "row": "",
+      "type": "pass"
+    }
+  ],
+  "hardware": {
+    "physicalEndpointUsed": false,
+    "hardwareTransferVerified": false,
+    "hmiBehaviorVerified": false,
+    "guiUsed": false,
+    "usbUsed": false,
+    "dllCalled": false
+  },
+  "redGreen": {
+    "firstRun": {
+      "file": "tests-r1.xml",
+      "passed": 332,
+      "failed": 0
+    },
+    "red": {
+      "file": "tests-r2-red.xml",
+      "passed": 2,
+      "failed": 8,
+      "note": "2 passes are Qt lifecycle rows; all 8 deadline scenarios failed before the fix.",
+      "productionCppSha256": "959a1e4a7fce897c21b65de30aa1ac45c48787eff33eb81d6c5064552508dba5"
+    },
+    "green": {
+      "file": "tests-r3.xml",
+      "passed": 340,
+      "failed": 0
+    }
+  },
+  "limitations": [
+    "仅同进程模拟从站；没有真实串口、网络、PLC或HMI传输。",
+    "该标准PDU实现不是原厂DLL ABI恢复，不引入plcFamily地址映射。",
+    "串口worker、端口身份、优先级、读改写调度与UI由主代理集成，未由本子任务关闭。",
+    "不阻塞/不抛异常是回调合同；取消不能中断尚未返回的同步回调。"
+  ]
+}

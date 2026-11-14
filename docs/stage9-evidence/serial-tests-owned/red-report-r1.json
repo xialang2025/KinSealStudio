@@ -1,0 +1,212 @@
+{
+  "status": "red-before-parent-fix",
+  "result": {
+    "passed": 66,
+    "failed": 35,
+    "skipped": 0,
+    "includesLifecycleRows": true
+  },
+  "realGapRows": 19,
+  "fieldSyncRows": 16,
+  "realGaps": [
+    {
+      "id": "SERIAL-RED-01",
+      "rows": 16,
+      "finding": "预校验早退没有统一的sessionInactive/closed/closeAttempted/closeConfirmed状态；应未打开、无关闭尝试、会话非活跃。"
+    },
+    {
+      "id": "SERIAL-RED-02",
+      "rows": 1,
+      "finding": "预取消早退未填写cancelled=true。"
+    },
+    {
+      "id": "SERIAL-RED-03",
+      "rows": 2,
+      "finding": "factory返回后未再次检查取消和总期限，仍调用open。"
+    }
+  ],
+  "testContractSynchronization": {
+    "rows": 16,
+    "note": "parent已将evidenceScope统一为scope；测试相应同步字段，不属于生产缺陷。原始R1保留。"
+  },
+  "failures": [
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "station0",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "station248",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-count0",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-address65536",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-wrap",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-register126",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-coil2001",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-multi-count-mismatch",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-multi-register-overflow",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-nonlogical-multi-coil",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-duplicate-id",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-empty-id",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "later-unsupported-function",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "empty-batch",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "batch257",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "invalidBatchNeverCreatesEndpoint",
+      "row": "invalid-settings",
+      "description": "'report.value(QStringLiteral(\"sessionInactive\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "1-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "1-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "2-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "2-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "3-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "3-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "4-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "4-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "5-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "5-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "6-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "6-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "15-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "15-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "16-fragment-1",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "goldenTransactions",
+      "row": "16-fragment-256",
+      "description": "Compared values are not the same\n   Actual   (result.value(QStringLiteral(\"evidenceScope\")).toString()): \"\"\n   Expected (QStringLiteral(\"controlled-rtu-session\"))                : \"controlled-rtu-session\""
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "before-factory",
+      "description": "'report.value(QStringLiteral(\"cancelled\")).toBool()' returned FALSE. ()"
+    },
+    {
+      "test": "cancellationBoundaries",
+      "row": "factory-cancels-before-open",
+      "description": "Compared values are not the same\n   Actual   (endpoint.openCount): 1\n   Expected (phase <= 1 ? 0 : 1): 0"
+    },
+    {
+      "test": "totalDeadline",
+      "row": "factory-exhausts-total",
+      "description": "Compared values are not the same\n   Actual   (endpoint.openCount): 1\n   Expected (phase == 0 ? 0 : 1): 0"
+    }
+  ],
+  "compileLogBytes": 0,
+  "parentOwnsProductionFix": true,
+  "productionFilesModifiedByThisTask": false
+}

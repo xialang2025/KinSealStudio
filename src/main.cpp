@@ -10,6 +10,7 @@
 #include "device_transfer_contract.h" //20261114-5 add
 #include "simulation_cli.h" //20261114-6 add
 #include "macro_compiler_cli.h" //20261114-7 add
+#include "plc_protocol_cli.h" //20261114-8 add
 
 #include <QApplication>
 #include <QSettings> //20261111-1 add: Keep automated captures out of the user recent-file preferences.
@@ -175,7 +176,7 @@ int main(int argc, char *argv[]) //20261107-6 add
     int simulationExit = 0; //20261114-6 add
     std::unique_ptr<MainWindow> window;
     QString capture_path;
-    QTemporaryDir captureSettings; //20261111-1 add
+    std::unique_ptr<QTemporaryDir> captureSettings; //20261114-8 change: Read-only CLI commands must not create capture settings directories.
     QJsonArray captureWidgets;
     QJsonObject captureWidget;
     QWidget *captureChild;
@@ -214,6 +215,7 @@ int main(int argc, char *argv[]) //20261107-6 add
     int cancelIndex;
 
     arguments = application.arguments();
+    if (handlePlcProtocolCli(arguments, &simulationExit)) { return simulationExit; } //20261114-8 add
     if (handleMacroCompilerCli(arguments, &simulationExit)) { return simulationExit; } //20261114-7 add
     if (handleSimulationCli(arguments, &simulationExit)) { return simulationExit; } //20261114-6 add
     if (arguments.size() >= 4 &&
@@ -554,7 +556,9 @@ int main(int argc, char *argv[]) //20261107-6 add
     {
         capture_path = QFileInfo(arguments.at(2)).absoluteFilePath();
         QSettings::setDefaultFormat(QSettings::IniFormat); //20261111-1 add
-        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, captureSettings.path());
+        captureSettings = std::make_unique<QTemporaryDir>();
+        if (!captureSettings->isValid()) { return 27; }
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, captureSettings->path());
         window = std::make_unique<MainWindow>();
         window->resize(1353, 708); //20261111-1 change: Compare the same logical client extent as the native reference.
         if (arguments.size() >= 4 && !window->openProjectPath(arguments.at(3), &validation_error)) { return 7; }

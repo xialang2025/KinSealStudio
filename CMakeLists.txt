@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 6.12 REQUIRED COMPONENTS Widgets Svg) #20261109-0 change
+find_package(Qt6 6.12 REQUIRED COMPONENTS Widgets Svg SerialPort) #20261114-8 change
 
 #20261109-0 add: Link the large SVG catalog as a resource object instead of compiling megabytes of C++ literals.
 qt_add_big_resources(KINSEAL_GALLERY_RESOURCES system_gallery.qrc)
@@ -85,6 +85,9 @@ qt_add_executable(KinSealStudioLite WIN32
     src/simulation_cli.h
     src/simulation_modbus_transport.cpp #20261114-6 add: Injected RTU replay only; no physical port backend.
     src/simulation_modbus_transport.h
+    src/plc_protocol_capabilities.cpp src/plc_protocol_capabilities.h #20261114-8 add
+    src/plc_serial_session.cpp src/plc_serial_session.h
+    src/plc_online_dialog.cpp src/plc_online_dialog.h
     src/text_payload_compiler.cpp #20261108-11 add
     src/text_payload_compiler.h
     src/static_text_properties.cpp #20261108-14 add
@@ -270,6 +273,7 @@ list(REMOVE_ITEM KINSEAL_TEST_SOURCES src/main.cpp)
 add_library(KinSealSimulationTestSupport OBJECT ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp)
 target_include_directories(KinSealSimulationTestSupport PRIVATE src third_party/lzokay)
 target_link_libraries(KinSealSimulationTestSupport PRIVATE Qt6::Widgets Qt6::Svg)
+target_link_libraries(KinSealSimulationTestSupport PUBLIC Qt6::SerialPort) #20261114-8 add
 target_compile_definitions(KinSealSimulationTestSupport PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 qt_add_executable(KinSealSimulationRuntimeTests tests/simulation_runtime_tests.cpp)
 target_include_directories(KinSealSimulationRuntimeTests PRIVATE src)
@@ -505,3 +509,30 @@ if(MINGW)
     target_compile_options(KinSealStudioLite PRIVATE -Wall -Wextra -Wpedantic)
     target_link_options(KinSealStudioLite PRIVATE -static-libgcc -static-libstdc++)
 endif()
+
+#20261114-8 add: Every full editor-source consumer needs the worker's serial symbols.
+get_property(KINSEAL_ALL_LOCAL_TARGETS DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
+foreach(KINSEAL_SERIAL_TARGET IN LISTS KINSEAL_ALL_LOCAL_TARGETS)
+    get_target_property(KINSEAL_SERIAL_SOURCES ${KINSEAL_SERIAL_TARGET} SOURCES)
+    if("src/plc_serial_session.cpp" IN_LIST KINSEAL_SERIAL_SOURCES)
+        target_link_libraries(${KINSEAL_SERIAL_TARGET} PRIVATE Qt6::SerialPort)
+    endif()
+endforeach()
+
+qt_add_executable(KinSealStage9AddressUiTests tests/stage9_address_ui_tests.cpp
+    src/plc_address_dialog.cpp src/plc_address.cpp src/plc_native_catalog.cpp plc_catalog.qrc)
+target_include_directories(KinSealStage9AddressUiTests PRIVATE src)
+target_link_libraries(KinSealStage9AddressUiTests PRIVATE Qt6::Widgets Qt6::Test)
+
+target_sources(KinSealStudioLite PRIVATE src/plc_protocol_cli.cpp src/plc_protocol_cli.h) #20261114-8 add
+
+qt_add_executable(KinSealPlcSerialSessionTests tests/plc_serial_session_tests.cpp
+    src/plc_serial_session.cpp src/simulation_modbus_transport.cpp)
+target_include_directories(KinSealPlcSerialSessionTests PRIVATE src)
+target_link_libraries(KinSealPlcSerialSessionTests PRIVATE Qt6::Core Qt6::Test Qt6::SerialPort)
+
+qt_add_executable(KinSealStage9OnlineUiTests tests/stage9_online_ui_tests.cpp
+    src/plc_online_dialog.cpp src/plc_protocol_capabilities.cpp src/plc_serial_session.cpp
+    src/simulation_modbus_transport.cpp src/plc_address.cpp src/plc_native_catalog.cpp plc_catalog.qrc)
+target_include_directories(KinSealStage9OnlineUiTests PRIVATE src)
+target_link_libraries(KinSealStage9OnlineUiTests PRIVATE Qt6::Widgets Qt6::Test Qt6::SerialPort)

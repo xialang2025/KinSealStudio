@@ -1,0 +1,38 @@
+********* Start testing of SimulationModbusTransportTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : SimulationModbusTransportTests::initTestCase()
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(2-late-poll-1) Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0
+tests/simulation_modbus_transport_tests.cpp(1989) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(2-late-poll-5) Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"
+tests/simulation_modbus_transport_tests.cpp(1985) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(4-late-poll-1) Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0
+tests/simulation_modbus_transport_tests.cpp(1989) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(4-late-poll-5) Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"
+tests/simulation_modbus_transport_tests.cpp(1985) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(15-late-poll-1) Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0
+tests/simulation_modbus_transport_tests.cpp(1989) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(15-late-poll-5) Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"
+tests/simulation_modbus_transport_tests.cpp(1985) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(16-late-poll-1) Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0
+tests/simulation_modbus_transport_tests.cpp(1989) : failure location
+FAIL!  : SimulationModbusTransportTests::lateCancellationPollRespectsDeadline(16-late-poll-5) Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"
+tests/simulation_modbus_transport_tests.cpp(1985) : failure location
+PASS   : SimulationModbusTransportTests::cleanupTestCase()
+Totals: 2 passed, 8 failed, 0 skipped, 0 blacklisted, 256ms
+********* Finished testing of SimulationModbusTransportTests *********

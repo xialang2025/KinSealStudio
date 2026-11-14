@@ -1,0 +1,355 @@
+{
+  "schemaVersion": 1,
+  "review": "stage9-final-code-release-r1",
+  "reviewer": "/root/polygon_docs",
+  "reviewedAt": "2026-11-14T19:35:10+08:00",
+  "changeMarker": "//20261114-8",
+  "method": "独立只读源/包装与失败路径复核；不修改生产/测试/其它文档，不构建，不调用包装器或真实端点。",
+  "sourceSnapshots": [
+    {
+      "path": "src/plc_protocol_cli.h",
+      "bytes": 173,
+      "sha256": "fc09d4e5c8412719770da0aec06cc543946c52e8d0c95c73eaf2bd0a8bfb7c18"
+    },
+    {
+      "path": "src/plc_protocol_cli.cpp",
+      "bytes": 1647,
+      "sha256": "59a0d513942b618368e08bd02a0977d7fd70501d0e447b564cca6a46563b88d9"
+    },
+    {
+      "path": "src/main.cpp",
+      "bytes": 27622,
+      "sha256": "dd2da1f5274bd0bac487e9255c7263a1a14d85c400e76d76ce3ef6b1045e683c"
+    },
+    {
+      "path": "src/plc_serial_session.h",
+      "bytes": 2156,
+      "sha256": "2bc1653805cda9be76a572a6bd70b09886b94e62eb0c0121e5a49d83d2d2857a"
+    },
+    {
+      "path": "src/plc_serial_session.cpp",
+      "bytes": 13431,
+      "sha256": "1311112ff79926725f18ff01fb1a9d2c3aade21dd36e4cf583facbbedf53fd02"
+    },
+    {
+      "path": "src/plc_online_dialog.h",
+      "bytes": 1218,
+      "sha256": "955c95e0a4801e6c0dba6ddc7b4fa7f4361fc84d4fb3173764e4fcfc63b185d2"
+    },
+    {
+      "path": "src/plc_online_dialog.cpp",
+      "bytes": 16576,
+      "sha256": "193ff2edab327c292642b1f3323409f72a109e259c602891ebd5bb6fc28432f1"
+    },
+    {
+      "path": "src/plc_protocol_capabilities.cpp",
+      "bytes": 5962,
+      "sha256": "b5dc528555d0e519bae7dcdbe07cef4f7f65373009666fb48d6d21ddfe76fd11"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 32819,
+      "sha256": "736c7e1946163b3b4024ea62aac24c05b921bf662b8755c446c7d5012d6bfd3f"
+    },
+    {
+      "path": "tools/package_stage9.py",
+      "bytes": 7044,
+      "sha256": "2e24b6c68b331f68e19d07a5cfbf02bf062ec6092b5537abb66ac21075fad13e"
+    },
+    {
+      "path": "tools/package_stage8.py",
+      "bytes": 19768,
+      "sha256": "00280f4b33dac57751f19e246ea574e95fabf8711af9d5fe5b4586920f98b3d4"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FINAL-R1-01",
+      "priority": "P2",
+      "title": "stdout缓冲刷新失败不能退出成功",
+      "original": "fwrite成功后忽略fflush返回，缓冲尾部写失败可能仍exit0。",
+      "resolution": "fflush==0与既有valid合并；report.ok=false、参数错、fwrite或fflush失败均exit2。",
+      "references": [
+        {
+          "file": "src/plc_protocol_cli.cpp",
+          "line": 24,
+          "excerpt": "valid = valid && report.value(QStringLiteral(\"ok\")).toBool(true);"
+        },
+        {
+          "file": "src/plc_protocol_cli.cpp",
+          "line": 26,
+          "excerpt": "valid = std::fflush(stdout) == 0 && valid; //20261114-8 change: Buffered output failure must not publish a successful CLI exit."
+        }
+      ],
+      "status": "root-fixed-source-rechecked"
+    },
+    {
+      "id": "FINAL-R1-02",
+      "priority": "P2",
+      "title": "能力CLI先构造截图临时目录",
+      "original": "main局部QTemporaryDir在能力CLI分派前立即创建TEMP目录，违反该CLI纯读取范围。",
+      "resolution": "captureSettings改unique_ptr，只有截图分支make_unique，并检查isValid；能力CLI在创建MainWindow和截图目录前返回。",
+      "references": [
+        {
+          "file": "src/main.cpp",
+          "line": 179,
+          "excerpt": "std::unique_ptr<QTemporaryDir> captureSettings; //20261114-8 change: Read-only CLI commands must not create capture settings directories."
+        },
+        {
+          "file": "src/main.cpp",
+          "line": 218,
+          "excerpt": "if (handlePlcProtocolCli(arguments, &simulationExit)) { return simulationExit; } //20261114-8 add"
+        },
+        {
+          "file": "src/main.cpp",
+          "line": 559,
+          "excerpt": "captureSettings = std::make_unique<QTemporaryDir>();"
+        },
+        {
+          "file": "src/main.cpp",
+          "line": 560,
+          "excerpt": "if (!captureSettings->isValid()) { return 27; }"
+        }
+      ],
+      "status": "root-fixed-source-rechecked"
+    },
+    {
+      "id": "FINAL-R1-03",
+      "priority": "P2",
+      "title": "首个取消门禁的早退字段保留旧快照",
+      "original": "预验证期间false→true的取消在首门禁被正确阻止，但回执cancelled/deadline可能仍为初始化值。",
+      "resolution": "首个门禁刷新cancelled/totalDeadlineReached/elapsedMs；factory后另有相同预算门禁，不在创建期间已取消后再open。",
+      "references": [
+        {
+          "file": "src/plc_serial_session.cpp",
+          "line": 179,
+          "excerpt": "report.insert(QStringLiteral(\"error\"), QStringLiteral(\"批次打开端口前已取消或超过总时限。\")); return report;"
+        },
+        {
+          "file": "src/plc_serial_session.cpp",
+          "line": 182,
+          "excerpt": "//20261114-8 add: Factory work consumes the same total budget; cancellation cannot open a new endpoint afterwards."
+        }
+      ],
+      "status": "root-fixed-source-rechecked"
+    },
+    {
+      "id": "FINAL-R1-04",
+      "priority": "P2",
+      "title": "包装脚本导入的身份/绑定helper未归档身份",
+      "original": "stage9脚本依赖package_stage8的identity/source/bind逻辑，输入记录只有stage9自身builder哈希。",
+      "resolution": "inputs.json加入实际previous.__file__的identityAndBindingHelper，保留已冻结的包装/绑定实现来源。",
+      "references": [
+        {
+          "file": "tools/package_stage9.py",
+          "line": 65,
+          "excerpt": "identityAndBindingHelper=previous.identity(Path(previous.__file__).resolve()),"
+        }
+      ],
+      "status": "root-fixed-source-rechecked"
+    }
+  ],
+  "positiveStaticChecks": [
+    {
+      "check": "CLI退出与旧API边界",
+      "result": "仅识别--plc-capabilities，陌生命令return false交回既有处理；可选型号只生成能力stdout JSON；无串口、DLL、SDK、USB调用。main以该处理结果提前return，原macro/simulation分派顺序继续保留。",
+      "references": [
+        {
+          "file": "src/plc_protocol_cli.cpp",
+          "line": 19,
+          "excerpt": "if (arguments.size() < 2 || arguments.at(1) != QStringLiteral(\"--plc-capabilities\")) { return false; }"
+        },
+        {
+          "file": "src/main.cpp",
+          "line": 218,
+          "excerpt": "if (handlePlcProtocolCli(arguments, &simulationExit)) { return simulationExit; } //20261114-8 add"
+        }
+      ]
+    },
+    {
+      "check": "整批预验证与门禁",
+      "result": "settings/请求数量/逐项帧/id在factory前验证；早退初始化包含opened=false、inactive/closed=true、closeAttempted/Confirmed=false、空results与completed0。factory后再检查取消和总预算，未进入connectToStation不调用open。",
+      "references": [
+        {
+          "file": "src/plc_serial_session.cpp",
+          "line": 157,
+          "excerpt": "{QStringLiteral(\"opened\"), false}, {QStringLiteral(\"sessionInactive\"), true}, {QStringLiteral(\"closed\"), true},"
+        },
+        {
+          "file": "src/plc_serial_session.cpp",
+          "line": 181,
+          "excerpt": "io = factory ? factory(settings, cancelled) : qtSerialIo(settings, cancelled);"
+        },
+        {
+          "file": "src/plc_serial_session.cpp",
+          "line": 199,
+          "excerpt": "opened = transport.connectToStation(station, io, options, &error);"
+        }
+      ]
+    },
+    {
+      "check": "严格写值输入",
+      "result": "仅逗号分隔，KeepEmptyParts保留空项；trim后ASCII数字正则与toUInt均通过才入values。空项、符号、空白分隔及溢出在worker/factory前失败；core继续校验线圈/寄存器范围与多写数量。",
+      "references": [
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 195,
+          "excerpt": "parts = m_values->text().split(QChar(u','), Qt::KeepEmptyParts);"
+        },
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 199,
+          "excerpt": "if (!ok || !decimal.match(part.trimmed()).hasMatch())"
+        },
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 209,
+          "excerpt": "if (!validatePlcSerialSettings(settings, &error) || !buildSimulationModbusRequest(station, request, &frame, &error))"
+        }
+      ]
+    },
+    {
+      "check": "Qt线程与owner",
+      "result": "默认QSerialPort在worker事务内创建/使用/销毁；UI冻结副本传入QThread，不捕获widget。原子取消、owner上下文自动断开、普通reject延迟至finished清理的边界保持；本复核不重复执行已分工的GUI测试。",
+      "references": [
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 213,
+          "excerpt": "m_thread = QThread::create([job, settings, station, request, factory]() { job->report = runPlcSerialBatch(settings, station, {request}, job->cancelled, factory); });"
+        },
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 215,
+          "excerpt": "connect(m_thread, &QThread::finished, this, [this, job]() {"
+        },
+        {
+          "file": "src/plc_online_dialog.cpp",
+          "line": 266,
+          "excerpt": "if (running()) { m_closeWhenFinished = true; cancelRequest(); return; }"
+        }
+      ]
+    },
+    {
+      "check": "CMake符号与新targets",
+      "result": "生产目标新增CLI源码；全editor源消费者有Qt::SerialPort链接；新AddressUi/SerialSession/OnlineUi目标分别显式列源和所需Qt链接。CLI在support对象快照之后加入生产目标，support不包含main且无CLI调用，未见静态未定义引用。",
+      "references": [
+        {
+          "file": "CMakeLists.txt",
+          "line": 527,
+          "excerpt": "target_sources(KinSealStudioLite PRIVATE src/plc_protocol_cli.cpp src/plc_protocol_cli.h) #20261114-8 add"
+        },
+        {
+          "file": "CMakeLists.txt",
+          "line": 529,
+          "excerpt": "qt_add_executable(KinSealPlcSerialSessionTests tests/plc_serial_session_tests.cpp"
+        },
+        {
+          "file": "CMakeLists.txt",
+          "line": 534,
+          "excerpt": "qt_add_executable(KinSealStage9OnlineUiTests tests/stage9_online_ui_tests.cpp"
+        }
+      ]
+    },
+    {
+      "check": "包的字节与运行库身份",
+      "result": "新输出路径与Z盘约束；EXE先匹配Root提供expected SHA；继承运行库逐文件核前包manifest，新增Qt6SerialPort单独记输入身份；使用普通copyfile并核输出SHA/nlink1。未复制SDK或原厂EXE，未创建到原厂目录的链接。",
+      "references": [
+        {
+          "file": "tools/package_stage9.py",
+          "line": 41,
+          "excerpt": "if previous.file_sha(executable) != args.expected_sha:"
+        },
+        {
+          "file": "tools/package_stage9.py",
+          "line": 51,
+          "excerpt": "raise ValueError(\"Runtime differs: \" + relative)"
+        },
+        {
+          "file": "tools/package_stage9.py",
+          "line": 73,
+          "excerpt": "raise ValueError(\"Copy identity/link mismatch\")"
+        }
+      ]
+    },
+    {
+      "check": "包/源码/真实commit分层",
+      "result": "source_identity冻结CMake/src/resources/qrc，包文件列表与EXE/source内容摘要分别记录。codeCommit初始None，绑定仅接受真实git commit，逐冻结source blob核当前字节（仅允许Git EOL归一）并复核包内每文件后写commit。脚本自身不stage/commit/push，也无设备I/O。",
+      "references": [
+        {
+          "file": "tools/package_stage9.py",
+          "line": 81,
+          "excerpt": "codeCommit=None, codeCommitState=\"awaiting-parent-verified-commit\", completeStage9=False,"
+        },
+        {
+          "file": "tools/package_stage9.py",
+          "line": 105,
+          "excerpt": "previous.bind_commit(args)"
+        },
+        {
+          "file": "tools/package_stage8.py",
+          "line": 304,
+          "excerpt": "args.bind_code_commit + \"^{commit}\"], text=True).strip()"
+        },
+        {
+          "file": "tools/package_stage8.py",
+          "line": 325,
+          "excerpt": "raise ValueError(\"Commit does not match frozen production source: \" + row[\"path\"])"
+        }
+      ]
+    },
+    {
+      "check": "能力声明",
+      "result": "完整native ABI、自动工程映射、真实PLC及HMI验证维持false；包说明明确本批没有真实PLC/HMI/USB，设备范围仍默认AMT单连接COM1站1/node1。",
+      "references": [
+        {
+          "file": "tools/package_stage9.py",
+          "line": 84,
+          "excerpt": "fullNativeDllAbi=False, physicalPlcVerified=False, hmiPlcVerified=False))"
+        },
+        {
+          "file": "tools/package_stage9.py",
+          "line": 26,
+          "excerpt": "本批仅受控RTU及PC界面验证，未进行真实PLC收发、HMI到PLC联动或USB下载。"
+        }
+      ]
+    }
+  ],
+  "priorFormalTestEvidenceRead": [
+    {
+      "path": "../windows-r1/KinSealPlcSerialSessionTests.txt",
+      "sha256": "6ba5ed2b2bb9018276b3ac9256ef50be69f1a9306cfa02c3686a31f850e2f9f3",
+      "summary": "Totals: 101 passed, 0 failed, 0 skipped, 0 blacklisted, 275ms",
+      "scope": "先前正式受控测试；不冒充本次r4源码重建/最终包r2通过"
+    },
+    {
+      "path": "../windows-r1/KinSealSimulationModbusTests.txt",
+      "sha256": "028193db2fc7fdbbdda87908a7f9e9fab6182f420a872a2741c68aa073fffb44",
+      "summary": "Totals: 340 passed, 0 failed, 0 skipped, 0 blacklisted, 549ms",
+      "scope": "先前正式受控测试；不冒充本次r4源码重建/最终包r2通过"
+    }
+  ],
+  "pendingRootValidation": {
+    "build": "Root r4 rebuild pending at review; no forecast",
+    "directedRegression": "Root serial+online+stage7UI r3 results pending",
+    "guiStrictInput": "RED→GREEN in progress; no final total claimed",
+    "package": {
+      "rejectedAsFinal": "portable-r1 / Stage9-plc-r1 kept as unaccepted, unbound evidence",
+      "nextCandidate": "Stage9-plc-r2 + docs/stage9-evidence/portable-r2/",
+      "commitBoundByReviewer": false,
+      "acceptanceByReviewer": false
+    }
+  },
+  "boundaries": {
+    "sourceRecheckedOnly": true,
+    "newUnresolvedBlockingFindings": 0,
+    "newUnresolvedP2Findings": 0,
+    "productionModified": false,
+    "testsModified": false,
+    "otherDocsModified": false,
+    "testsExecutedByReviewer": false,
+    "packageCreatedByReviewer": false,
+    "gitMutatedByReviewer": false,
+    "serialPlcUsbSdkOrDllIoByReviewer": false
+  },
+  "conclusion": "本轮4项P2候选均已见Root修复且独立源码复看闭合；未见新的阻断。正式r4/r3与最终包r2验收、真实commit绑定仍由Root完成，不能由本只读报告替代。"
+}

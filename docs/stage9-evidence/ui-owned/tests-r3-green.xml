@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="Stage9OnlineUiTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0676"/>
+  </TestFunction>
+  <TestFunction name="initialNoImplicitPortOrIo">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="123.093"/>
+  </TestFunction>
+  <TestFunction name="invalidRequestNeverCreatesEndpoint">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[no-port]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[untrimmed-port]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[fraction]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[coil-range]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[word-range]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[multi-coil-shape]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[multi-word-shape]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[span-crosses-end]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[uint-overflow]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[negative]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[duplicate-comma]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[trailing-comma]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[leading-plus]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[whitespace-only]]></DataTag>
+    </Incident>
+    <Duration msecs="1360.1"/>
+  </TestFunction>
+  <TestFunction name="operationControls">
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[01]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[02]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[03]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[04]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[05]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[06]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[15]]></DataTag>
+    </Incident>
+    <Incident type="pass" file="" line="0">
+      <DataTag><![CDATA[16]]></DataTag>
+    </Incident>
+    <Duration msecs="770.763"/>
+  </TestFunction>
+  <TestFunction name="maximumReadKeepsCompleteDisplayAndReport">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="302.894"/>
+  </TestFunction>
+  <TestFunction name="successfulWorkerFreezesAndRestores">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="176.916"/>
+  </TestFunction>
+  <TestFunction name="cancelledWorkerFreezesAndRestores">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="248.182"/>
+  </TestFunction>
+  <TestFunction name="rejectWaitsForCancelledClose">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="146.645"/>
+  </TestFunction>
+  <TestFunction name="ownerDestructionFinishesWorkerWithoutWidgetAccess">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="184.43"/>
+  </TestFunction>
+  <TestFunction name="capabilitiesRemainConservative">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="479.612"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0226"/>
+  </TestFunction>
+  <Duration msecs="3794.73"/>
+</TestCase>

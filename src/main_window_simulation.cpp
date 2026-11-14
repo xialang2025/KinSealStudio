@@ -1,6 +1,8 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
 #include "simulation_window.h"
+#include "plc_online_dialog.h" //20261114-8 add
+#include <QPointer>
 
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -46,29 +48,15 @@ void MainWindow::startOfflineSimulation() //20261114-6 add
 
 /******************************************************************************
  * Function Name   : MainWindow::showOnlineSimulationOptions
- * Description     : Explain the verified replay boundary without inventing a physical port or connecting to a PLC.
+ * Description     : Open the explicit PC RTU tool without mapping or mutating the editor project.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void MainWindow::showOnlineSimulationOptions() //20261114-6 add
+void MainWindow::showOnlineSimulationOptions() //20261114-8 change
 {
-    QDialog dialog(this);
-    QVBoxLayout *layout;
-    QLabel *scope;
-    QDialogButtonBox *buttons;
+    QPointer<PlcOnlineDialog> dialog = new PlcOnlineDialog({}, this);
 
-    dialog.setObjectName(QStringLiteral("onlineSimulationScope"));
-    dialog.setWindowTitle(QStringLiteral("在线模拟"));
-    layout = new QVBoxLayout(&dialog);
-    scope = new QLabel(QStringLiteral("在线模拟的实际PLC端口尚未接入。\n\n"
-        "当前已有受控Modbus RTU事务测试：内部测试从站、读线圈/保持寄存器、单点写入、CRC与异常应答、超时和退出清理。\n\n"
-        "原厂端口配置、设备地址映射、在线时限和真实PLC通信仍待验证。此窗口不会连接PLC。"), &dialog);
-    scope->setWordWrap(true);
-    scope->setMinimumWidth(420);
-    layout->addWidget(scope);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
-    layout->addWidget(buttons);
-    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-    dialog.exec();
+    dialog->exec();
+    if (!dialog.isNull()) { delete dialog.data(); }
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="SimulationModbusTransportTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0644"/>
+  </TestFunction>
+  <TestFunction name="lateCancellationPollRespectsDeadline">
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1989">
+      <DataTag><![CDATA[2-late-poll-1]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1985">
+      <DataTag><![CDATA[2-late-poll-5]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1989">
+      <DataTag><![CDATA[4-late-poll-1]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1985">
+      <DataTag><![CDATA[4-late-poll-5]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1989">
+      <DataTag><![CDATA[15-late-poll-1]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1985">
+      <DataTag><![CDATA[15-late-poll-5]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1989">
+      <DataTag><![CDATA[16-late-poll-1]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.requestMayHaveReachedSlave): 1
+   Expected (latePoll == 5)                    : 0]]></Description>
+    </Incident>
+    <Incident type="fail" file="tests/simulation_modbus_transport_tests.cpp" line="1985">
+      <DataTag><![CDATA[16-late-poll-5]]></DataTag>
+      <Description><![CDATA[Compared values are not the same
+   Actual   (result.errorCode)         : ""
+   Expected (QStringLiteral("timeout")): "timeout"]]></Description>
+    </Incident>
+    <Duration msecs="253.421"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0562"/>
+  </TestFunction>
+  <Duration msecs="255.636"/>
+</TestCase>

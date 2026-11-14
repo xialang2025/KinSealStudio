@@ -1,0 +1,176 @@
+********* Start testing of PlcSerialSessionTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : PlcSerialSessionTests::initTestCase()
+PASS   : PlcSerialSessionTests::settingsBounds(explicit-defaults)
+PASS   : PlcSerialSessionTests::settingsBounds(baud50)
+PASS   : PlcSerialSessionTests::settingsBounds(baud4000000)
+PASS   : PlcSerialSessionTests::settingsBounds(baud49)
+PASS   : PlcSerialSessionTests::settingsBounds(baud4000001)
+PASS   : PlcSerialSessionTests::settingsBounds(data7)
+PASS   : PlcSerialSessionTests::settingsBounds(data9)
+PASS   : PlcSerialSessionTests::settingsBounds(even)
+PASS   : PlcSerialSessionTests::settingsBounds(odd)
+PASS   : PlcSerialSessionTests::settingsBounds(unsupported-parity1)
+PASS   : PlcSerialSessionTests::settingsBounds(unsupported-parity4)
+PASS   : PlcSerialSessionTests::settingsBounds(two-stops)
+PASS   : PlcSerialSessionTests::settingsBounds(zero-stops)
+PASS   : PlcSerialSessionTests::settingsBounds(three-stops)
+PASS   : PlcSerialSessionTests::settingsBounds(timeout1)
+PASS   : PlcSerialSessionTests::settingsBounds(timeout60000)
+PASS   : PlcSerialSessionTests::settingsBounds(timeout0)
+PASS   : PlcSerialSessionTests::settingsBounds(timeout60001)
+PASS   : PlcSerialSessionTests::settingsBounds(total-before-transaction)
+PASS   : PlcSerialSessionTests::settingsBounds(total120001)
+PASS   : PlcSerialSessionTests::settingsBounds(empty-port)
+PASS   : PlcSerialSessionTests::settingsBounds(leading-space)
+PASS   : PlcSerialSessionTests::settingsBounds(trailing-space)
+PASS   : PlcSerialSessionTests::settingsBounds(port-newline)
+PASS   : PlcSerialSessionTests::settingsBounds(port-del)
+PASS   : PlcSerialSessionTests::settingsBounds(port256)
+PASS   : PlcSerialSessionTests::settingsBounds(port257)
+PASS   : PlcSerialSessionTests::settingsBounds(port-nul)
+PASS   : PlcSerialSessionTests::settingsBounds(total0)
+PASS   : PlcSerialSessionTests::settingsBounds(negative-parity)
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(station0) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(station248) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-count0) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-address65536) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-wrap) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-register126) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-coil2001) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-multi-count-mismatch) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-multi-register-overflow) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-nonlogical-multi-coil) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-duplicate-id) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-empty-id) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(later-unsupported-function) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(empty-batch) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(batch257) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::invalidBatchNeverCreatesEndpoint(invalid-settings) 'report.value(QStringLiteral("sessionInactive")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(417) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(1-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(1-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(2-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(2-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(3-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(3-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(4-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(4-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(5-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(5-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(6-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(6-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(15-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(15-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(16-fragment-1) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+FAIL!  : PlcSerialSessionTests::goldenTransactions(16-fragment-256) Compared values are not the same
+   Actual   (result.value(QStringLiteral("evidenceScope")).toString()): ""
+   Expected (QStringLiteral("controlled-rtu-session"))                : "controlled-rtu-session"
+tests/plc_serial_session_tests.cpp(494) : failure location
+PASS   : PlcSerialSessionTests::factoryAndCallbacksStayInWorker()
+PASS   : PlcSerialSessionTests::oneOpenForFrozenBatch()
+PASS   : PlcSerialSessionTests::maximumBatch()
+PASS   : PlcSerialSessionTests::openingFailures(open-failure)
+PASS   : PlcSerialSessionTests::openingFailures(missing-open)
+PASS   : PlcSerialSessionTests::openingFailures(missing-write)
+PASS   : PlcSerialSessionTests::openingFailures(missing-read)
+PASS   : PlcSerialSessionTests::openingFailures(missing-close)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(3-fault-0)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(3-fault-1)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(3-fault-2)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(3-fault-3)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(6-fault-0)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(6-fault-1)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(6-fault-2)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(6-fault-3)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(15-fault-0)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(15-fault-1)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(15-fault-2)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(15-fault-3)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(16-fault-0)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(16-fault-1)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(16-fault-2)
+PASS   : PlcSerialSessionTests::middleFailurePreservesConfirmedReceipts(16-fault-3)
+PASS   : PlcSerialSessionTests::closeFailureIsNotClosed(close-only)
+PASS   : PlcSerialSessionTests::closeFailureIsNotClosed(transaction-error-before-close)
+FAIL!  : PlcSerialSessionTests::cancellationBoundaries(before-factory) 'report.value(QStringLiteral("cancelled")).toBool()' returned FALSE. ()
+tests/plc_serial_session_tests.cpp(871) : failure location
+FAIL!  : PlcSerialSessionTests::cancellationBoundaries(factory-cancels-before-open) Compared values are not the same
+   Actual   (endpoint.openCount): 1
+   Expected (phase <= 1 ? 0 : 1): 0
+tests/plc_serial_session_tests.cpp(867) : failure location
+PASS   : PlcSerialSessionTests::cancellationBoundaries(open-cancels-before-write)
+PASS   : PlcSerialSessionTests::cancellationBoundaries(write-cancels-before-read)
+PASS   : PlcSerialSessionTests::cancellationBoundaries(first-read-cancels)
+PASS   : PlcSerialSessionTests::cancellationBoundaries(second-read-cancels)
+PASS   : PlcSerialSessionTests::cancellationBoundaries(complete-prefix-without-boundary)
+FAIL!  : PlcSerialSessionTests::totalDeadline(factory-exhausts-total) Compared values are not the same
+   Actual   (endpoint.openCount): 1
+   Expected (phase == 0 ? 0 : 1): 0
+tests/plc_serial_session_tests.cpp(939) : failure location
+PASS   : PlcSerialSessionTests::totalDeadline(open-exhausts-total)
+PASS   : PlcSerialSessionTests::totalDeadline(write-exhausts-total)
+PASS   : PlcSerialSessionTests::totalDeadline(second-response-exhausts-total)
+PASS   : PlcSerialSessionTests::cleanupTestCase()
+Totals: 66 passed, 35 failed, 0 skipped, 0 blacklisted, 272ms
+********* Finished testing of PlcSerialSessionTests *********

@@ -1,0 +1,115 @@
+{
+  "stage": "S09-05",
+  "scope": "standard-modbus-rtu-callback-transport",
+  "modificationMarker": "//20261114-8 add/change",
+  "sourceFiles": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.h",
+      "size": 9532,
+      "sha256": "8296c30efe01f7243d877baa4f817c62cade73da4f6708c8037a795678ba47df",
+      "relativePath": "src/simulation_modbus_transport.h"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.cpp",
+      "size": 30147,
+      "sha256": "ea024e3d6f7749b8958eb266a80979534f18f1b63638493e0134d39d5b98d722",
+      "relativePath": "src/simulation_modbus_transport.cpp"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\simulation_modbus_transport_tests.cpp",
+      "size": 84919,
+      "sha256": "c885e7df789067bc825edd7f3c6cb2e34ad8bb685fc70611a2c3c68d024532dc",
+      "relativePath": "tests/simulation_modbus_transport_tests.cpp"
+    }
+  ],
+  "api": {
+    "operations": {
+      "ReadCoils": 1,
+      "ReadDiscreteInputs": 2,
+      "ReadHoldingRegisters": 3,
+      "ReadInputRegisters": 4,
+      "WriteSingleCoil": 5,
+      "WriteSingleRegister": 6,
+      "WriteMultipleCoils": 15,
+      "WriteMultipleRegisters": 16
+    },
+    "request": {
+      "id": "去首尾空白后非空；最多256个QString单元；队列内不允许重复。",
+      "address": "u32存储，PDU零起始偏移0..65535；address+count<=65536。",
+      "count": "数量必须>=1，具体协议上限见operationRules。",
+      "value": "旧单写字段，01/02/03/04及0F/10必须为0；不作为多值容器。",
+      "values": "末尾新增QVector<u32>。只允许0F/10，必须长度=count；读与05/06拒绝非空容器。使用u32可在构帧前拒绝>65535的字值。"
+    },
+    "options": {
+      "maxPendingRequests": "旧默认32，产品可配置1..1024。",
+      "timeoutMs": "旧默认1000ms，产品可配置1..60000ms；包含写/读/取消轮询和结果接纳，不宣称原厂值或协议常量。",
+      "cancellationRequested": "末尾新增可选std::function<bool()>；空时沿用旧行为。owner线程轮询，调用方可捕获跨线程共享atomic。不得阻塞或抛异常。"
+    },
+    "compatibility": "旧枚举数值/单写value/API函数签名不变；新增成员位于末尾，旧源代码省略末尾成员初始化仍有效。"
+  },
+  "operationRules": {
+    "01/02": {
+      "count": "1..2000",
+      "request": "station/function/addressBE16/countBE16/CRC16LE，共8B。",
+      "response": "station/function/bytecount/LSB优先位数据/CRC；bytecount=ceil(count/8)，未用高位必须0。"
+    },
+    "03/04": {
+      "count": "1..125",
+      "request": "station/function/addressBE16/countBE16/CRC16LE，共8B。",
+      "response": "station/function/bytecount/BE16字数据/CRC；bytecount=count*2。"
+    },
+    "05/06": {
+      "count": 1,
+      "request": "05把逻辑0/1编码0000/ff00；06为0..65535；原8B请求。",
+      "response": "8B；完整CRC有效后，前6B必须与请求完全匹配。"
+    },
+    "0F": {
+      "count": "1..1968",
+      "values": "每项0或1，LSB优先打包，最后字节未用高位强制0。",
+      "request": "station/function/addressBE16/countBE16/bytecount/packedCoils/CRC16LE。bytecount=ceil(count/8)，最多255B。",
+      "response": "8B；station/function/address/count回显，CRC独立验证；不比较整条多写请求。"
+    },
+    "10": {
+      "count": "1..123",
+      "values": "每项0..65535，逐字BE16，不实现DWORD字序。",
+      "request": "station/function/addressBE16/countBE16/bytecount/BE16values/CRC16LE。bytecount=count*2，最多255B。",
+      "response": "8B；station/function/address/count回显，CRC独立验证。"
+    }
+  },
+  "receiveRules": {
+    "station": "显式1..247；不支持广播。",
+    "crc": "初值ffff，反射多项式a001，线上低字节先发。",
+    "frameBoundary": "必须由注入read报告endOfFrame；完整前缀不等于帧结束。允许数据与空帧结束分开到达；多帧合并/额外字节拒绝。",
+    "accumulator": "单次read按剩余257B容量请求；超返回容量为回调合同错误；实际目标帧最大255B。",
+    "validation": "站号、功能码、准确长度/bytecount、CRC、位填充或写echo全部通过后才发布。",
+    "exceptions": "01..06、08、0a、0b识别为失败；00、07、09、其它未分配值拒绝；busy/ack同样不自动重试。"
+  },
+  "cancellation": {
+    "pollPoints": [
+      "首次写前",
+      "写回调返回后",
+      "每次read前",
+      "read返回并保存合法容量内字节后",
+      "完整帧验证与解码后的最终接纳前"
+    ],
+    "errorCode": "cancelled；若回调期间同时显式disconnect，保留disconnected_during_transaction语义。",
+    "beforeSend": "requestMayHaveReachedSlave=false、remoteStateUnconfirmed=false；清空尚未发送队列、关闭一次。",
+    "afterSend": "写操作remoteStateUnconfirmed=true；没有已确认写状态或部分values；不能承诺回滚。",
+    "deadline": "首次poll后重新计算write剩余预算；最终poll后再查deadline。即使错误阻塞poll也不在过期后发送或接纳。"
+  },
+  "lifecycle": {
+    "queue": "FIFO受限、校验后复制快照；多值QVector保持拥有的数据快照。",
+    "failure": "保留首错；关闭一次；清空未发队列；不自动重连、不自动重试、不重放可能已执行的写。",
+    "reconnect": "只有调用方显式重新打开成功才清空首错；此前丢弃的队列不恢复。",
+    "unknownRemoteWrite": "任何已尝试的05/06/0F/10失败，都保守标记未确认；从站可能已执行。"
+  },
+  "evidence": "run-r3.json；340/0/0，含Qt生命周期；仅纯协议回放。",
+  "notImplementedByThisSlice": [
+    "真实serial/socket端点",
+    "原厂DLL ABI",
+    "plcFamily到PDU的映射",
+    "DWORD/浮点字序",
+    "扫描读/用户写/读改写的优先级与合并",
+    "HMI固件解释与实际PLC读写"
+  ]
+}

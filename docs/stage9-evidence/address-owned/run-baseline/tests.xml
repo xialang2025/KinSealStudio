@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCase name="Stage9AddressUiTests">
+  <Environment>
+    <QtVersion>6.12.0</QtVersion>
+    <QtBuild>Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)</QtBuild>
+    <QTestVersion>6.12.0</QTestVersion>
+  </Environment>
+  <TestFunction name="initTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0621"/>
+  </TestFunction>
+  <TestFunction name="initialInvalidDraft">
+    <Incident type="fail" file="Z:\Project\vscode_prj_temp\REA\.scratch\kinseal&#x002D;stage4&#x002D;20261112\worktree\tests\stage9_address_ui_tests.cpp" line="155">
+      <Description><![CDATA['visibleError' returned FALSE. ()]]></Description>
+    </Incident>
+    <Duration msecs="87.7045"/>
+  </TestFunction>
+  <TestFunction name="correctInvalidDraft">
+    <Incident type="fail" file="Z:\Project\vscode_prj_temp\REA\.scratch\kinseal&#x002D;stage4&#x002D;20261112\worktree\tests\stage9_address_ui_tests.cpp" line="185">
+      <Description><![CDATA['errorShown' returned FALSE. ()]]></Description>
+    </Incident>
+    <Duration msecs="42.35"/>
+  </TestFunction>
+  <TestFunction name="unvalidatedAcceptCannotCommit">
+    <Incident type="fail" file="Z:\Project\vscode_prj_temp\REA\.scratch\kinseal&#x002D;stage4&#x002D;20261112\worktree\tests\stage9_address_ui_tests.cpp" line="495">
+      <Description><![CDATA['!driveDialog(QStringLiteral("PlcAddressDialog"), [](QDialog *dialog) { if (dialog != nullptr) { dialog->accept(); } }, [&]() { return editPlcAddress(nullptr, false, connections, &text); })' returned FALSE. ()]]></Description>
+    </Incident>
+    <Duration msecs="34.2308"/>
+  </TestFunction>
+  <TestFunction name="cleanupTestCase">
+    <Incident type="pass" file="" line="0" />
+    <Duration msecs="0.0132"/>
+  </TestFunction>
+  <Duration msecs="166.178"/>
+</TestCase>

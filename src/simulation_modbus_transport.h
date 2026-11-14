@@ -12,9 +12,11 @@ using u8 = unsigned char;
 using u16 = unsigned short;
 using u32 = unsigned int;
 
-//20261114-6 add: Standard RTU offsets are explicit; no native address-family mapping is inferred.
-enum class SimulationModbusOperation { ReadCoils = 1, ReadHoldingRegisters = 3,
-                                       WriteSingleCoil = 5, WriteSingleRegister = 6 };
+//20261114-8 change: Standard PDU operations remain independent of any native DLL ABI or PLC family.
+enum class SimulationModbusOperation { ReadCoils = 1, ReadDiscreteInputs = 2,
+                                       ReadHoldingRegisters = 3, ReadInputRegisters = 4,
+                                       WriteSingleCoil = 5, WriteSingleRegister = 6,
+                                       WriteMultipleCoils = 15, WriteMultipleRegisters = 16 };
 
 struct SimulationModbusRequest
 {
@@ -23,6 +25,7 @@ struct SimulationModbusRequest
     u32 address = 0;                        // Zero-based PDU offset, never a 40001-style label.
     u32 count = 1;
     u32 value = 0;                          // Logical 0/1 for coils; unsigned 16-bit for registers.
+    QVector<u32> values;                    //20261114-8 add: Multiwrite only; one logical bit or unsigned word per item.
 };
 
 struct SimulationModbusReadChunk
@@ -45,6 +48,7 @@ struct SimulationModbusOptions
 {
     int maxPendingRequests = 32;             // Bounded queue: 1..1024.
     int timeoutMs = 1000;                    // One transaction deadline: 1..60000 ms, no retries.
+    std::function<bool()> cancellationRequested; //20261114-8 add: Optional owner-supplied poll; no throw or blocking.
 };
 
 struct SimulationModbusResult
@@ -75,7 +79,7 @@ u16 simulationModbusCrc16(const QByteArray &bytes); //20261114-6 add
 
 /******************************************************************************
  * Function Name   : buildSimulationModbusRequest
- * Description     : Validate an explicit station and construct an eight-byte RTU request.
+ * Description     : Validate an explicit station and construct a bounded standard RTU request.
  * Input Parameters: station, request, frame, error
  * Return Value    : True with a frame; the output is unchanged after invalid input.
  * Date            : 2026.11.14
@@ -92,7 +96,8 @@ bool buildSimulationModbusRequest(int station, const SimulationModbusRequest &re
  ******************************************************************************/
 QJsonObject simulationModbusResultToJson(const SimulationModbusResult &result);
 
-//20261114-6 add: Single-owner synchronous adapter. Callbacks obey deadlines and do not throw.
+//20261114-8 change: Single-owner synchronous adapter; callbacks obey deadlines and do not throw.
+// Cancellation polls bracket I/O and final acceptance; an active callback must return before cleanup.
 // This module supplies no serial, USB, socket, PLC-profile or native-driver implementation.
 class SimulationModbusTransport
 {

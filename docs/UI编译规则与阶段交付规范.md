@@ -600,3 +600,65 @@ Core名称最多256个QString单元，拒绝空白首尾、控制字符、NUL和
 样例随后只补英文函数头和日期注释，增量替换3份源码/嵌入源；smoke-r3实际2进程/4检查通过，2×24B RAW、1072/1808B包与注释修改前逐字相同。最终样例身份使用[smoke-r3](stage8-evidence/portable-r1/smoke-r3/run.json)，r2截图和完整24/31保留各自已跑身份；不将重复检查叠加到263项Qt总数。
 
 程序真实提交`fcbc196f9779718fc8ea314cec9d0a5f4e6d62e8`已推送并同步主目录。6331源码/资源与Git逐项校验，5791文本仅CRLF/LF差异；发布工具首轮因缺.kvg/.xml文本白名单保守拒绝，保留失败回执后仅补这两后缀并全量重验。最终helper SHA `00280f4b33dac57751f19e246ea574e95fabf8711af9d5fe5b4586920f98b3d4`；生产EXE和样例未改，无需重复Qt/CLI。最终包metadata、191文件/164样例及源/EXE绑定见[delivery-r1](stage8-evidence/delivery-r1.json)。
+
+## 24. 阶段9：地址事务、协议能力与显式PC串口（2026-11-14）
+
+本节补齐既有地址/扫描的转换入口及本批通信规则。PC串口工具与工程地址模型分开：本批不把工程控件自动接到PLC，不改变36B设备地址槽、AddrPara或USB包。真实PLC与HMI联动未验；原厂DLL静态事实、Lite标准RTU和物理结果各自记证据。
+
+### 24.1 地址字段与接纳事务
+
+详细14项S09.address字段字典见[地址复核](stage9-evidence/address-owned/readonly-review-r1.json)。连接选择给出profile、route和已知node；站文本只作元数据保存，不能从任意站字符串猜node。地址族/进制由已核codec或native family rule决定，未核族拒绝。默认packed字位只在已核族用major×16+minor，显式N跨度和DWORD占2字分别校验；不按_dw名字盲乘2。LB/LW上下文0..4096及32位LW最大4095是Lite边界。
+
+地址窗口在构造、每次输入变化和确认时校验同一候选；非法输入保留文本与错误，不用默认result掩盖。直接调用accept也不能绕过校验。确认仅在校验通过、对话框和调用owner仍存活时整体写回；取消、非法确认、嵌套事件销毁owner均保持调用者原值。editPlcAddress/editPlcConnections维持原API，但模态框改堆上QPointer生命周期。族/连接切换的清空/归一规则属于当前Lite实现，原厂全矩阵、复制引用/连接删除、多站和只读族写权限仍按S09-02开放。
+
+### 24.2 型号与协议能力表
+
+plcProtocolCapabilities(model)读内嵌目录与文件身份快照，并以目录SHA绑定。本批静态核139份profile源、139份历史presence，444个唯一被引用文件，AMT型号适用70份；按行计数的DLL/bin数量不得当唯一驱动数或实现数。serialDefaultsRaw保留INI原值，未知Parity等枚举未解释，不据此填写9600/8N1。
+
+每行分别给目录可见、连接可保存、逐族grammar已核数、设备编译资格、PC工程映射、物理PLC/HMI验证和完整DLL ABI。设备资格只表示原有AMT默认Link/serial_amz/MODBUS/Modbus_RTU.ini受限COM1站文本1/node1/route1/单连接单页候选，仍需设备编译器对完整工程再次检查。其它profile/型号无新增设备支持。8个raw PC功能与139行工程映射不互相推导。
+
+命令行 --plc-capabilities [model] 只向stdout输出JSON；非法参数或能力报告失败退出2，不发现或打开端点，不写报告文件。报告是编译时嵌入的文件观测快照，不是对用户当前安装目录的实时校验。
+
+### 24.3 PC窗口字段到标准RTU请求
+
+菜单“在线模拟”现打开“PLC通信与协议能力”，顶部明确工程画面联动尚未开放。串口枚举只读metadata，初始无选择；必须由用户选/输入PC端口并点击“执行一次”。本工具初始9600、8数据位、无校验、1停止位、站1、单次1000ms是显式Lite配置，不声称原厂默认或已适配现场PLC。
+
+| 字段 | 输入/转换 | 拒绝与边界 |
+|---|---|---|
+| PC端口 | 显式非空名称交给QSerialPort | 首尾空白/控制字符、超过256单元拒绝；不推定PC COM1就是HMI COM1 |
+| 串口 | 波特率50..4000000，8数据位，无流控；Parity Qt枚举0/2/3，停止位1/2 | OS最终接受度由open返回；尚无物理验收 |
+| 站号/地址 | 站1..247；0起始PDU地址0..65535 | 不接受广播0，不自动给40001减基；跨度不得跨65535 |
+| 功能01/02 | 读线圈/离散输入，数量1..2000 | value为0且values为空；响应数量按bit打包验证 |
+| 功能03/04 | 读保持/输入寄存器，数量1..125 | 每值0..65535；不隐含32位、字序、符号或工程地址族 |
+| 功能05/06 | 写单线圈/寄存器，数量固定1 | 05值0/1编码0000/FF00；06为0..65535，values为空 |
+| 功能15/16 | 多线圈1..1968、多寄存器1..123 | values长度严格等于数量，逐值0/1或0..65535；旧value必须0 |
+| 超时 | 单次1..60000ms；batch总期限>=单次且<=120000ms | UI单请求总期限采用120000ms；均为产品配置，非原厂观测常量 |
+
+写值按十进制逗号分隔，空项/非十进制/超范围拒绝；UI冻结值快照后worker再按相同builder复验。批次API接受1..256项并要求id唯一，所有项先验证后才创建端点。新枚举和多写values追加在旧结构末尾，保留旧调用；01/03/05/06已有范围继续有效。
+
+### 24.4 队列、收帧、取消和关闭
+
+标准帧按地址/数量大端编码，CRC16初值FFFF、反射A001、低字节先。完整读响应需站号、功能、字节数/长度、CRC吻合；写应答须回显地址和值/数量，异常帧单独报错，不接纳无关响应或多余粘包。逐字节/分段/CRC/异常/超时/断连/重连由transport既有及本批测试覆盖。原厂读位DLL数量有u16左移3位内部单位，不能把描述直接当标准bitCount。
+
+一个batch单open、FIFO、单请求在途、无自动重试、不合并。前项确认结果保留；首错丢弃后续未发队列并关闭。尚无扫描/用户写/RMW优先队列，也未做runtime映射。写调用一旦尝试，失败/取消不能承诺远端回滚；receipt保留writeAttempted及remoteStateUnconfirmed，UI提示可能已到达但未确认。不能用本地改值或发送成功冒充PLC确认。
+
+QSerialPort在worker创建/使用/释放，接收buffer512B，bytesToWrite归零才算本次发送完成。接收以RTU silence收尾：<=19200按3.5字符向上取整ms，>19200采用2ms；20ms是取消轮询切片，空切片不返回为协议无进度。该串口时序实现尚无实际端口验收。
+
+总预算含factory；预取消、预验证失败、factory期间取消/耗尽预算均不open。打开后每次写前、读前后、最终接纳前复查cancel/deadline；迟到响应不得接纳成功。停止只设shared atomic，UI冻结输入而保留停止；reject延迟到worker收尾，owner直接销毁只取消，线程不捕获QWidget，finished回调带context，线程自清理。
+
+receipt区分sessionInactive（状态机不再连接）、closeAttempted、closeConfirmed与closed（未打开或确认关闭）。关闭失败保留首错和未释放状态；预校验失败也给一致字段。注入端点标controlled scope、物理false；默认串口只有实际open成功才给physicalEndpointUsed，仍不确认HMI执行。GUI用同一文本块展示最大2000项读值，完整结构保留lastReport()，不因日志块上限删除开头状态。
+
+### 24.5 既有扫描、静态ABI及后续现场
+
+AddrPara.dat前200B按u8页面段数解释；每记录12B：族/route/固定0/node、LE16数量、2B清洁padding、LE32起点。当前仅第0页且每页<=255段。默认族特殊排序、packed-bit/DWORD合并继续用既有规则，不能替换成一般区间合并；当前UI地址验证通过不增加读订阅，写通知与读需求分开。历史37个扫描/31个Common oracle保留历史身份，本批只按实际新回归记录通过数。
+
+新增静态D证据恢复七槽地址、描述偏移、CRC、读1/2/3/4与写5/6/16/读改写分支，详见[ABI字段表](stage9-evidence/native-abi/native-abi.json)。缓冲区容量、生命周期、完整host匹配/异常及op2索引约束仍未知，nativeDllAbiImplemented=false。本批没有动态执行DLL，不能据静态伪码扩展设备模板。
+
+资料传输只有已有帮助H，触发/窗口/配置表与多页扫描仍未恢复。现场下一步固定专用从站身份、PC端口/接线/站参数，先读专用地址，再经授权写专用scratch寄存器、核独立值与异常/断线恢复；HMI另按原固件和默认COM1模板核读写/跨字/字序。无明确端点本批不自行开用户COM端口。PC测试不关闭真实PLC T或HMI E，新增控件仍必须实物下载。
+
+
+### 24.6 本批验证与交付身份
+
+正式Qt最终704/0/0，按test-summary.json逐目标取最新身份；旧阶段7说明窗口断言超时保留后只更新到显式端口的新入口契约，windows-r3串口101/在线31/模拟UI13通过。独立UI非法逗号RED和修复GREEN均保留。便携实际7进程/36检查通过，Qt及SerialPort只从包内加载，主窗与通信/能力截图已目视检查。完整任务5项partial/1项open，没有PLC/HMI证据升级。
+
+最终包为dist/KinSealStudioLite-Stage9-plc-r2，含192文件/164样例和Qt6SerialPort；源/资源6340项与EXE及真实代码提交单独绑定。自有中间文件实际清45项16,380,525B；废弃r1包122,439,021B自动审批拒绝删除，0删除且不换通道。旧拒绝项也未重试，TEMP/TMP/TMPDIR全Z。详见stage9-evidence/cleanup-result.json及交付身份记录。
