@@ -1,0 +1,52 @@
+{
+  "format": "KinSealStage10-function-local-readonly-review-v1",
+  "reviewedAtUtc": "2026-11-14T13:33:49.833584+00:00",
+  "sampleSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+  "derivationSha256": "b970c8c3cd855986628013788fc3af6526416df56832ca87d13b7d0915ad6acf",
+  "mode": "只读核字段与既有期待来源；不运行编译器、不触碰设备",
+  "checks": {
+    "sourceSampleHashesUnchanged": true,
+    "rootHelperHashUnchanged": true,
+    "generatedSampleHashMatchesReceipt": true,
+    "cnFunctionUnionCopiedExactly": true,
+    "enFunctionUnionCopiedExactly": true,
+    "gateFunctionUnionIsKnownCN": true,
+    "noticeFieldsCopiedExactly": true,
+    "visibilityFieldsCopiedExactly": true,
+    "onlySafeFunction13Unions": true,
+    "onlyLocalOperationAddresses": true,
+    "staticLanguageMarkerIndependentOfButtons": true,
+    "noOpaqueStateColourLossFromCaptionStyle": true,
+    "recordedNineteenScopeChecksTrue": true
+  },
+  "allPassed": true,
+  "noProductionChange": true,
+  "compilerRun": false,
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "screenObserved": false,
+  "initialState": "LB40/LB41初值不假定；先分别RESET并通过独立灯观察。工程语言列表为中文/English，activeLanguage只标编辑语言；真实启动与运行切换另由root编译/现场核对。",
+  "expectedSourceHashes": [
+    {
+      "path": "design_plan/功能按钮功能与交互复刻手册.md",
+      "sha256": "bb645e6437d5f8ee6ae76435219a2aa746e1c63d2f8388c5f06f0d16c8dc11a6"
+    },
+    {
+      "path": "docs/功能按钮手册实现与验收.md",
+      "sha256": "fef9ca574ff2dea3ea902a09c08377e3859923b6e917c30e78d2f140deb804e7"
+    },
+    {
+      "path": "samples/bit-button/README.md",
+      "sha256": "47a7eb8ee44257b685428a3b465a5beec47ab144de2f0f286ce72426945f72ea"
+    },
+    {
+      "path": "samples/lamp/README.md",
+      "sha256": "27738666a77353cfcb10a2c2ea12164c48a237f2cb81b3cabebee79ccccdabb6"
+    }
+  ],
+  "limits": [
+    "字段自检不等于HmiProject解析、C/T/E通过。",
+    "语言标识、显现、独立通知位分别观察，不由按钮外观推出其它动作成功。",
+    "不推断通知与语言切换的时序、不验证隐藏坐标触摸命中行为。"
+  ]
+}

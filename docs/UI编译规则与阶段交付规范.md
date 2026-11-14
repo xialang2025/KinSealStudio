@@ -665,3 +665,58 @@ AddrPara.dat前200B按u8页面段数解释；每记录12B：族/route/固定0/no
 
 
 阶段9应用程序提交`3be25a4c96deb0d37b09e57d181e314b59787fb9`，EXE `aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709`；6340源/资源、192包文件/164样例和主目录1891既存文件保护已核验。最终manifest `2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da`，详见docs/stage9-evidence/delivery-r1.json。首轮推送网络失败后已重试成功，GitHub main确认至79ccb915（含程序与验收元数据）；回执见docs/stage9-evidence/push-confirmed.json。仅阶段9证据设置Git -text以保留原哈希字节，应用输入/EXE/样例不变，无需重复已通过测试。
+
+
+## 25. 阶段10：现场身份、独立观察与性能证据（2026-11-14）
+
+本节补齐阶段10新增样例/工具和当前实测的UI到设备路径；前24节是既有各阶段的详细规则。未改应用生产模块，仍以阶段9EXE `aee3c13a…`、生产提交 `3be25a4c…` 为执行身份；验收基线为 `daefcdb5`。标记 `//20261114-9 add/change`。完整结果见[阶段10验收](阶段10现场运行与性能验收.md)。
+
+### 25.1 页面输入、独立观察及字段来源
+
+| 输入或UI行为 | 固定模型/编译规则 | 本轮观察范围 |
+|---|---|---|
+| 位页四按钮 | 复用bit seed：operation3/0/1/2分别LB0交替、LB1置位/复位、LB2点动；按钮自身颜色不是写入读回 | 另设monitorSame=false的LB0/1/2独立双态灯；用户观察切换两次归原态、SET1/RESET0、按下1松手0 |
+| 字页五按钮 | `wordButton.operation=0`，LW20/dataType0写0/1/4，LW30/dataType1写0/3 | 两独立五态灯只证选定状态选择；不等同完整寄存器值、U32高字/字序或32态 |
+| 标识和几何 | 非交互静态文字，ASCII唯一页标识；所有矩形在800×480内，按钮与灯不重叠 | PC预览仅用于几何检查，设备显示/触控另有原始答复 |
+| 功能扩展 | 已核语言function13/type0或1、单LB显现和notice位字段；独立译文/灯及RESET消除初值猜测 | 以该轮实际答复为准；系统窗口、时钟、重启、校正、资料传输、宏均未借用语言动作通过 |
+| 外观 | 无图片、全不透明、无闪烁，清理休眠图片字段但保留typed状态结构；两态可同标签 | 不增加设备编码，不绕过能力守卫；不把PC字体与HMI像素说成一致 |
+
+混合typed对象的schema必须取所有seed所需最大值；首轮位+灯误继承低schema，真实validate退出7，migrate退出21诊断活动字段需更高schema。失败输入/日志保留，改的是样例生成器，未降低生产校验；最终两页schema7。新文件使用独占创建，生成器重跑不能覆盖现有人工输入。每一份新源/契约重新计算原始SHA。
+
+### 25.2 从源到C、T和现场观察
+
+`run_stage10_samples.py prepare`依次启动实际 `--validate-project`、`--compile-project`、`--verify-compiled-package`、`--transfer-contract`，普通新页还运行 `--capture-preview`。每个owned进程使用 `PrivateDesktop` 和 `clean_environment`，没有前置/激活用户窗口；TEMP/TMP/TMPDIR/KINSEAL_MACRO_TEMP_ROOT全部指定本轮Z目录。复用阶段9/阶段6冻结EXE，不从当前主目录未提交源构建混合程序。
+
+`download`只接受明确单case，核EXE路径白名单、源路径、源/EXE/完整契约SHA及prepared通过状态。调用生产 `--download-project` 后校验每个payload-write实际SHA/长度/接纳状态，以及提交ACK、重启写出、尾读完成且结果-5、release/close。reset无需ACK，不能把expectedReply.length=0误当缺回执。段命令、状态查询与payload必须分开；12段页不是只有12条USB事件。
+
+脚本中的assert承担契约门禁，因此入口在任何输出/设备访问前显式拒绝Python优化模式；不能用 `-O` 或 `PYTHONOPTIMIZE` 跳过校验。正式执行为非优化Python。下载程序的 `screenDisplayAndTouchConfirmed=false` 是自动观察能力边界，用户回答保存在独立证据，不伪造自动观察字段。
+
+### 25.3 当前身份与恢复输入
+
+程序、源码manifest、原始KSP、规范模型、完整transfer contract、每段file/wire SHA各自独立；contract中的sourceSha是原始KSP，不能误填为C++源码SHA。`upLoad.knr`文件前加4B BE32长度后才是wire内容。宏14原契约与新契约JSON及14段wire相同，但CRLF/LF导致文本原始SHA不同，两个值都保留。
+
+OS USB实例路径只表示主机端点。唯一硬件号、实际固件未取得就填写unknown；ASCII日期、安装目录BIN、目标工程model或VID/PID都不能代替屏内版本/型号认证。可见行为只限在场端点本次运行，不推广其它固件或机型。
+
+恢复宏14必须用指定阶段6EXE和源，编译前后检查外部SDK，14段逐项核对；新恢复传输及用户标识/按钮观察独立存档。它是已知测试工程重新下载，不代表屏内原项目备份、可编辑上载、LB/LW/RTC/历史保持或宏实际执行。
+
+### 25.4 七层证据工具与输出事务
+
+`tools/stage10_acceptance.py`使用 `KinSealStage10-acceptance-v1`：requirements列必需case、独立layer、execution及identityId；cases只可引用已声明项；状态为not_run/blocked_external/partial/pass/fail，每项带reason。host/mock/physical_hmi/pc_controlled/pc_plc分开；物理E只允许physical_hmi，必须有相同身份的C、完整物理T、独立刺激/实际观察及恢复。缺唯一hardwareId时不能判物理T/E pass，仍另保留transportComplete及真实用户观察事实。
+
+pass/fail proof绑定真实source/program/project/payload artifacts、预期来源、观察者、记录时刻、刺激、实际观察、expectedMatched。收录时间不能伪造为触摸时刻；哈希只能认证当前文件与声明一致，不能认证人工观察真实性。全阶段任务与局部case分别列，不因单case通过关闭整个任务。
+
+完整plan核真实10/12/14段骨架、每段ACK、命令帧与序号、commit/reset和完成数；历史导入重新读取compiled文件校验file/wire SHA，保留首轮fail。解析拒绝重复JSON键、非finite含指数溢出、过大输入；artifact路径限制root，输出拒绝输入/证据/硬链接别名覆盖，原子失败保留旧输出。CLI退出0仅输入有效，`--require-complete`未全pass退出3，非法输入退出2；fullReplicaCertified始终false。详schema见[工具说明](stage10-evidence/recovery-owned/README.md)。
+
+### 25.5 性能入口、资源与保留字段
+
+7组单轴输入×5CLI×3实际进程，共105次。对象轴1/10/50/100、1语言；语言轴单对象2/4/8语言，不混成100×8。入口是validate加载、migrate加载保存、export-native、compile、simulate-offline空事件首帧。保存后比对全部提供字段；105进程成功、21保存及21首帧成功不证明交互/HMI性能。
+
+计时为QueryPerformanceCounter的perf_counter_ns，包含启动/退出检测；机器、CPU、内存、卷空闲、缓存未清、后台负载未控均写manifest。请求20ms采样，实际1201次/最大间隔62.8644ms；内核PeakWorkingSet最大80,216,064B，自有输出树采样峰174,919B；TEMP采样和退出检查无文件不能证明亚采样间隔内从未生成文件。无原生/产品阈值，不发任意秒数承诺；未做HMI延迟/扫描/长期运行。
+
+每轮输出先记长度/SHA后只清本轮owned可再生物。性能实际删除3,265,692B；工具过期绿元数据33,614B，失败和最后验证保留。C盘本批不作为临时根；不重试历史拒绝、不把外部清理释放计成本代理。旧目录丢失后的r1不计数，正式r2为迁移后真实复测。
+
+### 25.6 复核、剩余和交付
+
+37项证据工具回归、4份历史CLI导入、7个独立同行探针与实际新页C/T/用户答复分别统计，不相加制造“总功能通过”。新增工具的RED→修复涉及证据校验，不是生产协议回归。各冻结输入保存可重放小文本快照，后续追加用户答复/文档不会改变首轮artifact SHA。
+
+完整八项未完成：硬件/固件、剩余五类/权限/语言状态、工程配置、物理PLC、原生上载/保持、HMI性能/长稳及发布必需范围均进统一台账；保留sourceAssessment/candidates/history。应用未变化，不重复构建或复制整套运行库；白名单提交工具、样例、证据和规则，发布前后核1891份用户既存文件。阶段10证据、新样例及工具/测试单独设置Git -text，防止换行转换改变其绑定SHA。当前功能页只确认LB41显现/隐藏和出现后触控，通知/两组语言及第二恢复仍待续测。

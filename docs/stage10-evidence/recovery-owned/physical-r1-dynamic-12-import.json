@@ -1,0 +1,178 @@
+{
+  "format": "KinSealStage10-historical-import-v1",
+  "sample": "dynamic-12",
+  "sourceRun": "physical-r1",
+  "status": "fail",
+  "identity": {
+    "sourceSha256": "unknown",
+    "programSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+    "projectSha256": "440298a6854a7d445236b616e134d5c7c0329059432b74dd2c4c4f701debb298",
+    "normalizedProjectSha256": "cb5999dd34b089c64d3c2c234a1ab8838b0abdd28d006d9776397f66c17bee95",
+    "payloadSha256": "281785f37fbbee4e84fc22613642472405350a0e64e324ceab22076f8a968680",
+    "model": "AMT070W124-L800X480R",
+    "hardwareId": "unknown",
+    "endpointId": "historical-usb-physical-r1",
+    "protocol": "KinSealUSB",
+    "firmware": {
+      "state": "unknown",
+      "basis": "historical runner: not-observed"
+    }
+  },
+  "transferAudit": {
+    "transportComplete": false,
+    "wireOperationsObserved": 0,
+    "wireOperationsRequired": 80,
+    "mismatches": [],
+    "recoveryDisposition": "no_successful_download_claim",
+    "hmiExecutionConfirmed": false,
+    "automaticRollbackProven": false,
+    "powerRetentionProven": false
+  },
+  "T": "fail",
+  "E": "not_run",
+  "recovery": "not_run",
+  "originalReceipt": {
+    "acknowledgedSegments": [],
+    "anyWriteAttempted": false,
+    "cancelled": false,
+    "closeAttempted": false,
+    "closeResult": 0,
+    "closed": false,
+    "commitAccepted": false,
+    "commitCommandWritten": false,
+    "commitWriteAttempted": false,
+    "compiled": true,
+    "completedSteps": 0,
+    "events": [
+      {
+        "accepted": false,
+        "bytesHex": "",
+        "command": -1,
+        "expectedReplyLength": 0,
+        "message": "未发现7365:616C USB下载设备，尚未写入。",
+        "operation": "open",
+        "phase": "open",
+        "requested": 0,
+        "returned": -1,
+        "segment": "",
+        "sequence": 1,
+        "sha256": ""
+      }
+    ],
+    "firstError": {
+      "command": -1,
+      "expectedReplyLength": 0,
+      "kind": "open",
+      "message": "未发现7365:616C USB下载设备，尚未写入。",
+      "phase": "open",
+      "present": true,
+      "requested": 0,
+      "returned": -1,
+      "segment": ""
+    },
+    "interfaceClaimed": false,
+    "interfaceReleased": false,
+    "kind": "transfer-result",
+    "message": "未发现7365:616C USB下载设备，尚未写入。",
+    "modelReplyHex": "",
+    "ok": false,
+    "opened": false,
+    "outcome": "device_open_failed",
+    "parametersReplyHex": "",
+    "payloadBlocks": 12,
+    "planValidated": true,
+    "plannedSteps": 14,
+    "postResetReadCompleted": false,
+    "postResetReadResult": 0,
+    "postResetReadReturned": false,
+    "releaseAttempted": false,
+    "releaseResult": 0,
+    "resetWritten": false,
+    "screenDisplayAndTouchConfirmed": false,
+    "startAccepted": false,
+    "startOptionsHex": "000000",
+    "timeoutMs": 10000,
+    "transferAccepted": false,
+    "writtenSegments": []
+  },
+  "originalScreenRecord": {},
+  "retainedEvidence": {
+    "run": {
+      "path": "docs/stage6-evidence/physical-r1/run.json",
+      "sha256": "5a5c58646a9c542881657165a1a04804ddb894102076edf40317a8b36b13514c"
+    },
+    "contract": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-contract.json",
+      "sha256": "281785f37fbbee4e84fc22613642472405350a0e64e324ceab22076f8a968680"
+    },
+    "manifest": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/compiler-manifest.json",
+      "sha256": "ab03ca754bd69358efcb888092ca2cd2567e9fac0b6bc95c085b055ae5ad2c13"
+    },
+    "receipt": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-download-stdout.txt",
+      "sha256": "39ca8788140a10c71c73af3891469f38d91cd9b5290210aa73ff362e9a12d78a"
+    },
+    "observation": {
+      "path": "docs/stage6-evidence/screen-observations.json",
+      "sha256": "44a3453d68f6bec96a559e2aab32fa2d9443df2ded57351c0cd7ff9b7446bf3b"
+    },
+    "payload/SysPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/SysPara.dat",
+      "sha256": "7e6ed2ce804928b66c3b10f40758401be435ac50992873756b05d037edd5bfca"
+    },
+    "payload/ControlPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/ControlPara.dat",
+      "sha256": "1b061eb7c0b2e6ba6503f742bc946095dae25c2bbad40b388a83d0284c55b376"
+    },
+    "payload/SheetPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/SheetPara.dat",
+      "sha256": "ecbf93fb28e4c786bdaff79abf9e34b9fc80fc9f106736c7c3dde0824f4849e3"
+    },
+    "payload/AlarmPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/AlarmPara.dat",
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+    },
+    "payload/Collect.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/Collect.dat",
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+    },
+    "payload/AddrPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/AddrPara.dat",
+      "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+    },
+    "payload/PicLenPara.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/PicLenPara.dat",
+      "sha256": "8874b50d7b2e601d6e8e740e0f81291e8d7baab83fe42bbd481a95bfdc31ba8c"
+    },
+    "payload/Curve.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/Curve.dat",
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+    },
+    "payload/upLoad.knr": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/upLoad.knr",
+      "sha256": "2a9d0e85ecd9781cc2fb9858b264e9c27ccb388761a68a3ac852ffa895c58472"
+    },
+    "payload/ControlPixel.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/ControlPixel.dat",
+      "sha256": "def10b5eff5f9edb18a848a26877beda011d187aa065ef20cbc4ede7b2b431d0"
+    },
+    "payload/SheetPixel.dat": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/SheetPixel.dat",
+      "sha256": "53f49499b6bf3a69a576fee720b25e099bcd17cd9307f835524ec9e0295b3ec2"
+    },
+    "payload/Modbus_RTU_com1.bin": {
+      "path": "docs/stage6-evidence/physical-r1/dynamic-12-compiled/Modbus_RTU_com1.bin",
+      "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+    }
+  },
+  "releaseRestrictions": [
+    "Historical T is bound to its old executable/project/payload, never the current program.",
+    "Unique hardware identity and source-tree manifest were not recorded.",
+    "USB reset completion does not prove screen execution, upload, rollback, or power retention.",
+    "Screen record is preserved verbatim; incomplete stimuli/recovery cannot pass E."
+  ],
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "devicePowerInterrupted": false
+}

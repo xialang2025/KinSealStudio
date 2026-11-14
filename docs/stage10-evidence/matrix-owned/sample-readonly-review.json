@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-11-14T13:03:23.905149+00:00",
+  "scope": "read-only samples and pre-download runner review; no production/fixture changes and no device IO",
+  "baselineCommit": "daefcdb5287f97ec3190263d991881f3de9e1933",
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "newTransferExecuted": false,
+  "newPhysicalEResult": "not_run",
+  "blockingFindings": [],
+  "allChecksPassed": true,
+  "checkCount": 120,
+  "checks": [
+    {
+      "name": "bit-lamp-local/page_target",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/object_count",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/unique_ids",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/no_macros_or_external_connections",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/notice_press_macro_disabled",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/all_inside_800x480",
+      "passed": true,
+      "detail": [
+        {
+          "id": "page-marker",
+          "x": 20,
+          "y": 15,
+          "width": 760,
+          "height": 36
+        },
+        {
+          "id": "bit-0",
+          "x": 25,
+          "y": 100,
+          "width": 165,
+          "height": 85
+        },
+        {
+          "id": "bit-1",
+          "x": 220,
+          "y": 100,
+          "width": 165,
+          "height": 85
+        },
+        {
+          "id": "bit-2",
+          "x": 415,
+          "y": 100,
+          "width": 165,
+          "height": 85
+        },
+        {
+          "id": "bit-3",
+          "x": 610,
+          "y": 100,
+          "width": 165,
+          "height": 85
+        },
+        {
+          "id": "lamp-LB0",
+          "x": 55,
+          "y": 285,
+          "width": 185,
+          "height": 85
+        },
+        {
+          "id": "lamp-LB1",
+          "x": 305,
+          "y": 285,
+          "width": 185,
+          "height": 85
+        },
+        {
+          "id": "lamp-LB2",
+          "x": 555,
+          "y": 285,
+          "width": 185,
+          "height": 85
+        }
+      ]
+    },
+    {
+      "name": "bit-lamp-local/no_rectangle_overlap",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "bit-lamp-local/four_operation_mapping",
+      "passed": true,
+      "detail": [
+        [
+          "LB0",
+          3
+        ],
+        [
+          "LB1",
+          0
+        ],
+        [
+          "LB1",
+          1
+        ],
+        [
+          "LB2",
+          2
+        ]
+      ]
+    },
+    {
+      "name": "bit-lamp-local/three_independent_monitors",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/distinct_state_labels",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/declared_source_matches",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/page_target",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/object_count",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/unique_ids",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/no_macros_or_external_connections",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/notice_press_macro_disabled",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/all_inside_800x480",
+      "passed": true,
+      "detail": [
+        {
+          "id": "page-marker",
+          "x": 20,
+          "y": 15,
+          "width": 760,
+          "height": 36
+        },
+        {
+          "id": "word-0",
+          "x": 20,
+          "y": 100,
+          "width": 140,
+          "height": 75
+        },
+        {
+          "id": "word-1",
+          "x": 175,
+          "y": 100,
+          "width": 140,
+          "height": 75
+        },
+        {
+          "id": "word-2",
+          "x": 330,
+          "y": 100,
+          "width": 140,
+          "height": 75
+        },
+        {
+          "id": "word-3",
+          "x": 485,
+          "y": 100,
+          "width": 140,
+          "height": 75
+        },
+        {
+          "id": "word-4",
+          "x": 640,
+          "y": 100,
+          "width": 140,
+          "height": 75
+        },
+        {
+          "id": "lamp-word-0",
+          "x": 85,
+          "y": 270,
+          "width": 270,
+          "height": 90
+        },
+        {
+          "id": "lamp-word-1",
+          "x": 450,
+          "y": 270,
+          "width": 270,
+          "height": 90
+        }
+      ]
+    },
+    {
+      "name": "word-lamp-local/no_rectangle_overlap",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "word-lamp-local/five_word_writes",
+      "passed": true,
+      "detail": [
+        [
+          "LW20",
+          0,
+          0,
+          "0"
+        ],
+        [
+          "LW20",
+          0,
+          0,
+          "1"
+        ],
+        [
+          "LW20",
+          0,
+          0,
+          "4"
+        ],
+        [
+          "LW30",
+          1,
+          0,
+          "0"
+        ],
+        [
+          "LW30",
+          1,
+          0,
+          "3"
+        ]
+      ]
+    },
+    {
+      "name": "word-lamp-local/two_independent_five_state_monitors",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/five_distinct_state_labels",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/declared_source_matches",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/contract_identity",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/canonical_model_matches_manifest",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/compiler_identity",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/no_hardware_in_prepare",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/manifest_file/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/wire/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/payload_count",
+      "passed": true
+    },
+    {
+      "name": "bit-lamp-local/no_external_read_scan",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/contract_identity",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/canonical_model_matches_manifest",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/compiler_identity",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/no_hardware_in_prepare",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/manifest_file/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/wire/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/payload_count",
+      "passed": true
+    },
+    {
+      "name": "word-lamp-local/no_external_read_scan",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/contract_identity",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/canonical_model_matches_manifest",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/compiler_identity",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/no_hardware_in_prepare",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/SysPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/ControlPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/SheetPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/MarcoVar.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/MarcoVar.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/MarcoRun.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/MarcoRun.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/AlarmPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/Collect.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/AddrPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/PicLenPara.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/Curve.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/upLoad.knr",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/ControlPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/SheetPixel.dat",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/manifest_file/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/wire/Modbus_RTU_com1.bin",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/payload_count",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/no_external_read_scan",
+      "passed": true
+    },
+    {
+      "name": "restore-macro-14/old_contract_semantic_identity",
+      "passed": true,
+      "detail": {
+        "oldOnDiskSha256": "578096c073e405f3bb8208502e8524240b0efd2ad9722b05069a4f2c2ecbd5d4",
+        "oldBytes": 32865,
+        "oldCRLFCount": 877,
+        "newSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+        "newBytes": 31988,
+        "newCRLFCount": 0,
+        "exactFileBytesEqual": false,
+        "jsonEqual": true,
+        "onlyNewlineDifference": true,
+        "interpretation": "The safe checkout restored the historical text as CRLF. All decoded contract fields and fourteen wire payload identities are equal; exact text-file identity is not claimed."
+      }
+    },
+    {
+      "name": "restore-macro-14/all_fourteen_historical_wire_identity",
+      "passed": true
+    },
+    {
+      "name": "all_fourteen_private_processes",
+      "passed": true
+    },
+    {
+      "name": "prepare_summary",
+      "passed": true
+    }
+  ],
+  "inputs": [
+    {
+      "path": "tools\\make_stage10_samples.py",
+      "sha256": "31e9a6398d3308ac1d87593b20c76c616b5fac02f9dfa7a9fa8267953fd7694c",
+      "bytes": 4368
+    },
+    {
+      "path": "tools\\run_stage10_samples.py",
+      "sha256": "7f57ad98574d150aaa5031e52ca262b44897329fa29148392ced42fd611bcbd0",
+      "bytes": 7462
+    },
+    {
+      "path": "samples\\stage10\\bit-lamp-local.ksp",
+      "sha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+      "bytes": 45737
+    },
+    {
+      "path": "samples\\stage10\\word-lamp-local.ksp",
+      "sha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+      "bytes": 56568
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\run.json",
+      "sha256": "30694154ad666fe600dd0a2c863dec774efae1410edd8573e11062eb89adff15",
+      "bytes": 76971
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\bit-lamp-local-contract.json",
+      "sha256": "98e9bb19564cfc02c125c3d54c8612a8fed6f482bf660dd576cfac7377d4b0f3",
+      "bytes": 28374
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\bit-lamp-local-compiled\\compiler-manifest.json",
+      "sha256": "ae4bb5333939349685eaaa605a665fb02551e7fdaa09ebd3c0faa97d8bb2d23f",
+      "bytes": 5690
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\word-lamp-local-contract.json",
+      "sha256": "e9dddc1badab372fae998cf74993d8c5f82fdd13674881cbf954f27a3d59e671",
+      "bytes": 28374
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\word-lamp-local-compiled\\compiler-manifest.json",
+      "sha256": "68160ac903af057dee24d3ff03250e4ba0d5b2213382cb0720ed50051d31f594",
+      "bytes": 5690
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\restore-macro-14-contract.json",
+      "sha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+      "bytes": 31988
+    },
+    {
+      "path": "docs\\stage10-evidence\\samples-r3\\restore-macro-14-compiled\\compiler-manifest.json",
+      "sha256": "baddf77873abac7c862631f2a8d9c751771ace333bddb7cc814282d69222499f",
+      "bytes": 6470
+    },
+    {
+      "path": "docs\\stage6-evidence\\physical-r2\\macro-14-contract.json",
+      "sha256": "578096c073e405f3bb8208502e8524240b0efd2ad9722b05069a4f2c2ecbd5d4",
+      "bytes": 32865
+    }
+  ],
+  "casePayloads": {
+    "bit-lamp-local": [
+      {
+        "name": "SysPara.dat",
+        "fileSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "wireBytes": 4998,
+        "wireSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPara.dat",
+        "fileSha256": "77e81baab30f983f3167633e0942c7dba789c74480128c38fddd6c94b5562ed5",
+        "wireBytes": 4480,
+        "wireSha256": "77e81baab30f983f3167633e0942c7dba789c74480128c38fddd6c94b5562ed5",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPara.dat",
+        "fileSha256": "57feb7bb29a7e32726ddba5f2cd16682a05a0810bb7d35ff31389ec7c64604f2",
+        "wireBytes": 72,
+        "wireSha256": "57feb7bb29a7e32726ddba5f2cd16682a05a0810bb7d35ff31389ec7c64604f2",
+        "matchesContract": true
+      },
+      {
+        "name": "AlarmPara.dat",
+        "fileSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "wireBytes": 47840,
+        "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "matchesContract": true
+      },
+      {
+        "name": "Collect.dat",
+        "fileSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "wireBytes": 1424,
+        "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "matchesContract": true
+      },
+      {
+        "name": "AddrPara.dat",
+        "fileSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "wireBytes": 200,
+        "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "matchesContract": true
+      },
+      {
+        "name": "PicLenPara.dat",
+        "fileSha256": "6860044d8b9dfffdd08fad1b0a05c0912f28faaa58b05ee75c1719101f6513c4",
+        "wireBytes": 2568,
+        "wireSha256": "6860044d8b9dfffdd08fad1b0a05c0912f28faaa58b05ee75c1719101f6513c4",
+        "matchesContract": true
+      },
+      {
+        "name": "Curve.dat",
+        "fileSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "wireBytes": 501,
+        "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "matchesContract": true
+      },
+      {
+        "name": "upLoad.knr",
+        "fileSha256": "da8a09b51a98ce6b44dd4f65cc15f47c3756915811cb89e9c4f477058c2dd3b5",
+        "wireBytes": 1287,
+        "wireSha256": "42ef1ffb7d26cc81d93e3edc212154480a5b64f7516f6a7b4b6a43eede45bfeb",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPixel.dat",
+        "fileSha256": "53bdaafbf04c6b61760ffc32d600c4050e16982322de6346ac2cfaf03a939ad3",
+        "wireBytes": 4480,
+        "wireSha256": "53bdaafbf04c6b61760ffc32d600c4050e16982322de6346ac2cfaf03a939ad3",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPixel.dat",
+        "fileSha256": "9a25380e3166930f6a7c79ae7cf95761e49bcb0651cbeb85654b01b2cf831b0a",
+        "wireBytes": 4571,
+        "wireSha256": "9a25380e3166930f6a7c79ae7cf95761e49bcb0651cbeb85654b01b2cf831b0a",
+        "matchesContract": true
+      },
+      {
+        "name": "Modbus_RTU_com1.bin",
+        "fileSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "wireBytes": 12496,
+        "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "matchesContract": true
+      }
+    ],
+    "word-lamp-local": [
+      {
+        "name": "SysPara.dat",
+        "fileSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "wireBytes": 4998,
+        "wireSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPara.dat",
+        "fileSha256": "787faf0f0aa89c8abe67f77e879be4ff5bd3919d13046e8004a12a0a3f9cc6b9",
+        "wireBytes": 4480,
+        "wireSha256": "787faf0f0aa89c8abe67f77e879be4ff5bd3919d13046e8004a12a0a3f9cc6b9",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPara.dat",
+        "fileSha256": "1fd0056bd7c8567e29d246ae9ec313801106183691be71b24ccf7da207f9a45a",
+        "wireBytes": 72,
+        "wireSha256": "1fd0056bd7c8567e29d246ae9ec313801106183691be71b24ccf7da207f9a45a",
+        "matchesContract": true
+      },
+      {
+        "name": "AlarmPara.dat",
+        "fileSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "wireBytes": 47840,
+        "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "matchesContract": true
+      },
+      {
+        "name": "Collect.dat",
+        "fileSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "wireBytes": 1424,
+        "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "matchesContract": true
+      },
+      {
+        "name": "AddrPara.dat",
+        "fileSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "wireBytes": 200,
+        "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "matchesContract": true
+      },
+      {
+        "name": "PicLenPara.dat",
+        "fileSha256": "60838f7e4176cb570b4aaaa3e50c1e9dce65ee388b04dc5f58763626181fa3de",
+        "wireBytes": 2640,
+        "wireSha256": "60838f7e4176cb570b4aaaa3e50c1e9dce65ee388b04dc5f58763626181fa3de",
+        "matchesContract": true
+      },
+      {
+        "name": "Curve.dat",
+        "fileSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "wireBytes": 501,
+        "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "matchesContract": true
+      },
+      {
+        "name": "upLoad.knr",
+        "fileSha256": "57a4b68501592f185d30c733676074f7fcffdee257d3ff07c0d41e098e40995e",
+        "wireBytes": 1460,
+        "wireSha256": "55f61e5ab870d8cf944f89a3ec876eb8d647dcd0e80b6def2f51b013d82fffb7",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPixel.dat",
+        "fileSha256": "f202bc951b437b3665b7a2290a59b2bda4727acadd5bcd70f341c247ee6af3f8",
+        "wireBytes": 8032,
+        "wireSha256": "f202bc951b437b3665b7a2290a59b2bda4727acadd5bcd70f341c247ee6af3f8",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPixel.dat",
+        "fileSha256": "1b544d8a4aeced1973f96b256e88f7ec91ebbc19c91043ed05189cef80c84e10",
+        "wireBytes": 4710,
+        "wireSha256": "1b544d8a4aeced1973f96b256e88f7ec91ebbc19c91043ed05189cef80c84e10",
+        "matchesContract": true
+      },
+      {
+        "name": "Modbus_RTU_com1.bin",
+        "fileSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "wireBytes": 12496,
+        "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "matchesContract": true
+      }
+    ],
+    "restore-macro-14": [
+      {
+        "name": "SysPara.dat",
+        "fileSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "wireBytes": 4998,
+        "wireSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPara.dat",
+        "fileSha256": "d635c7f6131ee5690d70f2e26bb04d19fd672db65c1e947dd0f87f3e0cba0507",
+        "wireBytes": 640,
+        "wireSha256": "d635c7f6131ee5690d70f2e26bb04d19fd672db65c1e947dd0f87f3e0cba0507",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPara.dat",
+        "fileSha256": "c567314e2f27ff19587050f97feacebe76fec5da5c6bb9be131ac95226722ea3",
+        "wireBytes": 72,
+        "wireSha256": "c567314e2f27ff19587050f97feacebe76fec5da5c6bb9be131ac95226722ea3",
+        "matchesContract": true
+      },
+      {
+        "name": "MarcoVar.dat",
+        "fileSha256": "cc401ce5099578287fd15c062a92893754851bdb7ca3c1fe742bbff85e2281c2",
+        "wireBytes": 904,
+        "wireSha256": "cc401ce5099578287fd15c062a92893754851bdb7ca3c1fe742bbff85e2281c2",
+        "matchesContract": true
+      },
+      {
+        "name": "MarcoRun.dat",
+        "fileSha256": "7ae6900a147a5930098c6518f30d169912a138c507c1e6e2ad23d1f62caaf0f2",
+        "wireBytes": 1048,
+        "wireSha256": "7ae6900a147a5930098c6518f30d169912a138c507c1e6e2ad23d1f62caaf0f2",
+        "matchesContract": true
+      },
+      {
+        "name": "AlarmPara.dat",
+        "fileSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "wireBytes": 47840,
+        "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "matchesContract": true
+      },
+      {
+        "name": "Collect.dat",
+        "fileSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "wireBytes": 1424,
+        "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "matchesContract": true
+      },
+      {
+        "name": "AddrPara.dat",
+        "fileSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "wireBytes": 200,
+        "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "matchesContract": true
+      },
+      {
+        "name": "PicLenPara.dat",
+        "fileSha256": "7f7e35f4d3d3c0be8660495d30346df7d0b931edf4acb671b29a859759f6c579",
+        "wireBytes": 2424,
+        "wireSha256": "7f7e35f4d3d3c0be8660495d30346df7d0b931edf4acb671b29a859759f6c579",
+        "matchesContract": true
+      },
+      {
+        "name": "Curve.dat",
+        "fileSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "wireBytes": 501,
+        "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "matchesContract": true
+      },
+      {
+        "name": "upLoad.knr",
+        "fileSha256": "8b0ae6350cbb8dc96342f62a24496e8d00405d9aecf529be47c1f2c7fddbde77",
+        "wireBytes": 1077,
+        "wireSha256": "e49979ce3e31a859b13c9ccdbebba72ee496c66d16aa5dd272651c9e76874691",
+        "matchesContract": true
+      },
+      {
+        "name": "ControlPixel.dat",
+        "fileSha256": "b209e3505ea2dece536ed6a8fc294d03ec97c95072f11589637a9a2ef0393630",
+        "wireBytes": 7360,
+        "wireSha256": "b209e3505ea2dece536ed6a8fc294d03ec97c95072f11589637a9a2ef0393630",
+        "matchesContract": true
+      },
+      {
+        "name": "SheetPixel.dat",
+        "fileSha256": "c863e385e595fd6cfc263d0c228cc3c2b780d914f427cd8d998fcd95a66fc653",
+        "wireBytes": 4557,
+        "wireSha256": "c863e385e595fd6cfc263d0c228cc3c2b780d914f427cd8d998fcd95a66fc653",
+        "matchesContract": true
+      },
+      {
+        "name": "Modbus_RTU_com1.bin",
+        "fileSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "wireBytes": 12496,
+        "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "matchesContract": true
+      }
+    ]
+  },
+  "runnerAssertGates": [
+    {
+      "line": 43,
+      "expression": "sha(CURRENT) == CURRENT_SHA and sha(RESTORE) == RESTORE_SHA"
+    },
+    {
+      "line": 91,
+      "expression": "prepared['passed'] and 'restore-macro-14' in prepared['cases']"
+    },
+    {
+      "line": 95,
+      "expression": "exe.resolve() == (RESTORE if args.case.startswith('restore') else CURRENT).resolve()"
+    },
+    {
+      "line": 97,
+      "expression": "source.resolve() == SOURCES[args.case].resolve()"
+    },
+    {
+      "line": 98,
+      "expression": "sha(source) == identity['sourceSha256'] and sha(exe) == identity['executableSha256'] and (sha(contract) == identity['contractSha256'])"
+    },
+    {
+      "line": 103,
+      "expression": "final['kind'] == 'transfer-result'"
+    },
+    {
+      "line": 104,
+      "expression": "all((final[k] for k in ('ok', 'compiled', 'transferAccepted', 'commitAccepted', 'resetWritten', 'postResetReadCompleted', 'interfaceReleased', 'closed')))"
+    },
+    {
+      "line": 105,
+      "expression": "final['postResetReadResult'] == -5 and (not final['screenDisplayAndTouchConfirmed'])"
+    },
+    {
+      "line": 108,
+      "expression": "len(events) == len(expected)"
+    },
+    {
+      "line": 109,
+      "expression": "{line['segment']: line['sha256'] for line in events} == expected"
+    },
+    {
+      "line": 110,
+      "expression": "all((line['accepted'] and line['requested'] == line['returned'] for line in events))"
+    },
+    {
+      "line": 80,
+      "expression": "document['identity']['sourceSha256'] == sha(source) and (not document['usbAccessed'])"
+    },
+    {
+      "line": 83,
+      "expression": "{s['name']: s['wireSha256'] for s in old['segments']} == {s['name']: s['wireSha256'] for s in document['segments']}"
+    },
+    {
+      "line": 84,
+      "expression": "document['payloadCount'] == 14"
+    }
+  ],
+  "runnerStaticReview": {
+    "singleCaseRequired": true,
+    "sourceExeContractHashesCheckedBeforeLaunch": true,
+    "eachPayloadShaMatchesPreparedContract": true,
+    "payloadEventCountAndExactReturnedBytesChecked": true,
+    "commitResetPostReadReleaseCloseChecked": true,
+    "postResetReadMinusFiveRequired": true,
+    "doesNotAutomateScreenPass": true,
+    "hardwareBindingLimit": "Runner delegates device discovery to the existing frozen downloader; no new unique-device selection or cross-instance lock is implemented.",
+    "assertExecutionCondition": {
+      "observedPythonOptimize": 0,
+      "observedPYTHONOPTIMIZE": null,
+      "interpretation": "Current -B interpreter has optimization disabled. Assertion-based safety checks would be removed by -O/PYTHONOPTIMIZE; use this exact nonoptimized interpreter for this owned run."
+    }
+  },
+  "previewReview": {
+    "imagesViewed": [
+      "samples-r3/bit-lamp-local.png",
+      "samples-r3/word-lamp-local.png"
+    ],
+    "canvasViewportClipsRightEdge": true,
+    "pageCoordinatesInBounds": true,
+    "interpretation": "Visible clipping comes from editor scroll viewport, not object geometry exceeding 800x480; no HMI full-page rendering is claimed."
+  },
+  "scopeLimits": [
+    "U16 writing 0/1/4 only observes the configured five-state selection, not every 16-bit value.",
+    "U32 writing 0/3 makes only two tested values of a five-state monitor; it is not 32-state or high-word/word-order verification.",
+    "LB initial values must be observed; RESET provides an initialization stimulus only for LB1.",
+    "No actual download was performed by this review; success after physical download still needs independent human observations.",
+    "Restoring macro-14 with old EXE is a known test-project recovery path, not HMI upload or LB/LW/RTC/history backup.",
+    "Prepared metadata refers to source/file identities at preparation; root must preserve frozen files and recheck the recovery source/binary before device use."
+  ],
+  "conclusion": "No blocking sample, geometry, prepared-payload, or current runner-gate issue found for the two explicitly selected internal-only pages under the reviewed identities and nonoptimized interpreter. Historical/new contract text differs only in CRLF/LF and decoded content/wire payloads match. Physical download and E remain separate.",
+  "contractLineEndingObservation": {
+    "oldOnDiskSha256": "578096c073e405f3bb8208502e8524240b0efd2ad9722b05069a4f2c2ecbd5d4",
+    "oldBytes": 32865,
+    "oldCRLFCount": 877,
+    "newSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+    "newBytes": 31988,
+    "newCRLFCount": 0,
+    "exactFileBytesEqual": false,
+    "jsonEqual": true,
+    "onlyNewlineDifference": true,
+    "interpretation": "The safe checkout restored the historical text as CRLF. All decoded contract fields and fourteen wire payload identities are equal; exact text-file identity is not claimed."
+  },
+  "initialReviewObservation": {
+    "provisionalExactTextIdentityCheck": false,
+    "resolvedAs": "Evidence text CRLF/LF difference; not a payload or semantic mismatch. Original observation retained here rather than represented as exact equality."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "format": "KinSealStage10-current-facts-v1",
+  "sample": "word-lamp-local",
+  "identityId": "word",
+  "identitySha256": "7bec35fc34165085da22de138bf96d024f5468c54c94f70bc078588bf82e7154",
+  "artifactAuditAtUtc": "2026-11-14T13:26:28.043553+00:00",
+  "stimulusExactTime": "unknown; no per-touch timestamps were recorded",
+  "observationClockMeaning": "User record timestamps are answer-recording times, not invented stimulus/device times.",
+  "transportAudit": {
+    "transportComplete": true,
+    "wireOperationsObserved": 80,
+    "wireOperationsRequired": 80,
+    "mismatches": [],
+    "recoveryDisposition": "transport_complete_screen_unobserved",
+    "hmiExecutionConfirmed": false,
+    "automaticRollbackProven": false,
+    "powerRetentionProven": false
+  },
+  "localDisplayAndSelectedBehaviorConfirmedByUser": true,
+  "rawUserObservations": [
+    {
+      "id": "word-display-touch",
+      "recordedAtUtc": "2026-11-14T13:16:12.490324+00:00",
+      "question": "字按钮页已下载成功。请确认实屏标识为“S10-WORD-LAMP-1114”，并依次点击 LW20 的写0、写1、写4按钮，观察独立LW20框是否对应显示0、1、4；再点击LW30的写0、写3按钮，观察另一独立框是否对应显示0、3。两组操作和显示是否全部符合，且没有宽度提示？",
+      "answer": "两组操作和显示全部符合，无宽度提示",
+      "transfer": "physical-word-r1/run.json",
+      "confirmed": [
+        "S10-WORD-LAMP-1114 marker visible",
+        "LW20 independent lamp states 0,1,4 selected by constant writes",
+        "LW30 independent lamp states 0,3 selected by constant writes",
+        "no width warning"
+      ],
+      "notCovered": [
+        "full register readback",
+        "nonzero U32 high word",
+        "word order",
+        "all seven numeric types",
+        "32 lamp states",
+        "arithmetic",
+        "keyboard",
+        "password"
+      ],
+      "recovery": "Known macro-14 test page re-downloaded; marker and button confirmed by user. No runtime data restoration claim."
+    }
+  ],
+  "recoveryUserObservation": {
+    "id": "restore-macro-display",
+    "recordedAtUtc": "2026-11-14T13:17:52.786802+00:00",
+    "question": "已重新下载原来的宏14测试工程，14段、提交和重启收尾均成功。现在实屏是否恢复显示“S06-MACRO-14-1114”和“写常数并执行宏”按钮，且没有宽度提示？",
+    "answer": "已恢复标识和按钮，无宽度提示",
+    "transfer": "physical-restore-r1/run.json",
+    "confirmed": [
+      "S06-MACRO-14-1114 marker restored",
+      "write constant and execute macro button visible",
+      "no width warning"
+    ],
+    "notCovered": [
+      "macro execution",
+      "LB/LW retention",
+      "RTC retention",
+      "power cycle",
+      "native upload",
+      "original user project backup"
+    ]
+  },
+  "recoveryScope": "Known macro-14 test project re-downloaded and marker/button visible; no runtime values, RTC, history, native upload, original project backup, macro execution or power retention claim.",
+  "hardwareUniqueSerialKnown": false,
+  "firmwareKnown": false,
+  "sourceManifestMeaning": "Hash of original executable package source/build manifest; not the KSP hash or current edited source tree.",
+  "sourceCodeCommitAsRecorded": "3be25a4c96deb0d37b09e57d181e314b59787fb9",
+  "nativeRawSourceSha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+  "normalizedProjectSha256": "f2bcbabe2182ab298fef2441a5520ff60dfd881b360171ac9cef00cb21fcf832",
+  "strictTResult": "partial",
+  "strictEResult": "partial",
+  "limits": [
+    "Unique hardware serial not observed; USB instance path is an endpoint identity only.",
+    "Firmware version not read; no cross-firmware or cross-device claim.",
+    "Only the user's explicitly listed stimuli and independent lamp/display states are confirmed."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "format": "KinSealStage10-acceptance-v1",
+  "identities": {
+    "target-to-be-recorded": {
+      "sourceSha256": "unknown",
+      "programSha256": "unknown",
+      "projectSha256": "unknown",
+      "payloadSha256": "unknown",
+      "model": "AMT070W124-L800X480R",
+      "hardwareId": "unknown",
+      "endpointId": "unknown",
+      "protocol": "KinSealUSB",
+      "firmware": {"state": "unknown", "basis": "待实屏读取；不以安装目录固件替代"}
+    }
+  },
+  "artifacts": {},
+  "requirements": [
+    {"caseId": "REPLACE-D", "layer": "D", "execution": "host", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-U", "layer": "U", "execution": "host", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-P", "layer": "P", "execution": "host", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-R", "layer": "R", "execution": "host", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-C", "layer": "C", "execution": "host", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-T", "layer": "T", "execution": "physical_hmi", "identityId": "target-to-be-recorded"},
+    {"caseId": "REPLACE-E", "layer": "E", "execution": "physical_hmi", "identityId": "target-to-be-recorded"}
+  ],
+  "cases": []
+}

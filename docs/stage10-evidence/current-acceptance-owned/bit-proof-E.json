@@ -1,0 +1,37 @@
+{
+  "format": "KinSealStage10-proof-v1",
+  "caseId": "S10-CURRENT-BIT-E",
+  "layer": "E",
+  "execution": "physical_hmi",
+  "status": "partial",
+  "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+  "actor": "Codex read-only artifact auditor; user observations retained verbatim",
+  "initialState": "Frozen samples-r3 prepare outputs and exact physical download receipt already exist.",
+  "stimulusSteps": [
+    "Read the retained prepare/download command receipts.",
+    "Rehash the actual EXE, KSP, contract and every compiled block/wire payload.",
+    "Link the user's actual answers without inventing touch or device timestamps."
+  ],
+  "expected": "Exact sample input/executable/compiled and wire identities match the successful retained compiler/verify/transfer receipts; physical behavior limited to the recorded answers.",
+  "expectedMatched": true,
+  "expectedSource": "acceptance-design",
+  "actual": "C receipts and bytes match; native transportComplete=true; user answers as preserved in bit-facts.json; unique hardware serial and firmware remain unknown.",
+  "observedAt": "2026-11-14T13:26:28.043553+00:00",
+  "observedAtMeaning": "time of this read-only artifact audit; not a human stimulus or device timing measurement",
+  "rawObservation": "bit-facts",
+  "sourceArtifact": "bit-source-manifest",
+  "programArtifact": "bit-program",
+  "projectArtifact": "bit-project",
+  "payloadArtifact": "bit-contract",
+  "transferReceipt": "bit-receipt",
+  "transferContract": "bit-contract",
+  "independentObservation": true,
+  "recovery": {
+    "status": "pass",
+    "action": "Re-download only the known macro-14 test project.",
+    "actual": "已恢复标识和按钮，无宽度提示"
+  },
+  "originalUserRecord": "user-observations",
+  "unknownHardwareSerial": true,
+  "unknownFirmware": true
+}

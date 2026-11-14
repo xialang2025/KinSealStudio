@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-11-14T13:44:01.435315+00:00",
+  "sourceBaseline": "daefcdb5287f97ec3190263d991881f3de9e1933",
+  "applicationCodeCommit": "3be25a4c96deb0d37b09e57d181e314b59787fb9",
+  "application": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+    "sha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+    "releaseManifest": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/dist/KinSealStudioLite-Stage9-plc-r2/manifest.json",
+    "releaseManifestSha256": "2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da",
+    "sourceCommitBinding": "docs/stage9-evidence/portable-r2/commit-binding.json"
+  },
+  "device": {
+    "declaredProjectModel": "AMT070W124-L800X480R",
+    "declaredResolution": {
+      "width": 800,
+      "height": 480
+    },
+    "observedUsbFriendlyName": "Smart Control Device ",
+    "observedUsbInstance": "USB\\VID_7365&PID_616C\\5&1AA452E9&0&2",
+    "observedUsbStatus": "OK",
+    "enumerationBasis": "OS Get-PnpDevice -PresentOnly, exact VID/PID filter, before and after first restore",
+    "physicalModelIndependentlyVerified": false,
+    "uniqueHardwareSerial": "unknown",
+    "firmware": {
+      "state": "unknown",
+      "basis": "No version read or user firmware display observation; ASCII 20150713 in replies is not interpreted as firmware version."
+    }
+  },
+  "execution": {
+    "privateDesktopOnly": true,
+    "systemInput": false,
+    "desktopSwitched": false,
+    "temporaryRoot": "Z:/Project/vscode_prj_temp/REA/.stage10-run-20261114/temp",
+    "physicalPlcOpened": false,
+    "powerInterrupted": false,
+    "firmwareUpgraded": false,
+    "nativeUploadPerformed": false
+  },
+  "restore": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage6-transfer-r1\\KinSealStudioLite.exe",
+    "sha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+    "project": "samples/stage6/macro-14.ksp",
+    "projectSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+    "scope": "Known test project re-download and marker observation only; not runtime-value or original-project backup."
+  },
+  "prepared": [
+    {
+      "record": "docs/stage10-evidence/samples-r3/run.json",
+      "sha256": "30694154ad666fe600dd0a2c863dec774efae1410edd8573e11062eb89adff15",
+      "passed": true,
+      "actualProcesses": 14,
+      "cases": {
+        "bit-lamp-local": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\bit-lamp-local.ksp",
+          "sourceSha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\bit-lamp-local-contract.json",
+          "contractSha256": "98e9bb19564cfc02c125c3d54c8612a8fed6f482bf660dd576cfac7377d4b0f3",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+          "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+          "payloadCount": 12
+        },
+        "word-lamp-local": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\word-lamp-local.ksp",
+          "sourceSha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\word-lamp-local-contract.json",
+          "contractSha256": "e9dddc1badab372fae998cf74993d8c5f82fdd13674881cbf954f27a3d59e671",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+          "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+          "payloadCount": 12
+        },
+        "restore-macro-14": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage6\\macro-14.ksp",
+          "sourceSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\restore-macro-14-contract.json",
+          "contractSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage6-transfer-r1\\KinSealStudioLite.exe",
+          "executableSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+          "payloadCount": 14
+        }
+      }
+    },
+    {
+      "record": "docs/stage10-evidence/samples-r4/run.json",
+      "sha256": "088db56d6bc484124c57a8bf9070a78787877d9dd5d4e8c57d3735b8b8b7c06c",
+      "passed": true,
+      "actualProcesses": 19,
+      "cases": {
+        "bit-lamp-local": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\bit-lamp-local.ksp",
+          "sourceSha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r4\\bit-lamp-local-contract.json",
+          "contractSha256": "98e9bb19564cfc02c125c3d54c8612a8fed6f482bf660dd576cfac7377d4b0f3",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+          "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+          "payloadCount": 12
+        },
+        "word-lamp-local": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\word-lamp-local.ksp",
+          "sourceSha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r4\\word-lamp-local-contract.json",
+          "contractSha256": "e9dddc1badab372fae998cf74993d8c5f82fdd13674881cbf954f27a3d59e671",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+          "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+          "payloadCount": 12
+        },
+        "function-local": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\function-local.ksp",
+          "sourceSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r4\\function-local-contract.json",
+          "contractSha256": "9f42d20a18a209e62e757143410a2659ef7de99c7e0e9f976e81991575954a66",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+          "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+          "payloadCount": 12
+        },
+        "restore-macro-14": {
+          "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage6\\macro-14.ksp",
+          "sourceSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+          "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r4\\restore-macro-14-contract.json",
+          "contractSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+          "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage6-transfer-r1\\KinSealStudioLite.exe",
+          "executableSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+          "payloadCount": 14
+        }
+      }
+    }
+  ],
+  "downloads": [
+    {
+      "record": "docs/stage10-evidence/physical-bit-r1/run.json",
+      "sha256": "02350703781b59114e47d0a55d305d9176a59f46b3263ed53d83df64aa75d3ef",
+      "case": "bit-lamp-local",
+      "transportOutcome": "transport_complete",
+      "payloadCount": 12,
+      "contractIdentity": {
+        "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\bit-lamp-local.ksp",
+        "sourceSha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+        "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\bit-lamp-local-contract.json",
+        "contractSha256": "98e9bb19564cfc02c125c3d54c8612a8fed6f482bf660dd576cfac7377d4b0f3",
+        "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+        "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+        "payloadCount": 12
+      },
+      "commitAccepted": true,
+      "resetWritten": true,
+      "postResetReadResult": -5,
+      "interfaceReleased": true,
+      "closed": true,
+      "automaticScreenConfirmed": false
+    },
+    {
+      "record": "docs/stage10-evidence/physical-word-r1/run.json",
+      "sha256": "026039fd136a27d5e7d408ae25afa3a59d6d91611ea56d3761c219363e6c4994",
+      "case": "word-lamp-local",
+      "transportOutcome": "transport_complete",
+      "payloadCount": 12,
+      "contractIdentity": {
+        "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\word-lamp-local.ksp",
+        "sourceSha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+        "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\word-lamp-local-contract.json",
+        "contractSha256": "e9dddc1badab372fae998cf74993d8c5f82fdd13674881cbf954f27a3d59e671",
+        "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+        "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+        "payloadCount": 12
+      },
+      "commitAccepted": true,
+      "resetWritten": true,
+      "postResetReadResult": -5,
+      "interfaceReleased": true,
+      "closed": true,
+      "automaticScreenConfirmed": false
+    },
+    {
+      "record": "docs/stage10-evidence/physical-restore-r1/run.json",
+      "sha256": "aba84f18577116cb7b4fc21c75e6d53916b46cdc2b663159ca3d9677fa996164",
+      "case": "restore-macro-14",
+      "transportOutcome": "transport_complete",
+      "payloadCount": 14,
+      "contractIdentity": {
+        "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage6\\macro-14.ksp",
+        "sourceSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+        "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r3\\restore-macro-14-contract.json",
+        "contractSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+        "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage6-transfer-r1\\KinSealStudioLite.exe",
+        "executableSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+        "payloadCount": 14
+      },
+      "commitAccepted": true,
+      "resetWritten": true,
+      "postResetReadResult": -5,
+      "interfaceReleased": true,
+      "closed": true,
+      "automaticScreenConfirmed": false
+    },
+    {
+      "record": "docs/stage10-evidence/physical-function-r1/run.json",
+      "sha256": "860b22addeb92db7ccbfdcd65355df4234770a07d5520bb04f47d8c097bdced9",
+      "case": "function-local",
+      "transportOutcome": "transport_complete",
+      "payloadCount": 12,
+      "contractIdentity": {
+        "source": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\samples\\stage10\\function-local.ksp",
+        "sourceSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+        "contract": "Z:\\Project\\vscode_prj_temp\\REA\\.worktrees\\kinseal-stage10-20261114\\docs\\stage10-evidence\\samples-r4\\function-local-contract.json",
+        "contractSha256": "9f42d20a18a209e62e757143410a2659ef7de99c7e0e9f976e81991575954a66",
+        "executable": "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage9-plc-r2\\KinSealStudioLite.exe",
+        "executableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+        "payloadCount": 12
+      },
+      "commitAccepted": true,
+      "resetWritten": true,
+      "postResetReadResult": -5,
+      "interfaceReleased": true,
+      "closed": true,
+      "automaticScreenConfirmed": false
+    }
+  ],
+  "toolSources": {
+    "tools/make_stage10_samples.py": "31e9a6398d3308ac1d87593b20c76c616b5fac02f9dfa7a9fa8267953fd7694c",
+    "tools/make_stage10_function_sample.py": "b6355d889bbc92ae8189d6348a2557f48bef7214cf7e0bfab8ed49aece0e5ef8",
+    "tools/run_stage10_samples.py": "9206d1246f4179852b43a06217167024318f76e64a8d9784b25b9b0368f5b151",
+    "tools/run_stage10_performance.py": "02c64caa766186e823f9a937517963bcbdd338df5bd02e6ddaec16490769a6af",
+    "tools/stage10_acceptance.py": "be1dad7dd26330451fc29dc747a84c18926d60db71ac544efb0ae5c5ffe04018"
+  }
+}

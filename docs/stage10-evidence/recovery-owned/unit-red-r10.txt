@@ -1,0 +1,52 @@
+test_absent_required_result_is_not_run (__main__.AcceptanceTests.test_absent_required_result_is_not_run) ... ok
+test_actual_stage6_transport_not_E (__main__.AcceptanceTests.test_actual_stage6_transport_not_E) ... ok
+test_all_nonpass_states_retained (__main__.AcceptanceTests.test_all_nonpass_states_retained) ... ok
+test_all_seven_layers_are_distinct_and_unknown_layer_rejected (__main__.AcceptanceTests.test_all_seven_layers_are_distinct_and_unknown_layer_rejected) ... ok
+test_artifact_outside_root_is_rejected (__main__.AcceptanceTests.test_artifact_outside_root_is_rejected) ... ok
+test_atomic_replace_failure_preserves_old_output_and_cleans_only_owned_temp (__main__.AcceptanceTests.test_atomic_replace_failure_preserves_old_output_and_cleans_only_owned_temp) ... ok
+test_claim_identity_cannot_be_swapped (__main__.AcceptanceTests.test_claim_identity_cannot_be_swapped) ... ok
+test_cli_invalid_evidence_preserves_output (__main__.AcceptanceTests.test_cli_invalid_evidence_preserves_output) ... ok
+test_cli_require_complete_returns_three_for_blocked_coverage (__main__.AcceptanceTests.test_cli_require_complete_returns_three_for_blocked_coverage) ... ok
+test_commit_ack_without_reset_remains_unconfirmed (__main__.AcceptanceTests.test_commit_ack_without_reset_remains_unconfirmed) ... ok
+test_commit_write_without_ack_is_unknown (__main__.AcceptanceTests.test_commit_write_without_ack_is_unknown) ... ok
+test_complete_synthetic_C_T_E_can_pass_only_for_one_unknown_firmware_endpoint (__main__.AcceptanceTests.test_complete_synthetic_C_T_E_can_pass_only_for_one_unknown_firmware_endpoint) ... ok
+test_contract_cannot_omit_payloads_segment_ack_or_segment_binding (__main__.AcceptanceTests.test_contract_cannot_omit_payloads_segment_ack_or_segment_binding) ... ok
+test_duplicate_and_undeclared_cases_rejected (__main__.AcceptanceTests.test_duplicate_and_undeclared_cases_rejected) ... ok
+test_duplicate_keys_nonfinite_and_oversized_json_rejected (__main__.AcceptanceTests.test_duplicate_keys_nonfinite_and_oversized_json_rejected) ... ok
+test_empty_coverage_cannot_pass (__main__.AcceptanceTests.test_empty_coverage_cannot_pass) ... ok
+test_evidence_tamper_is_rejected (__main__.AcceptanceTests.test_evidence_tamper_is_rejected) ... ok
+test_hmi_E_needs_independent_observation_recovery_and_same_C_T (__main__.AcceptanceTests.test_hmi_E_needs_independent_observation_recovery_and_same_C_T) ... ok
+test_host_compile_pass_does_not_establish_physical_transport_or_E (__main__.AcceptanceTests.test_host_compile_pass_does_not_establish_physical_transport_or_E) ... ok
+test_input_and_hardlink_output_aliases_rejected (__main__.AcceptanceTests.test_input_and_hardlink_output_aliases_rejected) ... ok
+test_known_identity_must_match_actual_artifact (__main__.AcceptanceTests.test_known_identity_must_match_actual_artifact) ... ok
+test_missing_actual_stimulus_spec_or_observation_cannot_pass (__main__.AcceptanceTests.test_missing_actual_stimulus_spec_or_observation_cannot_pass) ... ok
+test_mixed_pass_and_blocked_is_partial (__main__.AcceptanceTests.test_mixed_pass_and_blocked_is_partial) ... ok
+test_mock_cannot_be_E (__main__.AcceptanceTests.test_mock_cannot_be_E) ... ok
+test_mock_transport_pass_is_explicitly_controlled_only (__main__.AcceptanceTests.test_mock_transport_pass_is_explicitly_controlled_only) ... ok
+test_naive_timestamp_rejected (__main__.AcceptanceTests.test_naive_timestamp_rejected) ... ok
+test_native_success_flag_cannot_hide_wrong_ack_payload_or_order (__main__.AcceptanceTests.test_native_success_flag_cannot_hide_wrong_ack_payload_or_order) ... ok
+test_recorded_mismatch_cannot_be_declared_pass (__main__.AcceptanceTests.test_recorded_mismatch_cannot_be_declared_pass) ... ok
+test_requirement_identity_cannot_be_changed (__main__.AcceptanceTests.test_requirement_identity_cannot_be_changed) ... ok
+test_stage6_import_preserves_old_identity_and_observation (__main__.AcceptanceTests.test_stage6_import_preserves_old_identity_and_observation) ... ok
+test_stage6_import_rejects_changed_compiled_payload_bytes (__main__.AcceptanceTests.test_stage6_import_rejects_changed_compiled_payload_bytes)
+Retain small real capture fixtures but corrupt one actual compiled block. ... FAIL
+test_stage6_static_import_does_not_override_missing_table_report (__main__.AcceptanceTests.test_stage6_static_import_does_not_override_missing_table_report) ... ok
+test_success_flags_cannot_replace_missing_commit_or_reset_wire_evidence (__main__.AcceptanceTests.test_success_flags_cannot_replace_missing_commit_or_reset_wire_evidence) ... ok
+test_transfer_contract_cannot_rebind_project_or_model (__main__.AcceptanceTests.test_transfer_contract_cannot_rebind_project_or_model) ... ok
+test_unknown_hardware_cannot_be_E (__main__.AcceptanceTests.test_unknown_hardware_cannot_be_E) ... ok
+test_unknown_hardware_cannot_be_physical_T (__main__.AcceptanceTests.test_unknown_hardware_cannot_be_physical_T) ... ok
+test_unknown_source_cannot_pass (__main__.AcceptanceTests.test_unknown_source_cannot_pass) ... ok
+
+======================================================================
+FAIL: test_stage6_import_rejects_changed_compiled_payload_bytes (__main__.AcceptanceTests.test_stage6_import_rejects_changed_compiled_payload_bytes)
+Retain small real capture fixtures but corrupt one actual compiled block.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "Z:\Project\vscode_prj_temp\REA\.worktrees\kinseal-stage10-20261114\tests\test_stage10_acceptance.py", line 386, in test_stage6_import_rejects_changed_compiled_payload_bytes
+    with self.assertRaisesRegex(acceptance.AcceptanceError, "compiled file"):
+AssertionError: AcceptanceError not raised
+
+----------------------------------------------------------------------
+Ran 37 tests in 7.663s
+
+FAILED (failures=1)

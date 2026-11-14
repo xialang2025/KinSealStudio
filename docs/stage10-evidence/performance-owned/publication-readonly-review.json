@@ -1,0 +1,121 @@
+{
+  "format": "KinSealStage10-publication-readonly-review-v1",
+  "reviewedAtUtc": "2026-11-14T14:00:00.642748+00:00",
+  "reviewer": "stage10_performance",
+  "mode": "仅静态和现有Git配置只读复核；未执行任一发布脚本、未merge/commit/push/复制或回滚主目录文件",
+  "reviewOutputOnly": "docs/stage10-evidence/performance-owned/publication-readonly-review.json",
+  "supersededDraft": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\publish_stage10.py",
+    "sha256": "738f5914fdd91508d36b31c6a145edea635dea7f652f99dcaac2cec9d88e6179",
+    "adopted": false,
+    "executed": false,
+    "findings": [
+      {
+        "id": "PUB-OLD-01",
+        "issue": "candidate^==base只校验第一父，merge candidate可通过；缺少detached HEAD约束。"
+      },
+      {
+        "id": "PUB-OLD-02",
+        "issue": "未确认MAIN当前分支是refs/heads/main；read-tree后只更新main ref可能留下另一个HEAD和脏index。"
+      },
+      {
+        "id": "PUB-OLD-03",
+        "issue": "snapshot未绑定精确hash/head/1891数量，错快照可降低保护范围。"
+      },
+      {
+        "id": "PUB-OLD-04",
+        "issue": "直接写工作文件、read-tree、update-ref分为多步，失败回滚自身再次失败时可残留混合状态；异常内的dst.unlink与本轮禁止删除要求冲突。"
+      },
+      {
+        "id": "PUB-OLD-05",
+        "issue": "直接复制内容依赖可变工作树，索引/ref/文件各阶段需要协调；未采用该实现。"
+      }
+    ],
+    "disposition": "保留为未采用草稿，禁止依据本报告执行；新方案不调用它。"
+  },
+  "adoptedNativePlan": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\publish_native_stage10.py",
+    "sha256": "1f512cced0a91a207ad58a13c8d0184efcc6c2a115866e76c3794c0b8609b6be",
+    "pythonSyntaxParsed": true,
+    "executedByReviewer": false,
+    "disposition": "静态审阅在列出的前置/后验范围内可采用；实际发布由root单独执行并保留回执，不是已发布证明。",
+    "blockingFindingsRemaining": [],
+    "checks": [
+      {
+        "area": "保护快照",
+        "result": "pass",
+        "basis": "读取前核精确SNAP_SHA，head固定初始daef、files恰1891、mainIndexEmpty=true；本次只读重算快照hash与字段一致。"
+      },
+      {
+        "area": "Git身份及父关系",
+        "result": "pass",
+        "basis": "MAIN symbolic-ref须refs/heads/main且HEAD=base；INITIAL须为base祖先。WORK symbolic-ref须返回detached状态1，HEAD=candidate，rev-list parents须精确[candidate,base]，合并提交拒绝。"
+      },
+      {
+        "area": "候选和索引冻结",
+        "result": "pass",
+        "basis": "WORK porcelain含全部untracked检查为空；MAIN cached diff必须退出0；读取候选差异清单并要求非空。"
+      },
+      {
+        "area": "路径白名单及零交集",
+        "result": "pass",
+        "basis": "仅固定exact清单或stage10 evidence/sample前缀；与1891保护集零交集，diff-filter D拒绝。所有目标resolve须在MAIN内。"
+      },
+      {
+        "area": "写入前目标保护",
+        "result": "pass",
+        "basis": "已有目标用git hash-object --path与base blob比较；新增目标不能已占位；全部1891源字节SHA逐份核对。"
+      },
+      {
+        "area": "工作文件/index/ref修改方法",
+        "result": "pass",
+        "basis": "仅调用git -c merge.autostash=false merge --ff-only --no-edit candidate；不自行复制主文件，不read-tree/update-ref，不强制reset/stash/手工rollback，不删除文件。Git拒绝时保留candidate和实际状态。"
+      },
+      {
+        "area": "回执独占及异常落盘",
+        "result": "pass",
+        "basis": "merge前evidence.open(x)预留新槽，初始与attempt前checkpoint flush+fsync；try/except/finally记录实际HEAD/branch/index及1891内容后验，Git非0也执行后验；任何不符不得published=true。"
+      },
+      {
+        "area": "发布后状态",
+        "result": "pass",
+        "basis": "成功路径必须HEAD=candidate、1891内容SHA不变、index空、任务文件与提交无diff；finally再核HEAD/main分支/index/1891；未知状态报告false而不自写回滚。"
+      },
+      {
+        "area": "当前hooks",
+        "result": "pass",
+        "basis": "只读查询core.hooksPath无覆盖；MAIN .git/hooks仅.sample文件，无启用的post-merge等hook。未执行任何hook。"
+      }
+    ],
+    "peerRequestedNativeRepairsResolved": [
+      {
+        "issue": "merge完成后后验异常可能不留回执",
+        "resolution": "所有perform异常经catch/finally，checkpoint记录published=false及实际状态。"
+      },
+      {
+        "issue": "exists后write_text并非独占输出",
+        "resolution": "merge前open(x)预留，不覆盖同名回执或dangling symlink。"
+      },
+      {
+        "issue": "Git非0跳过后验",
+        "resolution": "finally对非0同样核实际HEAD/branch/index和全部1891内容，不承诺自动回滚。"
+      }
+    ]
+  },
+  "protectionSnapshot": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.stage10-run-20261114\\main-user-changes-at-task-start.json",
+    "sha256": "2c8d9ad35b37231110295d49f178563f3d1b34132597c88d7d7196d7fdcd3053",
+    "initialHead": "daefcdb5287f97ec3190263d991881f3de9e1933",
+    "files": 1891,
+    "mainIndexEmptyAtSnapshot": true
+  },
+  "actualPublicationPerformedByReviewer": false,
+  "existingUserFilesModifiedByReviewer": false,
+  "limits": [
+    "本报告只审冻结脚本和已记录方案；候选commit尚须root按实际HEAD再次执行所有前置校验。",
+    "不得在本次受控发布期间由其它操作者并发改变main/index/候选树或保护快照；Git的ref/index锁不替代跨进程编辑协调。",
+    "磁盘/进程被硬中断或底层IO错误可能造成未知状态；依实际回执与后验处理，不宣称Git保证任意失败的文件系统级回滚。",
+    "后验失败只报告published=false与实际状态，不擅自删除、覆盖恢复或强制回退，以保留用户新改动。",
+    "发布回执路径在.stage10-run根外部记录；此审查报告不是commit/publish/push成功回执。"
+  ]
+}

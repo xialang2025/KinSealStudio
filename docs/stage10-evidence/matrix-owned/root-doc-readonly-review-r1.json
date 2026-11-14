@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-11-14T13:49:51.112020+00:00",
+  "mode": "read-only cross-document retained-evidence review; only this report written",
+  "rootDocumentsModified": false,
+  "newDeviceIo": false,
+  "documents": [
+    {
+      "path": "README.md",
+      "sha256": "0b8c02a454009cde2b497e2e8f58061156e22132d7ab35fbfac43da4efa74337",
+      "bytes": 19289
+    },
+    {
+      "path": "docs/阶段10现场运行与性能验收.md",
+      "sha256": "3366cbbaa47400f73052a6a7137c59aa0814a8d5a4932bd6b6d96f6338aa90e1",
+      "bytes": 8480
+    },
+    {
+      "path": "docs/阶段10逐项进度.md",
+      "sha256": "0d2c71209a9a8d1468eb80d0a3df4756c16d17af8b83afbfd384ff6e3adf8faf",
+      "bytes": 2686
+    },
+    {
+      "path": "docs/UI编译规则与阶段交付规范.md",
+      "sha256": "9efccba2dcaf6914209ce8ec455d806eef599d4ed962d2ca811f27dd32b9dcaa",
+      "bytes": 111797
+    },
+    {
+      "path": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md",
+      "sha256": "59a08d5d4542cb5b18d8fcbe5689f8b2f67940943f6105fdeebf22b75f18907a",
+      "bytes": 208262
+    },
+    {
+      "path": "design_plan/11_阶段10_设备运行兼容与性能验收.md",
+      "sha256": "e70325c4bfe5dee94112e11fef83273710c053ebc81e8223dac3740a18be7675",
+      "bytes": 10546
+    },
+    {
+      "path": "design_plan/未完成任务总台账.md",
+      "sha256": "5682eb357326870e369f2658141933ecbcfbfd8be93057e24f6c3982e7abd423",
+      "bytes": 2964880
+    },
+    {
+      "path": "design_plan/未完成任务总台账.json",
+      "sha256": "7bc666418d81dd049fda8a699ca4813965021e9414973d65fba6b52b186cd4aa",
+      "bytes": 8015534
+    }
+  ],
+  "checks": [
+    {
+      "name": "performance_identity",
+      "passed": true
+    },
+    {
+      "name": "seven_by_five_by_three",
+      "passed": true
+    },
+    {
+      "name": "21_save_21_offline",
+      "passed": true
+    },
+    {
+      "name": "resource_metrics",
+      "passed": true,
+      "detail": {
+        "peakMemoryBytes": 80216064,
+        "sampledDiskBytes": 174919,
+        "resourceSamples": 1201,
+        "maxSamplingGapNs": 62864400
+      }
+    },
+    {
+      "name": "median_ms/validate",
+      "passed": true,
+      "detail": 108.7748
+    },
+    {
+      "name": "median_ms/save",
+      "passed": true,
+      "detail": 151.21519999999998
+    },
+    {
+      "name": "median_ms/native-export",
+      "passed": true,
+      "detail": 319.10179999999997
+    },
+    {
+      "name": "median_ms/compile",
+      "passed": true,
+      "detail": 914.5721
+    },
+    {
+      "name": "median_ms/offline-start",
+      "passed": true,
+      "detail": 235.9571
+    },
+    {
+      "name": "no_hmi_threshold_or_long_stability_claim",
+      "passed": true
+    },
+    {
+      "name": "performance_cleanup",
+      "passed": true
+    },
+    {
+      "name": "tool37",
+      "passed": true
+    },
+    {
+      "name": "tool_source_hash",
+      "passed": true
+    },
+    {
+      "name": "historical4_preserves_fail",
+      "passed": true
+    },
+    {
+      "name": "peer7",
+      "passed": true
+    },
+    {
+      "name": "frozen_strict_gate_exit3",
+      "passed": true
+    },
+    {
+      "name": "eight_stage10_tasks_open",
+      "passed": true
+    },
+    {
+      "name": "ledger_counts",
+      "passed": true
+    },
+    {
+      "name": "preserve_history",
+      "passed": true
+    },
+    {
+      "name": "preserve_candidates",
+      "passed": true
+    },
+    {
+      "name": "preserve_sourceManifest",
+      "passed": true
+    },
+    {
+      "name": "preserve_auditInputManifest",
+      "passed": true
+    },
+    {
+      "name": "preserve_source_assessment",
+      "passed": true
+    },
+    {
+      "name": "function_transport_separate_from_E",
+      "passed": true
+    }
+  ],
+  "allConsistencyChecksPassed": true,
+  "findings": [],
+  "notes": [
+    "Function text points to separately recorded results, not explicit E pass; pending E should stay explicit until the raw answers exist.",
+    "Strict physical T/E remains partial due unknown unique hardware identity; selected observed behavior and complete transport are separate facts.",
+    "Mutable validation.json removal was confirmed intentional zero-reference provisional cleanup; frozen validation-r1/current-summary-r1 are used."
+  ],
+  "rawObservationIdsAtReview": [
+    "starting-page",
+    "bit-display",
+    "bit-touch",
+    "word-display-touch",
+    "restore-macro-display",
+    "function-visibility-touch"
+  ],
+  "fullStage10Complete": false,
+  "disposition": "Core counts, identity and open boundaries agree; resolve any current-state/closeout findings before final publication. No ordinary hardware-test blocker found."
+}

@@ -1,0 +1,52 @@
+{
+  "initialCommand": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "initialExitCode": 2,
+  "initialOutputBytes": 6995520,
+  "initialFirstLines": [
+    "docs/stage10-evidence/current-acceptance-owned/bit-facts.json:1: trailing whitespace.",
+    "+{",
+    "docs/stage10-evidence/current-acceptance-owned/bit-facts.json:2: trailing whitespace.",
+    "+  \"format\": \"KinSealStage10-current-facts-v1\",",
+    "docs/stage10-evidence/current-acceptance-owned/bit-facts.json:3: trailing whitespace.",
+    "+  \"sample\": \"bit-lamp-local\",",
+    "docs/stage10-evidence/current-acceptance-owned/bit-facts.json:4: trailing whitespace.",
+    "+  \"identityId\": \"bit\","
+  ],
+  "initialLastLines": [
+    "+}",
+    "tools/stage10_acceptance.py:653: new blank line at EOF."
+  ],
+  "explanation": "Exact CRLF evidence uses -text intentionally, so default whitespace checker treats retained CR as trailing. Preserve hashed evidence bytes and source identity; final blank EOF in frozen acceptance tool is nonfunctional and retained.",
+  "reviewedCodeAndDocsCommand": [
+    "git",
+    "-c",
+    "core.whitespace=blank-at-eol,space-before-tab,cr-at-eol",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)docs/stage10-evidence/**"
+  ],
+  "reviewedCodeAndDocsExitCode": 2,
+  "reviewedCodeAndDocsOutput": "tools/stage10_acceptance.py:653: new blank line at EOF.\n",
+  "evidenceBytesChangedToSatisfyStyle": false,
+  "finalCodeAndDocsCommand": [
+    "git",
+    "-c",
+    "core.whitespace=blank-at-eol,space-before-tab,cr-at-eol,-blank-at-eof",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)docs/stage10-evidence/**"
+  ],
+  "finalCodeAndDocsExitCode": 0,
+  "finalCodeAndDocsOutput": ""
+}

@@ -1,0 +1,481 @@
+{
+  "format": "KinSealStage10-summary-v1",
+  "status": "partial",
+  "counts": {
+    "pass": 3,
+    "partial": 11,
+    "not_run": 1,
+    "blocked_external": 2
+  },
+  "declaredCoverageComplete": false,
+  "fullReplicaCertified": false,
+  "results": [
+    {
+      "caseId": "S10-CURRENT-BIT-C",
+      "identityId": "bit",
+      "layer": "C",
+      "execution": "host",
+      "status": "pass",
+      "reason": "Successful current compile/verify receipts and exact EXE/KSP/contract/compiled byte audit; limited C scope.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-T",
+      "identityId": "bit",
+      "layer": "T",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-E",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-C",
+      "identityId": "word",
+      "layer": "C",
+      "execution": "host",
+      "status": "pass",
+      "reason": "Successful current compile/verify receipts and exact EXE/KSP/contract/compiled byte audit; limited C scope.",
+      "identitySha256": "7bec35fc34165085da22de138bf96d024f5468c54c94f70bc078588bf82e7154",
+      "limits": [
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-T",
+      "identityId": "word",
+      "layer": "T",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "7bec35fc34165085da22de138bf96d024f5468c54c94f70bc078588bf82e7154",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-E",
+      "identityId": "word",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "7bec35fc34165085da22de138bf96d024f5468c54c94f70bc078588bf82e7154",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-C",
+      "identityId": "restore",
+      "layer": "C",
+      "execution": "host",
+      "status": "pass",
+      "reason": "Successful current compile/verify receipts and exact EXE/KSP/contract/compiled byte audit; limited C scope.",
+      "identitySha256": "16fb7cd5a3b9959bbca586aa50bb8053c47c626fa434eb69dd7abe4e7e82f08e",
+      "limits": [
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-T",
+      "identityId": "restore",
+      "layer": "T",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "16fb7cd5a3b9959bbca586aa50bb8053c47c626fa434eb69dd7abe4e7e82f08e",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-E",
+      "identityId": "restore",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+      "identitySha256": "16fb7cd5a3b9959bbca586aa50bb8053c47c626fa434eb69dd7abe4e7e82f08e",
+      "limits": [
+        "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-01-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Endpoint/model and known test-project restore are recorded; unique hardware serial/firmware and original screen project backup remain unknown.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Endpoint/model and known test-project restore are recorded; unique hardware serial/firmware and original screen project backup remain unknown.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-02-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Bit toggle/set/reset/hold-release and selected LW20/LW30 constant-write lamp states confirmed; full five-control/type/boundary matrix remains open.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Bit toggle/set/reset/hold-release and selected LW20/LW30 constant-write lamp states confirmed; full five-control/type/boundary matrix remains open.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-03-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "not_run",
+      "reason": "Permissions, notification, pressure timing, language and overlap field axes not exercised in this physical session.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "not_run: Permissions, notification, pressure timing, language and overlap field axes not exercised in this physical session.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-04-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "blocked_external",
+      "reason": "Multipage/configuration/device compile prerequisites and broader macro scheduling/data subsystems are not restored.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "blocked_external: Multipage/configuration/device compile prerequisites and broader macro scheduling/data subsystems are not restored.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-05-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "blocked_external",
+      "reason": "No dedicated real PLC endpoint/register test zone or HMI PLC execution evidence is supplied.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "blocked_external: No dedicated real PLC endpoint/register test zone or HMI PLC execution evidence is supplied.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-06-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Known macro-14 test page re-downloaded and visually restored; upload/original backup/power/RTC/history/runtime-value retention remain not_run.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Known macro-14 test page re-downloaded and visually restored; upload/original backup/power/RTC/history/runtime-value retention remain not_run.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-07-OVERALL",
+      "identityId": "bit",
+      "layer": "E",
+      "execution": "physical_hmi",
+      "status": "partial",
+      "reason": "Host performance measurements exist separately; native/product thresholds, HMI latency and actual long-duration operation are not closed.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Host performance measurements exist separately; native/product thresholds, HMI latency and actual long-duration operation are not closed.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    },
+    {
+      "caseId": "S10-08-OVERALL",
+      "identityId": "bit",
+      "layer": "D",
+      "execution": "host",
+      "status": "partial",
+      "reason": "Evidence gate and limits exist; declaration does not close all required device/firmware/protocol/layer cases.",
+      "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+      "limits": [
+        "partial: Evidence gate and limits exist; declaration does not close all required device/firmware/protocol/layer cases.",
+        "firmware unknown; claims apply only to this endpoint and recorded run",
+        "hardware identity unavailable; no cross-device compatibility claim"
+      ],
+      "physicalTransportPassed": false,
+      "hmiExecutionPassed": false
+    }
+  ],
+  "releaseRestrictions": [
+    {
+      "caseId": "S10-CURRENT-BIT-C",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-C",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-T",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-T",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-T",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-E",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-E",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-BIT-E",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-C",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-C",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-T",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-T",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-T",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-E",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-E",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-WORD-E",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-C",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-C",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-T",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-T",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-T",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-E",
+      "reason": "partial: Actual transfer completed and selected observations exist, but strict physical identity requires a unique hardware serial; current USB instance is not one. No full T/E pass or cross-firmware claim."
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-E",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-CURRENT-RESTORE-E",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-01-OVERALL",
+      "reason": "partial: Endpoint/model and known test-project restore are recorded; unique hardware serial/firmware and original screen project backup remain unknown."
+    },
+    {
+      "caseId": "S10-01-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-01-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-02-OVERALL",
+      "reason": "partial: Bit toggle/set/reset/hold-release and selected LW20/LW30 constant-write lamp states confirmed; full five-control/type/boundary matrix remains open."
+    },
+    {
+      "caseId": "S10-02-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-02-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-03-OVERALL",
+      "reason": "not_run: Permissions, notification, pressure timing, language and overlap field axes not exercised in this physical session."
+    },
+    {
+      "caseId": "S10-03-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-03-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-04-OVERALL",
+      "reason": "blocked_external: Multipage/configuration/device compile prerequisites and broader macro scheduling/data subsystems are not restored."
+    },
+    {
+      "caseId": "S10-04-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-04-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-05-OVERALL",
+      "reason": "blocked_external: No dedicated real PLC endpoint/register test zone or HMI PLC execution evidence is supplied."
+    },
+    {
+      "caseId": "S10-05-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-05-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-06-OVERALL",
+      "reason": "partial: Known macro-14 test page re-downloaded and visually restored; upload/original backup/power/RTC/history/runtime-value retention remain not_run."
+    },
+    {
+      "caseId": "S10-06-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-06-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-07-OVERALL",
+      "reason": "partial: Host performance measurements exist separately; native/product thresholds, HMI latency and actual long-duration operation are not closed."
+    },
+    {
+      "caseId": "S10-07-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-07-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    },
+    {
+      "caseId": "S10-08-OVERALL",
+      "reason": "partial: Evidence gate and limits exist; declaration does not close all required device/firmware/protocol/layer cases."
+    },
+    {
+      "caseId": "S10-08-OVERALL",
+      "reason": "firmware unknown; claims apply only to this endpoint and recorded run"
+    },
+    {
+      "caseId": "S10-08-OVERALL",
+      "reason": "hardware identity unavailable; no cross-device compatibility claim"
+    }
+  ],
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "devicePowerInterrupted": false,
+  "integrityBoundary": "Hashes validate retained bytes and declared bindings, not observer authenticity or unrecorded behavior."
+}

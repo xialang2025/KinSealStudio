@@ -1,0 +1,213 @@
+{
+  "format": "KinSealStage10-function-local-design-v1",
+  "marker": "S10-FUNC-LOCAL-1114",
+  "createdSample": {
+    "path": "samples/stage10/function-local.ksp",
+    "sha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96"
+  },
+  "generatorSha256": "b6355d889bbc92ae8189d6348a2557f48bef7214cf7e0bfab8ed49aece0e5ef8",
+  "sourceSamples": [
+    {
+      "path": "samples/function-button/功能按钮实机联调.ksp",
+      "sha256": "f5bbfb7a2a239c16004568f1289b119e2af3de468bb514007f4282df6728d452"
+    },
+    {
+      "path": "samples/bit-button/四操作实机验收.ksp",
+      "sha256": "de331d51888b4f6c22b9b15527bd112b9cc5640c891df701eab304376c3d9dbb"
+    },
+    {
+      "path": "samples/lamp/指示灯实机联调.ksp",
+      "sha256": "f82fa4fa85b153e220d5c9ac6870dc84a86fd83a24d38d052e8a366142cfca4d"
+    }
+  ],
+  "rootHelper": {
+    "path": "tools/make_stage10_samples.py",
+    "sha256": "31e9a6398d3308ac1d87593b20c76c616b5fac02f9dfa7a9fa8267953fd7694c"
+  },
+  "layout": [
+    {
+      "id": "page-marker",
+      "rect": [
+        20,
+        15,
+        760,
+        30
+      ],
+      "layer": 0,
+      "label": "S10-FUNC-LOCAL-1114"
+    },
+    {
+      "id": "language-marker",
+      "rect": [
+        20,
+        55,
+        760,
+        32
+      ],
+      "layer": 1,
+      "label": "LANG = CN"
+    },
+    {
+      "id": "language-cn",
+      "rect": [
+        25,
+        110,
+        215,
+        70
+      ],
+      "layer": 2,
+      "label": "LANG CN"
+    },
+    {
+      "id": "language-en",
+      "rect": [
+        290,
+        110,
+        215,
+        70
+      ],
+      "layer": 3,
+      "label": "LANG EN + N40"
+    },
+    {
+      "id": "language-gated-cn",
+      "rect": [
+        555,
+        110,
+        220,
+        70
+      ],
+      "layer": 4,
+      "label": "GATED CN"
+    },
+    {
+      "id": "set-LB41",
+      "rect": [
+        25,
+        225,
+        215,
+        70
+      ],
+      "layer": 5,
+      "label": "SET LB41"
+    },
+    {
+      "id": "reset-LB41",
+      "rect": [
+        290,
+        225,
+        215,
+        70
+      ],
+      "layer": 6,
+      "label": "RESET LB41"
+    },
+    {
+      "id": "lamp-LB41",
+      "rect": [
+        555,
+        225,
+        220,
+        70
+      ],
+      "layer": 7,
+      "label": "LB41"
+    },
+    {
+      "id": "reset-LB40",
+      "rect": [
+        25,
+        340,
+        215,
+        70
+      ],
+      "layer": 8,
+      "label": "RESET LB40"
+    },
+    {
+      "id": "lamp-LB40",
+      "rect": [
+        290,
+        340,
+        215,
+        70
+      ],
+      "layer": 9,
+      "label": "LB40"
+    },
+    {
+      "id": "initialization-guide",
+      "rect": [
+        20,
+        430,
+        760,
+        30
+      ],
+      "layer": 10,
+      "label": "RESET LB41 + RESET LB40 FIRST"
+    }
+  ],
+  "readOnlyFieldChecks": {
+    "exactModelAndResolution": true,
+    "twoLanguagesInDeclaredOrder": true,
+    "elevenDistinctObjects": true,
+    "inside800x480": true,
+    "noOverlap": true,
+    "onlyLanguageSystemActions": true,
+    "languageTargetsExplicit": true,
+    "independentLanguageMarker": true,
+    "onlyLB41SetResetAndLB40Reset": true,
+    "independentLB41LB40Lamps": true,
+    "onlyEnglishNotice": true,
+    "noticeWritesLB40True": true,
+    "onlyGatedVisibility": true,
+    "gateIsLB41TrueOnly": true,
+    "noPicturesFlashOrTransparency": true,
+    "noMacroOrPressureGate": true,
+    "noTouchGateOrPressedEffect": true,
+    "noExternalConnectionsOrResources": true,
+    "allVisibleLabelsASCII": true
+  },
+  "allFieldChecksPassed": true,
+  "expectationSources": [
+    {
+      "path": "design_plan/功能按钮功能与交互复刻手册.md",
+      "sections": "function13 language order; visibility bit1; mutually exclusive notice-bit state"
+    },
+    {
+      "path": "docs/功能按钮手册实现与验收.md",
+      "sections": "existing LB40 notification and LB41 visibility sample; source/compiled function13 encoding"
+    },
+    {
+      "path": "samples/function-button/功能按钮实机联调.ksp",
+      "records": "function-6, function-7 language union; function-0 notice; function-14 visibility"
+    },
+    {
+      "path": "samples/bit-button/四操作实机验收.ksp",
+      "records": "usb-button-1 SET operation0; usb-button-2 RESET operation1"
+    },
+    {
+      "path": "samples/lamp/指示灯实机联调.ksp",
+      "records": "LB0双态 monitorMode1 mapped to LB40/LB41"
+    }
+  ],
+  "runtimeStimuliSuggested": [
+    "Observe exact page marker and independent LANG text; do not assume initial LB values.",
+    "Press RESET LB41 and RESET LB40, observe both independent lamps=0; record whether GATED CN is hidden.",
+    "Press LANG EN + N40; observe independent marker LANG = EN and LB40 lamp=1 as separate facts.",
+    "Press RESET LB40, then LANG CN; observe marker LANG = CN and record LB40 lamp unchanged=0.",
+    "Press SET LB41; observe LB41 lamp=1 and GATED CN becomes visible.",
+    "Press LANG EN + N40, then visible GATED CN; observe marker changes EN to CN; notification ordering is not inferred.",
+    "Press RESET LB41; observe independent LB41 lamp=0 and GATED CN hidden; finish with RESET LB40."
+  ],
+  "limits": [
+    "No device initialization/retention assumption for LB40/LB41; reset explicitly before observation.",
+    "Visibility and language results do not prove notification timing or hidden-region hit testing.",
+    "No outer PLC, macro, reboot, calibration or system-setting action exists in this fixture.",
+    "Field design checks are not HmiProject parser, C compilation, T download or E runtime acceptance."
+  ],
+  "compilerRun": false,
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "screenObserved": false
+}

@@ -1,0 +1,82 @@
+{
+  "format": "KinSealStage10-current-facts-v1",
+  "sample": "bit-lamp-local",
+  "identityId": "bit",
+  "identitySha256": "40cea76d8c8d0390ae3cb8738c46581a12da805112a4765ca18f695a24019384",
+  "artifactAuditAtUtc": "2026-11-14T13:26:28.043553+00:00",
+  "stimulusExactTime": "unknown; no per-touch timestamps were recorded",
+  "observationClockMeaning": "User record timestamps are answer-recording times, not invented stimulus/device times.",
+  "transportAudit": {
+    "transportComplete": true,
+    "wireOperationsObserved": 80,
+    "wireOperationsRequired": 80,
+    "mismatches": [],
+    "recoveryDisposition": "transport_complete_screen_unobserved",
+    "hmiExecutionConfirmed": false,
+    "automaticRollbackProven": false,
+    "powerRetentionProven": false
+  },
+  "localDisplayAndSelectedBehaviorConfirmedByUser": true,
+  "rawUserObservations": [
+    {
+      "id": "bit-display",
+      "question": "位按钮测试页已完成实物下载。实屏是否显示“S10-BIT-LAMP-1114”，并能看到上方4个按钮、下方LB0/LB1/LB2三个独立指示框，且没有宽度提示？",
+      "answer": "标识、4个按钮和3个指示框均正常，无宽度提示",
+      "transfer": "physical-bit-r1/run.json"
+    },
+    {
+      "id": "bit-touch",
+      "question": "请在当前位按钮页依次测试：①点TOGGLE LB0两次，下面LB0框是否每次切换并最终回原状态；②点SET LB1后显示1，再点RESET LB1后显示0；③按住HOLD LB2时显示1，松手后显示0。结果是否全部符合？",
+      "answer": "三项全部符合",
+      "transfer": "physical-bit-r1/run.json",
+      "confirmed": [
+        "LB0 toggled twice and returned to initial state",
+        "LB1 set to 1 then reset to 0",
+        "LB2 was 1 while held and 0 after release"
+      ],
+      "notCovered": [
+        "pointer leave",
+        "capture loss",
+        "long duration",
+        "notification",
+        "permission",
+        "PLC"
+      ],
+      "recovery": "Known macro-14 test page re-downloaded; marker and button confirmed by user. No runtime data restoration claim."
+    }
+  ],
+  "recoveryUserObservation": {
+    "id": "restore-macro-display",
+    "recordedAtUtc": "2026-11-14T13:17:52.786802+00:00",
+    "question": "已重新下载原来的宏14测试工程，14段、提交和重启收尾均成功。现在实屏是否恢复显示“S06-MACRO-14-1114”和“写常数并执行宏”按钮，且没有宽度提示？",
+    "answer": "已恢复标识和按钮，无宽度提示",
+    "transfer": "physical-restore-r1/run.json",
+    "confirmed": [
+      "S06-MACRO-14-1114 marker restored",
+      "write constant and execute macro button visible",
+      "no width warning"
+    ],
+    "notCovered": [
+      "macro execution",
+      "LB/LW retention",
+      "RTC retention",
+      "power cycle",
+      "native upload",
+      "original user project backup"
+    ]
+  },
+  "recoveryScope": "Known macro-14 test project re-downloaded and marker/button visible; no runtime values, RTC, history, native upload, original project backup, macro execution or power retention claim.",
+  "hardwareUniqueSerialKnown": false,
+  "firmwareKnown": false,
+  "sourceManifestMeaning": "Hash of original executable package source/build manifest; not the KSP hash or current edited source tree.",
+  "sourceCodeCommitAsRecorded": "3be25a4c96deb0d37b09e57d181e314b59787fb9",
+  "nativeRawSourceSha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+  "normalizedProjectSha256": "109fcc83b731af89db018765bf9791f11c48dc1c8e28164d7753de4de59f2648",
+  "strictTResult": "partial",
+  "strictEResult": "partial",
+  "limits": [
+    "Unique hardware serial not observed; USB instance path is an endpoint identity only.",
+    "Firmware version not read; no cross-firmware or cross-device claim.",
+    "Only the user's explicitly listed stimuli and independent lamp/display states are confirmed."
+  ]
+}

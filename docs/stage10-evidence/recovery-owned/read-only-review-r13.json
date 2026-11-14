@@ -1,0 +1,61 @@
+{
+  "mode": "read-only review followed by demonstrated RED/GREEN repair",
+  "productionLogicChanged": false,
+  "nativeTransferSourcesReviewed": [
+    "src/device_transfer_engine.cpp",
+    "tests/device_transfer_engine_tests.cpp",
+    "src/device_transfer_plan.cpp",
+    "src/device_transfer_contract.cpp",
+    "src/main.cpp"
+  ],
+  "findings": [
+    {
+      "id": "S10-AC-01",
+      "finding": "zero-length reset ACK must not produce reply-read",
+      "evidence": "unit-r1.txt",
+      "resolution": "exact reply ABI; final actual native replay"
+    },
+    {
+      "id": "S10-AC-02",
+      "finding": "matching removal of commit/reset plus success flags could bypass lifecycle proof",
+      "evidence": "unit-red-r4.txt",
+      "resolution": "fixed handshake and commit/reset skeleton plus frame-code checks"
+    },
+    {
+      "id": "S10-AC-03",
+      "finding": "non-E explicit expectation mismatch could be declared pass",
+      "evidence": "unit-red-r6.txt",
+      "resolution": "all pass requires expectedMatched=true"
+    },
+    {
+      "id": "S10-AC-04",
+      "finding": "missing all payloads/one ACK or unbound segment metadata could form false transport pass",
+      "evidence": "unit-red-r8.txt",
+      "reviewer": "stage10_performance",
+      "resolution": "exact 10/12/14-block ABI, per-step ACK, segment binding and counts"
+    },
+    {
+      "id": "S10-AC-05",
+      "finding": "historical import compared hash declarations without checking retained compiled files",
+      "evidence": "unit-red-r10.txt",
+      "resolution": "actual file size/hash and snapshot BE32 wire hash"
+    },
+    {
+      "id": "S10-AC-06",
+      "finding": "JSON exponent overflow bypassed explicit NaN/Infinity token rejection",
+      "evidence": "unit-red-r12.txt",
+      "reviewer": "stage10_performance",
+      "resolution": "finite parse_float validation"
+    }
+  ],
+  "residualLimits": [
+    "Hashes do not authenticate observers or reconstruct missing source/build provenance.",
+    "Historical firmware and unique hardware were not recorded; no current T/E inheritance.",
+    "No physical USB/PLC I/O, power interruption, recovery or long-duration test was performed.",
+    "No atomic rollback, resume, upload or power retention support is inferred."
+  ],
+  "sourceHashes": {
+    "tools/stage10_acceptance.py": "be1dad7dd26330451fc29dc747a84c18926d60db71ac544efb0ae5c5ffe04018",
+    "tests/test_stage10_acceptance.py": "59c8e5f780ea110baed7935bafaa5e0b92cdd06a520d9ca70d6d570880aeaa09"
+  }
+}

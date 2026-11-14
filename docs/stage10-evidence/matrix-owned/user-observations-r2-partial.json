@@ -1,0 +1,107 @@
+{
+  "recordedAtUtc": "2026-11-14T13:14:00.651811+00:00",
+  "observer": "user via current Codex conversation",
+  "firmwareVersion": "not-observed",
+  "uniqueHardwareSerial": "not-observed",
+  "deviceEndpoint": "USB\\VID_7365&PID_616C\\5&1AA452E9&0&2",
+  "observations": [
+    {
+      "id": "starting-page",
+      "question": "触摸屏现在显示的完整标识是什么？是否仍为 S06-MACRO-14-1114？",
+      "answer": "仍显示 S06-MACRO-14-1114",
+      "scope": "visible marker only"
+    },
+    {
+      "id": "bit-display",
+      "question": "位按钮测试页已完成实物下载。实屏是否显示“S10-BIT-LAMP-1114”，并能看到上方4个按钮、下方LB0/LB1/LB2三个独立指示框，且没有宽度提示？",
+      "answer": "标识、4个按钮和3个指示框均正常，无宽度提示",
+      "transfer": "physical-bit-r1/run.json"
+    },
+    {
+      "id": "bit-touch",
+      "question": "请在当前位按钮页依次测试：①点TOGGLE LB0两次，下面LB0框是否每次切换并最终回原状态；②点SET LB1后显示1，再点RESET LB1后显示0；③按住HOLD LB2时显示1，松手后显示0。结果是否全部符合？",
+      "answer": "三项全部符合",
+      "transfer": "physical-bit-r1/run.json",
+      "confirmed": [
+        "LB0 toggled twice and returned to initial state",
+        "LB1 set to 1 then reset to 0",
+        "LB2 was 1 while held and 0 after release"
+      ],
+      "notCovered": [
+        "pointer leave",
+        "capture loss",
+        "long duration",
+        "notification",
+        "permission",
+        "PLC"
+      ],
+      "recovery": "Known macro-14 test page re-downloaded; marker and button confirmed by user. No runtime data restoration claim."
+    },
+    {
+      "id": "word-display-touch",
+      "recordedAtUtc": "2026-11-14T13:16:12.490324+00:00",
+      "question": "字按钮页已下载成功。请确认实屏标识为“S10-WORD-LAMP-1114”，并依次点击 LW20 的写0、写1、写4按钮，观察独立LW20框是否对应显示0、1、4；再点击LW30的写0、写3按钮，观察另一独立框是否对应显示0、3。两组操作和显示是否全部符合，且没有宽度提示？",
+      "answer": "两组操作和显示全部符合，无宽度提示",
+      "transfer": "physical-word-r1/run.json",
+      "confirmed": [
+        "S10-WORD-LAMP-1114 marker visible",
+        "LW20 independent lamp states 0,1,4 selected by constant writes",
+        "LW30 independent lamp states 0,3 selected by constant writes",
+        "no width warning"
+      ],
+      "notCovered": [
+        "full register readback",
+        "nonzero U32 high word",
+        "word order",
+        "all seven numeric types",
+        "32 lamp states",
+        "arithmetic",
+        "keyboard",
+        "password"
+      ],
+      "recovery": "Known macro-14 test page re-downloaded; marker and button confirmed by user. No runtime data restoration claim."
+    },
+    {
+      "id": "restore-macro-display",
+      "recordedAtUtc": "2026-11-14T13:17:52.786802+00:00",
+      "question": "已重新下载原来的宏14测试工程，14段、提交和重启收尾均成功。现在实屏是否恢复显示“S06-MACRO-14-1114”和“写常数并执行宏”按钮，且没有宽度提示？",
+      "answer": "已恢复标识和按钮，无宽度提示",
+      "transfer": "physical-restore-r1/run.json",
+      "confirmed": [
+        "S06-MACRO-14-1114 marker restored",
+        "write constant and execute macro button visible",
+        "no width warning"
+      ],
+      "notCovered": [
+        "macro execution",
+        "LB/LW retention",
+        "RTC retention",
+        "power cycle",
+        "native upload",
+        "original user project backup"
+      ]
+    },
+    {
+      "id": "function-visibility-touch",
+      "recordedAtUtc": "2026-11-14T13:43:18.332508+00:00",
+      "question": "同一功能页请点 RESET LB41，是否LB41框为0且右上 GATED CN 按钮隐藏？再点 SET LB41，是否框为1且按钮出现？随后点 LANG EN + N40，再点 GATED CN，独立标识是否回到 LANG = CN？最后 RESET LB41 是否再次隐藏按钮？",
+      "answer": "显现、隐藏和出现后的触控全部符合",
+      "transfer": "physical-function-r1/run.json",
+      "confirmed": [
+        "LB41 reset to 0 and GATED CN hidden",
+        "LB41 set to 1 and GATED CN visible",
+        "after LANG EN then GATED CN, independent marker returned LANG = CN",
+        "LB41 reset hid button again"
+      ],
+      "notCovered": [
+        "touch attempted while hidden",
+        "touch permission separated from visibility",
+        "combined conditions",
+        "all languages/states",
+        "threshold/cancel",
+        "notification order"
+      ],
+      "recovery": "pending restore-macro-display-r2"
+    }
+  ]
+}

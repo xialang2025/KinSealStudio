@@ -1,0 +1,779 @@
+{
+    "deviceAcknowledged": false,
+    "format": "KinSealStage6-transfer-contract-v1",
+    "identity": {
+        "compiled": true,
+        "firmwareVersion": "not-observed",
+        "height": 480,
+        "modelSha256": "1ed2f3595373663618bf666be490cd743a04cb3e821af268525c9c34145333ab",
+        "sourceSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+        "targetModel": "AMT070W124-L800X480R",
+        "width": 800
+    },
+    "operations": [
+        {
+            "commandHex": "31",
+            "expectedReply": {
+                "firstByte": "4c",
+                "length": 24,
+                "readRequestBytes": 32
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373310200000000000000000000000000",
+            "kind": "command",
+            "name": "identify",
+            "nextSequence": 2,
+            "optionsHex": "02",
+            "sequence": 1,
+            "wireBytes": 32,
+            "wireSha256": "8e8f6e0f9c8421a6fce7b54462b753ac8a837ad1c52fc3f8e6eda2f33b60c936"
+        },
+        {
+            "commandHex": "53",
+            "expectedReply": {
+                "firstByte": "00",
+                "length": 24,
+                "readRequestBytes": 32
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373530000000000000000000000000000",
+            "kind": "command",
+            "name": "parameters",
+            "nextSequence": 3,
+            "optionsHex": "00",
+            "sequence": 2,
+            "wireBytes": 32,
+            "wireSha256": "7681e24f01a39e36d4f650c55fd0d83f6c4e1fc3e1288fafb5dc4dfa3f5bdc0a"
+        },
+        {
+            "commandHex": "34",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373340000000000000000000000000000",
+            "kind": "command",
+            "name": "begin",
+            "nextSequence": 4,
+            "optionsHex": "000000",
+            "sequence": 3,
+            "wireBytes": 32,
+            "wireSha256": "0a9216b10501047e385be2463acc88a2cb1567049c937e8919a5a8e753f6b567"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "begin-status",
+            "nextSequence": 5,
+            "optionsHex": "",
+            "sequence": 4,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0a",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730a0000000000000000000000000000",
+            "kind": "command",
+            "name": "SysPara.dat/command",
+            "nextSequence": 6,
+            "optionsHex": "",
+            "sequence": 5,
+            "wireBytes": 32,
+            "wireSha256": "6b50b64eea4c697ca16f0fefcd09c465cf0d66f61b616f49a65f13cc00d55ac3"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SysPara.dat",
+            "nextSequence": 7,
+            "sequence": 6,
+            "wireBytes": 4998,
+            "wireSha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "SysPara.dat/status",
+            "nextSequence": 8,
+            "optionsHex": "",
+            "sequence": 7,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0b",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730b0000000000000000000000000000",
+            "kind": "command",
+            "name": "ControlPara.dat/command",
+            "nextSequence": 9,
+            "optionsHex": "",
+            "sequence": 8,
+            "wireBytes": 32,
+            "wireSha256": "bef7b04b994c511c8298e30cff2117c1fb85c6b6215c47d86cc25645198df1b0"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "ControlPara.dat",
+            "nextSequence": 10,
+            "sequence": 9,
+            "wireBytes": 7040,
+            "wireSha256": "a1aa1b65d18f95f933fa649cab61547e6b7dbe7308563ef787e097f59e98c5fe"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "ControlPara.dat/status",
+            "nextSequence": 11,
+            "optionsHex": "",
+            "sequence": 10,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0c",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730c0000000000000000000000000000",
+            "kind": "command",
+            "name": "SheetPara.dat/command",
+            "nextSequence": 12,
+            "optionsHex": "",
+            "sequence": 11,
+            "wireBytes": 32,
+            "wireSha256": "17f54e93681f5c600c2c6ebbaf05b24016283808dfb7c605fb2941cc469884f9"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SheetPara.dat",
+            "nextSequence": 13,
+            "sequence": 12,
+            "wireBytes": 72,
+            "wireSha256": "0d6ae2c9044e5429eb59d813651c2a9214d2b8f01caab2bb2dad765160db94a9"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "SheetPara.dat/status",
+            "nextSequence": 14,
+            "optionsHex": "",
+            "sequence": 13,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0e",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730e0000000000000000000000000000",
+            "kind": "command",
+            "name": "AlarmPara.dat/command",
+            "nextSequence": 15,
+            "optionsHex": "",
+            "sequence": 14,
+            "wireBytes": 32,
+            "wireSha256": "8612bec1a6459e970bde3c668c93b5350bca1234ff07bd79fac914c717d4cf67"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "AlarmPara.dat",
+            "nextSequence": 16,
+            "sequence": 15,
+            "wireBytes": 47840,
+            "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "AlarmPara.dat/status",
+            "nextSequence": 17,
+            "optionsHex": "",
+            "sequence": 16,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "16",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373160000000000000000000000000000",
+            "kind": "command",
+            "name": "0x16/command",
+            "nextSequence": 18,
+            "optionsHex": "",
+            "sequence": 17,
+            "wireBytes": 32,
+            "wireSha256": "e901b5013687755bb6c0a07c8be2493ef869e9a160bce50bc4b86a492a88fa0f"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "0x16/status",
+            "nextSequence": 19,
+            "optionsHex": "",
+            "sequence": 18,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "15",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373150000000000000000000000000000",
+            "kind": "command",
+            "name": "Collect.dat/command",
+            "nextSequence": 20,
+            "optionsHex": "",
+            "sequence": 19,
+            "wireBytes": 32,
+            "wireSha256": "4dedbeef13c0488f86e72664722ea88ae88db4a98e5cb2feb1aa97a48134c052"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Collect.dat",
+            "nextSequence": 21,
+            "sequence": 20,
+            "wireBytes": 1424,
+            "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "Collect.dat/status",
+            "nextSequence": 22,
+            "optionsHex": "",
+            "sequence": 21,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "19",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373190000000000000000000000000000",
+            "kind": "command",
+            "name": "0x19/command",
+            "nextSequence": 23,
+            "optionsHex": "",
+            "sequence": 22,
+            "wireBytes": 32,
+            "wireSha256": "c80a52606a2e737e76de3c4983a9620d672581628b2f42967f77a47dc0cb256b"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "0x19/status",
+            "nextSequence": 24,
+            "optionsHex": "",
+            "sequence": 23,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "12",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373120000000000000000000000000000",
+            "kind": "command",
+            "name": "AddrPara.dat/command",
+            "nextSequence": 25,
+            "optionsHex": "",
+            "sequence": 24,
+            "wireBytes": 32,
+            "wireSha256": "248a552be6883ea75078a29dc8b8433cf98323b7153b450eed9049dd93aa5ad7"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "AddrPara.dat",
+            "nextSequence": 26,
+            "sequence": 25,
+            "wireBytes": 200,
+            "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "AddrPara.dat/status",
+            "nextSequence": 27,
+            "optionsHex": "",
+            "sequence": 26,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "14",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373140000000000000000000000000000",
+            "kind": "command",
+            "name": "PicLenPara.dat/command",
+            "nextSequence": 28,
+            "optionsHex": "",
+            "sequence": 27,
+            "wireBytes": 32,
+            "wireSha256": "f94e64f0e0a57fa378f95bb2e0ca18f4b68d21b9b6275b4d5eb134002ffcc565"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "PicLenPara.dat",
+            "nextSequence": 29,
+            "sequence": 28,
+            "wireBytes": 2700,
+            "wireSha256": "c86619c04fb542585aa8c58dd68f4f68060d2e2a7a8fd9dbf069e681ce89db11"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "PicLenPara.dat/status",
+            "nextSequence": 30,
+            "optionsHex": "",
+            "sequence": 29,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0d",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730d0000000000000000000000000000",
+            "kind": "command",
+            "name": "Curve.dat/command",
+            "nextSequence": 31,
+            "optionsHex": "",
+            "sequence": 30,
+            "wireBytes": 32,
+            "wireSha256": "43c0b42429305fd250eef3a55abafcbbe3ce6ddab5f75151e6e7f2fe81bc999a"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Curve.dat",
+            "nextSequence": 32,
+            "sequence": 31,
+            "wireBytes": 501,
+            "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "Curve.dat/status",
+            "nextSequence": 33,
+            "optionsHex": "",
+            "sequence": 32,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "1e",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973731e0000000000000000000000000000",
+            "kind": "command",
+            "name": "upLoad.knr/command",
+            "nextSequence": 34,
+            "optionsHex": "",
+            "sequence": 33,
+            "wireBytes": 32,
+            "wireSha256": "8502eb0a2bfe9f5ad127bf68760db4131ce990755eb97ff015a3d4f7c2c01859"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "upLoad.knr",
+            "nextSequence": 35,
+            "sequence": 34,
+            "wireBytes": 1621,
+            "wireSha256": "34e7eb3cd6149c52bb1c4c2631ff2416646ec78961751a9984338b4cd96ec007"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "upLoad.knr/status",
+            "nextSequence": 36,
+            "optionsHex": "",
+            "sequence": 35,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "10",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373100000000000000000000000000000",
+            "kind": "command",
+            "name": "ControlPixel.dat/command",
+            "nextSequence": 37,
+            "optionsHex": "",
+            "sequence": 36,
+            "wireBytes": 32,
+            "wireSha256": "09b148c4e24831be64a7c7f820df4ed16c43225a2aa770e3cb8d8f48e222907e"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "ControlPixel.dat",
+            "nextSequence": 38,
+            "sequence": 37,
+            "wireBytes": 11168,
+            "wireSha256": "89835626c2e65b0c0fb04a64b40059f3930db8920d8c1d5ff92a0b7ee1aaf092"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "ControlPixel.dat/status",
+            "nextSequence": 39,
+            "optionsHex": "",
+            "sequence": 38,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "0f",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973730f0000000000000000000000000000",
+            "kind": "command",
+            "name": "SheetPixel.dat/command",
+            "nextSequence": 40,
+            "optionsHex": "",
+            "sequence": 39,
+            "wireBytes": 32,
+            "wireSha256": "73cebb3d396c40afcffca0697e497a208f6709dd3730ff9e9174ca943de7c250"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SheetPixel.dat",
+            "nextSequence": 41,
+            "sequence": 40,
+            "wireBytes": 4137,
+            "wireSha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "SheetPixel.dat/status",
+            "nextSequence": 42,
+            "optionsHex": "",
+            "sequence": 41,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "11",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b69737311d030000000000000000000000000",
+            "kind": "command",
+            "name": "Modbus_RTU_com1.bin/command",
+            "nextSequence": 43,
+            "optionsHex": "d0300000",
+            "sequence": 42,
+            "wireBytes": 32,
+            "wireSha256": "4049ba4e333b1023635893e83ab12377ec6eac447d77073400e4589cfc4ce405"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Modbus_RTU_com1.bin",
+            "nextSequence": 44,
+            "sequence": 43,
+            "wireBytes": 12496,
+            "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        {
+            "commandHex": "35",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b697373350000000000000000000000000000",
+            "kind": "command",
+            "name": "Modbus_RTU_com1.bin/status",
+            "nextSequence": 45,
+            "optionsHex": "",
+            "sequence": 44,
+            "wireBytes": 32,
+            "wireSha256": "0d59948f8c4887f4f00a97e102216926668ef554d82a5061bb7000f10f0c85ee"
+        },
+        {
+            "commandHex": "1b",
+            "expectedReply": {
+                "firstByte": "4f",
+                "length": 1,
+                "readRequestBytes": 4
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973731b0000000000000000000000000000",
+            "kind": "command",
+            "name": "commit",
+            "nextSequence": 46,
+            "optionsHex": "",
+            "sequence": 45,
+            "wireBytes": 32,
+            "wireSha256": "b5a2597ba2a9bcfd956e19edf92174d1dbf44dbe24c9207bc7a69535855c3af4"
+        },
+        {
+            "commandHex": "1a",
+            "expectedReply": {
+                "firstByte": "",
+                "length": 0,
+                "readRequestBytes": 0
+            },
+            "frameHex": "4b696e5365616c53747564696f4b6973731a0000000000000000000000000000",
+            "kind": "command",
+            "name": "reset",
+            "nextSequence": 47,
+            "optionsHex": "",
+            "sequence": 46,
+            "wireBytes": 32,
+            "wireSha256": "f32d68a4140dc16dd6639235213ba44fd2e2bdd3770ee0ddb6414e478b8404ec"
+        },
+        {
+            "ackRequired": false,
+            "kind": "post-reset-read",
+            "name": "reset-read-completion",
+            "nextSequence": 0,
+            "observedReturn": -5,
+            "readRequestBytes": 4,
+            "sequence": 47
+        }
+    ],
+    "payloadCount": 12,
+    "screenDisplayAndTouchConfirmed": false,
+    "segments": [
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SysPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 4998,
+            "wireSha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "ControlPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 7040,
+            "wireSha256": "a1aa1b65d18f95f933fa649cab61547e6b7dbe7308563ef787e097f59e98c5fe"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SheetPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 72,
+            "wireSha256": "0d6ae2c9044e5429eb59d813651c2a9214d2b8f01caab2bb2dad765160db94a9"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "AlarmPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 47840,
+            "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Collect.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 1424,
+            "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "AddrPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 200,
+            "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "PicLenPara.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 2700,
+            "wireSha256": "c86619c04fb542585aa8c58dd68f4f68060d2e2a7a8fd9dbf069e681ce89db11"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Curve.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 501,
+            "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "upLoad.knr",
+            "snapshotOuterLengthBE32": true,
+            "wireBytes": 1621,
+            "wireSha256": "34e7eb3cd6149c52bb1c4c2631ff2416646ec78961751a9984338b4cd96ec007"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "ControlPixel.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 11168,
+            "wireSha256": "89835626c2e65b0c0fb04a64b40059f3930db8920d8c1d5ff92a0b7ee1aaf092"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "SheetPixel.dat",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 4137,
+            "wireSha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6"
+        },
+        {
+            "expectedReply": "none-until-following-status",
+            "kind": "payload",
+            "name": "Modbus_RTU_com1.bin",
+            "snapshotOuterLengthBE32": false,
+            "wireBytes": 12496,
+            "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        }
+    ],
+    "startOptionsHex": "000000",
+    "timeoutMs": 10000,
+    "usbAccessed": false
+}

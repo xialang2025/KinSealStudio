@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "stage": 10,
+  "round": "r2-partial-function-visibility",
+  "recordedAtUtc": "2026-11-14T14:08:55.933065+00:00",
+  "extends": {
+    "path": "field-results.json",
+    "sha256": "2a27c29e6f6c3cdc3af51f02b20f65c229a0d768fc1a7cfd57f2bcec86292328",
+    "scope": "First round bit/word/restore results remain unchanged historical facts."
+  },
+  "thisAuditorAccessedUsb": false,
+  "thisAuditorAccessedPlc": false,
+  "completeStage10": false,
+  "observationSnapshot": {
+    "path": "user-observations-r2-partial.json",
+    "sha256": "4085b02b6769a085ff967956dea0e917970616e30ebd3ab8e34c3391f98979c7",
+    "sourcePath": "docs\\stage10-evidence\\user-observations.json",
+    "sourceSha256AtFreeze": "4085b02b6769a085ff967956dea0e917970616e30ebd3ab8e34c3391f98979c7"
+  },
+  "transfer": {
+    "run": "docs\\stage10-evidence\\physical-function-r1\\run.json",
+    "runSha256": "860b22addeb92db7ccbfdcd65355df4234770a07d5520bb04f47d8c097bdced9",
+    "sourceSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+    "programSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+    "contractSha256": "9f42d20a18a209e62e757143410a2659ef7de99c7e0e9f976e81991575954a66",
+    "payloadCount": 12,
+    "payloadsMatchPreparedContract": true,
+    "receiptCheckPassed": true,
+    "milestones": {
+      "compiled": true,
+      "transferAccepted": true,
+      "commitAccepted": true,
+      "resetWritten": true,
+      "postResetReadCompleted": true,
+      "interfaceReleased": true,
+      "closed": true
+    },
+    "postResetReadResult": -5,
+    "releaseResult": 0,
+    "closeResult": 0,
+    "automatedScreenDisplayAndTouchConfirmed": false
+  },
+  "rawObservation": {
+    "id": "function-visibility-touch",
+    "recordedAtUtc": "2026-11-14T13:43:18.332508+00:00",
+    "question": "同一功能页请点 RESET LB41，是否LB41框为0且右上 GATED CN 按钮隐藏？再点 SET LB41，是否框为1且按钮出现？随后点 LANG EN + N40，再点 GATED CN，独立标识是否回到 LANG = CN？最后 RESET LB41 是否再次隐藏按钮？",
+    "answer": "显现、隐藏和出现后的触控全部符合",
+    "transfer": "physical-function-r1/run.json",
+    "confirmed": [
+      "LB41 reset to 0 and GATED CN hidden",
+      "LB41 set to 1 and GATED CN visible",
+      "after LANG EN then GATED CN, independent marker returned LANG = CN",
+      "LB41 reset hid button again"
+    ],
+    "notCovered": [
+      "touch attempted while hidden",
+      "touch permission separated from visibility",
+      "combined conditions",
+      "all languages/states",
+      "threshold/cancel",
+      "notification order"
+    ],
+    "recovery": "pending restore-macro-display-r2"
+  },
+  "observedSlices": [
+    {
+      "id": "S10-03-VIS-01",
+      "result": "observed_pass_in_defined_slice_recovery_pending",
+      "source": "samples/stage10/function-local.ksp",
+      "sourceSha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+      "actual": [
+        "RESET LB41 selected independent lamp0 and GATED CN hidden",
+        "SET LB41 selected independent lamp1 and GATED CN visible",
+        "LANG EN then visible GATED CN returned independent marker to LANG = CN",
+        "RESET LB41 hid GATED CN again"
+      ],
+      "limits": [
+        "No touch was attempted while hidden; no separate touch-permission claim.",
+        "LANG EN notification LB40 and independently observed EN/CN round trip are awaiting the separate answer.",
+        "No combined conditions/levels/tolerance/threshold/cancel/notification ordering/all-language-frame result."
+      ]
+    }
+  ],
+  "currentScreen": {
+    "lastTransferredSource": "samples/stage10/function-local.ksp",
+    "projectMarkerInSource": "S10-FUNC-LOCAL-1114",
+    "observedControls": [
+      "LB41 independent lamp",
+      "GATED CN conditional button",
+      "LANG = CN final independent marker"
+    ],
+    "separateFullPageMarkerAnswerReceived": false,
+    "secondRestoreTransport": "not_run",
+    "secondRestoreDisplay": "not_run",
+    "continuation": "Current function page remains on screen pending the unanswered language/notification observation and eventual second macro14 restore."
+  },
+  "previousRecovery": {
+    "round": "physical-restore-r1",
+    "status": "historically_confirmed_known_test_page",
+    "isCurrentScreen": false,
+    "runtimeStateRestoredClaimed": false
+  },
+  "aggregateAtThisMilestone": {
+    "actualDownloads": 4,
+    "payloadCountsInOrder": [
+      12,
+      12,
+      14,
+      12
+    ],
+    "fullStage10TasksCompleted": 0,
+    "strictPhysicalTE": "partial_due_unknown_unique_hardware_identity"
+  },
+  "pending": [
+    "Remaining LANG EN / notification LB40 answer",
+    "Second macro14 restore transfer and user page observation",
+    "All other unobserved Stage10 scope"
+  ]
+}

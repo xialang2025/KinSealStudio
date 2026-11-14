@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "stage": 10,
+  "baselineCommit": "daefcdb5287f97ec3190263d991881f3de9e1933",
+  "evidenceKind": "read_only_input_audit_and_root_user_field_evidence",
+  "taskCount": 8,
+  "allStage10TasksComplete": false,
+  "newCRunPerformedByThisAuditor": false,
+  "newTRunPerformedByThisAuditor": false,
+  "newERunPerformedByThisAuditor": false,
+  "usbAccessedByThisAuditor": false,
+  "plcAccessedByThisAuditor": false,
+  "firmwareReadPerformedByThisAuditor": false,
+  "originalOnDeviceProjectBackedUpByThisAuditor": false,
+  "knownTestProjectRecoveryInput": "recovery-input-audit.json",
+  "sampleAudit": "sample-input-audit.json",
+  "humanMatrix": "../../阶段10现场验收矩阵.md",
+  "runtimeResultPolicy": "Only observedSlices in the immutable field-results.json first round and field-results-r2-partial.json milestone have localized observations under their exact identities. Current screen is function; remaining language/notification answer and second restore are pending. Auditor IO flags remain false.",
+  "tasks": [
+    {
+      "id": "S10-01",
+      "title": "冻结现场矩阵与恢复能力",
+      "auditStatus": "partial_input_audit_complete",
+      "eResult": "not_run",
+      "available": [
+        "40份既有样例源身份",
+        "macro-14源与历史契约相符",
+        "14段磁盘wire与历史真实payload-write全部相符",
+        "当前起点标识由用户确认",
+        "冻结旧EXE恢复14段及用户恢复标识/按钮确认"
+      ],
+      "nextAction": "真实型号标签/固件身份仍可补；保留已知测试工程恢复路径与原屏备份/运行数据未恢复的边界。",
+      "openDependencies": [
+        "真实型号/固件身份仍需现场来源",
+        "原屏可编辑工程上载未实现",
+        "运行值/RTC/历史不是已备份数据"
+      ],
+      "resultBoundary": "只证明已知测试工程的恢复输入存在，不证明当前屏内字节或运行状态已备份。"
+    },
+    {
+      "id": "S10-02",
+      "title": "内部LB/LW五类现场行为",
+      "auditStatus": "internal_bit_and_word_lamp_slices_observed",
+      "eResult": "partial_pass",
+      "caseIds": [
+        "S10-02-TEXT-01",
+        "S10-02-GEO-01",
+        "S10-02-BIT-01",
+        "S10-02-WORD-01",
+        "S10-02-WORD-02",
+        "S10-02-WORD-03",
+        "S10-02-LAMP-01",
+        "S10-02-LAMP-02",
+        "S10-02-FUNC-01",
+        "S10-02-FUNC-02"
+      ],
+      "nextAction": "保留四位操作和U16常数0/1/4、U32常数0/3的独立灯现场结果；继续未测试类型/操作/公共属性。",
+      "openDependencies": [
+        "旧位四操作没有独立灯",
+        "旧七操作/七类型字按钮没有独立读值",
+        "U32三十二态单灯没有写激励",
+        "完整键盘/密码/越界/时序待原生期望"
+      ],
+      "resultBoundary": "灯状态可证明所测状态选择；不能代替完整数值读回，不能由U32五态证明32态。",
+      "fieldResults": "field-results.json",
+      "passedSlices": [
+        "S10-02-BIT-01: specified four operations plus independent LB0/1/2 lamps",
+        "S10-02-WORD-01: U16 0/1/4 and U32 0/3 selected states only"
+      ]
+    },
+    {
+      "id": "S10-03",
+      "title": "公共权限按压通知语言重叠",
+      "auditStatus": "LB41_visibility_and_visible_GATED_CN_observed",
+      "eResult": "partial_pass",
+      "caseIds": [
+        "S10-03-VIS-01",
+        "S10-03-TOUCH-01",
+        "S10-03-WCOND-01",
+        "S10-03-PRESS-01",
+        "S10-03-NOTICE-01",
+        "S10-03-LANG-01",
+        "S10-03-OVERLAP-01"
+      ],
+      "nextAction": "先取得独立语言/通知位剩余答复，再实际第二次恢复宏14并观察；权限、隐藏时触控和组合等仍开放。",
+      "openDependencies": [
+        "条件组合/误差/NaN公式未知",
+        "通知先后与拒绝路径未知",
+        "失捕获与阈值精确边界待D",
+        "禁止绕过动态重叠编译拒绝"
+      ],
+      "resultBoundary": "显现与触控分列；单语言单帧不外推全部状态与语言。",
+      "fieldResults": "field-results-r2-partial.json",
+      "passedSlices": [
+        "LB41 reset0 hidden/set1 visible/reset0 hidden again",
+        "Visible GATED CN returned marker to CN after LANG EN sequence"
+      ]
+    },
+    {
+      "id": "S10-04",
+      "title": "画面与工程配置运行",
+      "auditStatus": "configuration_dependencies_separated",
+      "eResult": "not_run",
+      "caseIds": [
+        "S10-04-PAGE-01",
+        "S10-04-CONFIG-01",
+        "S10-04-SYSTEM-01",
+        "S10-04-MACRO-01"
+      ],
+      "nextAction": "按单配置C恢复范围选择最小现场切片，缺C只阻塞对应项。",
+      "openDependencies": [
+        "多页/窗口设备索引未完整恢复",
+        "采集/报警/配方/资料传输配置C未完整恢复",
+        "宏变量交换与启动/周期调度未完整恢复"
+      ],
+      "resultBoundary": "功能按钮弹窗或宏按钮可见不证明其全局配置与运行语义已经实现。"
+    },
+    {
+      "id": "S10-05",
+      "title": "外部Modbus与真实PLC",
+      "auditStatus": "endpoint_plan_defined",
+      "physicalEndpointResult": "blocked_external",
+      "hmiEResult": "not_run",
+      "caseIds": [
+        "S10-05-PC-01",
+        "S10-05-PC-02",
+        "S10-05-HMI-01",
+        "S10-05-TYPE-01"
+      ],
+      "nextAction": "取得明确专用端口/速率/校验/站号/PDU隔离区后，先PC只读标记，再受控写与独立读回。",
+      "openDependencies": [
+        "未指定PLC物理端点/线缆/地址区",
+        "工程地址映射和完整DLL ABI尚未闭合",
+        "多route/多站/资料传输未闭合"
+      ],
+      "resultBoundary": "受控PC回放、PC物理串口、HMI受控从站、HMI真实PLC是不同证据，不能互代。"
+    },
+    {
+      "id": "S10-06",
+      "title": "保持上载失败恢复",
+      "auditStatus": "known_test_page_redownload_and_display_confirmed",
+      "eResult": "partial_pass",
+      "caseIds": [
+        "S10-06-RESTART-01",
+        "S10-06-RESTORE-01",
+        "S10-06-UPLOAD-01",
+        "S10-06-FAULT-01"
+      ],
+      "nextAction": "首轮宏14恢复历史事实保留；当前功能页仍在屏，第二次恢复与观察pending。其余保持/上载/断电继续开放。",
+      "openDependencies": [
+        "真实断电/中断须恢复工装和对应授权",
+        "AMT上载命令/密码/源恢复未实现",
+        "独立介质格式与屏端升级未闭合"
+      ],
+      "resultBoundary": "恢复测试页不恢复寄存器/RTC/历史值；尾读-5不证明保持或首帧，不能承诺回滚。",
+      "fieldResults": "field-results.json",
+      "passedSlices": [
+        "S10-06-RESTORE-01: old frozen EXE fourteen payloads and known marker/button restored"
+      ]
+    },
+    {
+      "id": "S10-07",
+      "title": "性能规模长期运行",
+      "auditStatus": "measurement_axes_defined",
+      "eResult": "not_run",
+      "nextAction": "固定机器/EXE/输入，按单轴测宿主单调时间、内存与临时磁盘；现场时序和长稳独立计时。",
+      "openDependencies": [
+        "原生或明确产品性能阈值尚未冻结",
+        "HMI触控/首帧/扫描需要真实时间轴",
+        "长期运行需要真实起止及累计时长"
+      ],
+      "resultBoundary": "本矩阵无新性能测量；100对象/单页/1..8语言是Lite范围，不是原厂极限。"
+    },
+    {
+      "id": "S10-08",
+      "title": "发布判定",
+      "auditStatus": "limited_release_criteria_defined",
+      "eResult": "not_run",
+      "nextAction": "主执行按功能/型号/固件/协议/层汇总本批真实结果与开放项，绑定可执行包和源码身份。",
+      "openDependencies": [
+        "S10-01至07声明范围的必需E未全部执行",
+        "不能按PC用例数量或8任务有进展关闭完整阶段"
+      ],
+      "resultBoundary": "可发布明确受限版本；阶段10完成须全部声明的必需现场切片有刺激/独立观察/恢复。"
+    }
+  ],
+  "criticalAuditFindings": [
+    {
+      "id": "S10-AUDIT-OBS-01",
+      "source": "samples/bit-button/四操作实机验收.ksp",
+      "finding": "4写按钮只有同址自监视，没有独立灯，不能仅按颜色判写入E。",
+      "scope": "observation_gap"
+    },
+    {
+      "id": "S10-AUDIT-OBS-02",
+      "source": "samples/word-button/七种操作实机验收.ksp",
+      "finding": "LW100/102/104/106/108/110/112均是I16写按钮，没有独立数值读回。",
+      "scope": "observation_gap"
+    },
+    {
+      "id": "S10-AUDIT-STATE-01",
+      "source": "samples/lamp/指示灯实机联调.ksp#/pages/0/objects/2/lamp/multiStateCount",
+      "finding": "LW30为U32五态，只有3/0赋值刺激；文件中的32位字宽不能升级为32态覆盖。",
+      "scope": "coverage_boundary"
+    },
+    {
+      "id": "S10-AUDIT-OBS-03",
+      "source": "samples/function-button/功能按钮实机联调.ksp#/pages/0/objects/1",
+      "finding": "系统时间通知LW40=123，但页中无LW40独立读回；系统时间窗口本身不能证明写值。",
+      "scope": "observation_gap"
+    },
+    {
+      "id": "S10-AUDIT-RECOVERY-01",
+      "source": "docs/stage6-evidence/physical-r2/macro-14-compiled",
+      "finding": "源与14段wire/历史真实写入全部匹配，但它们是已知测试工程的恢复材料，并非屏内原厂程序或运行状态备份。",
+      "scope": "recovery_boundary"
+    }
+  ],
+  "fieldResults": "field-results.json",
+  "fieldResultsLatest": "field-results-r2-partial.json",
+  "currentScreen": "function-local.ksp; language/notification answer and second restore pending"
+}

@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-11-14T13:23:08.183614+00:00",
+  "stage": 10,
+  "sourceActor": "root executed physical downloads; user observed display and touch; this auditor only reads retained receipts",
+  "thisAuditorAccessedUsb": false,
+  "thisAuditorAccessedPlc": false,
+  "completeStage10": false,
+  "rawUserObservations": {
+    "path": "docs\\stage10-evidence\\user-observations.json",
+    "sha256": "7b3b858a70dce0d117c35e905d608c7144efae1fa045eb3f126d788bc7564058",
+    "retainedObservations": [
+      "starting-page",
+      "bit-display",
+      "bit-touch",
+      "word-display-touch",
+      "restore-macro-display"
+    ]
+  },
+  "deviceEndpoint": "USB\\VID_7365&PID_616C\\5&1AA452E9&0&2",
+  "firmwareVersion": "not-observed",
+  "uniqueHardwareSerial": "not-observed",
+  "targetModel": "AMT070W124-L800X480R declared and downloader model check accepted; full physical model label not independently read",
+  "transfers": {
+    "bit": {
+      "run": "docs\\stage10-evidence\\physical-bit-r1\\run.json",
+      "runSha256": "02350703781b59114e47d0a55d305d9176a59f46b3263ed53d83df64aa75d3ef",
+      "sourceSha256": "31aff4be95dbda26a4aeaaae58da381fe3bf0412eec0178bf093bf1188573a25",
+      "programSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+      "contractSha256": "98e9bb19564cfc02c125c3d54c8612a8fed6f482bf660dd576cfac7377d4b0f3",
+      "payloadCount": 12,
+      "payloadWriteCount": 12,
+      "payloadsMatchPreparedContract": true,
+      "transportResult": "pass",
+      "milestones": {
+        "compiled": true,
+        "transferAccepted": true,
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "interfaceReleased": true,
+        "closed": true
+      },
+      "postResetReadResult": -5,
+      "releaseResult": 0,
+      "closeResult": 0,
+      "automatedScreenDisplayAndTouchConfirmed": false,
+      "userObservedEStoredSeparately": true
+    },
+    "word": {
+      "run": "docs\\stage10-evidence\\physical-word-r1\\run.json",
+      "runSha256": "026039fd136a27d5e7d408ae25afa3a59d6d91611ea56d3761c219363e6c4994",
+      "sourceSha256": "78104bee00fd0ee877a9b6b3b1eaa70cc8faaebf768249c0639c315ab43ef2fd",
+      "programSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
+      "contractSha256": "e9dddc1badab372fae998cf74993d8c5f82fdd13674881cbf954f27a3d59e671",
+      "payloadCount": 12,
+      "payloadWriteCount": 12,
+      "payloadsMatchPreparedContract": true,
+      "transportResult": "pass",
+      "milestones": {
+        "compiled": true,
+        "transferAccepted": true,
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "interfaceReleased": true,
+        "closed": true
+      },
+      "postResetReadResult": -5,
+      "releaseResult": 0,
+      "closeResult": 0,
+      "automatedScreenDisplayAndTouchConfirmed": false,
+      "userObservedEStoredSeparately": true
+    },
+    "restore": {
+      "run": "docs\\stage10-evidence\\physical-restore-r1\\run.json",
+      "runSha256": "aba84f18577116cb7b4fc21c75e6d53916b46cdc2b663159ca3d9677fa996164",
+      "sourceSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+      "programSha256": "7dd94b3ccb01b3fa695c773cf6a4e59bbb47ee384277ef242cded1233188c2ef",
+      "contractSha256": "c809ffd7e0a481d98dca9a47887f3ab4877a0e524b260d71a27b2b30b4045bf9",
+      "payloadCount": 14,
+      "payloadWriteCount": 14,
+      "payloadsMatchPreparedContract": true,
+      "transportResult": "pass",
+      "milestones": {
+        "compiled": true,
+        "transferAccepted": true,
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "interfaceReleased": true,
+        "closed": true
+      },
+      "postResetReadResult": -5,
+      "releaseResult": 0,
+      "closeResult": 0,
+      "automatedScreenDisplayAndTouchConfirmed": false,
+      "userObservedEStoredSeparately": true
+    }
+  },
+  "checks": [
+    {
+      "case": "bit",
+      "passed": true
+    },
+    {
+      "case": "word",
+      "passed": true
+    },
+    {
+      "case": "restore",
+      "passed": true
+    },
+    {
+      "observationId": "bit-display",
+      "passed": true
+    },
+    {
+      "observationId": "bit-touch",
+      "passed": true
+    },
+    {
+      "observationId": "word-display-touch",
+      "passed": true
+    },
+    {
+      "observationId": "restore-macro-display",
+      "passed": true
+    }
+  ],
+  "allReceiptAndObservationChecksPassed": true,
+  "observedSlices": [
+    {
+      "id": "S10-02-BIT-01",
+      "result": "pass_in_defined_slice",
+      "transfer": "bit",
+      "observationIds": [
+        "bit-display",
+        "bit-touch"
+      ],
+      "actual": [
+        "S10-BIT-LAMP-1114 and four buttons plus three independent lamps visible; no width warning",
+        "LB0 toggled twice and returned to initial state",
+        "SET LB1 selected lamp state1; RESET selected0",
+        "HOLD LB2 selected1 while held and0 after release"
+      ],
+      "limits": [
+        "No pointer-leave/capture-loss/long-duration/permission/notification/PLC result."
+      ]
+    },
+    {
+      "id": "S10-02-WORD-01",
+      "result": "pass_in_defined_slice",
+      "transfer": "word",
+      "observationIds": [
+        "word-display-touch"
+      ],
+      "actual": [
+        "S10-WORD-LAMP-1114 visible; no width warning",
+        "LW20 U16 constants0/1/4 selected corresponding independent five-state lamp states",
+        "LW30 U32 constants0/3 selected corresponding independent five-state lamp states"
+      ],
+      "limits": [
+        "Lamp state selection is not full register readback.",
+        "No nonzero high-word/word-order/seven numeric types/32-state/arithmetic/keyboard/password result."
+      ]
+    },
+    {
+      "id": "S10-06-RESTORE-01",
+      "result": "pass_known_test_page_redownload_and_display",
+      "transfer": "restore",
+      "observationIds": [
+        "restore-macro-display"
+      ],
+      "actual": [
+        "S06-MACRO-14-1114 and write-constant/execute-macro button restored; no width warning"
+      ],
+      "limits": [
+        "No macro execution, LB/LW/RTC/history retention, power-cycle, native upload, or original user project backup result."
+      ]
+    }
+  ],
+  "recovery": {
+    "transport": "pass",
+    "knownTestPageDisplay": "pass",
+    "nativeOnDeviceProjectBackup": false,
+    "runtimeStateRestoredClaimed": false,
+    "macroExecutionConfirmed": false
+  },
+  "notRun": [
+    "All other Stage10 cases remain pending unless a separate retained result explicitly identifies them.",
+    "No S10-03 common attribute, S10-04 global configuration, external PLC, power interruption, or long-duration E is implied."
+  ]
+}

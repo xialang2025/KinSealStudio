@@ -1,0 +1,156 @@
+{
+  "format": "KinSealStage10-acceptance-peer-review-v1",
+  "reviewedAtUtc": "2026-11-14T13:12:28.498386+00:00",
+  "reviewer": "stage10_performance",
+  "mode": "只读同行复核；仅写本报告，不改工具、测试、生产或性能r2",
+  "sourceHashes": {
+    "tools/stage10_acceptance.py": "be1dad7dd26330451fc29dc747a84c18926d60db71ac544efb0ae5c5ffe04018",
+    "tests/test_stage10_acceptance.py": "59c8e5f780ea110baed7935bafaa5e0b92cdd06a520d9ca70d6d570880aeaa09"
+  },
+  "finalStatusSha256": "650f7469d1730fa2033d73fe259223dfd7dec0f638d2ff7471662f6cef5621b8",
+  "disposition": "当前声明范围内未发现未解决的T/E升格或输入覆盖阻断项；保留明确边界",
+  "fullStage10AcceptancePassed": false,
+  "productionLogicChanged": false,
+  "toolOrTestsModifiedByReviewer": false,
+  "performanceR2Modified": false,
+  "newDeviceIo": false,
+  "blockingFindingsRemaining": [],
+  "resolvedFindings": [
+    {
+      "id": "PEER-01",
+      "issue": "旧实现只校验握手/提交/重启骨架，删去全部payload及对应事件仍可得到transportComplete=true。",
+      "reproduction": "同行曾以内存副本保留首4/末3契约操作并过滤所有非空segment事件，得到12/12 wire operations和transportComplete=true。",
+      "resolution": "固定10/12/14段ABI、逐段command/payload/status、segments与operations长度/hash、完整计数及ACK ABI独立约束。",
+      "ownerEvidence": "docs/stage10-evidence/recovery-owned/unit-red-r8.txt",
+      "finalPeerProbes": [
+        "all_payloads",
+        "one_status",
+        "segment_hash",
+        "payload_count",
+        "ack_length"
+      ]
+    },
+    {
+      "id": "PEER-02",
+      "issue": "仅parse_constant未拦截JSON指数溢出，1e999可变为inf。",
+      "resolution": "parse_float新增math.isfinite检查，正负指数溢出均结构化拒绝。",
+      "ownerEvidence": "docs/stage10-evidence/recovery-owned/unit-red-r12.txt",
+      "finalPeerProbes": [
+        "finite-1e999",
+        "finite--1e999"
+      ]
+    }
+  ],
+  "independentReadOnlyMemoryProbes": [
+    {
+      "name": "all_payloads",
+      "rejected": true,
+      "reason": "contract plan length mismatch"
+    },
+    {
+      "name": "one_status",
+      "rejected": true,
+      "reason": "contract plan length mismatch"
+    },
+    {
+      "name": "segment_hash",
+      "rejected": true,
+      "reason": "contract payload/segments mismatch"
+    },
+    {
+      "name": "payload_count",
+      "rejected": true,
+      "reason": "contract segments/payload count mismatch"
+    },
+    {
+      "name": "ack_length",
+      "rejected": true,
+      "reason": "contract command frame/reply ABI mismatch"
+    },
+    {
+      "name": "finite-1e999",
+      "rejected": true,
+      "reason": "non-finite JSON number"
+    },
+    {
+      "name": "finite--1e999",
+      "rejected": true,
+      "reason": "non-finite JSON number"
+    }
+  ],
+  "areasReviewed": [
+    {
+      "area": "T伪通过",
+      "assessment": "现契约固定AMT070W124-L800X480R与10/12/14段，逐帧/ACK/段名/长度/hash/计数/生命周期一致才可complete；ok旗标不能覆盖缺步骤。"
+    },
+    {
+      "area": "E依赖与物理范围",
+      "assessment": "pass需expectedMatched=true、四类真实哈希artifact、观察与刺激。E只允许physical_hmi，要求具体硬件/端点、独立观察、已确认或无需恢复，并依赖同identity C及physical_hmi T通过。"
+    },
+    {
+      "area": "mock与physical隔离",
+      "assessment": "mock/PC T可记录受控通过但physicalTransportPassed=false并进入限制；mock E被拒，mock T不能满足物理E的T依赖。"
+    },
+    {
+      "area": "固件/端点身份",
+      "assessment": "未知固件明确保留端点/本次运行限制；物理T/E拒绝unknown硬件或端点；fullReplicaCertified始终false。哈希不能认证观察者真实性。"
+    },
+    {
+      "area": "读取与输出路径",
+      "assessment": "artifact路径必须解析后位于显式root，拒绝末级symlink、非普通文件、超限及hash不符；输出路径由CLI显式提供，拒绝manifest/所有已读证据的同路径、大小写及硬链接别名。QSaveFile等价的同目录临时+fsync+replace失败保留旧输出。未从manifest执行任意命令或选择写路径。"
+    },
+    {
+      "area": "缺失case与发布",
+      "assessment": "非空requirements与唯一caseId限定声明覆盖；缺失结果自动not_run，重复/未声明/更改身份范围均拒绝；require-complete对有效但非pass返回3。仅对声明的覆盖集合负责，不自动证明全部阶段10目录已列齐。"
+    },
+    {
+      "area": "历史编译与原始观测",
+      "assessment": "历史程序/工程/契约/编译manifest绑定后，逐个重读实际payload长度/hash并核upLoad BE32线格式；实际旧失传输仍fail，完整旧T因源码/硬件/固件缺失保持partial，E全部not_run，原用户观察原样保留。"
+    }
+  ],
+  "retainedOwnerExecutionReview": {
+    "sourceHashesMatch": true,
+    "unitMethods": 37,
+    "unitExitCode": 0,
+    "unitLogSha256": "a31f0d1c3e3c8c4cbd6fa872a3a54edd9de2bb7ceccced3f3464163f3a2ce533",
+    "unitSuiteRerunByPeer": false,
+    "allRetainedExecutionOutputHashesMatch": true,
+    "historicalImports": [
+      {
+        "run": "physical-r1",
+        "sample": "static-10",
+        "status": "partial",
+        "T": "partial",
+        "E": "not_run"
+      },
+      {
+        "run": "physical-r1",
+        "sample": "dynamic-12",
+        "status": "fail",
+        "T": "fail",
+        "E": "not_run"
+      },
+      {
+        "run": "physical-r2",
+        "sample": "dynamic-12",
+        "status": "partial",
+        "T": "partial",
+        "E": "not_run"
+      },
+      {
+        "run": "physical-r2",
+        "sample": "macro-14",
+        "status": "partial",
+        "T": "partial",
+        "E": "not_run"
+      }
+    ],
+    "pendingTemplateGateExitCode": 3
+  },
+  "residualLimits": [
+    "证明文件的actor、expectedMatched、independentObservation等是提交者声明；本工具核一致性，不替代现场观察者或签名认证。",
+    "status=pass仅表示提交的声明覆盖集合通过，缺失于requirements的产品功能需由阶段10覆盖矩阵与统一台账继续管理。",
+    "显式CLI输出位置不限定在root内；保护所有实际读取输入，但操作者仍需为新报告指定专用输出位置。",
+    "没有新USB/PLC/断电/恢复或长稳刺激，不能从本工具结构化复核推出现场E通过。"
+  ]
+}

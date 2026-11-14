@@ -1,2 +1,12 @@
 #20261114-8 add: Retain the exact bytes of hashed Stage9 evidence across checkouts.
 docs/stage9-evidence/** -text
+#20261114-9 add: Preserve exact physical and performance evidence bytes.
+docs/stage10-evidence/** -text
+#20261114-9 add: Preserve the exact bytes bound by the Stage10 fixture/tool manifests.
+samples/stage10/** -text
+tools/make_stage10_samples.py -text
+tools/make_stage10_function_sample.py -text
+tools/run_stage10_samples.py -text
+tools/run_stage10_performance.py -text
+tools/stage10_acceptance.py -text
+tests/test_stage10_acceptance.py -text

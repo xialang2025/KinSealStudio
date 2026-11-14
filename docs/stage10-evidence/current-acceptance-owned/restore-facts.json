@@ -1,0 +1,76 @@
+{
+  "format": "KinSealStage10-current-facts-v1",
+  "sample": "restore-macro-14",
+  "identityId": "restore",
+  "identitySha256": "16fb7cd5a3b9959bbca586aa50bb8053c47c626fa434eb69dd7abe4e7e82f08e",
+  "artifactAuditAtUtc": "2026-11-14T13:26:28.043553+00:00",
+  "stimulusExactTime": "unknown; no per-touch timestamps were recorded",
+  "observationClockMeaning": "User record timestamps are answer-recording times, not invented stimulus/device times.",
+  "transportAudit": {
+    "transportComplete": true,
+    "wireOperationsObserved": 90,
+    "wireOperationsRequired": 90,
+    "mismatches": [],
+    "recoveryDisposition": "transport_complete_screen_unobserved",
+    "hmiExecutionConfirmed": false,
+    "automaticRollbackProven": false,
+    "powerRetentionProven": false
+  },
+  "localDisplayAndSelectedBehaviorConfirmedByUser": true,
+  "rawUserObservations": [
+    {
+      "id": "restore-macro-display",
+      "recordedAtUtc": "2026-11-14T13:17:52.786802+00:00",
+      "question": "已重新下载原来的宏14测试工程，14段、提交和重启收尾均成功。现在实屏是否恢复显示“S06-MACRO-14-1114”和“写常数并执行宏”按钮，且没有宽度提示？",
+      "answer": "已恢复标识和按钮，无宽度提示",
+      "transfer": "physical-restore-r1/run.json",
+      "confirmed": [
+        "S06-MACRO-14-1114 marker restored",
+        "write constant and execute macro button visible",
+        "no width warning"
+      ],
+      "notCovered": [
+        "macro execution",
+        "LB/LW retention",
+        "RTC retention",
+        "power cycle",
+        "native upload",
+        "original user project backup"
+      ]
+    }
+  ],
+  "recoveryUserObservation": {
+    "id": "restore-macro-display",
+    "recordedAtUtc": "2026-11-14T13:17:52.786802+00:00",
+    "question": "已重新下载原来的宏14测试工程，14段、提交和重启收尾均成功。现在实屏是否恢复显示“S06-MACRO-14-1114”和“写常数并执行宏”按钮，且没有宽度提示？",
+    "answer": "已恢复标识和按钮，无宽度提示",
+    "transfer": "physical-restore-r1/run.json",
+    "confirmed": [
+      "S06-MACRO-14-1114 marker restored",
+      "write constant and execute macro button visible",
+      "no width warning"
+    ],
+    "notCovered": [
+      "macro execution",
+      "LB/LW retention",
+      "RTC retention",
+      "power cycle",
+      "native upload",
+      "original user project backup"
+    ]
+  },
+  "recoveryScope": "Known macro-14 test project re-downloaded and marker/button visible; no runtime values, RTC, history, native upload, original project backup, macro execution or power retention claim.",
+  "hardwareUniqueSerialKnown": false,
+  "firmwareKnown": false,
+  "sourceManifestMeaning": "Hash of original executable package source/build manifest; not the KSP hash or current edited source tree.",
+  "sourceCodeCommitAsRecorded": "76def3c3f2a752082a28c0d2f2871caa9f06a03e",
+  "nativeRawSourceSha256": "36b714c9fb66d770a7a64559a47794759878d3c86855d602ee59aa922fbada55",
+  "normalizedProjectSha256": "52f34ee838adbbf47409b3656b3794ff397f50e2338c2480ffcc5d57d9ea5818",
+  "strictTResult": "partial",
+  "strictEResult": "partial",
+  "limits": [
+    "Unique hardware serial not observed; USB instance path is an endpoint identity only.",
+    "Firmware version not read; no cross-firmware or cross-device claim.",
+    "Only the user's explicitly listed stimuli and independent lamp/display states are confirmed."
+  ]
+}
