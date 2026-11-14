@@ -10142,7 +10142,7 @@
       "status": "受限切片已交付，完整任务仍有欠项",
       "activeOpen": true,
       "completedScope": "本轮实际构建/29帮助Qt、31打包工具、16发布保护测试及便携/静态依赖证据；规则26/协议99、支持限制/说明/样例/清理归档。",
-      "remaining": "公开分发资格、全环境/全入口/设备验收仍未完成；Git及包代码绑定仅以最终实际回执为准。",
+      "remaining": "公开分发资格、全环境/全入口/设备验收仍未完成；Git及包代码绑定仅以最终实际回执为准。 最终文档提交已留本地，GitHub443连接失败，推送状态待网络恢复后确认。",
       "blockers": [
         "上述S11环境/许可/全帮助欠项",
         "阶段10硬件身份/语言通知及第二恢复"
@@ -177764,7 +177764,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除261844538B，审批拒绝133836489B保留/该项释放0。 程序f05adf63已推送GitHub，6355源码/资源及最终包已绑定；1891用户差异保护通过。",
+  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除261844538B，审批拒绝133836489B保留/该项释放0。 程序f05adf63已推送GitHub，6355源码/资源及最终包已绑定；1891用户差异保护通过。 程序源码推送已确认；最终文档提交遇网络故障，状态待确认，本地保留。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178772,7 +178772,15 @@
       "manifestSha256": "8221e4ac324ca27e072d71dc1f4f9ad6aa3821cf137b79525f9de182cfbdcb63",
       "sourceFiles": 6355,
       "protectedUserFiles": 1891,
-      "preservedOverlappingUserDeltas": 2
+      "preservedOverlappingUserDeltas": 2,
+      "metadataPush": {
+        "state": "unconfirmed_after_network_failure",
+        "lastLocalMetadataCommit": "8a8b962a82a1aa22baf2ab45d246d12c2cc7b05c",
+        "programSourceCommitConfirmedOnGitHub": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+        "reason": "RPC connection reset, then GitHub443 connection failures; local commits preserved; remote metadata acceptance cannot be confirmed",
+        "evidence": "docs/stage11-evidence/push-metadata-unconfirmed.json",
+        "nextAction": "网络恢复后先核远端main，再普通git push origin main，禁止force"
+      }
     }
   ],
   "auditSourceCommitRetained": "daefcdb5287f97ec3190263d991881f3de9e1933",

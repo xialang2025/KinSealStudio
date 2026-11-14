@@ -1,0 +1,59 @@
+{
+  "format": "KinSealLite-stage11-metadata-publication-v1",
+  "baseline": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+  "candidate": "8a8b962a82a1aa22baf2ab45d246d12c2cc7b05c",
+  "message": "2026年11月15日 01:10:17，修改4：登记阶段11最终包绑定与发布回执",
+  "paths": [
+    "README.md",
+    "design_plan/未完成任务总台账.json",
+    "design_plan/未完成任务总台账.md",
+    "docs/UI编译规则与阶段交付规范.md",
+    "docs/stage11-evidence/commit-binding-r1/commit-binding.json",
+    "docs/stage11-evidence/commit-binding-r1/previous-manifest.json",
+    "docs/stage11-evidence/delivery-r1.json",
+    "docs/stage11-evidence/package-final-verify.json",
+    "docs/stage11-evidence/progress.json",
+    "docs/stage11-evidence/publication-actual/final-code-candidate.json",
+    "docs/stage11-evidence/publication-actual/final-code-publication.json",
+    "docs/stage11-evidence/publication-actual/final-user-protection-snapshot.json",
+    "docs/stage11-evidence/publication-actual/post-publication-stat-refresh.json",
+    "docs/stage11-evidence/publication-actual/push-code-confirmed.json",
+    "docs/阶段11逐项进度.md",
+    "docs/阶段11部署帮助与发布验收.md",
+    "程序修改记录.md"
+  ],
+  "method": "native git merge --ff-only; changed paths disjoint from all1891 protected user paths",
+  "beforeProtectionPassed": true,
+  "noForce": true,
+  "mergeExitCode": 0,
+  "afterProtectionPassed": true,
+  "protectedUserFiles": 1891,
+  "exactMetadataFiles": 15,
+  "textEnvelopeOnlyFiles": 2,
+  "outcome": "local_commit_retained_push_incomplete",
+  "pushExitCode": 1,
+  "pushStderr": "error: RPC failed; curl 55 Recv failure: Connection was reset\nsend-pack: unexpected disconnect while reading sideband packet\nfatal: the remote end hung up unexpectedly\nEverything up-to-date\n",
+  "retryAndConfirmation": [
+    {
+      "kind": "remote-check",
+      "attempt": 1,
+      "exitCode": 128,
+      "remoteHead": null,
+      "stderr": "fatal: unable to access 'https://github.com/xialang2025/KinSealStudio.git/': Failed to connect to github.com:443 after 21112 ms: Could not connect to server\n"
+    },
+    {
+      "kind": "push-retry",
+      "exitCode": 128,
+      "stdout": "",
+      "stderr": "fatal: unable to access 'https://github.com/xialang2025/KinSealStudio.git/': Failed to connect to github.com:443 after 21079 ms: Could not connect to server\n"
+    },
+    {
+      "kind": "remote-check",
+      "attempt": 2,
+      "exitCode": 128,
+      "remoteHead": null,
+      "stderr": "fatal: unable to access 'https://github.com/xialang2025/KinSealStudio.git/': Failed to connect to github.com:443 after 21080 ms: Could not connect to server\n"
+    }
+  ],
+  "confirmedAtUtc": "2026-11-14T17:12:45.640487+00:00"
+}
