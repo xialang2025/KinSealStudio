@@ -21,6 +21,138 @@ static bool compilationIssue(const HmiProject &project, const HmiObject &object,
 }
 
 /******************************************************************************
+ * Function Name   : polygonOrientation
+ * Description     : Compute the exact directed area for already bounded integer screen coordinates.
+ * Input Parameters: first, second, third
+ * Return Value    : Signed twice-area of the three-point triangle.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static qint64 polygonOrientation(const QPoint &first, const QPoint &second, const QPoint &third) //20261114-1 add
+{
+    return qint64(second.x()-first.x())*qint64(third.y()-first.y())-
+           qint64(second.y()-first.y())*qint64(third.x()-first.x());
+}
+
+/******************************************************************************
+ * Function Name   : polygonPointOnSegment
+ * Description     : Include both endpoints when detecting unproved polygon edge contacts.
+ * Input Parameters: point, first, second
+ * Return Value    : True when the point lies on the closed integer segment.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool polygonPointOnSegment(const QPoint &point, const QPoint &first, const QPoint &second) //20261114-1 add
+{
+    return polygonOrientation(first,second,point)==0 &&
+           point.x()>=qMin(first.x(),second.x()) && point.x()<=qMax(first.x(),second.x()) &&
+           point.y()>=qMin(first.y(),second.y()) && point.y()<=qMax(first.y(),second.y());
+}
+
+/******************************************************************************
+ * Function Name   : polygonSegmentsTouch
+ * Description     : Reject nonadjacent crossings, endpoint contacts and collinear overlaps without floating-point ties.
+ * Input Parameters: first, second, third, fourth
+ * Return Value    : True when the two closed integer segments intersect or touch.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool polygonSegmentsTouch(const QPoint &first, const QPoint &second, const QPoint &third, const QPoint &fourth) //20261114-1 add
+{
+    qint64 firstSide=polygonOrientation(first,second,third);
+    qint64 secondSide=polygonOrientation(first,second,fourth);
+    qint64 thirdSide=polygonOrientation(third,fourth,first);
+    qint64 fourthSide=polygonOrientation(third,fourth,second);
+
+    if (polygonPointOnSegment(third,first,second) || polygonPointOnSegment(fourth,first,second) ||
+        polygonPointOnSegment(first,third,fourth) || polygonPointOnSegment(second,third,fourth))
+    {
+        return true;
+    }
+    return ((firstSide<0 && secondSide>0) || (firstSide>0 && secondSide<0)) &&
+           ((thirdSide<0 && fourthSide>0) || (thirdSide>0 && fourthSide<0));
+}
+
+/******************************************************************************
+ * Function Name   : prepareDevicePolygon
+ * Description     : Admit only sampled simple polygons whose isolated background patches cannot erase another object.
+ * Input Parameters: project, object, objects, error, issue
+ * Return Value    : True for the bounded polygon slice; false with an exact rejected field.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool prepareDevicePolygon(const HmiProject &project, const HmiObject &object, const QList<HmiObject> &objects,
+                                 QString *error, QJsonObject *issue) //20261114-1 add
+{
+    QVector<QPoint> vertices;
+    QPointF normalized;
+    QPointF absolute;
+    HmiObject peer;
+    QRect patch=object.geometry.adjusted(-1,-1,2,2).intersected(QRect(0,0,800,480));
+    QRect peerPatch;
+    qint64 twiceArea=0;
+    int index;
+    int other;
+    int count=object.graphic.points.size();
+
+    if (object.graphic.lineStyle!=0 && object.graphic.lineStyle!=1)
+    { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("多边形只开放已核无线/实线。"),error,issue); }
+    if (object.graphic.fillStyle!=0 && object.graphic.fillStyle!=1)
+    { return compilationIssue(project,object,QStringLiteral("graphic.fillStyle"),object.graphic.fillStyle,QStringLiteral("多边形只开放已核无填充/纯色填充。"),error,issue); }
+    if (object.graphic.lineWidth!=1)
+    { return compilationIssue(project,object,QStringLiteral("graphic.lineWidth"),object.graphic.lineWidth,QStringLiteral("多边形本切片只开放宽度1。"),error,issue); }
+    if (object.graphic.alpha!=255)
+    { return compilationIssue(project,object,QStringLiteral("graphic.alpha"),object.graphic.alpha,QStringLiteral("多边形本切片只开放不透明颜色。"),error,issue); }
+    if (object.graphic.lineColor!=QColor(Qt::black) || object.graphic.foreground!=QColor(Qt::white) || object.graphic.background!=QColor(Qt::black))
+    { return compilationIssue(project,object,QStringLiteral("graphic.colors"),QJsonArray{object.graphic.lineColor.name(QColor::HexArgb),object.graphic.foreground.name(QColor::HexArgb),object.graphic.background.name(QColor::HexArgb)},QStringLiteral("多边形本切片只开放已核黑边/白前景/黑背景草稿，包括休眠颜色。"),error,issue); }
+    if (object.graphic.endArrow!=0 || object.graphic.endCap!=0)
+    { return compilationIssue(project,object,QStringLiteral("graphic.endpoints"),QJsonArray{object.graphic.endArrow,object.graphic.endCap},QStringLiteral("多边形本切片只开放无箭头及端点0。"),error,issue); }
+    if (object.geometry.width()<100 || object.geometry.height()<100)
+    { return compilationIssue(project,object,QStringLiteral("geometry.sampledSize"),QJsonArray{object.geometry.width(),object.geometry.height()},QStringLiteral("多边形本切片只开放宽高至少100的已采样范围。"),error,issue); }
+    if (count<3 || count>8)
+    { return compilationIssue(project,object,QStringLiteral("graphic.points"),count,QStringLiteral("多边形本切片只开放3到8个有序顶点。"),error,issue); }
+    Q_FOREACH (normalized,object.graphic.points)
+    {
+        absolute=QPointF(object.geometry.x()+normalized.x()*object.geometry.width(),object.geometry.y()+normalized.y()*object.geometry.height());
+        // Check finiteness and screen bounds before rounding so malformed input never reaches integer conversion.
+        if (!std::isfinite(normalized.x()) || !std::isfinite(normalized.y()) || normalized.x()<0 || normalized.x()>1 || normalized.y()<0 || normalized.y()>1 ||
+            !std::isfinite(absolute.x()) || !std::isfinite(absolute.y()) || absolute.x()<2 || absolute.x()>698 || absolute.y()<2 || absolute.y()>398 ||
+            std::abs(absolute.x()-std::round(absolute.x()))>1e-8 || std::abs(absolute.y()-std::round(absolute.y()))>1e-8)
+        { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("多边形仅开放已采样整数顶点，X范围2到698、Y范围2到398。"),error,issue); }
+        vertices.append(QPoint(qRound(absolute.x()),qRound(absolute.y())));
+    }
+    for (index=0;index<count;++index)
+    {
+        for (other=index+1;other<count;++other)
+        {
+            if (vertices[index]==vertices[other])
+            { return compilationIssue(project,object,QStringLiteral("graphic.points.duplicate"),QJsonArray{index,other},QStringLiteral("多边形取整后不得含任何重复顶点。"),error,issue); }
+        }
+        if (polygonOrientation(vertices[index],vertices[(index+1)%count],vertices[(index+2)%count])==0)
+        { return compilationIssue(project,object,QStringLiteral("graphic.points.collinear"),index,QStringLiteral("多边形连续三个顶点共线的路径尚未核定。"),error,issue); }
+        twiceArea+=qint64(vertices[index].x())*vertices[(index+1)%count].y()-qint64(vertices[index].y())*vertices[(index+1)%count].x();
+    }
+    if (twiceArea==0)
+    { return compilationIssue(project,object,QStringLiteral("graphic.points.area"),0,QStringLiteral("多边形面积不能为零。"),error,issue); }
+    for (index=0;index<count;++index)
+    {
+        for (other=index+1;other<count;++other)
+        {
+            // Consecutive edges share exactly one endpoint; all other edge contacts are outside this simple-path slice.
+            if (other==index+1 || (index==0 && other==count-1)) { continue; }
+            if (polygonSegmentsTouch(vertices[index],vertices[(index+1)%count],vertices[other],vertices[(other+1)%count]))
+            { return compilationIssue(project,object,QStringLiteral("graphic.points.intersection"),QJsonArray{index,other},QStringLiteral("多边形非邻边不能交叉或接触。"),error,issue); }
+        }
+    }
+    Q_FOREACH (peer,objects)
+    {
+        if (peer.id==object.id) { continue; }
+        peerPatch=peer.geometry.adjusted(-1,-1,2,2).intersected(QRect(0,0,800,480));
+        // Treat the physical pixel patch boundaries as closed, preserving even a one-pixel gap before composition is proved.
+        if (patch.x()<=peerPatch.x()+peerPatch.width() && peerPatch.x()<=patch.x()+patch.width() &&
+            patch.y()<=peerPatch.y()+peerPatch.height() && peerPatch.y()<=patch.y()+patch.height())
+        { return compilationIssue(project,object,QStringLiteral("geometry.overlap"),peer.id,QStringLiteral("多边形背景补片与其它对象扩展补片相交或接触的合成尚未核定。"),error,issue); }
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : prepareDeviceCompilePlan
  * Description     : Freeze supported ordered semantics and reject unproved graphics before allocating output segments.
  * Input Parameters: project, plan, error, issue
@@ -52,6 +184,12 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
+        if (object.type==QStringLiteral("polygon")) //20261114-1 add: Only the proven integer simple-path slice reaches the independent background raster.
+        {
+            if (!prepareDevicePolygon(project,object,prepared.objects,error,issue)) { return false; }
+            ++prepared.staticPolygonCount;
+            continue;
+        }
         if (object.type == QStringLiteral("roundrect")) //20261113-16 add: Gate the sampled closed rectangle, including the independently observed line/fill switches.
         {
             if (object.graphic.radiusX != 10 || object.graphic.radiusY != 10)

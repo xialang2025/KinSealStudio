@@ -53,6 +53,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/device_compile_plan.h
     src/device_roundrect_raster.cpp #20261113-16 add: Independently verified fixed background spans.
     src/device_roundrect_raster.h
+    src/device_polygon_raster.cpp #20261114-1 add: Independent bounded cell-area coverage.
+    src/device_polygon_raster.h
     src/device_package.cpp
     src/device_package.h
     src/independent_downloader.cpp #20261108-10 add

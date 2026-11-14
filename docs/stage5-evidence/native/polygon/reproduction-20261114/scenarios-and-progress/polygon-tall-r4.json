@@ -1,0 +1,90 @@
+[
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_polygon"
+  },
+  {
+    "op": "scene-move",
+    "x": 100,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 100,
+    "y": 100
+  },
+  {
+    "op": "scene-move",
+    "x": 220,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 220,
+    "y": 100
+  },
+  {
+    "op": "scene-move",
+    "x": 190,
+    "y": 350
+  },
+  {
+    "op": "scene-click",
+    "x": 190,
+    "y": 350
+  },
+  {
+    "op": "scene-click",
+    "x": 190,
+    "y": 350,
+    "button": "right"
+  },
+  {
+    "op": "scene-move",
+    "x": 700,
+    "y": 400
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "polygon-tall"
+  },
+  {
+    "op": "scene-read",
+    "label": "polygon-tall"
+  },
+  {
+    "op": "save",
+    "output": "polygon-tall.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

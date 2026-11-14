@@ -1,0 +1,64 @@
+[
+  {
+    "op": "action",
+    "name": "action_polygon"
+  },
+  {
+    "op": "scene-move",
+    "x": 400,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 400,
+    "y": 100
+  },
+  {
+    "op": "scene-move",
+    "x": 600,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 600,
+    "y": 100
+  },
+  {
+    "op": "scene-move",
+    "x": 550,
+    "y": 220
+  },
+  {
+    "op": "scene-click",
+    "x": 550,
+    "y": 220
+  },
+  {
+    "op": "scene-click",
+    "x": 550,
+    "y": 220,
+    "button": "right"
+  },
+  {
+    "op": "scene-move",
+    "x": 700,
+    "y": 400
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 2,
+    "label": "polygon-two-objects"
+  },
+  {
+    "op": "scene-read",
+    "label": "polygon-two-objects"
+  },
+  {
+    "op": "save",
+    "output": "polygon-two-objects.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_polygon"
+  },
+  {
+    "op": "scene-click",
+    "x": 250,
+    "y": 220
+  },
+  {
+    "op": "scene-click",
+    "x": 300,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 100,
+    "y": 100
+  },
+  {
+    "op": "scene-click",
+    "x": 100,
+    "y": 100,
+    "button": "right"
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "polygon-reversed"
+  },
+  {
+    "op": "scene-read",
+    "label": "polygon-reversed"
+  },
+  {
+    "op": "save",
+    "output": "polygon-reversed.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

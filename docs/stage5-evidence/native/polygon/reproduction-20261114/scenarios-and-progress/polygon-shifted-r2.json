@@ -1,0 +1,70 @@
+[
+  {
+    "op": "scene-assert",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "scene-select",
+    "rects": [
+      [
+        100,
+        100,
+        200,
+        120
+      ]
+    ]
+  },
+  {
+    "op": "action",
+    "name": "action_delete"
+  },
+  {
+    "op": "action",
+    "name": "action_polygon"
+  },
+  {
+    "op": "scene-click",
+    "x": 75,
+    "y": 65
+  },
+  {
+    "op": "scene-click",
+    "x": 235,
+    "y": 65
+  },
+  {
+    "op": "scene-click",
+    "x": 195,
+    "y": 185
+  },
+  {
+    "op": "scene-click",
+    "x": 195,
+    "y": 185,
+    "button": "right"
+  },
+  {
+    "op": "scene-count-assert",
+    "count": 1,
+    "label": "polygon-shifted"
+  },
+  {
+    "op": "scene-read",
+    "label": "polygon-shifted"
+  },
+  {
+    "op": "save",
+    "output": "polygon-shifted.sm"
+  },
+  {
+    "op": "native-compile",
+    "label": "created"
+  }
+]

@@ -1,8 +1,8 @@
 {
   "stage": 5,
   "totalTasks": 10,
-  "active": "G06便携与规则补齐已交付，继续其余图形、动态记录与多页配置",
-  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G06圆角矩形",
+  "active": "G09多边形受限C完成；准备第七批便携交付，继续椭圆正式变体",
+  "selectedSlice": "既有五类 + G04正交折线 + G10静态表格 + G08矩形 + G01普通直线 + G02两端点自由直线 + G06圆角矩形 + G09多边形",
   "usbAccessed": false,
   "complete": false,
   "tasks": [
@@ -14,22 +14,22 @@
     {
       "id": "S05-02",
       "state": "passed_selected_corpus_with_open_nondeterminism",
-      "scope": "既有50场景加圆角11独立场景；圆角23次有效编译/13canonical，非确定区无忽略掩码。"
+      "scope": "既有61场景加多边形18独立场景；37次有效编译/20canonical，无效采样单列，非确定区无忽略掩码。"
     },
     {
       "id": "S05-03",
       "state": "passed_bounded_single_page_projection",
-      "scope": "共享不可变单页计划、六类静态图形守卫；完整多页IR未恢复。"
+      "scope": "共享不可变单页计划、七类受限背景守卫；完整多页IR未恢复。"
     },
     {
       "id": "S05-04",
       "state": "existing_five_revalidated_static_slice_has_no_new_record",
-      "scope": "五类控制记录与六类静态背景；26个新动态类型未恢复。"
+      "scope": "五类控制记录与七类静态背景；26个新动态类型未恢复。"
     },
     {
       "id": "S05-05",
-      "state": "passed_six_canonical_background_cases",
-      "scope": "61个独立类型/场景；圆角13份实际编译全帧相等，不推广其它曲线。"
+      "state": "passed_seven_canonical_background_families",
+      "scope": "79个独立类型/场景；多边形20份原厂整帧夹具，椭圆默认候选不当正式支持。"
     },
     {
       "id": "S05-06",
@@ -49,16 +49,16 @@
     {
       "id": "S05-09",
       "state": "passed_selected_regression_and_review",
-      "scope": "最终482/0/0：核心248与完整控件编辑器234；r1及历史结果分别保留。"
+      "scope": "最终530/0/0：核心296与完整控件编辑器234；red2/20/0与旧批次各自保留。"
     },
     {
       "id": "S05-10",
       "state": "passed_owned_cleanup",
-      "scope": "本批圆角690文件与新增audit180文件共607813875逻辑字节定向清理；原始观测gzip回解核SHA。"
+      "scope": "本批定向清理2561文件/1760424262逻辑字节；原始gzip回解核SHA、全部独有证据及许可证保留。"
     }
   ],
   "softwareTests": {
-    "passed": 482,
+    "passed": 530,
     "failed": 0,
     "skipped": 0
   },
@@ -68,7 +68,7 @@
     "skipped": 0
   },
   "baselineCliCases": 10,
-  "nativeCanonicalPixelCases": 61,
+  "nativeCanonicalPixelCases": 79,
   "hardwareTransferExecuted": false,
   "completeIndependentCompatibility": false,
   "unresolved": [
@@ -169,6 +169,22 @@
     "cleanupFiles": 870,
     "cleanupLogicalBytes": 607813875,
     "report": "docs/阶段5_圆角矩形定点背景编译与差分验收.md",
+    "usbAccessed": false,
+    "E": false
+  },
+  "polygonSlice": {
+    "nativeCompilations": 37,
+    "canonicalFixtures": 20,
+    "independentCanonicalFrameCases": 18,
+    "negativeTests": 27,
+    "softwareTests": {
+      "passed": 530,
+      "failed": 0,
+      "skipped": 0
+    },
+    "cleanupFiles": 2561,
+    "cleanupLogicalBytes": 1760424262,
+    "report": "docs/阶段5_多边形单元格背景编译与差分验收.md",
     "usbAccessed": false,
     "E": false
   }

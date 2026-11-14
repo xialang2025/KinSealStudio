@@ -53,6 +53,11 @@ private slots:
     void lineUnprovedFieldsPreserveOutput_data();
     void lineUnprovedFieldsPreserveOutput();
     void lineSourceAndPackageGates();
+    void polygonCanonicalFrames_data(); //20261114-1 add
+    void polygonCanonicalFrames();
+    void polygonUnprovedFieldsPreserveOutput_data();
+    void polygonUnprovedFieldsPreserveOutput();
+    void polygonSourceAndPackageGates();
     void roundrectCanonicalFrames_data(); //20261113-16 add
     void roundrectCanonicalFrames();
     void roundrectUnprovedFieldsPreserveOutput_data();
@@ -64,6 +69,24 @@ private slots:
     void freelineUnprovedFieldsPreserveOutput();
     void freelineSourceAndPackageGates();
 };
+
+/******************************************************************************
+ * Function Name   : polygonProject
+ * Description     : Construct typed default vertices without a native source or baked image.
+ * Input Parameters: None
+ * Return Value    : One black simple triangle on the admitted target.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static HmiProject polygonProject() //20261114-1 add
+{
+    HmiProject project;
+    HmiObject object;
+
+    object.type=QStringLiteral("polygon");object.id=QStringLiteral("stage5-polygon");object.name=QStringLiteral("多边形");
+    object.text.clear();object.address.clear();object.geometry=QRect(100,100,200,120);
+    object.graphic.foreground=Qt::white;object.graphic.background=Qt::black;
+    object.graphic.points={QPointF(0,0),QPointF(1,0),QPointF(.75,1)};project.objects={object};return project;
+}
 
 /******************************************************************************
  * Function Name   : lineProject
@@ -346,6 +369,7 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     HmiObject table; //20261113-12 add: Both static families must coexist with the five existing record families.
     HmiObject rectangle; //20261113-13 add: Three static families must not disturb five dynamic raw offsets.
     HmiObject line; //20261113-14 add: A fourth background family must leave the existing dynamic record count unchanged.
+    HmiObject polygon; //20261114-1 add: A seventh background family must preserve dynamic records.
     HmiObject roundrect; //20261113-16 add: A sixth static family must preserve all five dynamic records.
     HmiObject freeline; //20261113-15 add: The fifth background family contributes no dynamic records.
     QSet<QString> found;
@@ -370,7 +394,8 @@ void Stage5CompilerTests::mixedExistingFiveAndPolylineCloseIndexes() //20261113-
     line = lineProject().objects.first(); line.geometry = QRect(400,350,100,60); project.objects.append(line); //20261113-14 add
     freeline = freelineProject().objects.first(); freeline.geometry = QRect(600,350,100,60); project.objects.append(freeline); //20261113-15 add
     roundrect = rectangleProject().objects.first(); roundrect.type = QStringLiteral("roundrect"); roundrect.id = QStringLiteral("stage5-roundrect"); roundrect.geometry.moveTopLeft(QPoint(350,80)); project.objects.append(roundrect); //20261113-16 add
-    QCOMPARE(project.objects.size(),11);
+    polygon=polygonProject().objects.first();polygon.geometry=QRect(590,80,100,100);project.objects.append(polygon); //20261114-1 add
+    QCOMPARE(project.objects.size(),12);
     QCOMPARE(found.size(),5); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));
     QCOMPARE(payloads.size(),12); QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
     QCOMPARE(payloads[10].size(),5*640);
@@ -1295,6 +1320,168 @@ void Stage5CompilerTests::roundrectSourceAndPackageGates() //20261113-16 add
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
+}
+
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::polygonCanonicalFrames_data
+ * Description     : Bind every saved/reopened scene to its complete raw native frame.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::polygonCanonicalFrames_data() //20261114-1 add
+{
+    QString root=QFINDTESTDATA("../docs/stage5-evidence/native/polygon");
+    QJsonArray cases=QJsonDocument::fromJson(testFileBytes(QDir(root).filePath(QStringLiteral("B-S-M-cell-area-r1.json")))).object().value(QStringLiteral("cases")).toArray();
+    QJsonValue sample;
+    QString run;
+    int count=0;
+
+    QCOMPARE(cases.size(),37);
+    QTest::addColumn<QJsonObject>("sample");
+    Q_FOREACH (sample,cases)
+    {
+        run=sample.toObject().value(QStringLiteral("run")).toString();
+        if (run.contains(QStringLiteral("reopen")) || run.contains(QStringLiteral("default-repeat"))) { QTest::newRow(qPrintable(run))<<sample.toObject();++count; }
+    }
+    QCOMPARE(count,20);
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::polygonCanonicalFrames
+ * Description     : Compile independent typed vertices and compare all 768000 background bytes.
+ * Input Parameters: Qt sample column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::polygonCanonicalFrames() //20261114-1 add
+{
+    QFETCH(QJsonObject,sample);
+    HmiProject project=polygonProject();
+    HmiObject object=project.objects.first();
+    QJsonValue polygon;
+    QJsonValue value;
+    QJsonArray vertices;
+    QJsonArray point;
+    QString root=QFINDTESTDATA("../docs/stage5-evidence/native/polygon");
+    QString folder=sample.value(QStringLiteral("folder")).toString();
+    QByteArray native=testFileBytes(QDir(root).filePath(folder.mid(folder.indexOf(QStringLiteral("polygon/"))+8)+QStringLiteral("/SheetPixel.dat")));
+    QByteArray source=testFileBytes(QDir(root).filePath(folder.mid(folder.indexOf(QStringLiteral("polygon/"))+8)+QStringLiteral("/input-native.sm")));
+    DeviceCompilePlan plan;
+    QVector<QByteArray> payloads;
+    QString error;
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+
+    object.graphic.lineStyle=sample.value(QStringLiteral("lineStyle")).toInt();object.graphic.fillStyle=sample.value(QStringLiteral("fillStyle")).toInt();project.objects.clear();
+    Q_FOREACH (polygon,sample.value(QStringLiteral("polygons")).toArray())
+    {
+        vertices=polygon.toArray();minX=800;minY=480;maxX=0;maxY=0;
+        Q_FOREACH (value,vertices)
+        {
+            point=value.toArray();minX=qMin(minX,point[0].toInt());minY=qMin(minY,point[1].toInt());maxX=qMax(maxX,point[0].toInt());maxY=qMax(maxY,point[1].toInt());
+        }
+        object.geometry=QRect(minX,minY,maxX-minX,maxY-minY);object.graphic.points.clear();
+        Q_FOREACH (value,vertices)
+        {
+            point=value.toArray();object.graphic.points.append(QPointF(double(point[0].toInt()-minX)/(maxX-minX),double(point[1].toInt()-minY)/(maxY-minY)));
+        }
+        object.id=QStringLiteral("polygon-%1").arg(project.objects.size());project.objects.append(object);
+    }
+    QCOMPARE(decodeTestFrame(native).size(),768000);
+    QVERIFY(!source.isEmpty());QCOMPARE(QString::fromLatin1(QCryptographicHash::hash(source,QCryptographicHash::Sha256).toHex()),sample.value(QStringLiteral("sourceSha256")).toString());
+    QVERIFY2(prepareDeviceCompilePlan(project,&plan,&error),qPrintable(error));QCOMPARE(plan.staticPolygonCount,project.objects.size());
+    QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error));QCOMPARE(payloads.size(),10);QCOMPARE(decodeTestFrame(payloads[8]),decodeTestFrame(native));
+    QCOMPARE(payloads[5].size(),2400);QCOMPARE(int(static_cast<unsigned char>(payloads[1][2])),0);QVERIFY2(validateDevicePayloadStructure(payloads,&error),qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::polygonUnprovedFieldsPreserveOutput_data
+ * Description     : Enumerate style, topology, coordinate and composition boundaries.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::polygonUnprovedFieldsPreserveOutput_data() //20261114-1 add
+{
+    int variant;
+    QTest::addColumn<int>("variant");
+    for (variant=0;variant<27;++variant) { QTest::newRow(qPrintable(QString::number(variant)))<<variant; }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::polygonUnprovedFieldsPreserveOutput
+ * Description     : Reject unsupported polygons without replacing caller-owned plans or payloads.
+ * Input Parameters: Qt variant column
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::polygonUnprovedFieldsPreserveOutput() //20261114-1 add
+{
+    QFETCH(int,variant);
+    HmiProject project=polygonProject();
+    HmiObject peer;
+    DeviceCompilePlan plan;
+    QJsonObject issue;
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QString error;
+
+    plan.staticPolygonCount=77;
+    if (variant==0) { project.objects[0].graphic.lineStyle=2; }
+    if (variant==1) { project.objects[0].graphic.lineWidth=2; }
+    if (variant==2) { project.objects[0].graphic.alpha=128; }
+    if (variant==3) { project.objects[0].graphic.lineColor=Qt::red; }
+    if (variant==4) { project.objects[0].graphic.fillStyle=2; }
+    if (variant==5) { project.objects[0].graphic.background=Qt::white; }
+    if (variant==6) { project.objects[0].graphic.foreground=Qt::black; }
+    if (variant==7) { project.objects[0].geometry.setWidth(99); }
+    if (variant==8) { project.objects[0].graphic.points[2]=QPointF(.751,1); }
+    if (variant==9) { project.objects[0].geometry.moveLeft(1); }
+    if (variant==10) { project.objects[0].geometry.moveLeft(600); }
+    if (variant==11) { project.objects[0].geometry.moveTop(360); }
+    if (variant==12) { project.objects[0].graphic.points[2]=project.objects[0].graphic.points[1]; }
+    if (variant==13) { project.objects[0].graphic.points={QPointF(0,0),QPointF(1,0),QPointF(.5,0)}; }
+    if (variant==14) { project.objects[0].graphic.points={QPointF(0,0),QPointF(1,1),QPointF(0,1),QPointF(1,0)}; }
+    if (variant==15) { project.objects[0].graphic.points={QPointF(0,0),QPointF(1,0),QPointF(.75,1),QPointF(0,1),QPointF(1,0)}; }
+    if (variant==16) { project.objects[0].graphic.points={QPointF(0,0),QPointF(.2,0),QPointF(.4,0),QPointF(.6,0),QPointF(.8,0),QPointF(1,0),QPointF(1,1),QPointF(.5,1),QPointF(0,1)}; }
+    if (variant==17) { project.objects[0].graphic.points={QPointF(0,0),QPointF(1,1)}; }
+    if (variant==18) { peer=project.objects[0];peer.id=QStringLiteral("overlap");project.objects.append(peer); }
+    if (variant==19) { peer=project.objects[0];peer.id=QStringLiteral("touching");peer.geometry.moveLeft(300);project.objects.append(peer); }
+    if (variant==20) { project.objects[0].graphic.points={QPointF(0,0),QPointF(.5,0),QPointF(1,0),QPointF(.75,1)}; }
+    if (variant==21) { project.objects[0].graphic.lineStyle=0;project.objects[0].graphic.fillStyle=0;project.objects[0].graphic.background=Qt::red; }
+    if (variant==22) { project.objects[0].geometry.setHeight(99); }
+    if (variant==23) { project.objects[0].graphic.endArrow=1; }
+    if (variant==24) { project.objects[0].geometry.moveLeft(499); }
+    if (variant==25) { project.objects[0].geometry.moveTop(279); }
+    if (variant==26) { project.objects[0].graphic.endCap=1; }
+    QVERIFY(!prepareDeviceCompilePlan(project,&plan,&error,&issue));QCOMPARE(plan.staticPolygonCount,77);QVERIFY(!issue.value(QStringLiteral("property")).toString().isEmpty());
+    QVERIFY(!buildProjectPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::polygonSourceAndPackageGates
+ * Description     : Verify real atomic publication while native source and legacy text remain rejected.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+void Stage5CompilerTests::polygonSourceAndPackageGates() //20261114-1 add
+{
+    HmiProject project=polygonProject();
+    QTemporaryDir temporary;
+    QString target=temporary.filePath(QStringLiteral("polygon"));
+    QByteArray source=QByteArrayLiteral("keep");
+    QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
+    QJsonObject manifest;
+    QString error;
+
+    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
+    QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
 }
 
 QTEST_MAIN(Stage5CompilerTests)
