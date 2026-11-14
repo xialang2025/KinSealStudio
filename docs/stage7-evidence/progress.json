@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "stage": 7,
+  "date": "2026-11-14",
+  "completeStage7": false,
+  "totalTasks": 6,
+  "activeOpen": [
+    "S07-01",
+    "S07-02",
+    "S07-03",
+    "S07-04",
+    "S07-05",
+    "S07-06"
+  ],
+  "closedCompleteTasks": [],
+  "deliveredSubsets": [
+    "S07-02 内部LB/LW及五类Lite动作",
+    "S07-03 单画面PC渲染/窗口切片",
+    "S07-04 活动配置拒绝和宏跳过门禁",
+    "S07-06 有界文档/能力/结果交付"
+  ],
+  "tasks": [
+    {
+      "id": "S07-01",
+      "title": "恢复启动与退出协议",
+      "delivered": "原厂真实入口/命令/局部读取及Lite快照入口",
+      "remaining": [
+        "原厂dirty/new/保存取消失败/重复/正常退出/父窗关闭",
+        "有效状态帧和在线配置/时限"
+      ],
+      "next": "缩小observer并补本地资源，分离0xC0000409；再用owned副本真实dirty/取消",
+      "status": "activeOpen",
+      "complete": false
+    },
+    {
+      "id": "S07-02",
+      "title": "内部地址和事件执行器",
+      "delivered": "LB/LW五类Lite动作/权限/通知/输入；运行器79项",
+      "remaining": [
+        "原厂初值/保持/字序/精确事件顺序",
+        "外部地址不在声明范围"
+      ],
+      "next": "先有效原厂帧或LB0独立值，再press/move/release/cancel与跨字",
+      "status": "activeOpen",
+      "complete": false
+    },
+    {
+      "id": "S07-03",
+      "title": "复用渲染与窗口模型",
+      "delivered": "单画面公共renderer、PC帧与UI13/workflow23项",
+      "remaining": [
+        "多画面/弹出/键盘窗口",
+        "原厂首帧/状态帧像素差分"
+      ],
+      "next": "取得有效原厂帧，按层次/命中/窗口单变量对照",
+      "status": "activeOpen",
+      "complete": false
+    },
+    {
+      "id": "S07-04",
+      "title": "配置型功能与离线限制",
+      "delivered": "活动配置拒绝、宏warning/macro-skipped",
+      "remaining": [
+        "采集/报警/历史/配方/资料传输/时钟/扫描/闪烁运行",
+        "原厂宏提示位置/内容"
+      ],
+      "next": "配置专题逐项恢复触发/时序/持久化/失败；不以门禁替代配置实现",
+      "status": "activeOpen",
+      "complete": false
+    },
+    {
+      "id": "S07-05",
+      "title": "在线传输与断线恢复",
+      "delivered": "纯callback Modbus RTU回放97项；在线范围说明",
+      "remaining": [
+        "真实端口/PLC配置/地址映射",
+        "runtime扫描/写队列/取消/重连集成",
+        "原厂在线配置/协议/时限"
+      ],
+      "next": "静态原厂入口+启动前串口/socket blocker，然后专用受控端点集成",
+      "status": "activeOpen",
+      "complete": false
+    },
+    {
+      "id": "S07-06",
+      "title": "收口",
+      "delivered": "规则/能力矩阵/进度；212正式及CLI/便携检查分层",
+      "remaining": [
+        "完整SIM-01..07/原厂一致性和在线配置欠项",
+        "自动清理拒绝DOC-CLEANUP-003",
+        "主任务实际Git推送/清单身份收口"
+      ],
+      "next": "保留所有完整任务activeOpen，冻结有界交付后从最小未验用例继续",
+      "status": "activeOpen",
+      "complete": false
+    }
+  ],
+  "scope": {
+    "format": "Lite JSON",
+    "pageCount": 1,
+    "pageKind": "normal",
+    "width": 800,
+    "height": 480,
+    "addressSpaces": [
+      "LB",
+      "LW"
+    ],
+    "addressIndexInclusive": [
+      0,
+      4096
+    ],
+    "nativeSourceSnapshotAccepted": false,
+    "activeConfigurationsAccepted": false
+  },
+  "tests": {
+    "evidence": "docs/stage7-evidence/windows-r3/run.json",
+    "passed": 212,
+    "failed": 0,
+    "skipped": 0,
+    "targets": [
+      {
+        "name": "KinSealSimulationRuntimeTests",
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "2f4911b9479e4f74d3f67dd680083ec691ff6e192e0a307f8f1880132d5352ca"
+      },
+      {
+        "name": "KinSealSimulationUiTests",
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "0c1d35ca2af521be0ebea4ac9ea11f11abe477a935c844daab6e861dff181269"
+      },
+      {
+        "name": "KinSealSimulationWorkflowTests",
+        "passed": 23,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "f00063a7abe764802aec31eb21c329ea44004671729749140bbeb2ed1b333ce6"
+      },
+      {
+        "name": "KinSealSimulationModbusTests",
+        "passed": 97,
+        "failed": 0,
+        "skipped": 0,
+        "sha256": "519304280df2fc6236feb0bf451546375307b37b407ac8f74adf3f2c88a7031a"
+      }
+    ],
+    "usbAccessed": false,
+    "desktopSwitched": false,
+    "systemInput": false,
+    "temporaryFilesRemaining": []
+  },
+  "cli": {
+    "evidence": "docs/stage7-evidence/cli-r2/run.json",
+    "passed": true,
+    "processes": 16,
+    "semanticChecks": 17
+  },
+  "portable": {
+    "evidence": "docs/stage7-evidence/portable-r1/run.json",
+    "passed": true,
+    "processes": 16,
+    "semanticChecks": 17,
+    "onlyBundledQtDllsObserved": true
+  },
+  "failureHistory": [
+    {
+      "evidence": "docs/stage7-evidence/windows-r2/run.json",
+      "note": "UI11通过/2失败；word fixture遗留bit.dualMonitor，修fixture后r3通过真实modal两项"
+    },
+    {
+      "evidence": "docs/stage7-evidence/cli-r1/run.json",
+      "note": "检查器以0/1访问实际LB0/LB1键，修检查器后r2通过；失败保留"
+    }
+  ],
+  "native": {
+    "evidence": "docs/stage7-evidence/audits/native-startup-audit.json",
+    "status": "startup-contract-partially-recovered-runtime-semantics-unverified",
+    "offlineChildExecuted": true,
+    "onlineChildExecuted": false,
+    "acceptedStateFrames": 0,
+    "actualPressSequenceObserved": false,
+    "traceOverflow": 0,
+    "savedSourceBytes": 4275,
+    "savedSourceSha256Unchanged": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+    "compileFilesProduced": 16,
+    "completeFileReadContractVerified": false,
+    "normalExitVerified": false,
+    "exitCausality": "0xC0000409 observed with and without directed close; cause unverified",
+    "archive": "docs/stage7-evidence/audits/native-startup-evidence.zip",
+    "archiveManifest": "docs/stage7-evidence/audits/native-archive-manifest.json"
+  },
+  "modbus": {
+    "scope": "controlled-modbus-rtu-replay",
+    "functionCodes": [
+      1,
+      3,
+      5,
+      6
+    ],
+    "formalPassed": 97,
+    "runtimeIntegrated": false,
+    "physicalEndpointUsed": false,
+    "hardwareTransferVerified": false,
+    "hmiBehaviorVerified": false,
+    "stageTaskClosed": false
+  },
+  "hardware": {
+    "hmiTransfer": "N/A-no-hmi-download-in-stage7",
+    "newHmiDownloadPerformed": false,
+    "hmiBehaviorConfirmed": false,
+    "previousHmiEvidenceUpgraded": false
+  },
+  "delivery": {
+    "package": "Z:/Project/vscode_prj_temp/REA/KinSealStudio/dist/KinSealStudioLite-Stage7-offline-r1",
+    "executableSha256": "5d3bdf047277d186d3521bf0bd0cf7de5628084ec154f162e0984ed0a5f0a0ba",
+    "manifest": "docs/stage7-evidence/delivery-r1/package-manifest.json",
+    "sourceCount": 227,
+    "finalCodeCommit": "See delivery manifest sourceCommit; parent finalizes after actual commit"
+  },
+  "cleanup": {
+    "evidence": "docs/stage7-evidence/cleanup-result.json",
+    "runtimeDuplicateObjects": {
+      "deletedFiles": 6,
+      "logicalBytesFreed": 7668946,
+      "evidence": "docs/stage7-evidence/audits/runtime-cleanup-r3.json"
+    },
+    "nativeTemporaryDirectories": {
+      "requestedDirectories": 12,
+      "requestedFiles": 389,
+      "requestedLogicalBytes": 819615805,
+      "status": "denied-by-automatic-review",
+      "reason": "blocked by policy",
+      "deletedFiles": 0,
+      "alternateDeletionAttempted": false,
+      "issueId": "DOC-CLEANUP-003"
+    },
+    "cDriveTemporaryFilesCreatedByDocumentation": false
+  },
+  "openIssueIds": [
+    "Q-S07-001",
+    "Q-S07-002",
+    "Q-S07-003",
+    "Q-S07-004",
+    "Q-S07-005",
+    "Q-S07-006",
+    "Q-S09-002",
+    "DOC-CLEANUP-003"
+  ],
+  "documents": [
+    "docs/阶段7离线模拟实现与验收.md",
+    "docs/阶段7逐项进度.md",
+    "docs/stage7-evidence/S07-capabilities.json",
+    "design_plan/08_阶段7_离线与在线模拟.md"
+  ],
+  "baselineCommit": "9d442ece511681aa2aba0aeef79169873a65c305"
+}

@@ -18,6 +18,7 @@ qt_add_executable(KinSealStudioLite WIN32
     src/main_window.cpp
     src/main_window.h
     src/main_window_workflow.cpp #20261110-7 add: Share command state and whole-project transactions.
+    src/main_window_simulation.cpp #20261114-6 add
     src/native_shell_ui.cpp #20261111-1 add: Reproduce the original desktop shell using retained native icons and layout.
     native_shell.qrc
     src/stage3_project_edits.h #20261110-8 add
@@ -71,6 +72,14 @@ qt_add_executable(KinSealStudioLite WIN32
     src/device_transfer_engine.h
     src/device_download_session.cpp #20261114-5 add: Own the cancellable worker and immutable input snapshot.
     src/device_download_session.h
+    src/simulation_runtime.cpp #20261114-6 add: Execute a bounded immutable internal-address runtime.
+    src/simulation_runtime.h
+    src/simulation_window.cpp
+    src/simulation_window.h
+    src/simulation_cli.cpp
+    src/simulation_cli.h
+    src/simulation_modbus_transport.cpp #20261114-6 add: Injected RTU replay only; no physical port backend.
+    src/simulation_modbus_transport.h
     src/text_payload_compiler.cpp #20261108-11 add
     src/text_payload_compiler.h
     src/static_text_properties.cpp #20261108-14 add
@@ -252,6 +261,24 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Test)
 get_target_property(KINSEAL_TEST_SOURCES KinSealStudioLite SOURCES)
 list(REMOVE_ITEM KINSEAL_TEST_SOURCES src/main.cpp)
+#20261114-6 add: Compile the unchanged editor/model support once for the three new simulation regression programs.
+add_library(KinSealSimulationTestSupport OBJECT ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp)
+target_include_directories(KinSealSimulationTestSupport PRIVATE src third_party/lzokay)
+target_link_libraries(KinSealSimulationTestSupport PRIVATE Qt6::Widgets Qt6::Svg)
+target_compile_definitions(KinSealSimulationTestSupport PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+qt_add_executable(KinSealSimulationRuntimeTests tests/simulation_runtime_tests.cpp)
+target_include_directories(KinSealSimulationRuntimeTests PRIVATE src)
+target_link_libraries(KinSealSimulationRuntimeTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealSimulationUiTests tests/simulation_ui_tests.cpp)
+target_include_directories(KinSealSimulationUiTests PRIVATE src)
+target_link_libraries(KinSealSimulationUiTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealSimulationWorkflowTests tests/stage2_workflow_tests.cpp)
+target_include_directories(KinSealSimulationWorkflowTests PRIVATE src third_party/lzokay)
+target_link_libraries(KinSealSimulationWorkflowTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+qt_add_executable(KinSealSimulationModbusTests
+    src/simulation_modbus_transport.cpp src/simulation_modbus_transport.h tests/simulation_modbus_transport_tests.cpp)
+target_include_directories(KinSealSimulationModbusTests PRIVATE src)
+target_link_libraries(KinSealSimulationModbusTests PRIVATE Qt6::Core Qt6::Test)
 #20261110-5 add: Exercise schema migration and the actual download backend without accessing USB.
 qt_add_executable(KinSealProjectModelTests ${KINSEAL_TEST_SOURCES} tests/project_model_stage1_tests.cpp)
 target_include_directories(KinSealProjectModelTests PRIVATE src third_party/lzokay)

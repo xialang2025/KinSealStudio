@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 1,
+  "stage": 7,
+  "date": "2026-11-14",
+  "completeStage7": false,
+  "identity": {
+    "baselineCommit": "9d442ece511681aa2aba0aeef79169873a65c305",
+    "deliveryManifest": "docs/stage7-evidence/delivery-r1/package-manifest.json"
+  },
+  "scope": {
+    "format": "Lite JSON",
+    "pageCount": 1,
+    "pageKind": "normal",
+    "width": 800,
+    "height": 480,
+    "addressSpaces": [
+      "LB",
+      "LW"
+    ],
+    "addressIndexInclusive": [
+      0,
+      4096
+    ],
+    "nativeSourceSnapshotAccepted": false,
+    "activeConfigurationsAccepted": false
+  },
+  "definitions": {
+    "D": "原厂文档/契约恢复程度；Lite规则单列，不自动代表原厂一致",
+    "U": "产品UI在声明范围内的实现和测试",
+    "P": "工程/会话/数值与保存隔离",
+    "R": "PC帧/命中，不等于HMI像素或固件执行",
+    "C": "仅对应输入/输出契约，原厂模拟输入/设备编译分别核定",
+    "pcTransport": "PC回放或真实端点通信，不能继承USB下载",
+    "hmiT": "本批未新增HMI传输；无HMI下载的PC切片为N/A",
+    "hmiE": "所有PC测试不升级固件显示/触摸/宏/PLC执行"
+  },
+  "formalTests": {
+    "passed": 212,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "docs/stage7-evidence/windows-r3/run.json"
+  },
+  "cli": {
+    "processes": 16,
+    "semanticChecks": 17,
+    "passed": true,
+    "evidence": "docs/stage7-evidence/cli-r2/run.json"
+  },
+  "portable": {
+    "processes": 16,
+    "semanticChecks": 17,
+    "passed": true,
+    "evidence": "docs/stage7-evidence/portable-r1/run.json"
+  },
+  "rows": [
+    {
+      "id": "S07-OFF-TEXT",
+      "key": {
+        "feature": "静态text",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-local"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "不支持内嵌状态文字的独立权限",
+        "无原厂有效首帧/状态帧差分"
+      ],
+      "productRules": [],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-BIT",
+      "key": {
+        "feature": "bit switch",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-LB"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "按压阈值与闪烁拒绝",
+        "原厂精确事件顺序、点动移出/取消未证"
+      ],
+      "productRules": [
+        "动作enum0置位/1复位/2点动/3交替",
+        "press执行；release/move-out/cancel/stop/权限丢失清除所拥有点动位"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-WORD",
+      "key": {
+        "feature": "word switch",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-LW"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "整数字非零小数缩放拒绝",
+        "密码原始runtime snapshot含值；仅CLI导出遮盖"
+      ],
+      "productRules": [
+        "赋值/加减/增减绕回/数值输入/密码输入",
+        "候选内存事务通过后整体写值及通知",
+        "输入submit才写；非法输入保持pending可纠正或取消",
+        "越界拒绝，绕回直接跳min/max"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-LAMP",
+      "key": {
+        "feature": "lamp",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-LB-LW"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "原厂像素/状态语义未对照"
+      ],
+      "productRules": [
+        "位/字位/多态监视",
+        "超出声明状态visualState=-1，不绘对象、不伪装状态0"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-FUNCTION",
+      "key": {
+        "feature": "function",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-function-8-13"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "仅function8注销等级、13语言切换",
+        "其它function带名称拒绝",
+        "等级侧栏是刺激，不是认证"
+      ],
+      "productRules": [
+        "启动语言=非空startupLanguage，否则languages.first()"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-MEMORY",
+      "key": {
+        "feature": "内部地址/类型银行",
+        "mode": "offline",
+        "modelScope": "Lite-LB-LW-0..4096"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "not-applicable",
+        "P": "verified-in-defined-lite-scope",
+        "R": "not-applicable",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests"
+      ],
+      "limits": [
+        "外部地址/@connection、位字角色错配及跨尾拒绝",
+        "原厂初值/保持/32位字序未证"
+      ],
+      "productRules": [
+        "LB/LW各4097项零初值、等级0、32位低字优先是Lite规则",
+        "U16/U32/I16/I32/BCD16/BCD32/F32；非法BCD、NaN/Inf及溢出/下溢拒绝，失败不改输出/内存"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-PERMISSION",
+      "key": {
+        "feature": "可见/触摸权限与通知",
+        "mode": "offline",
+        "modelScope": "single-condition-Lite-LB-LW-level"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests"
+      ],
+      "limits": [
+        "只支持单bit/level/word条件",
+        "多条件AND/OR、enabled但无活动条件、非零容差拒绝",
+        "重叠动作/通知地址含跨字拒绝"
+      ],
+      "productRules": [
+        "比较enum顺序< > == <> <= >=",
+        "动作、通知和语言/等级全部检查后一次提交"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-SESSION",
+      "key": {
+        "feature": "菜单/独立快照/生命周期",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-local"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationUiTests",
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationWorkflowTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "同进程独立QDialog，不是原厂独立EXE",
+        "原厂dirty/new/保存取消失败/正常退出完整矩阵未知"
+      ],
+      "productRules": [
+        "当前编辑快照无需保存且不回写内容/dirty/路径",
+        "重复启动复用已有会话；关闭后可重启",
+        "失捕获/失活/关闭/析构清理点动"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-MACRO",
+      "key": {
+        "feature": "宏绑定跳过",
+        "mode": "offline",
+        "modelScope": "single-800x480-Lite-five-families"
+      },
+      "status": "implemented-skip-not-execution",
+      "layers": {
+        "D": "help-plus-lite-contract",
+        "U": "verified-in-defined-lite-scope",
+        "P": "verified-in-defined-lite-scope",
+        "R": "not-applicable",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "不执行初始化/周期/事件宏",
+        "原厂警告位置/内容未核",
+        "此门禁不关闭配置型功能整项"
+      ],
+      "productRules": [
+        "warning及macro-skipped事件公开跳过"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-CONFIG",
+      "key": {
+        "feature": "采集/报警/历史/配方/资料传输/闪烁/调度",
+        "mode": "offline",
+        "modelScope": "active-global-config-or-unsupported-timing"
+      },
+      "status": "rejected-at-preflight",
+      "layers": {
+        "D": "documented-open-boundary",
+        "U": "explicit-preflight-error",
+        "P": "preserved-by-editor-not-executed",
+        "R": "not-implemented",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "运行、时钟、触发、持久化和失败语义未实现",
+        "S07-04完整任务保持activeOpen"
+      ],
+      "productRules": [
+        "活动全局配置、按压阈值、flash在启动前拒绝"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-PAGES",
+      "key": {
+        "feature": "多画面/弹出窗口/键盘页/外部地址",
+        "mode": "offline",
+        "modelScope": "outside-single-normal-800x480-Lite-local"
+      },
+      "status": "rejected-at-preflight",
+      "layers": {
+        "D": "documented-open-boundary",
+        "U": "explicit-preflight-error",
+        "P": "not-applicable",
+        "R": "not-implemented",
+        "C": "not-applicable",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationRuntimeTests",
+        "docs/stage7-evidence/cli-r2/run.json"
+      ],
+      "limits": [
+        "没有窗口模型运行或原厂像素差分",
+        "nativeSourceSnapshot非空也拒绝"
+      ],
+      "productRules": [],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-OFF-CLI",
+      "key": {
+        "feature": "有界离线事件/JSON/PNG导出",
+        "mode": "offline",
+        "modelScope": "Lite-JSON-plus-event-array"
+      },
+      "status": "verified-in-defined-lite-scope",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "not-applicable",
+        "P": "verified-in-defined-lite-scope",
+        "R": "verified-in-defined-lite-scope",
+        "C": "verified-in-defined-lite-scope",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/cli-r2/run.json",
+        "docs/stage7-evidence/portable-r1/run.json"
+      ],
+      "limits": [
+        "能力报告exit0不是supported=true",
+        "允许原子替换不相干既有输出JSON",
+        "不解析原厂16文件模拟输入",
+        "原始runtime snapshot不自动遮盖"
+      ],
+      "productRules": [
+        "工程16MiB、事件1MiB/1024项、trace8MiB、输出16MiB、能力报告1MiB",
+        "源/事件别名或硬链接拒绝；失败保留旧输出",
+        "密码工程去LB/LW、遮盖value、不导出原始事件摘要",
+        "最终关闭前PNG与stateBeforeStop/finalState分开"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-ON-REPLAY",
+      "key": {
+        "feature": "标准Modbus RTU事务",
+        "mode": "online-replay",
+        "modelScope": "controlled-injected-callbacks-no-physical-endpoint"
+      },
+      "status": "replay-passed-only",
+      "layers": {
+        "D": "standard-contract-plus-lite-design",
+        "U": "not-applicable",
+        "P": "validated-values-after-full-frame",
+        "R": "not-applicable",
+        "C": "not-applicable",
+        "pcTransport": "controlled-modbus-rtu-replay-only",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationModbusTests"
+      ],
+      "limits": [
+        "无串口/USB/socket/原厂驱动",
+        "未接runtime银行/扫描/在线UI",
+        "未验证真实PLC或物理端点",
+        "97项不关闭S07-05"
+      ],
+      "productRules": [
+        "功能码1/3/5/6；站号1..247；PDU零基offset",
+        "队列默认32范围1..1024、timeout默认1000ms范围1..60000ms",
+        "完整CRC/站号/功能/长度/字节数/echo才发布值",
+        "错误保留首错、关闭并丢弃未发送队列；无自动重试；已尝试写不承诺回滚"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-ON-RUNTIME",
+      "key": {
+        "feature": "真实在线模拟",
+        "mode": "online",
+        "modelScope": "physical-PLC-runtime-integration"
+      },
+      "status": "not-implemented",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "scope-explanation-only",
+        "P": "not-implemented",
+        "R": "not-implemented",
+        "C": "not-applicable",
+        "pcTransport": "not-connected",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/windows-r3/run.json#KinSealSimulationWorkflowTests",
+        "docs/stage7-evidence/audits/native-startup-audit.json"
+      ],
+      "limits": [
+        "原厂online启动请求被拦截，child没执行",
+        "真实端口/PLC映射、runtime扫描/重连未实现",
+        "原厂配置、协议列表和在线时限未知",
+        "S07-05完整任务activeOpen"
+      ],
+      "productRules": [],
+      "nativeRuntimeEquivalenceConfirmed": false
+    },
+    {
+      "id": "S07-NATIVE-STARTUP",
+      "key": {
+        "feature": "原厂启动/文件/退出契约",
+        "mode": "native-offline-observation",
+        "modelScope": "saved-owned-800x480-sample"
+      },
+      "status": "partially-recovered-runtime-unverified",
+      "layers": {
+        "D": "partial-native-evidence",
+        "U": "window-observed-no-accepted-state-frame",
+        "P": "one-saved-source-sha-unchanged",
+        "R": "acceptedStateFrames=0",
+        "C": "16-files-produced-partial-reads-only",
+        "pcTransport": "no-physical-io",
+        "hmiT": "not-applicable-no-hmi-transfer",
+        "hmiE": "not-upgraded-by-stage7"
+      },
+      "evidence": [
+        "docs/stage7-evidence/audits/native-startup-audit.json"
+      ],
+      "limits": [
+        "完整dirty/new/取消/失败/重复/退出矩阵未验",
+        "初值/保持/字序/点动未知",
+        "16文件不等于阶段6静态14文件copy-only输入",
+        "0xC0000409有/无close均出现，关闭因果未证",
+        "在线child未执行"
+      ],
+      "productRules": [
+        "原厂观察不能用Lite默认补齐"
+      ],
+      "nativeRuntimeEquivalenceConfirmed": false
+    }
+  ],
+  "activeOpenTasks": [
+    "S07-01",
+    "S07-02",
+    "S07-03",
+    "S07-04",
+    "S07-05",
+    "S07-06"
+  ],
+  "hardwareIo": false,
+  "hmiBehaviorConfirmed": false
+}

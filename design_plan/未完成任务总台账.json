@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14T13:16:16+08:00",
+  "updatedAt": "2026-11-14（阶段7限定离线切片）",
   "sourceCommit": "76def3c3f2a752082a28c0d2f2871caa9f06a03e",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -8,7 +8,7 @@
     "activeOpenTasks": 76,
     "closedDefinedScopeTasks": 14,
     "families": 41,
-    "currentQuestions": 202,
+    "currentQuestions": 205,
     "aggregateItems": 42,
     "originalCandidates": 308,
     "candidateRows": 318,
@@ -18,7 +18,7 @@
       "historyEntryIssues": 195,
       "historyFieldIssues": 1521
     },
-    "extensions": 15
+    "extensions": 16
   },
   "interpretationRules": [
     "已发布范围：五类既有控制记录＋九类受限静态背景C；阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
@@ -32,6 +32,8 @@
     "三项已关闭事实继续关闭：Q-FUNC-MACRO-001、Q-LAMP-MACRO-001、Q-LAMP-COUNT-001；U-308不建立功能问题。"
   ],
   "resumeOrder": [
+    "阶段7已交付单画面内部LB/LW五类离线；完整原厂运行语义、窗口/配置和真实在线继续按S07/Q-S07恢复。",
+    "阶段9优先恢复默认Modbus RTU的真实端点及runtime扫描映射；回放97项不替代真实T/E。",
     "继续阶段5：从已调查/建模的新动态控件选择最小独立C切片，或恢复多页/活动配置的明确依赖；不重复九类受限背景。",
     "对新独立编译产物完成T，再独立记录E；需实屏/触控/PLC配合的条目提前准备输入身份、刺激和期望。",
     "按Q恢复完整SM、G03真实曲率及范围外样式；同一次成果同步核销覆盖的旧候选/字段分支，保留原ID去向。",
@@ -6240,15 +6242,14 @@
       "id": "S07-01",
       "stage": 7,
       "title": "S07-01 · 恢复启动与退出协议",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "编辑画布预览已有；原厂offline/online分辨率程序身份和QAction入口已记录。",
-      "remaining": "独立模拟启动参数/输入格式/工作目录/保存提示/生命周期、重复启动/退出与30分钟限制实证未恢复。",
+      "completedScope": "已恢复原厂offline/online QAction→槽→无额外参数启动链、输入前后SHA、真实offline窗口与部分16文件读取；Lite快照/重复启动/父窗关闭测试通过。",
+      "remaining": "原厂保存取消/失败矩阵、正常退出/崩溃因果、有效状态帧、完整文件消费者和在线时限仍待核。",
       "blockers": [
-        "阶段1可序列化模型",
-        "原厂离线/在线真实入口"
+        "原厂对应运行语义/可靠状态帧未取得"
       ],
-      "nextAction": "后台用同一内部LB/LW工程分别启动三个入口，记录命令行/读写文件/前后hash/退出原因；未知IPC不猜。",
+      "nextAction": "在私有桌面先恢复可靠捕获与无干扰退出记录，不复用0xC0000409作为原厂缺陷。",
       "acceptance": [
         "SIM-01/07：保存取消失败无孤儿进程或工程改写；真实时长/退出原因有单调时间记录，不按旧帮助硬编码。",
         {
@@ -6284,6 +6285,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6357,22 +6366,26 @@
             "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
       "id": "S07-02",
       "stage": 7,
       "title": "S07-02 · 内部地址和事件执行器",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "位/字/灯模型、地址解析及公共renderer可复用；画布模拟状态仅外观预览。",
-      "remaining": "独立address store、字位别名/16-32位语义、初值保持、事件→读写→渲染、点动失捕获/取消和权限通知顺序未形成执行器。",
+      "completedScope": "内部LB/LW纯值运行器及七类型、位/字动作、监视/权限/通知事务，79项核心与UI/CLI验证通过；初值0/低字优先/取消释放明确为Lite设计。",
+      "remaining": "原厂初值/保持/字序/点动移出与取消/按压及flash时序未知，未知字段严格拒绝；不是全部控件执行器。",
       "blockers": [
-        "控件运行规格",
-        "地址codec",
-        "S07-01会话边界"
+        "原厂对应运行语义/可靠状态帧未取得"
       ],
-      "nextAction": "先单画面内部LB/LW五类受限运行，逐事件记录旧值/写入/相关监视/新帧，使用原厂最小样本核取消时序。",
+      "nextAction": "只对单一LB/LW刺激恢复原厂可靠状态帧及事件顺序，然后逐分支扩展。",
       "acceptance": [
         "SIM-02/03：独立观察点证明地址变化；press移出/失捕获/关闭清理正确，编辑工程不被运行值回写；未知对象启动前拒绝。",
         {
@@ -6407,6 +6420,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6480,22 +6501,26 @@
             "text": "| SIM-03 / S07-02 | press后移出/失捕获/关闭窗口/权限转无效 | release/cancel遵循已核规则，无丢失清理；设备E独立 | U/R；事件与地址初末值 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
       "id": "S07-03",
       "stage": 7,
       "title": "S07-03 · 复用渲染与窗口模型",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "已有五类renderer和编辑画布；单页PC渲染及受限设备背景可复用。",
-      "remaining": "runtime首帧/状态/语言失效、切页/弹窗/键盘层次、关闭触点、透明重叠及隐藏权限后的重绘未接入闭环。",
+      "completedScope": "五类共享renderer、layer稳定排序、单页命中、全帧重绘、语言、输入更正与生命周期通过；PC两帧已实际查看。",
+      "remaining": "多页/弹窗/原厂键盘、更多对象和与原厂首帧/状态帧像素对照未完成。",
       "blockers": [
-        "阶段3层次/命中/渲染",
-        "S07-02执行器",
-        "页面/窗口模型"
+        "原厂对应运行语义/可靠状态帧未取得"
       ],
-      "nextAction": "先绑定内部地址到单页状态帧和命中，按相同资源入口比PC原厂截图；特殊页/重叠仅在对应模型规则恢复后开放。",
+      "nextAction": "先恢复原厂有效帧对照，再按窗口模型接入导航与原厂键盘。",
       "acceptance": [
         "SIM-04：模型/帧/命中/窗口和奇数宽处理一致，未支持组合启动前拒绝；PC截图与设备RGB565/E分别记。",
         {
@@ -6508,7 +6533,8 @@
       "itemIds": [
         "Q-S07-002",
         "Q-S05-002",
-        "Q-S01-001"
+        "Q-S01-001",
+        "Q-S07-006"
       ],
       "sources": [
         {
@@ -6526,6 +6552,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6594,20 +6628,26 @@
             "text": "| SIM-04 / S07-03 | 切画面/窗口/启动语言、透明重叠、奇数宽图片 | 使用相应模型/命中/帧规范，不支持组合在启动前明确拒绝 | P/R；代表帧/拒绝清单 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
       "id": "S07-04",
       "stage": 7,
       "title": "S07-04 · 配置型功能与离线限制",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "帮助明确离线宏不执行；功能/配置能力边界已写任务书，尚未自动变为实现。",
-      "remaining": "配置型运行调度/状态持久化/失败、可控时钟与离线宏提示内容位置未实现验证；所有配置不能用静态外观替代。",
+      "completedScope": "宏绑定/来源保留且离线绝不执行；活动配置/动画/未核时序在启动前明确拒绝，能力表列明。",
+      "remaining": "采集/报警/历史/配方/资料传输、可控系统时钟及配置持久化/失败调度未实现。",
       "blockers": [
-        "采集/报警/历史/配方/资料传输配置恢复"
+        "原厂对应运行语义/可靠状态帧未取得"
       ],
-      "nextAction": "先核V5.1离线带宏提示；选择一个已恢复配置接入地址输入→触发→时序→状态→持久化，其他按能力表禁用。",
+      "nextAction": "按采集→报警→历史→配方→资料传输顺序，每项先恢复地址/触发/时序/状态/持久化契约。",
       "acceptance": [
         "SIM-05：兼容离线不执行宏，配置只执行已恢复范围，有事件/数据日志；未实现项明确拒绝。",
         {
@@ -6619,7 +6659,8 @@
       ],
       "itemIds": [
         "Q-S07-003",
-        "Q-S01-003"
+        "Q-S01-003",
+        "Q-S07-004"
       ],
       "sources": [
         {
@@ -6637,6 +6678,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6702,21 +6751,26 @@
             "text": "| SIM-05 / S07-04 | 离线工程绑定宏和配置型采集/报警 | 兼容离线不执行宏；其它只按能力表执行，不能静态图冒充支持 | D/U；能力行/运行日志 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
       "id": "S07-05",
       "stage": 7,
       "title": "S07-05 · 在线传输与断线恢复",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "在线模拟职责和原厂入口身份已知；PC端点与HMI COM1必须区分。",
-      "remaining": "在线runtime与后端对接、扫描/写队列、超时/异常/重连、写失败展示/通知、退出释放和在线时限仍欠。",
+      "completedScope": "新增可注入Modbus RTU01/03/05/06回放模块，CRC/地址/站号/异常/超时/断连及队列规则97项通过，无I/O。",
+      "remaining": "无真实串口/USB/socket后端，未接runtime扫描/映射；原厂在线配置/端口映射、真实PC通信及故障恢复待完成。",
       "blockers": [
-        "S09-05默认Modbus PC后端",
-        "模拟会话事件/地址映射"
+        "阶段9真实传输与runtime映射；受控端点待接入"
       ],
-      "nextAction": "先接受控模拟从站回放，核单次读写和取消未发队列，再逐项加入异常/延迟/断连重连。",
+      "nextAction": "阶段9恢复默认RTU接口并接受控测试端点，先完成runtime与队列映射，再按端点授权执行T。",
       "acceptance": [
         "SIM-06/07：错误写不显示生效，已发/未发区分，退出释放端口；PC成功不关闭HMI E或USB T。",
         {
@@ -6734,7 +6788,8 @@
       ],
       "itemIds": [
         "Q-S09-002",
-        "Q-S07-003"
+        "Q-S07-003",
+        "Q-S07-005"
       ],
       "sources": [
         {
@@ -6752,6 +6807,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6827,20 +6890,26 @@
             "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
       "id": "S07-06",
       "stage": 7,
       "title": "S07-06 · 收口",
-      "status": "仍有欠项/未完整闭环",
+      "status": "限定切片已交付；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "三模式职责、局部允许范围和SIM用例已有规格。",
-      "remaining": "功能×offline/online×模型范围的实际capabilities和SIM通过/拒绝证据未交付。",
+      "completedScope": "已形成6项进度、D/U/P/R/PC传输/HMI边界矩阵、软件证据/便携包、UI规则21、USB95及台账交接。",
+      "remaining": "SIM完整模式和全部原厂一致性/在线/配置/E尚未闭合；本批只交付限定五类内部离线切片。",
       "blockers": [
-        "S07-01～05对应能力"
+        "原厂对应运行语义/可靠状态帧未取得"
       ],
-      "nextAction": "按当前可实际实现的单页LB/LW范围生成能力行，再补各入口生命周期与在线声明协议故障结果。",
+      "nextAction": "从本批最小未验原厂事件/真实在线依赖继续，不重复已过内存用例或暂缓静态表格下载。",
       "acceptance": [
         "声明范围内SIM有真实结果；离线T=N/A有理由，PC通信/HMI E分层；恢复点含末事件/地址快照/退出原因。",
         {
@@ -6890,6 +6959,14 @@
           "kind": "现有能力和阶段边界",
           "path": "design_plan/08_阶段7_离线与在线模拟.md",
           "line": 9
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -6978,6 +7055,12 @@
             "text": "| CLN-02 / 各阶段结束 | 清理后检查留存文件/链接/哈希与磁盘 | 归档可读、后续只靠保留资料可继续；磁盘减量真实记录 | 路径/前后字节/链接hash结果 |"
           }
         ]
+      },
+      "stage7Execution": {
+        "scope": "单画面+内部LB/LW+五类+宏不执行",
+        "pcTests": "212/0/0",
+        "hardwareIo": false,
+        "hmiEUpgraded": false
       }
     },
     {
@@ -10228,7 +10311,14 @@
       "sharedIssueIds": [
         "Q-AUDIT-S04-12-MIX-001",
         "Q-AUDIT-C01-C05-SCOPE-001"
-      ]
+      ],
+      "stage7OfflineSupplement": {
+        "status": "单页内部地址限定离线支持",
+        "scope": "不改原D/U/P/R/C/T/E结论，PC共享renderer/运行器另计",
+        "capabilities": "docs/stage7-evidence/S07-capabilities.json",
+        "physicalTransfer": "N/A",
+        "hmiEUpgraded": false
+      }
     },
     {
       "familyId": "C02",
@@ -10408,7 +10498,14 @@
       "sharedIssueIds": [
         "Q-AUDIT-S04-12-MIX-001",
         "Q-AUDIT-C01-C05-SCOPE-001"
-      ]
+      ],
+      "stage7OfflineSupplement": {
+        "status": "单页内部地址限定离线支持",
+        "scope": "不改原D/U/P/R/C/T/E结论，PC共享renderer/运行器另计",
+        "capabilities": "docs/stage7-evidence/S07-capabilities.json",
+        "physicalTransfer": "N/A",
+        "hmiEUpgraded": false
+      }
     },
     {
       "familyId": "C03",
@@ -10587,7 +10684,14 @@
       "sharedIssueIds": [
         "Q-AUDIT-S04-12-MIX-001",
         "Q-AUDIT-C01-C05-SCOPE-001"
-      ]
+      ],
+      "stage7OfflineSupplement": {
+        "status": "单页内部地址限定离线支持",
+        "scope": "不改原D/U/P/R/C/T/E结论，PC共享renderer/运行器另计",
+        "capabilities": "docs/stage7-evidence/S07-capabilities.json",
+        "physicalTransfer": "N/A",
+        "hmiEUpgraded": false
+      }
     },
     {
       "familyId": "C04",
@@ -10766,7 +10870,14 @@
       "sharedIssueIds": [
         "Q-AUDIT-S04-12-MIX-001",
         "Q-AUDIT-C01-C05-SCOPE-001"
-      ]
+      ],
+      "stage7OfflineSupplement": {
+        "status": "单页内部地址限定离线支持",
+        "scope": "不改原D/U/P/R/C/T/E结论，PC共享renderer/运行器另计",
+        "capabilities": "docs/stage7-evidence/S07-capabilities.json",
+        "physicalTransfer": "N/A",
+        "hmiEUpgraded": false
+      }
     },
     {
       "familyId": "C05",
@@ -10946,7 +11057,14 @@
       "sharedIssueIds": [
         "Q-AUDIT-S04-12-MIX-001",
         "Q-AUDIT-C01-C05-SCOPE-001"
-      ]
+      ],
+      "stage7OfflineSupplement": {
+        "status": "单页内部地址限定离线支持",
+        "scope": "不改原D/U/P/R/C/T/E结论，PC共享renderer/运行器另计",
+        "capabilities": "docs/stage7-evidence/S07-capabilities.json",
+        "physicalTransfer": "N/A",
+        "hmiEUpgraded": false
+      }
     },
     {
       "familyId": "C06",
@@ -22249,15 +22367,15 @@
     {
       "id": "Q-S07-001",
       "title": "离线/在线模拟的启动参数、工作目录、输入文件/退出契约；D/U/C",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证；剩余开放",
       "scope": "阶段5～11",
-      "remaining": "离线/在线模拟的启动参数、工作目录、输入文件/退出契约；D/U/C",
+      "remaining": "原厂完整保存/取消/文件输入语义、正常退出与全部入口条件未闭合。",
       "blockers": [
         "阶段1可序列化模型",
         "原厂离线/在线真实入口",
         "S07-01～05对应能力"
       ],
-      "nextAction": "每入口启动一次受控原厂进程，记录命令行、子进程、读入文件、退出码；未抓到内容不填猜测参数",
+      "nextAction": "先补无干扰正常退出与完整输入消费者。",
       "acceptance": "各声明模拟入口有实际进程命令行、工作目录、读取文件、子进程和退出码证据，可按同一输入复现启动与退出；未观察到的参数继续未知。",
       "relatedIds": [
         "S07-01",
@@ -22268,16 +22386,25 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 162
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "已恢复无额外参数启动及部分文件消费，Lite快照生命周期通过。"
     },
     {
       "id": "Q-S07-002",
       "title": "内部LB/LW初值、保持、周期/事件顺序及取消；P/PC运行",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证；剩余开放",
       "scope": "阶段5～11",
-      "remaining": "内部LB/LW初值、保持、周期/事件顺序及取消；P/PC运行",
+      "remaining": "原厂初值/保持/字序/事件顺序与点动取消仍未知；未取得有效状态帧。",
       "blockers": [
         "控件运行规格",
         "地址codec",
@@ -22287,7 +22414,7 @@
         "页面/窗口模型",
         "S07-01～05对应能力"
       ],
-      "nextAction": "同一最小工程仅改变一个内部地址，记录打开/事件/关闭/重开快照；区别PC运行内存与工程默认值",
+      "nextAction": "取得一个单LB/LW原厂事件前后状态，逐分支核对。",
       "acceptance": "最小工程的内部LB/LW初值、保持、周期/事件顺序和取消各有打开/事件/关闭/重开对照，PC运行内存与工程默认值区分，未观测分支不预设行为。",
       "relatedIds": [
         "S07-02",
@@ -22299,16 +22426,25 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 163
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "Lite执行器79项及UI/CLI通过；零初值/低字优先/取消释放有明确设计标注。"
     },
     {
       "id": "Q-S07-003",
       "title": "旧帮助的离线宏跳过行为与在线30分钟时限是否仍适用；D/PC运行",
-      "status": "开放，按关联S的具体欠项执行",
+      "status": "部分补证；剩余开放",
       "scope": "阶段5～11",
-      "remaining": "旧帮助的离线宏跳过行为与在线30分钟时限是否仍适用；D/PC运行",
+      "remaining": "原厂30分钟时限/真实在线配置/PLC支持表和模拟宏提示位置尚未实证。",
       "blockers": [
         "阶段1可序列化模型",
         "原厂离线/在线真实入口",
@@ -22317,7 +22453,7 @@
         "模拟会话事件/地址映射",
         "S07-01～05对应能力"
       ],
-      "nextAction": "固定V5.1程序/分辨率，观察离线带宏提示与在线生命周期；按受控时钟/实际时长取得退出原因，帮助文字不足以关闭",
+      "nextAction": "先核原厂配置与帮助版本，再私有桌面记录单调时间和退出原因。",
       "acceptance": "固定V5.1程序与工程，离线带宏提示/执行情况和在线生命周期均有实际时钟、持续时长及退出原因记录；明确旧帮助中的宏跳过与30分钟限制是否仍适用，不能单凭帮助关闭。",
       "relatedIds": [
         "S07-01",
@@ -22330,9 +22466,18 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 164
+        },
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ],
-      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。"
+      "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
+      "completedScope": "宏离线不执行；原厂online进程请求已记录且阻断，未连接PLC。"
     },
     {
       "id": "Q-S08-001",
@@ -24052,6 +24197,90 @@
         {
           "path": "design_plan/复刻待验线索台账.csv",
           "line": 319
+        }
+      ]
+    },
+    {
+      "id": "Q-S07-004",
+      "title": "活动配置与调度",
+      "status": "开放",
+      "scope": "阶段7限定交付之外",
+      "completedScope": "明确能力拒绝和产品差异，未伪执行。",
+      "remaining": "采集/报警/历史/配方/资料传输/系统时钟调度未实现，启动前拒绝。",
+      "blockers": [
+        "对应原厂运行契约及执行实现尚未闭合"
+      ],
+      "nextAction": "按采集→报警→历史→配方→资料传输顺序，每项先恢复地址/触发/时序/状态/持久化契约。",
+      "acceptance": [
+        "同一输入/刺激有可复现状态/失败及资源释放记录；PC T不替代HMI E。"
+      ],
+      "relatedIds": [
+        "S07-04"
+      ],
+      "sources": [
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "Q-S07-005",
+      "title": "真实在线连接与runtime映射",
+      "status": "开放",
+      "scope": "阶段7限定交付之外",
+      "completedScope": "明确能力拒绝和产品差异，未伪执行。",
+      "remaining": "RTU仅回放；真实PC传输后端、runtime扫描/映射、端口释放及真实故障恢复待接入。",
+      "blockers": [
+        "对应原厂运行契约及执行实现尚未闭合"
+      ],
+      "nextAction": "阶段9恢复默认RTU接口并接受控测试端点，先完成runtime与队列映射，再按端点授权执行T。",
+      "acceptance": [
+        "同一输入/刺激有可复现状态/失败及资源释放记录；PC T不替代HMI E。"
+      ],
+      "relatedIds": [
+        "S07-05"
+      ],
+      "sources": [
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "Q-S07-006",
+      "title": "单页以外窗口与原厂像素对照",
+      "status": "开放",
+      "scope": "阶段7限定交付之外",
+      "completedScope": "明确能力拒绝和产品差异，未伪执行。",
+      "remaining": "多画面/弹窗/原厂键盘未接入，PC帧尚无有效原厂对应帧对照。",
+      "blockers": [
+        "对应原厂运行契约及执行实现尚未闭合"
+      ],
+      "nextAction": "先恢复原厂有效帧对照，再按窗口模型接入导航与原厂键盘。",
+      "acceptance": [
+        "同一输入/刺激有可复现状态/失败及资源释放记录；PC T不替代HMI E。"
+      ],
+      "relatedIds": [
+        "S07-03"
+      ],
+      "sources": [
+        {
+          "path": "docs/阶段7离线模拟实现与验收.md",
+          "line": 1
+        },
+        {
+          "path": "docs/stage7-evidence/windows-r3/run.json",
+          "line": 1
         }
       ]
     }
@@ -176498,6 +176727,26 @@
         }
       ],
       "countsTowardAmtStages": false
+    },
+    {
+      "id": "DOC-CLEANUP-003",
+      "title": "阶段7原厂临时运行目录清理被拒绝",
+      "status": "自动审批拒绝，未删除",
+      "completedScope": "109文件证据ZIP已逐项校SHA；运行器独立清6个重复.o/7668946B。",
+      "remaining": "12个自有可再生目录389文件819615805逻辑字节保留；硬链接不等同物理释放。",
+      "blockers": [
+        "本次Remove-Item自动审批返回blocked by policy；不换通道重试。"
+      ],
+      "nextAction": "保留清理回执及压缩证据；只有审批条件改变后才处理这些明确目录。",
+      "acceptance": [
+        "对应绝对目录在许可下删除且唯一证据仍可解压核SHA；如继续拒绝如实记录。"
+      ],
+      "sources": [
+        {
+          "path": "docs/stage7-evidence/cleanup-result.json",
+          "line": 1
+        }
+      ]
     }
   ],
   "aliases": {
@@ -177194,7 +177443,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "本次实际实施阶段6，94项Qt、媒体29通过/1权限跳过；10/12/14段新版独立产物USB下载成功，完整上载/独立介质生成/完整原厂窗及E仍有欠项。",
+  "activitySummary": "本批实施阶段7限定内部离线会话并执行212项Qt、CLI/便携及后台原厂启动调查；未连接PLC/USB，HMI E不升级。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -177287,6 +177536,767 @@
         "cleanup": "docs/stage6-evidence/native/cleanup-receipt.json"
       },
       "historyPolicy": "旧sourceAssessment及history2515记录保留原状态；只更新当前任务和关联范围，不据新USB T批量关闭全部历史字段。"
+    }
+  ],
+  "stage7Executions": [
+    {
+      "progress": "docs/stage7-evidence/progress.json",
+      "sourceBaseline": "76def3c3f2a752082a28c0d2f2871caa9f06a03e",
+      "previousStageTaskStates": [
+        {
+          "id": "S07-01",
+          "stage": 7,
+          "title": "S07-01 · 恢复启动与退出协议",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "编辑画布预览已有；原厂offline/online分辨率程序身份和QAction入口已记录。",
+          "remaining": "独立模拟启动参数/输入格式/工作目录/保存提示/生命周期、重复启动/退出与30分钟限制实证未恢复。",
+          "blockers": [
+            "阶段1可序列化模型",
+            "原厂离线/在线真实入口"
+          ],
+          "nextAction": "后台用同一内部LB/LW工程分别启动三个入口，记录命令行/读写文件/前后hash/退出原因；未知IPC不猜。",
+          "acceptance": [
+            "SIM-01/07：保存取消失败无孤儿进程或工程改写；真实时长/退出原因有单调时间记录，不按旧帮助硬编码。",
+            {
+              "caseId": "SIM-01",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 63,
+              "text": "| SIM-01 / S07-01 | 未保存工程分别启动画布预览/离线/在线，取消保存或保存失败 | 三入口区别、生命周期按原生；取消后无孤儿进程/工程改写。未知启动协议先补证 | D/U/P；窗口/进程/前后hash |"
+            },
+            {
+              "caseId": "SIM-07",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 69,
+              "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S07-001",
+            "Q-S07-003"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 37,
+              "endLine": 44
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3439
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-01",
+            "auditState": "open_unimplemented_or_unverified",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S07-001",
+              "Q-S07-003"
+            ],
+            "blockingDependencies": [
+              "阶段1可序列化模型",
+              "原厂离线/在线真实入口"
+            ],
+            "donePart": "编辑画布预览已有；原厂offline/online分辨率程序身份和QAction入口已记录。",
+            "specificGap": "独立模拟启动参数/输入格式/工作目录/保存提示/生命周期、重复启动/退出与30分钟限制实证未恢复。",
+            "minimumNextStep": "后台用同一内部LB/LW工程分别启动三个入口，记录命令行/读写文件/前后hash/退出原因；未知IPC不猜。",
+            "decidableAcceptance": "SIM-01/07：保存取消失败无孤儿进程或工程改写；真实时长/退出原因有单调时间记录，不按旧帮助硬编码。",
+            "acceptanceCaseIds": [
+              "SIM-01",
+              "SIM-07"
+            ],
+            "title": "S07-01 · 恢复启动与退出协议",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-01 · 恢复启动与退出协议",
+                "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 37,
+                "endLine": 44
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3439
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-01",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 63,
+                "text": "| SIM-01 / S07-01 | 未保存工程分别启动画布预览/离线/在线，取消保存或保存失败 | 三入口区别、生命周期按原生；取消后无孤儿进程/工程改写。未知启动协议先补证 | D/U/P；窗口/进程/前后hash |"
+              },
+              {
+                "caseId": "SIM-07",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 69,
+                "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+              }
+            ]
+          }
+        },
+        {
+          "id": "S07-02",
+          "stage": 7,
+          "title": "S07-02 · 内部地址和事件执行器",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "位/字/灯模型、地址解析及公共renderer可复用；画布模拟状态仅外观预览。",
+          "remaining": "独立address store、字位别名/16-32位语义、初值保持、事件→读写→渲染、点动失捕获/取消和权限通知顺序未形成执行器。",
+          "blockers": [
+            "控件运行规格",
+            "地址codec",
+            "S07-01会话边界"
+          ],
+          "nextAction": "先单画面内部LB/LW五类受限运行，逐事件记录旧值/写入/相关监视/新帧，使用原厂最小样本核取消时序。",
+          "acceptance": [
+            "SIM-02/03：独立观察点证明地址变化；press移出/失捕获/关闭清理正确，编辑工程不被运行值回写；未知对象启动前拒绝。",
+            {
+              "caseId": "SIM-02",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 64,
+              "text": "| SIM-02 / S07-02 | 内部位交替/置复位/点动，灯读同地址；字赋值/加减由独立显示读 | 有效事件产生独立可观测寄存器变化，符号/跨度正确；未核触控时序先原生对照 | R/运行逻辑；事件→地址→帧日志 |"
+            },
+            {
+              "caseId": "SIM-03",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 65,
+              "text": "| SIM-03 / S07-02 | press后移出/失捕获/关闭窗口/权限转无效 | release/cancel遵循已核规则，无丢失清理；设备E独立 | U/R；事件与地址初末值 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S07-002"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 45,
+              "endLine": 52
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3460
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-02",
+            "auditState": "open_unimplemented_or_unverified",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S07-002"
+            ],
+            "blockingDependencies": [
+              "控件运行规格",
+              "地址codec",
+              "S07-01会话边界"
+            ],
+            "donePart": "位/字/灯模型、地址解析及公共renderer可复用；画布模拟状态仅外观预览。",
+            "specificGap": "独立address store、字位别名/16-32位语义、初值保持、事件→读写→渲染、点动失捕获/取消和权限通知顺序未形成执行器。",
+            "minimumNextStep": "先单画面内部LB/LW五类受限运行，逐事件记录旧值/写入/相关监视/新帧，使用原厂最小样本核取消时序。",
+            "decidableAcceptance": "SIM-02/03：独立观察点证明地址变化；press移出/失捕获/关闭清理正确，编辑工程不被运行值回写；未知对象启动前拒绝。",
+            "acceptanceCaseIds": [
+              "SIM-02",
+              "SIM-03"
+            ],
+            "title": "S07-02 · 内部地址和事件执行器",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-02 · 内部地址和事件执行器",
+                "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 45,
+                "endLine": 52
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3460
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-02",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 64,
+                "text": "| SIM-02 / S07-02 | 内部位交替/置复位/点动，灯读同地址；字赋值/加减由独立显示读 | 有效事件产生独立可观测寄存器变化，符号/跨度正确；未核触控时序先原生对照 | R/运行逻辑；事件→地址→帧日志 |"
+              },
+              {
+                "caseId": "SIM-03",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 65,
+                "text": "| SIM-03 / S07-02 | press后移出/失捕获/关闭窗口/权限转无效 | release/cancel遵循已核规则，无丢失清理；设备E独立 | U/R；事件与地址初末值 |"
+              }
+            ]
+          }
+        },
+        {
+          "id": "S07-03",
+          "stage": 7,
+          "title": "S07-03 · 复用渲染与窗口模型",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "已有五类renderer和编辑画布；单页PC渲染及受限设备背景可复用。",
+          "remaining": "runtime首帧/状态/语言失效、切页/弹窗/键盘层次、关闭触点、透明重叠及隐藏权限后的重绘未接入闭环。",
+          "blockers": [
+            "阶段3层次/命中/渲染",
+            "S07-02执行器",
+            "页面/窗口模型"
+          ],
+          "nextAction": "先绑定内部地址到单页状态帧和命中，按相同资源入口比PC原厂截图；特殊页/重叠仅在对应模型规则恢复后开放。",
+          "acceptance": [
+            "SIM-04：模型/帧/命中/窗口和奇数宽处理一致，未支持组合启动前拒绝；PC截图与设备RGB565/E分别记。",
+            {
+              "caseId": "SIM-04",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 66,
+              "text": "| SIM-04 / S07-03 | 切画面/窗口/启动语言、透明重叠、奇数宽图片 | 使用相应模型/命中/帧规范，不支持组合在启动前明确拒绝 | P/R；代表帧/拒绝清单 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S07-002",
+            "Q-S05-002",
+            "Q-S01-001"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 53,
+              "endLine": 59
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3481
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-03",
+            "auditState": "open_unimplemented_or_unverified",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S07-002",
+              "Q-S05-002",
+              "Q-S01-001"
+            ],
+            "blockingDependencies": [
+              "阶段3层次/命中/渲染",
+              "S07-02执行器",
+              "页面/窗口模型"
+            ],
+            "donePart": "已有五类renderer和编辑画布；单页PC渲染及受限设备背景可复用。",
+            "specificGap": "runtime首帧/状态/语言失效、切页/弹窗/键盘层次、关闭触点、透明重叠及隐藏权限后的重绘未接入闭环。",
+            "minimumNextStep": "先绑定内部地址到单页状态帧和命中，按相同资源入口比PC原厂截图；特殊页/重叠仅在对应模型规则恢复后开放。",
+            "decidableAcceptance": "SIM-04：模型/帧/命中/窗口和奇数宽处理一致，未支持组合启动前拒绝；PC截图与设备RGB565/E分别记。",
+            "acceptanceCaseIds": [
+              "SIM-04"
+            ],
+            "title": "S07-03 · 复用渲染与窗口模型",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-03 · 复用渲染与窗口模型",
+                "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 53,
+                "endLine": 59
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3481
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-04",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 66,
+                "text": "| SIM-04 / S07-03 | 切画面/窗口/启动语言、透明重叠、奇数宽图片 | 使用相应模型/命中/帧规范，不支持组合在启动前明确拒绝 | P/R；代表帧/拒绝清单 |"
+              }
+            ]
+          }
+        },
+        {
+          "id": "S07-04",
+          "stage": 7,
+          "title": "S07-04 · 配置型功能与离线限制",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "帮助明确离线宏不执行；功能/配置能力边界已写任务书，尚未自动变为实现。",
+          "remaining": "配置型运行调度/状态持久化/失败、可控时钟与离线宏提示内容位置未实现验证；所有配置不能用静态外观替代。",
+          "blockers": [
+            "采集/报警/历史/配方/资料传输配置恢复"
+          ],
+          "nextAction": "先核V5.1离线带宏提示；选择一个已恢复配置接入地址输入→触发→时序→状态→持久化，其他按能力表禁用。",
+          "acceptance": [
+            "SIM-05：兼容离线不执行宏，配置只执行已恢复范围，有事件/数据日志；未实现项明确拒绝。",
+            {
+              "caseId": "SIM-05",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 67,
+              "text": "| SIM-05 / S07-04 | 离线工程绑定宏和配置型采集/报警 | 兼容离线不执行宏；其它只按能力表执行，不能静态图冒充支持 | D/U；能力行/运行日志 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S07-003",
+            "Q-S01-003"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 60,
+              "endLine": 65
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3502
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-04",
+            "auditState": "open_unimplemented_or_unverified",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S07-003",
+              "Q-S01-003"
+            ],
+            "blockingDependencies": [
+              "采集/报警/历史/配方/资料传输配置恢复"
+            ],
+            "donePart": "帮助明确离线宏不执行；功能/配置能力边界已写任务书，尚未自动变为实现。",
+            "specificGap": "配置型运行调度/状态持久化/失败、可控时钟与离线宏提示内容位置未实现验证；所有配置不能用静态外观替代。",
+            "minimumNextStep": "先核V5.1离线带宏提示；选择一个已恢复配置接入地址输入→触发→时序→状态→持久化，其他按能力表禁用。",
+            "decidableAcceptance": "SIM-05：兼容离线不执行宏，配置只执行已恢复范围，有事件/数据日志；未实现项明确拒绝。",
+            "acceptanceCaseIds": [
+              "SIM-05"
+            ],
+            "title": "S07-04 · 配置型功能与离线限制",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-04 · 配置型功能与离线限制",
+                "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 60,
+                "endLine": 65
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3502
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-05",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 67,
+                "text": "| SIM-05 / S07-04 | 离线工程绑定宏和配置型采集/报警 | 兼容离线不执行宏；其它只按能力表执行，不能静态图冒充支持 | D/U；能力行/运行日志 |"
+              }
+            ]
+          }
+        },
+        {
+          "id": "S07-05",
+          "stage": 7,
+          "title": "S07-05 · 在线传输与断线恢复",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "在线模拟职责和原厂入口身份已知；PC端点与HMI COM1必须区分。",
+          "remaining": "在线runtime与后端对接、扫描/写队列、超时/异常/重连、写失败展示/通知、退出释放和在线时限仍欠。",
+          "blockers": [
+            "S09-05默认Modbus PC后端",
+            "模拟会话事件/地址映射"
+          ],
+          "nextAction": "先接受控模拟从站回放，核单次读写和取消未发队列，再逐项加入异常/延迟/断连重连。",
+          "acceptance": [
+            "SIM-06/07：错误写不显示生效，已发/未发区分，退出释放端口；PC成功不关闭HMI E或USB T。",
+            {
+              "caseId": "SIM-06",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 68,
+              "text": "| SIM-06 / S07-05 | 模拟从站正常/异常/超时/重连，退出时待写队列 | 按PC后端契约处理；写失败不当生效，释放端口；未发/已发写区分 | PC通信；回放日志，不记HMI E |"
+            },
+            {
+              "caseId": "SIM-07",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 69,
+              "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S09-002",
+            "Q-S07-003"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 66,
+              "endLine": 73
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3523
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-05",
+            "auditState": "open_blocked",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S09-002",
+              "Q-S07-003"
+            ],
+            "blockingDependencies": [
+              "S09-05默认Modbus PC后端",
+              "模拟会话事件/地址映射"
+            ],
+            "donePart": "在线模拟职责和原厂入口身份已知；PC端点与HMI COM1必须区分。",
+            "specificGap": "在线runtime与后端对接、扫描/写队列、超时/异常/重连、写失败展示/通知、退出释放和在线时限仍欠。",
+            "minimumNextStep": "先接受控模拟从站回放，核单次读写和取消未发队列，再逐项加入异常/延迟/断连重连。",
+            "decidableAcceptance": "SIM-06/07：错误写不显示生效，已发/未发区分，退出释放端口；PC成功不关闭HMI E或USB T。",
+            "acceptanceCaseIds": [
+              "SIM-06",
+              "SIM-07"
+            ],
+            "title": "S07-05 · 在线传输与断线恢复",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [
+                "S09-05"
+              ],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-05 · 在线传输与断线恢复",
+                "nextAction": "先读取S09-05在线PC后端契约；只完成本次协议范围后返回，不等待全部51DLL"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 66,
+                "endLine": 73
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3523
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-06",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 68,
+                "text": "| SIM-06 / S07-05 | 模拟从站正常/异常/超时/重连，退出时待写队列 | 按PC后端契约处理；写失败不当生效，释放端口；未发/已发写区分 | PC通信；回放日志，不记HMI E |"
+              },
+              {
+                "caseId": "SIM-07",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 69,
+                "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+              }
+            ]
+          }
+        },
+        {
+          "id": "S07-06",
+          "stage": 7,
+          "title": "S07-06 · 收口",
+          "status": "仍有欠项/未完整闭环",
+          "activeOpen": true,
+          "completedScope": "三模式职责、局部允许范围和SIM用例已有规格。",
+          "remaining": "功能×offline/online×模型范围的实际capabilities和SIM通过/拒绝证据未交付。",
+          "blockers": [
+            "S07-01～05对应能力"
+          ],
+          "nextAction": "按当前可实际实现的单页LB/LW范围生成能力行，再补各入口生命周期与在线声明协议故障结果。",
+          "acceptance": [
+            "声明范围内SIM有真实结果；离线T=N/A有理由，PC通信/HMI E分层；恢复点含末事件/地址快照/退出原因。",
+            {
+              "caseId": "SIM-01",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 63,
+              "text": "| SIM-01 / S07-01 | 未保存工程分别启动画布预览/离线/在线，取消保存或保存失败 | 三入口区别、生命周期按原生；取消后无孤儿进程/工程改写。未知启动协议先补证 | D/U/P；窗口/进程/前后hash |"
+            },
+            {
+              "caseId": "SIM-07",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 69,
+              "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+            },
+            {
+              "caseId": "CLN-01",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 114,
+              "text": "| CLN-01 / 各阶段结束 | 列本阶段临时manifest及归档/引用 | 唯一样本/失败记录/历史证据保留；每项临时物可再生或已有对应证据 | 删除白名单及依据 |"
+            },
+            {
+              "caseId": "CLN-02",
+              "path": "design_plan/A06_运行与发布验收用例.md",
+              "line": 115,
+              "text": "| CLN-02 / 各阶段结束 | 清理后检查留存文件/链接/哈希与磁盘 | 归档可读、后续只靠保留资料可继续；磁盘减量真实记录 | 路径/前后字节/链接hash结果 |"
+            }
+          ],
+          "itemIds": [
+            "Q-S07-001",
+            "Q-S07-002",
+            "Q-S07-003",
+            "Q-S09-002"
+          ],
+          "sources": [
+            {
+              "kind": "任务原文",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 74,
+              "endLine": 77
+            },
+            {
+              "kind": "机器任务状态原值",
+              "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+              "line": 3546
+            },
+            {
+              "kind": "现有能力和阶段边界",
+              "path": "design_plan/08_阶段7_离线与在线模拟.md",
+              "line": 9
+            }
+          ],
+          "sourceAssessment": {
+            "stage": 7,
+            "taskId": "S07-06",
+            "auditState": "open_dependency_closure",
+            "activeOpen": true,
+            "questionIds": [
+              "Q-S07-001",
+              "Q-S07-002",
+              "Q-S07-003",
+              "Q-S09-002"
+            ],
+            "blockingDependencies": [
+              "S07-01～05对应能力"
+            ],
+            "donePart": "三模式职责、局部允许范围和SIM用例已有规格。",
+            "specificGap": "功能×offline/online×模型范围的实际capabilities和SIM通过/拒绝证据未交付。",
+            "minimumNextStep": "按当前可实际实现的单页LB/LW范围生成能力行，再补各入口生命周期与在线声明协议故障结果。",
+            "decidableAcceptance": "声明范围内SIM有真实结果；离线T=N/A有理由，PC通信/HMI E分层；恢复点含末事件/地址快照/退出原因。",
+            "acceptanceCaseIds": [
+              "SIM-01",
+              "SIM-07",
+              "CLN-01",
+              "CLN-02"
+            ],
+            "title": "S07-06 · 收口",
+            "machineSnapshot": {
+              "documentation": "generated_and_checked",
+              "investigation": {
+                "state": "not_revalidated_in_this_run",
+                "scope": "本任务已有来源/步骤已整理；文档交付不判定实际调查或实现通过"
+              },
+              "implementation": {
+                "state": "not_assessed_this_run",
+                "scope": "本轮无业务修改；已有5类能力按README/最新报告复用，不能当作未实现"
+              },
+              "blockingDependencies": [],
+              "resumePoint": {
+                "document": "08_阶段7_离线与在线模拟.md",
+                "heading": "S07-06 · 收口",
+                "nextAction": "读取该任务的前置、输入和第一个未闭合步骤；按其Q-ID补证并记录分层结果，本轮硬件步骤未执行"
+              }
+            },
+            "sourceReferences": [
+              {
+                "kind": "任务原文",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 74,
+                "endLine": 77
+              },
+              {
+                "kind": "机器任务状态原值",
+                "path": "design_plan/分阶段文档证据/阶段交付与清理记录.json",
+                "line": 3546
+              },
+              {
+                "kind": "现有能力和阶段边界",
+                "path": "design_plan/08_阶段7_离线与在线模拟.md",
+                "line": 9
+              }
+            ],
+            "acceptanceCaseDefinitions": [
+              {
+                "caseId": "SIM-01",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 63,
+                "text": "| SIM-01 / S07-01 | 未保存工程分别启动画布预览/离线/在线，取消保存或保存失败 | 三入口区别、生命周期按原生；取消后无孤儿进程/工程改写。未知启动协议先补证 | D/U/P；窗口/进程/前后hash |"
+              },
+              {
+                "caseId": "SIM-07",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 69,
+                "text": "| SIM-07 / S07-01 | 后台观察V5.1在线运行到退出或已覆盖时长 | 时间/原因如实记；旧帮助30分钟未经观察不硬编码 | D/U；单调时间/进程原因 |"
+              },
+              {
+                "caseId": "CLN-01",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 114,
+                "text": "| CLN-01 / 各阶段结束 | 列本阶段临时manifest及归档/引用 | 唯一样本/失败记录/历史证据保留；每项临时物可再生或已有对应证据 | 删除白名单及依据 |"
+              },
+              {
+                "caseId": "CLN-02",
+                "path": "design_plan/A06_运行与发布验收用例.md",
+                "line": 115,
+                "text": "| CLN-02 / 各阶段结束 | 清理后检查留存文件/链接/哈希与磁盘 | 归档可读、后续只靠保留资料可继续；磁盘减量真实记录 | 路径/前后字节/链接hash结果 |"
+              }
+            ]
+          }
+        }
+      ],
+      "observed": {
+        "core": 79,
+        "ui": 13,
+        "workflow": 23,
+        "modbusReplay": 97,
+        "hardwareIo": false,
+        "completeStage7": false
+      },
+      "historyPolicy": "保留sourceAssessment、候选和历史原值；此execution仅为当前追加状态"
     }
   ]
 }

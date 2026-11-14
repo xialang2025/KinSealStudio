@@ -799,7 +799,7 @@ void Stage2WorkflowTests::nativeShellPendingCommandsAreReadOnly() //20261111-1 a
         message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
         if (message != nullptr) { explained = message->text().contains(QStringLiteral("后续阶段")); message->accept(); }
     });
-    window.m_commands.value(QStringLiteral("action_online_simulation"))->trigger();
+    window.m_commands.value(QStringLiteral("action_upload"))->trigger(); //20261114-6 change: Online simulation now has a specific capability explanation; upload remains pending.
     QVERIFY(explained); QCOMPARE(window.currentEditorProject().toJson(), before);
     QVERIFY(!window.m_dirty);
 }

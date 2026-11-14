@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "simulation_window.h" //20261114-6 add
 #include "bit_button_renderer.h" //20261108-15 add
 
 #include "hmi_canvas.h"
@@ -1736,6 +1737,7 @@ void MainWindow::closeEvent(QCloseEvent *event) //20261107-6 add
     }
     if (confirmDiscardChanges())
     {
+        if (!m_simulationWindow.isNull()) { m_simulationWindow->close(); } //20261114-6 add: End held private runtime touches only after the editor close is accepted.
         event->accept();
     }
     else

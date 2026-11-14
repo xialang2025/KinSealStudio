@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QPoint>
 #include <QString>
+#include <QPointer> //20261114-6 add
 
 class QLabel;
 class QCloseEvent;
@@ -24,6 +25,7 @@ class QComboBox;
 class QAction; //20261110-7 add: Share command instances across all main-window surfaces.
 class QMenu;
 class DeviceDownloadSession; //20261114-5 add
+class SimulationWindow; //20261114-6 add
 
 class MainWindow : public QMainWindow
 {
@@ -32,6 +34,7 @@ class MainWindow : public QMainWindow
     friend class Stage2WorkflowTests; //20261110-7 add: Exercise whole-project transactions without operating user windows.
     friend class Stage3IntegrationTests; //20261110-8 add: Verify resource placement and project clipboard transactions.
     friend class Stage4ControlTests; //20261112-0 add: Exercise real control actions and transaction history.
+    friend class SimulationUiTests; //20261114-6 add: Verify snapshot isolation through the actual shell actions.
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -84,6 +87,7 @@ private:
     QProcess *m_downloadProcess; //20261108-8 add
     QTemporaryDir *m_downloadTemp; //20261108-8 add
     DeviceDownloadSession *m_downloadSession = nullptr; //20261114-5 add
+    QPointer<SimulationWindow> m_simulationWindow; //20261114-6 add
     QTabWidget *m_pageTabs;
     ScreenCanvas *m_canvas;
     QTreeWidget *m_projectTree;
@@ -143,6 +147,8 @@ private:
     void dispatchEditCommand(const QString &command);
     void updateCommandStates();
     bool downloadInProgress() const; //20261114-5 add
+    void startOfflineSimulation(); //20261114-6 add
+    void showOnlineSimulationOptions(); //20261114-6 add
     void resetProjectHistory();
     void recordProjectHistory();
     bool projectIsModified() const;

@@ -266,6 +266,14 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                     m_canvas->setZoomPercent(zoom); m_canvas->setProperty("nativeShellZoom", zoom);
                 });
             }
+            else if (id == QStringLiteral("action_offline_simulation")) //20261114-6 add: Run a detached model snapshot instead of editing scene preview states.
+            {
+                connect(action, &QAction::triggered, this, &MainWindow::startOfflineSimulation);
+            }
+            else if (id == QStringLiteral("action_online_simulation")) //20261114-6 add
+            {
+                connect(action, &QAction::triggered, this, &MainWindow::showOnlineSimulationOptions);
+            }
             else
             {
                 action->setProperty("nativeShellPending", true);

@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "revision": "r1",
+  "reviewer": "polygon_gate",
+  "mode": "只读代码复核；未运行构建、测试、GUI、USB或PLC",
+  "workingTree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+  "baselineCommit": "9d442ece",
+  "changeMarker": "20261114-6",
+  "task": "阶段7窗口/CLI/运行器整合及受控Modbus复核",
+  "result": "three_p2_findings_at_initial_snapshot_followup_revision_in_progress",
+  "findingsAtReviewSnapshot": [
+    {
+      "id": "S07-R1-UI-INPUT-RECOVERY",
+      "priority": "P2",
+      "statusAtInitialSnapshot": "requires-fix",
+      "title": "一次非法数字输入后UI保留pending但没有更正或取消入口",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 475,
+          "endLine": 481
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 831,
+          "endLine": 832
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 900,
+          "endLine": 911
+        }
+      ],
+      "trigger": "在合法数字/密码输入控件上释放，弹窗输入越界或位数不符数值并确定。",
+      "effect": "submitInput失败按运行器契约保留m_pendingInput供更正；UI直接return并关闭getText，未重开或取消。后续所有press都因pending而拒绝。",
+      "sourceExcerpt": "else if (!m_runtime.submitInput(value, &error)) { m_status->setText(error); return; }",
+      "minimumFix": "保留对话框并反馈可更正错误，或显式取消请求以允许重新触摸；取消和关闭必须清pending。",
+      "testGap": "初始UI测试未覆盖错误输入后同会话更正/重触和取消。"
+    },
+    {
+      "id": "S07-R1-CLI-PASSWORD-SNAPSHOT",
+      "priority": "P2",
+      "statusAtInitialSnapshot": "requires-fix",
+      "title": "遮盖事件value后仍由trace.state/finalState的LW输出密码",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 159,
+          "endLine": 175
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 188,
+          "endLine": 204
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 789
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 988,
+          "endLine": 1002
+        }
+      ],
+      "trigger": "合法operation2密码输入，例如12345，提交到LW0。",
+      "effect": "loggedEvent.value成为<masked-input>，但相同及后续trace快照和finalState含LW0=12345；成功stdout也保留finalState。32位及BCD值可由raw words恢复。",
+      "minimumFix": "对所有报告路径采用敏感范围/派生数据策略，覆盖trace/finalState/stdout、同址及跨字别名；如无法保证则密码会话省略内存值报告并明确范围。",
+      "testGap": "运行器测试只断言events不含2468，没有检查CLI全部JSON快照。"
+    },
+    {
+      "id": "S07-R1-CLI-OUTPUT-BOUND",
+      "priority": "P2",
+      "statusAtInitialSnapshot": "requires-fix",
+      "title": "16MiB检查在完整序列化之后，超限拒绝仍把大trace重新输出stdout",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 155,
+          "endLine": 177
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 185,
+          "endLine": 212
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 399,
+          "endLine": 403
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 1002,
+          "endLine": 1003
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\project_model.cpp",
+          "line": 1440,
+          "endLine": 1446
+        }
+      ],
+      "trigger": "一个合法控件绑定约512KiB宏名及同名宏，源仍远低于16MiB，再输入最多1024个cancel等事件。初始模型只核宏名非空，不限制其长度。",
+      "effect": "长宏名进入warnings并随每row.state重复；编码前可增长至约512MiB。超过16MiB后break，result仍含trace/frame；末尾compact再次编码并写stdout。拒绝未构成内存或错误输出上限。未运行该大样例。",
+      "sourceExcerpt": "encoded = QJsonDocument(result).toJson(QJsonDocument::Indented); if (encoded.size() > 16 * 1024 * 1024) { ... break; } ... encoded = QJsonDocument(result).toJson(QJsonDocument::Compact) + '\\n';",
+      "minimumFix": "逐行累计预算并限制单项诊断长度，在累计超限前停止；所有失败用新建的小错误JSON，禁止继续发布trace/frame。",
+      "testGap": "初始没有累计预算或超限错误stdout有界测试。"
+    }
+  ],
+  "currentSourceStatus": {
+    "changedDuringReview": true,
+    "currentFindingsState": "必须依据后续freeze重新复核；本r1发现对应下列初始SHA，并不宣称新版本仍有相同问题。",
+    "observedLaterSha256": {
+      "simulation_window_cpp": "520dd6ca3723719fbc5d41c6e942687cc2d9dbb3f8fa51e53c8b3f1b0200f6d1",
+      "simulation_cli_cpp": "b6abade55e3de2a5fa78f9bc9566abc46e2d90a4ef66a4362fe5cb9cece8304a",
+      "simulation_runtime_cpp": "6fe6f2e6e45f008f7f99f3740db995ac35a3c42a4c13bf508199a4b7f0cbe23b"
+    }
+  },
+  "risksRequiringFocusedLifecycleTest": [
+    {
+      "id": "S07-R1-OWNER-DESTRUCTOR-CALLBACK",
+      "status": "unreproduced-static-risk",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.h",
+          "line": 39,
+          "endLine": 41
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.h",
+          "line": 60,
+          "endLine": 61
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 222,
+          "endLine": 227
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 345,
+          "endLine": 360
+        }
+      ],
+      "risk": "viewport保留运行器成员raw指针和捕获owner的std::function。初始owner析构仅stop未清viewport持按；运行器成员先于QWidget基类销毁子控件，若teardown发focusOut/Ungrab会触及已析构对象。未取得Qt teardown实测，不把它冒称已重现崩溃。",
+      "recommendation": "owner析构体在runtime仍存活时先解除changed回调、取消viewport持按并销毁或解除其runtime引用；专测真实viewport持按后直接delete owner。"
+    },
+    {
+      "id": "S07-R1-MODAL-OWNER-DELETE",
+      "status": "unreproduced-static-risk",
+      "locations": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 476,
+          "endLine": 481
+        }
+      ],
+      "risk": "QInputDialog::getText启用嵌套事件循环；调用返回后立即访问this。初始无QPointer存活守卫，owner在modal期间被删除的程序路径需要覆盖。",
+      "recommendation": "使用guard或受控对话框生命周期；专测modal期间owner删除后无回调/后续成员访问。"
+    }
+  ],
+  "verifiedScope": [
+    {
+      "topic": "快照隔离和主窗接入",
+      "conclusion": "currentEditorProject按值复制到runtime；QPointer跟踪会话，重复菜单动作复用一窗；下载时离线动作受禁用/入口双检查；主窗关闭确认通过后关闭模拟窗。初始接入未见直接写回工程、历史或文件路径。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_simulation.cpp",
+          "line": 19,
+          "endLine": 44
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_workflow.cpp",
+          "line": 568,
+          "endLine": 575
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window.cpp",
+          "line": 1737,
+          "endLine": 1744
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\native_shell_ui.cpp",
+          "line": 269,
+          "endLine": 277
+        }
+      ]
+    },
+    {
+      "topic": "同层绘制和命中",
+      "conclusion": "绘制与hit测试共用稳定layer排序；同层后插入者最后绘制并先命中。命中先看最上可见对象再由runtime拒绝只读/权限对象，未见穿透受限上层控件的逻辑。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 29,
+          "endLine": 37
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 59,
+          "endLine": 75
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 129,
+          "endLine": 139
+        }
+      ]
+    },
+    {
+      "topic": "点动正常release和失捕获",
+      "conclusion": "viewport覆盖move-out/focusOut/UngrabMouse/WindowDeactivate/close；runtime在release/cancel/stop和权限丢失时对自有momentary位写false。已指出owner直接析构的额外风险，不能由正常close覆盖。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+          "line": 183,
+          "endLine": 268
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 717,
+          "endLine": 723
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 826,
+          "endLine": 891
+        }
+      ]
+    },
+    {
+      "topic": "运行器数值和事务",
+      "conclusion": "已检查7类型编码、低字优先跨字边界、BCD非法数位、有限float和整数范围；applyAction先候选内存并验证通知，再统一发布。当前初始快照未见独立数值溢出或半写阻断。该结论只适用于Lite明确规则。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 59,
+          "endLine": 82
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 91,
+          "endLine": 228
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+          "line": 732,
+          "endLine": 816
+        }
+      ]
+    },
+    {
+      "topic": "CLI源别名与输出事务",
+      "conclusion": "输入先读冻结字节；输出前复用Windows canonical/case/file-identity别名守卫并在发布前再查，QSaveFile保留原子提交；发现的输出累计预算和密码报告问题另列。未据此宣称抵抗恶意并发路径替换。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 131,
+          "endLine": 154
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+          "line": 195,
+          "endLine": 201
+        },
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\device_transfer_contract.cpp",
+          "line": 23,
+          "endLine": 63
+        }
+      ]
+    },
+    {
+      "topic": "在线入口范围",
+      "conclusion": "只解释受控Modbus切片；无端口连接动作、串口后端或PLC访问。UI没有将受控回放当真实通信。",
+      "sources": [
+        {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_simulation.cpp",
+          "line": 54,
+          "endLine": 74
+        }
+      ]
+    }
+  ],
+  "modbusReadOnlyReview": {
+    "result": "no_independent_blocker_in_frozen_controlled_replay_scope",
+    "reportPath": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\modbus-owned\\modbus-contract-report.json",
+    "reportSha256": "155e900c57275ac85e5e19c3b9ea835999417c003584576642234fa0abb7ccbd",
+    "sourceAndArtifactIdentitiesChecked": 10,
+    "allHashesMatched": true,
+    "xmlPassCountRead": 97,
+    "xmlFailCountRead": 0,
+    "independentlyRerun": false,
+    "sourceFreeze": [
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.h",
+        "sha256": "3fbde90e6629fdc93cc980debba30700eeb5178ba1e58e8628ba00943b945e15"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.cpp",
+        "sha256": "9fd78d31dc7876b40212124006687689fc95f0931cb0f521cd57f9560ca330ef"
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\simulation_modbus_transport_tests.cpp",
+        "sha256": "751f51379ad40d8a3700866edc80525075a6698c6361fb44f02d59d3f022be27"
+      }
+    ],
+    "checked": "站号1..247、地址+数量界、01/03/05/06参数、CRC、分段完整帧、超时含write、无进展/超长拒绝、单写echo、异常码、线圈padding、队列上限/重复ID、失败原子值发布、清未发队列、首错保留、退出延后、open/close重入及只关一次。",
+    "boundary": "调用者提供deadline内同步且不抛异常的I/O；没有真实串口端点、native族映射或在线菜单连接；physical/T/E=false准确。"
+  },
+  "initialSourceManifest": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.h",
+      "lineCount": 70,
+      "sha256": "6cc5d0a5caf05989d15a211134445f3f4a45340fd8f864c3047475c7f0fc8bde"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_window.cpp",
+      "lineCount": 509,
+      "sha256": "618ff0de972817dbfd2b2cc4a68a072de9316a550c0c1aff4865af104453cb97"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.h",
+      "lineCount": 5,
+      "sha256": "41cb6d6ccdfee46de50813de1699a6b2f3f6030a6d4a957494b3e180462aba76"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_cli.cpp",
+      "lineCount": 216,
+      "sha256": "e3e9a12733f4e0507f0f571801ba81a362f696df669b5cf5f6d27a975b2237aa"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\main_window_simulation.cpp",
+      "lineCount": 74,
+      "sha256": "f0da299a653ed98e7387d58a9f7fcd93d6170d1634d33f7a3bda1512add71745"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.h",
+      "lineCount": 58,
+      "sha256": "6422c42c2414c165a5a3bd1634a311230d4bf405bf19d33ce54093d1bbf8ff45"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_runtime.cpp",
+      "lineCount": 1021,
+      "sha256": "1ecf219f2324ed57ad0b761272a7c04112810d67f3299b9fee8c0fd502148174"
+    }
+  ],
+  "integrationReadSha256": {
+    "main_window_cpp": "fd59567538af0de5baa9b05cc11949e3748ec7e60b8db56d3b6ae6c73679db49",
+    "main_window_h": "bc305c730ea90a29cf8e9721926a29ec57b45229ebe4ac849d101e2c264e8041",
+    "main_window_workflow_cpp": "4cb2413cc2f7321e6955e38544af0251df7b98617e087854c5121898d3a8eafc",
+    "native_shell_ui_cpp": "816844f97f2dd1afeb174affdf75d5f3af912290581c0fa75780e13ae94d2a78",
+    "main_cpp": "1e35b0b6acc52ecc7008feb5a84055c405b26c0984bd1cfb55a2b2e1abff6563",
+    "device_transfer_contract_cpp": "709405ec50ddc81937a63f96166671b013c26db9093e201a5a0638f67391e039"
+  },
+  "executionScope": {
+    "productionCodeModified": false,
+    "testsModified": false,
+    "documentsModified": false,
+    "buildRun": false,
+    "testsRun": false,
+    "guiStarted": false,
+    "usbOrPlcAccessed": false,
+    "gitChanged": false,
+    "onlyOwnedReviewJsonWritten": true
+  }
+}

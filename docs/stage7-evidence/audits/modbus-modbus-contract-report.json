@@ -1,0 +1,771 @@
+{
+  "schema": "kinseal-stage7-controlled-modbus-evidence-v1",
+  "dateAsiaShanghai": "2026-11-14",
+  "codeMark": "20261114-6 add",
+  "scope": "S07-05 bounded standard Modbus RTU controlled replay slice",
+  "nativeCompatibilityVerified": false,
+  "physicalEndpointUsed": false,
+  "hardwareTransferVerified": false,
+  "hmiBehaviorVerified": false,
+  "serialBackendProvided": false,
+  "productionOnlineSimulationEnabled": false,
+  "sourceIdentities": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.h",
+      "size": 8998,
+      "sha256": "3fbde90e6629fdc93cc980debba30700eeb5178ba1e58e8628ba00943b945e15"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\simulation_modbus_transport.cpp",
+      "size": 24948,
+      "sha256": "9fd78d31dc7876b40212124006687689fc95f0931cb0f521cd57f9560ca330ef"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\tests\\simulation_modbus_transport_tests.cpp",
+      "size": 47828,
+      "sha256": "751f51379ad40d8a3700866edc80525075a6698c6361fb44f02d59d3f022be27"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\plc_address.h",
+      "size": 6981,
+      "sha256": "822e9fd3a2759b0c77e46ca8aaf838e78cb7ba5d24bd37e29d1278aa200ca13a"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\src\\plc_address.cpp",
+      "size": 43152,
+      "sha256": "f7a12a31eafe85fd6127d33eeaf7709086b9aa2e331f4581dbefa4c3121b1978"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\resources\\plc-catalog.json",
+      "size": 1210686,
+      "sha256": "693e689d90163c2aabfc892da95b83cf3cc13ab592e2944de4f5d46aae2d473b"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\modbus-owned\\build\\KinSealSimulationModbusTests.exe",
+      "size": 266269,
+      "sha256": "461aad5cd0e5b603908f2bbf8802cd05d1cce0c8e08acca41cf16b7f66c11618"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\modbus-owned\\test-r2.txt",
+      "size": 7276,
+      "sha256": "766dc747311d6479075780181dc425694e41269ed738b76688516f1d50a0b752"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\modbus-owned\\test-r2.xml",
+      "size": 12651,
+      "sha256": "e882be2ceea3398aa2598326866bccba50a1d79df34474b4dae1fc80b3854d84"
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\modbus-owned\\build-r2.log",
+      "size": 500,
+      "sha256": "f9f2f1ab1f6c219501db1bd2d2de9ceb8266e9cd2270460984ec6ceb91e9a07e"
+    }
+  ],
+  "existingObservedProfiles": [
+    {
+      "id": "Link/serial/MODBUS/Modbus_RTU.ini",
+      "driverName": "Modbus_RTU",
+      "sourceSha256": "78fdc0aa284d545c0a1a55bfa98fa0bb3bb49e464f670212996ee818eb01a477",
+      "serialDefaults": {
+        "WorkMode": "RS485",
+        "Baud": "9600",
+        "DataBits": "8",
+        "Parity": "1",
+        "StopBits": "1",
+        "DefaultStation": "1",
+        "DefaultTimeout": "1000",
+        "DefaultMaxRwLen": "32",
+        "DefaultRetryTimes": "3",
+        "DefaultIntervalTime": "20",
+        "DefaultCollectRate": "1"
+      }
+    },
+    {
+      "id": "Link/serial_amz/MODBUS/Modbus_RTU.ini",
+      "driverName": "Modbus_RTU",
+      "sourceSha256": "78fdc0aa284d545c0a1a55bfa98fa0bb3bb49e464f670212996ee818eb01a477",
+      "serialDefaults": {
+        "WorkMode": "RS485",
+        "Baud": "9600",
+        "DataBits": "8",
+        "Parity": "1",
+        "StopBits": "1",
+        "DefaultStation": "1",
+        "DefaultTimeout": "1000",
+        "DefaultMaxRwLen": "32",
+        "DefaultRetryTimes": "3",
+        "DefaultIntervalTime": "20",
+        "DefaultCollectRate": "1"
+      }
+    }
+  ],
+  "existingProfileInterpretation": [
+    "Only two hash-identical default Modbus RTU profiles pass plcProfileHasModbusCodec.",
+    "Parity=1 remains raw observed configuration data; its PC serial meaning is not asserted.",
+    "Native address-record node is independent of station; no conversion is inferred here.",
+    "The observed 1x extra bound 65536 is an offline native-codec fact, not a legal 16-bit PDU offset.",
+    "Family 3x/4x native metadata is not bound to these standard PDU operations.",
+    "Observed default retry count 3 is not applied: this module never retries automatically."
+  ],
+  "sourceInventory": {
+    "query": "QSerialPort or QtSerialPort in src/*.cpp and src/*.h",
+    "matches": [],
+    "interpretation": "No Qt serial endpoint implementation was found by this bounded query; no stage9 backend is assumed."
+  },
+  "publicApi": {
+    "class": "SimulationModbusTransport",
+    "connect": "connectToStation(int station, const SimulationModbusIo&, options, error)",
+    "enqueue": "enqueue(const SimulationModbusRequest&, error)",
+    "executeOne": "processNext() returns SimulationModbusResult synchronously",
+    "exit": "disconnectFromStation(); destructor also clears unsent queue and closes at most once",
+    "inspect": [
+      "isConnected",
+      "pendingCount",
+      "firstError"
+    ],
+    "frameBuilder": "buildSimulationModbusRequest(station, request, frame, error)",
+    "json": "simulationModbusResultToJson(result)",
+    "io": {
+      "open": "bool(QString*); failed open cleans any resources acquired by callback",
+      "write": "int(const QByteArray&, int timeoutMs); exactly one call, exact byte-count required",
+      "read": "SimulationModbusReadChunk(int maxBytes, int timeoutMs)",
+      "close": "bool(QString*); cleanup failure does not mask the first transaction error"
+    },
+    "readChunk": {
+      "bytes": "One partial frame chunk, no more than maxBytes",
+      "endOfFrame": "Explicit observed replay boundary; future serial caller must supply RTU silent-gap framing",
+      "timedOut": "Deadline exhausted, even if partial bytes accompany it",
+      "error": "Nonempty callback error disconnects immediately"
+    }
+  },
+  "contract": {
+    "station": "explicit unicast 1..247; 0 broadcast and 248..255 rejected before open",
+    "address": "zero-based PDU offset 0..65535; address+count cannot exceed 65536",
+    "readCoils01": "1..2000 bits; least-significant-bit first; unused high bits must be zero",
+    "readHolding03": "1..125 unsigned 16-bit words; network byte order",
+    "writeCoil05": "exactly one; public logical 0/1 encodes 0000/ff00",
+    "writeRegister06": "exactly one unsigned 16-bit value",
+    "crc": "CRC16 reflected polynomial a001, initial ffff, low byte first",
+    "queue": "1..1024 configurable bound; default32; duplicate pending request ids rejected; owned snapshots",
+    "timeout": "1..60000ms configurable whole-transaction deadline, default1000; includes write callback",
+    "callbackDiscipline": "single owner; callbacks must obey provided deadlines and not throw; disconnect is deferred until active callback returns",
+    "readBound": "maximum response255 bytes; accumulator ceiling257 detects trailing response data",
+    "validation": "exact station/function/byte-count/total-length/CRC/coil padding; write echo must match full request",
+    "exceptions": "01,02,03,04,05,06,08,0a,0b recognized as failure; 00/07/09/unassigned rejected",
+    "publication": "only complete validated frame publishes all values or writeAcknowledged",
+    "onFailure": "disconnect, clear all unsent queued work, preserve first error, no automatic retry",
+    "unknownRemoteState": "any failed attempted write sets remoteStateUnconfirmed; no rollback or nonexecution promise"
+  },
+  "verification": {
+    "compiler": "MinGW GCC13.1.0; Qt6.12.0 Core and Test; C++17",
+    "compileFlags": [
+      "-Wall",
+      "-Wextra",
+      "-Wconversion"
+    ],
+    "buildWarnings": 0,
+    "passed": 97,
+    "failed": 0,
+    "skipped": 0,
+    "includesQtLifecycleRows": true,
+    "incidents": [
+      {
+        "test": "initTestCase",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "crcVectors",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "crcVectors",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "crcVectors",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "crcVectors",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "goldenRequests",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "goldenRequests",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "goldenRequests",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "goldenRequests",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "goldenRequests",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "requestValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "connectionValidation",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "validResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "malformedResponses",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "exceptions",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "ioFaults",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "queueAndSessionLifecycle",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "disconnectDuringCallback",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "disconnectDuringCallback",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "remoteWriteIsNotRolledBack",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "realDeadline",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "explicitFrameBoundaryRequired",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "writeThenReadWorkflow",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "physicalEvidenceRemainsFalse",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "endpointTransitionReentry",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "destroyDiscardsUnsentQueue",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "frameBoundaryMayArriveSeparately",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "partialThenTimeoutPublishesNothing",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "writeExhaustsDeadlineBeforeRead",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "queuedRequestIsSnapshot",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      },
+      {
+        "test": "cleanupTestCase",
+        "type": "pass",
+        "file": "",
+        "line": "0"
+      }
+    ],
+    "processType": "QTEST_GUILESS_MAIN; console QtCore test, no window activation or capture",
+    "ioPeer": "same-process independent simulated slave consumes actual request frames and produces CRC-sealed response frames",
+    "initialRunnerArgumentFailure": "First PowerShell invocation incorrectly separated ,txt/,xml arguments; no tests ran. Corrected runner then passed91; expanded r2 passes97.",
+    "reviewFix": "Added endpoint transition reentry guard after read-only self-review; added coverage before rerun."
+  },
+  "limitations": [
+    "No actual serial/USB/socket endpoint, port picker, serial parity/baud setup or RS485 timing backend.",
+    "No original online simulation protocol, native family-to-PDU mapping or native station/node routing proof.",
+    "No production online connect menu is enabled by this module.",
+    "No real PLC communication, actual serial transfer T or HMI behavior E is established by replay.",
+    "RTU lacks transaction identifiers; injected endpoint must isolate frames and discard stale data on reopening.",
+    "The supplied read callback confirms frame boundaries; physical RTU silent-gap measurement remains unimplemented.",
+    "Slave exceptions and timeout are terminal for this session even when a caller might later choose an explicit new session.",
+    "Multiwrite, input/discrete reads, ASCII, TCP, DWORD ordering and other PLC drivers remain outside this slice.",
+    "Callbacks are synchronous; cancellation cannot interrupt an active callback before its deadline."
+  ]
+}

@@ -94,3 +94,11 @@ KinSealStudioLite.exe --download-project input.ksp
 ## 阶段0基线与证据管理（2026年11月10日）
 
 已新增可复现的阶段0身份/源往返/编译/下载工具、31手册字段追踪、原308候选初审和后台入口台账。阶段0当时使用0.7.0正式便携EXE；该轮五类十二控件双语基线已真实USB下载成功，屏端触控与固件身份尚待确认。执行方法、证据和M0未闭环边界见[阶段0验收](docs/阶段0基线与验收.md)，样例为`samples/stage0/stage0-baseline.ksp`。默认运行`tools/RunStage0.ps1`只做离线检查，显式`-Download`才写屏；不恢复关机任务。
+
+## 阶段7离线模拟（2026年11月14日）
+
+新增工具菜单“离线模拟”：对当前编辑内容建立独立快照，支持单个800×480普通画面、内部LB/LW、静态文字/位按钮/字按钮/指示灯/注销与语言切换按钮。可点击操作、输入数值、检查内部地址；关闭后运行值不写回工程。宏不执行。多页、活动采集/报警/历史/配方、外部地址及未核时序启动前拒绝，在线菜单暂仅说明范围。
+
+便携包：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage7-offline-r1`。打开`samples/stage7/internal-five-family.ksp`后选择离线模拟；CLI为`KinSealStudioLite.exe --simulate-offline samples/stage7/internal-five-family.ksp samples/stage7/internal-events.json result.json`。
+
+[实现与验收](docs/阶段7离线模拟实现与验收.md) · [六项进度](docs/阶段7逐项进度.md) · [统一未完成台账](design_plan/未完成任务总台账.md)。零初值/低字优先/点动取消是Lite规则，原厂运行语义及真实在线PLC仍待完成。PC验证不能替代HMI实屏E。

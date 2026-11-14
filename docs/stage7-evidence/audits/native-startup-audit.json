@@ -1,0 +1,1857 @@
+{
+  "schemaVersion": 1,
+  "taskIds": [
+    "S07-01"
+  ],
+  "baselineCommit": "9d442ece",
+  "date": "2026-11-14",
+  "status": "startup-contract-partially-recovered-runtime-semantics-unverified",
+  "scope": {
+    "worktree": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree",
+    "ownedRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup",
+    "productionSourcesChanged": false,
+    "archivedDocsChanged": false,
+    "referenceProgramRead": false,
+    "userMainUncommittedFilesRead": false,
+    "sharedReaTargetChanged": false,
+    "privateDesktopOnly": true,
+    "globalInput": false,
+    "onlineProcessExecuted": false,
+    "realDeviceTransferRequested": false,
+    "hostTemp": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\host-temp",
+    "allChildTempTmpTmpdirUnderOwnedZRoot": true
+  },
+  "identities": {
+    "originalEditorSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+    "privateEditorSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+    "privateEditorChange": "Three-byte startup check only at file offset0x7c4; simulation routines untouched",
+    "offline800x480Sha256": "6e4e104e552869e0e4139d2d4db2a3bdf9383eed8c29a2b64d3300b607c5df7f",
+    "online800x480Sha256": "49e278605c1af904f6df336c42f834e6041fb7f3b8f2be7171f004f2f2f0efe7",
+    "inventoryMatchesCurrentInstalledBytes": true,
+    "target": "AMT070W124-L800X480R",
+    "inputProvenance": [
+      {
+        "input": {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm",
+          "bytes": 4275,
+          "sha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+          "lineCount": 16
+        },
+        "fieldBoundaryReport": {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui-fields.json",
+          "bytes": 51533,
+          "sha256": "b237b8f762d8907ec79a375a7ccdb0e9b4bc92c9e3171ca44b43a72938bc5af9",
+          "lineCount": 1
+        },
+        "observedInternalAddressQStrings": [
+          {
+            "path": "system.16c[0].50[0].tail.3",
+            "value": "LW0",
+            "fileOffset": 1376
+          },
+          {
+            "path": "config.d4.0",
+            "value": "LB0",
+            "fileOffset": 1960
+          },
+          {
+            "path": "config.10c.0",
+            "value": "LW0",
+            "fileOffset": 2008
+          },
+          {
+            "path": "config.140.0",
+            "value": "LW0",
+            "fileOffset": 2059
+          },
+          {
+            "path": "config.158.0",
+            "value": "LW0",
+            "fileOffset": 2095
+          },
+          {
+            "path": "config.170.0",
+            "value": "LW0",
+            "fileOffset": 2131
+          },
+          {
+            "path": "config.18c.0",
+            "value": "LW0",
+            "fileOffset": 2171
+          },
+          {
+            "path": "config.1a4.0",
+            "value": "LW0",
+            "fileOffset": 2207
+          },
+          {
+            "path": "config.1bc.0",
+            "value": "LW0",
+            "fileOffset": 2243
+          },
+          {
+            "path": "config.1d4.0",
+            "value": "LW0",
+            "fileOffset": 2279
+          },
+          {
+            "path": "config.200.0",
+            "value": "LW0",
+            "fileOffset": 2334
+          },
+          {
+            "path": "config.218.0",
+            "value": "LB0",
+            "fileOffset": 2370
+          },
+          {
+            "path": "config.240.0",
+            "value": "LW0",
+            "fileOffset": 2422
+          },
+          {
+            "path": "config.258.0",
+            "value": "LB0",
+            "fileOffset": 2458
+          },
+          {
+            "path": "object[0].common.40.0",
+            "value": "LB0",
+            "fileOffset": 3200
+          },
+          {
+            "path": "object[0].common.e4.0",
+            "value": "LB0",
+            "fileOffset": 3249
+          },
+          {
+            "path": "object[0].common.90.0",
+            "value": "LB0",
+            "fileOffset": 3290
+          },
+          {
+            "path": "object[0].common.60.0",
+            "value": "LB0",
+            "fileOffset": 3338
+          },
+          {
+            "path": "object[0].common.b0.0",
+            "value": "LB0",
+            "fileOffset": 3387
+          },
+          {
+            "path": "object[0].common.fc.0",
+            "value": "LB0",
+            "fileOffset": 3440
+          },
+          {
+            "path": "object[0].switch.12c.0",
+            "value": "LB0",
+            "fileOffset": 3489
+          },
+          {
+            "path": "object[0].switch.254.0",
+            "value": "LB0",
+            "fileOffset": 3550
+          }
+        ],
+        "operationFieldValue": 3,
+        "boundary": "Fields are verified old input provenance; current runtime does not expose address-store values or word order."
+      },
+      {
+        "input": {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-jog-native-ui.sm",
+          "bytes": 4275,
+          "sha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+          "lineCount": 16
+        },
+        "fieldBoundaryReport": {
+          "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-jog-native-ui-fields.json",
+          "bytes": 51533,
+          "sha256": "ff6a0fbaf6d7075a2f0d2e668d0b56debe0ea8a49108f90c8f051d5206d6ac2d",
+          "lineCount": 1
+        },
+        "observedInternalAddressQStrings": [
+          {
+            "path": "system.16c[0].50[0].tail.3",
+            "value": "LW0",
+            "fileOffset": 1376
+          },
+          {
+            "path": "config.d4.0",
+            "value": "LB0",
+            "fileOffset": 1960
+          },
+          {
+            "path": "config.10c.0",
+            "value": "LW0",
+            "fileOffset": 2008
+          },
+          {
+            "path": "config.140.0",
+            "value": "LW0",
+            "fileOffset": 2059
+          },
+          {
+            "path": "config.158.0",
+            "value": "LW0",
+            "fileOffset": 2095
+          },
+          {
+            "path": "config.170.0",
+            "value": "LW0",
+            "fileOffset": 2131
+          },
+          {
+            "path": "config.18c.0",
+            "value": "LW0",
+            "fileOffset": 2171
+          },
+          {
+            "path": "config.1a4.0",
+            "value": "LW0",
+            "fileOffset": 2207
+          },
+          {
+            "path": "config.1bc.0",
+            "value": "LW0",
+            "fileOffset": 2243
+          },
+          {
+            "path": "config.1d4.0",
+            "value": "LW0",
+            "fileOffset": 2279
+          },
+          {
+            "path": "config.200.0",
+            "value": "LW0",
+            "fileOffset": 2334
+          },
+          {
+            "path": "config.218.0",
+            "value": "LB0",
+            "fileOffset": 2370
+          },
+          {
+            "path": "config.240.0",
+            "value": "LW0",
+            "fileOffset": 2422
+          },
+          {
+            "path": "config.258.0",
+            "value": "LB0",
+            "fileOffset": 2458
+          },
+          {
+            "path": "object[0].common.40.0",
+            "value": "LB0",
+            "fileOffset": 3200
+          },
+          {
+            "path": "object[0].common.e4.0",
+            "value": "LB0",
+            "fileOffset": 3249
+          },
+          {
+            "path": "object[0].common.90.0",
+            "value": "LB0",
+            "fileOffset": 3290
+          },
+          {
+            "path": "object[0].common.60.0",
+            "value": "LB0",
+            "fileOffset": 3338
+          },
+          {
+            "path": "object[0].common.b0.0",
+            "value": "LB0",
+            "fileOffset": 3387
+          },
+          {
+            "path": "object[0].common.fc.0",
+            "value": "LB0",
+            "fileOffset": 3440
+          },
+          {
+            "path": "object[0].switch.12c.0",
+            "value": "LB0",
+            "fileOffset": 3489
+          },
+          {
+            "path": "object[0].switch.254.0",
+            "value": "LB0",
+            "fileOffset": 3550
+          }
+        ],
+        "operationFieldValue": 2,
+        "boundary": "Fields are verified old input provenance; current runtime does not expose address-store values or word order."
+      }
+    ]
+  },
+  "entryContracts": {
+    "offline": {
+      "actionObjectName": "action_offline_simulation",
+      "label": "离线\n模拟",
+      "enabledInOpenedSavedSample": true,
+      "metaClass": "MainWindow",
+      "methodIndex": 294,
+      "slot": "ExecuteOffLineMonitor()",
+      "qtMetaCall": "0xb5ee50",
+      "nativeSlotFunction": "0x45a02c",
+      "observedReturnAddress": "0xb5fa89",
+      "callChain": [
+        "real QAction trigger",
+        "MainWindow::qt_metacall",
+        "ExecuteOffLineMonitor()",
+        "QProcess::start(QString, flags)",
+        "QProcess::start(QString, QStringList, flags)",
+        "CreateProcessW"
+      ],
+      "rawCommand": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\offlineSimulation\\V51_800X480.exe ",
+      "applicationName": null,
+      "nativeFlags": 134218752,
+      "nativeFlagsHex": "0x8000400",
+      "nativeEnvironmentPointer": "0x0",
+      "nativeCurrentDirectoryArgument": null,
+      "nativeStartupDesktopArgument": null,
+      "explicitExtraArgumentsObserved": false,
+      "savedSourcePromptObserved": false,
+      "nativeSource": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\run.json",
+        "bytes": 1171767,
+        "sha256": "1f0d67e1c78898348d429377347c3764465bc9f134905f56924d624fce21e0e7",
+        "lineCount": 37857,
+        "jsonPointer": "/launchRequests/0"
+      },
+      "executionBoundary": "Only owned offline child executed after suspension and tracing; online launch deliberately failed before execution"
+    },
+    "online": {
+      "actionObjectName": "action_online_simulation",
+      "label": "在线模拟",
+      "enabledInOpenedSavedSample": true,
+      "metaClass": "MainWindow",
+      "methodIndex": 60,
+      "slot": "on_action_online_simulation_triggered()",
+      "qtMetaCall": "0xb5ee50",
+      "nativeSlotFunction": "0x45843c",
+      "observedReturnAddress": "0xb5fa79",
+      "callChain": [
+        "real QAction trigger",
+        "MainWindow::qt_metacall",
+        "on_action_online_simulation_triggered()",
+        "QProcess::start(QString, flags)",
+        "QProcess::start(QString, QStringList, flags)",
+        "CreateProcessW"
+      ],
+      "rawCommand": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\online-config-r1\\runtime\\onlineSimulation\\onlineV51_800X480.exe ",
+      "applicationName": null,
+      "nativeFlags": 134218752,
+      "nativeFlagsHex": "0x8000400",
+      "nativeEnvironmentPointer": "0x0",
+      "nativeCurrentDirectoryArgument": null,
+      "nativeStartupDesktopArgument": null,
+      "explicitExtraArgumentsObserved": false,
+      "savedSourcePromptObserved": false,
+      "nativeSource": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\online-config-r1\\run.json",
+        "bytes": 836235,
+        "sha256": "5d479dabd58242261bc4054d6c24b2391387c62183631e197c39e6609f45fbdb",
+        "lineCount": 27069,
+        "jsonPointer": "/launchRequests/0"
+      },
+      "executionBoundary": "Native launch request recorded and blocked; online simulator did not execute"
+    }
+  },
+  "offlineRuntime": {
+    "windowEvidence": [
+      {
+        "hwnd": 24251418,
+        "title": "Offline Simulation",
+        "class": "Offline Simulation",
+        "visible": 1,
+        "rect": [
+          280,
+          130,
+          1086,
+          638
+        ],
+        "clientRect": [
+          0,
+          0,
+          800,
+          479
+        ]
+      },
+      {
+        "hwnd": 13962290,
+        "title": "Default IME",
+        "class": "IME",
+        "visible": 0,
+        "rect": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "clientRect": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "hwnd": 28707148,
+        "title": "MSCTFIME UI",
+        "class": "MSCTFIME UI",
+        "visible": 0,
+        "rect": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "clientRect": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "traceInstalledBeforeResume": true,
+    "resumePriorSuspendCount": 1,
+    "nativeFlagsInterposition": "Only CREATE_SUSPENDED bit added to the exact allowed owned offline executable; no command or working-directory rewrite in accepted run",
+    "observedWorkingRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime",
+    "workingRootEvidence": "Child fopen strings contain the complete owned runtime/compile paths; native cwd argument was NULL (inheritance)",
+    "generatedCompileFiles": [
+      {
+        "name": "AddrPara.dat",
+        "bytes": 200,
+        "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AddrPara.dat"
+      },
+      {
+        "name": "AlarmMuti.dat",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AlarmMuti.dat"
+      },
+      {
+        "name": "AlarmPara.dat",
+        "bytes": 47840,
+        "sha256": "c774455b52c130d7f91889c4b93dca50c329041a6d7d015c8340c476ca865328",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AlarmPara.dat"
+      },
+      {
+        "name": "Collect.dat",
+        "bytes": 1424,
+        "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Collect.dat"
+      },
+      {
+        "name": "ControlPara.dat",
+        "bytes": 640,
+        "sha256": "78d960d53d58cd0fb6b74b07f6118e2542b0555cc1d6fd49fcb2abf9fceb9365",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\ControlPara.dat"
+      },
+      {
+        "name": "ControlPixel.dat",
+        "bytes": 7200,
+        "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\ControlPixel.dat"
+      },
+      {
+        "name": "Curve.dat",
+        "bytes": 501,
+        "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Curve.dat"
+      },
+      {
+        "name": "load.bin",
+        "bytes": 233,
+        "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\load.bin"
+      },
+      {
+        "name": "load.kns",
+        "bytes": 13624,
+        "sha256": "a33ab426997b777454b6c306a7f2f51f516471ea1045649f971df4dd766e7345",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\load.kns"
+      },
+      {
+        "name": "MarcoVar.dat",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\MarcoVar.dat"
+      },
+      {
+        "name": "PicLenPara.dat",
+        "bytes": 2424,
+        "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\PicLenPara.dat"
+      },
+      {
+        "name": "SheetPara.dat",
+        "bytes": 72,
+        "sha256": "22c8126c194128ace0aaf866d31f58db6c395f762422dea10314b1b9cfa4adf2",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SheetPara.dat"
+      },
+      {
+        "name": "SheetPixel.dat",
+        "bytes": 3655,
+        "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SheetPixel.dat"
+      },
+      {
+        "name": "SysPara.dat",
+        "bytes": 4998,
+        "sha256": "8b9196ca44cee0e4b6d06c114c26e2b72393f7a5c402aca9e1884188330f0e1d",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SysPara.dat"
+      },
+      {
+        "name": "upLoad.knr",
+        "bytes": 1148,
+        "sha256": "ec9d386be992aaf472299886d330a709fec18c3c983c87ff00b690a5f0e7d87c",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\upLoad.knr"
+      },
+      {
+        "name": "Usbload.bin",
+        "bytes": 1704,
+        "sha256": "5cf6b22f2964f5c0d33238a32b82e472ee3652b5b08d8aaad2e1c5ef0f9e0af7",
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Usbload.bin"
+      }
+    ],
+    "fopen": [
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\SysPara.dat",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\upLoad.knr",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\SysPara.dat",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\Curve.dat",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\SheetPara.dat",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\Recipe.dat",
+        "mode": "rb",
+        "result": "0x0",
+        "deviceBlocked": null
+      },
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\compile\\ControlPixel.dat",
+        "mode": "rb",
+        "result": "0x75453068",
+        "deviceBlocked": null
+      }
+    ],
+    "freadTotals": {
+      "SysPara.dat": {
+        "freadCalls": 2,
+        "bytesRead": 9996
+      },
+      "Curve.dat": {
+        "freadCalls": 1,
+        "bytesRead": 501
+      },
+      "SheetPara.dat": {
+        "freadCalls": 1,
+        "bytesRead": 72
+      },
+      "ControlPixel.dat": {
+        "freadCalls": 1,
+        "bytesRead": 7200
+      }
+    },
+    "traceOverflow": 0,
+    "sourceUnchanged": {
+      "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm",
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\NativeInput.sm",
+      "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+      "beforeBytes": 4275,
+      "afterDecisionSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+      "afterSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+      "finalSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73"
+    },
+    "sourceHashAfterClose": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+    "readFileHashBoundary": "Copied input-file hashes identify observed files; fopen/fread events prove reads, not complete semantic recovery or a stable universal layout",
+    "mediaToolCompatibilityBoundary": "This control project produces 16 files, including ControlPara.dat and ControlPixel.dat; the stage6 narrow 14-file copy-only validator must reject this broader scope. No media-encoder claim is made."
+  },
+  "lifecycle": {
+    "savedInputSavePrompt": "No prompt in this opened/saved sample. Dirty/new/save-failure/cancel paths remain unknown.",
+    "cancelDecisionExecuted": false,
+    "offlineCloseEvent": "WM_CLOSE was directed only to the owned visible simulator window",
+    "offlineExitCodeAfterClose": -1073740791,
+    "offlineExitCodeHex": "0xc0000409",
+    "closeIsCauseOfExitEstablished": false,
+    "sameExitWithoutCloseSeen": "offline-start-r7 ends 0xC0000409 after frame-capture timeout without the WM_CLOSE sequence; instrumentation/minimal deployment remain possible confounders.",
+    "normalExitContractVerified": false,
+    "editorShutdown": "Owned editors forcibly terminated during harness cleanup; normal parent-window close behavior not tested.",
+    "allOwnedRecordedProcessesEnded": true
+  },
+  "onlineConfiguration": {
+    "editorConfigDialogObservedBeforeSpawn": false,
+    "observedPopup": "Load-file failure caused by deliberate child-start blocker; acknowledged without starting a simulator",
+    "onlineSimulatorExecuted": false,
+    "configurationFields": [],
+    "supportedProtocolListVerified": false,
+    "thirtyMinuteLimitVerified": false,
+    "helpLimitEvidenceKind": "H only",
+    "nextMinimalProbe": "Inspect online WinMain/configuration call chain statically first; only run a private configuration-only slice with pre-entry serial/socket blockers when it can stop before communication initialization."
+  },
+  "unverifiedRuntimeSemantics": [
+    "Initial LB/LW values and persistence",
+    "16/32-bit aliasing and word order",
+    "Jog press/move-out/release/cancel effects",
+    "Language/startup-screen differences",
+    "Repeated start and parent-close lifecycle",
+    "Clean native exit and crash attribution",
+    "Thirty-minute online limit and actual supported PLC matrix"
+  ],
+  "captureBoundary": {
+    "acceptedStateFrames": 0,
+    "jogInputSourceCopied": true,
+    "pressSequenceActuallyExecuted": false,
+    "printWindowCandidate": "offline-start-r6/initial.png is black and is not state evidence",
+    "gdiFrameAttempt": "offline-start-r7 timed out before initial frame; did not proceed to press/move/cancel"
+  },
+  "safetyEvidence": {
+    "prelaunchPrivateUsbDllPatches": [
+      {
+        "original": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\libusb0.dll",
+        "originalSha256": "00caca07869b19d10b370552ac7cc2f6f2ee246fc15db11650f6cd3f4ef9b666",
+        "private": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\libusb0.dll",
+        "privateSha256": "262f5cd9360a36486789a84521a57232858a9a9157fb6bb556550279926ce8db",
+        "patches": [
+          {
+            "name": "usb_bulk_read",
+            "rva": 20334,
+            "fileOffset": 17262,
+            "before": "8bff558becff",
+            "after": "b8fbffffffc3",
+            "result": -5
+          },
+          {
+            "name": "usb_bulk_write",
+            "rva": 20292,
+            "fileOffset": 17220,
+            "before": "8bff558becff",
+            "after": "b8fbffffffc3",
+            "result": -5
+          },
+          {
+            "name": "usb_control_msg",
+            "rva": 16469,
+            "fileOffset": 13397,
+            "before": "8bff558bec83",
+            "after": "b8fbffffffc3",
+            "result": -5
+          },
+          {
+            "name": "usb_find_busses",
+            "rva": 20912,
+            "fileOffset": 17840,
+            "before": "8bff55",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "usb_find_devices",
+            "rva": 21218,
+            "fileOffset": 18146,
+            "before": "8bff55",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "usb_get_busses",
+            "rva": 20884,
+            "fileOffset": 17812,
+            "before": "a164e4",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "usb_init",
+            "rva": 20376,
+            "fileOffset": 17304,
+            "before": "8bff56",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "usb_open",
+            "rva": 20430,
+            "fileOffset": 17358,
+            "before": "8bff55",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "usb_submit_async",
+            "rva": 14496,
+            "fileOffset": 11424,
+            "before": "8bff558bec56",
+            "after": "b8fbffffffc3",
+            "result": -5
+          }
+        ],
+        "abi": "cdecl; original usb_open/bulk/control and DownT wrapper RET instructions verified before harness preparation",
+        "scope": "Hardware-blocking test interposition, not native production behavior"
+      },
+      {
+        "original": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\DownT.dll",
+        "originalSha256": "4023b1b1c339b99aa711e99595861c43bf98c2a099d68641943e2ed93f254758",
+        "private": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\DownT.dll",
+        "privateSha256": "83b54e09772f02b41ec40297c085a024773a7f85d39ee0491afe915eb5bb916e",
+        "patches": [
+          {
+            "name": "Usb_connect",
+            "rva": 4208,
+            "fileOffset": 1136,
+            "before": "c705b4",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "Usb_init",
+            "rva": 4416,
+            "fileOffset": 1344,
+            "before": "c705b4",
+            "after": "31c0c3",
+            "result": 0
+          },
+          {
+            "name": "Usb_readRaw",
+            "rva": 4448,
+            "fileOffset": 1376,
+            "before": "558beca1b428",
+            "after": "b8fbffffffc3",
+            "result": -5
+          },
+          {
+            "name": "Usb_writeRaw",
+            "rva": 4528,
+            "fileOffset": 1456,
+            "before": "558bec8b0db4",
+            "after": "b8fbffffffc3",
+            "result": -5
+          }
+        ],
+        "abi": "cdecl; original usb_open/bulk/control and DownT wrapper RET instructions verified before harness preparation",
+        "scope": "Hardware-blocking test interposition, not native production behavior"
+      }
+    ],
+    "loadedPaths": [
+      {
+        "name": "libusb0.dll",
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\libusb0.dll"
+      },
+      {
+        "name": "DownT.dll",
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\runtime\\DownT.dll"
+      }
+    ],
+    "privateDllHashesRecheckedAtFreeze": true,
+    "acceptedRunHardwareOrOutsideWriteBlocksObserved": 0,
+    "onlineChildStartResult": 0,
+    "sourceOriginalsRecheckedUnchanged": true,
+    "manualDesktopOrForegroundActions": false
+  },
+  "helpEvidence": [
+    {
+      "source": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\复刻路线图证据\\native-help-selected.json",
+        "bytes": 53167,
+        "sha256": "35b463b46b7af820c9586921510875f4f91fc9bc7f37e205c7a92f85991ddb32",
+        "lineCount": 190,
+        "jsonPointer": "/topics/24"
+      },
+      "member": "imitate/imitates/off-line-imitate.htm",
+      "text": "TITLE: \nAdministrator霞？？？12373112052-11.1.0.140367E61142589724623A55390D81407B517_12MicrosoftInternetExplorer402DocumentNotSpecified7.8 磅Web0\n离线模拟\n在将画面编译下载到HMI中设备之前，可以利用HMIStudio自带的离线模拟功能来校检一下组态画面的正确性和效果展示。（值得注意的是目前不支持宏指令离线模拟，其它功能的模拟检测都可以实现）\n操作过程： 保存当前编辑好的工程，如果没有保存则会提示保存，如图所示。\n选择工具菜单中的离线模拟命令，即可弹出离线模拟窗口，在这里你可以用鼠标单击代替触碰触摸屏，在弹出的窗口中实现触摸屏的部分功能。\n当模拟完成后点击右上角的X按钮就退出离线模拟状态。\n离线模拟示例\n如下图 ，可以对编辑好的组态进行离线模拟，鼠标单击数值输入显示器，输入数值50，则在仪表盘上可以看到仪表指针指向 50 的位置，多态按钮也会相应的显示当前的状态。离线模拟可以很好的帮助工程设计人员检查和发现工程组态画面存在的一些问题，如监视地址是否选择正确，控件间相互关系是否正确等等。做到有备无患。\n\n",
+      "kind": "H: historical help only, not V5.1 execution proof"
+    },
+    {
+      "source": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\复刻路线图证据\\native-help-selected.json",
+        "bytes": 53167,
+        "sha256": "35b463b46b7af820c9586921510875f4f91fc9bc7f37e205c7a92f85991ddb32",
+        "lineCount": 190,
+        "jsonPointer": "/topics/34"
+      },
+      "member": "simulation/在线模拟.html",
+      "text": "TITLE: \nAdministrator霞？？？11479112052-12.1.0.17147696438F57E1A43E09A7C6AE9C9FC9E92_13MicrosoftInternetExplorer402DocumentNotSpecified7.8 磅Web0\n在线模拟\n在线模拟可以使您在没有HMI的情况下，通过个人的计算机（需要安装HMI组态软件）和plc等相关器件进行通讯，具体接线图如下图1所示。\n图1 在线模拟接线图03\n在使用该功能时个人计算机模拟触摸屏的运行状况，可以用来调试您组态软件是否正确，以及在触摸屏发生故障的时候进行相关测试工作。\n在线模拟需要连接plc，在运行在线模拟时请确保连接plc与电脑的线缆可以正常通讯。在线模拟功能的使用时间为30分钟，在程序运行30分钟之后将会自动退出模拟。\n在线模拟目前支持plc型号：MITSUBISHI(三菱)系列、EMERSON(艾默生)系列、OMRON(欧姆龙)系列、SIEMENS(西门子)S7-200 PPI、MATSUSHITA(松下)系列、LG系列、Fatek(永宏)系列、Haiwell(海为)系列、THINGET(信捷)系列、Techwayson(德维森)系列、Modbus RTU Mater。\n温馨提示：\n要注意的是一般的plc在使用在线模拟时用到的线缆是下载线，即连接plc编程软件的线缆，非plc连接触摸屏的通讯线缆。如遇到不能通讯的时候请尽快联系技术支持。\n\n",
+      "kind": "H: historical help only, not V5.1 execution proof"
+    }
+  ],
+  "harnessFailuresAndRejectedInterpretations": [
+    {
+      "run": "offline-cancel-r1",
+      "scope": "QMetaObject::method eight-byte POD return was initially modeled with an incorrect sret ABI; failed before the entry action. Corrected after QtCore disassembly showed EAX/EDX return."
+    },
+    {
+      "run": "offline-cancel-r2",
+      "scope": "Native entry/slot/command observed, but flags used the wrong argument index and file guard incorrectly redirected DOS extended paths. Do not cite its flags/file behavior."
+    },
+    {
+      "run": "offline-start-r1",
+      "scope": "Harness wrote args[6] instead of dwCreationFlags args[5]; editor 0xC0000005 is a harness defect, not a native software finding. No child execution."
+    },
+    {
+      "run": "offline-start-r2 and r4",
+      "scope": "Initial device-path guard incorrectly treated ordinary \\\\?\\Z:\\ paths as devices, redirected own compile writes, and permitted sentinel creation. These runs cannot support native input-format or crash conclusions."
+    },
+    {
+      "run": "offline-start-r3",
+      "scope": "A compile QAction seed from static resources was absent from observed menu tree; StopIteration occurred before compilation/start. Subsequent explicit compile used actual action_USBdownload compiler phase, never transfer buttons."
+    },
+    {
+      "run": "offline-start-r6",
+      "scope": "PrintWindow produced an all-black candidate frame and the GetDC wrapper cleanup failed. No press sequence executed; image is not accepted as a native state frame."
+    },
+    {
+      "run": "offline-start-r7",
+      "scope": "No SetDIBitsToDevice state frame was received within the bounded capture. No press sequence executed. Do not infer initial value, jog/release/cancel behavior."
+    }
+  ],
+  "runs": [
+    {
+      "name": "offline-cancel-r1",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r1\\run.json",
+        "bytes": 6004,
+        "sha256": "6e2b84a631e397d7a87fcb4420890aa512fcfd75d514a19ac36e534284ea3ddd",
+        "lineCount": 183
+      },
+      "reportedStatus": "partial-or-error",
+      "error": "AssertionError({'serial': 1, 'status': 'error', 'error': 'Error: access violation accessing 0x10'})",
+      "ownedProcesses": {
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r1\\harness-source.py",
+        "sha256": "21016a44909f4bcddc3dad19600f45dd25d9cb74ba6933ee122ee97029db0a8b",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r1\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-cancel-r2",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r2\\run.json",
+        "bytes": 834705,
+        "sha256": "822dbd6f859fa75a5ec356013ec511bf379a57a06064eb638d64d62beb14e5b4",
+        "lineCount": 27017
+      },
+      "reportedStatus": "observed",
+      "error": null,
+      "ownedProcesses": {
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r2\\harness-source.py",
+        "sha256": "70dbbadf02f6c441a42798922f48609348f66f3615e6041a9ae8d10116441e12",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-cancel-r2\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r1",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r1\\run.json",
+        "bytes": 291107,
+        "sha256": "893182f4dcb12ef75de74ee459103d4d8475ded65c6aabcb1ba80cbcd63ad968",
+        "lineCount": 9417
+      },
+      "reportedStatus": "partial-or-error",
+      "error": "InvalidOperationError('script has been destroyed')",
+      "ownedProcesses": {
+        "editor": {
+          "exitCodeBeforeForcedCleanup": -1073741819,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r1\\harness-source.py",
+        "sha256": "637b26d0e9441bf2b0eeec97e3354ce92d3fc6dae15930fe0a9473b82a3006b9",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r1\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r2",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r2\\run.json",
+        "bytes": 864088,
+        "sha256": "2e5611f9beb9bc6b91c5e2c1a0214efef9e60366ce79ef6f8fd560d8f3a3e36d",
+        "lineCount": 26966
+      },
+      "reportedStatus": "observed",
+      "error": null,
+      "ownedProcesses": {
+        "offlineRuntime": {
+          "exitCodeBeforeForcedCleanup": -1073740791,
+          "terminated": true
+        },
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r2\\harness-source.py",
+        "sha256": "25abd020a514d6343037cadbe846bf0f1fcf54d0f05e864597d32be7c9afe0d4",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r2\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r3",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r3\\run.json",
+        "bytes": 44812,
+        "sha256": "2ed89fa4f3ad1205f67ee6da2c16af88eb0c31610083b808d0b8199576ccf6da",
+        "lineCount": 1391
+      },
+      "reportedStatus": "partial-or-error",
+      "error": "StopIteration()",
+      "ownedProcesses": {
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r3\\harness-source.py",
+        "sha256": "69c5c6fb875d290c82a8d1fcf33246da2b7d607c66972b6b19e1c603d840c44e",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r3\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r4",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r4\\run.json",
+        "bytes": 1154047,
+        "sha256": "c90af84bd2d3c276aa6235ed141d27e63367af51290a2bcebe24baecbe8e5e67",
+        "lineCount": 37332
+      },
+      "reportedStatus": "observed",
+      "error": null,
+      "ownedProcesses": {
+        "offlineRuntime": {
+          "exitCodeBeforeForcedCleanup": -1073740791,
+          "terminated": true
+        },
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "acceptedScope": "Harness-interfered or setup-only; do not use for native file-format/runtime-failure conclusions",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r4\\harness-source.py",
+        "sha256": "a3d51b30930903cad5f45899b4a4a393a82111720152b2e23b334eb14de6a20e",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r4\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r5",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\run.json",
+        "bytes": 1171767,
+        "sha256": "1f0d67e1c78898348d429377347c3764465bc9f134905f56924d624fce21e0e7",
+        "lineCount": 37857
+      },
+      "reportedStatus": "observed",
+      "error": null,
+      "ownedProcesses": {
+        "offlineRuntime": {
+          "exitCodeBeforeForcedCleanup": -1073740791,
+          "terminated": true
+        },
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "compiledFiles": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "c774455b52c130d7f91889c4b93dca50c329041a6d7d015c8340c476ca865328",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "78d960d53d58cd0fb6b74b07f6118e2542b0555cc1d6fd49fcb2abf9fceb9365",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Curve.dat"
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\load.bin"
+        },
+        {
+          "name": "load.kns",
+          "bytes": 13624,
+          "sha256": "a33ab426997b777454b6c306a7f2f51f516471ea1045649f971df4dd766e7345",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\load.kns"
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\MarcoVar.dat"
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "22c8126c194128ace0aaf866d31f58db6c395f762422dea10314b1b9cfa4adf2",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "8b9196ca44cee0e4b6d06c114c26e2b72393f7a5c402aca9e1884188330f0e1d",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1148,
+          "sha256": "ec9d386be992aaf472299886d330a709fec18c3c983c87ff00b690a5f0e7d87c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\upLoad.knr"
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "5cf6b22f2964f5c0d33238a32b82e472ee3652b5b08d8aaad2e1c5ef0f9e0af7",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r5\\Usbload.bin"
+        }
+      ],
+      "acceptedScope": "Current corrected file/device guards; startup identity/entry/file data only, runtime effects and clean exit remain unverified",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\harness-source.py",
+        "sha256": "f2c099eab31dfbec9daa9ca713ee03fd20bf6ca2fe845faf7f2ac72ec0431dbd",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r5\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r6",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r6\\run.json",
+        "bytes": 836010,
+        "sha256": "99a14cc387911a8d306643377a5eec5421e5f5f4e52c8e53d8613d0c5b747a8c",
+        "lineCount": 27077
+      },
+      "reportedStatus": "partial-or-error",
+      "error": "error('DeleteDC failed')",
+      "ownedProcesses": {
+        "offlineRuntime": {
+          "exitCodeBeforeForcedCleanup": -1073740791,
+          "terminated": true
+        },
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+        "finalFreezeSha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-jog-native-ui.sm"
+      },
+      "compiledFiles": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "8b3aa2c37ce8dae2caa35c771244687c642a1b85d073449f360d7a0b063f85b1",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "b65dfcc14258b45f512c0367e2c5c5cc1175a7d374b5294a19e9eb90e999b7e1",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\Curve.dat"
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\load.bin"
+        },
+        {
+          "name": "load.kns",
+          "bytes": 13536,
+          "sha256": "2ec31a9cb92a7b7ae64ba5b881405f0c786297227ba0a1eaf826f62d68f93b1b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\load.kns"
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\MarcoVar.dat"
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "22c8126c194128ace0aaf866d31f58db6c395f762422dea10314b1b9cfa4adf2",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "a6c62add8a0db60a9482ff69c96503c7c17968f3f95b4384355aa1b3164b2cfe",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1145,
+          "sha256": "8bbc974e79e3102671c6d0a7faf2dab79bff7486520debed4dc19a126e2d58c5",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\upLoad.knr"
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "4fa273a5a68ec0bc7648b5eeff7ff5ad438db4d17c54f1b91a12aad36e2d8cb8",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r6\\Usbload.bin"
+        }
+      ],
+      "acceptedScope": "Current corrected file/device guards; startup identity/entry/file data only, runtime effects and clean exit remain unverified",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r6\\harness-source.py",
+        "sha256": "9582e06fa003ee48f0ab51d34ea8f1c592e3552e2b67c53087ab09db8f82bded",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r6\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "offline-start-r7",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r7\\run.json",
+        "bytes": 836067,
+        "sha256": "9fe0ef46b92e49df94b9bd4e0d4433c79b31c7d67c3eb01e5af128adc15a0279",
+        "lineCount": 27077
+      },
+      "reportedStatus": "partial-or-error",
+      "error": "RuntimeError('Native DIB was not captured for initial')",
+      "ownedProcesses": {
+        "offlineRuntime": {
+          "exitCodeBeforeForcedCleanup": -1073740791,
+          "terminated": true
+        },
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+        "finalFreezeSha256": "b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\b423d6509c8eb1ae8e872f01da5a306f2fdd3fb51f39a81240f352180a5b06e6.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-jog-native-ui.sm"
+      },
+      "compiledFiles": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "bb11b2299a2ff5fb0f7e742612532312db47179d763a274b99e592f901f65a0e",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "507de8c20091788203d073ea92340394eb246593444960e513a8e1f41d0d7af3",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\Curve.dat"
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\load.bin"
+        },
+        {
+          "name": "load.kns",
+          "bytes": 13577,
+          "sha256": "dcb6b9224dfff5136191933fe31b3d19c6fcb1bbd42a0f24301392d4d9ae6f9c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\load.kns"
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\MarcoVar.dat"
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "22c8126c194128ace0aaf866d31f58db6c395f762422dea10314b1b9cfa4adf2",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "133d1ac4036b65cae33e5dc5c2c54546bb0964eff2399e691de3d3e04b2f26a1",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1145,
+          "sha256": "1b2237e4dc222d3a09b411b1015287d5e10f8b025cedcb01cfe7820c3c4b137b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\upLoad.knr"
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "29222247321b2eb118601a4616f29f7dcf5f49aadc15591a589ae2177217e0a2",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\offline-start-r7\\Usbload.bin"
+        }
+      ],
+      "acceptedScope": "Current corrected file/device guards; startup identity/entry/file data only, runtime effects and clean exit remain unverified",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r7\\harness-source.py",
+        "sha256": "0228c99ce006b2e970ae1033696052dbb094baf3f04be4551e26a723aff4abf9",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\offline-start-r7\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    },
+    {
+      "name": "online-config-r1",
+      "record": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\online-config-r1\\run.json",
+        "bytes": 836235,
+        "sha256": "5d479dabd58242261bc4054d6c24b2391387c62183631e197c39e6609f45fbdb",
+        "lineCount": 27069
+      },
+      "reportedStatus": "observed",
+      "error": null,
+      "ownedProcesses": {
+        "editor": {
+          "exitCodeBeforeForcedCleanup": 259,
+          "terminated": true
+        }
+      },
+      "sourceClaim": "Current original private-copy execution; previous SM file is input provenance only",
+      "input": {
+        "beforeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "finalFreezeSha256": "ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73",
+        "unchanged": true,
+        "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\inputs\\ee2e1a80937f254ba954de8e0277a460497d1dacabdf83cd0c2a4e99feeb0d73.sm",
+        "origin": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage1-evidence\\native-analysis\\bit-operation-toggle-native-ui.sm"
+      },
+      "compiledFiles": [
+        {
+          "name": "AddrPara.dat",
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\AddrPara.dat"
+        },
+        {
+          "name": "AlarmMuti.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\AlarmMuti.dat"
+        },
+        {
+          "name": "AlarmPara.dat",
+          "bytes": 47840,
+          "sha256": "c908a4d5b1ec6cbcd626f7d79eab7c32cf1ef235248f50d25fffe876b37b42d0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\AlarmPara.dat"
+        },
+        {
+          "name": "Collect.dat",
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\Collect.dat"
+        },
+        {
+          "name": "ControlPara.dat",
+          "bytes": 640,
+          "sha256": "cfb0b451d629779364a818a8ffaef5d8c5a2ddc0e2c747b7d99e31241877d4ad",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\ControlPara.dat"
+        },
+        {
+          "name": "ControlPixel.dat",
+          "bytes": 7200,
+          "sha256": "13ff3ec37c199003740a7945a4d46e5a65f2366998b8a80d23c150a83d69fb40",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\ControlPixel.dat"
+        },
+        {
+          "name": "Curve.dat",
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\Curve.dat"
+        },
+        {
+          "name": "load.bin",
+          "bytes": 233,
+          "sha256": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\load.bin"
+        },
+        {
+          "name": "load.kns",
+          "bytes": 13546,
+          "sha256": "26bc1484bc1e8aa62a995a92bcafba93d120cba6d0e168d81b0c3118e27cc49e",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\load.kns"
+        },
+        {
+          "name": "MarcoVar.dat",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\MarcoVar.dat"
+        },
+        {
+          "name": "PicLenPara.dat",
+          "bytes": 2424,
+          "sha256": "ddad2db340563addc4213239c582594cc45603199bb1f09e1097d9ff54e6426b",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\PicLenPara.dat"
+        },
+        {
+          "name": "SheetPara.dat",
+          "bytes": 72,
+          "sha256": "22c8126c194128ace0aaf866d31f58db6c395f762422dea10314b1b9cfa4adf2",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\SheetPara.dat"
+        },
+        {
+          "name": "SheetPixel.dat",
+          "bytes": 3655,
+          "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\SheetPixel.dat"
+        },
+        {
+          "name": "SysPara.dat",
+          "bytes": 4998,
+          "sha256": "33861958ebab3bf11f1caa5f1ddf918737dbb69590421fcfa6ff896aa145f55e",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\SysPara.dat"
+        },
+        {
+          "name": "upLoad.knr",
+          "bytes": 1150,
+          "sha256": "87fa8d13f347462cfee60d691983c01e03c104b935e7677684128f5ce343b359",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\upLoad.knr"
+        },
+        {
+          "name": "Usbload.bin",
+          "bytes": 1704,
+          "sha256": "47fe5fa2bfa669256e8539833f85231cddd2fa9531b4a9074ec6660d8928f100",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\compiled\\online-config-r1\\Usbload.bin"
+        }
+      ],
+      "acceptedScope": "Current corrected file/device guards; startup identity/entry/file data only, runtime effects and clean exit remain unverified",
+      "retainedHarness": {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\online-config-r1\\harness-source.py",
+        "sha256": "f2c099eab31dfbec9daa9ca713ee03fd20bf6ca2fe845faf7f2ac72ec0431dbd",
+        "originalProbeSourceManifest": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\online-config-r1\\probe-sources.json"
+      },
+      "retainedConfiguration": [
+        {
+          "name": "model.dat",
+          "bytes": 25936,
+          "sha256": "3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\3be6a993ec1bf25bd5178a7c36bd5b4f17968bd5ae9236cd9a9372dfe7d3c384-model.dat"
+        },
+        {
+          "name": "modelInfo.dat",
+          "bytes": 161214,
+          "sha256": "7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\7b832c98b6ba762fed622fbd67aad92627d6498d6701d2dcd2fa9d07a59adc67-modelInfo.dat"
+        },
+        {
+          "name": "language.ini",
+          "bytes": 224,
+          "sha256": "4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0",
+          "retained": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence\\configuration\\4763f15b4deb45a81da0286907b6b72b98778fd5f462dfaa58aa8d075c8473a0-language.ini"
+        }
+      ]
+    }
+  ],
+  "minimalNextProbes": [
+    {
+      "id": "S07-native-next-exit",
+      "action": "Reproduce the same native-generated input under the private desktop with complete required local resources and a smaller observer, then separate the 0xC0000409 from tracing/packaging effects. No external ports."
+    },
+    {
+      "id": "S07-native-next-cancel",
+      "action": "On an owned copy make one real editor change, confirm actual dirty state, invoke offline, choose the observed cancel button, and compare SHA/process list; do not infer a universal prompt from old help."
+    },
+    {
+      "id": "S07-native-next-state",
+      "action": "First recover a valid native framebuffer or internal LB0 observation at the known jog sample, then send only directed press/move/release/cancel messages and record visual/address results."
+    }
+  ],
+  "cleanup": {
+    "historicallyRejectedScopesRetried": false,
+    "newTaskRuntimeDeletionAttempted": false,
+    "status": "preserved-for-parent-archive-before-new-scope-cleanup",
+    "uniqueEvidenceRoot": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\preserved-evidence",
+    "note": "All prior failed and corrected probe records retained. Do not use another deletion path for historically rejected stage6 cleanup.",
+    "newTaskCleanupPlan": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\cleanup-plan.json"
+  },
+  "sources": [
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\08_阶段7_离线与在线模拟.md",
+      "bytes": 10047,
+      "sha256": "c36ee94368931629cdf634d5646b608ccdd47f3830e0331d5c576006bdeb4ee5",
+      "lineCount": 98
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\复刻路线图证据\\native-artifact-inventory.json",
+      "bytes": 38949,
+      "sha256": "5ad7c31da8d3c28f9097d6839da8c345e775d1dd99db79ba3fd66c89ae0daaf1",
+      "lineCount": 1243
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\design_plan\\复刻路线图证据\\native-help-selected.json",
+      "bytes": 53167,
+      "sha256": "35b463b46b7af820c9586921510875f4f91fc9bc7f37e205c7a92f85991ddb32",
+      "lineCount": 190
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage0-evidence\\entry-inventory.json",
+      "bytes": 960991,
+      "sha256": "ba3fe24784c3c85533578a67986a73325af133c113ac9d8d0b89910ea9eff1a9",
+      "lineCount": 22685
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\startup_probe.py",
+      "bytes": 30017,
+      "sha256": "c121073ce6bde640b79dd8b7fbbd862a3120d1438039ba6a3b9c4ff8353b82ec",
+      "lineCount": 330
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\static-inventory.json",
+      "bytes": 1109220,
+      "sha256": "10e04f90f9138e5d578437668d966afcad2f3deb72fa5f5d802d7d24de5b9344",
+      "lineCount": 40281
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\focused-abi-and-dispatch.json",
+      "bytes": 11193,
+      "sha256": "827d9e349860e9b4346f5f6e9bf4bf0c1b5b4234b953719758d1a988c0fc64ac",
+      "lineCount": 419
+    },
+    {
+      "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\simulation-slot-disassembly.json",
+      "bytes": 135487,
+      "sha256": "e1534fd216fb81daf23a58e6b028553c92d6529fc97ae42569115ebfbf926f88",
+      "lineCount": 4751
+    },
+    {
+      "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\KinSealStudio5.1.exe",
+      "bytes": 18682368,
+      "sha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+      "lineCount": 105829
+    },
+    {
+      "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\offlineSimulation\\V51_800x480.exe",
+      "bytes": 2190336,
+      "sha256": "6e4e104e552869e0e4139d2d4db2a3bdf9383eed8c29a2b64d3300b607c5df7f",
+      "lineCount": 9004
+    },
+    {
+      "path": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\onlineSimulation\\onlineV51_800x480.exe",
+      "bytes": 2208768,
+      "sha256": "49e278605c1af904f6df336c42f834e6041fb7f3b8f2be7171f004f2f2f0efe7",
+      "lineCount": 8961
+    }
+  ],
+  "finalVerification": {
+    "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\native-startup\\final-verification.json",
+    "sha256": "5201993bbb7cc820b13eb49b9e880fff1b255033ad51a2325f29717959d3ef31",
+    "status": "passed"
+  }
+}

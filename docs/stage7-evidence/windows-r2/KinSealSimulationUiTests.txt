@@ -1,0 +1,19 @@
+********* Start testing of SimulationUiTests *********
+Config: Using QtTest library 6.12.0, Qt 6.12.0 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 15.1.0), windows 10
+PASS   : SimulationUiTests::initTestCase()
+PASS   : SimulationUiTests::sharedFrameFollowsAddress()
+PASS   : SimulationUiTests::heldMomentaryMoveAndCaptureLoss()
+PASS   : SimulationUiTests::stoppedSessionKeepsSource()
+PASS   : SimulationUiTests::snapshotDoesNotDirtyEditor()
+PASS   : SimulationUiTests::duplicateActionOwnsOneWindow()
+PASS   : SimulationUiTests::unsupportedProjectDoesNotStart()
+PASS   : SimulationUiTests::parentCloseEndsRuntime()
+PASS   : SimulationUiTests::onlineScopeHasNoConnectAction()
+FAIL!  : SimulationUiTests::invalidNumericInputCanRecover() 'window.initialize(project, &error)' returned FALSE. ([{"message":"页面page-1无效或稳定ID重复。工程包含无效的控件记录。","objectId":"","property":"model"}])
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/tests/simulation_ui_tests.cpp(373) : failure location
+PASS   : SimulationUiTests::directOwnerDeletionWithHeldViewport()
+FAIL!  : SimulationUiTests::ownerDeletionInsideInputDialog() 'window->initialize(project, &error)' returned FALSE. ()
+Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-stage4-20261112/worktree/tests/simulation_ui_tests.cpp(459) : failure location
+PASS   : SimulationUiTests::cleanupTestCase()
+Totals: 11 passed, 2 failed, 0 skipped, 0 blacklisted, 938ms
+********* Finished testing of SimulationUiTests *********

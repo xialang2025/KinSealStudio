@@ -1,0 +1,54 @@
+{
+  "sourceSha256": {
+    "src\\simulation_runtime.h": "6422c42c2414c165a5a3bd1634a311230d4bf405bf19d33ce54093d1bbf8ff45",
+    "src\\simulation_runtime.cpp": "d7f28ee53560c380d4229a6ec738ca6bd1fab0c9f5a3487ed38579326d57ea13",
+    "tests\\simulation_runtime_tests.cpp": "1d63d5559722b32254240c329b6a7026ece49b889026b7feee238e304309b8e8"
+  },
+  "logicChangedDuringReview": false,
+  "blockingFindings": [],
+  "formalTests": {
+    "report": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage4-20261112\\worktree\\docs\\stage7-evidence\\windows-r2\\run.json",
+    "passed": 79,
+    "failed": 0,
+    "skipped": 0,
+    "executableSha256": "1781dcd205724614190ba7e2ca8f638346f6006662d926e553271687b4ee22dd"
+  },
+  "independentCompilation": {
+    "report": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-stage7-20261114\\runtime-owned\\compile-run-r3.json",
+    "mocExit": 0,
+    "productionExit": 0,
+    "testExit": 0,
+    "allLogBytes": 0,
+    "options": [
+      "-Wall",
+      "-Wextra",
+      "-Wconversion"
+    ]
+  },
+  "checked": [
+    "the runtime has no timer, process, driver, transport or physical I/O implementation",
+    "all active address roles and spans reuse the canonical PLC parser with isolated LB/LW banks",
+    "connection-qualified text is rejected before any external-family fallback",
+    "typed values are finite and bounded before shifts or conversions; all signed decoding avoids implementation-defined narrowing",
+    "both raw words are staged together; BCD and nonfinite float interpretations reject without output mutation",
+    "press actions and notices publish candidate bit/word/language/level state only after all checks succeed",
+    "duplicate presses and pending input prevent overlapping interaction ownership",
+    "release, move-out, cancel, stop and access loss force the owned momentary bit false",
+    "input waits for submission; rejected input cannot emit notices and is retained for correction",
+    "failed start does not replace the active project or memory; successful start resets banks and retains bounded lifecycle history",
+    "startup language follows explicit startupLanguage or the first registered language, never the editor activeLanguage by accident",
+    "only logout and language functions run; unsupported timing, predicates, globals, pages and opaque native source are explicit refusals",
+    "bound macros are skipped with warnings and macro-skipped events; source bodies never execute",
+    "diagnostic events are capped at 512 and text fields are bounded; capabilities errors and macro-name warnings are separately bounded",
+    "English function headers, date tags and function-entry declarations retained"
+  ],
+  "remainingLimits": [
+    "all memory starts at zero, 32-bit storage is low-word-first and access starts at level zero as explicit Lite design choices, not native oracle results",
+    "the runtime is a single-thread value owner with one active pointer/input interaction",
+    "multiple simultaneous permission predicates, enabled gates with no predicate, nonzero tolerance, nested appearance permissions and timed flash/press behavior are refused",
+    "integer fixed-point keypad scaling is refused; float input uses direct finite binary32 values with declared decimal layout limits",
+    "unrepresented multi-state lamp values return minus one rather than inventing state zero",
+    "raw snapshot LB/LW intentionally exposes test memory; UI/CLI owners must redact password-derived or otherwise sensitive values before exporting diagnostics",
+    "root owns UI input retry, output caps/redaction, CMake integration, docs, all physical or native evidence and Git"
+  ]
+}

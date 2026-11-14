@@ -8,6 +8,7 @@
 #include "text_payload_compiler.h" //20261108-11 add
 #include "project_capabilities.h" //20261110-5 add
 #include "device_transfer_contract.h" //20261114-5 add
+#include "simulation_cli.h" //20261114-6 add
 
 #include <QApplication>
 #include <QSettings> //20261111-1 add: Keep automated captures out of the user recent-file preferences.
@@ -170,6 +171,7 @@ int main(int argc, char *argv[]) //20261107-6 add
 {
     QApplication application(argc, argv);
     QStringList arguments;
+    int simulationExit = 0; //20261114-6 add
     std::unique_ptr<MainWindow> window;
     QString capture_path;
     QTemporaryDir captureSettings; //20261111-1 add
@@ -211,6 +213,7 @@ int main(int argc, char *argv[]) //20261107-6 add
     int cancelIndex;
 
     arguments = application.arguments();
+    if (handleSimulationCli(arguments, &simulationExit)) { return simulationExit; } //20261114-6 add
     if (arguments.size() >= 4 &&
         arguments.at(1) == QStringLiteral("--render-text-frame")) //20261108-11 add: Offline raster comparison only.
     {
