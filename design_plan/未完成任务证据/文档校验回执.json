@@ -1,0 +1,572 @@
+{
+  "date": "2026-11-14",
+  "sourceCommit": "b73a3cf0740ec9b8afa2be4d788b50034caeb1e9",
+  "scope": "文档数据/引用/来源及既存改动隔离",
+  "passed": true,
+  "rendering": {
+    "checked": true,
+    "bytes": 2953018,
+    "sha256": "26b0084a580b44966a3b44ae31c529da7e594d8e6184a35b402d5f04ed393502",
+    "coverage": {
+      "stageTasks": 90,
+      "families": 41,
+      "currentRecords": 244,
+      "historicalRecords": 2515,
+      "candidateRows": 318,
+      "archives": 6
+    }
+  },
+  "sourceLocators": 4051,
+  "sourceLocatorErrors": [],
+  "sourceSnapshotFiles": 126,
+  "sourceSnapshotIdentities": [
+    {
+      "path": "design_plan/00_复刻执行总入口.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "design_plan/01_阶段0_基线范围与证据管理.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/02_阶段1_工程模型与文件格式.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/03_阶段2_主窗口与工程配置.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/04_阶段3_画布资源与一致渲染.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/05_阶段4_控件逐项复刻.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/06_阶段5_设备编译与格式差分.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/07_阶段6_USB上传与介质下载.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/08_阶段7_离线与在线模拟.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/09_阶段8_宏系统与调度.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/10_阶段9_PLC地址模板与通信.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/11_阶段10_设备运行兼容与性能验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/12_阶段11_部署帮助与发布.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A01_公共属性与事务规范.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A02_全局入口与工程配置规范.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A03_基础图形与表格规范.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A04_31控件实施索引.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A05_源格式与设备编译契约.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/A06_运行与发布验收用例.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/ASCII显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/GIF显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/X-Y曲线功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/下拉框功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/二维码功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/位按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/刻度功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/功能复刻说明书模板.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/功能按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/动态报警条功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/历史报警显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/历史数据显示器功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/历史趋势图功能与交互复刻手册.md",
+      "mode": "exact"
+    },
+    {
+      "path": "design_plan/原生软件复刻补充分析_20261110.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/图片显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/图表功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/复刻待验核销记录.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "design_plan/多功能按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/多态按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/字按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/完整复刻路线图.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/工具箱控件复刻总览.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/报警显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/指示灯功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/控件文档与实施覆盖矩阵.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/数值显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/数据群组功能与交互复刻手册.md",
+      "mode": "exact"
+    },
+    {
+      "path": "design_plan/时间显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/流动块功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/消息显示功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/滑动开关功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/滚轮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/画面按钮功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/移动轨迹功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/趋势图功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/配方显示器功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "design_plan/静态文本功能与交互复刻手册.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/AMT070W124-L800X480R_USB下载协议_已验证部分.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "docs/ASCII显示手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/GIF显示手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/UI编译规则与阶段交付规范.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "docs/X-Y曲线手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/下拉框手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/下载链路差异.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/主窗口外观复刻验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/二维码手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/位按钮手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/位按钮设备编译实现.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/刻度手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/功能按钮手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/动态报警条手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/历史报警显示手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/历史控件实物下载补验汇总.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/历史数据显示器手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/历史趋势图手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/图片显示手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/图表手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/圆与椭圆图形实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/圆角矩形图形实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/多功能按钮手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/多态按钮手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/多边形图形实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/字按钮手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/实屏宽度提示与下载生命周期排查.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/扇形默认角度切片实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/折线图形实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/报警显示手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/指示灯手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/指示灯程序修改记录.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/数值显示手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/数据群组手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/时间显示手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/曲线圆弧调查与阻塞记录.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/流动块手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/消息显示手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/滑动开关手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/滚轮手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/画面按钮手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/直线图形实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/矩形图形实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/移动轨迹手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/纯图像表格实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/自由直线首尾切片实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/趋势图手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/配方显示器手册实现与验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/阶段0基线与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段1工程模型与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段2主窗口与工程配置验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段3主目录兼容残留_20261112.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段3画布资源与一致渲染验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段4_41项本轮交付.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/阶段4_C21增量包交付.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段4_C23增量包交付.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段4_C26增量包交付.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段4逐控件进度.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "docs/阶段5_圆角矩形定点背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_多边形单元格背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_扇形默认角度背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_普通直线独立背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_椭圆定点细分背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_正交折线编译与离线包验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_矩形设备背景编译与差分验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/阶段5_自由直线两端点背景编译与差分验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/阶段5_静态表格设备背景编译与差分验收.md",
+      "mode": "exact"
+    },
+    {
+      "path": "docs/阶段5逐项进度.md",
+      "mode": "CRLF checkout"
+    },
+    {
+      "path": "docs/静态文本手册实现与验收.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    },
+    {
+      "path": "docs/验证报告.md",
+      "mode": "exact audit checkout bytes; Git-normalized content equal"
+    }
+  ],
+  "previousTaskStatesPreserved": true,
+  "noBusinessSourceOrTestsChanged": true,
+  "formalQuestionReferenceCoverage": true,
+  "closedFactsNotReopened": true,
+  "originalCandidateIdsPreserved": true,
+  "readOnlyReviews": [
+    {
+      "scope": "阶段0～3与全部历史视图",
+      "reviewer": "polygon_docs",
+      "result": "修正主目录证据身份及S01-03完成范围后，无实质遗漏"
+    },
+    {
+      "scope": "41族/142Q/13过期分支/A03/3关闭事实",
+      "reviewer": "sector_analysis",
+      "result": "未发现实质遗漏或错误"
+    },
+    {
+      "scope": "阶段5～11与A06问题",
+      "reviewer": "polygon_gate",
+      "result": "最终只读复查通过：14个A06 Q验收按问题范围收窄，原列映射/依赖及验收扩大均已修复，无剩余范围污染。"
+    }
+  ],
+  "cleanupStatus": "自动审批拒绝删除六份展开审计JSON，实际删除0，已登记DOC-CLEANUP-001及独立清理回执",
+  "auditInputErrata": [
+    {
+      "input": "extensions.json.gz",
+      "field": "DOC-CONFIG-001来源行号",
+      "original": 213,
+      "canonical": 174,
+      "reason": "根AGENTS的Issue tracker实际位于174行，统一JSON已纠正；冻结输入保留原貌。"
+    }
+  ],
+  "notRun": [
+    "业务构建",
+    "业务测试",
+    "GUI/原厂运行",
+    "USB/PLC通信",
+    "实屏观察"
+  ],
+  "knownLimits": [
+    "历史待核记录未全部按新成果核销，不计确认未实现数量",
+    "LT779来源仍为本地既存未提交文档",
+    "不把文档通过升级为任何D/U/P/R/C/T/E通过"
+  ]
+}
