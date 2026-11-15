@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-11-15 Asia/Shanghai",
-  "sourceCommit": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+  "sourceCommit": "6dcd08332ede7c532842eba2b38522a50854a523",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
     "stageTasks": 90,
@@ -10566,12 +10566,17 @@
           "line": 1,
           "endLine": 5,
           "quote": "# 位按钮手册实现与验收\n\n日期：2026年11月9日。当前版本：0.4.3透明图库版。设备验收基线为0.4；图库补全标记：`//20261109-1 add/change`，原生目录标记：`//20261109-3 add/change`，图库透明绘制修正：`//20261109-4 add/change`。\n\n依据[位按钮功能与交互复刻手册](../design_plan/位按钮功能与交互复刻手册.md)。本轮已从0.3编辑实现推进到独立设备编译、真实SDK宏编译、PLC地址编码、多语言及原厂源工程读写。**尚未完成全部实机验收**，四操作测试屏当前仍等待现场确认。"
+        },
+        {
+          "path": "docs/位按钮行为编码逆向分析.md",
+          "line": 1,
+          "quote": "2026-11-15静态逆向：PC与安装包ARM四操作、4/2/1条件AND/容差、通知位优先、宏请求、按压计数及点动释放已补证；实际时基、全部取消/异常、PLC结果和实物固件身份仍开放。"
         }
       ],
       "layers": {
         "D": {
           "status": "bounded_documentation_and_supplemental_evidence",
-          "boundary": "已有手册和专项补证；未逐字段审定整层通过，原始候选数量不是未实现功能数量。",
+          "boundary": "已有手册及固定SHA PC/ARM静态专项补证；ARM真实条件AND/有限正常数容差、位优先通知/宏请求、按压全局计数与释放消费者已有汇编依据。尚未逐字段审定整层通过；真实时基、全部事件/异常及当前屏内版本未闭合。",
           "sources": [
             {
               "path": "design_plan/控件文档与实施覆盖矩阵.md",
@@ -10643,7 +10648,7 @@
         },
         "C": {
           "status": "existing_independent_compile_scope_proven",
-          "boundary": "位按钮独立640B/type10及四操作、ON→OFF状态图、扫描、权限通知按压、SDK宏、typed SM已实现。 单目标800×480普通单页、最多100对象、1..8语言和默认Modbus路由守卫继续；未知动态重叠/机型/活动配置未放开。",
+          "boundary": "位按钮独立640B/type10及四操作、ON→OFF状态图、扫描、权限通知按压、SDK宏、typed SM已实现。 单目标800×480普通单页、最多100对象、1..8语言和默认Modbus路由守卫继续；未知动态重叠/机型/活动配置未放开。 装载观察仅证明type10前448B复制瞬间同偏移，运行槽后续被改写；不据模拟器旧条件枚举改变现有编译格式。",
           "sources": [
             {
               "path": "docs/阶段4逐控件进度.md",
@@ -10695,7 +10700,7 @@
         },
         "E": {
           "status": "full_field_unverified",
-          "boundary": "尚无完整屏显/触控/PLC结果；静态无交互图形和无触控图表不人为要求不存在的触控功能。",
+          "boundary": "阶段10基础四操作有用户独立灯与刺激确认；完整取消/延时/权限/通知宏/监视/PLC仍开放。2026-11-15静态分析不新增现场E通过，实际屏内固件版本仍未确认。",
           "sources": [
             {
               "path": "design_plan/控件文档与实施覆盖矩阵.md",
@@ -21942,9 +21947,9 @@
       "title": "",
       "status": "open",
       "scope": "C02",
-      "remaining": "四操作、监视、显现/触控、通知、按压、宏、闪烁、多语言及外部PLC的完整实机闭环仍待；相应编辑与独立编码已存在。",
-      "blockers": "待闭合层：E；具体限制和已有证据范围见对应家族。",
-      "nextAction": "用现成四操作工程先触发一次置位和释放并读LB/PLC，记录屏端和寄存器；其余分支分别观察。",
+      "remaining": "真实OS时基和墙钟延迟、全部移出/失捕获/隐藏/切页取消及竞态/重复/回绕，缓存输入类型转换/NaN/次正规/溢出，通知/宏实际完成与忙时请求，完整监视/闪烁/透明/多语言、外部PLC和实物版本认证。另待修Lite离线双通知与ARM位优先差异，扩组合/容差/按压或明确范围。",
+      "blockers": "ARM安装包消费者已经定位，不再笼统记为无固件证据；仍缺当前屏内同版本认证、OS tick配置及完整事件/读缓存链和对应实物刺激。静态调用/入队不能替代PLC结果；PC原厂模拟器与ARM及Lite路径不同。",
+      "nextAction": "先修Lite离线位/字通知同开双写差异并定向回归；以本轮ARM真值表扩条件/容差时分别标定异常输入；继续查OS tick、完整取消与缓存读取链，再安排对应版本独立观察点实屏。设备编码如变更仍逐项实物下载。",
       "acceptance": "每个实际功能有刺激/实屏/寄存器/时间证据；不以USB ACK关闭运行项。",
       "relatedIds": [],
       "sources": [
@@ -21953,8 +21958,14 @@
           "line": 135,
           "endLine": 135,
           "quote": "- **仍待实机闭环**：四操作触控、监视、权限、通知、按压、宏、闪烁、多语言切换及外部PLC真实通信。未得到现场结果的项目保持待验收。"
+        },
+        {
+          "path": "docs/位按钮行为编码逆向分析.md",
+          "line": 1,
+          "quote": "2026-11-15静态逆向：PC与安装包ARM四操作、4/2/1条件AND/容差、通知位优先、宏请求、按压计数及点动释放已补证；实际时基、全部取消/异常、PLC结果和实物固件身份仍开放。"
         }
-      ]
+      ],
+      "completedScope": "阶段10用户已确认LB0两次交替归原、LB1置1/复0、LB2按下1/松手0，独立灯正常且无宽度提示；2026-11-15固定SHA模拟器静态恢复前448B装载、主写/通知helper/宏请求次序及点动释放队列。 ARM已恢复0x5C8消费者、4/2/1 AND及等级拒绝优先、正常有限数容差区间、通知位优先和五字类型分派、unsigned宏索引、全局按压登记/计数/部分取消与点动清零及队列满边界。上述是静态证据，不新增E。"
     },
     {
       "id": "Q-AUDIT-C02-PIXELS-001",
@@ -22892,7 +22903,7 @@
         "S11-01～05",
         "阶段10当前E范围及公开限制"
       ],
-      "nextAction": "以本批新输入/程序身份继续一个未观察动作，先配可信独立数值或状态观察点；不重下相同工程代替刺激。",
+      "nextAction": "以本批新输入/程序身份继续一个未观察动作，先配可信独立数值或状态观察点；不重下相同工程代替刺激。 位按钮以专项报告第9节已证规则作预期，避免再次把AND/容差/位通知优先列成全部未知。",
       "acceptance": "既有五类按实际声明范围逐项记录显示、触控、权限和语言的原厂期望及Lite实屏/寄存器结果；沿用灯/功能父子Q，仅关闭明确已观察分支，未测组合保留。",
       "relatedIds": [
         "S10-02",
@@ -22905,10 +22916,15 @@
         {
           "path": "design_plan/A06_运行与发布验收用例.md",
           "line": 170
+        },
+        {
+          "path": "docs/位按钮行为编码逆向分析.md",
+          "line": 1,
+          "quote": "2026-11-15静态逆向：PC与安装包ARM四操作、4/2/1条件AND/容差、通知位优先、宏请求、按压计数及点动释放已补证；实际时基、全部取消/异常、PLC结果和实物固件身份仍开放。"
         }
       ],
       "acceptanceBasis": "按A06问题范围及其下一最小探针限定；收口/清理及其它功能的关联S仅保留追踪，不反向扩成本Q的关闭条件。",
-      "completedScope": "当前程序位四操作/独立LB灯、字常数0/1/4与0/3、功能页LB41显现/隐藏及出现后触控有实屏答复；两组语言/独立LB40通知余项待答。"
+      "completedScope": "当前程序位四操作/独立LB灯、字常数0/1/4与0/3、功能页LB41显现/隐藏及出现后触控有实屏答复；两组语言/独立LB40通知余项待答。 2026-11-15位按钮模拟器静态消费链另行留证，不计新增现场通过。 ARM静态条件/通知/按压/释放补证已完成，当前Lite离线明确差异单列C02；不提升现场通过范围。"
     },
     {
       "id": "Q-S10-002",
@@ -30849,7 +30865,7 @@
         "assignmentTitle": "位按钮字的位索引0至15与固件位值的映射",
         "historicalStatus": "部分历史补证，余项未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -30881,7 +30897,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：位按钮字的位索引0至15与固件位值的映射。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -30896,6 +30912,11 @@
             "candidateId": "CAND-20261110/U-058",
             "candidateText": "6. “字的位”位序（0–15 与设备位编号的映射）、透明度范围、双态渲染合成公式 [待验]。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31024,7 +31045,7 @@
         "assignmentTitle": "位按钮显现和触控多条件组合逻辑",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31056,7 +31077,7 @@
         "historicalPreconditions": "选择该控件的显现或触控列，单独建立位、等级、字条件，且对象无重叠遮挡。",
         "historicalStimulus": "分别使各条件全真、仅一真、仅一假和全假，保持其他参数不变，记录显现与触控写值结果。 对象：位按钮显现和触控多条件组合逻辑。",
         "historicalExpectedObservation": "取得显现与触控各自的真值表、组合方式及优先级；不由共用容器推断所有控件相同。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：分别使各条件全真、仅一真、仅一假和全假，保持其他参数不变，记录显现与触控写值结果。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31071,6 +31092,11 @@
             "candidateId": "CAND-20261110/U-059",
             "candidateText": "7. 多个显现/触控条件同时勾选的逻辑（AND/OR）、等级等于阈值边界、误差算式 [待验]。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31082,7 +31108,7 @@
         "assignmentTitle": "位按钮等级等于阈值边界",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31114,7 +31140,7 @@
         "historicalPreconditions": "固定该控件的最低等级阈值，位和字条件关闭或恒定满足。",
         "historicalStimulus": "分别以阈值-1、阈值、阈值+1等级观察显现或触控；显现和触控列分开记录。 对象：位按钮等级等于阈值边界。",
         "historicalExpectedObservation": "取得最低等级的等值边界与实际权限结果，不由字段名称预设闭开关系。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：分别以阈值-1、阈值、阈值+1等级观察显现或触控；显现和触控列分开记录。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31129,6 +31155,11 @@
             "candidateId": "CAND-20261110/U-059",
             "candidateText": "7. 多个显现/触控条件同时勾选的逻辑（AND/OR）、等级等于阈值边界、误差算式 [待验]。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31140,7 +31171,7 @@
         "assignmentTitle": "位按钮等于与不等于比较的误差算式",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31172,7 +31203,7 @@
         "historicalPreconditions": "固定字比较值和误差，位和等级条件恒定满足；整数和浮点分别留样本。",
         "historicalStimulus": "测比较值±容差及邻界，分别测试等于、不等于及0误差，保持其他字段不变。 对象：位按钮等于与不等于比较的误差算式。",
         "historicalExpectedObservation": "取得容差闭开区间、绝对/相对误差及浮点边界，不提前假设具体公式。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：测比较值±容差及邻界，分别测试等于、不等于及0误差，保持其他字段不变。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31187,6 +31218,11 @@
             "candidateId": "CAND-20261110/U-059",
             "candidateText": "7. 多个显现/触控条件同时勾选的逻辑（AND/OR）、等级等于阈值边界、误差算式 [待验]。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31198,7 +31234,7 @@
         "assignmentTitle": "位置位操作按下与松开写值时序",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31230,7 +31266,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：位置位操作按下与松开写值时序。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31245,6 +31281,11 @@
             "candidateId": "CAND-20261110/U-060",
             "candidateText": "8. 操作类型四语义的设备端时序（尤其“点动”的按住/松开写值）仅来自帮助文字 [H]，未做设备对照。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31256,7 +31297,7 @@
         "assignmentTitle": "位复位操作按下与松开写值时序",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31288,7 +31329,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：位复位操作按下与松开写值时序。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31303,6 +31344,11 @@
             "candidateId": "CAND-20261110/U-060",
             "candidateText": "8. 操作类型四语义的设备端时序（尤其“点动”的按住/松开写值）仅来自帮助文字 [H]，未做设备对照。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31314,7 +31360,7 @@
         "assignmentTitle": "位点动操作按住、松开及失去触控时的写值",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31346,7 +31392,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：位点动操作按住、松开及失去触控时的写值。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31361,6 +31407,11 @@
             "candidateId": "CAND-20261110/U-060",
             "candidateText": "8. 操作类型四语义的设备端时序（尤其“点动”的按住/松开写值）仅来自帮助文字 [H]，未做设备对照。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31372,7 +31423,7 @@
         "assignmentTitle": "位交替操作一次触碰如何读取并翻转当前值",
         "historicalStatus": "未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31404,7 +31455,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：位交替操作一次触碰如何读取并翻转当前值。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31419,6 +31470,11 @@
             "candidateId": "CAND-20261110/U-060",
             "candidateText": "8. 操作类型四语义的设备端时序（尤其“点动”的按住/松开写值）仅来自帮助文字 [H]，未做设备对照。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31486,7 +31542,7 @@
         "assignmentTitle": "位按钮受支持属性的原厂源字段布局",
         "historicalStatus": "部分历史补证，余项未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31518,7 +31574,7 @@
         "historicalPreconditions": "准备原厂空白基线与仅含该对象的最小sm，保留源文件SHA及原件/副本身份。",
         "historicalStimulus": "逐字段改一个值后保存重开，解析typed流并比对；复制、删增或改变状态数时另留独立样本。 对象：位按钮受支持属性的原厂源字段布局。",
         "historicalExpectedObservation": "定位稳定字段、长度、引用及休眠数据；只能在明确支持边界内声明可编辑互通。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：逐字段改一个值后保存重开，解析typed流并比对；复制、删增或改变状态数时另留独立样本。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31533,6 +31589,11 @@
             "candidateId": "CAND-20261110/U-062",
             "candidateText": "10. 工程文件（.sm）与下载文件中位按钮的序列化格式、目标屏固件解析规则不在本次证据内；设备兼容需另行文件/固件比对。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31544,7 +31605,7 @@
         "assignmentTitle": "位按钮设备记录、地址扫描及图帧布局",
         "historicalStatus": "部分历史补证，余项未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31576,7 +31637,7 @@
         "historicalPreconditions": "使用最小原厂sm及已固定默认AMT目标；隔离各次编译输出并记录输入SHA。",
         "historicalStimulus": "单变量原厂离线编译，比较对应控制、图片、文本或配置段；需要图像时独立解压并核对索引。 对象：位按钮设备记录、地址扫描及图帧布局。",
         "historicalExpectedObservation": "形成活动字段、字节序、段结构及图片数量的证据；随机残留与未初始化区域单列。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：单变量原厂离线编译，比较对应控制、图片、文本或配置段；需要图像时独立解压并核对索引。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31591,6 +31652,11 @@
             "candidateId": "CAND-20261110/U-062",
             "candidateText": "10. 工程文件（.sm）与下载文件中位按钮的序列化格式、目标屏固件解析规则不在本次证据内；设备兼容需另行文件/固件比对。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -31602,7 +31668,7 @@
         "assignmentTitle": "固件消费位按钮记录后的触控及监视兼容性",
         "historicalStatus": "部分历史补证，余项未闭合",
         "currentStatus": "current_review_required",
-        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。",
+        "currentStatusRationale": "历史早于阶段4/5，本轮仅全量提取和归属映射，未逐条采用后续证据，不计确认未实施。 2026-11-15已对账基础四操作和静态消费链；完整原子题仍待补证，详位按钮行为编码逆向分析，不改历史结论。 本次又以安装包ARM补齐条件/容差、通知/宏请求、按压计数与释放消费者，未关闭全部现场/异常范围。",
         "countAsConfirmedUnimplemented": false,
         "familyMapping": {
           "id": "C02",
@@ -31634,7 +31700,7 @@
         "historicalPreconditions": "先固定AMT型号、固件与工程/程序哈希，取得原生期望；具备可记录的屏幕及LB/LW或PLC观察。",
         "historicalStimulus": "针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 对象：固件消费位按钮记录后的触控及监视兼容性。",
         "historicalExpectedObservation": "记录屏端或寄存器的实际结果、时间与顺序；没有原生观察不预设答案，USB ACK不算运行结果。",
-        "nextExecutableStep": "先核后续同版本同范围证据，缺口才执行：针对问题中的单一动作施加可辨识激励，分别记录刺激前、按下、保持、松开、取消及必要的重启后状态。 先核当前证据身份，已有同范围证据直接复用；缺口才新增最小原生样本。",
+        "nextExecutableStep": "复用阶段10基础四操作及本次PC/ARM固定SHA证据，只补原问题真实剩余的版本、OS时基/全部取消、缓存读取/异常、监视、宏/PLC完成；Lite离线双通知等具体差异另按专项报告修复。",
         "sources": [
           {
             "path": "docs/stage0-evidence/candidate-ledger.json",
@@ -31649,6 +31715,11 @@
             "candidateId": "CAND-20261110/U-062",
             "candidateText": "10. 工程文件（.sm）与下载文件中位按钮的序列化格式、目标屏固件解析规则不在本次证据内；设备兼容需另行文件/固件比对。",
             "referenceKind": "historical_frozen_source"
+          },
+          {
+            "path": "docs/位按钮行为编码逆向分析.md",
+            "line": 1,
+            "quote": "2026-11-15静态逆向：复制/写入/释放/通知/宏请求链已见；模拟器权限、字通知和按压覆盖受限，实物完整状态机仍开放。"
           }
         ]
       },
@@ -177047,10 +177118,10 @@
     },
     {
       "id": "DOC-CLEANUP-006",
-      "title": "阶段11重复验证包和构建对象清理被拒",
+      "title": "阶段11及位按钮分析自有中间物清理被拒",
       "status": "开放，自动审批拒绝后保留",
       "completedScope": "本轮自有测试副本/夹具累计逻辑删除261844538B，最终便携TEMP0文件；失败/最终证据保留，全部新临时输出在Z。",
-      "remaining": "duplicate117435743B及139构建对象16400746B被自动审批blocked by policy，0删除；旧r1候选包保留。",
+      "remaining": "duplicate117435743B及139构建对象16400746B被自动审批blocked by policy，0删除；旧r1候选包保留。 2026-11-15位按钮ARM分析项目26,379,429B和temp9,528,896B（共35,908,325B）两次自动审查拒绝，0实际删除；没有重试阶段11历史目标。",
       "blockers": [
         "自动审批拒绝 exact task-owned duplicate 和显式对象删除；无更细理由"
       ],
@@ -177065,6 +177136,9 @@
         },
         {
           "path": "docs/stage11-evidence/package-owned/duplicate-r2/cleanup-rejected.json"
+        },
+        {
+          "path": "docs/bitbutton-rea-evidence/firmware/cleanup.json"
         }
       ],
       "countsTowardAmtStages": false
@@ -177764,7 +177838,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "阶段11实际交付0.11.0受限便携验证切片：版本统一、依赖/许可、白名单包和本地帮助；最终80私有进程/25语义项完成，79观察到退出及1缺插件限时终止。完整六主任务仍有环境/授权/安装器/全入口及现场欠项；阶段10屏幕和余项保持。自有物逻辑删除261844538B，审批拒绝133836489B保留/该项释放0。 程序f05adf63已推送GitHub，6355源码/资源及最终包已绑定；1891用户差异保护通过。 程序源码推送已确认；最终文档提交遇网络故障，状态待确认，本地保留。",
+  "activitySummary": "本轮完成固定SHA位按钮PC与安装包ARM静态补证，恢复条件掩码/容差、通知/宏请求、按压计数和点动释放链，定位当前Lite离线差异；未执行目标、USB、PLC或新增实屏。阶段11既有发布资料保留。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -178784,5 +178858,51 @@
     }
   ],
   "auditSourceCommitRetained": "daefcdb5287f97ec3190263d991881f3de9e1933",
-  "sourceCommitScope": "当前阶段11已发布程序源码；sourceAssessment/sourceManifest及审计归档保留历史身份"
+  "sourceCommitScope": "当前阶段11已发布程序源码；sourceAssessment/sourceManifest及审计归档保留历史身份",
+  "bitButtonReaExecutions": [
+    {
+      "date": "2026-11-15",
+      "scope": "固定SHA PC模拟器和ARM安装包固件的位按钮静态行为分析",
+      "report": "docs/位按钮行为编码逆向分析.md",
+      "evidence": "docs/bitbutton-rea-evidence/findings.json",
+      "simulatorEvidenceRecords": 78,
+      "fullBehaviorRecovered": false,
+      "usbAccessed": false,
+      "targetExecuted": false,
+      "openIssueIds": [
+        "Q-AUDIT-C02-RUN-001",
+        "Q-AUDIT-C02-PIXELS-001",
+        "Q-S10-001"
+      ],
+      "firmwareEvidence": "docs/bitbutton-rea-evidence/firmware/findings.json",
+      "firmwareSha256": "74d510f150dc8edadf8e967bdb3c00ca5790ca68b9da6f906125a5234a485c24",
+      "providers": [
+        "REA Ghidra PE",
+        "Direct Ghidra 12.1.4 raw ARM fallback",
+        "Direct Capstone 5.0.7 raw-word cross-check"
+      ],
+      "applicationLogicChanged": false,
+      "implementationMismatches": [
+        "Lite离线位/字通知同开双写，ARM位优先；设备编译器另有拒绝保护",
+        "Lite离线拒绝无子条件/AND/非零容差与按压，ARM已有相应消费者",
+        "Lite事务提交/宏跳过/取消策略不等于完整ARM行为"
+      ],
+      "stillUnverified": [
+        "当前屏内固件与安装包身份一致性",
+        "OS tick与实际延迟",
+        "全部取消/竞态/重复/回绕",
+        "读缓存类型转换及非有限/次正规/溢出",
+        "PLC完成/异常补偿与宏调度完成",
+        "完整监视/闪烁/透明/语言"
+      ],
+      "cleanup": {
+        "status": "blocked_by_automatic_approval_review",
+        "actualDeletedBytes": 0,
+        "retainedTemporaryBytes": 35908325,
+        "evidence": "docs/bitbutton-rea-evidence/firmware/cleanup.json",
+        "issueId": "DOC-CLEANUP-006",
+        "historicalDeniedTargetsRetried": false
+      }
+    }
+  ]
 }

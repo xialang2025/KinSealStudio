@@ -1,0 +1,277 @@
+{
+  "schema": "kinseal-bitbutton-findings-v1",
+  "date": "2026-11-15",
+  "scope": "static-analysis-only",
+  "targetSha256": "6e4e104e552869e0e4139d2d4db2a3bdf9383eed8c29a2b64d3300b607c5df7f",
+  "bundle": "20261115-simulator-r1.json",
+  "recordCount": 78,
+  "targetExecuted": false,
+  "usbAccessed": false,
+  "plcAccessed": false,
+  "fullBehaviorRecovered": false,
+  "findings": [
+    {
+      "id": "SIM-LOAD",
+      "claim": "type10从640B槽复制前448B到0x624运行对象；仅subtype0随即清+0x11D，另有其它运行字段覆盖。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x4542e0",
+          "evidenceId": "ev_602b281455fe9921365b1d55dabd19bba97b11a0552c14fb5c8a5a6e41948737"
+        },
+        {
+          "query": "asm:0x4542e0",
+          "evidenceId": "ev_dd9effd2c3b43c0f499f42acdc4577679505cccb1d4c69211f51b640595fd011"
+        }
+      ]
+    },
+    {
+      "id": "SIM-DISPATCH",
+      "claim": "可见且触控返回1后按0..3分派四操作；随后登记宏请求。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x40e510",
+          "evidenceId": "ev_a0d934d66ad3ab75123b3ba4ccd8f24a205a3d5ebca444e97ed339b0a8fec38e"
+        },
+        {
+          "query": "asm:0x40e510",
+          "evidenceId": "ev_436b61a2f3713b577c7c914442d585dc1f39ec462dc62494f2cd5786716520cf"
+        },
+        {
+          "query": "0x40f3b0",
+          "evidenceId": "ev_7cd699905cc35f4210738544a350db04fce01ec290bbd50008c6aceee7443b2c"
+        },
+        {
+          "query": "asm:0x40f3b0",
+          "evidenceId": "ev_8578a599ae46ca3e8d294b83deaf21f8c6721e9a100166beef678861cbd90241"
+        }
+      ]
+    },
+    {
+      "id": "SIM-SET-RESET",
+      "claim": "主SET1/RESET0、可选通知helper及同址监视缓存更新。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "asm:0x410600",
+          "evidenceId": "ev_d72451697c61140c6ee3e90e5fdbe129470bf7d15fb4cf169325fcb8e9dec30b"
+        },
+        {
+          "query": "asm:0x4106b0",
+          "evidenceId": "ev_b0adacba3222d9aaa0361a48add1c3acabbb1d029bf4ef6fc2c27722065896e8"
+        }
+      ]
+    },
+    {
+      "id": "SIM-JOG",
+      "claim": "主地址登记释放队列，释放尝试清零；外部队列满可跳过入队后仍清释放队列；缓存同步受同址监视条件限制，取消/时序待证。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "asm:0x410760",
+          "evidenceId": "ev_2448d14b5184ee116afc2542098b30af8c830b245d3bf30228612c29486aef16"
+        },
+        {
+          "query": "0x410c00",
+          "evidenceId": "ev_ca5dca40bf04b5f61f1aa7457e92ddb1887bf7c020e50b38f36bb34bf397ed3e"
+        },
+        {
+          "query": "asm:0x410c00",
+          "evidenceId": "ev_a22dff796e394713f29444a857e575a92a1a51fbc9a07a67131bcb9905458246"
+        },
+        {
+          "query": "asm:0x40e480",
+          "evidenceId": "ev_341b66602af1abe3d12603d5c76a99d347ec61b098aee997342501b86922d483"
+        },
+        {
+          "query": "0x40e330",
+          "evidenceId": "ev_df035473b1c0eb97717a61998e25e05dadad120fe503c455bcddabbced251c69"
+        },
+        {
+          "query": "0x43ef10",
+          "evidenceId": "ev_99984e195cff0f4742492c0e0461bf25922a2a7c8b96f4f5b0ed1d26e43600b1"
+        },
+        {
+          "query": "0x4109b0",
+          "evidenceId": "ev_01f21e967117743bf92ead35868e6c0ad944968959052d76ec543d00db4e6e96"
+        }
+      ]
+    },
+    {
+      "id": "SIM-TOGGLE",
+      "claim": "按主地址double缓存等于1写0，否则写1；不是可见帧本身取反。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "asm:0x410820",
+          "evidenceId": "ev_186671c82dd92bbd588d9b17bb9cda1d73aa5f2622aa8263cc10a429531708b5"
+        }
+      ]
+    },
+    {
+      "id": "SIM-WRITE",
+      "claim": "route0本地写；route1/2队列；程序调用顺序不等于PLC生效顺序。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x4103c0",
+          "evidenceId": "ev_767e224f40a0a881e3123584fa68b11d57747d46e5fbb167d4f0d17e447b8b32"
+        },
+        {
+          "query": "asm:0x4103c0",
+          "evidenceId": "ev_4b7cb4e307944a2816a3e59a03e400258495a268bb19d76f1f98130a6675639f"
+        },
+        {
+          "query": "0x438830",
+          "evidenceId": "ev_82566f3d69a5ab66e1fdfde223bd5511c4095a5e4241e099e2bd25c37d9e5629"
+        }
+      ]
+    },
+    {
+      "id": "SIM-PERMISSION",
+      "claim": "runtime+0x21仅精确0/1/3分支，现代4/2/1掩码原样输入存在语义差异。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x44dac0",
+          "evidenceId": "ev_55a76363eb1de355301cc7c736a747b9df9df1fc05d3742ae7cf7290bf4d2654"
+        },
+        {
+          "query": "asm:0x44dac0",
+          "evidenceId": "ev_6f0b6c5751c6e3583759996ed3e188b308613779d6e25825fdfb143d8bea1998"
+        },
+        {
+          "query": "0x44da20",
+          "evidenceId": "ev_21d7c2cbe0326a31ba24402bfff810adcf9873da07ed888500aaa8f658c58f1b"
+        },
+        {
+          "query": "asm:0x44da20",
+          "evidenceId": "ev_7434fdb290dda0a968f9496508fb4462fb580bcf3cda3ac54d7c0d31dc4c07b0"
+        },
+        {
+          "query": "0x44dd50",
+          "evidenceId": "ev_da03f02012e288e95848112ed224923a8f60fdac205edbe28a6c3be74a6a7ed6"
+        }
+      ]
+    },
+    {
+      "id": "SIM-VISIBILITY",
+      "claim": "显现按0/1/3消费并缓存到runtime+0x2E2；未证明现代字条件与组合。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x44d990",
+          "evidenceId": "ev_b404caef1ca6ff8780ec5cffda19635b42e665b8e08435ee89983254f63c8814"
+        },
+        {
+          "query": "0x451e20",
+          "evidenceId": "ev_0aa8abc13fd8e69800ff53bc014aeeea61eb9a0b998d59b0c48fee8aecdd6fc2"
+        }
+      ]
+    },
+    {
+      "id": "SIM-NOTICE",
+      "claim": "四操作所见通知读取使能/位值/共享地址，未按字模式/类型/f64常量分派。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "asm:0x410600",
+          "evidenceId": "ev_d72451697c61140c6ee3e90e5fdbe129470bf7d15fb4cf169325fcb8e9dec30b"
+        },
+        {
+          "query": "asm:0x4106b0",
+          "evidenceId": "ev_b0adacba3222d9aaa0361a48add1c3acabbb1d029bf4ef6fc2c27722065896e8"
+        },
+        {
+          "query": "asm:0x410760",
+          "evidenceId": "ev_2448d14b5184ee116afc2542098b30af8c830b245d3bf30228612c29486aef16"
+        },
+        {
+          "query": "asm:0x410820",
+          "evidenceId": "ev_186671c82dd92bbd588d9b17bb9cda1d73aa5f2622aa8263cc10a429531708b5"
+        },
+        {
+          "query": "0x4103c0",
+          "evidenceId": "ev_767e224f40a0a881e3123584fa68b11d57747d46e5fbb167d4f0d17e447b8b32"
+        }
+      ]
+    },
+    {
+      "id": "SIM-MACRO",
+      "claim": "操作后写宏请求状态2及调度标志；没有在该函数完成宏执行。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x431490",
+          "evidenceId": "ev_1e11a4835220cbee28eb50d0cb9381799aad4725242253e532e19a75e1bbb131"
+        },
+        {
+          "query": "asm:0x431490",
+          "evidenceId": "ev_b27dec0ac0c5bbf5a60f3c2adc04a1f89e7c67ff874d1d07e71b5d54d121c0af"
+        },
+        {
+          "query": "asm:0x40f3b0",
+          "evidenceId": "ev_8578a599ae46ca3e8d294b83deaf21f8c6721e9a100166beef678861cbd90241"
+        }
+      ]
+    },
+    {
+      "id": "SIM-PRESS",
+      "claim": "硬编码0x72<0x75令正常入口跳过按压计时支路；常量业务含义未知。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "asm:0x40e510",
+          "evidenceId": "ev_436b61a2f3713b577c7c914442d585dc1f39ec462dc62494f2cd5786716520cf"
+        }
+      ]
+    },
+    {
+      "id": "SIM-EVENT",
+      "claim": "已见0x26消息通知1/4与2分别分派操作和释放；尚未绑定全部窗口库事件。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x44bba0",
+          "evidenceId": "ev_f4e925998af35239c51aa43bf81f5165b68d06c70e91153f52e5dd280e6821dd"
+        },
+        {
+          "query": "0x44c220",
+          "evidenceId": "ev_f54c53e2d770f50fb649f538841eaacf2be7064e0b4a12748b0cbcd8b61f6d3e"
+        },
+        {
+          "query": "asm:0x40e480",
+          "evidenceId": "ev_341b66602af1abe3d12603d5c76a99d347ec61b098aee997342501b86922d483"
+        }
+      ]
+    },
+    {
+      "id": "SIM-MONITOR",
+      "claim": "0x410920仅向限定type10子类/监视模式且地址四元组匹配的目标复制源缓存；SET/RESET源缓存更新受同址监视条件限制，不保证所有配置即时正确显示。",
+      "evidenceType": "static-code-observation-with-bounded-semantic-inference",
+      "evidence": [
+        {
+          "query": "0x410920",
+          "evidenceId": "ev_d581495c358ced2d71ae47924ff74593cf7e98028430d77f25c31adf192472bc"
+        },
+        {
+          "query": "0x44b4b0",
+          "evidenceId": "ev_57648d031e736ca0f18453e85ced6705d143523cd51e255a2ad7ed24f867ceb8"
+        },
+        {
+          "query": "0x44a9d0",
+          "evidenceId": "ev_5c77494242617e9dffdf070c41096483e523eb945f78e74e83cfa94572613246"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "所有PE地址限于固定SHA；不移植到ARM。",
+    "前448字节是复制瞬间同偏移，运行期会覆盖；上游转换仍待核。",
+    "宏请求不是宏执行完成，外部入队不是PLC确认。",
+    "按压恒跳转只约束所见正常入口；常量0x72业务含义未知。",
+    "本文件仅索引PE证据；ARM补证另列firmware/findings.json。取消全路径、实际时序、完整监视、PLC结果和实物固件身份仍未闭合。",
+    "REA unknowns=0不表示业务未知项为零。"
+  ]
+}

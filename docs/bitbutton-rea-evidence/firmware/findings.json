@@ -1,0 +1,101 @@
+{
+  "schema": "kinseal-bitbutton-arm-findings-v1",
+  "date": "2026-11-15",
+  "provider": "Direct Ghidra 12.1.4 / Capstone 5.0.7; no REA evidence ID",
+  "sourceSha256": "74d510f150dc8edadf8e967bdb3c00ca5790ca68b9da6f906125a5234a485c24",
+  "targetExecuted": false,
+  "deviceAccessed": false,
+  "fullBehaviorRecovered": false,
+  "findings": [
+    {
+      "id": "ARM-MAP",
+      "claim": "链接映射VA=fileOffset+0x8001FFE0与scatter/RW重建有交叉依据，非bootloader物理装载认证。",
+      "evidence": [
+        "memory-map.json",
+        "scripts/reconstruct_firmware.py"
+      ]
+    },
+    {
+      "id": "ARM-DISPATCH",
+      "claim": "0x5C8运行步长；按压门控后检查显现和触控，按0..3低字节分派SET/RESET/JOG/TOGGLE，主写→通知→宏请求。",
+      "evidence": [
+        "details-r1.json:8007f13c",
+        "details-r1.json:8002b038",
+        "details-r1.json:8002af44",
+        "details-r1.json:8002ae44",
+        "details-r1.json:8002ad18",
+        "details-r1.json:8007c1e4"
+      ]
+    },
+    {
+      "id": "ARM-CONDITION",
+      "claim": "触控/显现掩码4/2/1为AND；触控位/字拒绝2、等级拒绝覆盖0，显现拒绝统一0。正常有限数比较含闭区间容差；负容差写回0，非法比较>=6跳过字拒绝。",
+      "evidence": [
+        "details-r2.json:80057258",
+        "details-r3.json:80057074",
+        "raw-evidence.json:touch_word_compare_dispatch",
+        "raw-evidence.json:double_subtract_tail_to_add",
+        "raw-evidence.json:double_add_body_and_normalization",
+        "raw-evidence.json:double_compare_flags_forward",
+        "raw-evidence.json:double_compare_flags_reverse"
+      ]
+    },
+    {
+      "id": "ARM-NOTICE",
+      "claim": "mode & 0x01位通知优先，否则mode & 0x02字通知；2/4一字、3/5/8两字；6/7非明确拒绝，数值异常转换未全证。",
+      "evidence": [
+        "details-r1.json:80060e5c",
+        "raw-evidence.json:notify_type_dispatch_and_cases"
+      ]
+    },
+    {
+      "id": "ARM-MACRO",
+      "claim": "使能/ready均为1，unsigned byte索引<count才置pending2及全局标志，非宏执行完成。",
+      "evidence": [
+        "details-r1.json:80074830"
+      ]
+    },
+    {
+      "id": "ARM-PRESS",
+      "claim": "单组全局索引/活动/计数/阈值；登记暂缓，再入放行；counter==floor(threshold/20)尝试消息0x26参数1；RTOS延时参数20/100，tick和墙钟未核。",
+      "evidence": [
+        "details-r1.json:80054ed0",
+        "details-r3.json:80082248",
+        "details-r3.json:80061f3c",
+        "details-r4.json:8008A100",
+        "details-r4.json:8002A034",
+        "raw-evidence.json:u16ThresholdMathCheck"
+      ]
+    },
+    {
+      "id": "ARM-CANCEL",
+      "claim": "消息0x26子码2/3及初始化/通用重置清按压状态；未证明硬件输入到消息和全部取消必达。",
+      "evidence": [
+        "details-r3.json:80056840",
+        "details-r4.json:8009F594",
+        "details-r4.json:8009A224",
+        "details-r4.json:80079B14"
+      ]
+    },
+    {
+      "id": "ARM-RELEASE",
+      "claim": "释放列表消费按route写0或入队0，满200跳过后仍清列表；已见消费者不重发通知/宏、不重查权限；配置分直接或扫描后释放。",
+      "evidence": [
+        "details-r5.json:8003A670",
+        "raw-evidence.json:release_dispatch_and_literals",
+        "raw-evidence.json:release_list_consumer",
+        "raw-evidence.json:local_bit_write_helper",
+        "raw-evidence.json:release_flag_dispatch",
+        "raw-evidence.json:release_flag_consume_and_reset"
+      ]
+    }
+  ],
+  "limitations": [
+    "ARM设备记录0x280到运行对象0x5C8的装载链未定位",
+    "当前屏内固件与安装包身份尚未对齐",
+    "完整硬件事件、取消/竞争/回绕、OS时基未证",
+    "NaN/Inf/次正规/溢出/全部转换及读取缓存链未闭合",
+    "外部入队及宏pending不等于完成；监视/闪烁/语言全覆盖未证",
+    "直接工具与REA记录分别保留身份，不把反编译成功计成行为验证"
+  ]
+}

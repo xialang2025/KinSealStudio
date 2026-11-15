@@ -1,0 +1,53 @@
+{
+  "provider": "Direct Ghidra headless fallback; not an REA evidence record",
+  "source": "G:\\01_Professional\\触摸屏\\金玺\\KinSealStudio_Setup_V5.1\\Installed\\Firmware\\AMT070W124-L800X480R.bin",
+  "sourceSize": 907264,
+  "sourceSha256": "74d510f150dc8edadf8e967bdb3c00ca5790ca68b9da6f906125a5234a485c24",
+  "mapFormula": "virtualAddress = fileOffset + 0x8001ffe0 before initialized RW data",
+  "entryFileOffset": "0x20",
+  "entryVA": "0x80020000",
+  "architecture": "Observed little-endian ARM and Thumb interworking; CPU model unknown",
+  "basis": [
+    "entry LDR literal 0x80022bb8 maps to exception vectors file0x2bd8",
+    "vector branch returns to VA0x80020000; handlers map to their code stubs",
+    "scatter table and destination function addresses resolve consistently",
+    "reconstructed RW pointers resolve ControlPara.dat strings"
+  ],
+  "scatterRecords": [
+    [
+      "0x800fb2e8",
+      "0x8010085c",
+      "0x2360",
+      "0x80020128"
+    ],
+    [
+      "0x8010085c",
+      "0x800fb2e8",
+      "0x5574",
+      "0x800200c8"
+    ],
+    [
+      "0x800fd648",
+      "0x8010085c",
+      "0x14ea78",
+      "0x80020150"
+    ]
+  ],
+  "compressedSourceFileOffset": "0xdb308",
+  "consumed": "0x235f",
+  "tokens": 1893,
+  "initializedDataVA": "0x800fb2e8",
+  "initializedDataLength": "0x5574",
+  "initializedDataSha256": "2880fba2e52e80abc614fc84926459f55f2e833557307ddd866294b602e4fcd0",
+  "bssStart": "0x8010085c",
+  "bssLength": "0x14ea78",
+  "memoryImage": "Z:\\Project\\vscode_prj_temp\\REA\\.bitbutton-rea-20261115\\firmware\\temp\\firmware-memory.bin",
+  "memoryImageSize": 2290420,
+  "memoryImageSha256": "d6b839c48d4c44df67098f28a3b0538c9e838b94e4a8c77d629a1f31c1afbf31",
+  "limitations": [
+    "Not executed; source is an installation artifact, not verified device firmware",
+    "Link-time virtual mapping established; bootloader physical load procedure unknown",
+    "Header checksum/signature semantics not established",
+    "Memory image contains reconstructed data and synthesized zero BSS, is not flashable"
+  ]
+}
