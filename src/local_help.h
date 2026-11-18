@@ -35,6 +35,7 @@ private:
 
 class LocalHelpController : public QObject //20261114-10 add
 {
+    Q_OBJECT //20261118-5 add: Dialogs locate their per-dialog controller with QObject::findChild, which requires Q_OBJECT for the target type.
 public:
     explicit LocalHelpController(QWidget *owner, const QString &root = QString());
     ~LocalHelpController() override;
