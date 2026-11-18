@@ -8,6 +8,7 @@
 #include "qr_code_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
 #include "gif_display_dialog.h" //20261112-0 add
+#include "static_text_dialog.h" //20261119-2 add
 #include "animation_resources.h"
 #include "number_display_dialog.h" //20261112-0 add
 #include "bit_button_dialog.h" //20261112-0 add
@@ -64,6 +65,7 @@
 #include <QTabWidget>
 #include <QTemporaryDir>
 #include <QTest>
+#include <QTextBrowser> //20261119-2 add
 #include <QTimer>
 #include <limits>
 
@@ -182,6 +184,8 @@ private slots:
     void timeResourcesVisibilityAndNoMonitorCarrier();
     void timeRasterClippingAndFormatSamples();
     void timeShellPlacementConversionAndUndo();
+    void displayHelpButtonsOpenPackagedChapter_data(); //20261119-2 add
+    void displayHelpButtonsOpenPackagedChapter();
     void screenDefaultsOperationsAndStableTargets();
     void screenMonitorAppearanceAndPermissions();
     void screenStrictMixedPersistenceAndBackendGates();
@@ -1741,6 +1745,81 @@ static HmiObject timeObject() //20261112-0 add
 {
     HmiObject object;
     object.id = QStringLiteral("time-object"); object.type = QStringLiteral("time"); object.name = QStringLiteral("时间显示器"); object.geometry = QRect(450, 200, 220, 70); return object;
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::displayHelpButtonsOpenPackagedChapter_data
+ * Description     : Cover the GIF and static text editors and the three modes of the shared display editor.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.19
+ ******************************************************************************/
+void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter_data() //20261119-2 add
+{
+    QTest::addColumn<QString>("family");
+    QTest::newRow("gif") << QStringLiteral("gif");
+    QTest::newRow("number") << QStringLiteral("number");
+    QTest::newRow("ascii") << QStringLiteral("ascii");
+    QTest::newRow("time") << QStringLiteral("time");
+    QTest::newRow("static-text") << QStringLiteral("text");
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::displayHelpButtonsOpenPackagedChapter
+ * Description     : Click real editor buttons and verify local text, reusable ownership and no editor acceptance.
+ * Input Parameters: QtTest family, executable-relative help package
+ * Return Value    : None
+ * Date            : 2026.11.19
+ ******************************************************************************/
+void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter() //20261119-2 add
+{
+    QFETCH(QString, family);
+    const HmiProject project;
+    HmiObject textObject;
+    int finishedCount = 0;
+    QWidget owner;
+    QDialog *editor;
+    QDialogButtonBox *buttons;
+    QDialog *viewer;
+    QTextBrowser *browser;
+    QPushButton *help;
+    QString buttonsName;
+
+    if (family == QStringLiteral("gif"))
+    {
+        editor = new GifDisplayDialog(gifObject(), project, &owner);
+        buttonsName = QStringLiteral("GifButtons");
+    }
+    else if (family == QStringLiteral("text"))
+    {
+        textObject.type = family;
+        editor = new StaticTextDialog(textObject, {QStringLiteral("中文")}, &owner);
+    }
+    else
+    {
+        editor = new NumberDisplayDialog(family == QStringLiteral("number") ? numberObject() :
+                                        family == QStringLiteral("ascii") ? asciiObject() : timeObject(), project, &owner);
+        buttonsName = QStringLiteral("NumberButtons");
+    }
+
+    connect(editor, &QDialog::finished, editor, [&finishedCount]() { ++finishedCount; });
+    editor->show();
+    buttons = editor->findChild<QDialogButtonBox *>(buttonsName, Qt::FindDirectChildrenOnly);
+    QVERIFY(buttons != nullptr);
+    help = buttons->button(QDialogButtonBox::Help);
+    QVERIFY(help != nullptr);
+    help->click();
+    viewer = editor->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"), Qt::FindDirectChildrenOnly);
+    QVERIFY(viewer != nullptr && viewer->isVisible());
+    browser = viewer->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+    QVERIFY(browser != nullptr);
+    QVERIFY(browser->toPlainText().contains(QStringLiteral("放置与修改")));
+    QCOMPARE(finishedCount, 0);
+    viewer->close();
+    help->click();
+    QVERIFY(viewer->isVisible());
+    QCOMPARE(editor->findChildren<QDialog *>(QStringLiteral("LocalHelpDialog"), Qt::FindDirectChildrenOnly).size(), 1);
+    QCOMPARE(finishedCount, 0);
 }
 
 /******************************************************************************

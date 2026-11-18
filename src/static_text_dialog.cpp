@@ -24,6 +24,7 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#include "local_help.h" //20261119-2 add
 
 //20261108-14 add: Render draft values without committing them to the canvas object.
 class StaticTextPreview : public QWidget
@@ -298,11 +299,22 @@ StaticTextDialog::StaticTextDialog(const HmiObject &object, const QStringList &l
     layout->setColumnStretch(0, 1);
     connect(buttons, &QDialogButtonBox::accepted, this, &StaticTextDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+#if 0 //20261119-2 del: The packaged chapter retains the previous text-editing and device-scope guidance.
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() {
         QMessageBox::information(this, QStringLiteral("静态文本帮助"),
             QStringLiteral("先配置文字、字体和填充，确定后在画布拖出文本框。双击控件重新编辑；取消会放弃本次修改。\n"
                            "自适应会按矩形缩放文字，禁用字号和对齐。显现页可独立配置位、用户等级和字条件。\n"
                            "设备端权限组合与地址编码仍须协议验证，启用显现条件的工程目前会在下载前明确拒绝。"));
+    });
+#endif //20261119-2 del
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261119-2 add: Open the packaged controls chapter without saving the text draft.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
+
+        if (help == nullptr)
+        {
+            help = new LocalHelpController(this);
+        }
+        help->showCommand(QStringLiteral("help_StaticTextDialog"), this);
     });
     connect(m_text, &QPlainTextEdit::textChanged, this, &StaticTextDialog::refresh);
     connect(m_font, &QFontComboBox::currentFontChanged, this, &StaticTextDialog::refresh);

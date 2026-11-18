@@ -42,6 +42,8 @@ private slots:
     void junctionEscapeIsRejected();
     void packagedCatalog();
     void dialogHelpCommandRoutes(); //20261118-4 add
+    void dialogF1UsesExplicitContext_data(); //20261119-2 add
+    void dialogF1UsesExplicitContext();
 
 private:
     QTemporaryDir *m_temp = nullptr;
@@ -535,13 +537,13 @@ void LocalHelpTests::dialogHelpCommandRoutes() //20261118-4 add
         QStringLiteral("help_AlarmRegistrationDialog"), QStringLiteral("help_BitButtonDialog"),
         QStringLiteral("help_ChartDialog"), QStringLiteral("help_DataCollectionDialog"),
         QStringLiteral("help_DataGroupDialog"), QStringLiteral("help_DropdownDialog"),
-        QStringLiteral("help_FlowBlockDialog"), QStringLiteral("help_GraphicDialog"),
+        QStringLiteral("help_FlowBlockDialog"), QStringLiteral("help_GifDisplayDialog"), QStringLiteral("help_GraphicDialog"), //20261119-2 change
         QStringLiteral("help_GraphicTableDialog"), QStringLiteral("help_HistoryDataDialog"),
         QStringLiteral("help_HistoryTrendDialog"), QStringLiteral("help_ImageDisplayDialog"),
-        QStringLiteral("help_MessageDisplayDialog"), QStringLiteral("help_MoveTrackDialog"),
+        QStringLiteral("help_MessageDisplayDialog"), QStringLiteral("help_MoveTrackDialog"), QStringLiteral("help_NumberDisplayDialog"), //20261119-2 change
         QStringLiteral("help_QrCodeDialog"), QStringLiteral("help_RecipeDialog"),
         QStringLiteral("help_RecipeDisplayDialog"), QStringLiteral("help_ScaleDialog"),
-        QStringLiteral("help_SliderDialog"), QStringLiteral("help_TrendDialog"),
+        QStringLiteral("help_SliderDialog"), QStringLiteral("help_StaticTextDialog"), QStringLiteral("help_TrendDialog"), //20261119-2 change
         QStringLiteral("help_WheelDialog"), QStringLiteral("help_XyCurveDialog")};
     QString root = qEnvironmentVariable("KINSEAL_HELP_SOURCE_ROOT");
     LocalHelpStore store(root);
@@ -581,7 +583,52 @@ void LocalHelpTests::dialogHelpCommandRoutes() //20261118-4 add
         }
         ++resolved;
     }
-    QCOMPARE(resolved, 24); //20261118-4 add: Every registered dialog help route was checked exactly once.
+    QCOMPARE(resolved, 27); //20261119-2 change: Every registered dialog help route was checked exactly once.
+}
+
+/******************************************************************************
+ * Function Name   : LocalHelpTests::dialogF1UsesExplicitContext_data
+ * Description     : Cover the dialog IDs that now have explicit packaged help contexts.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.19
+ ******************************************************************************/
+void LocalHelpTests::dialogF1UsesExplicitContext_data() //20261119-2 add
+{
+    QTest::addColumn<QString>("objectName");
+    QTest::newRow("image") << QStringLiteral("ImageDisplayDialog");
+    QTest::newRow("alarm-registration") << QStringLiteral("AlarmRegistrationDialog");
+    QTest::newRow("collection") << QStringLiteral("DataCollectionDialog");
+    QTest::newRow("recipe-definition") << QStringLiteral("RecipeDialog");
+}
+
+/******************************************************************************
+ * Function Name   : LocalHelpTests::dialogF1UsesExplicitContext
+ * Description     : Send F1 to a child field and verify the packaged chapter and its dialog owner.
+ * Input Parameters: QtTest objectName, KINSEAL_HELP_SOURCE_ROOT environment variable
+ * Return Value    : None
+ * Date            : 2026.11.19
+ ******************************************************************************/
+void LocalHelpTests::dialogF1UsesExplicitContext() //20261119-2 add
+{
+    QFETCH(QString, objectName);
+    QWidget owner;
+    QDialog editor(&owner);
+    QLineEdit field(&editor);
+    const QString root = qEnvironmentVariable("KINSEAL_HELP_SOURCE_ROOT");
+    LocalHelpController controller(&owner, root);
+    QDialog *viewer;
+    QLabel *status;
+
+    editor.setObjectName(objectName); // Resolve via stable IDs even when titles are translated or empty.
+    controller.installContextHelp();
+    editor.show();
+    QTest::keyClick(&field, Qt::Key_F1);
+    viewer = editor.findChild<QDialog *>(QStringLiteral("LocalHelpDialog"), Qt::FindDirectChildrenOnly);
+    QVERIFY(viewer != nullptr);
+    status = viewer->findChild<QLabel *>(QStringLiteral("LocalHelpStatus"));
+    QVERIFY(status != nullptr);
+    QVERIFY(status->text().endsWith(QStringLiteral("controls.html")));
 }
 
 QTEST_MAIN(LocalHelpTests)

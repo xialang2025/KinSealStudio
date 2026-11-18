@@ -1,6 +1,7 @@
 #include "gif_display_dialog.h"
 #include "animation_resources.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261119-2 add
 #include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -76,6 +77,15 @@ GifDisplayDialog::GifDisplayDialog(const HmiObject &object, const HmiProject &pr
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GifButtons")); root->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261112-0 change: Keep native Chinese captions independent of the system Qt translation installation.
     connect(buttons, &QDialogButtonBox::accepted, this, &GifDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &GifDisplayDialog::reject);
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261119-2 add: Open the packaged controls chapter without applying the dialog draft.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
+
+        if (help == nullptr)
+        {
+            help = new LocalHelpController(this);
+        }
+        help->showCommand(QStringLiteral("help_GifDisplayDialog"), this);
+    });
     connect(choose, &QPushButton::clicked, this, &GifDisplayDialog::selectAnimation); connect(m_run, &QPushButton::clicked, this, &GifDisplayDialog::togglePlayback);
     connect(m_addressPicker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_address, true); });
     connect(m_bitControl, &QCheckBox::toggled, this, [this](bool enabled) { m_address->setEnabled(enabled); m_addressPicker->setEnabled(enabled); m_state0->setEnabled(enabled); m_state1->setEnabled(enabled); });

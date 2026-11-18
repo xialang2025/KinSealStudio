@@ -3,6 +3,7 @@
 #include "control_rendering.h"
 #include "hmi_property_widgets.h"
 #include "kvg_library.h"
+#include "local_help.h" //20261119-2 add
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
@@ -342,6 +343,15 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     preview = new QGroupBox(QStringLiteral("预览"), this); preview->setFixedWidth(170); previewLayout = new QVBoxLayout(preview); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("NumberPreview")); m_preview->setFixedSize(145, 190); previewLayout->addWidget(m_preview); previewLayout->addStretch(); content->addWidget(preview); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("NumberButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &NumberDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &NumberDisplayDialog::reject);
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261119-2 add: The numeric, ASCII and time modes share this local help chapter.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
+
+        if (help == nullptr)
+        {
+            help = new LocalHelpController(this);
+        }
+        help->showCommand(QStringLiteral("help_NumberDisplayDialog"), this);
+    });
     connect(dataType, &QComboBox::currentIndexChanged, this, &NumberDisplayDialog::changeType); m_ready = true; updateLinkage();
     connect(qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("noticeBit"))), &QCheckBox::toggled, this, [this](bool selected) { if (selected) { qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("noticeWord")))->setChecked(false); } }); //20261112-0 add
     connect(qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("noticeWord"))), &QCheckBox::toggled, this, [this](bool selected) { if (selected) { qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("noticeBit")))->setChecked(false); } });
