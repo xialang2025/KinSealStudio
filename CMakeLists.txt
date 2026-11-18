@@ -367,20 +367,19 @@ target_include_directories(KinSealFunctionButtonDialogTests PRIVATE src third_pa
 target_link_libraries(KinSealFunctionButtonDialogTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealFunctionButtonDialogTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
-qt_add_executable(KinSealNativeFunctionControlTests
-    src/native_function_button_control.cpp src/native_bit_button_control.cpp
-    src/function_button_properties.cpp src/bit_button_properties.cpp src/static_text_properties.cpp
-    tests/native_function_button_control_tests.cpp)
-target_include_directories(KinSealNativeFunctionControlTests PRIVATE src)
-target_link_libraries(KinSealNativeFunctionControlTests PRIVATE Qt6::Widgets Qt6::Test)
+#20261118-1 add: Switch both minimal native-control targets to the shared application source list.
+# HmiObject gained many control-property members on 20261112-13; its implicit inline default
+# constructor references every out-of-line property constructor, so a hand-picked source list
+# cannot stay linked. The shared list (all app sources except main.cpp) matches the pattern
+# already used by the other project-model consumer targets.
+qt_add_executable(KinSealNativeFunctionControlTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_function_button_control_tests.cpp)
+target_include_directories(KinSealNativeFunctionControlTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeFunctionControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealNativeFunctionControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
-qt_add_executable(KinSealNativeLampControlTests
-    src/native_lamp_control.cpp src/native_bit_button_control.cpp
-    src/lamp_properties.cpp src/word_button_properties.cpp src/bit_button_properties.cpp src/static_text_properties.cpp
-    tests/native_lamp_control_tests.cpp)
-target_include_directories(KinSealNativeLampControlTests PRIVATE src)
-target_link_libraries(KinSealNativeLampControlTests PRIVATE Qt6::Widgets Qt6::Test)
+qt_add_executable(KinSealNativeLampControlTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_lamp_control_tests.cpp)
+target_include_directories(KinSealNativeLampControlTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeLampControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealNativeLampControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261109-0 add: Original caption pixel masks use the Windows font backend without creating a window.
@@ -413,38 +412,31 @@ target_include_directories(KinSealDeviceDownloadSessionTests PRIVATE src)
 target_link_libraries(KinSealDeviceDownloadSessionTests PRIVATE Qt6::Core Qt6::Test)
 target_compile_definitions(KinSealDeviceDownloadSessionTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
-#20261109-0 add: Native record oracles exclude uninitialized bytes in the vendor writer.
-qt_add_executable(KinSealNativeControlTests
-    src/native_bit_button_control.cpp src/native_bit_button_control.h
-    src/bit_button_properties.cpp src/static_text_properties.cpp
-    tests/native_bit_button_control_tests.cpp)
-target_include_directories(KinSealNativeControlTests PRIVATE src)
-target_link_libraries(KinSealNativeControlTests PRIVATE Qt6::Widgets Qt6::Test)
+#20261118-1 add: Native bit/word/static control targets also switch to the shared application source list for the same HmiObject inline-constructor link requirement.
+qt_add_executable(KinSealNativeControlTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_bit_button_control_tests.cpp)
+target_include_directories(KinSealNativeControlTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealNativeControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
-#20261109-6 add: Word union records use independent native fixtures, widths and operation codes.
-qt_add_executable(KinSealNativeWordControlTests
-    src/native_word_button_control.cpp src/native_bit_button_control.cpp
-    src/word_button_properties.cpp src/bit_button_properties.cpp src/static_text_properties.cpp
-    tests/native_word_button_control_tests.cpp)
-target_include_directories(KinSealNativeWordControlTests PRIVATE src)
-target_link_libraries(KinSealNativeWordControlTests PRIVATE Qt6::Widgets Qt6::Test)
+qt_add_executable(KinSealNativeWordControlTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_word_button_control_tests.cpp)
+target_include_directories(KinSealNativeWordControlTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeWordControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealNativeWordControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
-#20261109-0 add: Localized and permission-controlled text shares the observed type28 header.
-qt_add_executable(KinSealNativeStaticControlTests src/native_static_text_control.cpp
-    src/static_text_properties.cpp src/bit_button_properties.cpp tests/native_static_text_control_tests.cpp)
+qt_add_executable(KinSealNativeStaticControlTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_static_text_control_tests.cpp)
+target_include_directories(KinSealNativeStaticControlTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeStaticControlTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
+target_compile_definitions(KinSealNativeStaticControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 target_include_directories(KinSealNativeStaticControlTests PRIVATE src)
 target_link_libraries(KinSealNativeStaticControlTests PRIVATE Qt6::Widgets Qt6::Test)
 target_compile_definitions(KinSealNativeStaticControlTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261109-0 add: A supplied ARM SDK enables real C compilation checks; ordinary tests need no SDK.
-qt_add_executable(KinSealDeviceMacroTests
-    src/device_macro_compiler.cpp src/device_macro_compiler.h tests/device_macro_tests.cpp
-    src/project_model.cpp src/native_test_project.cpp src/static_text_properties.cpp src/bit_button_properties.cpp)
-target_sources(KinSealDeviceMacroTests PRIVATE src/plc_address.cpp src/native_project_codec.cpp plc_catalog.qrc) #20261109-0 change
-target_include_directories(KinSealDeviceMacroTests PRIVATE src)
-target_link_libraries(KinSealDeviceMacroTests PRIVATE Qt6::Widgets Qt6::Test)
+#20261118-1 add: Switch to the shared application source list; native_test_project constructs HmiObject and its
+# inline default constructor references every control-property family, which the hand-picked list cannot link.
+qt_add_executable(KinSealDeviceMacroTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/device_macro_tests.cpp)
+target_include_directories(KinSealDeviceMacroTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealDeviceMacroTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealDeviceMacroTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261109-0 add: Catalog and address codec tests never load or execute a vendor driver.
@@ -467,10 +459,10 @@ target_link_libraries(KinSealDeviceScanTests PRIVATE Qt6::Core Qt6::Test)
 target_compile_definitions(KinSealDeviceScanTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 #20261109-0 add: Bound native source primitives without treating an opaque archive as semantic import.
-qt_add_executable(KinSealNativeSourceTests src/native_project_codec.cpp tests/native_project_codec_tests.cpp
-    src/project_model.cpp src/native_test_project.cpp src/plc_address.cpp src/static_text_properties.cpp src/bit_button_properties.cpp plc_catalog.qrc native_test_template.qrc)
-target_include_directories(KinSealNativeSourceTests PRIVATE src)
-target_link_libraries(KinSealNativeSourceTests PRIVATE Qt6::Widgets Qt6::Test)
+#20261118-1 add: Switch to the shared application source list for the same HmiObject inline-constructor link requirement.
+qt_add_executable(KinSealNativeSourceTests ${KINSEAL_TEST_SOURCES} src/plc_native_catalog.cpp tests/native_project_codec_tests.cpp)
+target_include_directories(KinSealNativeSourceTests PRIVATE src third_party/lzokay third_party/qrcodegen)
+target_link_libraries(KinSealNativeSourceTests PRIVATE Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 target_compile_definitions(KinSealNativeSourceTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
 
 target_compile_definitions(KinSealStudioLite PRIVATE
