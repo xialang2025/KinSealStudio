@@ -22,11 +22,13 @@ $Compiler = Join-Path $ToolRoot 'mingw1310_64\bin\g++.exe'
 $CompilerBin = Join-Path $ToolRoot 'mingw1310_64\bin'
 $env:Path = "$CompilerBin;$($QtRoot)\bin;$($ToolRoot)\Ninja;$env:Path"
 $env:QT_QPA_PLATFORM = 'offscreen' # 20261108-7 change: Keep tests off the user's desktop.
+$env:QT_PLUGIN_PATH = Join-Path $QtRoot 'plugins' #20261119-5 add: Use the SDK's offscreen platform even when build has a portable runtime.
 #20261110-8 add: Keep compiler and SDK temporary files on the workspace drive.
 $Stage3Temp = Join-Path $ProjectRoot '..\.scratch\kinseal-stage3-20261110\temp'
 New-Item -ItemType Directory -Force -Path $Stage3Temp | Out-Null
 $env:TEMP = [System.IO.Path]::GetFullPath($Stage3Temp)
 $env:TMP = $env:TEMP
+$env:TMPDIR = $env:TEMP #20261119-5 add: Keep tools that use the POSIX temp convention on the workspace drive.
 
 & $CMake -S $ProjectRoot -B (Join-Path $ProjectRoot 'build') -G Ninja `
     "-DCMAKE_MAKE_PROGRAM=$Ninja" `
@@ -240,6 +242,7 @@ if ($InvalidTest.ExitCode -ne 7) {
 }
 
 if ($Deploy) {
+    Remove-Item Env:QT_PLUGIN_PATH -ErrorAction SilentlyContinue #20261119-5 add: Deployment checks must resolve packaged plugins.
     $env:QT_QPA_PLATFORM = 'windows' # 20261108-7 change: Deployment contains qwindows and tests display no windows.
     $DeployDirectory = Join-Path $ProjectRoot ('dist\' + $DeployDirectoryName) #20261109-1 change
     $Windeployqt = Join-Path $QtRoot 'bin\windeployqt.exe'

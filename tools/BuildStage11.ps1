@@ -33,6 +33,7 @@ $env:KINSEAL_MACRO_TEMP_ROOT = $env:TEMP
 $env:KINSEAL_HELP_SOURCE_ROOT = Join-Path $Stage11Project 'help'
 $env:PYTHONIOENCODING = 'utf-8'
 $env:QT_QPA_PLATFORM = 'offscreen'
+$env:QT_PLUGIN_PATH = Join-Path $Stage11Qt 'plugins' #20261119-5 add: Use the build toolchain's platform plugins for development checks.
 $env:PATH = "$Stage11Compiler;$Stage11Qt\bin;$($Stage11Tools)\Ninja;$env:PATH"
 
 <#
@@ -104,7 +105,8 @@ function Invoke-Stage11Step([string]$Name, [string]$File, [string[]]$Arguments) 
 
 Invoke-Stage11Step 'configure' $Stage11CMake @('-S',$Stage11Project,'-B',$Stage11Build,'-G','Ninja',
     "-DCMAKE_MAKE_PROGRAM=$Stage11Ninja", "-DCMAKE_CXX_COMPILER=$Stage11Compiler\g++.exe",
-    "-DCMAKE_RC_COMPILER=$Stage11Compiler\windres.exe", "-DCMAKE_PREFIX_PATH=$Stage11Qt", '-DCMAKE_BUILD_TYPE=Release')
+    ('-DCMAKE_RC_COMPILER=' + (Join-Path $Stage11Compiler 'windres.exe').Replace('\', '/')), #20261119-5 change: CMake serializes this path into quoted CMake code.
+    "-DCMAKE_PREFIX_PATH=$Stage11Qt", '-DCMAKE_BUILD_TYPE=Release')
 Invoke-Stage11Step 'build' $Stage11CMake @('--build',$Stage11Build,'--target','KinSealStudioLite','KinSealLocalHelpTests','--parallel','4')
 Invoke-Stage11Step 'local-help-tests' (Join-Path $Stage11Build 'KinSealLocalHelpTests.exe') @('-o',((Join-Path $EvidenceDirectory 'local-help-qt.txt') + ',txt'))
 Invoke-Stage11Step 'self-test' (Join-Path $Stage11Build 'KinSealStudioLite.exe') @('--self-test')

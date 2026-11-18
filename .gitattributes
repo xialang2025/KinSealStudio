@@ -1,5 +1,8 @@
 #20261114-8 add: Retain the exact bytes of hashed Stage9 evidence across checkouts.
 docs/stage9-evidence/** -text
+#20261119-4 add: Keep the embedded catalog bytes and its audit digest stable on Windows checkouts.
+/resources/plc-catalog.json -text
+/resources/plc-stage9-file-audit.json -text
 #20261114-9 add: Preserve exact physical and performance evidence bytes.
 docs/stage10-evidence/** -text
 #20261115-0 add: Keep static reverse-engineering evidence bytes stable across checkouts.
