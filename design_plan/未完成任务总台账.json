@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-15 Asia/Shanghai",
+  "updatedAt": "2026-11-19 Asia/Shanghai",
   "sourceCommit": "6dcd08332ede7c532842eba2b38522a50854a523",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -231,16 +231,17 @@
       "activeOpen": true,
       "completedScope": [
         "落地与仍欠见关联items；不以其它层或全阶段通过替代。",
-        "308候选冻结；799Q=613原子+186父，3历史事实关闭沿用，本次完整提取。"
+        "308候选冻结；799Q=613原子+186父，3历史事实关闭沿用。",
+        "613原子逐条建立当前证据和恢复路径，按同版本同层既有证据核销48项、部分覆盖89项；186个父按去重叶原子汇总。"
       ],
       "remaining": [
-        "610历史未闭原子须逐条查后续证据；U-181渲染/U-079运行分支不能因UI/USB整体关。"
+        "89项部分覆盖需补声明的剩余分支，473项待采用单项证据；185个父仍开放。U-181渲染与U-079运行分支继续分层处理。"
       ],
       "blockers": [
-        "历史open早于阶段4/5，不是610项已确认未实施。"
+        "单项证据需明确V5.1范围、层级和刺激；当前索引无法证明未覆盖的原厂行为或设备运行。"
       ],
       "nextAction": [
-        "逐historyAtomicIssues核同版本同层证据，记录关闭/部分覆盖/新任务；父按子汇总。"
+        "按S00-04逐项对账补残余及待验证条目；证据按精确原子ID采用，父状态从叶子递归汇总。"
       ],
       "acceptance": [
         "613原子均有当前状态和证据缺口，所有U/Q去向保留，数量与测试独立。"
@@ -253,6 +254,10 @@
           "path": "design_plan/01_阶段0_基线范围与证据管理.md",
           "line": 44,
           "branch": "worktree"
+        },
+        {
+          "path": "design_plan/S00-04历史原子逐项对账.md",
+          "line": 1
         }
       ],
       "sourceAssessment": {
@@ -17475,12 +17480,12 @@
     {
       "id": "EARLY-S00-CANDIDATE-RECONCILE",
       "title": "799历史问题与当前证据逐条核销",
-      "status": "当前状态待核",
+      "status": "已有逐项核销，剩余待证",
       "scope": "阶段0",
-      "completedScope": "308候选冻结；799Q=613原子+186父，3历史事实关闭沿用，本次完整提取。",
-      "remaining": "610历史未闭原子须逐条查后续证据；U-181渲染/U-079运行分支不能因UI/USB整体关。",
-      "blockers": "历史open早于阶段4/5，不是610项已确认未实施。",
-      "nextAction": "逐historyAtomicIssues核同版本同层证据，记录关闭/部分覆盖/新任务；父按子汇总。",
+      "completedScope": "308候选冻结；799Q=613原子+186父。3项历史事实沿用，按同版本同层既有证据核销48项、部分覆盖89项，并给出每个原子及父的去向。",
+      "remaining": "89项剩余验证分支、473项仍待采用单项证据。185个父仍开放，含U-181渲染/U-079运行分支。",
+      "blockers": "单项证据需明确V5.1范围、层级和刺激；索引关联仅用于定位下一步。",
+      "nextAction": "按S00-04逐项对账中的具体未覆盖范围取最小原厂或实物证据，再按精确原子ID采用。",
       "acceptance": "613原子均有当前状态和证据缺口，所有U/Q去向保留，数量与测试独立。",
       "relatedIds": [
         "S00-04",
@@ -17506,6 +17511,10 @@
           "path": "docs/stage0-evidence/candidate-ledger.json",
           "line": 1,
           "branch": "worktree"
+        },
+        {
+          "path": "design_plan/S00-04历史原子逐项对账.md",
+          "line": 1
         }
       ],
       "countAsConfirmedUnimplemented": false
@@ -25577,6 +25586,17 @@
       ]
     }
   ],
+  "historyAtomicReconciliation": {
+    "evidencePath": "design_plan/未完成任务证据/history-atomic-adoptions-20261119.json",
+    "evidenceCanonicalSha256": "78ee9fd160d6c72257ae125b5d98e9b13a47ca612e9ab9c815dca48b115ae422",
+    "reportPath": "design_plan/S00-04历史原子逐项对账.md",
+    "atomicCounts": {
+      "historical_closed": 3,
+      "evidence_closed": 48,
+      "partial": 89,
+      "open": 473
+    }
+  },
   "history": {
     "historyAtomicIssues": [
       {

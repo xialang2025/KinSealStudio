@@ -12,6 +12,8 @@ import hashlib
 import json
 import re
 
+from reconcile_history_atomic import LABELS, load_ledger_reconciliation
+
 
 ROOT = Path(__file__).resolve().parents[1]
 JSON_PATH = ROOT / "design_plan/未完成任务总台账.json"
@@ -50,7 +52,28 @@ def sources(records):
     return "；".join(dict.fromkeys(source_link(record) for record in records or [])) or "—"
 
 
-def render(data):
+def historical_disposition(item, reconciliation):  # //20261119-0 add
+    """Input: frozen record and reviewed overlay. Return: current status and next action."""
+    status = "历史事实已关闭" if item.get("currentStatus") == "historical_fact_closed" else "待与最新证据对账"
+    action = item.get("nextExecutableStep", "先核同范围最新证据，再补缺失分支。")
+    if reconciliation is None:
+        return status, action
+
+    _, _, outcomes, parents, adopted, _ = reconciliation
+    issue_id = item["id"]
+    if issue_id in adopted:
+        outcome, remaining, _ = outcomes[issue_id]
+        status = LABELS[outcome] + "；" + adopted[issue_id]["conclusion"]
+        action = remaining
+    if issue_id in parents:
+        parent_state, counts = parents[issue_id]
+        if counts["evidence_closed"] or counts["partial"]:
+            status = f"{parent_state}；本轮核销 {counts['evidence_closed']}、部分覆盖 {counts['partial']}（按叶原子）"
+            action = "逐未核销原子补证，见[S00-04逐项对账](S00-04历史原子逐项对账.md)。"
+    return status, action
+
+
+def render(data, reconciliation=None):
     """Input: the maintained ledger. Return: a complete human-readable view."""
     out = []
 
@@ -142,7 +165,15 @@ def render(data):
     table(["ID/分支", "旧说法", "现行范围", "父项是否关闭", "依据"], [[item["componentId"], item["oldStatement"], item["replacementBoundary"], "否", sources(item["sources"])] for item in data["supersededComponents"]])
     table(["A03父问题", "已完成范围", "仍需完成", "当前Q", "核销标准"], [[item["qId"], item["provenNow"] + "；受限C：" + item["backgroundC"], item["remaining"], item["currentIssueIds"], item["closureRule"]] for item in data["legacyA03Mappings"]])
     heading(2, "历史记录全量保留")
-    line("下列是阶段0历史记录的逐条保留视图，当前统一状态为待与后续实施/补证对账（历史关闭事实另标）。历史开放不等于本版本仍未实现。处理时先查本台账当前S/Q和控件最新边界，只关闭获得新证据覆盖的分支；不能用文档规格通过核销软件实现。")
+    line("下列保留阶段0历史ID与原始状态。“当前处理”列显示原状态及使用现有证据核定的当前边界。历史开放不等于本版本仍未实现。处理时先查本台账当前S/Q和控件最新边界，只关闭获得同层证据覆盖的分支；不能用文档规格通过核销软件实现。")
+    if reconciliation is not None:
+        counts = data["historyAtomicReconciliation"]["atomicCounts"]
+        line()
+        line(
+            f"已核定的当前原子状态为：原有已闭 {counts['historical_closed']} 项，本轮核销 {counts['evidence_closed']} 项，"
+            f"部分覆盖 {counts['partial']} 项，待单项补证 {counts['open']} 项。父项按去重叶原子汇总。"
+            "所有采用的证据、覆盖层和待验证动作见[S00-04历史原子逐项对账](S00-04历史原子逐项对账.md)。"
+        )
     for key, title in [("historyAtomicIssues", "历史原子问题"), ("historyParentIssues", "历史父问题"), ("historyEntryIssues", "历史入口问题"), ("historyFieldIssues", "历史字段问题")]:
         records = data["history"].get(key, [])
         heading(3, title + "（" + str(len(records)) + "条）")
@@ -151,10 +182,10 @@ def render(data):
             continue
         table(["历史ID", "原始问题/欠项", "历史状态 → 当前处理", "家族/S映射", "下一步/验收", "来源"], [
             [item["id"], [item.get("question", item.get("title", item.get("remaining", ""))), item.get("gapDescriptions", [])],
-             str(item.get("historicalStatus", "")) + " → " + ("历史事实已关闭" if item.get("currentStatus") == "historical_fact_closed" else "待与最新证据对账"),
+             str(item.get("historicalStatus", "")) + " → " + status,
              [item.get("familyMapping", {}).get("id", ""), item.get("familyMapping", {}).get("name", ""), item.get("relatedTaskIds", [])],
-             [item.get("nextExecutableStep", "先核同范围最新证据，再补缺失分支。"), "验收：" + str(item.get("historicalExpectedObservation", "原问题所声明字段/联动/寿命/消费者有对应层新证据；部分覆盖逐分支核销。"))], sources(item.get("sources", []))]
-            for item in records])
+             [action, "验收：" + str(item.get("historicalExpectedObservation", "原问题所声明字段/联动/寿命/消费者有对应层新证据；部分覆盖逐分支核销。"))], sources(item.get("sources", []))]
+            for item in records for status, action in [historical_disposition(item, reconciliation)]])
     heading(2, "原始候选与后续追加行全量")
     line("冻结CAND-20261110原308条继续保留；现行CSV共318行，审计快照SHA及主目录等价字节身份见JSON。下列原文不截断，保留原始状态与来源，并给出本次分流。来源SHA按每行旧快照解释，不能冒充现文件哈希。")
     table(["候选ID/模块", "原始候选全文", "原记录状态", "统一处理/关联", "下一步/核销", "来源"], [
@@ -178,7 +209,7 @@ def render(data):
     heading(3, "复现与证据")
     line("维护源：[同名JSON](未完成任务总台账.json)。只更新JSON中的对应S/Q/家族/候选处理，执行`python -B tools/render_open_task_ledger.py`重生成本文；该工具不运行业务程序或硬件测试。原始审计以确定性gzip去重保存于[证据目录](未完成任务证据/README.md)，输入文件名、SHA256及读取基线均在JSON中。")
     line()
-    line("本轮校验只覆盖文档ID完整性、数量、关联、来源及主目录改动隔离；不新增任何D/U/P/R/C/T/E通过结论。")
+    line("本轮校验覆盖文档ID完整性、数量、关联、来源和历史证据的核销范围；没有新执行的D/U/P/R/C/T/E验证。")
     return "\n".join(out).rstrip() + "\n"
 
 
@@ -258,9 +289,13 @@ def main():
     args = parser.parse_args()
     data = json.loads(JSON_PATH.read_text(encoding="utf-8-sig"))
     checks = validate(data)
-    rendered = render(data).encode("utf-8")
+    reconciliation = load_ledger_reconciliation(data)
+    if reconciliation is not None:
+        checks["historyAtomicReconciliation"] = data["historyAtomicReconciliation"]["atomicCounts"]
+    rendered = render(data, reconciliation).encode("utf-8")
     if args.check:
-        if MD_PATH.read_bytes() != rendered:
+        # Git can convert LF files to CRLF when checking out on Windows.
+        if MD_PATH.read_bytes().replace(b"\r\n", b"\n") != rendered:
             raise SystemExit("Markdown is stale; render it from the maintained JSON")
     else:
         MD_PATH.write_bytes(rendered)
