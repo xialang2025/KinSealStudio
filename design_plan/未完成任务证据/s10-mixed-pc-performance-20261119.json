@@ -1,0 +1,146 @@
+{
+  "sourceBaseline": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+  "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+  "scriptSha256": "ed58448d5f0df349081b457d9dc4b7d4c23e02f8152f9b77a28ab5a26587c7cd",
+  "launcherSha256": "4d8c1959b160e4c13d10aed48e284b59b9794a516414a721f92917f9cf11a0c3",
+  "clock": {
+    "name": "time.perf_counter_ns",
+    "implementation": "QueryPerformanceCounter()",
+    "monotonic": true,
+    "adjustable": false,
+    "resolution": 1e-07
+  },
+  "matrix": "mixed",
+  "plannedProcessCount": 21,
+  "completedProcessCount": 21,
+  "successfulProcessCount": 21,
+  "hardwareIo": false,
+  "longTermStabilityMeasured": false,
+  "hmiPerformanceMeasured": false,
+  "performanceThresholdDeclared": false,
+  "cleanupBytesRemoved": 2065986,
+  "temporaryFilesRemaining": [],
+  "cases": [
+    {
+      "id": "mixed-o100-l8",
+      "axis": "mixed",
+      "objects": 100,
+      "languages": 8,
+      "expectedValidationExit": 0,
+      "sourceSha256": "7549635c98729ffd7543a6dca78fa5362e904ce77879efbd4acc9f7d153e153c",
+      "sourceBytes": 116641
+    },
+    {
+      "id": "object-limit-o101-l8",
+      "axis": "object-limit",
+      "objects": 101,
+      "languages": 8,
+      "expectedValidationExit": 7,
+      "sourceSha256": "c70f46568a21617f8c1f2c048cda0dde9478635a8e6771787e9f83980981d87a",
+      "sourceBytes": 117805
+    },
+    {
+      "id": "language-limit-o100-l9",
+      "axis": "language-limit",
+      "objects": 100,
+      "languages": 9,
+      "expectedValidationExit": 7,
+      "sourceSha256": "2bc476cca521a9c98cf718f595f6dbce90c6b62dbed52b2a5ac85a93ef8b4154",
+      "sourceBytes": 120460
+    }
+  ],
+  "summaries": [
+    {
+      "name": "mixed-o100-l8",
+      "operation": "validate",
+      "samples": 3,
+      "exitCodes": [
+        0,
+        0,
+        0
+      ],
+      "medianSeconds": 0.3151529,
+      "peakWorkingSetBytes": 26877952
+    },
+    {
+      "name": "mixed-o100-l8",
+      "operation": "save",
+      "samples": 3,
+      "exitCodes": [
+        0,
+        0,
+        0
+      ],
+      "medianSeconds": 0.3604304,
+      "peakWorkingSetBytes": 28147712
+    },
+    {
+      "name": "mixed-o100-l8",
+      "operation": "native-export",
+      "samples": 3,
+      "exitCodes": [
+        0,
+        0,
+        0
+      ],
+      "medianSeconds": 0.9530887,
+      "peakWorkingSetBytes": 41398272
+    },
+    {
+      "name": "mixed-o100-l8",
+      "operation": "compile",
+      "samples": 3,
+      "exitCodes": [
+        0,
+        0,
+        0
+      ],
+      "medianSeconds": 3.8148569,
+      "peakWorkingSetBytes": 81379328
+    },
+    {
+      "name": "mixed-o100-l8",
+      "operation": "offline-start",
+      "samples": 3,
+      "exitCodes": [
+        0,
+        0,
+        0
+      ],
+      "medianSeconds": 0.6207003,
+      "peakWorkingSetBytes": 48627712
+    },
+    {
+      "name": "object-limit-o101-l8",
+      "operation": "validate",
+      "samples": 3,
+      "exitCodes": [
+        7,
+        7,
+        7
+      ],
+      "medianSeconds": 0.1714289,
+      "peakWorkingSetBytes": 19050496
+    },
+    {
+      "name": "language-limit-o100-l9",
+      "operation": "validate",
+      "samples": 3,
+      "exitCodes": [
+        7,
+        7,
+        7
+      ],
+      "medianSeconds": 0.2648478,
+      "peakWorkingSetBytes": 23302144
+    }
+  ],
+  "limitations": [
+    "Whole-process timing includes Qt startup/shutdown and exit detection up to actual polling gap.",
+    "Three ordered repeats share the OS cache; system load is uncontrolled.",
+    "Kernel peak memory differs from sampled current memory; sampled disk can miss transient peaks.",
+    "The240s guard is only hang protection, not a product performance threshold.",
+    "Empty-event offline startup includes final frame and stop; no sustained interactive session.",
+    "Typed static text workloads only; no image-resource load, HMI latency, or long-term test."
+  ]
+}

@@ -85,8 +85,8 @@ def cleanup_generated(directory: Path, allowed_root: Path) -> dict:
     return receipt
 
 
-def make_cases(root: Path, output: Path) -> list[dict]:
-    """Input: source/evidence roots. Return: seven real-schema single-axis input cases."""
+def make_cases(root: Path, output: Path, matrix: str) -> list[dict]:  #20261119-3 change
+    """Input: source/evidence roots and matrix name. Return: workload and rejection cases."""
     source = root / "samples/stage1/stage1-single-page.ksp"
     original = json.loads(source.read_text(encoding="utf-8-sig"))
     base = copy.deepcopy(original)
@@ -102,6 +102,9 @@ def make_cases(root: Path, output: Path) -> list[dict]:
     definitions = [("objects", count, 1) for count in (1, 10, 50, 100)]
     definitions += [("languages", 1, count) for count in (2, 4, 8)]
     languages = ["中文", "English", "Deutsch", "Français", "Español", "Italiano", "日本語", "한국어"]
+    if matrix == "mixed":
+        definitions = [("mixed", 100, 8), ("object-limit", 101, 8), ("language-limit", 100, 9)]
+        languages.append("Português")  # Only the rejection fixture uses a ninth language.
     inputs, cases = output / "inputs", []
     inputs.mkdir()
     for axis, object_count, language_count in definitions:
@@ -110,15 +113,20 @@ def make_cases(root: Path, output: Path) -> list[dict]:
         objects = []
         for index in range(object_count):
             item = copy.deepcopy(text)
-            item.update(id="performance-text-" + str(index), x=10 + index % 10 * 78,
-                        y=10 + index // 10 * 46)
-            item["staticText"]["texts"] = {language: "AB12" for language in project["languages"]}
+            grid_index = index % 100  # Keep the 101st object's geometry valid so only the count is rejected.
+            item.update(id="performance-text-" + str(index), x=10 + grid_index % 10 * 78,
+                        y=10 + grid_index // 10 * 46)
+            item["staticText"]["texts"] = {
+                language: "AB12" if matrix == "single-axis" or language_index == 0 else f"L{language_index}-{index:02d}"
+                for language_index, language in enumerate(project["languages"])
+            }
             objects.append(item)
         project["pages"][0]["objects"] = objects
         case_id = f"{axis}-o{object_count}-l{language_count}"
         path = inputs / (case_id + ".ksp")
         write_json(path, project)
         cases.append({"id": case_id, "axis": axis, "objects": object_count, "languages": language_count,
+                      "expectedValidationExit": 7 if axis.endswith("-limit") else 0,
                       "source": str(path), "sourceSha256": digest(path), "sourceBytes": path.stat().st_size})
     write_json(inputs / "derivation.json", {
         "fixture": str(source), "fixtureSha256": digest(source), "schemaVersion": original["schemaVersion"],
@@ -126,8 +134,10 @@ def make_cases(root: Path, output: Path) -> list[dict]:
         "changes": ["Retain released schema9 envelope and first typed text only.",
                     "Normalize common caption AB12, font16, spacing0, geometry70x36.",
                     "Clone unique IDs on fixed10x10 grid inside800x480 for objects axis.",
-                    "Use one object and identical AB12 captions in each language for language axis."],
-        "baseCaseShared": "objects-o1-l1", "mixedPressureExecuted": False, "noDeviceGateBypass": True,
+                    "Use one object and identical AB12 captions for the single language-count axis."
+                    if matrix == "single-axis" else
+                    "Use distinct per-object and per-language captions outside the startup language in the mixed matrix."],
+        "matrix": matrix, "includesMixedPressure": matrix == "mixed", "noDeviceGateBypass": True,
         "modelLimitsSource": "HmiPage::fromJson:100 objects; HmiProject::validateModel:1..8 languages"})
     return cases
 
@@ -248,6 +258,9 @@ def main() -> int:
     parser.add_argument("--expected-sha", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--temporary-root", type=Path, required=True)
+    parser.add_argument("--matrix", choices=("single-axis", "mixed"), default="single-axis")  #20261119-3 add
+    parser.add_argument("--source-baseline", help="Source revision identified by the supplied executable manifest")
+    parser.add_argument("--launcher", type=Path, help="Private desktop launcher from an isolated evidence checkout")
     args = parser.parse_args()
     executable = args.exe.resolve(strict=True)
     if digest(executable).lower() != args.expected_sha.lower():
@@ -256,14 +269,15 @@ def main() -> int:
     allowed_temp = Path("Z:/Project/vscode_prj_temp/REA/.stage10-run-20261114/temp").resolve()
     if temporary_root == allowed_temp or not temporary_root.is_relative_to(allowed_temp):
         raise ValueError("TEMP must be an exclusive child of the stage10 owned root outside .scratch")
-    output.mkdir(parents=True, exist_ok=False)
-    temporary_root.mkdir(parents=True, exist_ok=False)
     root = Path(__file__).resolve().parents[1]
-    spec = importlib.util.spec_from_file_location("stage10_private_launcher", root / "docs/stage1-evidence/gui-portable/probe.py")
+    launcher_path = (args.launcher or root / "docs/stage1-evidence/gui-portable/probe.py").resolve(strict=True)
+    spec = importlib.util.spec_from_file_location("stage10_private_launcher", launcher_path)
     launcher = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(launcher)
+    output.mkdir(parents=True, exist_ok=False)
+    temporary_root.mkdir(parents=True, exist_ok=False)
     environment = launcher.clean_environment(executable.parent)
-    cases = make_cases(root, output)
+    cases = make_cases(root, output, args.matrix)
     empty_events = output / "inputs/empty-events.json"
     write_json(empty_events, [])
     desktop, started = launcher.PrivateDesktop(output), time.perf_counter_ns()
@@ -271,7 +285,8 @@ def main() -> int:
                 "startedAtUtc": datetime.now(timezone.utc).isoformat(),
                 "scope": "PC whole-process CLI slice; no firmware or long-term acceptance",
                 "executable": str(executable), "executableSha256": digest(executable),
-                "sourceBaseline": "daefcdb5", "scriptSha256": digest(Path(__file__)),
+                "sourceBaseline": args.source_baseline, "scriptSha256": digest(Path(__file__)),
+                "launcherSha256": digest(launcher_path),
                 "python": platform.python_version(), "pythonExecutable": os.sys.executable,
                 "windows": platform.platform(), "machine": platform.machine(), "logicalCpuCount": os.cpu_count(),
                 "environmentBefore": environment_snapshot(),
@@ -286,12 +301,15 @@ def main() -> int:
                                 "Kernel peak memory differs from sampled current memory; sampled disk can miss transient peaks.",
                                 "The240s guard is only hang protection, not a product performance threshold.",
                                 "Empty-event offline startup includes final frame and stop; no sustained interactive session.",
-                                "Only single-axis object/language counts; no resource, mixed pressure, HMI latency, or long-term test."]}
+                                "Typed static text workloads only; no image-resource load, HMI latency, or long-term test."]}
     operations = ("validate", "save", "native-export", "compile", "offline-start")
+    planned_operations = {case["id"]: ("validate",) if case["expectedValidationExit"] else operations for case in cases}
+    planned_processes = sum(map(len, planned_operations.values())) * manifest["repeatsPerCaseAndOperation"]
+    manifest.update(matrix=args.matrix, plannedProcessCount=planned_processes)
     try:
         for case in cases:
             source = case["source"]
-            for operation in operations:
+            for operation in planned_operations[case["id"]]:
                 for repeat in range(1, 4):
                     name = f"{case['id']}-{operation}-r{repeat}"
                     command_root = temporary_root / name
@@ -306,6 +324,10 @@ def main() -> int:
                         "offline-start": ["--simulate-offline", source, str(empty_events), str(command_root / "offline.json")]}
                     row = measure(desktop, name, executable, commands[operation], environment, output, command_root)
                     row.update(case=case["id"], operation=operation, repeat=repeat)
+                    if operation == "validate":
+                        row["expectedExitCode"] = case["expectedValidationExit"]
+                        row["passed"] = (row.get("exitCode") == row["expectedExitCode"] and "error" not in row
+                                         and not row["generatedFilesAfterExit"] and digest(Path(source)) == case["sourceSha256"])
                     if operation == "save" and row["passed"]:
                         saved = json.loads((command_root / "saved.ksp").read_text(encoding="utf-8-sig"))
                         row["savedSuppliedFieldsPreserved"] = launcher.supplied_fields_preserved(
@@ -320,9 +342,9 @@ def main() -> int:
                     manifest["runs"].append(row)
                     manifest["cleanup"].append(cleanup_generated(command_root, temporary_root))
                     write_json(output / "manifest.json", manifest)
-                    print(f"{len(manifest['runs']):3}/105 {name}: exit={row.get('exitCode')} elapsed={row['elapsedSeconds']:.4f}s", flush=True)
+                    print(f"{len(manifest['runs']):3}/{planned_processes} {name}: exit={row.get('exitCode')} elapsed={row['elapsedSeconds']:.4f}s", flush=True)
         for case in cases:
-            for operation in operations:
+            for operation in planned_operations[case["id"]]:
                 rows = [row for row in manifest["runs"] if row["case"] == case["id"] and row["operation"] == operation]
                 seconds = [row["elapsedSeconds"] for row in rows]
                 manifest["summaries"].append({"case": case["id"], "operation": operation, "samples": len(rows),
@@ -341,10 +363,15 @@ def main() -> int:
                         successfulProcessCount=sum(row["passed"] for row in manifest["runs"]),
                         cleanupBytesRemoved=sum(row["bytesRemoved"] for row in manifest["cleanup"]))
         manifest["frozenExecutableUnchanged"] = manifest["executableSha256After"] == manifest["executableSha256"]
-        manifest["allPlannedProcessesExecuted"] = len(manifest["runs"]) == 105
+        manifest["allPlannedProcessesExecuted"] = len(manifest["runs"]) == planned_processes
         manifest["measurementCompleted"] = manifest["allPlannedProcessesExecuted"] and manifest["frozenExecutableUnchanged"] and "error" not in manifest
+        manifest["allWorkloadExpectationsMet"] = (manifest["measurementCompleted"]
+            and manifest["successfulProcessCount"] == planned_processes
+            and all(row["complete"] for row in manifest["cleanup"]))
         write_json(output / "manifest.json", manifest)
-    return 0 if manifest["measurementCompleted"] else 1
+    if not manifest["measurementCompleted"]:
+        return 1
+    return 0 if manifest["allWorkloadExpectationsMet"] else 2
 
 
 if __name__ == "__main__":

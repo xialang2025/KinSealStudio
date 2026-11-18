@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "recordDate": "2026-11-19",
+  "scope": "S06-02 local offline wire framing; S05-02 physical receipt comparison",
+  "priorDeviceReceipt": "docs/stage6-evidence/transfer-codexprobe-20261118-summary.md",
+  "commands": [
+    "--compile-project",
+    "--transfer-contract",
+    "--verify-compiled-package"
+  ],
+  "fixture": "samples/native-device-test/CodexProbeTest.ksp",
+  "matchedHistoricalWireDataSegments": 10,
+  "head": {
+    "sourceCommit": "71b9db4204d9e162bd9df2ec2b868110872fd5c6",
+    "executableSha256": "45840ee47c0b55deddc7b1bd7f7fbcff0542851ca42682f3d0e7e805359e458d",
+    "sourceSha256": "5203dea625d9a8aeb01c5e570fbbc2aa9b6dd9e497fd2b545ec1d2a564eeab8f",
+    "transferSegments": {
+      "SysPara.dat": {
+        "fileBytes": 4998,
+        "fileSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "headerHex": "",
+        "wireBytes": 4998,
+        "wireSha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+      },
+      "SheetPara.dat": {
+        "fileBytes": 72,
+        "fileSha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+        "headerHex": "",
+        "wireBytes": 72,
+        "wireSha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+      },
+      "AlarmPara.dat": {
+        "fileBytes": 47840,
+        "fileSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+        "headerHex": "",
+        "wireBytes": 47840,
+        "wireSha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+      },
+      "Collect.dat": {
+        "fileBytes": 1424,
+        "fileSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "headerHex": "",
+        "wireBytes": 1424,
+        "wireSha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+      },
+      "AddrPara.dat": {
+        "fileBytes": 200,
+        "fileSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "headerHex": "",
+        "wireBytes": 200,
+        "wireSha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      "PicLenPara.dat": {
+        "fileBytes": 2400,
+        "fileSha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+        "headerHex": "",
+        "wireBytes": 2400,
+        "wireSha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d"
+      },
+      "Curve.dat": {
+        "fileBytes": 501,
+        "fileSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "headerHex": "",
+        "wireBytes": 501,
+        "wireSha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+      },
+      "upLoad.knr": {
+        "fileBytes": 1093,
+        "fileSha256": "9324e2c37f9684fa0a26d33710a61d4c16a641cc19b210533bbd8d3437c9db5c",
+        "headerHex": "00000445",
+        "wireBytes": 1097,
+        "wireSha256": "f869063784ff77cb5669d649e59ea9c944b2f16f4395716f62ee17913619a494"
+      },
+      "SheetPixel.dat": {
+        "fileBytes": 3919,
+        "fileSha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+        "headerHex": "",
+        "wireBytes": 3919,
+        "wireSha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca"
+      },
+      "Modbus_RTU_com1.bin": {
+        "fileBytes": 12496,
+        "fileSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "headerHex": "",
+        "wireBytes": 12496,
+        "wireSha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+      }
+    },
+    "matchesPreviousDeviceReceipt": true,
+    "hardwareIo": false
+  },
+  "existingDevelopmentBuild": {
+    "executableSha256": "00406b65ce964543374ad23592a12efe48dbb50fa5b842ea36cd1648181c3dc4",
+    "sourceSha256": "9d08bdab87e171f03b0c7a2b83b2f0642d176e7581eaa23117f528acea3c8752",
+    "bodyBytes": 1093,
+    "bodySha256": "9324e2c37f9684fa0a26d33710a61d4c16a641cc19b210533bbd8d3437c9db5c",
+    "headerHex": "00000445",
+    "wireBytes": 1097,
+    "wireSha256": "f869063784ff77cb5669d649e59ea9c944b2f16f4395716f62ee17913619a494",
+    "contractSegment": {
+      "expectedReply": "none-until-following-status",
+      "kind": "payload",
+      "name": "upLoad.knr",
+      "snapshotOuterLengthBE32": true,
+      "wireBytes": 1097,
+      "wireSha256": "f869063784ff77cb5669d649e59ea9c944b2f16f4395716f62ee17913619a494"
+    },
+    "matchesPreviousDeviceReceipt": true,
+    "hardwareIo": false
+  },
+  "hardwareIo": false,
+  "screenDisplayAndTouchConfirmed": false
+}

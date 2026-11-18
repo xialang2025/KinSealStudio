@@ -1,0 +1,1055 @@
+{
+  "recordDate": "2026-11-19",
+  "deviceDownloadPerformed": false,
+  "screenObserved": false,
+  "externalPlcPortOpened": false,
+  "portableSourceCommit": "f05adf63ef49bfdd0ffe42f735ade3158068c6ee",
+  "stage7": {
+    "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+    "privateDesktopOnly": true,
+    "hardwareIo": false,
+    "hmiBehaviorConfirmed": false,
+    "processRecords": 16,
+    "checks": 17,
+    "allPassed": true,
+    "checkRecords": [
+      {
+        "name": "supported-internal-five-family",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "toggle-input-language-and-final-stop",
+        "passed": true,
+        "observed": {
+          "LB": {
+            "LB0": true
+          },
+          "LW": {
+            "LW10": 42
+          },
+          "events": [
+            {
+              "detail": "zero-initialized; low-word-first; no hardware I/O",
+              "kind": "start",
+              "objectId": "",
+              "sequence": 1
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "toggle",
+              "sequence": 2
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "toggle",
+              "sequence": 3
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "momentary",
+              "sequence": 4
+            },
+            {
+              "detail": "test-move-out",
+              "kind": "cancel",
+              "objectId": "momentary",
+              "sequence": 5
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "set-word",
+              "sequence": 6
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "set-word",
+              "sequence": 7
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "add-word",
+              "sequence": 8
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "add-word",
+              "sequence": 9
+            },
+            {
+              "detail": "",
+              "kind": "input-requested",
+              "objectId": "input-word",
+              "sequence": 10
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "input-word",
+              "sequence": 11
+            },
+            {
+              "detail": "",
+              "kind": "input-accepted",
+              "objectId": "input-word",
+              "sequence": 12
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "english",
+              "sequence": 13
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "english",
+              "sequence": 14
+            },
+            {
+              "detail": "trace-finished",
+              "kind": "cancel",
+              "objectId": "",
+              "sequence": 15
+            },
+            {
+              "detail": "trace-finished",
+              "kind": "stop",
+              "objectId": "",
+              "sequence": 16
+            }
+          ],
+          "format": "KinSealLite-offline-memory-v1",
+          "hardwareIo": false,
+          "language": "English",
+          "macroExecution": false,
+          "pendingInputObjectId": "",
+          "pressedObjectId": "",
+          "projectId": "project-1",
+          "running": false,
+          "userLevel": 0,
+          "warnings": [
+            "LB/LW共各4097项、零初值、32位低字优先和等级0是Lite运行规则，不是原厂保持/字序的验证结论。"
+          ],
+          "wordOrder": "low-word-first-lite-rule",
+          "zeroInitialValuesAreLiteRule": true
+        }
+      },
+      {
+        "name": "process-completion-releases-momentary",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "macro-does-not-write-LB10",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "password-all-exported-memory-and-event-values-omitted",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "invalid-op-atomic-rejection",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "unknown-object-atomic-rejection",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "wrong-type-atomic-rejection",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "too-many-events-atomic-rejection",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "external-address-no-output",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "multi-page-no-output",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "case-alias-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "hardlink-alias-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "missing-input-no-output",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "trace-budget-small-error-and-preserved-output",
+        "passed": true,
+        "observed": {
+          "stdoutBytes": 130,
+          "message": "模拟逐步记录超过8MiB保护，未覆盖输出。"
+        }
+      },
+      {
+        "name": "source-bytes-unchanged",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "Qt-loaded-only-from-explicit-dependencies",
+        "passed": true,
+        "observed": [
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Core.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Gui.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6SerialPort.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Svg.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Widgets.dll"
+        ]
+      }
+    ],
+    "rawManifestSha256": "63ef050918e2e09f5b75b7f35df29848d80ce3f72746374eac7c4cf8115752e1"
+  },
+  "stage8": {
+    "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+    "sdkIdentitySha256": "40ca9534248f0439e0d53a6606e78a92263c5e8e92626dcb9a171254771af8cb",
+    "reproducibilityKeySha256": "247a0fb1690d24469ece59095eb500a76f193b93b1e35cb865e0ac9c94067076",
+    "hardwareIo": false,
+    "hmiExecutionConfirmed": false,
+    "notCovered": [
+      "No HMI download, display, touch or macro execution.",
+      "No address variables, global/init scheduler, other models or SDK versions.",
+      "SDK identity hashes are not vendor authentication or redistribution authorization.",
+      "CLI tests do not replace synthetic timeout/cancellation/owner-destruction tests."
+    ],
+    "temporaryFilesRemaining": [
+      {
+        "path": "Z:\\Project\\vscode_prj_temp\\REA\\.scratch\\kinseal-followup-20261119\\macros-temp\\stage8-cli-m6lcfgyl\\oversized.ksp",
+        "bytes": 16777217
+      }
+    ],
+    "processRecords": 24,
+    "checks": 31,
+    "allPassed": true,
+    "checkRecords": [
+      {
+        "name": "zero-macros-needs-no-sdk",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "one-macro-independent-arm-oracle",
+        "passed": true,
+        "observed": {
+          "rawSha256": "d6e4f44119b03071a0dea0e8066f084054da6736f8ba5aeb74d443fff914e5da",
+          "marcoRunSha256": "5c982aee45033ca20fe3adea84b92df426d3f45117d7f199aef59ca73f392d22",
+          "variableBytes": 904
+        }
+      },
+      {
+        "name": "identical-source-reproducibility",
+        "passed": true,
+        "observed": {
+          "key": "247a0fb1690d24469ece59095eb500a76f193b93b1e35cb865e0ac9c94067076"
+        }
+      },
+      {
+        "name": "changed-constant-changes-code-and-key",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "multiple-macros-sort-by-name-not-json-insertion",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "one-source-sdk-and-package-identity",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "multi-source-sdk-and-package-identity",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "native-source-export-for-package-check",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "ksp-package-compile-success",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "ksp-package-macro-index-and-exact-bytes",
+        "passed": true,
+        "observed": {
+          "controlBytes": 640,
+          "macroEnabled": 1,
+          "encodedIndex": 1,
+          "expectedMap": {
+            "Alpha": 0,
+            "Zulu": 1
+          },
+          "marcoRunSha256": "4780da6323c5a62c755f28e0582f29058ba70e888cba174eb5957f3f1b9ef7ad",
+          "marcoVarSha256": "285d27b52114b97387abdce62bf55e9e613a68e56e5c5727e4c056d76f211d6b",
+          "hardwareIo": false
+        }
+      },
+      {
+        "name": "sm-package-compile-success",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "sm-package-macro-index-and-exact-bytes",
+        "passed": true,
+        "observed": {
+          "controlBytes": 640,
+          "macroEnabled": 1,
+          "encodedIndex": 1,
+          "expectedMap": {
+            "Alpha": 0,
+            "Zulu": 1
+          },
+          "marcoRunSha256": "4780da6323c5a62c755f28e0582f29058ba70e888cba174eb5957f3f1b9ef7ad",
+          "marcoVarSha256": "285d27b52114b97387abdce62bf55e9e613a68e56e5c5727e4c056d76f211d6b",
+          "hardwareIo": false
+        }
+      },
+      {
+        "name": "invalid-c-source-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "宏“Broken” 编译：armcc.exe失败（退出码1）。\n\"macro_000.c\", line 1: Error: C2456E: undeclared name, inventing 'extern int broken'\r\n\"macro_000.c\", line 1: Serious error: C2291E: <expression> expected but found ';'\r\nmacro_000.c: 0 warnings, 1 error, 1 serious error\r\n",
+          "firstError": {
+            "code": "sdk-stage-failed",
+            "compiledIndex": 0,
+            "macroName": "Broken",
+            "message": "宏“Broken” 编译：armcc.exe失败（退出码1）。\n\"macro_000.c\", line 1: Error: C2456E: undeclared name, inventing 'extern int broken'\r\n\"macro_000.c\", line 1: Serious error: C2291E: <expression> expected but found ';'\r\nmacro_000.c: 0 warnings, 1 error, 1 serious error\r\n",
+            "severity": "error",
+            "stage": "宏“Broken” 编译"
+          }
+        }
+      },
+      {
+        "name": "invalid-source-keeps-structured-compiler-stage",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "missing-sdk-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "ARM宏工具链目录无效，请通过工具菜单选择完整SDK目录，或设置KINSEAL_ARM_SDK。",
+          "firstError": {
+            "code": "sdk-validation-failed",
+            "compiledIndex": -1,
+            "macroName": "",
+            "message": "ARM宏工具链目录无效，请通过工具菜单选择完整SDK目录，或设置KINSEAL_ARM_SDK。",
+            "severity": "error",
+            "stage": "preflight"
+          }
+        }
+      },
+      {
+        "name": "missing-input-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "无法读取工程，或超过16MiB输入保护。",
+          "firstError": null
+        }
+      },
+      {
+        "name": "malformed-input-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "宏编译输入需要完整Lite JSON工程。",
+          "firstError": null
+        }
+      },
+      {
+        "name": "array-input-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "宏编译输入需要完整Lite JSON工程。",
+          "firstError": null
+        }
+      },
+      {
+        "name": "oversized-input-atomic-preservation",
+        "passed": true,
+        "observed": {
+          "message": "无法读取工程，或超过16MiB输入保护。",
+          "firstError": null
+        }
+      },
+      {
+        "name": "identical-path-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "normalized-alias-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "case-alias-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "hardlink-alias-input-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "wrong-extension-output-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "bad-arguments-have-small-error",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "missing-parent-publication-no-partial-output",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "failed-commit-preserves-existing-output",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "all-original-source-bytes-kept",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "compiler-owned-temporary-scope-empty",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "executable-kept-frozen",
+        "passed": true,
+        "observed": null
+      },
+      {
+        "name": "Qt-loaded-only-from-explicit-dependencies",
+        "passed": true,
+        "observed": [
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Core.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Gui.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6SerialPort.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Svg.dll",
+          "Z:\\Project\\vscode_prj_temp\\REA\\KinSealStudio\\dist\\KinSealStudioLite-Stage11-release-r2\\Qt6Widgets.dll"
+        ]
+      }
+    ],
+    "rawManifestSha256": "37c30e56cb1cafda681aa2c09b3b7cf14c7d5c4ef59de09411b4b4b28a38dd87"
+  },
+  "stage11": {
+    "executableSha256": "1bcd29cf1b799096def3d3a820e836b5d683de27ef5a96b23ace4b7ab8783b97",
+    "manifestSha256Before": "8221e4ac324ca27e072d71dc1f4f9ad6aa3821cf137b79525f9de182cfbdcb63",
+    "manifestSha256After": "8221e4ac324ca27e072d71dc1f4f9ad6aa3821cf137b79525f9de182cfbdcb63",
+    "packageUnchanged": true,
+    "environmentScope": "Windows开发机清洁进程PATH/插件搜索隔离；不是干净虚拟机或卸载Qt/驱动。",
+    "unexpectedLoadedModulePaths": [],
+    "notRun": [
+      "独立干净系统/VM",
+      "普通用户权限与只读安装目录",
+      "长路径上限",
+      "多DPI/多显示器",
+      "删除或替换系统字体",
+      "卸载/安装USB驱动与真实设备",
+      "真实PLC/COM串口",
+      "安装/升级/卸载器",
+      "设备T/E与长期性能",
+      "缺平台插件后的应用正常退出：Qt致命对话阻塞，已记录并限时终止；不能称正常拒绝返回"
+    ],
+    "temporaryFilesRemaining": [],
+    "processRecords": 80,
+    "checks": 25,
+    "allPassed": true,
+    "checkRecords": [
+      {
+        "name": "release-version-and-declaration",
+        "passed": true,
+        "observed": {
+          "distribution": "restricted_internal_validation",
+          "fonts": [
+            {
+              "available": true,
+              "requested": "微软雅黑",
+              "resolved": "微软雅黑"
+            },
+            {
+              "available": true,
+              "requested": "Arial",
+              "resolved": "Arial"
+            }
+          ],
+          "fullReplicaCertified": false,
+          "hardwareIo": false,
+          "installerProvided": false,
+          "product": "KinSealStudio Lite",
+          "qtVersion": "6.12.0",
+          "version": "0.11.0"
+        }
+      },
+      {
+        "name": "packaged-help-catalog",
+        "passed": true,
+        "observed": {
+          "commandCount": 128,
+          "failures": [],
+          "globalEntryCoverageComplete": false,
+          "linkCount": 64,
+          "schemaVersion": 1,
+          "scope": "随包本地帮助目录、显式命令映射与有限上下文；不据此声明全入口D/U或设备T/E通过。",
+          "topicsChecked": [
+            "compile",
+            "controls",
+            "files",
+            "limits",
+            "project",
+            "simulation",
+            "start",
+            "usb"
+          ],
+          "valid": true
+        }
+      },
+      {
+        "name": "actual-mainwindow-help-action",
+        "passed": true
+      },
+      {
+        "name": "sample-1-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": true,
+        "exactSuppliedChanges": [],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-1-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-2-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": true,
+        "exactSuppliedChanges": [],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-2-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-3-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": true,
+        "exactSuppliedChanges": [],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-3-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-4-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": true,
+        "exactSuppliedChanges": [],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-4-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-5-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": true,
+        "exactSuppliedChanges": [],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-5-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-6-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": false,
+        "exactSuppliedChanges": [
+          {
+            "path": "/animations",
+            "before": {},
+            "removed": true
+          },
+          {
+            "path": "/schemaVersion",
+            "before": 12,
+            "after": 9
+          },
+          {
+            "path": "/connections",
+            "before": [],
+            "removed": true
+          }
+        ],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-6-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-7-save-values-and-idempotence",
+        "passed": true,
+        "suppliedFieldsPreserved": false,
+        "exactSuppliedChanges": [
+          {
+            "path": "/animations",
+            "before": {},
+            "removed": true
+          },
+          {
+            "path": "/schemaVersion",
+            "before": 12,
+            "after": 9
+          },
+          {
+            "path": "/connections",
+            "before": [],
+            "removed": true
+          }
+        ],
+        "secondSaveIdempotent": true
+      },
+      {
+        "name": "sample-7-source-publication-boundary",
+        "passed": true
+      },
+      {
+        "name": "sample-7-compile-refusal-no-partial-publication",
+        "passed": true
+      },
+      {
+        "name": "independent-offline-trace",
+        "passed": true,
+        "observedState": {
+          "LB": {
+            "LB0": true
+          },
+          "LW": {
+            "LW10": 5
+          },
+          "events": [
+            {
+              "detail": "zero-initialized; low-word-first; no hardware I/O",
+              "kind": "start",
+              "objectId": "",
+              "sequence": 1
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "toggle",
+              "sequence": 2
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "toggle",
+              "sequence": 3
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "set-word",
+              "sequence": 4
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "set-word",
+              "sequence": 5
+            },
+            {
+              "detail": "",
+              "kind": "action",
+              "objectId": "english",
+              "sequence": 6
+            },
+            {
+              "detail": "",
+              "kind": "release",
+              "objectId": "english",
+              "sequence": 7
+            }
+          ],
+          "format": "KinSealLite-offline-memory-v1",
+          "hardwareIo": false,
+          "language": "English",
+          "macroExecution": false,
+          "pendingInputObjectId": "",
+          "pressedObjectId": "",
+          "projectId": "project-1",
+          "running": true,
+          "userLevel": 0,
+          "warnings": [
+            "LB/LW共各4097项、零初值、32位低字优先和等级0是Lite运行规则，不是原厂保持/字序的验证结论。"
+          ],
+          "wordOrder": "low-word-first-lite-rule",
+          "zeroInitialValuesAreLiteRule": true
+        }
+      },
+      {
+        "name": "missing-sdk-scoped-refusal",
+        "passed": true,
+        "observed": {
+          "compiler": {
+            "addressVariableCount": 0,
+            "ansiCodePage": 936,
+            "ansiEncoding": "Windows-ACP-Qt-toLocal8Bit",
+            "cancelled": false,
+            "capturedOutputBytes": 0,
+            "cleanupTimeoutMs": 2000,
+            "deadlineScope": "whole invocation; bounded owned-child cleanup follows cancellation/deadline",
+            "diagnostics": [
+              {
+                "code": "sdk-validation-failed",
+                "compiledIndex": -1,
+                "macroName": "",
+                "message": "ARM宏工具链目录无效，请通过工具菜单选择完整SDK目录，或设置KINSEAL_ARM_SDK。",
+                "severity": "error",
+                "stage": "preflight"
+              }
+            ],
+            "elapsedMs": 0,
+            "firstError": {
+              "code": "sdk-validation-failed",
+              "compiledIndex": -1,
+              "macroName": "",
+              "message": "ARM宏工具链目录无效，请通过工具菜单选择完整SDK目录，或设置KINSEAL_ARM_SDK。",
+              "severity": "error",
+              "stage": "preflight"
+            },
+            "format": "KinSealLite-device-macro-compilation-v1",
+            "hardwareExecutionVerified": false,
+            "macroCount": 2,
+            "macros": [],
+            "maxProcessOutputBytes": 262144,
+            "maxTotalOutputBytes": 1048576,
+            "nativeRuntimeCompatibilityVerified": false,
+            "ok": false,
+            "processTimeoutMs": 30000,
+            "qtVersion": "6.12.0",
+            "sdkAuthenticated": false,
+            "sourceSetFrozen": true,
+            "sources": [
+              {
+                "actualAnsiBytes": 531,
+                "actualAnsiSha256": "f81a51c006a7695685075b2a4b5329d53ec0c4dcfb3cdeb24be2d587efc4f979",
+                "ansiRoundTripExact": true,
+                "compiledIndex": 0,
+                "macroName": "ClearLB1",
+                "qstringUtf16CodeUnits": 531,
+                "qstringUtf16LeSha256": "67e29f4f441eda8af1ce80d3f932279fd539d404ddd7b13f892dd249df473f90",
+                "sourceUtf8Bytes": 531,
+                "sourceUtf8Sha256": "f81a51c006a7695685075b2a4b5329d53ec0c4dcfb3cdeb24be2d587efc4f979"
+              },
+              {
+                "actualAnsiBytes": 529,
+                "actualAnsiSha256": "8dd5f37fc8f44c8c5df60b284eb36b9f4ecda4f170610f4f8ea7c07b20af4733",
+                "ansiRoundTripExact": true,
+                "compiledIndex": 1,
+                "macroName": "SetLB1",
+                "qstringUtf16CodeUnits": 529,
+                "qstringUtf16LeSha256": "953001332fac8095069d40fc0e5851bcf15a3f302290429d4f80343a02aac2fb",
+                "sourceUtf8Bytes": 529,
+                "sourceUtf8Sha256": "8dd5f37fc8f44c8c5df60b284eb36b9f4ecda4f170610f4f8ea7c07b20af4733"
+              }
+            ],
+            "stages": [],
+            "targetModel": "AMT070W124-L800X480R",
+            "temporaryCleanupSucceeded": true,
+            "totalTimeoutMs": 120000
+          },
+          "hardwareIo": false,
+          "hmiExecutionConfirmed": false,
+          "message": "ARM宏工具链目录无效，请通过工具菜单选择完整SDK目录，或设置KINSEAL_ARM_SDK。",
+          "ok": false
+        }
+      },
+      {
+        "name": "unicode-copy-identical",
+        "passed": true
+      },
+      {
+        "name": "missing-help-clear-refusal",
+        "passed": true,
+        "observed": {
+          "commandCount": 0,
+          "failures": [
+            "帮助索引不存在、为空或超出大小限制。",
+            "帮助索引的主题或命令数量无效。"
+          ],
+          "globalEntryCoverageComplete": false,
+          "linkCount": 0,
+          "schemaVersion": 1,
+          "scope": "随包本地帮助目录、显式命令映射与有限上下文；不据此声明全入口D/U或设备T/E通过。",
+          "topicsChecked": [],
+          "valid": false
+        }
+      },
+      {
+        "name": "clone-restored-before-missing-qt",
+        "passed": true
+      },
+      {
+        "name": "clone-restored-before-missing-plugin",
+        "passed": true
+      },
+      {
+        "name": "missing-platform-plugin-diagnostic-and-bounded-stop",
+        "passed": true,
+        "exitCode": null,
+        "guardedBlockedStartup": true,
+        "normalExitObserved": false
+      }
+    ],
+    "rawManifestSha256": "31ce3d9abf2d43e5c2c118646985fd0ea76ed3ecf7b75f62bad39bbb2a6a2d15"
+  },
+  "existingBinaryVerification": {
+    "fixtureScope": "Stage5 used committed isolated fixtures, external ARM SDK and short task temp; Stage3 lacked two native captures. These test executables predate this change.",
+    "stage5": {
+      "totals": "Totals: 319 passed, 0 failed, 0 skipped, 0 blacklisted, 31022ms",
+      "failures": [],
+      "logSha256": "97e83a00af2e07f1cf9f16a8bb1978794f90d4b25c1607085f90dcd0a0b677a7"
+    },
+    "stage5ExeSha256": "9a364719002d69ba49f408f84ac75f94ee983e96b9a813fd3bba3b74a488c2bf",
+    "stage8": {
+      "totals": "Totals: 19 passed, 0 failed, 0 skipped, 0 blacklisted, 3731ms",
+      "failures": [],
+      "logSha256": "4ca23d117d44da92a4d1969a69f4c193ed3c2ddf1240263e37e1ec601bbbe547"
+    },
+    "stage8ExeSha256": "4f4aece6584ff369b9881ce120a866ad1a9a243e7e05460f9e2c225272168148",
+    "stage3Canvas": {
+      "totals": "Totals: 46 passed, 2 failed, 0 skipped, 0 blacklisted, 1327ms",
+      "failures": [
+        "FAIL!  : Stage3CanvasTests::nativeFractionalSourceRoundTrip() 'sourceFile.open(QIODevice::ReadOnly)' returned FALSE. ()",
+        "FAIL!  : Stage3CanvasTests::nativeNestedSourceRoundTrip() 'sourceFile.open(QIODevice::ReadOnly)' returned FALSE. ()"
+      ],
+      "logSha256": "ad191753c1ebb84fc0c4a4644c100b950cf53b11a64d191146645aacef7f4e5f"
+    },
+    "stage3Integration": {
+      "totals": "Totals: 17 passed, 0 failed, 0 skipped, 0 blacklisted, 8461ms",
+      "failures": [],
+      "logSha256": "b8a23d9cf8a7f82e1ac431d95801d36877e4d5b1bc9fa81f91c4bdd6cd0ca169"
+    },
+    "otherSuites": [
+      {
+        "suite": "SimulationRuntime",
+        "exit": 0,
+        "exeSha256": "881778a9d84b276b02eb7ec3a33d03f04876de850562b6f6284b8976d00f4f13",
+        "totals": "Totals: 79 passed, 0 failed, 0 skipped, 0 blacklisted, 781ms",
+        "failures": []
+      },
+      {
+        "suite": "SimulationUi",
+        "exit": 0,
+        "exeSha256": "bb49bb517ec802d8ed60bd7b42b5c829271f5605668e7ce9b6c0f992603c6d3a",
+        "totals": "Totals: 13 passed, 0 failed, 0 skipped, 0 blacklisted, 9287ms",
+        "failures": []
+      },
+      {
+        "suite": "SimulationWorkflow",
+        "exit": 1,
+        "exeSha256": "a08217501c4a1b53b3a27193babc1db3c8dc09ff1002696a5c7332e6415a57a2",
+        "totals": "Totals: 22 passed, 1 failed, 0 skipped, 0 blacklisted, 22914ms",
+        "failures": [
+          "FAIL!  : Stage2WorkflowTests::nativeShellResourcesAndNavigation() Compared values are not the same"
+        ]
+      },
+      {
+        "suite": "SimulationModbus",
+        "exit": 0,
+        "exeSha256": "71f43efd340631c6113d98705207807060b98f2e57b0010a5da57d0984f22d81",
+        "totals": "Totals: 340 passed, 0 failed, 0 skipped, 0 blacklisted, 775ms",
+        "failures": []
+      },
+      {
+        "suite": "MacroWorkspace",
+        "exit": 0,
+        "exeSha256": "2fa376f0e3f0bc7317afaa5becc414de8e18497debf8940f92091e6ae0d9650a",
+        "totals": "Totals: 81 passed, 0 failed, 0 skipped, 0 blacklisted, 16376ms",
+        "failures": []
+      },
+      {
+        "suite": "MacroUi",
+        "exit": 0,
+        "exeSha256": "a671d5824264b3c7c24d0040376e821ef03e524bb858046bc43493cd8b26ac8a",
+        "totals": "Totals: 48 passed, 0 failed, 0 skipped, 0 blacklisted, 7486ms",
+        "failures": []
+      },
+      {
+        "suite": "PlcAddress",
+        "exit": 0,
+        "exeSha256": "8af3309e26698cfb7b60a64a9c878ae23a4d1233a45f735fe8c3b1b813303b0a",
+        "totals": "Totals: 46 passed, 0 failed, 0 skipped, 0 blacklisted, 126ms",
+        "failures": []
+      },
+      {
+        "suite": "PlcNativeCatalog",
+        "exit": 0,
+        "exeSha256": "c5bb7e1e3011fc9bd481408d32eb9628114fe480010a37bc33c2f28a94d7cdba",
+        "totals": "Totals: 8 passed, 0 failed, 0 skipped, 0 blacklisted, 2330ms",
+        "failures": []
+      },
+      {
+        "suite": "DeviceScan",
+        "exit": 0,
+        "exeSha256": "16c822a275a7f7559d28e780811189746dfab658f9ec998dce52b941b4bc7002",
+        "totals": "Totals: 37 passed, 0 failed, 0 skipped, 0 blacklisted, 194ms",
+        "failures": []
+      },
+      {
+        "suite": "PlcSerialSession",
+        "exit": 0,
+        "exeSha256": "9283b8b8908fd76d6b4f465c74ecbc9c516f7af1ae29fb2b4ce725f9486bd26c",
+        "totals": "Totals: 101 passed, 0 failed, 0 skipped, 0 blacklisted, 478ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage9AddressUi",
+        "exit": 0,
+        "exeSha256": "bd8a605711d418d1f0b4ea97ab03794326b1220da11f1fc20bb5aa8574d0cac6",
+        "totals": "Totals: 26 passed, 0 failed, 0 skipped, 0 blacklisted, 3071ms",
+        "failures": []
+      },
+      {
+        "suite": "DeviceTransfer",
+        "exit": 0,
+        "exeSha256": "1180309ca4e283154ee73d79708eefd62730146fb8bd9bf7d3b14a61a8537d43",
+        "totals": "Totals: 9 passed, 0 failed, 0 skipped, 0 blacklisted, 141ms",
+        "failures": []
+      },
+      {
+        "suite": "DeviceTransferEngine",
+        "exit": 0,
+        "exeSha256": "359a48bf19f3ac920dbc67286125e6bbc0379e896c57fabbea418dd319208366",
+        "totals": "Totals: 58 passed, 0 failed, 0 skipped, 0 blacklisted, 95ms",
+        "failures": []
+      },
+      {
+        "suite": "DeviceDownloadSession",
+        "exit": 0,
+        "exeSha256": "bbb71c95c5ff33b5c14e6e4c09258af902b671c8ed1f024ca874f7d907922849",
+        "totals": "Totals: 27 passed, 0 failed, 0 skipped, 0 blacklisted, 16729ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage3ProjectEdits",
+        "exit": 0,
+        "exeSha256": "04b710d9bdbef094f8f630f362c44db692ece3470297eb9eae06a160938ac98a",
+        "totals": "Totals: 18 passed, 0 failed, 0 skipped, 0 blacklisted, 24927ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage2Dialogs",
+        "exit": 0,
+        "exeSha256": "e4beb691bab2a2f286329f6cbdba6b8a8ab402726f8ef77f502415442c9510ee",
+        "totals": "Totals: 50 passed, 0 failed, 0 skipped, 0 blacklisted, 2585ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage2GlobalTools",
+        "exit": 0,
+        "exeSha256": "ce181705c73cb6e409206ae9eb5945db480a6f8f5b14888e73294d22ea8aedf9",
+        "totals": "Totals: 15 passed, 0 failed, 0 skipped, 0 blacklisted, 761ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage2Workflow",
+        "exit": 1,
+        "exeSha256": "ba21e7bcb1cad6709241e954edd8309679f034b4780bccee35cfd90910ed52e8",
+        "totals": "Totals: 22 passed, 1 failed, 0 skipped, 0 blacklisted, 19716ms",
+        "failures": [
+          "FAIL!  : Stage2WorkflowTests::nativeShellResourcesAndNavigation() Compared values are not the same"
+        ]
+      },
+      {
+        "suite": "NativeSource",
+        "exit": 0,
+        "exeSha256": "8cab076c42192e246d357adc9163653b20292f906fcdd00cb1ccb1d20464f966",
+        "totals": "Totals: 62 passed, 0 failed, 0 skipped, 0 blacklisted, 50884ms",
+        "failures": []
+      },
+      {
+        "suite": "Stage4Control",
+        "status": "timeout"
+      }
+    ]
+  },
+  "python": {
+    "stage6Media": {
+      "counts": [
+        "Ran 30 tests in 45.510s",
+        "OK (skipped=1)"
+      ],
+      "logSha256": "e3a22ecbaa69fa2acd8d0cf0a69d28674aaa4bf9f2c711017e2ef0eeb7fdbb5a"
+    },
+    "stage10Validator": {
+      "counts": [
+        "Ran 37 tests in 25.985s",
+        "OK"
+      ],
+      "logSha256": "532c074079bff476ef0129c86fbd0e93032aeea99162199523a017a31e3df3a9"
+    },
+    "stage11Package": {
+      "counts": [
+        "Ran 31 tests in 90.142s",
+        "OK (skipped=1)"
+      ],
+      "logSha256": "08615fc9983ab8279933cfd827ce083ad924cbe4b7d0e166ebb4835e0f5e27b1"
+    },
+    "stage11Publication": {
+      "counts": [
+        "Ran 16 tests in 458.141s",
+        "OK"
+      ],
+      "logSha256": "ee24b1300847c18a9b77f3831a582cc206536c3353bacae3b8061bf3208dae63"
+    }
+  }
+}
