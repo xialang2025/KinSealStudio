@@ -1,5 +1,6 @@
 #include "recipe_display_dialog.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
@@ -149,7 +150,14 @@ RecipeDisplayDialog::RecipeDisplayDialog(const HmiObject &object, const HmiProje
     QDialogButtonBox *buttons;
     QJsonArray connections;
     PlcConnection connection;
-    setObjectName(QStringLiteral("RecipeDisplayDialog")); setWindowTitle(QStringLiteral("配方显示器")); resize(614, 540); setFont(QFont(QStringLiteral("SimSun"), 9)); setStyleSheet(QStringLiteral("QLineEdit, QComboBox, QSpinBox {background:#caeace;} QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled {background:#b1ceed;}")); Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList()); tabs->setObjectName(QStringLiteral("RecipeDisplayTabs")); tabs->addTab(basicPage(), QStringLiteral("基本属性")); tabs->addTab(permissionPage(), QStringLiteral("权限设置")); layout->addWidget(tabs); buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("RecipeDisplayButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons); connect(buttons, &QDialogButtonBox::accepted, this, &RecipeDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("配方显示器帮助"), QStringLiteral("先建立配方，再设置显示样式。编辑配方可使用真实自定义键盘，权限页设置显现、触控有效和通知。")); }); refreshLinkage();
+    setObjectName(QStringLiteral("RecipeDisplayDialog")); setWindowTitle(QStringLiteral("配方显示器")); resize(614, 540); setFont(QFont(QStringLiteral("SimSun"), 9)); setStyleSheet(QStringLiteral("QLineEdit, QComboBox, QSpinBox {background:#caeace;} QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled {background:#b1ceed;}")); Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList()); tabs->setObjectName(QStringLiteral("RecipeDisplayTabs")); tabs->addTab(basicPage(), QStringLiteral("基本属性")); tabs->addTab(permissionPage(), QStringLiteral("权限设置")); layout->addWidget(tabs); buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("RecipeDisplayButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons); connect(buttons, &QDialogButtonBox::accepted, this, &RecipeDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("配方显示器帮助"), QStringLiteral("先建立配方，再设置显示样式。编辑配方可使用真实自定义键盘，权限页设置显现、触控有效和通知。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_RecipeDisplayDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
+    refreshLinkage();
 }
 
 /******************************************************************************

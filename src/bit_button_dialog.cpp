@@ -4,6 +4,7 @@
 #include "hmi_property_widgets.h"
 #include "stage3_resources.h" //20261112-0 add
 #include "macro_workspace.h" //20261114-7 add
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QBuffer>
 #include <QButtonGroup> //20261110-0 add
 #include <QCheckBox>
@@ -128,6 +129,7 @@ BitButtonDialog::BitButtonDialog(const HmiObject &object, const HmiProject &proj
     layout->addWidget(buttons, 1, 0, 1, 2);
     connect(buttons, &QDialogButtonBox::accepted, this, &BitButtonDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+#if 0 //20261118-4 del: Transient message-box hints were replaced by the packaged local help route below.
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() {
         if (m_working.hasFunctionButtonProperties) //20261110-0 add
         {
@@ -154,6 +156,12 @@ BitButtonDialog::BitButtonDialog(const HmiObject &object, const HmiProject &proj
             QStringLiteral("设置位地址和操作类型，分别配置状态0与状态1，确定后在画布拖框。\n"
                            "指示灯可使用操作地址、独立位地址或字地址中的一位。\n"
                            "右键的模拟状态仅切换编辑外观。下载前会检查设备编译范围，传输后请核对实机显示与触控。")); //20261109-0 change
+    });
+#endif //20261118-4 del
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog family.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_BitButtonDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
     });
     m_loading = false; loadState(); refreshMonitor();
 }

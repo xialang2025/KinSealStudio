@@ -2,6 +2,7 @@
 #include "flow_block_properties.h"
 #include "alarm_registration_properties.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -131,7 +132,14 @@ AlarmBarDialog::AlarmBarDialog(const HmiObject &object, const HmiProject &projec
     PlcConnection connection;
     setObjectName(QStringLiteral("AlarmBarDialog")); setWindowTitle(QStringLiteral("动态报警条")); resize(820, 560); setStyleSheet(QStringLiteral("QLineEdit, QComboBox, QSpinBox {background:#caeace;} QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled {background:#b1ceed;}")); Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
     tabs->setObjectName(QStringLiteral("AlarmTabs")); tabs->addTab(basicPage(), QStringLiteral("基本设置")); m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("AlarmVisible"), m_draft.visibility, false, permission); m_visibility->configureUnchosenBitState(m_draft.visibilityBitChosen); permissions->addWidget(m_visibility); permissions->addStretch(); tabs->addTab(permission, QStringLiteral("权限设置")); layout->addWidget(tabs, 0, 0); layout->setColumnStretch(0, 1); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("AlarmPreview")); m_preview->setFixedSize(130, 130); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("AlarmButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2); connect(buttons, &QDialogButtonBox::accepted, this, &AlarmBarDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("动态报警条帮助"), QStringLiteral("先在报警登录中配置数位地址报警或条件报警，再设置显示外观、滚动方向、排序与显现条件。")); }); refresh();
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("AlarmButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2); connect(buttons, &QDialogButtonBox::accepted, this, &AlarmBarDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("动态报警条帮助"), QStringLiteral("先在报警登录中配置数位地址报警或条件报警，再设置显示外观、滚动方向、排序与显现条件。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_AlarmBarDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
+    refresh();
 }
 
 /******************************************************************************

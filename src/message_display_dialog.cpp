@@ -2,6 +2,7 @@
 #include "hmi_property_widgets.h"
 #include "static_text_renderer.h"
 #include "plc_address_dialog.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -142,8 +143,13 @@ MessageDisplayDialog::MessageDisplayDialog(const HmiObject &object, const HmiPro
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("MessageButtons"));
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Cancel)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Help)->setMinimumSize(72, 28);
-    connect(buttons, &QDialogButtonBox::accepted, this, &MessageDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("消息显示帮助"), QStringLiteral("参见design_plan/消息显示功能与交互复刻手册.md。监视地址选择状态，移动方向仅用于设备运行；当前PC预览不模拟PLC或滚动时序。")); });
+    connect(buttons, &QDialogButtonBox::accepted, this, &MessageDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("消息显示帮助"), QStringLiteral("参见design_plan/消息显示功能与交互复刻手册.md。监视地址选择状态，移动方向仅用于设备运行；当前PC预览不模拟PLC或滚动时序。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_MessageDisplayDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
     connect(picker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_address, false, m_type->currentIndex() == 0 ? 1 : 2); });
     connect(m_count, &QSpinBox::valueChanged, this, [this](int count) { m_draft.stateCount = count; m_draft.ensureStates(count); rebuildTable(); });
     connect(m_movement, &QComboBox::currentIndexChanged, this, [this, speedLabel](int movement) { m_draft.movement = movement; m_speed->setVisible(movement != 0); speedLabel->setVisible(movement != 0); });

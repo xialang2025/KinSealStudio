@@ -1,5 +1,6 @@
 #include "slider_dialog.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QColorDialog>
@@ -87,7 +88,13 @@ SliderDialog::SliderDialog(const HmiObject &object, const HmiProject &project, Q
     Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
     tabs->setObjectName(QStringLiteral("SliderTabs")); tabs->addTab(createGeneral(), QStringLiteral("一般属性")); tabs->addTab(createPermissions(), QStringLiteral("权限控制")); layout->addWidget(tabs);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("SliderButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons);
-    connect(buttons, &QDialogButtonBox::accepted, this, &SliderDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("滑动开关帮助"), QStringLiteral("配置写入地址、滑块外观、范围、权限和宏指令。动态范围每次重新开启时恢复LW2/LW3。")); });
+    connect(buttons, &QDialogButtonBox::accepted, this, &SliderDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("滑动开关帮助"), QStringLiteral("配置写入地址、滑块外观、范围、权限和宏指令。动态范围每次重新开启时恢复LW2/LW3。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_SliderDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
 }
 
 /******************************************************************************

@@ -1,6 +1,7 @@
 #include "recipe_dialog.h"
 #include "recipe_csv.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -40,7 +41,14 @@ RecipeDialog::RecipeDialog(const HmiConfigurationNode &node, const HmiProject &p
     if (!node.properties.isEmpty()) { m_initialValid = RecipeProperties::fromJson(node.properties, &m_draft, &error); }
     if (m_original.id.isEmpty()) { m_original.id = QStringLiteral("recipe-%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces)); }
     setObjectName(QStringLiteral("RecipeDialog")); setWindowTitle(QStringLiteral("配方")); resize(568, 660); setFont(QFont(QStringLiteral("SimSun"), 9)); setStyleSheet(QStringLiteral("QLineEdit, QComboBox, QSpinBox {background:#caeace; min-height:22px;} QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled {background:#b1ceed;} QTableWidget {background:#caeace;}")); Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
-    tabs->setObjectName(QStringLiteral("RecipeDefinitionTabs")); tabs->addTab(basicPage(), QStringLiteral("一般")); tabs->addTab(dataPage(), QStringLiteral("数据项")); layout->addWidget(tabs); buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("RecipeDefinitionButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons); connect(buttons, &QDialogButtonBox::accepted, this, &RecipeDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("配方帮助"), QStringLiteral("设置配方长度、总数和类型，在数据项页选择单元格后编辑名称、元素名称和数值。复制编号从0开始，只复制数值。CSV只交换当前可见数据。")); }); refreshRanges(); rebuildTable();
+    tabs->setObjectName(QStringLiteral("RecipeDefinitionTabs")); tabs->addTab(basicPage(), QStringLiteral("一般")); tabs->addTab(dataPage(), QStringLiteral("数据项")); layout->addWidget(tabs); buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("RecipeDefinitionButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons); connect(buttons, &QDialogButtonBox::accepted, this, &RecipeDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("配方帮助"), QStringLiteral("设置配方长度、总数和类型，在数据项页选择单元格后编辑名称、元素名称和数值。复制编号从0开始，只复制数值。CSV只交换当前可见数据。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_RecipeDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
+    refreshRanges(); rebuildTable();
 }
 
 /******************************************************************************

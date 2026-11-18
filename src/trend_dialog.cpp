@@ -1,5 +1,6 @@
 #include "trend_dialog.h"
 #include "hmi_property_widgets.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
@@ -229,7 +230,14 @@ TrendDialog::TrendDialog(const HmiObject &object, const HmiProject &project, QWi
     m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("TrendVisible"), m_draft.visibility, false, permission); m_visibility->configureUnchosenBitState(m_draft.visibilityBitChosen); permissionLayout->addWidget(m_visibility); permissionLayout->addStretch(); tabs->addTab(permission, QStringLiteral("权限设置")); layout->addWidget(tabs, 0, 0); layout->setColumnStretch(0, 1);
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("TrendPreview")); m_preview->setFixedSize(130, 155); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("TrendButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2);
-    connect(buttons, &QDialogButtonBox::accepted, this, &TrendDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("趋势图帮助"), QStringLiteral("设置触发、读取和清除地址，逐通道配置范围、线型、颜色及坐标轴。预览使用固定示意数据。")); }); refresh();
+    connect(buttons, &QDialogButtonBox::accepted, this, &TrendDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("趋势图帮助"), QStringLiteral("设置触发、读取和清除地址，逐通道配置范围、线型、颜色及坐标轴。预览使用固定示意数据。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_TrendDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
+    refresh();
 }
 
 /******************************************************************************

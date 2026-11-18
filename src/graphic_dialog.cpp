@@ -1,4 +1,5 @@
 #include "graphic_dialog.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -155,8 +156,13 @@ GraphicDialog::GraphicDialog(const HmiObject &object, QWidget *parent) //2026111
     }
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GraphicButtons")); outer->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
-    connect(buttons, &QDialogButtonBox::accepted, this, &GraphicDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("帮助"), QStringLiteral("线型、线宽、末端箭头、端点形状、边框色与透明度按工程保存。绘制后双击修改。")); });
+    connect(buttons, &QDialogButtonBox::accepted, this, &GraphicDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("帮助"), QStringLiteral("线型、线宽、末端箭头、端点形状、边框色与透明度按工程保存。绘制后双击修改。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_GraphicDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
     connect(m_style, &QComboBox::currentIndexChanged, this, &GraphicDialog::refreshPreview); connect(m_width, &QComboBox::currentIndexChanged, this, &GraphicDialog::refreshPreview);
     connect(m_arrow, &QComboBox::currentIndexChanged, this, &GraphicDialog::refreshPreview); connect(m_cap, &QComboBox::currentIndexChanged, this, &GraphicDialog::refreshPreview);
     connect(m_alpha, &QSpinBox::valueChanged, this, &GraphicDialog::refreshPreview);

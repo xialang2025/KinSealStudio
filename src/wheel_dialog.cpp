@@ -2,6 +2,7 @@
 #include "hmi_property_widgets.h"
 #include "bit_button_dialog.h"
 #include "control_rendering.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QCheckBox>
 #include <QColorDialog>
 #include <QComboBox>
@@ -72,7 +73,14 @@ WheelDialog::WheelDialog(const HmiObject &object, const HmiProject &project, QWi
     tabs->setObjectName(QStringLiteral("WheelTabs")); tabs->addTab(createAppearance(), QStringLiteral("外观设置")); tabs->addTab(createPermissions(), QStringLiteral("权限设置")); layout->addWidget(tabs, 0, 0); layout->setColumnStretch(0, 1);
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("WheelPreview")); m_preview->setFixedSize(160, 160); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("WheelButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2);
-    connect(buttons, &QDialogButtonBox::accepted, this, &WheelDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("滚轮控件帮助"), QStringLiteral("设置写入地址、滚动绕回、灵敏度、数字外观与高亮底图。预览显示范围中点。")); }); refresh();
+    connect(buttons, &QDialogButtonBox::accepted, this, &WheelDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("滚轮控件帮助"), QStringLiteral("设置写入地址、滚动绕回、灵敏度、数字外观与高亮底图。预览显示范围中点。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_WheelDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
+    refresh();
 }
 
 /******************************************************************************

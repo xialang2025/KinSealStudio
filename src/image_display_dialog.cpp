@@ -3,6 +3,7 @@
 #include "hmi_property_widgets.h"
 #include "control_rendering.h"
 #include "kvg_library.h"
+#include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -125,7 +126,13 @@ ImageDisplayDialog::ImageDisplayDialog(const HmiObject &object, const HmiProject
     side = new QVBoxLayout(); preview = new QGroupBox(QStringLiteral("预览"), this); previewLayout = new QVBoxLayout(preview); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("ImagePreview")); m_preview->setFixedSize(140, 150); previewLayout->addWidget(m_preview); side->addWidget(preview);
     hint = new QGroupBox(QStringLiteral("提示"), this); hintLayout = new QVBoxLayout(hint); hintText = new QLabel(QStringLiteral("支持png、jpg、bmp格式图片"), hint); hintText->setWordWrap(true); hintText->setStyleSheet(QStringLiteral("color:blue")); hintText->setMaximumWidth(140); hintLayout->addWidget(hintText); side->addWidget(hint); side->addStretch(); content->addWidget(tabs, 1); content->addLayout(side); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("ImageButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
-    connect(buttons, &QDialogButtonBox::accepted, this, &ImageDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("图片显示帮助"), QStringLiteral("参见design_plan/图片显示功能与交互复刻手册.md。时间、数值和位条件用于运行时选图，编辑器通过状态下拉预览每一张图片。")); });
+    connect(buttons, &QDialogButtonBox::accepted, this, &ImageDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
+    //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("图片显示帮助"), QStringLiteral("参见design_plan/图片显示功能与交互复刻手册.md。时间、数值和位条件用于运行时选图，编辑器通过状态下拉预览每一张图片。")); });
+    connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.
+        LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly); //20261118-4 add: Reuse one dialog-scoped viewer for repeated clicks.
+        if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
+        help->showCommand(QStringLiteral("help_ImageDisplayDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
+    });
     connect(m_type, &QButtonGroup::idClicked, this, [this]() { updateMode(false); }); connect(m_condition, &QButtonGroup::idClicked, this, [this]() { updateMode(true); });
     connect(m_count, &QSpinBox::valueChanged, this, [this](int count) { if (!m_updating) { m_draft.setStateCount(count); rebuildTable(); } });
     connect(m_picker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_address, m_condition->checkedId() == 2); });

@@ -41,6 +41,7 @@ private slots:
     void nestedDialogOwnsHelp();
     void junctionEscapeIsRejected();
     void packagedCatalog();
+    void dialogHelpCommandRoutes(); //20261118-4 add
 
 private:
     QTemporaryDir *m_temp = nullptr;
@@ -518,6 +519,69 @@ void LocalHelpTests::packagedCatalog() //20261114-10 add
     QVERIFY2(report.value(QStringLiteral("valid")).toBool(), QJsonDocument(report).toJson().constData());
     QCOMPARE(report.value(QStringLiteral("topicsChecked")).toArray().size(), 8);
     QVERIFY(report.value(QStringLiteral("commandCount")).toInt() >= 100);
+}
+
+/******************************************************************************
+ * Function Name   : LocalHelpTests::dialogHelpCommandRoutes
+ * Description     : Resolve every S11-05 dialog help command through the packaged map and read the declared topic page,
+ *                   including entries that carry a note field, without opening windows or external endpoints.
+ * Input Parameters: KINSEAL_HELP_SOURCE_ROOT environment variable, or executable-relative help.
+ * Return Value    : None
+ * Date            : 2026.11.18
+ ******************************************************************************/
+void LocalHelpTests::dialogHelpCommandRoutes() //20261118-4 add
+{
+    const QStringList dialogCommands = {QStringLiteral("help_AlarmBarDialog"), QStringLiteral("help_AlarmDisplayDialog"),
+        QStringLiteral("help_AlarmRegistrationDialog"), QStringLiteral("help_BitButtonDialog"),
+        QStringLiteral("help_ChartDialog"), QStringLiteral("help_DataCollectionDialog"),
+        QStringLiteral("help_DataGroupDialog"), QStringLiteral("help_DropdownDialog"),
+        QStringLiteral("help_FlowBlockDialog"), QStringLiteral("help_GraphicDialog"),
+        QStringLiteral("help_GraphicTableDialog"), QStringLiteral("help_HistoryDataDialog"),
+        QStringLiteral("help_HistoryTrendDialog"), QStringLiteral("help_ImageDisplayDialog"),
+        QStringLiteral("help_MessageDisplayDialog"), QStringLiteral("help_MoveTrackDialog"),
+        QStringLiteral("help_QrCodeDialog"), QStringLiteral("help_RecipeDialog"),
+        QStringLiteral("help_RecipeDisplayDialog"), QStringLiteral("help_ScaleDialog"),
+        QStringLiteral("help_SliderDialog"), QStringLiteral("help_TrendDialog"),
+        QStringLiteral("help_WheelDialog"), QStringLiteral("help_XyCurveDialog")};
+    QString root = qEnvironmentVariable("KINSEAL_HELP_SOURCE_ROOT");
+    LocalHelpStore store(root);
+    QFile mapFile(QDir(store.rootPath()).filePath(QStringLiteral("command-map.json")));
+    QJsonDocument document;
+    QJsonObject commands;
+    QJsonObject topics;
+    QJsonObject entry;
+    QJsonValue note;
+    QString topic;
+    QString html;
+    QString error;
+    QUrl url;
+    int resolved = 0;
+
+    QVERIFY2(!store.rootPath().isEmpty(), "Packaged help folder is missing; set KINSEAL_HELP_SOURCE_ROOT or place help beside the test executable.");
+    QVERIFY(mapFile.open(QIODevice::ReadOnly));
+    document = QJsonDocument::fromJson(mapFile.readAll());
+    QVERIFY(document.isObject());
+    commands = document.object().value(QStringLiteral("commands")).toObject();
+    topics = document.object().value(QStringLiteral("topics")).toObject();
+    Q_FOREACH (const QString &commandId, dialogCommands)
+    {
+        QVERIFY2(commands.contains(commandId), qPrintable(QStringLiteral("Missing dialog help command mapping: %1").arg(commandId)));
+        entry = commands.value(commandId).toObject();
+        topic = store.topicForCommand(commandId); //20261118-4 add: The store must resolve the declared command on its own.
+        QVERIFY2(!topic.isEmpty(), qPrintable(QStringLiteral("Dialog help command did not resolve: %1").arg(commandId)));
+        QVERIFY2(topics.contains(topic), qPrintable(QStringLiteral("Dialog help command targets an unknown topic: %1").arg(commandId)));
+        QVERIFY2(entry.value(QStringLiteral("topic")).toString() == topic, qPrintable(QStringLiteral("Stored topic differs from declared topic: %1").arg(commandId)));
+        QVERIFY2(!entry.value(QStringLiteral("capability")).toString().isEmpty(), qPrintable(QStringLiteral("Dialog help command lacks a capability note: %1").arg(commandId)));
+        QVERIFY2(store.readTopic(topic, &html, &url, &error), qPrintable(QStringLiteral("Topic page for %1 failed: %2").arg(commandId, error))); //20261118-4 add: The routed chapter must actually load.
+        QVERIFY(!html.isEmpty());
+        note = entry.value(QStringLiteral("note")); //20261118-4 add: Note-annotated routing entries must stay plain strings and keep resolving above.
+        if (!note.isUndefined())
+        {
+            QVERIFY2(note.isString() && !note.toString().isEmpty(), qPrintable(QStringLiteral("Dialog help command note is not usable text: %1").arg(commandId)));
+        }
+        ++resolved;
+    }
+    QCOMPARE(resolved, 24); //20261118-4 add: Every registered dialog help route was checked exactly once.
 }
 
 QTEST_MAIN(LocalHelpTests)
