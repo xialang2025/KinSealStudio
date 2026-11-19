@@ -659,5 +659,89 @@ class MediaBundleTests(unittest.TestCase):
         self.assertEqual(list(self.root.glob(".changed.kinseal-media-*")), [])
 
 
+class SnapshotTests(unittest.TestCase):  #20261119-9 add
+    """Recover recognized snapshots and prove size, envelope, and publication guards."""
+
+    def setUp(self):
+        parent = os.environ.get("KINSEAL_STAGE6_TEST_ROOT")
+        if not parent:
+            raise RuntimeError("Set KINSEAL_STAGE6_TEST_ROOT; system TEMP is not used")
+        self.workspace = tempfile.TemporaryDirectory(prefix="snapshot-", dir=parent)
+        self.addCleanup(self.workspace.cleanup)
+        self.root = Path(self.workspace.name)
+        self.source = self.root / "upLoad.knr"
+        self.project = b'{"format":"KinSealStudio-Prototype","schemaVersion":9}'
+
+    def envelope(self, project, length=None):
+        return struct.pack(">I", len(project) if length is None else length) + zlib.compress(project)
+
+    def test_frozen_native_snapshot_keeps_exact_project_bytes(self):
+        source = Path(__file__).resolve().parents[1] / "samples/native-device-test/compile-test/upLoad.knr"
+        destination = self.root / "native.sm"
+        report = bundle.extract_project_snapshot(source, destination)
+        self.assertEqual(report["sourceEnvelope"], "native-source-v1.0.2")
+        self.assertEqual(report["decodedBytes"], 4023)
+        self.assertEqual(hashlib.sha256(destination.read_bytes()).hexdigest(),
+                         "d8d975dafeecc26cbaeb1a1dc918ab9841ffaf24de15d292cbf357ce02695597")
+        self.assertFalse(report["projectCompatibilityVerified"])
+
+    def test_wire_prefix_is_explicit_and_checked(self):
+        file_bytes = self.envelope(self.project)
+        self.source.write_bytes(struct.pack(">I", len(file_bytes)) + file_bytes)
+        decoded, report = bundle.read_project_snapshot(self.source, "wire")
+        self.assertEqual(decoded, self.project)
+        self.assertEqual(report["knrBytes"], len(file_bytes))
+        self.assertEqual(report["expectedExtension"], ".ksp")
+        with self.assertRaises((bundle.BundleError, zlib.error)):
+            bundle.read_project_snapshot(self.source)
+        self.source.write_bytes(struct.pack(">I", len(file_bytes) - 1) + file_bytes)
+        with self.assertRaisesRegex(bundle.BundleError, "length header"):
+            bundle.read_project_snapshot(self.source, "wire")
+
+    def test_refuses_invalid_stream_sizes_and_trailing_data(self):
+        for malformed in (self.envelope(self.project, len(self.project) - 1),
+                          self.envelope(self.project, bundle.MAX_FILE_BYTES + 1),
+                          self.envelope(self.project) + zlib.compress(b"more"),
+                          self.envelope(self.project)[:-1]):
+            with self.subTest(length=len(malformed)):
+                self.source.write_bytes(malformed)
+                with self.assertRaises((bundle.BundleError, zlib.error)):
+                    bundle.read_project_snapshot(self.source)
+
+    def test_refuses_unrecognized_source_even_when_inflate_succeeds(self):
+        for payload in (b"raw payload", b'{"format":"KinSealStudio-Prototype","schemaVersion":true}',
+                        b'{"format":"something else","schemaVersion":9}'):
+            self.source.write_bytes(self.envelope(payload))
+            with self.assertRaisesRegex(bundle.BundleError, "recognized"):
+                bundle.read_project_snapshot(self.source)
+
+    def test_output_extension_and_existing_file_remain_guarded(self):
+        self.source.write_bytes(self.envelope(self.project))
+        with self.assertRaisesRegex(bundle.BundleError, "end in .ksp"):
+            bundle.extract_project_snapshot(self.source, self.root / "wrong.sm")
+        output = self.root / "correct.ksp"
+        bundle.extract_project_snapshot(self.source, output)
+        self.assertEqual(output.read_bytes(), self.project)
+        with self.assertRaisesRegex(bundle.BundleError, "must be absent"):
+            bundle.extract_project_snapshot(self.source, output)
+        self.assertEqual(output.read_bytes(), self.project)
+
+    def test_racing_destination_prevents_replacement_and_discards_stage(self):
+        self.source.write_bytes(self.envelope(self.project))
+        output = self.root / "race.ksp"
+        method = "rename" if os.name == "nt" else "link"
+        publish = getattr(os, method)
+
+        def race(staged, destination):
+            Path(destination).write_bytes(b"other process")
+            return publish(staged, destination)
+
+        with mock.patch.object(os, method, side_effect=race):
+            with self.assertRaises(OSError):
+                bundle.extract_project_snapshot(self.source, output)
+        self.assertEqual(output.read_bytes(), b"other process")
+        self.assertFalse(any(self.root.glob(".kinseal-snapshot-*")))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

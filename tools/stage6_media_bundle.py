@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and copy an existing, narrowly scoped native KinSeal media bundle.
+"""Validate and copy a scoped native media bundle or recover an existing project snapshot.
 
 This tool does not compile a project or synthesize media metadata. The caller
 supplies a native-generated compile directory; structural checks cannot certify
@@ -36,6 +36,8 @@ USBLOAD_BYTES = 1704
 MAX_FILE_BYTES = 64 * 1024 * 1024
 MAX_TOTAL_BYTES = 128 * 1024 * 1024
 REPARSE_ATTRIBUTE = 0x400
+NATIVE_SNAPSHOT_TAG = "KinSealStudio-V1.0.2".encode("utf-16-be")  #20261119-9 add
+LITE_SNAPSHOT_FORMAT = "KinSealStudio-Prototype"
 
 
 class BundleError(ValueError):
@@ -137,6 +139,70 @@ def _inflate(data, size, window):
             decoder.unconsumed_tail):
         raise BundleError("Invalid compressed stream, length, or trailing data")
     return decoded
+
+
+def read_project_snapshot(source, container="file"):  #20261119-9 add
+    """Read one qCompress file or explicit USB 0x1e payload and identify its source envelope."""
+    blob = _read_file(_absolute(source))
+    knr = blob
+    if container == "wire":
+        if len(blob) < 4 or int.from_bytes(blob[:4], "big") != len(blob) - 4:
+            raise BundleError("USB payload length header does not match the embedded KNR file")
+        knr = blob[4:]
+    elif container != "file":
+        raise BundleError("Unsupported snapshot container")
+    if len(knr) < 6:
+        raise BundleError("Truncated KNR envelope")
+    decoded_bytes = int.from_bytes(knr[:4], "big")
+    decoded = _inflate(knr[4:], decoded_bytes, 15)
+    native_prefix = len(NATIVE_SNAPSHOT_TAG).to_bytes(4, "big") + NATIVE_SNAPSHOT_TAG
+    if decoded.startswith(native_prefix) and len(decoded) > len(native_prefix):
+        kind, suffix = "native-source-v1.0.2", ".sm"
+    else:
+        try:
+            project = json.loads(decoded.decode("utf-8"))
+        except (ValueError, RecursionError) as error:
+            raise BundleError("Snapshot does not carry a recognized native or Lite source envelope") from error
+        if (not isinstance(project, dict) or project.get("format") != LITE_SNAPSHOT_FORMAT or
+                type(project.get("schemaVersion")) is not int or project["schemaVersion"] < 1):
+            raise BundleError("Snapshot does not carry a recognized native or Lite source envelope")
+        kind, suffix = "lite-project-json", ".ksp"
+    return decoded, {
+        "container": container, "inputBytes": len(blob), "inputSha256": _sha256(blob),
+        "knrBytes": len(knr), "knrSha256": _sha256(knr), "decodedBytes": decoded_bytes,
+        "decodedSha256": _sha256(decoded), "sourceEnvelope": kind, "expectedExtension": suffix,
+        "projectCompatibilityVerified": False, "hardwareIo": False,
+    }
+
+
+def extract_project_snapshot(source, destination, container="file"):  #20261119-9 add
+    """Publish decoded bytes to a fresh matching source path without replacing existing files."""
+    decoded, report = read_project_snapshot(source, container)
+    output = _absolute(destination)
+    if output.suffix.lower() != report["expectedExtension"]:
+        raise BundleError(f"Destination must end in {report['expectedExtension']}")
+    parent = _ordinary_path(output.parent)
+    if not stat.S_ISDIR(parent.st_mode) or os.path.lexists(output):
+        raise BundleError("Destination must be absent in an existing ordinary directory")
+    staged = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=".kinseal-snapshot-", dir=output.parent, delete=False) as stream:
+            staged = Path(stream.name)
+            stream.write(decoded)
+            stream.flush()
+            os.fsync(stream.fileno())
+        current = _ordinary_path(output.parent)
+        if (parent.st_dev, parent.st_ino) != (current.st_dev, current.st_ino):
+            raise BundleError("Destination directory changed while staging")
+        if os.name == "nt":
+            os.rename(staged, output)  # Windows rename fails if the destination already exists.
+        else:
+            os.link(staged, output)  # Publish atomically without POSIX rename replacement.
+    finally:
+        if staged is not None:
+            staged.unlink(missing_ok=True)
+    report["destination"] = str(output)
+    return report
 
 
 # /******************************************************************************
@@ -451,15 +517,25 @@ def main(argv=None):
     publish = commands.add_parser("publish", help="Copy validated artifacts into a new directory")
     publish.add_argument("source_compile")
     publish.add_argument("destination")
+    inspect_snapshot = commands.add_parser("snapshot-inspect", help="Identify a local qCompress project snapshot")  #20261119-9 add
+    extract_snapshot = commands.add_parser("snapshot-extract", help="Recover exact project bytes to a new file")
+    for snapshot_command in (inspect_snapshot, extract_snapshot):
+        snapshot_command.add_argument("source")
+        snapshot_command.add_argument("--container", choices=("file", "wire"), default="file")
+    extract_snapshot.add_argument("destination")
     options = parser.parse_args(argv)
     try:
         if options.command == "validate":
             result = validate_bundle(options.source_compile)
-        else:
+        elif options.command == "publish":
             result = publish_bundle(options.source_compile, options.destination)
+        elif options.command == "snapshot-inspect":
+            _, result = read_project_snapshot(options.source, options.container)
+        else:
+            result = extract_project_snapshot(options.source, options.destination, options.container)
         print(json.dumps(result, ensure_ascii=True, indent=2))
         return 0
-    except BundleError as error:
+    except (BundleError, OSError, zlib.error) as error:
         print(json.dumps({"status": "refused", "error": str(error)}, ensure_ascii=True),
               file=sys.stderr)
         return 2
