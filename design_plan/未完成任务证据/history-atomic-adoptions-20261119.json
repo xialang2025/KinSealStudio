@@ -1,5 +1,5 @@
 {
-  "evidenceCommit": "71b9db4204d9e162bd9df2ec2b868110872fd5c6",
+  "evidenceCommit": "8dfe834655b5ab6f8b16fae02052a536f70f497f",
   "sources": {
     "ascii": {
       "path": "docs/ASCII显示手册实现与验收.md",
@@ -185,6 +185,11 @@
       "path": "docs/下拉框手册实现与验收.md",
       "identity": "Lite 编辑器私有桌面回归，只采用软件端观测。",
       "kind": "lite"
+    },
+    "field-1119": {
+      "path": "design_plan/阶段10现场续验_20261119.md",
+      "identity": "Lite便携构建 b96f418b 的11月19日在场反馈。已确认型号 AMT070W124-L800X480R。屏内固件版本与唯一序号仍未读出。",
+      "kind": "field"
     }
   },
   "adoptions": [
@@ -1830,6 +1835,50 @@
       "status": "partial",
       "conclusion": "内部语言页已确认显现门控后触控切回中文。",
       "remaining": "阶段10独立LB40通知和完整语言回读尚缺，固件身份也待核。"
+    },
+    {
+      "id": "Q-S00-CAND-173-FUNC-RUNTIME",
+      "source": "field-1119",
+      "anchor": "用户确认文字正常，复位 LB40 后切英文得到",
+      "layers": [
+        "E"
+      ],
+      "status": "partial",
+      "conclusion": "功能按钮切换英文并通知 LB40=1，切回中文时独立 LB40 保持 0。",
+      "remaining": "其余功能、精确通知顺序、权限组合及屏内固件版本。"
+    },
+    {
+      "id": "Q-S00-CAND-394-WORD-RUNTIME",
+      "source": "field-1119",
+      "anchor": "三组读数，短按 LB42 为 0",
+      "layers": [
+        "E"
+      ],
+      "status": "partial",
+      "conclusion": "U32 写 65539 和 U16 单写低字后，独立 LW30/LW31 依序为 0/0、3/1、4/1。",
+      "remaining": "其他数值边界、键盘输入、完整设备与固件覆盖。"
+    },
+    {
+      "id": "Q-S00-CAND-433-LAMP-RUNTIME",
+      "source": "field-1119",
+      "anchor": "三组读数，短按 LB42 为 0",
+      "layers": [
+        "E"
+      ],
+      "status": "partial",
+      "conclusion": "两个独立 U16 多态指示与 LB42 双态指示按刺激显示对应值。",
+      "remaining": "其他监视类型、越界值、权限组合及屏内固件版本。"
+    },
+    {
+      "id": "Q-S00-CAND-700-TEXT-RUNTIME",
+      "source": "field-1119",
+      "anchor": "用户确认文字正常，复位 LB40 后切英文得到",
+      "layers": [
+        "E"
+      ],
+      "status": "partial",
+      "conclusion": "独立双语静态文本随语言动作显示 LANG = EN 与 LANG = CN。",
+      "remaining": "缺译、语言共享、重启后语言及其他动态文本场景。"
     }
   ]
 }

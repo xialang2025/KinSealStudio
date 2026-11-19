@@ -26,7 +26,7 @@
     "P按KSP与完整SM分别解释；R预览与C设备像素分别解释。九类受限背景C不得扩成全样式/多页/配置通过。",
     "历史36项原厂基线完整传输、早期五类独立下载和六份默认人工屏显分别保留。2026-11-19 追加八次独立现场传输，验收范围以样例观察为准。",
     "宽度提示的提交/重启生命周期修复已由B标识及后续默认图形实屏反馈证实；不把历史提示重开为当前未修故障。",
-    "2026-11-19 用户在场，USB 实物收尾后确认 TEST。设备实际固件、序列号和独立型号证据仍未知。",
+    "2026-11-19 用户在场，USB 实物收尾后确认 TEST。用户确认 AMT070W124-L800X480R。实机固件和序列以及独立铭牌仍待取证。",
     "本地阶段3未合并续作与b73a3cf已发布基线分开；LT779是独立扩展，不能混算AMT阶段进度。",
     "历史开放原子/入口/字段与308候选是重叠的调查视图，均需与阶段4/5新成果对账；不是几千个确认未实现功能。",
     "三项已关闭事实继续关闭：Q-FUNC-MACRO-001、Q-LAMP-MACRO-001、Q-LAMP-COUNT-001；U-308不建立功能问题。"
@@ -116,7 +116,8 @@
       "completedScope": [
         "落地与仍欠见关联items；不以其它层或全阶段通过替代。",
         "194入口/121 QAction及真实12对象全选已采，产品命令/局部输入路由已实现。",
-        "31控件/9图形/表格分别追踪；阶段4已补编辑器，阶段5已有受限静态C。"
+        "31控件/9图形/表格分别追踪；阶段4已补编辑器，阶段5已有受限静态C。",
+        "未修改原厂 V5.1 副本在非管理员后台因权限提示停在编辑器前。Lite 的共享命令、保存后重新打开、关闭保存/丢弃/取消及重开回归通过。"
       ],
       "remaining": [
         "原厂空工程/单选/完整配置/只读运行状态、dirty保存重开，以及全入口焦点快捷键未闭合。",
@@ -124,11 +125,12 @@
       ],
       "blockers": [
         "几何x+1和Save/Undo使能不证明真实dirty；原ABI/事件失败不能视为禁用。",
-        "旧台账早于31编辑切片，直接沿用open或按能点击全关都会误报。"
+        "旧台账早于31编辑切片，直接沿用open或按能点击全关都会误报。",
+        "当前执行进程无管理员令牌；原厂启动提示需要管理员身份。"
       ],
       "nextAction": [
-        "复用121表，仅补缺失状态，真实用户等价事件→保存→重开，优先单选/dirty。",
-        "按historyEntryIssues逐ID复用最新控件/命令/配置证据，再分配精确缺口。"
+        "可用具备管理员身份的隔离后台环境时，先验证空工程和真实单选，随后执行修改→保存→关闭→重开并保存回执。",
+        "195条入口继续按当前实现证据逐ID对照，快捷键及右键/双击独立记录。"
       ],
       "acceptance": [
         "八状态身份明确，Ctrl+P/copym等焦点行为、dirty/关闭提示有原厂真值表。",
@@ -143,6 +145,10 @@
           "path": "design_plan/01_阶段0_基线范围与证据管理.md",
           "line": 30,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "sourceAssessment": {
@@ -177,7 +183,8 @@
       "activeOpen": true,
       "completedScope": [
         "落地与仍欠见关联items；不以其它层或全阶段通过替代。",
-        "31手册按SHA/行号接入1521字段追踪及事件/验收候选。"
+        "31手册按SHA/行号接入1521字段追踪及事件/验收候选。",
+        "C02 位按钮操作类型已从手册字段追到四份原厂 SM BE32、Lite 模型和 type10 控件记录 LE32@0x114。五个本轮用例/数据行通过。"
       ],
       "remaining": [
         "复合行拆分、真实enabled/visible/checked、值域/隐藏寿命、源设备映射仍需逐字段核定。"
@@ -199,6 +206,10 @@
           "path": "design_plan/01_阶段0_基线范围与证据管理.md",
           "line": 38,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "sourceAssessment": {
@@ -232,10 +243,11 @@
       "completedScope": [
         "落地与仍欠见关联items；不以其它层或全阶段通过替代。",
         "308候选冻结；799Q=613原子+186父，3历史事实关闭沿用。",
-        "613原子逐条建立当前证据和恢复路径，按同版本同层既有证据核销48项、部分覆盖89项；186个父按去重叶原子汇总。"
+        "613原子逐条建立当前证据和恢复路径，按同版本同层既有证据核销48项、部分覆盖89项；186个父按去重叶原子汇总。",
+        "新增四条实屏部分证据，旧37条来源记录在新固定提交的文件字节一致。"
       ],
       "remaining": [
-        "89项部分覆盖需补声明的剩余分支，473项待采用单项证据；185个父仍开放。U-181渲染与U-079运行分支继续分层处理。"
+        "93项已有部分证据，469项仍待单项证据，185个父项开放。U-181渲染与U-079运行仍分层追踪。"
       ],
       "blockers": [
         "单项证据需明确V5.1范围、层级和刺激；当前索引无法证明未覆盖的原厂行为或设备运行。"
@@ -258,6 +270,10 @@
         {
           "path": "design_plan/S00-04历史原子逐项对账.md",
           "line": 1
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "sourceAssessment": {
@@ -337,16 +353,17 @@
       "activeOpen": true,
       "completedScope": [
         "落地与仍欠见关联items；不以其它层或全阶段通过替代。",
-        "AMT XML、USB/libusb0和真实T回执已有；后续若干静态图形用户已确认屏显。"
+        "AMT XML、USB/libusb0和真实T回执已有；后续若干静态图形用户已确认屏显。",
+        "用户确认 AMT070W124-L800X480R，量得约7英寸。所给907264字节镜像与原厂 V5.1 逐字节一致，之前 0x4C USB 回执及 TEST 恢复可追溯。"
       ],
       "remaining": [
-        "实际固件版本/可复核屏身份，内部LB/LW和PLC/从站连接/观察量/恢复条件仍待固定。"
+        "屏内固件版本、唯一序列及独立铭牌证据待取得。记录 PLC 实际连接、可独立核验的寄存器与运行值保持条件。"
       ],
       "blockers": [
         "VID/PID及工程元数据不足证明固件；旧E=false不抹去后续已确认图形，也不升级其它E。"
       ],
       "nextAction": [
-        "取得设备型号/版本页，建立寄存器观察及PLC回读样例，逐控制族复用已有E。"
+        "从实屏版本页记录实际固件与序列信息。复用已实测的内部LB/LW及TEST恢复例，专用PLC/从站参数和可读寄存器取得后再补外部观测。"
       ],
       "acceptance": [
         "型号固件驱动连接版本与T/E一一对应，未观测范围保持待验。"
@@ -359,6 +376,10 @@
           "path": "design_plan/01_阶段0_基线范围与证据管理.md",
           "line": 62,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "sourceAssessment": {
@@ -8548,8 +8569,8 @@
       "title": "S10-01 · 冻结现场矩阵与恢复能力",
       "status": "部分进展；完整任务仍开放",
       "activeOpen": true,
-      "completedScope": "冻结阶段9/恢复阶段6程序、KSP及契约；40份旧样例重新审计，当前USB端点与宏14恢复材料逐段核对，实际恢复页用户确认。 本轮便携版、输入及线上契约已冻结，CodexProbeTest十段与历史一致，恢复后用户确认TEST。",
-      "remaining": "唯一硬件号、实机型号独立证据及实际固件版本仍未知；未上载屏内原工程和运行数据。",
+      "completedScope": "冻结阶段9/恢复阶段6程序、KSP及契约；40份旧样例重新审计，当前USB端点与宏14恢复材料逐段核对，实际恢复页用户确认。 本轮便携版、输入及线上契约已冻结，CodexProbeTest十段与历史一致，恢复后用户确认TEST。 阶段0补充用户确认型号 AMT070W124-L800X480R、7英寸与已知原厂镜像 SHA。",
+      "remaining": "屏端固件版本、唯一硬件号和独立铭牌证据仍待核。屏内原工程及运行数据仍需上载验证。",
       "blockers": [
         "当前C/T/运行能力范围",
         "可恢复工程与设备身份"
@@ -8579,6 +8600,10 @@
         {
           "kind": "2026-11-19 现场续验证据",
           "path": "design_plan/阶段10现场续验_20261119.md"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "sourceAssessment": {
@@ -17428,10 +17453,10 @@
       "title": "八种工程状态、dirty和焦点快捷键真值表",
       "status": "待原厂补证",
       "scope": "阶段0",
-      "completedScope": "194入口/121 QAction及真实12对象全选已采，产品命令/局部输入路由已实现。",
+      "completedScope": "194入口/121 QAction及真实12对象全选已采，产品命令/局部输入路由已实现。 同哈希未修改 V5.1 副本在私有桌面显示管理员身份要求。Lite 四项工作流回归通过。",
       "remaining": "原厂空工程/单选/完整配置/只读运行状态、dirty保存重开，以及全入口焦点快捷键未闭合。",
       "blockers": "几何x+1和Save/Undo使能不证明真实dirty；原ABI/事件失败不能视为禁用。",
-      "nextAction": "复用121表，仅补缺失状态，真实用户等价事件→保存→重开，优先单选/dirty。",
+      "nextAction": "在具备管理员权限的隔离后台环境先补原厂单选、脏态和保存重开，再推广到其余状态。",
       "acceptance": "八状态身份明确，Ctrl+P/copym等焦点行为、dirty/关闭提示有原厂真值表。",
       "relatedIds": [
         "Q-S00-ENTRY-STATE-EMPTY",
@@ -17465,6 +17490,10 @@
           "path": "design_plan/A02_全局入口与工程配置规范.md",
           "line": 85,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "countAsConfirmedUnimplemented": false
@@ -17508,7 +17537,7 @@
       "title": "复合字段原子化、启用事件与原厂规格",
       "status": "待原厂补证",
       "scope": "阶段0",
-      "completedScope": "31手册按SHA/行号接入1521字段追踪及事件/验收候选。",
+      "completedScope": "31手册按SHA/行号接入1521字段追踪及事件/验收候选。 C02 操作类型已建立手册→事件→原厂保存样本→模型→设备记录的证据链。",
       "remaining": "复合行拆分、真实enabled/visible/checked、值域/隐藏寿命、源设备映射仍需逐字段核定。",
       "blockers": "1521是结构化记录数，不是原子字段数或D通过数；后续证据未自动回写全部F/EV/AC。",
       "nextAction": "逐当前控件先匹配正式补证，再拆复合行，仅为缺口做最小原厂探针。",
@@ -17532,6 +17561,10 @@
           "path": "docs/stage0-evidence/field-traceability.json",
           "line": 1,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "countAsConfirmedUnimplemented": false
@@ -17541,8 +17574,8 @@
       "title": "799历史问题与当前证据逐条核销",
       "status": "已有逐项核销，剩余待证",
       "scope": "阶段0",
-      "completedScope": "308候选冻结；799Q=613原子+186父。3项历史事实沿用，按同版本同层既有证据核销48项、部分覆盖89项，并给出每个原子及父的去向。",
-      "remaining": "89项剩余验证分支、473项仍待采用单项证据。185个父仍开放，含U-181渲染/U-079运行分支。",
+      "completedScope": "308候选冻结；799Q=613原子+186父。3项历史事实沿用，按同版本同层既有证据核销48项、部分覆盖89项，并给出每个原子及父的去向。 采用四条S10实屏局部证据，旧的51条完整核销保持有效。",
+      "remaining": "93条部分覆盖、469条待逐项证据，合计562条开放原子，185个父项仍开放。",
       "blockers": "单项证据需明确V5.1范围、层级和刺激；索引关联仅用于定位下一步。",
       "nextAction": "按S00-04逐项对账中的具体未覆盖范围取最小原厂或实物证据，再按精确原子ID采用。",
       "acceptance": "613原子均有当前状态和证据缺口，所有U/Q去向保留，数量与测试独立。",
@@ -17574,6 +17607,10 @@
         {
           "path": "design_plan/S00-04历史原子逐项对账.md",
           "line": 1
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "countAsConfirmedUnimplemented": false
@@ -17583,8 +17620,8 @@
       "title": "屏型号/固件身份与现场资源固定",
       "status": "待实物",
       "scope": "阶段0",
-      "completedScope": "AMT XML、USB/libusb0和真实T回执已有；后续若干静态图形用户已确认屏显。",
-      "remaining": "实际固件版本/可复核屏身份，内部LB/LW和PLC/从站连接/观察量/恢复条件仍待固定。",
+      "completedScope": "AMT XML、USB/libusb0和真实T回执已有；后续若干静态图形用户已确认屏显。 用户确认 AMT070W124-L800X480R，仓库参考镜像与原厂 V5.1 相同。",
+      "remaining": "屏内固件版本、设备序列号、独立铭牌及PLC/从站实际连接和观察量。",
       "blockers": "VID/PID及工程元数据不足证明固件；旧E=false不抹去后续已确认图形，也不升级其它E。",
       "nextAction": "取得设备型号/版本页，建立寄存器观察及PLC回读样例，逐控制族复用已有E。",
       "acceptance": "型号固件驱动连接版本与T/E一一对应，未观测范围保持待验。",
@@ -17613,6 +17650,10 @@
           "path": "docs/stage1-language-evidence/README.md",
           "line": 25,
           "branch": "worktree"
+        },
+        {
+          "kind": "阶段0续验证据",
+          "path": "design_plan/阶段0续验_20261119.md"
         }
       ],
       "countAsConfirmedUnimplemented": false
@@ -25655,13 +25696,13 @@
   ],
   "historyAtomicReconciliation": {
     "evidencePath": "design_plan/未完成任务证据/history-atomic-adoptions-20261119.json",
-    "evidenceCanonicalSha256": "78ee9fd160d6c72257ae125b5d98e9b13a47ca612e9ab9c815dca48b115ae422",
+    "evidenceCanonicalSha256": "6d7cdeccc7464b80f442e23747788e7401da9ef975ae1321659383f1e1d87db8",
     "reportPath": "design_plan/S00-04历史原子逐项对账.md",
     "atomicCounts": {
-      "historical_closed": 3,
       "evidence_closed": 48,
-      "partial": 89,
-      "open": 473
+      "open": 469,
+      "partial": 93,
+      "historical_closed": 3
     }
   },
   "history": {
@@ -177925,7 +177966,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "2026-11-19 阶段6、8、10完成五项在场实际观察，八次 USB 下载全部与契约一致，恢复 TEST。完整阶段、设备身份及真实 PLC 等余项继续开放。",
+  "activitySummary": "2026-11-19 阶段0补录用户确认机型与镜像、位按钮源和设备字段、四项历史实屏部分证据；原厂 V5.1 后台受管理员身份限制。现场五项及 TEST 恢复证据见对应回执。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
@@ -179002,5 +179043,13 @@
     "evidenceIndex": "docs/stage10-evidence/physical-field-20261119/field-summary.json",
     "report": "design_plan/阶段10现场续验_20261119.md",
     "activeOpenTasks": 76
+  },
+  "stage0Followup20261119": {
+    "report": "design_plan/阶段0续验_20261119.md",
+    "evidence": "design_plan/未完成任务证据/阶段0续验证据_20261119.json",
+    "baseCommit": "8dfe834655b5ab6f8b16fae02052a536f70f497f",
+    "openStage0Tasks": 4,
+    "nativeEditorEntered": false,
+    "userConfirmedTarget": "AMT070W124-L800X480R"
   }
 }
