@@ -519,7 +519,7 @@ void LocalHelpTests::packagedCatalog() //20261114-10 add
     QJsonObject report = helpCatalogReport(root);
 
     QVERIFY2(report.value(QStringLiteral("valid")).toBool(), QJsonDocument(report).toJson().constData());
-    QCOMPARE(report.value(QStringLiteral("topicsChecked")).toArray().size(), 8);
+    QCOMPARE(report.value(QStringLiteral("topicsChecked")).toArray().size(), 17); //20261119-8 change: Eight chapters and nine validated section destinations.
     QVERIFY(report.value(QStringLiteral("commandCount")).toInt() >= 100);
 }
 
@@ -596,22 +596,24 @@ void LocalHelpTests::dialogHelpCommandRoutes() //20261118-4 add
 void LocalHelpTests::dialogF1UsesExplicitContext_data() //20261119-2 add
 {
     QTest::addColumn<QString>("objectName");
-    QTest::newRow("image") << QStringLiteral("ImageDisplayDialog");
-    QTest::newRow("alarm-registration") << QStringLiteral("AlarmRegistrationDialog");
-    QTest::newRow("collection") << QStringLiteral("DataCollectionDialog");
-    QTest::newRow("recipe-definition") << QStringLiteral("RecipeDialog");
+    QTest::addColumn<QString>("anchor"); //20261119-8 add: Assert the target within the shared chapter, not only its filename.
+    QTest::newRow("image") << QStringLiteral("ImageDisplayDialog") << QStringLiteral("display-image");
+    QTest::newRow("alarm-registration") << QStringLiteral("AlarmRegistrationDialog") << QStringLiteral("config-alarm");
+    QTest::newRow("collection") << QStringLiteral("DataCollectionDialog") << QStringLiteral("config-collection");
+    QTest::newRow("recipe-definition") << QStringLiteral("RecipeDialog") << QStringLiteral("config-recipe");
 }
 
 /******************************************************************************
  * Function Name   : LocalHelpTests::dialogF1UsesExplicitContext
  * Description     : Send F1 to a child field and verify the packaged chapter and its dialog owner.
- * Input Parameters: QtTest objectName, KINSEAL_HELP_SOURCE_ROOT environment variable
+ * Input Parameters: QtTest objectName, anchor, KINSEAL_HELP_SOURCE_ROOT environment variable
  * Return Value    : None
  * Date            : 2026.11.19
  ******************************************************************************/
 void LocalHelpTests::dialogF1UsesExplicitContext() //20261119-2 add
 {
     QFETCH(QString, objectName);
+    QFETCH(QString, anchor); //20261119-8 add
     QWidget owner;
     QDialog editor(&owner);
     QLineEdit field(&editor);
@@ -619,6 +621,7 @@ void LocalHelpTests::dialogF1UsesExplicitContext() //20261119-2 add
     LocalHelpController controller(&owner, root);
     QDialog *viewer;
     QLabel *status;
+    QTextBrowser *browser;
 
     editor.setObjectName(objectName); // Resolve via stable IDs even when titles are translated or empty.
     controller.installContextHelp();
@@ -629,6 +632,9 @@ void LocalHelpTests::dialogF1UsesExplicitContext() //20261119-2 add
     status = viewer->findChild<QLabel *>(QStringLiteral("LocalHelpStatus"));
     QVERIFY(status != nullptr);
     QVERIFY(status->text().endsWith(QStringLiteral("controls.html")));
+    browser = viewer->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+    QVERIFY(browser != nullptr);
+    QCOMPARE(browser->document()->baseUrl().fragment(), anchor); //20261119-8 add
 }
 
 QTEST_MAIN(LocalHelpTests)

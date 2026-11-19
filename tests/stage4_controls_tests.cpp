@@ -66,6 +66,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTextBrowser> //20261119-2 add
+#include <QTextDocument> //20261119-8 add
 #include <QTimer>
 #include <limits>
 
@@ -1757,23 +1758,25 @@ static HmiObject timeObject() //20261112-0 add
 void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter_data() //20261119-2 add
 {
     QTest::addColumn<QString>("family");
-    QTest::newRow("gif") << QStringLiteral("gif");
-    QTest::newRow("number") << QStringLiteral("number");
-    QTest::newRow("ascii") << QStringLiteral("ascii");
-    QTest::newRow("time") << QStringLiteral("time");
-    QTest::newRow("static-text") << QStringLiteral("text");
+    QTest::addColumn<QString>("anchor"); //20261119-8 add: Validate the exact section for each help button.
+    QTest::newRow("gif") << QStringLiteral("gif") << QStringLiteral("display-gif");
+    QTest::newRow("number") << QStringLiteral("number") << QStringLiteral("display-number");
+    QTest::newRow("ascii") << QStringLiteral("ascii") << QStringLiteral("display-ascii");
+    QTest::newRow("time") << QStringLiteral("time") << QStringLiteral("display-time");
+    QTest::newRow("static-text") << QStringLiteral("text") << QStringLiteral("static-text");
 }
 
 /******************************************************************************
  * Function Name   : Stage4ControlTests::displayHelpButtonsOpenPackagedChapter
  * Description     : Click real editor buttons and verify local text, reusable ownership and no editor acceptance.
- * Input Parameters: QtTest family, executable-relative help package
+ * Input Parameters: QtTest family, anchor, executable-relative help package
  * Return Value    : None
  * Date            : 2026.11.19
  ******************************************************************************/
 void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter() //20261119-2 add
 {
     QFETCH(QString, family);
+    QFETCH(QString, anchor); //20261119-8 add
     const HmiProject project;
     HmiObject textObject;
     int finishedCount = 0;
@@ -1783,6 +1786,7 @@ void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter() //20261119-2 ad
     QDialog *viewer;
     QTextBrowser *browser;
     QPushButton *help;
+    QRadioButton *asciiMode;
     QString buttonsName;
 
     if (family == QStringLiteral("gif"))
@@ -1814,10 +1818,19 @@ void Stage4ControlTests::displayHelpButtonsOpenPackagedChapter() //20261119-2 ad
     browser = viewer->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
     QVERIFY(browser != nullptr);
     QVERIFY(browser->toPlainText().contains(QStringLiteral("放置与修改")));
+    QCOMPARE(browser->document()->baseUrl().fragment(), anchor); //20261119-8 add
     QCOMPARE(finishedCount, 0);
     viewer->close();
+    if (family == QStringLiteral("number")) //20261119-8 add: Resolve the current draft mode after an in-place switch.
+    {
+        asciiMode = editor->findChild<QRadioButton *>(QStringLiteral("NumberFamily1"));
+        QVERIFY(asciiMode != nullptr);
+        asciiMode->click();
+        anchor = QStringLiteral("display-ascii");
+    }
     help->click();
     QVERIFY(viewer->isVisible());
+    QCOMPARE(browser->document()->baseUrl().fragment(), anchor); //20261119-8 add
     QCOMPARE(editor->findChildren<QDialog *>(QStringLiteral("LocalHelpDialog"), Qt::FindDirectChildrenOnly).size(), 1);
     QCOMPARE(finishedCount, 0);
 }

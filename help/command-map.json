@@ -34,6 +34,42 @@
     "limits": {
       "file": "limits.html",
       "title": "限制与常见提示"
+    },
+    "static-text": {
+      "file": "controls.html#static-text",
+      "title": "静态文本"
+    },
+    "display-gif": {
+      "file": "controls.html#display-gif",
+      "title": "GIF 播放与显现"
+    },
+    "display-number": {
+      "file": "controls.html#display-number",
+      "title": "数值输入与显示"
+    },
+    "display-ascii": {
+      "file": "controls.html#display-ascii",
+      "title": "ASCII 输入与显示"
+    },
+    "display-time": {
+      "file": "controls.html#display-time",
+      "title": "日期、星期与时间"
+    },
+    "display-image": {
+      "file": "controls.html#display-image",
+      "title": "图片来源与切换"
+    },
+    "config-alarm": {
+      "file": "controls.html#config-alarm",
+      "title": "报警登记"
+    },
+    "config-collection": {
+      "file": "controls.html#config-collection",
+      "title": "数据采集"
+    },
+    "config-recipe": {
+      "file": "controls.html#config-recipe",
+      "title": "配方定义"
     }
   },
   "commands": {
@@ -813,8 +849,8 @@
     },
     "help_AlarmRegistrationDialog": {
       "label": "报警登录帮助",
-      "topic": "controls",
-      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "topic": "config-alarm",
+      "capability": "设置报警读取地址、扫描周期、消息；按数位地址或条件报警编辑。",
       "coverage": "chapter-summary"
     },
     "help_BitButtonDialog": {
@@ -831,8 +867,8 @@
     },
     "help_DataCollectionDialog": {
       "label": "数据采集帮助",
-      "topic": "controls",
-      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "topic": "config-collection",
+      "capability": "设置取样地址、长度、次数和方式，再配置数据项；活动设备采集另有范围。",
       "coverage": "chapter-summary"
     },
     "help_DataGroupDialog": {
@@ -855,8 +891,8 @@
     },
     "help_GifDisplayDialog": {
       "label": "GIF显示器帮助",
-      "topic": "controls",
-      "capability": "选择工程 GIF、试播和编辑控制位/显现条件；设备端编译和受位控制播放仍需按支持范围验收。",
+      "topic": "display-gif",
+      "capability": "选择工程 GIF、试播，分别配置控制位和显现条件；设备播放需按目标验证。",
       "coverage": "chapter-summary"
     },
     "help_GraphicDialog": {
@@ -885,8 +921,8 @@
     },
     "help_ImageDisplayDialog": {
       "label": "图片显示器帮助",
-      "topic": "controls",
-      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "topic": "display-image",
+      "capability": "选择图片资源、设置显示模式，检查失效资源与设备端支持范围。",
       "coverage": "chapter-summary"
     },
     "help_MessageDisplayDialog": {
@@ -902,9 +938,9 @@
       "coverage": "chapter-summary"
     },
     "help_NumberDisplayDialog": {
-      "label": "数值显示、ASCII显示和时间显示帮助",
-      "topic": "controls",
-      "capability": "三种控件共用属性对话框，分别编辑数值输入和监视、ASCII 字符、时间显示；设备编码与运行验证按控件独立验收。",
+      "label": "数值输入与显示帮助",
+      "topic": "display-number",
+      "capability": "编辑监视地址、数据类型和输入条件；设备端按支持配置检查。",
       "coverage": "chapter-summary"
     },
     "help_QrCodeDialog": {
@@ -915,8 +951,8 @@
     },
     "help_RecipeDialog": {
       "label": "配方帮助",
-      "topic": "controls",
-      "capability": "独立控件/配置编辑、字段校验及资源引用；可编辑不代表全部原生源/设备编码/运行功能已闭合。",
+      "topic": "config-recipe",
+      "capability": "配置配方和数据项，分开检查工程定义与配方显示器引用。",
       "coverage": "chapter-summary"
     },
     "help_RecipeDisplayDialog": {
@@ -939,8 +975,8 @@
     },
     "help_StaticTextDialog": {
       "label": "静态文本帮助",
-      "topic": "controls",
-      "capability": "编辑各工程语言的文字、字体、填充和显现条件；不同设备编译路径以当前范围检查为准。",
+      "topic": "static-text",
+      "capability": "编辑各工程语言的文字、字体、填充和显现条件；设备编译范围以当前检查为准。",
       "coverage": "chapter-summary"
     },
     "help_TrendDialog": {
@@ -975,7 +1011,7 @@
     },
     {
       "objectName": "StaticTextDialog",
-      "topic": "controls"
+      "topic": "static-text"
     },
     {
       "objectName": "MessageDisplayDialog",
@@ -991,23 +1027,23 @@
     },
     {
       "objectName": "GifDisplayDialog",
-      "topic": "controls"
+      "topic": "display-gif"
     },
     {
       "objectName": "ImageDisplayDialog",
-      "topic": "controls"
+      "topic": "display-image"
     },
     {
       "objectName": "NumberDisplayDialog",
-      "topic": "controls"
+      "topic": "display-number"
     },
     {
       "objectName": "AsciiDisplayDialog",
-      "topic": "controls"
+      "topic": "display-ascii"
     },
     {
       "objectName": "TimeDisplayDialog",
-      "topic": "controls"
+      "topic": "display-time"
     },
     {
       "objectName": "ScreenButtonDialog",
@@ -1071,11 +1107,11 @@
     },
     {
       "objectName": "AlarmRegistrationDialog",
-      "topic": "controls"
+      "topic": "config-alarm"
     },
     {
       "objectName": "DataCollectionDialog",
-      "topic": "controls"
+      "topic": "config-collection"
     },
     {
       "objectName": "HistoryDataDialog",
@@ -1087,7 +1123,7 @@
     },
     {
       "objectName": "RecipeDialog",
-      "topic": "controls"
+      "topic": "config-recipe"
     },
     {
       "objectName": "GraphicDialog",
