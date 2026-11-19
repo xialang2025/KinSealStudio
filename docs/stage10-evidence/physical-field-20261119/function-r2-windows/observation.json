@@ -1,0 +1,26 @@
+{
+  "observedBy": "user at touch screen",
+  "pageMarker": "S10-FUNC-LOCAL-1114",
+  "reply": "文字正常，两组结果都符合",
+  "before": "The previous offscreen build showed square characters",
+  "steps": [
+    {
+      "stimulus": [
+        "RESET LB40",
+        "LANG EN + N40"
+      ],
+      "languageText": "LANG = EN",
+      "independentLB40": 1
+    },
+    {
+      "stimulus": [
+        "RESET LB40",
+        "LANG CN"
+      ],
+      "languageText": "LANG = CN",
+      "independentLB40": 0
+    }
+  ],
+  "acceptedScope": "Readability, language switching, one independent output-bit notification",
+  "transferRunSha256": "e873203b080c47eeac7e728d9e344de5b1d0a28a01016f4e719537699c72abf3"
+}

@@ -1,0 +1,78 @@
+{
+  "binarySha256": "153c9c2162d52c6f4023dd01dcca7eb9fcc494e5a24121206d4b2263a00d6641",
+  "sdk": {
+    "armcc.exe": "b05c77f2f5d76950c153cee011d73d4a8d979eb3037631ecd669b4e29de71bcf",
+    "armlink.exe": "ee709916f69bdcd6d45bcf9888d87fc50fde3e5520b6b36c61a07691d038ab61",
+    "fromelf.exe": "dbe5f3d767c75eb0528ef8b9b8f0a5f3a17e2f82fa599292a1c8b58a23da2f21"
+  },
+  "cases": {
+    "function": {
+      "sample": "samples/stage10/function-local.ksp",
+      "sha256": "7b6da8cb7739d41c76716406f8f61c041e91358750451c3853ebb172f2a0ff96",
+      "exits": [
+        0,
+        0,
+        0
+      ],
+      "wireDataSegments": 12,
+      "contractSha256": "40731abda8e7ecc887e8f218c1245637995c08a33e700dca53f7094def2769d0",
+      "wireBound": true
+    },
+    "macro": {
+      "sample": "samples/stage6/macro-14.ksp",
+      "sha256": "c8d56218ec0d094406346328db1f8b2ed9b5345e211011bddac9644ce9ca0368",
+      "exits": [
+        0,
+        0,
+        0
+      ],
+      "wireDataSegments": 14,
+      "contractSha256": "ff5fb1810f32d96e34d8f794e89772f20d57de3501be3fbb936ad4050db28f5b",
+      "wireBound": true
+    },
+    "codex": {
+      "sample": "samples/native-device-test/CodexProbeTest.ksp",
+      "sha256": "9d08bdab87e171f03b0c7a2b83b2f0642d176e7581eaa23117f528acea3c8752",
+      "exits": [
+        0,
+        0,
+        0
+      ],
+      "wireDataSegments": 10,
+      "contractSha256": "a243133f82bbead154bbe8af1611cbedec54e4237a06c63e4557cf49a813885e",
+      "wireBound": true
+    },
+    "static": {
+      "sample": "samples/stage6/static-10.ksp",
+      "sha256": "03f65f6357ad35c7a663988fac98394f49ab2807a1be98ece031d9fd0849b24a",
+      "exits": [
+        0,
+        0,
+        0
+      ],
+      "wireDataSegments": 10,
+      "contractSha256": "f05a866d95e2d1cfc58486aa51beb86385a58d39801e45f9c4f5da7b65fe8d4b",
+      "wireBound": true
+    },
+    "u32-press": {
+      "sample": "derived from samples/stage10/{word-lamp-local,bit-lamp-local}.ksp",
+      "sha256": "1e6923e873bf00a402fe7c6ad1dc90c7c747592f0dc407bc60dada37dc923a41",
+      "contractSha256": "d422a00373950b0b6d844acb0169d095285cac7343a046e0e1fc5d45e21050d5",
+      "wireDataSegments": 12,
+      "wireBound": true,
+      "exits": [
+        0,
+        0,
+        0
+      ]
+    },
+    "static-top": {
+      "sha256": "6660e9578bd971b4939d1b4ecd4471c49778cb1967fa8fb4b64b9d3297f6f154",
+      "sample": "Derived static-10.ksp; change only stage6-identifier.y from 430 to 40"
+    },
+    "dynamic": {
+      "sha256": "7e21484b1f5bd92ad637fe0de8b200154ab718c1281f28bc1c5c68e4ddd465b0",
+      "sample": "samples/stage6/dynamic-12.ksp"
+    }
+  }
+}
