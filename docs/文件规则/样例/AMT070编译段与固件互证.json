@@ -1,0 +1,672 @@
+{
+  "annotatedImportPaths": {
+    "AddrPara.dat": [
+      {
+        "address": "0x800A2ED8",
+        "line": 137310,
+        "pathAddress": "0x800FAD78"
+      }
+    ],
+    "AlarmPara.dat": [
+      {
+        "address": "0x8008D63C",
+        "line": 115095,
+        "pathAddress": "0x800FAD48"
+      }
+    ],
+    "Collect.dat": [
+      {
+        "address": "0x8008D71C",
+        "line": 115153,
+        "pathAddress": "0x800FAEF8"
+      }
+    ],
+    "ControlPara.dat": [
+      {
+        "address": "0x80087034",
+        "line": 108257,
+        "pathAddress": "0x800FAD30"
+      }
+    ],
+    "ControlPixel.dat": [
+      {
+        "address": "0x8008F060",
+        "line": 116791,
+        "pathAddress": "0x800FAE60"
+      }
+    ],
+    "Curve.dat": [
+      {
+        "address": "0x8008EF6C",
+        "line": 116728,
+        "pathAddress": "0x800FAE00"
+      }
+    ],
+    "PicLenPara.dat": [
+      {
+        "address": "0x800A3144",
+        "line": 137461,
+        "pathAddress": "0x800FAD60"
+      }
+    ],
+    "Recipe.dat": [
+      {
+        "address": "0x80086E3C",
+        "line": 108127,
+        "pathAddress": "0x800FADEC"
+      }
+    ],
+    "SheetPara.dat": [
+      {
+        "address": "0x8008ED1C",
+        "line": 116574,
+        "pathAddress": "0x800FADA4"
+      }
+    ],
+    "SheetPixel.dat": [
+      {
+        "address": "0x8008EC04",
+        "line": 116502,
+        "pathAddress": "0x800FAEB0"
+      }
+    ],
+    "SysPara.dat": [
+      {
+        "address": "0x8007F628",
+        "line": 100359,
+        "pathAddress": "0x800FAD90"
+      }
+    ]
+  },
+  "archiveCommit": "c80c7d5582634c404852f116f75f34ebc023501b",
+  "execution": "static ARM rules projected on archived samples",
+  "firmware": {
+    "length": 907264,
+    "sha256": "74d510f150dc8edadf8e967bdb3c00ca5790ca68b9da6f906125a5234a485c24"
+  },
+  "format": "KinSeal-AMT070-DAT-firmware-crosscheck-v1",
+  "instructions": {
+    "0x8006AECC": {
+      "assembly": "ldrb r12,[r4,#0x2]",
+      "line": 79252,
+      "raw": "02c0d4e5"
+    },
+    "0x8006AEE0": {
+      "assembly": "add r0,r2,r2, lsl #0x2",
+      "line": 79257,
+      "raw": "020182e0"
+    },
+    "0x8006AEE4": {
+      "assembly": "add r0,r4,r0, lsl #0x3",
+      "line": 79258,
+      "raw": "800184e0"
+    },
+    "0x8006AEE8": {
+      "assembly": "ldrb r3,[r0,#0x8c]",
+      "line": 79259,
+      "raw": "8c30d0e5"
+    },
+    "0x8006AEF0": {
+      "assembly": "cmp r3,#0x0",
+      "line": 79261,
+      "raw": "000053e3"
+    },
+    "0x8006AEF4": {
+      "assembly": "cmpne r3,#0x2",
+      "line": 79262,
+      "raw": "02005313"
+    },
+    "0x8006AEF8": {
+      "assembly": "addeq r1,r1,#0x1",
+      "line": 79263,
+      "raw": "01108102"
+    },
+    "0x8006AEFC": {
+      "assembly": "addne r1,r1,#0x2",
+      "line": 79264,
+      "raw": "02108112"
+    },
+    "0x8006AF08": {
+      "assembly": "and r0,r1,#0xff",
+      "line": 79267,
+      "raw": "ff0001e2"
+    },
+    "0x8006AF18": {
+      "assembly": "strb r0,[r4,#0x1]",
+      "line": 79271,
+      "raw": "0100c4e5"
+    },
+    "0x8006BAAC": {
+      "assembly": "mov r0,#0x37",
+      "line": 80026,
+      "raw": "3700a0e3"
+    },
+    "0x8006BAB0": {
+      "assembly": "bl 0x8002b544  ; UNCONDITIONAL_CALL 8002b544",
+      "line": 80027,
+      "raw": "a3fefeeb"
+    },
+    "0x8006BAB4": {
+      "assembly": "ldrb r0,[r8,#0x0]  ; READ 80720000",
+      "line": 80028,
+      "raw": "0000d8e5"
+    },
+    "0x8006BAE4": {
+      "assembly": "add r0,r6,r6, lsl #0x2",
+      "line": 80040,
+      "raw": "060186e0"
+    },
+    "0x8006BAE8": {
+      "assembly": "add r0,r0,r6, lsl #0x3",
+      "line": 80041,
+      "raw": "860180e0"
+    },
+    "0x8006BAEC": {
+      "assembly": "add r0,r8,r0, lsl #0x2",
+      "line": 80042,
+      "raw": "000188e0"
+    },
+    "0x8006BAF0": {
+      "assembly": "add r1,r0,#0x1",
+      "line": 80043,
+      "raw": "011080e2"
+    },
+    "0x8006BAF4": {
+      "assembly": "mov r2,#0x34",
+      "line": 80044,
+      "raw": "3420a0e3"
+    },
+    "0x8006BAFC": {
+      "assembly": "bl 0x80020bfc  ; UNCONDITIONAL_CALL 80020bfc",
+      "line": 80046,
+      "raw": "3ed4feeb"
+    },
+    "0x8006BB0C": {
+      "assembly": "ldrb r0,[r0,#0x6]",
+      "line": 80050,
+      "raw": "0600d0e5"
+    },
+    "0x8006BB10": {
+      "assembly": "cmp r0,#0x28",
+      "line": 80051,
+      "raw": "280050e3"
+    },
+    "0x8006BB14": {
+      "assembly": "cmpne r0,#0x71",
+      "line": 80052,
+      "raw": "71005013"
+    },
+    "0x8006C578": {
+      "assembly": "mov r2,#0x7d0",
+      "line": 80721,
+      "raw": "7d2ea0e3"
+    },
+    "0x8006C580": {
+      "assembly": "mov r0,#0x41",
+      "line": 80723,
+      "raw": "4100a0e3"
+    },
+    "0x8006C584": {
+      "assembly": "bl 0x8002b544  ; UNCONDITIONAL_CALL 8002b544",
+      "line": 80724,
+      "raw": "eefbfeeb"
+    },
+    "0x8006C58C": {
+      "assembly": "mov r2,#0x590",
+      "line": 80726,
+      "raw": "592ea0e3"
+    },
+    "0x8006C594": {
+      "assembly": "mov r1,r4  ; PARAM 80720000",
+      "line": 80728,
+      "raw": "0410a0e1"
+    },
+    "0x8006C598": {
+      "assembly": "bl 0x80020bfc  ; UNCONDITIONAL_CALL 80020bfc",
+      "line": 80729,
+      "raw": "97d1feeb"
+    },
+    "0x8006C59C": {
+      "assembly": "bl 0x8006aeb8  ; UNCONDITIONAL_CALL 8006aeb8",
+      "line": 80730,
+      "raw": "45faffeb"
+    },
+    "0x8008D790": {
+      "assembly": "mov r0,#0x41",
+      "line": 115182,
+      "raw": "4100a0e3"
+    },
+    "0x8008D794": {
+      "assembly": "b 0x8002b5c8  ; UNCONDITIONAL_JUMP 8002b5c8",
+      "line": 115183,
+      "raw": "8b77feea"
+    },
+    "0x8008EFE0": {
+      "assembly": "mov r0,#0x37",
+      "line": 116757,
+      "raw": "3700a0e3"
+    },
+    "0x8008EFE4": {
+      "assembly": "b 0x8002b5c8  ; UNCONDITIONAL_JUMP 8002b5c8",
+      "line": 116758,
+      "raw": "7771feea"
+    },
+    "0x8009AA14": {
+      "assembly": "add r1,r0,r3, lsl #0x2",
+      "line": 128965,
+      "raw": "031180e0"
+    },
+    "0x8009AA1C": {
+      "assembly": "ldrb r0,[r2,r1,lsl #0x7]",
+      "line": 128967,
+      "raw": "8103d2e7"
+    },
+    "0x8009AA20": {
+      "assembly": "mov r5,#0xb9",
+      "line": 128968,
+      "raw": "b950a0e3"
+    },
+    "0x8009AA28": {
+      "assembly": "mul r5,r4,r5",
+      "line": 128970,
+      "raw": "940505e0"
+    },
+    "0x8009AA38": {
+      "assembly": "add r4,r4,r5, lsl #0x3",
+      "line": 128974,
+      "raw": "854184e0"
+    },
+    "0x8009AA40": {
+      "assembly": "strb r0,[r4,#0x284]  ; DATA 80146db8",
+      "line": 128976,
+      "raw": "8402c4e5"
+    }
+  },
+  "listingSha256": "c6081dc5e1c3af4d8f8c6a43efb4a07a596caa3f745994dbb6db75fe189a6a82",
+  "newHardwareIo": false,
+  "originalCompilerSamples": {
+    "Collect.dat": {
+      "history-data-custom-r5": {
+        "calculatedRuntimeUnits": 3,
+        "classOffsets": [
+          140,
+          180,
+          220
+        ],
+        "classes": [
+          0,
+          0,
+          0
+        ],
+        "items": 3,
+        "path": "docs/stage4-evidence/history-data/native/compiled/history-data-custom-r5/Collect.dat",
+        "sha256": "eaaa1bd1d7f0fb458db2fd64a0522049e0ca01628a876d83b4c81fa35d59ce66"
+      },
+      "history-data-default-r2": {
+        "calculatedRuntimeUnits": 1,
+        "classOffsets": [
+          140
+        ],
+        "classes": [
+          0
+        ],
+        "items": 1,
+        "path": "docs/stage4-evidence/history-data/native/compiled/history-data-default-r2/Collect.dat",
+        "sha256": "8a0daf46786c36e47bf13bacca0c1e601e358a353e67755f0cdc48e68b0adddd"
+      },
+      "history-data-shrunk-r6": {
+        "calculatedRuntimeUnits": 2,
+        "classOffsets": [
+          140,
+          180
+        ],
+        "classes": [
+          0,
+          0
+        ],
+        "items": 2,
+        "path": "docs/stage4-evidence/history-data/native/compiled/history-data-shrunk-r6/Collect.dat",
+        "sha256": "18da87513bb0e3a051ca5bc41e2e4afd6a20ca7baf7aed2ea33671e716a67514"
+      }
+    },
+    "Curve.dat": {
+      "history-default-r2": {
+        "descriptorSpan": [
+          1,
+          53
+        ],
+        "descriptors": 1,
+        "path": "docs/stage4-evidence/history-trend/native/compiled/history-default-r2/Curve.dat",
+        "sha256": "5eedfe23daf5e208a7bb426271c48c196842116edd3e0ce72232e2a1349c7e4d",
+        "tags": [
+          47
+        ]
+      },
+      "trend-default-r3": {
+        "descriptorSpan": [
+          1,
+          53
+        ],
+        "descriptors": 1,
+        "path": "docs/stage4-evidence/trend/native/compiled/trend-default-r3/Curve.dat",
+        "sha256": "00fbb642c1952161c700984e6693d77e35cdf6b61e2576eccfcc8775c8b778f6",
+        "tags": [
+          113
+        ]
+      },
+      "xy-default-r1": {
+        "descriptorSpan": [
+          1,
+          53
+        ],
+        "descriptors": 1,
+        "path": "docs/stage4-evidence/xy-curve/native/compiled/xy-default-r1/Curve.dat",
+        "sha256": "0ff9372a39dd1e05891e49eca57213d3f3eb92bd7f7400658a8947d656a38992",
+        "tags": [
+          40
+        ]
+      }
+    }
+  },
+  "rules": {
+    "Collect.dat": {
+      "classOffsetForFirstItem": 140,
+      "configurationCopyBytes": 1424,
+      "itemClassStride": 40,
+      "itemCountOffset": 2,
+      "matchedClassUnits": 1,
+      "oneUnitClasses": [
+        0,
+        2
+      ],
+      "otherClassUnits": 2,
+      "runtimeAccumulatorMask": 255,
+      "runtimeAccumulatorOffset": 1,
+      "runtimeReadRequestBytes": 2000,
+      "storageSelector": 65
+    },
+    "ControlPara.dat": {
+      "fileRecordStride": 640,
+      "runtimeRecordStride": 1480,
+      "runtimeTypeOffset": 644
+    },
+    "Curve.dat": {
+      "comparedTags": [
+        40,
+        113
+      ],
+      "descriptorCountOffset": 0,
+      "descriptorStride": 52,
+      "dispatchTagOffset": 6,
+      "firstDescriptorOffset": 1,
+      "storageSelector": 55
+    }
+  },
+  "sameDefaultFilesAcrossUsbCases": {
+    "AlarmPara.dat": {
+      "bytes": 47840,
+      "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+    },
+    "Collect.dat": {
+      "bytes": 1424,
+      "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+    },
+    "Curve.dat": {
+      "bytes": 501,
+      "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+    }
+  },
+  "usbCases": {
+    "dynamic-12": {
+      "archiveDirectory": "docs/stage6-evidence/physical-r2/dynamic-12-compiled",
+      "audit": {
+        "automaticRollbackProven": false,
+        "hmiExecutionConfirmed": false,
+        "mismatches": [],
+        "powerRetentionProven": false,
+        "recoveryDisposition": "transport_complete_screen_unobserved",
+        "transportComplete": true,
+        "wireOperationsObserved": 80,
+        "wireOperationsRequired": 80
+      },
+      "collect": {
+        "calculatedRuntimeUnits": 0,
+        "classOffsets": [],
+        "classes": [],
+        "items": 0
+      },
+      "controlFrames": 21,
+      "controlRecords": 5,
+      "controlTypes": [
+        28,
+        10,
+        10,
+        10,
+        10
+      ],
+      "curve": {
+        "descriptorSpan": [
+          1,
+          1
+        ],
+        "descriptors": 0,
+        "tags": []
+      },
+      "files": {
+        "AddrPara.dat": {
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "bytes": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "bytes": 3200,
+          "sha256": "1b061eb7c0b2e6ba6503f742bc946095dae25c2bbad40b388a83d0284c55b376"
+        },
+        "ControlPixel.dat": {
+          "bytes": 40224,
+          "sha256": "def10b5eff5f9edb18a848a26877beda011d187aa065ef20cbc4ede7b2b431d0"
+        },
+        "Curve.dat": {
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "bytes": 2652,
+          "sha256": "8874b50d7b2e601d6e8e740e0f81291e8d7baab83fe42bbd481a95bfdc31ba8c"
+        },
+        "SheetPara.dat": {
+          "bytes": 72,
+          "sha256": "ecbf93fb28e4c786bdaff79abf9e34b9fc80fc9f106736c7c3dde0824f4849e3"
+        },
+        "SheetPixel.dat": {
+          "bytes": 7796,
+          "sha256": "53f49499b6bf3a69a576fee720b25e099bcd17cd9307f835524ec9e0295b3ec2"
+        },
+        "SysPara.dat": {
+          "bytes": 4998,
+          "sha256": "7e6ed2ce804928b66c3b10f40758401be435ac50992873756b05d037edd5bfca"
+        },
+        "upLoad.knr": {
+          "bytes": 1780,
+          "sha256": "2a9d0e85ecd9781cc2fb9858b264e9c27ccb388761a68a3ac852ffa895c58472"
+        }
+      },
+      "wireSegments": 12
+    },
+    "macro-14": {
+      "archiveDirectory": "docs/stage6-evidence/physical-r2/macro-14-compiled",
+      "audit": {
+        "automaticRollbackProven": false,
+        "hmiExecutionConfirmed": false,
+        "mismatches": [],
+        "powerRetentionProven": false,
+        "recoveryDisposition": "transport_complete_screen_unobserved",
+        "transportComplete": true,
+        "wireOperationsObserved": 90,
+        "wireOperationsRequired": 90
+      },
+      "collect": {
+        "calculatedRuntimeUnits": 0,
+        "classOffsets": [],
+        "classes": [],
+        "items": 0
+      },
+      "controlFrames": 2,
+      "controlRecords": 1,
+      "controlTypes": [
+        10
+      ],
+      "curve": {
+        "descriptorSpan": [
+          1,
+          1
+        ],
+        "descriptors": 0,
+        "tags": []
+      },
+      "files": {
+        "AddrPara.dat": {
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "bytes": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "bytes": 640,
+          "sha256": "d635c7f6131ee5690d70f2e26bb04d19fd672db65c1e947dd0f87f3e0cba0507"
+        },
+        "ControlPixel.dat": {
+          "bytes": 7360,
+          "sha256": "b209e3505ea2dece536ed6a8fc294d03ec97c95072f11589637a9a2ef0393630"
+        },
+        "Curve.dat": {
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "MarcoRun.dat": {
+          "bytes": 1048,
+          "sha256": "7ae6900a147a5930098c6518f30d169912a138c507c1e6e2ad23d1f62caaf0f2"
+        },
+        "MarcoVar.dat": {
+          "bytes": 904,
+          "sha256": "cc401ce5099578287fd15c062a92893754851bdb7ca3c1fe742bbff85e2281c2"
+        },
+        "Modbus_RTU_com1.bin": {
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "bytes": 2424,
+          "sha256": "7f7e35f4d3d3c0be8660495d30346df7d0b931edf4acb671b29a859759f6c579"
+        },
+        "SheetPara.dat": {
+          "bytes": 72,
+          "sha256": "c567314e2f27ff19587050f97feacebe76fec5da5c6bb9be131ac95226722ea3"
+        },
+        "SheetPixel.dat": {
+          "bytes": 4557,
+          "sha256": "c863e385e595fd6cfc263d0c228cc3c2b780d914f427cd8d998fcd95a66fc653"
+        },
+        "SysPara.dat": {
+          "bytes": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "bytes": 1073,
+          "sha256": "8b0ae6350cbb8dc96342f62a24496e8d00405d9aecf529be47c1f2c7fddbde77"
+        }
+      },
+      "wireSegments": 14
+    },
+    "static-10": {
+      "archiveDirectory": "docs/stage6-evidence/physical-r1/static-10-compiled",
+      "audit": {
+        "automaticRollbackProven": false,
+        "hmiExecutionConfirmed": false,
+        "mismatches": [],
+        "powerRetentionProven": false,
+        "recoveryDisposition": "transport_complete_screen_unobserved",
+        "transportComplete": true,
+        "wireOperationsObserved": 70,
+        "wireOperationsRequired": 70
+      },
+      "collect": {
+        "calculatedRuntimeUnits": 0,
+        "classOffsets": [],
+        "classes": [],
+        "items": 0
+      },
+      "controlFrames": 0,
+      "controlRecords": 0,
+      "controlTypes": [],
+      "curve": {
+        "descriptorSpan": [
+          1,
+          1
+        ],
+        "descriptors": 0,
+        "tags": []
+      },
+      "files": {
+        "AddrPara.dat": {
+          "bytes": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "bytes": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "bytes": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "Curve.dat": {
+          "bytes": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "bytes": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "bytes": 2400,
+          "sha256": "dad8e6bd6fe73dbd5a7549428845275b181972545a29a20b4735b827d4622b54"
+        },
+        "SheetPara.dat": {
+          "bytes": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+        },
+        "SheetPixel.dat": {
+          "bytes": 4514,
+          "sha256": "e2c01f9f06e4262ccde95648cb8fa0ac05c02a718cacd8f7ee38e08acbc3c112"
+        },
+        "SysPara.dat": {
+          "bytes": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "bytes": 766,
+          "sha256": "411a2e5fcbca5f98fddf68852eb195ae6d244b3a57f8f64ffccd192f5676b824"
+        }
+      },
+      "wireSegments": 10
+    }
+  }
+}
