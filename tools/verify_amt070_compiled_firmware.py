@@ -10,7 +10,7 @@ import struct
 import subprocess
 import sys
 
-from stage10_acceptance import _last_receipt, _native_transfer, require
+from stage10_acceptance import _last_receipt, _native_transfer, parse_json, require
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -216,21 +216,58 @@ def project_curve(data, rule):
             "tags": [data[pos + rule["dispatchTagOffset"]] for pos in positions]}
 
 
-def check_usb_case(run_name, sample, expected, rules):
-    """Bind a compiled package to its manifest, its exact wire payload and captured USB events."""
+def check_manifest_plan(manifest, contract, sample):  # //20261122-2 add
+    """Match every compiler step to the audited command and its optional payload."""
+    segments = {item["name"]: item for item in contract["segments"]}
+    empty_sha = sha256(b"")
+    plan = []
+    for operation in contract["operations"]:
+        name, _, suffix = operation["name"].rpartition("/")
+        if suffix != "command":
+            continue
+        segment = segments.get(name, {})
+        plan.append({
+            "command": int(operation["commandHex"], 16),
+            "name": name,
+            "optionsHex": operation["optionsHex"],
+            "wireBytes": segment.get("wireBytes", 0),
+            "wireSha256": segment.get("wireSha256", empty_sha),
+        })
+    require(manifest.get("complete") is True and manifest.get("transferPlan") == plan,
+            f"Compiler transfer plan differs from contract: {sample}")
+
+
+def check_usb_case(run_name, sample, expected, rules):  # //20261122-2 change
+    """Bind the archived source, compiler package and historical USB receipt to the contract."""
     run_root = f"docs/stage6-evidence/{run_name}"
     package = f"{run_root}/{sample}-compiled"
-    manifest = json.loads(git_blob(f"{package}/compiler-manifest.json"))
-    run = json.loads(git_blob(f"{run_root}/run.json"))
-    contract = json.loads(git_blob(f"{run_root}/{sample}-contract.json"))
-    receipt = _last_receipt(git_blob(f"{run_root}/{sample}-download-stdout.txt"))
+    manifest = parse_json(git_blob(f"{package}/compiler-manifest.json"))
+    run = parse_json(git_blob(f"{run_root}/run.json"))
+    contract = parse_json(git_blob(f"{run_root}/{sample}-contract.json"))
+    receipt_name = f"{sample}-download-stdout.txt"
+    receipt = _last_receipt(git_blob(f"{run_root}/{receipt_name}"))
     audit = _native_transfer(receipt, contract)
     require(audit["transportComplete"] and len(contract["segments"]) == expected,
             f"USB contract did not close for {sample}")
+    identity = contract["identity"]
     require(run["executableSha256"] == manifest["compilerExecutableSha256"]
-            and manifest["targetModel"] == contract["identity"]["targetModel"]
-            and manifest["inputProjectSha256"] == contract["identity"]["modelSha256"],
-            f"Program or project identity mismatch for {sample}")
+            and run["model"] == manifest["targetModel"] == identity["targetModel"]
+            and manifest["inputProjectSha256"] == identity["modelSha256"],
+            f"Program, target or project identity mismatch for {sample}")
+    source_path = f"samples/stage6/{sample}.ksp"
+    source = git_blob(source_path)
+    # These snapshots were read by the Windows runner with CRLF after checkout.
+    source_crlf = source.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    source_sha = sha256(source_crlf)
+    require(source_sha == identity["sourceSha256"], f"Archived KSP source hash mismatch: {sample}")
+    check_manifest_plan(manifest, contract, sample)
+    downloads = [item for item in run["runs"] if item.get("name") == f"{sample}-download"]
+    require(run.get("usbAccessed") is True and len(downloads) == 1
+            and downloads[0].get("stdout") == receipt_name and downloads[0].get("exitCode") == 0,
+            f"Physical USB runner did not confirm the successful receipt: {sample}")
+    require(run.get("firmwareVersion") == identity.get("firmwareVersion") == "not-observed"
+            and manifest.get("firmwareVersionConfirmed") is False,
+            f"Unexpected firmware version claims in the historical evidence: {sample}")
 
     files = {}
     matches = {}
@@ -256,6 +293,11 @@ def check_usb_case(run_name, sample, expected, rules):
     require(len(indices) == 2400 + 12 * frame_count, f"Image index size mismatch for {sample}")
     return {
         "archiveDirectory": package, "wireSegments": expected, "audit": audit,
+        "source": {"path": source_path, "windowsCrlfSha256": source_sha},
+        "compilerExecutableSha256": run["executableSha256"],
+        "targetModel": identity["targetModel"], "modelSha256": identity["modelSha256"],
+        "historicalRunner": {"usbAccessed": run["usbAccessed"], "exitCode": downloads[0]["exitCode"],
+                             "firmwareVersion": run["firmwareVersion"]},
         "controlRecords": control_count, "controlTypes": list(control[::stride]),
         "controlFrames": frame_count, "files": matches,
         "collect": project_collect(files["Collect.dat"], rules["Collect.dat"]),
@@ -305,7 +347,7 @@ def main():
         templates[name] = variants[0]
 
     report = {
-        "format": "KinSeal-AMT070-DAT-firmware-crosscheck-v1",
+        "format": "KinSeal-AMT070-DAT-firmware-crosscheck-v2",
         "archiveCommit": ARCHIVE,
         "firmware": {"length": len(image), "sha256": sha256(image)},
         "listingSha256": sha256(listing),
