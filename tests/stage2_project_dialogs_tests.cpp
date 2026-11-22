@@ -12,6 +12,7 @@
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QStackedWidget>
+#include <QTabWidget>
 #include <QTemporaryDir>
 #include "stage2_project_dialogs.h"
 #include "stage2_system_settings.h"
@@ -48,6 +49,7 @@ private slots:
     void systemUpdatePreservesOtherNodesAndExtensions();
     void systemConflictsAreAtomic();
     void systemDialogCancelAndReopen();
+    void systemDialogSelectsModelAndStartupPage(); //20261122-4 add
     void systemNativeSnapshotIsReadOnly();
 };
 
@@ -1054,6 +1056,64 @@ void Stage2ProjectDialogsTests::systemDialogCancelAndReopen() //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : systemDialogSelectsModelAndStartupPage
+ * Description     : Verify ordinary startup pages, the shared model selector and access boundary.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2ProjectDialogsTests::systemDialogSelectsModelAndStartupPage() //20261122-4 add
+{
+    HmiProject project;
+    HmiPage popup;
+    QComboBox *model;
+    QComboBox *startup;
+    QTabWidget *tabs;
+    QDialogButtonBox *buttons;
+    QString error;
+    int passwordFields = 0;
+
+    QVERIFY2(project.addPage(secondPage(), &error), qPrintable(error));
+    popup.id = QStringLiteral("window-test");
+    popup.name = QStringLiteral("窗口样例");
+    popup.kind = QStringLiteral("window");
+    popup.width = 240;
+    popup.height = 160;
+    QVERIFY2(project.addPage(popup, &error), qPrintable(error));
+    Stage2SystemSettingsDialog dialog(project);
+    model = child<QComboBox>(&dialog, "systemTargetModelCombo");
+    startup = child<QComboBox>(&dialog, "systemStartupPageCombo");
+    tabs = child<QTabWidget>(&dialog, "systemSettingsTabs");
+    buttons = child<QDialogButtonBox>(&dialog, "buttonBox");
+    QCOMPARE(model->currentData().toString(), project.targetModel);
+    QCOMPARE(startup->currentData().toString(), project.startupPageId);
+    QCOMPARE(startup->findData(popup.id), -1);
+    QCOMPARE(tabs->count(), 2);
+    tabs->setCurrentIndex(1);
+    for (QLineEdit *password : tabs->currentWidget()->findChildren<QLineEdit *>())
+    {
+        if (password->echoMode() == QLineEdit::Password)
+        {
+            ++passwordFields;
+            QVERIFY(!password->isEnabled());
+            QVERIFY(password->text().isEmpty());
+        }
+    }
+    QCOMPARE(passwordFields, 10);
+    QSignalSpy help(&dialog, &Stage2SystemSettingsDialog::helpRequested);
+    buttons->button(QDialogButtonBox::Help)->click();
+    QCOMPARE(help.size(), 1);
+    model->setCurrentIndex(model->findText(QStringLiteral("AMZ070W01R")));
+    startup->setCurrentIndex(startup->findData(secondPage().id));
+    buttons->button(QDialogButtonBox::Ok)->click();
+    QCOMPARE(dialog.result(), int(QDialog::Accepted));
+    QCOMPARE(dialog.draftProject().targetModel, QStringLiteral("AMZ070W01"));
+    QCOMPARE(dialog.draftProject().startupPageId, secondPage().id);
+    QCOMPARE(dialog.draftProject().activePageId, project.activePageId);
+    QVERIFY(dialog.draftProject().configurationNodes.isEmpty());
+}
+
+/******************************************************************************
  * Function Name   : systemNativeSnapshotIsReadOnly
  * Description     : Refuse value edits on native snapshots even if a disabled widget is changed programmatically.
  * Input Parameters: None
@@ -1080,9 +1140,16 @@ void Stage2ProjectDialogsTests::systemNativeSnapshotIsReadOnly() //20261110-7 ad
     QVERIFY(error.contains(QStringLiteral("只读")));
     QCOMPARE(snapshot(output), before);
     dialog = new Stage2SystemSettingsDialog(project);
+    QVERIFY(!child<QComboBox>(dialog, "systemTargetModelCombo")->isEnabled()); //20261122-4 add
+    QVERIFY(!child<QComboBox>(dialog, "systemStartupPageCombo")->isEnabled());
     QVERIFY(!child<QSpinBox>(dialog, "screensaverMinutesSpin")->isEnabled());
     QVERIFY(!child<QCheckBox>(dialog, "touchSoundCheck")->isEnabled());
     QVERIFY(!child<QLabel>(dialog, "systemSnapshotReadOnlyLabel")->text().isEmpty());
+    child<QComboBox>(dialog, "systemTargetModelCombo")->setCurrentIndex(1);
+    child<QDialogButtonBox>(dialog, "buttonBox")->button(QDialogButtonBox::Ok)->click();
+    QVERIFY(dialog->result() != QDialog::Accepted);
+    QCOMPARE(snapshot(dialog->draftProject()), snapshot(project));
+    child<QComboBox>(dialog, "systemTargetModelCombo")->setCurrentIndex(0);
     child<QSpinBox>(dialog, "screensaverMinutesSpin")->setValue(2);
     child<QDialogButtonBox>(dialog, "buttonBox")->button(QDialogButtonBox::Ok)->click();
     QVERIFY(dialog->result() != QDialog::Accepted);

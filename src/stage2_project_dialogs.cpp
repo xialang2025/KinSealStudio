@@ -1,5 +1,5 @@
 #include "stage2_project_dialogs.h"
-#include "device_target.h" //20261122-3 add
+#include "stage2_system_settings.h" //20261122-4 change
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -48,24 +48,6 @@ static void addLanguageChoices(QComboBox *combo, const HmiProject &project, bool
 }
 
 /******************************************************************************
- * Function Name   : addTargetChoices
- * Description     : Expose both screen profiles and keep an existing AMZ key stable.
- * Input Parameters: combo, model
- * Return Value    : None.
- * Date            : 2026.11.22
- ******************************************************************************/
-static void addTargetChoices(QComboBox *combo, const QString &model) //20261122-3 add
-{
-    QString amt = QStringLiteral("AMT070W124-L800X480R");
-    QString amz = isAmz070Target(model) ? model : QStringLiteral("AMZ070W01");
-
-    combo->setObjectName(QStringLiteral("targetModelEdit"));
-    combo->addItem(amt, amt);
-    combo->addItem(QStringLiteral("AMZ070W01R"), amz);
-    combo->setCurrentIndex(combo->findData(model));
-}
-
-/******************************************************************************
  * Function Name   : Stage2NewProjectDialog::Stage2NewProjectDialog
  * Description     : Build the observed three-step workflow without creating a directory or file.
  * Input Parameters: seed, suggestedPath, parent
@@ -107,7 +89,8 @@ Stage2NewProjectDialog::Stage2NewProjectDialog(const HmiProject &seed, const QSt
     m_path = new QLineEdit(suggestedPath, identityStep);
     m_path->setObjectName(QStringLiteral("projectPathEdit"));
     m_target = new QComboBox(identityStep); //20261122-3 change
-    addTargetChoices(m_target, seed.targetModel);
+    m_target->setObjectName(QStringLiteral("targetModelEdit")); //20261122-4 change
+    populateStage2TargetChoices(m_target, seed.targetModel);
     identityForm->addRow(QStringLiteral("工程名称"), m_name);
     identityForm->addRow(QStringLiteral("工程文件（.ksp）"), m_path);
     identityForm->addRow(QStringLiteral("目标型号"), m_target);
@@ -340,7 +323,8 @@ Stage2ProjectDialog::Stage2ProjectDialog(const HmiProject &project, QWidget *par
     m_projectName->setObjectName(QStringLiteral("projectNameEdit"));
     m_projectName->setMaxLength(qMax<int>(32767, project.name.size()));
     m_target = new QComboBox(projectTab); //20261122-3 change
-    addTargetChoices(m_target, project.targetModel);
+    m_target->setObjectName(QStringLiteral("targetModelEdit")); //20261122-4 change
+    populateStage2TargetChoices(m_target, project.targetModel);
     m_target->setEnabled(project.nativeSourceSnapshot.isEmpty()); // The native snapshot retains its own model selector.
     m_editorPage = new QComboBox(projectTab);
     m_editorPage->setObjectName(QStringLiteral("editorPageCombo"));

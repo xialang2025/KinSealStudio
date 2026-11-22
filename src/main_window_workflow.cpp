@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
+#include "local_help.h" //20261122-4 add
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
 #include "stage2_system_settings.h"
@@ -290,16 +291,19 @@ bool MainWindow::activatePageId(const QString &pageId, const QString &objectId) 
 
 /******************************************************************************
  * Function Name   : MainWindow::configureSystemSettings
- * Description     : Commit the five recovered system properties as an explicit editor-only project transaction.
+ * Description     : Publish one settings draft and open project help in the same dialog context.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.10
  ******************************************************************************/
-void MainWindow::configureSystemSettings() //20261110-7 add
+void MainWindow::configureSystemSettings() //20261122-4 change
 {
     Stage2SystemSettingsDialog dialog(currentEditorProject(), this);
     QString error;
     if (!m_hasProject) { return; }
+    connect(&dialog, &Stage2SystemSettingsDialog::helpRequested, this, [this, &dialog]() {
+        m_localHelp->showTopic(QStringLiteral("project"), &dialog);
+    });
     if (dialog.exec() == QDialog::Accepted && !commitProjectDraft(dialog.draftProject(), &error)) {
         QMessageBox::warning(this, QStringLiteral("系统参数未提交"), error);
     }

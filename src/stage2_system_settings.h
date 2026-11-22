@@ -5,6 +5,7 @@
 #include <QDialog>
 
 class QCheckBox;
+class QComboBox; //20261122-4 add
 class QDialogButtonBox;
 class QLabel;
 class QSpinBox;
@@ -26,6 +27,7 @@ bool readStage2SystemSettings(const HmiProject &project, Stage2SystemSettings *s
                               QString *error = nullptr);
 bool applyStage2SystemSettings(const HmiProject &source, const Stage2SystemSettings &settings,
                                HmiProject *draft, QString *error = nullptr);
+void populateStage2TargetChoices(QComboBox *combo, const QString &model); //20261122-4 add
 
 class Stage2SystemSettingsDialog : public QDialog
 {
@@ -33,11 +35,15 @@ class Stage2SystemSettingsDialog : public QDialog
 public:
     explicit Stage2SystemSettingsDialog(const HmiProject &project, QWidget *parent = nullptr);
     HmiProject draftProject() const;
+signals:
+    void helpRequested(); //20261122-4 add
 protected:
     void accept() override;
 private:
     HmiProject m_working;
     bool m_readable;
+    QComboBox *m_target; //20261122-4 add
+    QComboBox *m_startupPage; //20261122-4 add
     QSpinBox *m_screensaver;
     QSpinBox *m_flicker;
     QCheckBox *m_touchSound;
