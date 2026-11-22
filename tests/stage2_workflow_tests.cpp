@@ -69,6 +69,7 @@ private slots:
     void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
     void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
+    void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1069,6 +1070,89 @@ void Stage2WorkflowTests::newPageBackgroundRendersAndSurvivesReopen() //20261123
     QVERIFY(!window.m_dirty);
     QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
     QCOMPARE(sampledCanvasColor(reopened.m_canvas), selected);
+}
+
+/******************************************************************************
+ * Function Name   : newPageGradientKeepsNativeSymmetryAndPersists
+ * Description     : Use the property window to create a horizontal symmetric gradient and sample the scene after reopening.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageGradientKeepsNativeSymmetryAndPersists() //20261123-1 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QColor foreground(1, 2, 3);
+    QString path;
+    QString error;
+    bool choseStyle = false;
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01");
+    path = directory.filePath(QStringLiteral("page-gradient.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QPushButton *color;
+        QComboBox *style;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        color = dialog->findChild<QPushButton *>(QStringLiteral("newPageForegroundColor"));
+        style = dialog->findChild<QComboBox *>(QStringLiteral("newPageBackgroundStyle"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (color == nullptr || style == nullptr || buttons == nullptr ||
+            style->count() != 12 || style->itemText(2) != QStringLiteral("横向对称过渡"))
+        {
+            dialog->reject();
+            return;
+        }
+        QTimer::singleShot(0, dialog, [&]() {
+            QColorDialog *picker = qobject_cast<QColorDialog *>(QApplication::activeModalWidget());
+            if (picker != nullptr)
+            {
+                picker->setCurrentColor(foreground);
+                picker->accept();
+            }
+        });
+        color->click();
+        style->setCurrentIndex(2);
+        choseStyle = true;
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QVERIFY(choseStyle);
+    auto scan = [](QGraphicsView *view) {
+        QImage pixels(800, 480, QImage::Format_RGB32);
+        QPainter painter(&pixels);
+        view->scene()->render(&painter, QRectF(0, 0, 800, 480), QRectF(0, 0, 800, 480));
+        painter.end();
+        return QList<QColor>{pixels.pixelColor(4, 240), pixels.pixelColor(399, 240), pixels.pixelColor(795, 240)};
+    };
+    const QList<QColor> values = scan(window.m_canvas);
+    // The sampled pixels lie 4.5 pixels inside each edge and already contain a small part of the background color.
+    const int edgeBlue = qRound(foreground.blue() + (255 - foreground.blue()) * 4.5 / 400.0);
+    QVERIFY2(qAbs(values.first().blue() - edgeBlue) <= 2, qPrintable(values.first().name()));
+    QVERIFY(qAbs(values.at(1).blue() - 255) <= 1);
+    QVERIFY2(qAbs(values.last().blue() - edgeBlue) <= 2, qPrintable(values.last().name()));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(scan(reopened.m_canvas), values);
 }
 
 /******************************************************************************

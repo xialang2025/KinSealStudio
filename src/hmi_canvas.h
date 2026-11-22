@@ -94,7 +94,7 @@ private:
     QString m_activeTool;
     int m_pageWidth;
     int m_pageHeight;
-    QColor m_pageBackgroundColor = QColor(197, 222, 255); //20261123-0 add
+    HmiPageBackground m_pageBackground; //20261123-1 change
     int m_zoomPercent;
     HmiObject m_previousSelection;
     bool m_previousSelectionValid;

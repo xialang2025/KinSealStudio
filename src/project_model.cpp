@@ -4,12 +4,15 @@
 #include "native_project_codec.h" //20261109-0 add
 #include "stage2_system_settings.h" //20261110-7 add: Validate only the explicitly recovered system-property schema.
 
+#include <QBrush> //20261123-1 add
 #include <QFile>
 #include <QFileInfo> //20261108-9 add
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonParseError>
+#include <QLinearGradient> //20261123-1 add
+#include <QRadialGradient>
 #include <QSaveFile>
 #include <QSet>
 #include <QUuid> //20261110-5 add
@@ -171,7 +174,7 @@ HmiPage activePage(const HmiProject &project)
     page.id = project.activePageId; page.kind = project.activePageKind;
     page.name = project.pageName; page.width = project.pageWidth; page.height = project.pageHeight;
     page.number = project.activePageNumber; //20261122-10 add: Preserve the number when the page becomes inactive.
-    page.backgroundColor = project.activePageBackgroundColor; //20261123-0 add
+    page.background = project.activePageBackground; //20261123-1 change
     page.objects = project.objects; page.extensions = project.activePageExtensions;
     return page;
 }
@@ -188,7 +191,7 @@ void assignActivePage(HmiProject *project, const HmiPage &page)
     project->activePageId = page.id; project->activePageKind = page.kind;
     project->pageName = page.name; project->pageWidth = page.width; project->pageHeight = page.height;
     project->activePageNumber = page.number; //20261122-10 add: Restore the selected page's optional number independently of its ID.
-    project->activePageBackgroundColor = page.backgroundColor; //20261123-0 add
+    project->activePageBackground = page.background; //20261123-1 change
     project->objects = page.objects; project->activePageExtensions = page.extensions;
 }
 
@@ -204,7 +207,7 @@ bool hasStage1Data(const HmiProject &project)
     HmiObject object;
 
     if (project.activePageNumber.has_value()) { return true; } //20261122-10 add: Legacy top-level page fields cannot carry an assigned number.
-    if (!project.activePageBackgroundColor.isEmpty()) { return true; } //20261123-0 add
+    if (!project.activePageBackground.isDefault()) { return true; } //20261123-1 change
     if (project.projectId != QStringLiteral("project-1") || !project.inactivePages.isEmpty() || project.activePageId != QStringLiteral("page-1") ||
         project.activePageKind != QStringLiteral("normal") || !project.activePageExtensions.isEmpty() ||
         project.pageOrder != QStringList{QStringLiteral("page-1")} || project.startupPageId != QStringLiteral("page-1") ||
@@ -617,6 +620,97 @@ HmiProject::HmiProject() //20261107-6 add
 }
 
 /******************************************************************************
+ * Function Name   : HmiPageBackground::defaultColor
+ * Description     : Return the default appearance of an ordinary page in the reference editor.
+ * Input Parameters: None.
+ * Return Value    : Opaque default light blue.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+QColor HmiPageBackground::defaultColor() //20261123-1 add
+{
+    return QColor(197, 222, 255);
+}
+
+/******************************************************************************
+ * Function Name   : HmiPageBackground::isDefault
+ * Description     : Identify a fill that needs no explicit page fields in KSP.
+ * Input Parameters: None.
+ * Return Value    : True for the inherited solid background.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool HmiPageBackground::isDefault() const //20261123-1 add
+{
+    return color.isEmpty() && foregroundColor.isEmpty() && style == 0;
+}
+
+/******************************************************************************
+ * Function Name   : HmiPageBackground::brush
+ * Description     : Reproduce the V5.1 page preview fill for the selected style.
+ * Input Parameters: bounds.
+ * Return Value    : A solid, linear or radial brush for the supplied rectangle.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+QBrush HmiPageBackground::brush(const QRectF &bounds) const //20261123-1 add
+{
+    const QColor back = color.isEmpty() ? defaultColor() : QColor(color);
+    const QColor front = foregroundColor.isEmpty() ? defaultColor() : QColor(foregroundColor);
+    QPointF start;
+    QPointF end;
+    QLinearGradient linear;
+    QRadialGradient radial;
+    bool reverse;
+    bool symmetric;
+
+    switch (style)
+    {
+    case 1:
+    case 2:
+        start = bounds.bottomLeft();
+        end = bounds.bottomRight();
+        break;
+    case 3:
+    case 4:
+        start = bounds.topRight();
+        end = bounds.bottomRight();
+        break;
+    case 5:
+    case 6:
+    case 10:
+        start = bounds.topLeft();
+        end = bounds.bottomRight();
+        break;
+    case 7:
+    case 8:
+        start = bounds.bottomLeft();
+        end = bounds.topRight();
+        break;
+    case 9:
+        start = bounds.topRight();
+        end = bounds.bottomLeft();
+        break;
+    case 11:
+        // Native V5.1 ties the radius to width even on a landscape page.
+        radial = QRadialGradient(bounds.center(), bounds.width() / 2);
+        radial.setColorAt(0, back);
+        radial.setColorAt(1, front);
+        return QBrush(radial);
+    default:
+        return QBrush(back);
+    }
+    // The two corner styles use the native linear fills and retain their original color order.
+    reverse = style == 7 || style == 9 || style == 10;
+    symmetric = style == 2 || style == 4 || style == 6 || style == 8;
+    linear = QLinearGradient(start, end);
+    linear.setColorAt(0, reverse ? back : front);
+    if (symmetric)
+    {
+        linear.setColorAt(0.5, back);
+    }
+    linear.setColorAt(1, reverse || symmetric ? front : back);
+    return QBrush(linear);
+}
+
+/******************************************************************************
  * Function Name   : HmiPage::toJson
  * Description     : Serialize a complete independent page value in schema9.
  * Input Parameters: None
@@ -635,7 +729,9 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     json.insert(QStringLiteral("height"), height); json.insert(QStringLiteral("objects"), items);
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); }
     if (number.has_value()) { json.insert(QStringLiteral("number"), *number); } //20261122-10 add
-    if (!backgroundColor.isEmpty()) { json.insert(QStringLiteral("backgroundColor"), backgroundColor); } //20261123-0 add
+    if (!background.color.isEmpty()) { json.insert(QStringLiteral("backgroundColor"), background.color); } //20261123-1 change
+    if (!background.foregroundColor.isEmpty()) { json.insert(QStringLiteral("foregroundColor"), background.foregroundColor); }
+    if (background.style != 0) { json.insert(QStringLiteral("backgroundStyle"), background.style); }
     return json;
 }
 
@@ -653,12 +749,14 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonArray items;
     QJsonValue item;
     QJsonValue savedNumber; //20261122-10 add
+    QJsonValue savedStyle; //20261123-1 add
     QString key;
     QSet<QString> ids;
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
-        QStringLiteral("number"), QStringLiteral("backgroundColor")}, QStringLiteral("page"), error)) { return false; } //20261123-0 change
+        QStringLiteral("number"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor"),
+        QStringLiteral("backgroundStyle")}, QStringLiteral("page"), error)) { return false; } //20261123-1 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
     {
         if (!json.value(key).isString() || json.value(key).toString().trimmed().isEmpty())
@@ -691,15 +789,31 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
         }
         candidate.number = savedNumber.toInt();
     }
-    if (json.contains(QStringLiteral("backgroundColor"))) //20261123-0 add: Accept only opaque RGB values for ordinary pages.
-    {
-        const QString rgb = json.value(QStringLiteral("backgroundColor")).toString();
-        if (candidate.kind != QStringLiteral("normal") || rgb.size() != 7 ||
-            !rgb.startsWith(QLatin1Char('#')) || !QColor(rgb).isValid())
+    auto readFillColor = [&](const QString &field, QString *output) {
+        QString rgb;
+        if (!json.contains(field))
         {
-            return modelError(error, QStringLiteral("普通画面背景色必须为 #RRGGBB。"));
+            return true;
         }
-        candidate.backgroundColor = rgb.toLower();
+        rgb = json.value(field).toString();
+        if (rgb.size() != 7 || !rgb.startsWith(QLatin1Char('#')) || !QColor(rgb).isValid())
+        {
+            return false;
+        }
+        *output = rgb.toLower();
+        return true;
+    };
+    savedStyle = json.value(QStringLiteral("backgroundStyle")); //20261123-1 change
+    if ((!savedStyle.isUndefined() && (!exactInteger(savedStyle) || savedStyle.toInt() < 0 || savedStyle.toInt() > 11)) ||
+        !readFillColor(QStringLiteral("backgroundColor"), &candidate.background.color) ||
+        !readFillColor(QStringLiteral("foregroundColor"), &candidate.background.foregroundColor))
+    {
+        return modelError(error, QStringLiteral("普通画面填充颜色必须为 #RRGGBB，背景样式为 0–11。"));
+    }
+    candidate.background.style = savedStyle.toInt(0);
+    if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal"))
+    {
+        return modelError(error, QStringLiteral("现有背景字段适用于普通画面。"));
     }
     items = json.value(QStringLiteral("objects")).toArray();
     if (items.size() > 100) { return modelError(error, QStringLiteral("页面超过Lite每页100控件保护上限。")); }
@@ -1618,7 +1732,7 @@ bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 ad
     {
         return modelError(error, QStringLiteral("当前源/设备后端仅支持普通画面编号 000。"));
     }
-    if (!activePageBackgroundColor.isEmpty()) //20261123-0 add: Both source and device backends still use the verified default fill.
+    if (!activePageBackground.isDefault()) //20261123-1 change: Keep all custom fills in KSP until native formats are mapped.
     {
         return modelError(error, QStringLiteral("自定义画面背景尚未核对原厂源和设备编码。"));
     }

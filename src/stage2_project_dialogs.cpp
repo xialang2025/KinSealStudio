@@ -7,11 +7,13 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFormLayout>
+#include <QGridLayout> //20261123-1 add
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QPainter> //20261123-1 add
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSignalBlocker>
@@ -74,10 +76,13 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QLineEdit *name;
     QSpinBox *number;
     QGroupBox *background;
-    QFormLayout *backgroundLayout;
+    QGridLayout *backgroundLayout; //20261123-1 change
     QPushButton *backgroundColorButton;
+    QPushButton *foregroundColorButton;
+    QComboBox *backgroundStyle;
     QLabel *backgroundPreview;
-    QColor backgroundColor(197, 222, 255); //20261123-0 add
+    QColor backgroundColor = HmiPageBackground::defaultColor(); //20261123-1 change
+    QColor foregroundColor = HmiPageBackground::defaultColor();
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
@@ -118,32 +123,66 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     layout->addRow(QStringLiteral("名称"), name);
     layout->addRow(QStringLiteral("编号"), number);
     background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
-    backgroundLayout = new QFormLayout(background);
+    backgroundLayout = new QGridLayout(background); //20261123-1 change
     backgroundColorButton = new QPushButton(background);
     backgroundColorButton->setObjectName(QStringLiteral("newPageBackgroundColor"));
     backgroundColorButton->setMinimumWidth(180);
     backgroundColorButton->setAccessibleName(QStringLiteral("背景色"));
+    foregroundColorButton = new QPushButton(background);
+    foregroundColorButton->setObjectName(QStringLiteral("newPageForegroundColor"));
+    foregroundColorButton->setAccessibleName(QStringLiteral("前景色"));
+    backgroundStyle = new QComboBox(background);
+    backgroundStyle->setObjectName(QStringLiteral("newPageBackgroundStyle"));
+    backgroundStyle->addItems({QStringLiteral("纯色"), QStringLiteral("横向过渡"), QStringLiteral("横向对称过渡"),
+        QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"),
+        QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"),
+        QStringLiteral("右上角辐射"), QStringLiteral("左上角辐射"), QStringLiteral("中心辐射")});
     backgroundPreview = new QLabel(background);
     backgroundPreview->setFixedSize(110, 110);
     backgroundPreview->setAccessibleName(QStringLiteral("背景预览"));
-    backgroundLayout->addRow(QStringLiteral("背景色"), backgroundColorButton);
-    backgroundLayout->addRow(QStringLiteral("预览"), backgroundPreview);
+    backgroundLayout->addWidget(new QLabel(QStringLiteral("背景色"), background), 0, 0);
+    backgroundLayout->addWidget(backgroundColorButton, 0, 1);
+    backgroundLayout->addWidget(new QLabel(QStringLiteral("前景色"), background), 1, 0);
+    backgroundLayout->addWidget(foregroundColorButton, 1, 1);
+    backgroundLayout->addWidget(new QLabel(QStringLiteral("样式"), background), 2, 0);
+    backgroundLayout->addWidget(backgroundStyle, 2, 1);
+    backgroundLayout->addWidget(backgroundPreview, 0, 2, 3, 1, Qt::AlignCenter);
     layout->addRow(background);
-    auto updateBackgroundPreview = [&]() {
-        const QString style = QStringLiteral("background-color: %1").arg(backgroundColor.name());
-        backgroundColorButton->setStyleSheet(style);
-        backgroundPreview->setStyleSheet(style);
+    auto fillDraft = [&]() {
+        HmiPageBackground fill;
+        if (backgroundColor != HmiPageBackground::defaultColor())
+        {
+            fill.color = backgroundColor.name();
+        }
+        if (foregroundColor != HmiPageBackground::defaultColor())
+        {
+            fill.foregroundColor = foregroundColor.name();
+        }
+        fill.style = backgroundStyle->currentIndex();
+        return fill;
+    };
+    auto updateBackgroundPreview = [&]() { //20261123-1 change: Preview and active canvas share the recovered brush geometry.
+        QPixmap sample(backgroundPreview->size());
+        QPainter painter(&sample);
+        backgroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(backgroundColor.name()));
+        foregroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(foregroundColor.name()));
+        painter.fillRect(sample.rect(), fillDraft().brush(sample.rect()));
+        painter.end();
+        backgroundPreview->setPixmap(sample);
     };
     updateBackgroundPreview();
-    QObject::connect(backgroundColorButton, &QPushButton::clicked, &dialog, [&]() {
-        const QColor chosen = QColorDialog::getColor(backgroundColor, &dialog, QStringLiteral("选择颜色"),
+    auto chooseColor = [&](QColor &current) {
+        const QColor chosen = QColorDialog::getColor(current, &dialog, QStringLiteral("选择颜色"),
                                                        QColorDialog::DontUseNativeDialog);
         if (chosen.isValid())
         {
-            backgroundColor = chosen;
+            current = chosen;
             updateBackgroundPreview();
         }
-    });
+    };
+    QObject::connect(backgroundColorButton, &QPushButton::clicked, &dialog, [&]() { chooseColor(backgroundColor); });
+    QObject::connect(foregroundColorButton, &QPushButton::clicked, &dialog, [&]() { chooseColor(foregroundColor); });
+    QObject::connect(backgroundStyle, &QComboBox::currentIndexChanged, &dialog, updateBackgroundPreview);
     layout->addRow(validation);
     layout->addRow(buttons);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -154,10 +193,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         page.name = name->text();
         page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.
-        if (backgroundColor != QColor(197, 222, 255))
-        {
-            page.backgroundColor = backgroundColor.name(); //20261123-0 add
-        }
+        page.background = fillDraft(); //20261123-1 change
         candidate = project;
         // Activate by the new ID so the device startup page is left independent.
         if (!validateStage2PageName(project, QString(), page.name, &error) ||

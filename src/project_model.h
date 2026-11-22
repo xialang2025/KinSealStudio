@@ -1,6 +1,7 @@
 #ifndef PROJECT_MODEL_H
 #define PROJECT_MODEL_H
 
+#include <QBrush> //20261123-1 add
 #include <QJsonObject>
 #include <QList>
 #include <QRect>
@@ -94,6 +95,18 @@ struct HmiObject
     static bool fromJson(const QJsonObject &json, HmiObject *object, QString *error);
 };
 
+//20261123-1 add: Keep the editable fill separate from the device pixel encoding.
+struct HmiPageBackground
+{
+    QString color;
+    QString foregroundColor;
+    int style = 0;
+
+    static QColor defaultColor();
+    bool isDefault() const;
+    QBrush brush(const QRectF &bounds) const;
+};
+
 //20261110-5 add: These are editor entities; page kinds do not claim a recovered native layout.
 struct HmiPage
 {
@@ -105,7 +118,7 @@ struct HmiPage
     QList<HmiObject> objects;
     QJsonObject extensions;
     std::optional<int> number; //20261122-10 add: Independent ordinary page number. Earlier projects derive it from page order.
-    QString backgroundColor; //20261123-0 add: Empty uses the editor's legacy page color.
+    HmiPageBackground background; //20261123-1 change
 
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &json, HmiPage *page, QString *error = nullptr);
@@ -161,7 +174,7 @@ struct HmiProject
     QString activePageKind = QStringLiteral("normal");
     QJsonObject activePageExtensions;
     std::optional<int> activePageNumber; //20261122-10 add
-    QString activePageBackgroundColor; //20261123-0 add
+    HmiPageBackground activePageBackground; //20261123-1 change
     QList<HmiPage> inactivePages;
     QStringList pageOrder = {QStringLiteral("page-1")};
     QString startupPageId = QStringLiteral("page-1");
