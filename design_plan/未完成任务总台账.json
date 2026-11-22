@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19 Asia/Shanghai",
+  "updatedAt": "2026-11-22 Asia/Shanghai",
   "sourceCommit": "6dcd08332ede7c532842eba2b38522a50854a523",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -18,7 +18,7 @@
       "historyEntryIssues": 195,
       "historyFieldIssues": 1521
     },
-    "extensions": 19
+    "extensions": 22
   },
   "interpretationRules": [
     "已发布范围：五类既有控制记录＋九类受限静态背景C；阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
@@ -177270,6 +177270,60 @@
         }
       ],
       "countsTowardAmtStages": false
+    },
+    {
+      "id": "EXT-AMZ-BOOT-001",
+      "stage": "AMZ启动专项",
+      "title": "恢复复位到应用入口的完整冷启动链",
+      "status": "部分已证，缺少上游启动材料",
+      "completedScope": "已核应用正文0x80020000到HMI任务链；启动前要求RAM可用。259条关键指令与原厂BIN一致。",
+      "remaining": "最早期入口、BootROM/外部加载器、DRAM冷初始化、完整镜像装载及头部处理。",
+      "blockers": "用户2026-11-22确认目前只有现有文件，未提供启动镜像、ROM材料或整片NAND备份。",
+      "nextAction": "取得匹配板型启动材料后从复位入口追踪内存初始化、应用复制及跳转。",
+      "acceptance": "原始字节贯通复位至应用0x80020000；将CPU运行地址与Flash偏移分开标注。",
+      "sources": [
+        {
+          "path": "firmware_analysis/amz070w01-disasm-20261119/Bootloader启动与下载边界_20261122.md",
+          "sha256": "3f07fd0b5d399a19a5f2a9aaf70b936e25613182a3c3fd97956efbfca6df6460"
+        }
+      ],
+      "countsTowardAmtStages": false
+    },
+    {
+      "id": "EXT-AMZ-BOOT-002",
+      "stage": "AMZ启动专项",
+      "title": "确定Bootloader精确Flash位置和冗余布局",
+      "status": "应用写入边界已证，Bootloader布局待证",
+      "completedScope": "AMZ页2048B、块128KiB；升级由物理候选块8/主区0x100000起顺序写并跳坏块，正常路径不触碰前1MiB。468条指令和4条数据记录与原BIN一致。",
+      "remaining": "Bootloader实际起止区间、冗余副本、坏块/OOB和冷启动选择规则；前1MiB只是调查候选。",
+      "blockers": "没有前部Flash原始内容或原厂布局；维护工程上载固定读工程区且可能先保存运行数据，不能作为无副作用整片读取。",
+      "nextAction": "取得含前部区域及必要OOB/坏块信息的有效读回或原厂分区文件，核启动头及真实代码。",
+      "acceptance": "给出启动各阶段的精确存储范围、原件身份及副本规则，与0x100000应用起点交叉核对。",
+      "sources": [
+        {
+          "path": "firmware_analysis/amz070w01-disasm-20261119/Bootloader启动与下载边界_20261122.md",
+          "sha256": "3f07fd0b5d399a19a5f2a9aaf70b936e25613182a3c3fd97956efbfca6df6460"
+        }
+      ],
+      "countsTowardAmtStages": false
+    },
+    {
+      "id": "EXT-AMZ-BOOT-003",
+      "stage": "AMZ启动专项",
+      "title": "确认空片烧录及启动损坏恢复方式",
+      "status": "常规更新边界已证，生产恢复未验证",
+      "completedScope": "原厂V5.1强制更新helper发送fbottomFile完整镜像；应用接收并写应用区，未另发送独立Bootloader。112份限定文件未命中明文eGON.BT0/BT1/BT2/FES。",
+      "remaining": "空白NAND/新板的启动镜像、烧录工具、ROM恢复协议、板级入口条件和冷启动验收。",
+      "blockers": "无匹配AMZ量产/恢复包；TurboWriter的W55FA91/93/95材料不能替代AMZ启动证据。",
+      "nextAction": "取得原厂匹配恢复或量产材料，先静态核对传输文件、写入区域和入口，再安排有恢复条件的验证。",
+      "acceptance": "明确何时需要专用上位机/编程器及其完整文件和地址；冷启动结果另留实际证据，不用普通UI下载代替。",
+      "sources": [
+        {
+          "path": "firmware_analysis/amz070w01-disasm-20261119/Bootloader启动与下载边界_20261122.md",
+          "sha256": "3f07fd0b5d399a19a5f2a9aaf70b936e25613182a3c3fd97956efbfca6df6460"
+        }
+      ],
+      "countsTowardAmtStages": false
     }
   ],
   "aliases": {
@@ -177966,7 +178020,7 @@
     "本次只读文档/证据，不重新执行GUI、原厂、构建、USB、PLC或实屏。",
     "历史记录尚未逐条与全部新成果核销，统一列为current_review_required，不判断源码全无。"
   ],
-  "activitySummary": "2026-11-19 阶段0补录用户确认机型与镜像、位按钮源和设备字段、四项历史实屏部分证据；原厂 V5.1 后台受管理员身份限制。现场五项及 TEST 恢复证据见对应回执。",
+  "activitySummary": "2026-11-19 阶段0补录用户确认机型与镜像、位按钮源和设备字段、四项历史实屏部分证据；原厂 V5.1 后台受管理员身份限制。现场五项及 TEST 恢复证据见对应回执。 2026-11-22完成AMZ启动与固件写区静态复核，新增3项冷启动/Bootloader布局/空片恢复材料缺口；没有实物读写。",
   "stage6Executions": [
     {
       "progress": "docs/stage6-evidence/progress.json",
