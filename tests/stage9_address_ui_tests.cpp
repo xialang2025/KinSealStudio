@@ -24,6 +24,7 @@ private slots:
     void radixAndMinorRoundTrip();
     void familyAndMemoryReset();
     void cancelKeepsOriginal();
+    void keypadCommitsEditedAddress(); //20261122-8 add
     void boundary_data();
     void boundary();
     void nativeRadixAndUnknownProfile();
@@ -270,6 +271,47 @@ void Stage9AddressUiTests::cancelKeepsOriginal() //20261114-8 add
         dialog->reject();
     }, [&]() { return editPlcAddress(nullptr, false, {}, &text); }));
     QCOMPARE(text, QStringLiteral("  lw00015  "));
+}
+
+/******************************************************************************
+ * Function Name   : keypadCommitsEditedAddress
+ * Description     : Enter a word address with the on-screen digits, Clear, Backspace and Input.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage9AddressUiTests::keypadCommitsEditedAddress() //20261122-8 add
+{
+    QString text = QStringLiteral("LW9");
+    bool hasKeypad = false;
+    bool confirmed;
+
+    confirmed = driveDialog(QStringLiteral("PlcAddressDialog"), [&](QDialog *dialog) {
+        QPushButton *button;
+        QString key;
+        QStringList entries = {QStringLiteral("清除"), QStringLiteral("1"), QStringLiteral("2"),
+            QStringLiteral("4"), QStringLiteral("后退"), QStringLiteral("3")};
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        Q_FOREACH (key, entries)
+        {
+            button = dialog->findChild<QPushButton *>(QStringLiteral("PlcKey") + key);
+            if (button == nullptr || !button->isEnabled())
+            {
+                dialog->reject();
+                return;
+            }
+            button->click();
+        }
+        button = okButton(dialog);
+        hasKeypad = button->text() == QStringLiteral("输入");
+        button->click();
+    }, [&]() { return editPlcAddress(nullptr, false, {}, &text); });
+    QVERIFY(hasKeypad);
+    QVERIFY(confirmed);
+    QCOMPARE(text, QStringLiteral("LW123"));
 }
 
 /******************************************************************************

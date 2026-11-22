@@ -708,14 +708,18 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     QPointer<QWidget> guardedParent(parent);
     bool confirmed = false;
     int modalResult;
-    QGridLayout *layout;
     QComboBox *memory;
     QComboBox *kind;
     QComboBox *radix;
     QLineEdit *number;
     QLabel *range;
+    QLabel *inputType;
     QLabel *validation;
     QDialogButtonBox *buttons;
+    QPushButton *keyButton;
+    QVector<QPushButton *> keypad;
+    QString keys;
+    int keyIndex;
     const PlcProfile *profile;
     const PlcConnection *connection;
     QString error;
@@ -786,10 +790,18 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         }
         initialValue = body.mid(initialFamily.size());
     }
-    dialog = new QDialog(parent); //20261114-8 add: Allocate only after preflight validation succeeds.
+    dialog = new QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowSystemMenuHint |
+                         Qt::WindowCloseButtonHint | Qt::WindowContextHelpButtonHint); //20261122-8 change
     dialog->setWindowTitle(QStringLiteral("地址输入"));
     dialog->setObjectName(QStringLiteral("PlcAddressDialog"));
-    layout = new QGridLayout(dialog.data());
+    dialog->setFixedSize(380, 311);
+    dialog->setFont(QFont(QStringLiteral("SimSun"), 9));
+    dialog->setStyleSheet(QStringLiteral(
+        "QComboBox, QLineEdit { background: #caeace; border: 1px solid #a9a9a9; }"
+        "QComboBox:disabled, QLineEdit:disabled { background: #b1ceed; }"
+        "QPushButton { background: #dedede; border: 1px solid #a9a9a9; }"
+        "QPushButton:pressed { background: #c2c2c2; }"
+        "QPushButton:default { border: 2px solid #0078d7; }"));
     memory = new QComboBox(dialog.data());
     memory->setObjectName(QStringLiteral("PlcMemory"));
     memory->addItem(QStringLiteral("内部存储器"), QString());
@@ -825,22 +837,53 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     range = new QLabel(dialog.data());
     range->setObjectName(QStringLiteral("PlcAddressRange")); //20261114-8 add: Retain the explicit span in UI evidence.
     range->setWordWrap(true);
+    inputType = new QLabel(QStringLiteral("输入类型："), dialog);
     validation = new QLabel(error, dialog.data());
     validation->setObjectName(QStringLiteral("PlcAddressError"));
     validation->setWordWrap(true);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog.data());
     buttons->setObjectName(QStringLiteral("PlcAddressButtons"));
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    layout->addWidget(new QLabel(QStringLiteral("存储器"), dialog.data()), 0, 0);
-    layout->addWidget(memory, 0, 1, 1, 2);
-    layout->addWidget(new QLabel(QStringLiteral("地址种类"), dialog.data()), 1, 0);
-    layout->addWidget(kind, 1, 1);
-    layout->addWidget(radix, 1, 2);
-    layout->addWidget(range, 2, 0, 1, 3);
-    layout->addWidget(number, 3, 0, 1, 3);
-    layout->addWidget(validation, 4, 0, 1, 3);
-    layout->addWidget(buttons, 5, 0, 1, 3);
+    // The input key spans the last two columns while Leave occupies the right return key.
+    buttons->setGeometry(211, 201, 98, 78);
+    buttons->layout()->setEnabled(false);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("输入"));
+    buttons->button(QDialogButtonBox::Ok)->setGeometry(0, 40, 98, 38);
+    buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("离开"));
+    buttons->button(QDialogButtonBox::Cancel)->setGeometry(50, 0, 48, 38);
+    buttons->button(QDialogButtonBox::Cancel)->setAutoDefault(false);
+    memory->setGeometry(10, 10, 160, 22);
+    memory->setAccessibleName(QStringLiteral("存储器"));
+    kind->setGeometry(10, 40, 160, 22);
+    kind->setAccessibleName(QStringLiteral("寄存器"));
+    inputType->setGeometry(179, 10, 76, 22);
+    inputType->setBuddy(radix);
+    radix->setGeometry(257, 10, 109, 22);
+    range->setGeometry(179, 38, 193, 29);
+    number->setGeometry(180, 70, 131, 22);
+    validation->setGeometry(11, 280, 358, 30);
+    auto makeKey = [&](const QString &caption, int column, int row) {
+        QPushButton *key = new QPushButton(caption, dialog);
+        key->setObjectName(QStringLiteral("PlcKey") + caption);
+        key->setGeometry(11 + column * 50, 121 + row * 40, 48, 38);
+        key->setFocusPolicy(Qt::NoFocus);
+        key->setAutoDefault(false);
+        keypad.append(key);
+        return key;
+    };
+    keys = QStringLiteral("1234567890ABCDEF./:");
+    for (keyIndex = 0; keyIndex < keys.size(); ++keyIndex)
+    {
+        const QString value = keys.mid(keyIndex, 1);
+        keyButton = makeKey(value, keyIndex % 5, keyIndex / 5);
+        QObject::connect(keyButton, &QPushButton::clicked, number, [number, value]() { number->insert(value); });
+    }
+    keyButton = makeKey(QStringLiteral("清除"), 5, 0);
+    QObject::connect(keyButton, &QPushButton::clicked, number, &QLineEdit::clear);
+    keyButton = makeKey(QStringLiteral("后退"), 5, 1);
+    QObject::connect(keyButton, &QPushButton::clicked, number, &QLineEdit::backspace);
+    number->setFocus();
+    number->selectAll();
 
     refresh = [&]() {
         const PlcConnection *selectedConnection;
@@ -854,6 +897,8 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
         bool supported;
         bool standardRadix;
         int familyIndex;
+        QPushButton *key;
+        QString rangeHelp;
 
         family = kind->currentData().toString();
         selectedConnection = plcConnection(context, memory->currentData().toString());
@@ -874,13 +919,19 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
                 }
             }
         }
+        range->setText(rangeText);
+        rangeHelp = rangeText;
         if (standardRadix && family.endsWith(QStringLiteral("_bit")))
         {
-            rangeText += QStringLiteral("\nA.B 表示字地址和位号；位号 0~15，始终使用十进制。");
+            rangeHelp += QStringLiteral("\nA.B 表示字地址和位号。位号 0~15，始终使用十进制。");
         }
-        rangeText += QStringLiteral("\n连续传送数量：%1").arg(context.transferCount); //20261114-8 add
-        range->setText(rangeText);
+        rangeHelp += QStringLiteral("\n连续传送数量：%1").arg(context.transferCount);
+        range->setToolTip(rangeHelp);
         number->setEnabled(supported);
+        Q_FOREACH (key, keypad)
+        {
+            key->setEnabled(supported);
+        }
         radix->setItemText(0, standardRadix ? QStringLiteral("十进制") : QStringLiteral("原生进制")); //20261109-0 change
         radix->setEnabled(supported && standardRadix);
         validDraft = supported && !family.isEmpty() &&
