@@ -136,7 +136,7 @@ bool DeviceAddressCompiler::prepare(const HmiProject &project, QByteArray *scanT
     {
         if (project.connections.size() != 1 || connection.profileId != QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini") ||
             connection.channel != PlcChannel::Com1 || connection.station != QStringLiteral("1") ||
-            !connection.nodeKnown || connection.node != 1)
+            !connection.nodeKnown || connection.node != 1 || !connection.usesDefaultProtocolTiming()) //20261122-7 change
         {
             return addressCompileError(error, QStringLiteral("设备编译当前支持默认Modbus RTU COM1、站号1和已确认节点1；所选PLC驱动参数尚未恢复，未打开USB。"));
         }

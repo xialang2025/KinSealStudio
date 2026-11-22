@@ -7,6 +7,8 @@ class QWidget;
 
 bool editPlcSerialPort(QWidget *parent, const QString &port, QJsonObject *settings,
                        const QString &sourceNotice = {}); //20261122-6 add
+bool editPlcProtocol(QWidget *parent, const QString &model, PlcConnection *connection,
+                     bool readOnly, QString *error = nullptr); //20261122-7 add
 
 /******************************************************************************
  * Function Name   : editPlcConnections

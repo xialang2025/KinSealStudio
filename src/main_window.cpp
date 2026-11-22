@@ -662,6 +662,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
         else if (role == QStringLiteral("serialPort")) { configureSerialPort(pageId); } //20261122-6 add
+        else if (role == QStringLiteral("plcProtocol")) { configureProtocol(pageId); } //20261122-7 add
         else if (role == QStringLiteral("alarm-bit") || role == QStringLiteral("alarm-condition")) { configureAlarmRegistration(role == QStringLiteral("alarm-bit") ? 0 : 1); } //20261113-2 add
         else if (role == QStringLiteral("recipe")) { configureRecipe(pageId); } //20261113-2 add
         else if (role == QStringLiteral("dataCollection")) { configureDataCollection(pageId); } //20261112-1 add
@@ -684,6 +685,17 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         {
             id = item->data(0, Qt::UserRole + 1).toString();
             menu.addAction(QStringLiteral("打开"), this, [this, id]() { configureSerialPort(id); });
+            menu.addAction(QStringLiteral("增加协议"), this, [this, id]() { addProtocol(id); })
+                ->setEnabled(m_project.nativeSourceSnapshot.isEmpty()); //20261122-7 add
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("plcProtocol")) //20261122-7 add
+        {
+            id = item->data(0, Qt::UserRole + 1).toString();
+            menu.addAction(QStringLiteral("打开"), this, [this, id]() { configureProtocol(id); });
+            menu.addAction(QStringLiteral("删除"), this, [this, id]() { deleteProtocol(id); })
+                ->setEnabled(m_project.nativeSourceSnapshot.isEmpty());
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
         }

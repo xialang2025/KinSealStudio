@@ -6,6 +6,7 @@
 
 #include <QFile>
 #include <QFileInfo> //20261108-9 add
+#include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonParseError>
@@ -14,6 +15,8 @@
 #include <QUuid> //20261110-5 add
 #include <limits>
 #include <cmath> //20261108-14 add
+
+static constexpr int maxProtocolsPerPort = 128; //20261122-7 add: Match the existing native source parser's per-port bound.
 
 namespace { //20261110-5 add: Keep JSON type checks ahead of every lossy Qt conversion.
 
@@ -1099,13 +1102,17 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
     }
     if (json.contains(QStringLiteral("connections")))
     {
-        if (!json.value(QStringLiteral("connections")).isArray() || json.value(QStringLiteral("connections")).toArray().size() > 2)
+        if (!json.value(QStringLiteral("connections")).isArray() ||
+            json.value(QStringLiteral("connections")).toArray().size() > 2 * maxProtocolsPerPort) //20261122-7 change
         {
             return modelError(error, QStringLiteral("连接配置类型或数量无效。"));
         }
         Q_FOREACH (value, json.value(QStringLiteral("connections")).toArray())
         {
-            if (!value.isObject() || !knownKeys(value.toObject(), PlcConnection().toJson().keys(), QStringLiteral("connection"), error) ||
+            if (!value.isObject() || !knownKeys(value.toObject(), {QStringLiteral("id"), QStringLiteral("profileId"),
+                QStringLiteral("station"), QStringLiteral("channel"), QStringLiteral("node"), QStringLiteral("displayName"),
+                QStringLiteral("timeoutMs"), QStringLiteral("maximumWords"), QStringLiteral("retries"),
+                QStringLiteral("frameIntervalMs")}, QStringLiteral("connection"), error) || //20261122-7 change
                 !PlcConnection::fromJson(value.toObject(), &connection, error)) { return false; }
             loaded.connections.append(connection);
         }
@@ -1850,7 +1857,7 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
     HmiPage page;
     QList<HmiObject> allObjects;
     QSet<QString> ids;
-    QSet<int> channels;
+    QHash<int, int> channelCounts; //20261122-7 change
     QList<QPair<QString, PlcAddressRole>> addresses;
     QPair<QString, PlcAddressRole> address;
     QString captionLanguage; //20261113-2 add: Caption languages must remain editable in the destination project.
@@ -1957,21 +1964,20 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
         hasQualified = hasQualified || address.first.startsWith(QLatin1Char('@'));
     }
     if (connections.isEmpty() && !hasQualified) { return true; }
-    if (connections.size() > 2 || !catalog.load(QStringLiteral(":/plc/plc-catalog.json"), error))
+    if (connections.size() > 2 * maxProtocolsPerPort || !catalog.load(QStringLiteral(":/plc/plc-catalog.json"), error)) //20261122-7 change
     {
         if (error != nullptr && error->isEmpty()) { *error = QStringLiteral("PLC连接配置无效。"); }
         return false;
     }
     Q_FOREACH (connection, connections)
     {
-        if (ids.contains(connection.id) || channels.contains(int(connection.channel)) ||
+        if (ids.contains(connection.id) || ++channelCounts[int(connection.channel)] > maxProtocolsPerPort || //20261122-7 change
             catalog.profile(connection.profileId) == nullptr || connection.channel == PlcChannel::Unspecified)
         {
-            if (error != nullptr) { *error = QStringLiteral("PLC连接重复、未指定通道或协议不存在。"); }
+            if (error != nullptr) { *error = QStringLiteral("PLC连接标识重复、端口协议数超限、通道无效或协议不存在。"); }
             return false;
         }
         ids.insert(connection.id);
-        channels.insert(int(connection.channel));
     }
     context.connections = connections;
     Q_FOREACH (address, addresses)

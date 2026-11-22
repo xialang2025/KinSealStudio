@@ -674,6 +674,10 @@ void MainWindow::decorateNativeSystemTree() //20261111-1 add
     {
         item = *iterator; label = item->text(0);
         if (item->data(0, Qt::UserRole).toString() == QStringLiteral("page")) { label = QStringLiteral("000:画面1"); }
+        if (item->data(0, Qt::UserRole).toString() == QStringLiteral("plcProtocol")) //20261122-7 add
+        {
+            label = QStringLiteral("Modbus_RTU"); // Use the protocol icon for every instance name.
+        }
         item->setIcon(0, nativeShellIcon(icons.value(label).toString())); ++iterator;
     }
 }

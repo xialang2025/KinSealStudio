@@ -84,8 +84,14 @@ struct PlcConnection
     QString station;                         // Raw project station text; no observed station bounds.
     bool nodeKnown = false;
     u8 node = 0;                             // A node is independent of station and may remain unknown.
+    QString displayName;                   //20261122-7 add: Empty inherits the catalog name; addresses continue using id.
+    int timeoutMs = 1000;
+    int maximumWords = 32;
+    int retries = 3;
+    int frameIntervalMs = 20;
 
     QJsonObject toJson() const;
+    bool usesDefaultProtocolTiming() const;
     static bool fromJson(const QJsonObject &json, PlcConnection *connection,
                          QString *error = nullptr);
 };

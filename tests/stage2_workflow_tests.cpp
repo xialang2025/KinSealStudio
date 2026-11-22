@@ -32,6 +32,7 @@
 #include <QStatusBar>
 #include <QDir>
 #include <QTreeWidget>
+#include <functional>
 
 //20261110-7 add: Exercise the real main-window transactions without using physical input or USB.
 class Stage2WorkflowTests : public QObject
@@ -61,6 +62,9 @@ private slots:
     void recentFilesAreBoundedAndIsolated();
     void openedProjectShowsProtocolsUnderTheirOwnPorts(); //20261122-6 add
     void serialPortSettingsAreIndependentAndPersisted(); //20261122-6 add
+    void protocolTreeEditsAreScopedToTheirInstance(); //20261122-7 add
+    void addingProtocolKeepsExistingProtocolsOnThePort(); //20261122-7 add
+    void deletingProtocolProtectsProjectReferences(); //20261122-7 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -766,6 +770,281 @@ void Stage2WorkflowTests::serialPortSettingsAreIndependentAndPersisted() //20261
              (QStringList{QStringLiteral("COM2"), QStringLiteral("19200"), QStringLiteral("COM11"), QStringLiteral("232")}));
     QCOMPARE(editPort(tree, QStringLiteral("COM2"), {}, {}, false, false),
              (QStringList{QStringLiteral("COM2"), QStringLiteral("9600"), QStringLiteral("COM2"), QStringLiteral("232")}));
+}
+
+/******************************************************************************
+ * Function Name   : protocolTreeEditsAreScopedToTheirInstance
+ * Description     : Rename and change timing on COM2 while retaining COM1 and the original stable ID.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::protocolTreeEditsAreScopedToTheirInstance() //20261122-7 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    PlcConnection connection;
+    MainWindow window;
+    MainWindow reopened;
+    QString error;
+    QString path;
+    QTreeWidget *tree;
+    auto editProtocol = [](QTreeWidget *settings, const QString &port, bool edit, bool confirm) {
+        QStringList fields;
+        const QList<QTreeWidgetItem *> ports = settings->findItems(port, Qt::MatchExactly | Qt::MatchRecursive);
+        if (ports.size() != 1 || ports.first()->childCount() != 1)
+        {
+            return fields;
+        }
+        QTimer::singleShot(0, settings, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            QLineEdit *name = dialog->findChild<QLineEdit *>(QStringLiteral("edit_name"));
+            QComboBox *series = dialog->findChild<QComboBox *>(QStringLiteral("combo_protocol"));
+            QSpinBox *station = dialog->findChild<QSpinBox *>(QStringLiteral("spin_stationIndex"));
+            QSpinBox *timeout = dialog->findChild<QSpinBox *>(QStringLiteral("spin_time"));
+            QDialogButtonBox *buttons = dialog->findChild<QDialogButtonBox *>();
+            if (dialog->windowTitle() != QStringLiteral("协议") || name == nullptr || series == nullptr ||
+                station == nullptr || timeout == nullptr || buttons == nullptr)
+            {
+                fields.append(dialog->windowTitle());
+                dialog->reject();
+                return;
+            }
+            fields = {series->currentText(), name->text(), QString::number(station->value()), QString::number(timeout->value())};
+            if (edit)
+            {
+                name->setText(QStringLiteral("PLC-B"));
+                timeout->setValue(2200);
+            }
+            buttons->button(confirm ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+        });
+        settings->itemDoubleClicked(ports.first()->child(0), 0);
+        return fields;
+    };
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01R");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.id = QStringLiteral("com1");
+    connection.channel = PlcChannel::Com1;
+    connection.station = QStringLiteral("1");
+    project.connections.append(connection);
+    connection.id = QStringLiteral("com2");
+    connection.channel = PlcChannel::Com2;
+    connection.station = QStringLiteral("2");
+    project.connections.append(connection);
+    path = directory.filePath(QStringLiteral("protocol-settings.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    QCOMPARE(editProtocol(tree, QStringLiteral("COM2"), true, false),
+             (QStringList{QStringLiteral("Modbus_RTU"), QStringLiteral("Modbus_RTU"), QStringLiteral("2"), QStringLiteral("1000")}));
+    QVERIFY(!window.m_dirty);
+    QCOMPARE(editProtocol(tree, QStringLiteral("COM2"), true, true),
+             (QStringList{QStringLiteral("Modbus_RTU"), QStringLiteral("Modbus_RTU"), QStringLiteral("2"), QStringLiteral("1000")}));
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    QCOMPARE(editProtocol(tree, QStringLiteral("COM1"), false, false),
+             (QStringList{QStringLiteral("Modbus_RTU"), QStringLiteral("Modbus_RTU"), QStringLiteral("1"), QStringLiteral("1000")}));
+    QCOMPARE(editProtocol(tree, QStringLiteral("COM2"), false, false),
+             (QStringList{QStringLiteral("Modbus_RTU"), QStringLiteral("PLC-B"), QStringLiteral("2"), QStringLiteral("2200")}));
+    const QList<QTreeWidgetItem *> named = tree->findItems(QStringLiteral("PLC-B"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(named.size(), 1);
+    QCOMPARE(named.first()->parent()->text(0), QStringLiteral("COM2"));
+    QCOMPARE(named.first()->data(0, Qt::UserRole + 1).toString(), QStringLiteral("com2"));
+}
+
+/******************************************************************************
+ * Function Name   : triggerSettingsTreeAction
+ * Description     : Select an action from the actual settings tree context menu.
+ * Input Parameters: tree, item, actionText, whileDialogOpen.
+ * Return Value    : True if the menu exposes the requested action.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+static bool triggerSettingsTreeAction(QTreeWidget *tree, QTreeWidgetItem *item, const QString &actionText,
+                                      const std::function<void()> &whileDialogOpen = {}) //20261122-7 add
+{
+    bool triggered = false;
+    QTimer menuSelection;
+
+    tree->scrollToItem(item);
+    menuSelection.setSingleShot(true);
+    QObject::connect(&menuSelection, &QTimer::timeout, tree, [&]() {
+        QMenu *menu = qobject_cast<QMenu *>(QApplication::activePopupWidget());
+        QAction *action;
+        QList<QAction *> actions;
+        if (menu == nullptr)
+        {
+            return;
+        }
+        actions = menu->actions();
+        menu->close();
+        Q_FOREACH (action, actions)
+        {
+            if (action->text() == actionText && action->isEnabled())
+            {
+                if (whileDialogOpen)
+                {
+                    QTimer::singleShot(0, tree, whileDialogOpen);
+                }
+                triggered = true;
+                action->trigger();
+                return;
+            }
+        }
+    });
+    menuSelection.start(0);
+    tree->customContextMenuRequested(tree->visualItemRect(item).center());
+    return triggered;
+}
+
+/******************************************************************************
+ * Function Name   : addingProtocolKeepsExistingProtocolsOnThePort
+ * Description     : Add a second COM2 instance from the context menu and reload both entries.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::addingProtocolKeepsExistingProtocolsOnThePort() //20261122-7 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    PlcConnection connection;
+    MainWindow window;
+    MainWindow reopened;
+    QString error;
+    QString path;
+    QStringList fields;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> ports;
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01R");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.id = QStringLiteral("com2");
+    connection.channel = PlcChannel::Com2;
+    connection.station = QStringLiteral("1");
+    project.connections.append(connection);
+    path = directory.filePath(QStringLiteral("new-protocol.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    ports = tree->findItems(QStringLiteral("COM2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(ports.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, ports.first(), QStringLiteral("增加协议"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QComboBox *series;
+        QSpinBox *station;
+        QDialogButtonBox *buttons;
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        series = dialog->findChild<QComboBox *>(QStringLiteral("combo_protocol"));
+        station = dialog->findChild<QSpinBox *>(QStringLiteral("spin_stationIndex"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (series == nullptr || station == nullptr || buttons == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        fields = {series->currentText(), QString::number(station->value())};
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QCOMPARE(fields, (QStringList{QStringLiteral("Mitsubishi_Fx3U"), QStringLiteral("0")}));
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    ports = tree->findItems(QStringLiteral("COM2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(ports.size(), 1);
+    QCOMPARE(ports.first()->childCount(), 2);
+    QCOMPARE(ports.first()->child(0)->text(0), QStringLiteral("Modbus_RTU"));
+    QCOMPARE(ports.first()->child(1)->text(0), QStringLiteral("Mitsubishi_Fx3U"));
+    QVERIFY(ports.first()->child(0)->data(0, Qt::UserRole + 1) != ports.first()->child(1)->data(0, Qt::UserRole + 1));
+}
+
+/******************************************************************************
+ * Function Name   : deletingProtocolProtectsProjectReferences
+ * Description     : Reject deletion of a referenced protocol and persist removal of its unreferenced neighbor.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::deletingProtocolProtectsProjectReferences() //20261122-7 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reloaded;
+    HmiReference reference;
+    PlcConnection connection;
+    MainWindow window;
+    QString error;
+    QString path;
+    QString warning;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> ports;
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01R");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.id = QStringLiteral("com2");
+    connection.channel = PlcChannel::Com2;
+    connection.station = QStringLiteral("1");
+    project.connections.append(connection);
+    connection.id = QStringLiteral("spare-com2");
+    connection.displayName = QStringLiteral("PLC-SPARE");
+    project.connections.append(connection);
+    reference.id = QStringLiteral("system-route");
+    reference.ownerKind = QStringLiteral("project");
+    reference.ownerId = project.projectId;
+    reference.field = QStringLiteral("route");
+    reference.targetKind = QStringLiteral("connection");
+    reference.targetId = QStringLiteral("com2");
+    project.references.append(reference);
+    path = directory.filePath(QStringLiteral("delete-protocol.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    ports = tree->findItems(QStringLiteral("COM2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(ports.size(), 1);
+    QCOMPARE(ports.first()->childCount(), 2);
+    QVERIFY(triggerSettingsTreeAction(tree, ports.first()->child(0), QStringLiteral("删除"), [&]() {
+        QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+        if (message != nullptr)
+        {
+            warning = message->windowTitle();
+            message->accept();
+        }
+    }));
+    QCOMPARE(warning, QStringLiteral("协议仍被使用"));
+    QCOMPARE(ports.first()->childCount(), 2);
+    QVERIFY(!window.m_dirty);
+    QVERIFY(triggerSettingsTreeAction(tree, ports.first()->child(1), QStringLiteral("删除")));
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reloaded, &error), qPrintable(error));
+    QCOMPARE(reloaded.connections.size(), 1);
+    QCOMPARE(reloaded.connections.first().id, QStringLiteral("com2"));
+    QCOMPARE(reloaded.references.first().targetId, QStringLiteral("com2"));
 }
 
 /******************************************************************************

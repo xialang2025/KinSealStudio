@@ -30,6 +30,7 @@
 #include <QTextCursor>
 #include <QTextDocument>
 #include <QTreeWidget>
+#include <QUuid>
 #include <QVBoxLayout>
 #include <algorithm>
 
@@ -383,6 +384,128 @@ void MainWindow::configureSerialPort(const QString &port) //20261122-6 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::configureProtocol
+ * Description     : Edit the chosen protocol by ID and protect references from driver changes.
+ * Input Parameters: id.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void MainWindow::configureProtocol(const QString &id) //20261122-7 add
+{
+    HmiProject draft;
+    HmiProject referenceCheck;
+    QVector<PlcConnection>::iterator record;
+    PlcConnection candidate;
+    QString error;
+
+    if (!m_hasProject)
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    record = std::find_if(draft.connections.begin(), draft.connections.end(), [&id](const PlcConnection &entry) {
+        return entry.id == id;
+    });
+    if (record == draft.connections.end())
+    {
+        return;
+    }
+    candidate = *record;
+    if (!editPlcProtocol(this, draft.targetModel, &candidate, !draft.nativeSourceSnapshot.isEmpty(), &error))
+    {
+        if (!error.isEmpty())
+        {
+            QMessageBox::warning(this, QStringLiteral("协议窗口未打开"), error);
+        }
+        return;
+    }
+    if (candidate.profileId != record->profileId)
+    {
+        // Validate without this ID before allowing a different driver to reuse it.
+        referenceCheck = draft;
+        referenceCheck.connections.removeAt(record - draft.connections.begin());
+        if (!referenceCheck.validateModel(&error))
+        {
+            QMessageBox::warning(this, QStringLiteral("协议仍被使用"), error);
+            return;
+        }
+    }
+    *record = candidate;
+    if (!commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("协议未提交"), error);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::addProtocol
+ * Description     : Append a separately identified protocol draft to the chosen port.
+ * Input Parameters: port (COM1 or COM2).
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void MainWindow::addProtocol(const QString &port) //20261122-7 add
+{
+    HmiProject draft;
+    PlcConnection connection;
+    QString error;
+
+    if (!m_hasProject || !m_project.nativeSourceSnapshot.isEmpty() ||
+        (port != QStringLiteral("COM1") && port != QStringLiteral("COM2")))
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    connection.id = QStringLiteral("plc-") + QUuid::createUuid().toString(QUuid::WithoutBraces);
+    connection.channel = port == QStringLiteral("COM1") ? PlcChannel::Com1 : PlcChannel::Com2;
+    if (!editPlcProtocol(this, draft.targetModel, &connection, false, &error))
+    {
+        if (!error.isEmpty())
+        {
+            QMessageBox::warning(this, QStringLiteral("协议窗口未打开"), error);
+        }
+        return;
+    }
+    draft.connections.append(connection);
+    if (!commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("协议未提交"), error);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::deleteProtocol
+ * Description     : Remove a single protocol only after checking all project references.
+ * Input Parameters: id.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void MainWindow::deleteProtocol(const QString &id) //20261122-7 add
+{
+    HmiProject draft;
+    QVector<PlcConnection>::iterator record;
+    QString error;
+
+    if (!m_hasProject || !m_project.nativeSourceSnapshot.isEmpty())
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    record = std::find_if(draft.connections.begin(), draft.connections.end(), [&id](const PlcConnection &entry) {
+        return entry.id == id;
+    });
+    if (record == draft.connections.end())
+    {
+        return;
+    }
+    draft.connections.erase(record);
+    if (!commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("协议仍被使用"), error);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::refreshPageNavigation
  * Description     : Keep actual page tabs and the toolbar selector synchronized with stable model identities.
  * Input Parameters: None
@@ -467,7 +590,10 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     settings = new QTreeWidgetItem(m_systemSettingsTree, {QStringLiteral("设置")});
     connections = new QTreeWidgetItem(settings, {QStringLiteral("连接设置")});
     connections->setData(0, Qt::UserRole, QStringLiteral("connections"));
-    catalog.load(); //20261122-6 add: Resolve protocol labels without altering the saved connection identity.
+    if (!m_project.connections.isEmpty())
+    {
+        catalog.load(); //20261122-6 add: Resolve protocol labels without altering the saved connection identity.
+    }
     for (number = 1; number <= 2; ++number)
     {
         item = new QTreeWidgetItem(connections, {QStringLiteral("COM%1").arg(number)});
@@ -481,9 +607,13 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
                 continue;
             }
             profile = catalog.profile(connection.profileId);
-            label = profile != nullptr ? profile->name : QFileInfo(connection.profileId).completeBaseName();
+            label = connection.displayName; //20261122-7 change: Names can change without renaming the bound ID.
+            if (label.isEmpty())
+            {
+                label = profile != nullptr ? profile->name : QFileInfo(connection.profileId).completeBaseName();
+            }
             parent = new QTreeWidgetItem(item, {label.isEmpty() ? connection.profileId : label});
-            parent->setData(0, Qt::UserRole, QStringLiteral("connections"));
+            parent->setData(0, Qt::UserRole, QStringLiteral("plcProtocol")); //20261122-7 change
             parent->setData(0, Qt::UserRole + 1, connection.id);
         }
     }

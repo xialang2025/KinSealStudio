@@ -16,7 +16,10 @@
 #include <QRegularExpression>
 #include <QSet>
 #include <QSignalBlocker>
+#include <QSpinBox>
+#include <QTabWidget>
 #include <QVBoxLayout>
+#include <algorithm>
 #include <functional>
 
 //20261109-0 add: These widgets expose project choices, while node/route research stays outside the flow.
@@ -242,6 +245,253 @@ bool editPlcSerialPort(QWidget *parent, const QString &port, QJsonObject *settin
         return false;
     }
     *settings = staged;
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : editPlcProtocol
+ * Description     : Edit one stable protocol instance in the original Settings page layout.
+ * Input Parameters: parent, model, connection, readOnly, error.
+ * Return Value    : True after a validated draft is confirmed.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+bool editPlcProtocol(QWidget *parent, const QString &model, PlcConnection *connection,
+                     bool readOnly, QString *error) //20261122-7 add
+{
+    PlcCatalog catalog;
+    QVector<PlcProfile> profiles;
+    PlcProfile profile;
+    PlcConnection staged;
+    PlcConnection confirmed;
+    QString selectedProfileId;
+    const PlcProfile *selectedProfile;
+    QPointer<QDialog> dialog;
+    QTabWidget *tabs;
+    QWidget *page;
+    QComboBox *manufacturer;
+    QComboBox *series;
+    QLineEdit *name;
+    QSpinBox *station;
+    QSpinBox *timeout;
+    QSpinBox *maximumWords;
+    QSpinBox *retries;
+    QSpinBox *interval;
+    QLabel *validation;
+    QFrame *separator;
+    QPushButton *defaults;
+    QDialogButtonBox *buttons;
+    QAbstractButton *button;
+    int result;
+    bool adding;
+
+    if (connection == nullptr || !catalog.load(QStringLiteral(":/plc/plc-catalog.json"), error))
+    {
+        return false;
+    }
+    profiles = catalog.profilesForModel(model);
+    selectedProfileId = connection->profileId;
+    adding = selectedProfileId.isEmpty(); //20261122-7 add: An empty draft starts on the native default series.
+    if (adding)
+    {
+        const auto initial = std::find_if(profiles.cbegin(), profiles.cend(), [](const PlcProfile &entry) {
+            return entry.name == QStringLiteral("Mitsubishi_Fx3U");
+        });
+        if (initial != profiles.cend())
+        {
+            selectedProfileId = initial->id;
+        }
+    }
+    selectedProfile = catalog.profile(selectedProfileId);
+    if (selectedProfile == nullptr || std::none_of(profiles.cbegin(), profiles.cend(), [&](const PlcProfile &entry) {
+            return entry.id == selectedProfileId;
+        }))
+    {
+        return connectionEditorError(error, QStringLiteral("当前型号目录没有此工程的 PLC 协议。"));
+    }
+    dialog = new QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowSystemMenuHint |
+                         Qt::WindowCloseButtonHint | Qt::WindowContextHelpButtonHint);
+    dialog->setObjectName(QStringLiteral("PlcProtocolDialog"));
+    dialog->setWindowTitle(QStringLiteral("协议"));
+    dialog->setFixedSize(405, 504);
+    dialog->setFont(QFont(QStringLiteral("SimSun"), 9));
+    dialog->setStyleSheet(QStringLiteral(
+        "QWidget#PlcProtocolPage { background: white; }"
+        "QComboBox, QLineEdit, QSpinBox { background: #caeace; border: 1px solid #a9a9a9; }"
+        "QSpinBox QLineEdit { border: none; }"
+        "QComboBox:disabled, QLineEdit:disabled, QSpinBox:disabled { background: #b1ceed; }"));
+    tabs = new QTabWidget(dialog);
+    tabs->setGeometry(10, 10, 379, 460);
+    page = new QWidget(tabs);
+    page->setObjectName(QStringLiteral("PlcProtocolPage"));
+    tabs->addTab(page, QStringLiteral("设置"));
+    auto label = [page](const QString &text, int x, int y, int width) {
+        QLabel *item = new QLabel(text, page);
+        item->setGeometry(x, y, width, 24);
+        return item;
+    };
+    manufacturer = new QComboBox(page);
+    manufacturer->setObjectName(QStringLiteral("combo_manu"));
+    manufacturer->setGeometry(130, 19, 221, 22);
+    manufacturer->setEnabled(!readOnly);
+    label(QStringLiteral("制造商："), 20, 18, 100)->setBuddy(manufacturer);
+    series = new QComboBox(page);
+    series->setObjectName(QStringLiteral("combo_protocol"));
+    series->setGeometry(130, 54, 221, 22);
+    series->setEnabled(!readOnly);
+    label(QStringLiteral("系列："), 20, 53, 100)->setBuddy(series);
+    name = new QLineEdit(page);
+    name->setObjectName(QStringLiteral("edit_name"));
+    name->setGeometry(130, 89, 221, 22);
+    name->setMaxLength(48);
+    name->setReadOnly(readOnly);
+    label(QStringLiteral("名称："), 20, 88, 100)->setBuddy(name);
+    label(QStringLiteral("通讯设置"), 15, 124, 60);
+    separator = new QFrame(page);
+    separator->setFrameShape(QFrame::HLine);
+    separator->setGeometry(66, 135, 298, 1);
+    auto spin = [page, &label, readOnly](const QString &caption, const QString &objectName,
+                                        const QString &unit, int minimum, int maximum, int y) {
+        QSpinBox *field = new QSpinBox(page);
+        field->setObjectName(objectName);
+        field->setGeometry(134, y, 171, 25);
+        field->setRange(minimum, maximum);
+        field->setReadOnly(readOnly);
+        label(caption, 20, y, 110)->setBuddy(field);
+        if (!unit.isEmpty())
+        {
+            label(unit, 312, y, 45);
+        }
+        return field;
+    };
+    station = spin(QStringLiteral("站号："), QStringLiteral("spin_stationIndex"), {}, 0, 255, 152);
+    timeout = spin(QStringLiteral("超时时间："), QStringLiteral("spin_time"), QStringLiteral("毫秒"), 50, 300000, 188);
+    maximumWords = spin(QStringLiteral("最大读写长度："), QStringLiteral("spin_length"), QStringLiteral("字"), 1, 256, 224);
+    retries = spin(QStringLiteral("重试次数："), QStringLiteral("spin_retry"), QStringLiteral("次"), 0, 10, 260);
+    interval = spin(QStringLiteral("帧间隔时间："), QStringLiteral("spin_interval"), QStringLiteral("毫秒"), 0, 30000, 296);
+    validation = label(readOnly ? QStringLiteral("原厂工程中的协议配置仅供查看。") : QString(), 24, 379, 328);
+    validation->setStyleSheet(QStringLiteral("background: #f7f7f7;"));
+    Q_FOREACH (profile, profiles)
+    {
+        if (manufacturer->findData(profile.manufacturer) < 0)
+        {
+            manufacturer->addItem(profile.manufacturer == QStringLiteral("MITSUBISHI") ?
+                QStringLiteral("MITSUBISHI(三菱)") : profile.manufacturer, profile.manufacturer);
+        }
+    }
+    auto populateSeries = [&](const QString &preferred) {
+        PlcProfile entry;
+        QSignalBlocker blocker(series);
+        int index;
+        series->clear();
+        Q_FOREACH (entry, profiles)
+        {
+            if (entry.manufacturer == manufacturer->currentData().toString())
+            {
+                series->addItem(entry.name, entry.id);
+            }
+        }
+        index = series->findData(preferred);
+        series->setCurrentIndex(index >= 0 ? index : 0);
+    };
+    auto applyDefaults = [&](bool resetName) {
+        const PlcProfile *entry = catalog.profile(series->currentData().toString());
+        QJsonObject values;
+        if (entry == nullptr)
+        {
+            return;
+        }
+        values = entry->serialDefaults;
+        station->setValue(values.value(QStringLiteral("DefaultStation")).toString(QStringLiteral("0")).toInt());
+        timeout->setValue(values.value(QStringLiteral("DefaultTimeout")).toString(QStringLiteral("1000")).toInt());
+        maximumWords->setValue(values.value(QStringLiteral("DefaultMaxRwLen")).toString(QStringLiteral("32")).toInt());
+        retries->setValue(values.value(QStringLiteral("DefaultRetryTimes")).toString(QStringLiteral("3")).toInt());
+        interval->setValue(values.value(QStringLiteral("DefaultIntervalTime")).toString(QStringLiteral("20")).toInt());
+        if (resetName)
+        {
+            name->setText(entry->name);
+        }
+    };
+    manufacturer->setCurrentIndex(manufacturer->findData(selectedProfile->manufacturer));
+    populateSeries(selectedProfileId);
+    name->setText(connection->displayName.isEmpty() ? selectedProfile->name : connection->displayName);
+    station->setValue(connection->station.toInt());
+    timeout->setValue(connection->timeoutMs);
+    maximumWords->setValue(connection->maximumWords);
+    retries->setValue(connection->retries);
+    interval->setValue(connection->frameIntervalMs);
+    if (adding)
+    {
+        applyDefaults(true);
+    }
+    QObject::connect(manufacturer, &QComboBox::currentIndexChanged, dialog, [&]() { populateSeries({}); applyDefaults(true); });
+    QObject::connect(series, &QComboBox::currentIndexChanged, dialog, [&]() { applyDefaults(true); });
+    defaults = new QPushButton(QStringLiteral("恢复默认值"), dialog);
+    defaults->setGeometry(11, 476, 129, 24);
+    defaults->setEnabled(!readOnly);
+    QObject::connect(defaults, &QPushButton::clicked, dialog, [&]() { applyDefaults(false); });
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, dialog);
+    buttons->setGeometry(191, 476, 198, 24);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setEnabled(!readOnly);
+    Q_FOREACH (button, buttons->buttons())
+    {
+        button->setFixedSize(58, 24);
+    }
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+    QObject::connect(buttons, &QDialogButtonBox::helpRequested, dialog, [&]() {
+        QMessageBox::information(dialog, QStringLiteral("协议帮助"),
+            QStringLiteral("选择制造商和系列后，可设置本协议的名称、站号和通讯参数。"));
+    });
+    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog, [&]() {
+        QString message;
+        QString newName = name->text().trimmed();
+        if (newName.isEmpty())
+        {
+            validation->setText(QStringLiteral("请输入协议名称。"));
+            return;
+        }
+        staged = *connection;
+        staged.displayName = newName == series->currentText() ? QString() : newName;
+        staged.profileId = series->currentData().toString();
+        staged.station = QString::number(station->value());
+        staged.timeoutMs = timeout->value();
+        staged.maximumWords = maximumWords->value();
+        staged.retries = retries->value();
+        staged.frameIntervalMs = interval->value();
+        // A driver or station change cannot carry a native node from the previous route.
+        if (staged.profileId != connection->profileId || staged.station != connection->station)
+        {
+            staged.nodeKnown = false;
+            staged.node = 0;
+        }
+        if (staged.channel == PlcChannel::Com1 && staged.station == QStringLiteral("1") &&
+            staged.profileId == QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini") &&
+            staged.usesDefaultProtocolTiming())
+        {
+            // This exact combination has an independently verified native node.
+            staged.nodeKnown = true;
+            staged.node = 1;
+        }
+        if (!PlcConnection::fromJson(staged.toJson(), &confirmed, &message))
+        {
+            validation->setText(message);
+            return;
+        }
+        dialog->accept();
+    });
+    result = dialog->exec();
+    if (dialog.isNull())
+    {
+        return false;
+    }
+    delete dialog.data();
+    if (result != QDialog::Accepted || confirmed.id.isEmpty())
+    {
+        return false;
+    }
+    *connection = confirmed;
     return true;
 }
 
@@ -546,8 +796,14 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     for (index = 0; index < connections.size(); ++index)
     {
         profile = catalog.profile(connections[index].profileId);
-        memory->addItem(connections[index].id.toUpper() + QStringLiteral(" / ") +
-                         (profile == nullptr ? QStringLiteral("未知 PLC") : profile->name), connections[index].id);
+        QString port = connections[index].channel == PlcChannel::Com1 ? QStringLiteral("COM1") :
+            connections[index].channel == PlcChannel::Com2 ? QStringLiteral("COM2") : connections[index].id.toUpper();
+        QString name = connections[index].displayName; //20261122-7 change: Keep qualified address IDs separate from the visible route.
+        if (name.isEmpty())
+        {
+            name = profile == nullptr ? QStringLiteral("未知 PLC") : profile->name;
+        }
+        memory->addItem(port + QStringLiteral(" / ") + name, connections[index].id);
     }
     selected = memory->findData(connectionId);
     if (selected < 0)

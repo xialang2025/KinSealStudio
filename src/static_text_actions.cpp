@@ -4,11 +4,12 @@
 #include "bit_button_dialog.h" //20261108-15 add
 #include "plc_address_dialog.h" //20261109-0 add
 #include <QMessageBox>
-#include <QJsonArray> //20261109-0 add
 #include <QComboBox>
 #include <QInputDialog>
 #include <QRegularExpression>
 #include <QStatusBar>
+#include <QTreeWidget>
+#include <algorithm>
 
 /******************************************************************************
  * Function Name   : MainWindow::applyControlDraft
@@ -351,28 +352,36 @@ void MainWindow::configureLanguages() //20261110-5 change
  * Return Value    : None
  * Date            : 2026.11.09
  ******************************************************************************/
-void MainWindow::configureConnections() //20261109-0 add
+void MainWindow::configureConnections() //20261122-7 change
 {
     QVector<PlcConnection> connections;
     HmiProject candidate;
-    QJsonArray connectionsJson; //20261109-0 add
-    PlcConnection connection;
     QString error;
+    QTreeWidgetItem *connectionGroup;
 
+    if (!m_hasProject)
+    {
+        return;
+    }
     connections = m_project.connections;
+    if (!m_project.nativeSourceSnapshot.isEmpty() || connections.size() > 2 ||
+        std::any_of(connections.cbegin(), connections.cend(), [](const PlcConnection &entry) {
+            return !((entry.id == QStringLiteral("com1") && entry.channel == PlcChannel::Com1) ||
+                     (entry.id == QStringLiteral("com2") && entry.channel == PlcChannel::Com2));
+        }))
+    {
+        // The legacy aggregate editor can represent only two canonical slots.
+        connectionGroup = m_systemSettingsTree->topLevelItem(0)->child(0);
+        connectionGroup->setExpanded(true);
+        m_systemSettingsTree->setCurrentItem(connectionGroup);
+        m_systemSettingsTree->scrollToItem(connectionGroup);
+        return;
+    }
     if (editPlcConnections(this, m_project.targetModel, &connections, &error))
     {
-        candidate = m_project;
-        candidate.objects = m_canvas->objects();
+        candidate = currentEditorProject();
         candidate.connections = connections;
-        if (candidate.validateModel(&error)) //20261110-5 change: Explicit schema9 connection references also participate in this transaction.
-        {
-            m_project.connections = connections;
-            Q_FOREACH (connection, connections) { connectionsJson.append(connection.toJson()); }
-            setProperty("plcConnections", connectionsJson.toVariantList());
-            setDirty(true);
-        }
-        else
+        if (!commitProjectDraft(candidate, &error))
         {
             QMessageBox::warning(this, QStringLiteral("连接仍被使用"), error);
         }

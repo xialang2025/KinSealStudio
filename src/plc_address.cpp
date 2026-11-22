@@ -375,7 +375,8 @@ QVector<PlcProfile> PlcCatalog::profilesForModel(const QString &modelName) const
     for (index = 0; index < models.size(); ++index)
     {
         model = models[index].toObject();
-        if (model.value(QStringLiteral("name")).toString() == modelName)
+        if (model.value(QStringLiteral("name")).toString() ==
+            (modelName == QStringLiteral("AMZ070W01R") ? QStringLiteral("AMZ070W01") : modelName)) //20261122-7 change
         {
             drivePath = model.value(QStringLiteral("drivePath")).toString();
             break;
@@ -447,7 +448,50 @@ QJsonObject PlcConnection::toJson() const
     json.insert(QStringLiteral("channel"), channelText(channel));
     json.insert(QStringLiteral("station"), station);
     json.insert(QStringLiteral("node"), nodeKnown ? QJsonValue(int(node)) : QJsonValue(QJsonValue::Null));
+    //20261122-7 add: Keep the original serialization of legacy connections with default settings.
+    if (!displayName.isEmpty()) { json.insert(QStringLiteral("displayName"), displayName); }
+    if (timeoutMs != 1000) { json.insert(QStringLiteral("timeoutMs"), timeoutMs); }
+    if (maximumWords != 32) { json.insert(QStringLiteral("maximumWords"), maximumWords); }
+    if (retries != 3) { json.insert(QStringLiteral("retries"), retries); }
+    if (frameIntervalMs != 20) { json.insert(QStringLiteral("frameIntervalMs"), frameIntervalMs); }
     return json;
+}
+
+/******************************************************************************
+ * Function Name   : PlcConnection::usesDefaultProtocolTiming
+ * Description     : Identify values that can use the verified Modbus device defaults.
+ * Input Parameters: None.
+ * Return Value    : True if no timing or frame limit needs device encoding.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+bool PlcConnection::usesDefaultProtocolTiming() const //20261122-7 add
+{
+    return timeoutMs == 1000 && maximumWords == 32 && retries == 3 && frameIntervalMs == 20;
+}
+
+/******************************************************************************
+ * Function Name   : readOptionalProtocolInteger
+ * Description     : Validate an optional numeric field without overwriting its legacy default when absent.
+ * Input Parameters: json, key, minimum, maximum, output.
+ * Return Value    : True for a missing field or an integer in range.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+static bool readOptionalProtocolInteger(const QJsonObject &json, const QString &key, int minimum,
+                                        int maximum, int *output) //20261122-7 add
+{
+    int value;
+
+    if (!json.contains(key))
+    {
+        return true;
+    }
+    value = json.value(key).toInt(minimum - 1);
+    if (value < minimum || value > maximum)
+    {
+        return false;
+    }
+    *output = value;
+    return true;
 }
 
 /******************************************************************************
@@ -574,6 +618,23 @@ bool PlcConnection::fromJson(const QJsonObject &json, PlcConnection *connection,
         }
         parsed.nodeKnown = true;
         parsed.node = u8(numericNode);
+    }
+    if (json.contains(QStringLiteral("displayName"))) //20261122-7 add
+    {
+        parsed.displayName = json.value(QStringLiteral("displayName")).toString();
+        if (parsed.displayName.isEmpty() || parsed.displayName.size() > 48 ||
+            parsed.displayName != parsed.displayName.trimmed() || parsed.displayName.contains(QChar(u'\n')) ||
+            parsed.displayName.contains(QChar(u'\r')))
+        {
+            return addressError(error, QStringLiteral("协议名称必须为 1 至 48 个字符的单行文本。"));
+        }
+    }
+    if (!readOptionalProtocolInteger(json, QStringLiteral("timeoutMs"), 50, 300000, &parsed.timeoutMs) ||
+        !readOptionalProtocolInteger(json, QStringLiteral("maximumWords"), 1, 256, &parsed.maximumWords) ||
+        !readOptionalProtocolInteger(json, QStringLiteral("retries"), 0, 10, &parsed.retries) ||
+        !readOptionalProtocolInteger(json, QStringLiteral("frameIntervalMs"), 0, 30000, &parsed.frameIntervalMs))
+    {
+        return addressError(error, QStringLiteral("协议超时、读写长度、重试次数或帧间隔超出允许范围。"));
     }
     *connection = parsed;
     clearAddressError(error);
