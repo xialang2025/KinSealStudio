@@ -945,6 +945,23 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         *node = candidate;
         return true;
     }
+    if (candidate.kind == QStringLiteral("pageSlide")) //20261123-4 add
+    {
+        const QJsonValue distance = candidate.properties.value(QStringLiteral("distance"));
+
+        if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
+            candidate.ownerPageId.isEmpty() || !candidate.implemented || !candidate.active ||
+            !knownKeys(candidate.properties, {QStringLiteral("enabled"), QStringLiteral("distance")},
+                QStringLiteral("pageSlide"), error) ||
+            !candidate.properties.value(QStringLiteral("enabled")).isBool() ||
+            !exactInteger(distance) || distance.toInt() < 5 || distance.toInt() > 480 ||
+            !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
+        {
+            return modelError(error, QStringLiteral("滑动设置需要普通画面、总开关和 5–480 像素距离。"));
+        }
+        *node = candidate;
+        return true;
+    }
     if (candidate.kind == QStringLiteral("serialPort") && candidate.implemented && candidate.active && candidate.ownerPageId.isEmpty()) //20261122-6 add
     {
         // The fixed identity permits one independent settings record per device port.
@@ -1547,6 +1564,10 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     QSet<QString> languageNames;
     QSet<QString> referenceFields;
     QMap<QString, QString> navigationPageKinds; //20261112-0 add
+    QMap<QString, QString> slideOwners; //20261123-4 add
+    QSet<QString> pagesWithSlide;
+    const QStringList slideDirections = {QStringLiteral("left"), QStringLiteral("right"),
+                                         QStringLiteral("up"), QStringLiteral("down")};
     QSet<QString> keyboardPageIds; //20261112-0 add
     QMap<QString, QSet<QString>> entities;
     QMap<QString, QString>::const_iterator macro;
@@ -1673,6 +1694,16 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("配置节点%1重复、悬空或包含未恢复活动字段。").arg(node.id));
         }
         nodeIds.insert(node.id);
+        if (node.kind == QStringLiteral("pageSlide")) //20261123-4 add
+        {
+            if (navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") ||
+                pagesWithSlide.contains(node.ownerPageId))
+            {
+                return modelError(error, QStringLiteral("每个普通画面只能保存一组滑动设置。"));
+            }
+            slideOwners.insert(node.id, node.ownerPageId);
+            pagesWithSlide.insert(node.ownerPageId);
+        }
         if (node.kind == QStringLiteral("system") && node.implemented && node.active) { hasSystemSettings = true; }
     }
     //20261112-1 add: Resolve collection identities over all pages before allowing a rename, removal or paste to publish.
@@ -1753,6 +1784,13 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("引用%1重复、所有者或目标悬空；旧宏名称不属于稳定ID。").arg(reference.id));
         }
         referenceIds.insert(reference.id); referenceFields.insert(binding);
+        if (reference.ownerKind == QStringLiteral("configuration") && slideOwners.contains(reference.ownerId) &&
+            (reference.targetKind != QStringLiteral("page") ||
+             navigationPageKinds.value(reference.targetId) != QStringLiteral("normal") ||
+             slideOwners.value(reference.ownerId) == reference.targetId || !slideDirections.contains(reference.field)))
+        {
+            return modelError(error, QStringLiteral("滑动方向只能指向本页之外的普通画面。")); //20261123-4 add
+        }
     }
     if (!inactiveExtensions(extensions, QStringLiteral("project.extensions"), error)) { return false; }
     return validatePlcConfiguration(error);

@@ -4,6 +4,8 @@
 #include "kvg_library.h" //20261123-3 add
 #include "stage2_system_settings.h" //20261122-4 change
 
+#include <QCheckBox> //20261123-4 add
+
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -162,6 +164,19 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QPushButton *systemGallery; //20261123-3 add
     QColor backgroundColor = HmiPageBackground::defaultColor(); //20261123-1 change
     QColor foregroundColor = HmiPageBackground::defaultColor();
+    QGroupBox *slideGroup; //20261123-4 add
+    QGridLayout *slideLayout;
+    QSpinBox *slideDistance;
+    QCheckBox *slideDirections[4];
+    QComboBox *slideTargets[4];
+    const QStringList slideLabels = {QStringLiteral("向左"), QStringLiteral("向右"),
+                                     QStringLiteral("向上"), QStringLiteral("向下")};
+    const QStringList slideKeys = {QStringLiteral("Left"), QStringLiteral("Right"),
+                                   QStringLiteral("Up"), QStringLiteral("Down")};
+    const QMap<QString, int> ordinaryNumbers = project.ordinaryPageNumbers();
+    const QList<HmiPage> targetPages = project.allPages();
+    int directionIndex;
+    int column;
     QString bitmapName;
     QString systemPicture; //20261123-3 add
     QImage bitmap;
@@ -259,6 +274,38 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     backgroundLayout->addWidget(bitmapMode, 1, 0);
     backgroundLayout->addWidget(backgroundOptions, 0, 1, 2, 1);
     backgroundLayout->addWidget(backgroundPreview, 0, 2, 2, 1, Qt::AlignCenter);
+
+    slideGroup = new QGroupBox(QStringLiteral("滑动打开画面"), background); //20261123-4 add
+    slideGroup->setObjectName(QStringLiteral("pageSlideGroup"));
+    slideGroup->setCheckable(true);
+    slideLayout = new QGridLayout(slideGroup);
+    slideDistance = new QSpinBox(slideGroup);
+    slideDistance->setObjectName(QStringLiteral("pageSlideDistance"));
+    slideDistance->setRange(5, 480);
+    slideDistance->setValue(50);
+    slideLayout->addWidget(new QLabel(QStringLiteral("滑动距离："), slideGroup), 0, 0);
+    slideLayout->addWidget(slideDistance, 0, 1);
+    for (directionIndex = 0; directionIndex < 4; ++directionIndex)
+    {
+        column = 2 * (directionIndex % 2);
+        slideDirections[directionIndex] = new QCheckBox(slideLabels.at(directionIndex), slideGroup);
+        slideTargets[directionIndex] = new QComboBox(slideGroup);
+        slideDirections[directionIndex]->setObjectName(QStringLiteral("pageSlide") + slideKeys.at(directionIndex));
+        slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
+        for (const HmiPage &target : targetPages)
+        {
+            if (ordinaryNumbers.contains(target.id))
+            {
+                // The label reflects renumbering or renaming while the data carries a stable ID.
+                slideTargets[directionIndex]->addItem(QStringLiteral("%1:%2")
+                    .arg(ordinaryNumbers.value(target.id), 3, 10, QLatin1Char('0')).arg(target.name), target.id);
+            }
+        }
+        slideLayout->addWidget(slideDirections[directionIndex], 1 + directionIndex / 2, column);
+        slideLayout->addWidget(slideTargets[directionIndex], 1 + directionIndex / 2, column + 1);
+    }
+    slideGroup->setChecked(false);
+    backgroundLayout->addWidget(slideGroup, 2, 0, 1, 3);
     layout->addRow(background);
     auto fillDraft = [&]() {
         HmiPageBackground fill;
@@ -350,6 +397,10 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
         HmiPage page;
         QString error;
+        HmiConfigurationNode slide; //20261123-4 add
+        HmiReference target;
+        bool preserveSlide;
+        int direction;
 
         if (bitmapMode->isChecked() && bitmap.isNull() && systemPicture.isEmpty()) //20261123-3 change
         {
@@ -363,7 +414,46 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         candidate = project;
         // Activate by the new ID so the device startup page is left independent.
         if (!validateStage2PageName(project, QString(), page.name, &error) ||
-            !candidate.addPage(page, &error) || !candidate.selectPage(page.id, &error))
+            !candidate.addPage(page, &error)) //20261123-4 change
+        {
+            validation->setText(error);
+            return;
+        }
+        slide.id = QUuid::createUuid().toString(QUuid::WithoutBraces); //20261123-4 add
+        slide.kind = QStringLiteral("pageSlide");
+        slide.name = slideGroup->title();
+        slide.ownerPageId = page.id;
+        slide.implemented = true;
+        slide.active = true;
+        slide.properties = {{QStringLiteral("enabled"), slideGroup->isChecked()},
+                            {QStringLiteral("distance"), slideDistance->value()}};
+        preserveSlide = slideGroup->isChecked() || slideDistance->value() != 50;
+        for (direction = 0; direction < 4; ++direction)
+        {
+            if (!slideDirections[direction]->isChecked())
+            {
+                continue;
+            }
+            target.targetId = slideTargets[direction]->currentData().toString();
+            if (target.targetId.isEmpty())
+            {
+                validation->setText(QStringLiteral("请选择“%1”的目标画面。").arg(slideLabels.at(direction)));
+                return;
+            }
+            target.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            target.ownerKind = QStringLiteral("configuration");
+            target.ownerId = slide.id;
+            target.targetKind = QStringLiteral("page");
+            target.field = slideKeys.at(direction).toLower();
+            candidate.references.append(target);
+            preserveSlide = true;
+        }
+        if (preserveSlide)
+        {
+            // Keep selected directions if the master switch was turned back off before confirming.
+            candidate.configurationNodes.append(slide);
+        }
+        if (!candidate.selectPage(page.id, &error))
         {
             validation->setText(error);
             return;

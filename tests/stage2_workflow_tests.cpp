@@ -11,10 +11,12 @@
 #include <QApplication>
 #include <QBuffer>
 #include <QClipboard>
+#include <QCheckBox> //20261123-4 add
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
+#include <QGroupBox> //20261123-4 add
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -79,6 +81,7 @@ private slots:
     void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
     void newPageProjectBitmapStretchesAndPersists(); //20261123-2 add
     void newPageSystemBitmapStretchesAndPersists(); //20261123-3 add
+    void newPageSlideKeepsStableTargetAcrossSave(); //20261123-4 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1460,6 +1463,96 @@ void Stage2WorkflowTests::newPageSystemBitmapStretchesAndPersists() //20261123-3
     QCOMPARE(simulationFrame(runtime), expected);
     QVERIFY(!project.validateSinglePageBackend(&error));
     QVERIFY(error.contains(QStringLiteral("背景")));
+}
+
+/******************************************************************************
+ * Function Name   : newPageSlideKeepsStableTargetAcrossSave
+ * Description     : Enable left swipe, save the page and verify the target survives renaming.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageSlideKeepsStableTargetAcrossSave() //20261123-4 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    HmiPage target;
+    HmiPage window;
+    QString error;
+    QString path;
+    QString pageId;
+    bool configured = false;
+
+    QVERIFY(directory.isValid());
+    target.id = QStringLiteral("swipe-target");
+    target.name = QStringLiteral("目标画面");
+    target.number = 5;
+    QVERIFY2(project.addPage(target, &error), qPrintable(error));
+    window.id = QStringLiteral("popup-target");
+    window.kind = QStringLiteral("window");
+    window.name = QStringLiteral("弹出窗口");
+    QVERIFY2(project.addPage(window, &error), qPrintable(error));
+
+    QTimer::singleShot(0, this, [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QGroupBox *group;
+        QSpinBox *distance;
+        QCheckBox *left;
+        QComboBox *leftTarget;
+        QDialogButtonBox *buttons;
+        int targetIndex;
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        group = editor->findChild<QGroupBox *>(QStringLiteral("pageSlideGroup"));
+        distance = editor->findChild<QSpinBox *>(QStringLiteral("pageSlideDistance"));
+        left = editor->findChild<QCheckBox *>(QStringLiteral("pageSlideLeft"));
+        leftTarget = editor->findChild<QComboBox *>(QStringLiteral("pageSlideLeftTarget"));
+        buttons = editor->findChild<QDialogButtonBox *>();
+        if (group == nullptr || distance == nullptr || left == nullptr || leftTarget == nullptr || buttons == nullptr ||
+            group->isChecked() || distance->isEnabled() || left->isEnabled() || leftTarget->isEnabled() ||
+            distance->minimum() != 5 || distance->maximum() != 480 || distance->value() != 50)
+        {
+            editor->reject();
+            return;
+        }
+        group->setChecked(true);
+        targetIndex = leftTarget->findText(QStringLiteral("005:目标画面"));
+        if (!leftTarget->isEnabled() || left->isChecked() || targetIndex < 0 || leftTarget->count() != 2)
+        {
+            editor->reject();
+            return;
+        }
+        distance->setValue(75);
+        left->click();
+        leftTarget->setCurrentIndex(targetIndex);
+        configured = true;
+        buttons->button(QDialogButtonBox::Ok)->click();
+        if (editor->isVisible())
+        {
+            editor->reject();
+        }
+    });
+    const bool accepted = editStage2NewNormalPage(nullptr, project);
+    QVERIFY2(configured && accepted, "The new-page dialog must accept 75 px left swipe to ordinary page 005.");
+    pageId = project.activePageId;
+    QVERIFY2(project.renamePage(target.id, QStringLiteral("已改名目标"), &error), qPrintable(error));
+    path = directory.filePath(QStringLiteral("page-slide.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.configurationNodes.size(), 1);
+    QCOMPARE(reopened.configurationNodes.first().ownerPageId, pageId);
+    QCOMPARE(reopened.configurationNodes.first().properties.value(QStringLiteral("enabled")).toBool(), true);
+    QCOMPARE(reopened.configurationNodes.first().properties.value(QStringLiteral("distance")).toInt(), 75);
+    QCOMPARE(reopened.references.size(), 1);
+    QCOMPARE(reopened.references.first().field, QStringLiteral("left"));
+    QCOMPARE(reopened.references.first().targetId, target.id);
+    QVERIFY(!reopened.removePage(target.id, &error));
+    QVERIFY(error.contains(QStringLiteral("被引用")));
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
 }
 
 /******************************************************************************
