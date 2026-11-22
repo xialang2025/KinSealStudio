@@ -66,6 +66,7 @@ private slots:
     void addingProtocolKeepsExistingProtocolsOnThePort(); //20261122-7 add
     void deletingProtocolProtectsProjectReferences(); //20261122-7 add
     void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
+    void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -990,6 +991,102 @@ void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9
     QCOMPARE(groups.size(), 1);
     QCOMPARE(groups.first()->childCount(), 2);
     QCOMPARE(groups.first()->child(1)->text(0), QStringLiteral("001:画面2"));
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageNumbersAreEditableAndPersisted
+ * Description     : Reject an occupied page number and round-trip a non-default ordinary number without changing window labels.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageNumbersAreEditableAndPersisted() //20261122-10 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject single;
+    HmiPage popup;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> items;
+    QString path;
+    QString pageId;
+    QString error;
+    bool numberIsEditable = false;
+    bool duplicateRejected = false;
+
+    QVERIFY(directory.isValid());
+    popup.id = QStringLiteral("popup-number-test");
+    popup.kind = QStringLiteral("window");
+    popup.name = QStringLiteral("对照窗口");
+    popup.width = 240;
+    popup.height = 180;
+    QVERIFY2(project.addPage(popup, &error), qPrintable(error));
+    path = directory.filePath(QStringLiteral("numbered-page.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    items = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(items.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, items.first(), QStringLiteral("新建画面"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QDialogButtonBox *buttons;
+        QSpinBox *number;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        number = dialog->findChild<QSpinBox *>(QStringLiteral("newPageNumberSpin"));
+        if (buttons == nullptr || number == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        numberIsEditable = !number->isReadOnly() && number->minimum() == 0 && number->maximum() == 999;
+        number->setValue(0);
+        buttons->button(QDialogButtonBox::Ok)->click();
+        duplicateRejected = dialog->isVisible();
+        if (duplicateRejected)
+        {
+            number->setValue(999);
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    }));
+    QVERIFY2(numberIsEditable, "Ordinary page numbers must be selectable from 0 to 999.");
+    QVERIFY2(duplicateRejected, "A new ordinary page must reject the first page's effective number 0.");
+    pageId = window.currentEditorProject().activePageId;
+    QVERIFY(pageId != project.activePageId);
+    QCOMPARE(tree->findItems(QStringLiteral("001:对照窗口"), Qt::MatchExactly | Qt::MatchRecursive).size(), 1);
+    QCOMPARE(tree->findItems(QStringLiteral("999:画面3"), Qt::MatchExactly | Qt::MatchRecursive).size(), 1);
+    QVERIFY(window.activatePageId(project.activePageId));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(reopened.currentEditorProject().activePageId, project.activePageId);
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    QCOMPARE(tree->findItems(QStringLiteral("000:画面1"), Qt::MatchExactly | Qt::MatchRecursive).size(), 1);
+    items = tree->findItems(QStringLiteral("999:画面3"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(items.size(), 1);
+    tree->itemDoubleClicked(items.first(), 0);
+    QCOMPARE(reopened.currentEditorProject().activePageId, pageId);
+    single = reopened.currentEditorProject();
+    single.startupPageId = pageId;
+    QVERIFY2(single.removePage(project.activePageId, &error), qPrintable(error));
+    QVERIFY2(single.removePage(popup.id, &error), qPrintable(error));
+    QVERIFY2(!single.validateSinglePageBackend(&error), "An explicit nonzero number must not compile as page zero.");
+    QVERIFY(error.contains(QStringLiteral("编号")));
 }
 
 /******************************************************************************

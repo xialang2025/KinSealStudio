@@ -74,6 +74,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
+    QList<int> occupiedNumbers; //20261122-10 add
     QString suggestion;
     int pageNumber;
     int nameNumber;
@@ -81,6 +82,11 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
 
     pageNumber = project.pageCount();
     nameNumber = pageNumber + 1;
+    occupiedNumbers = project.ordinaryPageNumbers().values();
+    while (occupiedNumbers.contains(pageNumber)) //20261122-10 add: Keep the established order-based suggestion wherever it is available.
+    {
+        ++pageNumber;
+    }
     suggestion = QStringLiteral("画面%1").arg(nameNumber);
     while (!validateStage2PageName(project, QString(), suggestion, nullptr))
     {
@@ -96,9 +102,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     number->setObjectName(QStringLiteral("newPageNumberSpin"));
     number->setRange(0, 999);
     number->setValue(pageNumber);
-    number->setReadOnly(true); // The current KSP model derives the visible number from page order.
-    number->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    number->setToolTip(QStringLiteral("当前编号随工程中的页面顺序显示。"));
+    number->setToolTip(QStringLiteral("同一工程内普通画面编号不可重复。")); //20261122-10 change
     validation = new QLabel(&dialog);
     validation->setWordWrap(true);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
@@ -115,6 +119,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
 
         page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         page.name = name->text();
+        page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.
         candidate = project;
         // Activate by the new ID so the device startup page is left independent.
         if (!validateStage2PageName(project, QString(), page.name, &error) ||

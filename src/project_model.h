@@ -38,6 +38,7 @@
 #include "flow_block_properties.h" //20261112-0 add
 #include "dropdown_properties.h" //20261112-0 add
 #include "multi_function_button_properties.h" //20261112-0 add //20261112-0 add
+#include <optional> //20261122-10 add
 
 struct HmiObject
 {
@@ -103,6 +104,7 @@ struct HmiPage
     int height = 480;
     QList<HmiObject> objects;
     QJsonObject extensions;
+    std::optional<int> number; //20261122-10 add: Independent ordinary page number. Earlier projects derive it from page order.
 
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &json, HmiPage *page, QString *error = nullptr);
@@ -157,6 +159,7 @@ struct HmiProject
     QString activePageId = QStringLiteral("page-1");
     QString activePageKind = QStringLiteral("normal");
     QJsonObject activePageExtensions;
+    std::optional<int> activePageNumber; //20261122-10 add
     QList<HmiPage> inactivePages;
     QStringList pageOrder = {QStringLiteral("page-1")};
     QString startupPageId = QStringLiteral("page-1");
@@ -168,6 +171,7 @@ struct HmiProject
 
     HmiProject();
     QList<HmiPage> allPages() const;
+    QMap<QString, int> ordinaryPageNumbers() const; //20261122-10 add
     int pageCount() const;
     bool selectPage(const QString &id, QString *error = nullptr);
     bool addPage(const HmiPage &page, QString *error = nullptr);

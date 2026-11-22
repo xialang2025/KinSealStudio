@@ -170,6 +170,7 @@ HmiPage activePage(const HmiProject &project)
 
     page.id = project.activePageId; page.kind = project.activePageKind;
     page.name = project.pageName; page.width = project.pageWidth; page.height = project.pageHeight;
+    page.number = project.activePageNumber; //20261122-10 add: Preserve the number when the page becomes inactive.
     page.objects = project.objects; page.extensions = project.activePageExtensions;
     return page;
 }
@@ -185,6 +186,7 @@ void assignActivePage(HmiProject *project, const HmiPage &page)
 {
     project->activePageId = page.id; project->activePageKind = page.kind;
     project->pageName = page.name; project->pageWidth = page.width; project->pageHeight = page.height;
+    project->activePageNumber = page.number; //20261122-10 add: Restore the selected page's optional number independently of its ID.
     project->objects = page.objects; project->activePageExtensions = page.extensions;
 }
 
@@ -199,6 +201,7 @@ bool hasStage1Data(const HmiProject &project)
 {
     HmiObject object;
 
+    if (project.activePageNumber.has_value()) { return true; } //20261122-10 add: Legacy top-level page fields cannot carry an assigned number.
     if (project.projectId != QStringLiteral("project-1") || !project.inactivePages.isEmpty() || project.activePageId != QStringLiteral("page-1") ||
         project.activePageKind != QStringLiteral("normal") || !project.activePageExtensions.isEmpty() ||
         project.pageOrder != QStringList{QStringLiteral("page-1")} || project.startupPageId != QStringLiteral("page-1") ||
@@ -628,6 +631,7 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     json.insert(QStringLiteral("name"), name); json.insert(QStringLiteral("width"), width);
     json.insert(QStringLiteral("height"), height); json.insert(QStringLiteral("objects"), items);
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); }
+    if (number.has_value()) { json.insert(QStringLiteral("number"), *number); } //20261122-10 add
     return json;
 }
 
@@ -644,11 +648,13 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     HmiObject object;
     QJsonArray items;
     QJsonValue item;
+    QJsonValue savedNumber; //20261122-10 add
     QString key;
     QSet<QString> ids;
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
-        QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions")}, QStringLiteral("page"), error)) { return false; }
+        QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
+        QStringLiteral("number")}, QStringLiteral("page"), error)) { return false; } //20261122-10 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
     {
         if (!json.value(key).isString() || json.value(key).toString().trimmed().isEmpty())
@@ -670,6 +676,16 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
         !inactiveExtensions(candidate.extensions, QStringLiteral("page.extensions"), error))
     {
         return modelError(error, QStringLiteral("页面类型或尺寸超出当前AMT编辑范围。"));
+    }
+    if (json.contains(QStringLiteral("number"))) //20261122-10 add: Only ordinary page numbering has been specified.
+    {
+        savedNumber = json.value(QStringLiteral("number"));
+        if (candidate.kind != QStringLiteral("normal") || !exactInteger(savedNumber) ||
+            savedNumber.toInt() < 0 || savedNumber.toInt() > 999)
+        {
+            return modelError(error, QStringLiteral("仅普通画面可保存编号，编号必须为 0–999 的整数。"));
+        }
+        candidate.number = savedNumber.toInt();
     }
     items = json.value(QStringLiteral("objects")).toArray();
     if (items.size() > 100) { return modelError(error, QStringLiteral("页面超过Lite每页100控件保护上限。")); }
@@ -1291,6 +1307,48 @@ int HmiProject::pageCount() const //20261110-5 add
 }
 
 /******************************************************************************
+ * Function Name   : HmiProject::ordinaryPageNumbers
+ * Description     : Keep assigned numbers and derive missing ordinary page numbers from page order.
+ * Input Parameters: None.
+ * Return Value    : Ordinary page numbers indexed by stable page ID.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261122-10 add
+{
+    QList<HmiPage> pages = allPages();
+    QMap<QString, int> numbers;
+    QSet<int> assigned;
+    HmiPage page;
+    int ordinal = 0;
+    int fallback;
+
+    Q_FOREACH (page, pages)
+    {
+        if (page.kind == QStringLiteral("normal") && page.number.has_value())
+        {
+            numbers.insert(page.id, *page.number);
+            assigned.insert(*page.number);
+        }
+    }
+    Q_FOREACH (page, pages)
+    {
+        if (page.kind == QStringLiteral("normal") && !page.number.has_value())
+        {
+            // Assigned numbers survive deletion and reordering. Only legacy projections may shift.
+            fallback = ordinal;
+            while (assigned.contains(fallback))
+            {
+                ++fallback;
+            }
+            numbers.insert(page.id, fallback);
+            assigned.insert(fallback);
+        }
+        ++ordinal;
+    }
+    return numbers;
+}
+
+/******************************************************************************
  * Function Name   : HmiProject::validateModel
  * Description     : Check all K entities and stable references before any transaction commits.
  * Input Parameters: error
@@ -1310,6 +1368,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     HmiReference reference;
     HmiReference parsedReference;
     QSet<QString> pageIds;
+    QSet<int> explicitPageNumbers; //20261122-10 add
     QSet<QString> objectIds;
     QSet<QString> nodeIds;
     QSet<QString> referenceIds;
@@ -1369,6 +1428,14 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("页面%1无效或稳定ID重复。%2").arg(page.id, error == nullptr ? QString() : *error));
         }
         pageIds.insert(page.id);
+        if (page.number.has_value()) //20261122-10 add: Reject duplicate assignments in imported KSP as well as editor transactions.
+        {
+            if (explicitPageNumbers.contains(*page.number))
+            {
+                return modelError(error, QStringLiteral("普通画面编号 %1 已被使用。").arg(*page.number));
+            }
+            explicitPageNumbers.insert(*page.number);
+        }
         Q_FOREACH (object, page.objects)
         {
             subtypeCount = int(object.hasWordButtonProperties) + int(object.hasLampProperties) + int(object.hasFunctionButtonProperties);
@@ -1533,6 +1600,10 @@ bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 ad
     {
         return modelError(error, QStringLiteral("当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。"));
     }
+    if (activePageNumber.value_or(0) != 0) //20261122-10 add: The verified single-page source and device formats use page zero.
+    {
+        return modelError(error, QStringLiteral("当前源/设备后端仅支持普通画面编号 000。"));
+    }
     return true;
 }
 
@@ -1574,6 +1645,11 @@ bool HmiProject::addPage(const HmiPage &page, QString *error) //20261110-5 add
 {
     HmiProject candidate;
 
+    if (page.kind == QStringLiteral("normal") && page.number.has_value() &&
+        ordinaryPageNumbers().values().contains(*page.number)) //20261122-10 add
+    {
+        return modelError(error, QStringLiteral("普通画面编号 %1 已被使用。").arg(*page.number));
+    }
     candidate = *this; candidate.inactivePages.append(page); candidate.pageOrder.append(page.id);
     if (!candidate.validateModel(error)) { return false; }
     *this = candidate; return true;
@@ -1628,6 +1704,7 @@ bool HmiProject::copyPage(const QString &id, const QString &newName, QString *ne
     Q_FOREACH (page, allPages()) { if (page.id == id) { copy = page; found = true; break; } }
     if (!found) { return modelError(error, QStringLiteral("待复制页面不存在。")); }
     copy.id = QUuid::createUuid().toString(QUuid::WithoutBraces); copy.name = newName;
+    copy.number.reset(); //20261122-10 add: The copy derives its own ordinary page number.
     ids.insert(QStringLiteral("page/") + id, copy.id);
     for (index = 0; index < copy.objects.size(); ++index)
     {
