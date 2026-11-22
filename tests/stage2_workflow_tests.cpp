@@ -65,6 +65,7 @@ private slots:
     void protocolTreeEditsAreScopedToTheirInstance(); //20261122-7 add
     void addingProtocolKeepsExistingProtocolsOnThePort(); //20261122-7 add
     void deletingProtocolProtectsProjectReferences(); //20261122-7 add
+    void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -905,6 +906,90 @@ static bool triggerSettingsTreeAction(QTreeWidget *tree, QTreeWidgetItem *item, 
     menuSelection.start(0);
     tree->customContextMenuRequested(tree->visualItemRect(item).center());
     return triggered;
+}
+
+/******************************************************************************
+ * Function Name   : newPageFromSettingsTreeCancelsOrReopens
+ * Description     : Open the ordinary page creation action and verify cancellation, activation and persistence.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9 add
+{
+    QTemporaryDir directory;
+    HmiProject original = workflowProject();
+    HmiProject created;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QStringList displayedDefaults;
+    QString error;
+    QString path;
+
+    QVERIFY(directory.isValid());
+    original.targetModel = QStringLiteral("AMZ070W01");
+    path = directory.filePath(QStringLiteral("new-page.ksp"));
+    QVERIFY2(original.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    auto finishDraft = [&displayedDefaults](bool confirm) {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name;
+        QSpinBox *number;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+        number = dialog->findChild<QSpinBox *>(QStringLiteral("newPageNumberSpin"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (name == nullptr || number == nullptr || buttons == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        displayedDefaults = {dialog->windowTitle(), name->text(), QString::number(number->value())};
+        if (!confirm)
+        {
+            name->setText(QStringLiteral("取消的新画面"));
+        }
+        buttons->button(confirm ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+    };
+    QVERIFY2(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() { finishDraft(false); }),
+             "The ordinary page group must offer New Page.");
+    QCOMPARE(displayedDefaults, (QStringList{QStringLiteral("新建画面"), QStringLiteral("画面2"), QStringLiteral("1")}));
+    QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
+    QVERIFY(!window.m_dirty);
+    displayedDefaults.clear();
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() { finishDraft(true); }));
+    QCOMPARE(displayedDefaults, (QStringList{QStringLiteral("新建画面"), QStringLiteral("画面2"), QStringLiteral("1")}));
+    created = window.currentEditorProject();
+    QCOMPARE(created.pageCount(), 2);
+    QCOMPARE(created.activePageKind, QStringLiteral("normal"));
+    QCOMPARE(created.pageName, QStringLiteral("画面2"));
+    QCOMPARE(created.startupPageId, original.startupPageId);
+    QVERIFY(created.activePageId != original.activePageId);
+    QVERIFY(window.m_canvas->objects().isEmpty());
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(reopened.currentEditorProject().toJson(), created.toJson());
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QCOMPARE(groups.first()->childCount(), 2);
+    QCOMPARE(groups.first()->child(1)->text(0), QStringLiteral("001:画面2"));
 }
 
 /******************************************************************************

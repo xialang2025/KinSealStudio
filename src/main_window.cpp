@@ -657,7 +657,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         pageId = item->data(0, Qt::UserRole + 1).toString();
         label = item->text(0);
         if (role == QStringLiteral("page")) { activatePageId(pageId); }
-        else if (role == QStringLiteral("project")) { configureProject(); }
+        else if (role == QStringLiteral("project") || role == QStringLiteral("normalPages")) { configureProject(); } //20261122-9 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
@@ -681,6 +681,12 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         QTreeWidgetItem *item = m_systemSettingsTree->itemAt(position);
         QString id;
         QMenu menu(this);
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("normalPages")) //20261122-9 add
+        {
+            menu.addAction(QStringLiteral("新建画面"), this, &MainWindow::createNormalPage);
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
         if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("serialPort")) //20261122-6 add
         {
             id = item->data(0, Qt::UserRole + 1).toString();

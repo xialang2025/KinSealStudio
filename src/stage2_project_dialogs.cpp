@@ -33,6 +33,109 @@ static bool stage2Error(QString *error, const QString &message) //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : validateStage2PageName
+ * Description     : Enforce the common editor page naming policy without changing stable identities.
+ * Input Parameters: project, id, name, error.
+ * Return Value    : True for a nonempty unique display name within the editor's bounded input.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+static bool validateStage2PageName(const HmiProject &project, const QString &id,
+                                   const QString &name, QString *error) //20261122-9 change
+{
+    HmiPage page;
+
+    if (name.trimmed().isEmpty() || name.size() > 32767)
+    {
+        return stage2Error(error, QStringLiteral("画面名称不能为空或超过32767字符。"));
+    }
+    Q_FOREACH (page, project.allPages())
+    {
+        if (page.id != id && page.name == name)
+        {
+            return stage2Error(error, QStringLiteral("名字已经存在，请重新输入。"));
+        }
+    }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : editStage2NewNormalPage
+ * Description     : Create and activate a normal page on a detached project after the user confirms.
+ * Input Parameters: parent, project.
+ * Return Value    : True after the complete page transaction is accepted.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 add
+{
+    QDialog dialog(parent);
+    QFormLayout *layout;
+    QLineEdit *name;
+    QSpinBox *number;
+    QLabel *validation;
+    QDialogButtonBox *buttons;
+    HmiProject candidate;
+    QString suggestion;
+    int pageNumber;
+    int nameNumber;
+    bool confirmed = false;
+
+    pageNumber = project.pageCount();
+    nameNumber = pageNumber + 1;
+    suggestion = QStringLiteral("画面%1").arg(nameNumber);
+    while (!validateStage2PageName(project, QString(), suggestion, nullptr))
+    {
+        suggestion = QStringLiteral("画面%1").arg(++nameNumber);
+    }
+
+    dialog.setWindowTitle(QStringLiteral("新建画面"));
+    layout = new QFormLayout(&dialog);
+    name = new QLineEdit(suggestion, &dialog);
+    name->setObjectName(QStringLiteral("newPageNameEdit"));
+    name->setMaxLength(32767);
+    number = new QSpinBox(&dialog);
+    number->setObjectName(QStringLiteral("newPageNumberSpin"));
+    number->setRange(0, 999);
+    number->setValue(pageNumber);
+    number->setReadOnly(true); // The current KSP model derives the visible number from page order.
+    number->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    number->setToolTip(QStringLiteral("当前编号随工程中的页面顺序显示。"));
+    validation = new QLabel(&dialog);
+    validation->setWordWrap(true);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    layout->addRow(QStringLiteral("名称"), name);
+    layout->addRow(QStringLiteral("编号"), number);
+    layout->addRow(validation);
+    layout->addRow(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
+        HmiPage page;
+        QString error;
+
+        page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        page.name = name->text();
+        candidate = project;
+        // Activate by the new ID so the device startup page is left independent.
+        if (!validateStage2PageName(project, QString(), page.name, &error) ||
+            !candidate.addPage(page, &error) || !candidate.selectPage(page.id, &error))
+        {
+            validation->setText(error);
+            return;
+        }
+        confirmed = true;
+        dialog.accept();
+    });
+    name->selectAll();
+    if (dialog.exec() != QDialog::Accepted || !confirmed)
+    {
+        return false;
+    }
+    project = candidate;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : addLanguageChoices
  * Description     : Keep inherited startup language distinct from an explicit language selection.
  * Input Parameters: combo, project, inherited
@@ -452,28 +555,6 @@ HmiProject Stage2ProjectDialog::draftProject() const //20261110-7 add
 }
 
 /******************************************************************************
- * Function Name   : Stage2ProjectDialog::validatePageName
- * Description     : Enforce an explicit editor naming policy without changing stable identities.
- * Input Parameters: id, name, error
- * Return Value    : True for a nonempty unique display name within the editor's bounded input.
- * Date            : 2026.11.10
- ******************************************************************************/
-bool Stage2ProjectDialog::validatePageName(const QString &id, const QString &name, QString *error) const //20261110-7 add
-{
-    HmiPage page;
-
-    if (name.trimmed().isEmpty() || name.size() > 32767)
-    {
-        return stage2Error(error, QStringLiteral("画面名称不能为空或超过32767字符。"));
-    }
-    Q_FOREACH (page, m_working.allPages())
-    {
-        if (page.id != id && page.name == name) { return stage2Error(error, QStringLiteral("名字已经存在，请重新输入。")); }
-    }
-    return true;
-}
-
-/******************************************************************************
  * Function Name   : Stage2ProjectDialog::addPageDraft
  * Description     : Append only supported editor page roles through the model's atomic transaction.
  * Input Parameters: page, error
@@ -482,7 +563,7 @@ bool Stage2ProjectDialog::validatePageName(const QString &id, const QString &nam
  ******************************************************************************/
 bool Stage2ProjectDialog::addPageDraft(const HmiPage &page, QString *error) //20261110-7 add
 {
-    if (!validatePageName(QString(), page.name, error)) { return false; }
+    if (!validateStage2PageName(m_working, QString(), page.name, error)) { return false; } //20261122-9 change
     if (page.kind != QStringLiteral("normal") && page.kind != QStringLiteral("window"))
     {
         return stage2Error(error, QStringLiteral("此入口仅创建普通画面或窗口；键盘和Logo字段尚未核定。"));
@@ -505,7 +586,7 @@ bool Stage2ProjectDialog::addPageDraft(const HmiPage &page, QString *error) //20
  ******************************************************************************/
 bool Stage2ProjectDialog::renamePageDraft(const QString &id, const QString &name, QString *error) //20261110-7 add
 {
-    if (!validatePageName(id, name, error) || !m_working.renamePage(id, name, error)) { return false; }
+    if (!validateStage2PageName(m_working, id, name, error) || !m_working.renamePage(id, name, error)) { return false; } //20261122-9 change
     refresh(id);
     return true;
 }
@@ -521,7 +602,7 @@ bool Stage2ProjectDialog::copyPageDraft(const QString &id, const QString &name, 
 {
     QString copiedId;
 
-    if (!validatePageName(QString(), name, error) || !m_working.copyPage(id, name, &copiedId, error)) { return false; }
+    if (!validateStage2PageName(m_working, QString(), name, error) || !m_working.copyPage(id, name, &copiedId, error)) { return false; } //20261122-9 change
     if (newId != nullptr) { *newId = copiedId; }
     refresh(copiedId);
     return true;

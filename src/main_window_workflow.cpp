@@ -258,6 +258,29 @@ void MainWindow::configureProject() //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::createNormalPage
+ * Description     : Publish a new page as one editor transaction after the settings dialog accepts.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void MainWindow::createNormalPage() //20261122-9 add
+{
+    HmiProject draft;
+    QString error;
+
+    if (!m_hasProject)
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    if (editStage2NewNormalPage(this, draft) && !commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("新建画面未提交"), error);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::activatePageId
  * Description     : Synchronize the active canvas before navigating by a stable page and optional object identity.
  * Input Parameters: pageId, objectId
@@ -630,7 +653,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
         item->setData(0, Qt::UserRole, QStringLiteral("page"));
         item->setData(0, Qt::UserRole + 1, page.id);
     }
-    normal->setData(0, Qt::UserRole, QStringLiteral("project"));
+    normal->setData(0, Qt::UserRole, QStringLiteral("normalPages")); //20261122-9 change: Route the ordinary page group to its own context actions.
     windows->setData(0, Qt::UserRole, QStringLiteral("project"));
     system = new QTreeWidgetItem(settings, {QStringLiteral("系统设置")});
     Q_FOREACH (label, (QStringList{QStringLiteral("参数设置"), QStringLiteral("HMI状态"), QStringLiteral("PLC控制"),

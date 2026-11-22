@@ -13,6 +13,8 @@ class QPushButton;
 class QSpinBox;
 class QStackedWidget;
 
+bool editStage2NewNormalPage(QWidget *parent, HmiProject &project); //20261122-9 add
+
 //20261110-7 add: Callers publish these detached values only after QDialog::Accepted.
 class Stage2NewProjectDialog : public QDialog
 {
@@ -74,7 +76,6 @@ private:
     void refresh(const QString &selectedId = QString());
     void showSelectedPage();
     QString selectedPageId() const;
-    bool validatePageName(const QString &id, const QString &name, QString *error) const;
     void addFromFields();
     void renameFromFields();
     void copyFromFields();
