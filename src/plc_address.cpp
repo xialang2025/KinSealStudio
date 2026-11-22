@@ -451,6 +451,79 @@ QJsonObject PlcConnection::toJson() const
 }
 
 /******************************************************************************
+ * Function Name   : PlcSerialPortSettings::choices
+ * Description     : Share the observed serial choices between the dialog and project validation.
+ * Input Parameters: None.
+ * Return Value    : Accepted display values by persisted field.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+const QMap<QString, QStringList> &PlcSerialPortSettings::choices() //20261122-6 add
+{
+    static const QMap<QString, QStringList> values = [] {
+        QMap<QString, QStringList> fields;
+        QStringList ports;
+        int index;
+
+        for (index = 1; index <= 20; ++index)
+        {
+            ports.append(QStringLiteral("COM%1").arg(index));
+        }
+        fields.insert(QStringLiteral("onlinePort"), ports);
+        fields.insert(QStringLiteral("baudRate"), {QStringLiteral("1200"), QStringLiteral("2400"),
+            QStringLiteral("4800"), QStringLiteral("9600"), QStringLiteral("19200"), QStringLiteral("38400"),
+            QStringLiteral("57600"), QStringLiteral("115200"), QStringLiteral("187500"), QStringLiteral("230400")});
+        fields.insert(QStringLiteral("parity"), {QStringLiteral("NONE"), QStringLiteral("EVEN"), QStringLiteral("ODD")});
+        fields.insert(QStringLiteral("dataBits"), {QStringLiteral("7"), QStringLiteral("8")});
+        fields.insert(QStringLiteral("stopBits"), {QStringLiteral("1"), QStringLiteral("2")});
+        fields.insert(QStringLiteral("mode"), {QStringLiteral("232"), QStringLiteral("485"), QStringLiteral("422")});
+        return fields;
+    }();
+
+    return values;
+}
+
+/******************************************************************************
+ * Function Name   : PlcSerialPortSettings::defaults
+ * Description     : Supply the observed independent factory settings for a device port.
+ * Input Parameters: port (COM1 or COM2).
+ * Return Value    : Default serial and PC simulation values.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+QJsonObject PlcSerialPortSettings::defaults(const QString &port) //20261122-6 add
+{
+    return {{QStringLiteral("onlinePort"), port}, {QStringLiteral("baudRate"), QStringLiteral("9600")},
+        {QStringLiteral("parity"), QStringLiteral("NONE")}, {QStringLiteral("dataBits"), QStringLiteral("8")},
+        {QStringLiteral("stopBits"), QStringLiteral("1")},
+        {QStringLiteral("mode"), port == QStringLiteral("COM1") ? QStringLiteral("485") : QStringLiteral("232")}};
+}
+
+/******************************************************************************
+ * Function Name   : PlcSerialPortSettings::validate
+ * Description     : Reject missing, unknown or unsupported saved serial field values.
+ * Input Parameters: settings, error.
+ * Return Value    : True for a complete valid settings record.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+bool PlcSerialPortSettings::validate(const QJsonObject &settings, QString *error) //20261122-6 add
+{
+    const QMap<QString, QStringList> &fields = choices();
+    QMap<QString, QStringList>::const_iterator field;
+
+    if (settings.size() != fields.size())
+    {
+        return addressError(error, QStringLiteral("串口设置必须完整包含六个已核对的字段。"));
+    }
+    for (field = fields.constBegin(); field != fields.constEnd(); ++field)
+    {
+        if (!field.value().contains(settings.value(field.key()).toString()))
+        {
+            return addressError(error, QStringLiteral("串口字段 %1 的值无效。").arg(field.key()));
+        }
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : PlcConnection::fromJson
  * Description     : Read offline connections without treating station as native node evidence.
  * Input Parameters: json, connection, error

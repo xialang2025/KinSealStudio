@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
 #include "local_help.h" //20261122-4 add
+#include "plc_address_dialog.h" //20261122-6 add
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
 #include "stage2_system_settings.h"
@@ -310,6 +311,78 @@ void MainWindow::configureSystemSettings() //20261122-4 change
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::configureSerialPort
+ * Description     : Commit a single device port's settings alongside independent PC port selection.
+ * Input Parameters: port (COM1 or COM2).
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void MainWindow::configureSerialPort(const QString &port) //20261122-6 add
+{
+    HmiProject draft;
+    HmiConfigurationNode node;
+    QJsonObject settings;
+    QJsonObject defaults;
+    QString notice;
+    QString id;
+    QString error;
+    qsizetype index;
+
+    if (!m_hasProject || (port != QStringLiteral("COM1") && port != QStringLiteral("COM2")))
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    id = QStringLiteral("serial-port-") + port.toLower();
+    defaults = PlcSerialPortSettings::defaults(port);
+    settings = defaults;
+    for (index = 0; index < draft.configurationNodes.size(); ++index)
+    {
+        node = draft.configurationNodes.at(index);
+        if (node.id == id && node.kind == QStringLiteral("serialPort"))
+        {
+            settings = node.properties;
+            break;
+        }
+    }
+    if (!draft.nativeSourceSnapshot.isEmpty())
+    {
+        notice = QStringLiteral("原厂源串口参数尚未完整解析。此处展示 Lite 默认值，原厂配置会保留。");
+    }
+    if (!editPlcSerialPort(this, port, &settings, notice))
+    {
+        return;
+    }
+    if (settings == defaults)
+    {
+        // Removing the explicit override restores the original compile eligibility.
+        if (index < draft.configurationNodes.size())
+        {
+            draft.configurationNodes.removeAt(index);
+        }
+    }
+    else if (index < draft.configurationNodes.size())
+    {
+        draft.configurationNodes[index].properties = settings;
+    }
+    else
+    {
+        node = HmiConfigurationNode();
+        node.id = id;
+        node.name = port;
+        node.kind = QStringLiteral("serialPort");
+        node.active = true;
+        node.implemented = true;
+        node.properties = settings;
+        draft.configurationNodes.append(node);
+    }
+    if (!commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("连接设置未提交"), error);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::refreshPageNavigation
  * Description     : Keep actual page tabs and the toolbar selector synchronized with stable model identities.
  * Input Parameters: None
@@ -381,6 +454,9 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     HmiConfigurationNode collection; //20261112-1 add
     QTreeWidgetItem *collectionItem;
     PlcConnection connection;
+    PlcCatalog catalog;
+    const PlcProfile *profile;
+    PlcChannel channel;
     QString label;
     int number;
     QSignalBlocker blocker(m_systemSettingsTree);
@@ -391,14 +467,24 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     settings = new QTreeWidgetItem(m_systemSettingsTree, {QStringLiteral("设置")});
     connections = new QTreeWidgetItem(settings, {QStringLiteral("连接设置")});
     connections->setData(0, Qt::UserRole, QStringLiteral("connections"));
+    catalog.load(); //20261122-6 add: Resolve protocol labels without altering the saved connection identity.
     for (number = 1; number <= 2; ++number)
     {
         item = new QTreeWidgetItem(connections, {QStringLiteral("COM%1").arg(number)});
-        item->setData(0, Qt::UserRole, number == 1 ? QStringLiteral("connections") : QStringLiteral("unsupported"));
-        if (number == 1)
+        item->setData(0, Qt::UserRole, QStringLiteral("serialPort")); //20261122-6 change: The device port owns its settings even without a PLC protocol.
+        item->setData(0, Qt::UserRole + 1, item->text(0));
+        channel = number == 1 ? PlcChannel::Com1 : PlcChannel::Com2;
+        Q_FOREACH (connection, m_project.connections)
         {
-            parent = new QTreeWidgetItem(item, {QStringLiteral("Modbus_RTU")});
+            if (connection.channel != channel)
+            {
+                continue;
+            }
+            profile = catalog.profile(connection.profileId);
+            label = profile != nullptr ? profile->name : QFileInfo(connection.profileId).completeBaseName();
+            parent = new QTreeWidgetItem(item, {label.isEmpty() ? connection.profileId : label});
             parent->setData(0, Qt::UserRole, QStringLiteral("connections"));
+            parent->setData(0, Qt::UserRole + 1, connection.id);
         }
     }
     normal = new QTreeWidgetItem(settings, {QStringLiteral("画面")});

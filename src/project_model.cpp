@@ -755,6 +755,19 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         *node = candidate;
         return true;
     }
+    if (candidate.kind == QStringLiteral("serialPort") && candidate.implemented && candidate.active && candidate.ownerPageId.isEmpty()) //20261122-6 add
+    {
+        // The fixed identity permits one independent settings record per device port.
+        if ((candidate.name != QStringLiteral("COM1") && candidate.name != QStringLiteral("COM2")) ||
+            candidate.id != QStringLiteral("serial-port-") + candidate.name.toLower() ||
+            !PlcSerialPortSettings::validate(candidate.properties, error) ||
+            !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
+        {
+            return modelError(error, QStringLiteral("串口设置节点的端口、标识或属性无效。"));
+        }
+        *node = candidate;
+        return true;
+    }
     if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
         !QStringList{QStringLiteral("system"), QStringLiteral("project"), QStringLiteral("dataCollection"),
         QStringLiteral("alarm"), QStringLiteral("recipe"), QStringLiteral("macro"), QStringLiteral("dataTransfer")}.contains(candidate.kind) ||

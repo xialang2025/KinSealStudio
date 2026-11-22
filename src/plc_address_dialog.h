@@ -5,6 +5,9 @@
 
 class QWidget;
 
+bool editPlcSerialPort(QWidget *parent, const QString &port, QJsonObject *settings,
+                       const QString &sourceNotice = {}); //20261122-6 add
+
 /******************************************************************************
  * Function Name   : editPlcConnections
  * Description     : Edit the model's COM1/COM2 PLC connections with transactional confirmation.

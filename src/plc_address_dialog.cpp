@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QFont>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -116,6 +117,132 @@ void populateAddressFamilies(QComboBox *kind, const QString &connectionId, bool 
         kind->setCurrentIndex(index);
     }
 }
+}
+
+/******************************************************************************
+ * Function Name   : editPlcSerialPort
+ * Description     : Edit one serial port in a draft using the observed two-group layout.
+ * Input Parameters: parent, port, settings, sourceNotice.
+ * Return Value    : True only if validated changes were confirmed.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+bool editPlcSerialPort(QWidget *parent, const QString &port, QJsonObject *settings,
+                       const QString &sourceNotice) //20261122-6 add
+{
+    QPointer<QDialog> dialog;
+    QGroupBox *connection;
+    QGroupBox *protocol;
+    QLineEdit *name;
+    QDialogButtonBox *buttons;
+    QPushButton *defaultsButton;
+    QMap<QString, QComboBox *> inputs;
+    QJsonObject staged;
+    QJsonObject factory;
+    int result;
+
+    if (settings == nullptr || (port != QStringLiteral("COM1") && port != QStringLiteral("COM2")))
+    {
+        return false;
+    }
+    dialog = new QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowSystemMenuHint |
+                         Qt::WindowCloseButtonHint | Qt::WindowContextHelpButtonHint);
+    dialog->setObjectName(QStringLiteral("PlcSerialPortDialog"));
+    dialog->setWindowTitle(QStringLiteral("连接设置"));
+    dialog->setFixedSize(633, 356);
+    dialog->setFont(QFont(QStringLiteral("SimSun"), 9));
+    dialog->setStyleSheet(QStringLiteral(
+        "QComboBox, QLineEdit { background: #caeace; border: 1px solid #a9a9a9; }"
+        "QComboBox:disabled, QLineEdit:read-only { background: #b1ceed; color: #696969; }"
+        "QGroupBox { border: 1px solid #d9d9d9; margin-top: 5px; }"
+        "QGroupBox::title { subcontrol-origin: margin; left: 8px; }"));
+    connection = new QGroupBox(QStringLiteral("连接属性"), dialog);
+    connection->setGeometry(10, 11, 561, 99);
+    protocol = new QGroupBox(QStringLiteral("协议属性"), dialog);
+    protocol->setGeometry(10, 131, 561, 149);
+    auto addLabel = [](QWidget *group, const QString &text, int x, int y) {
+        QLabel *label = new QLabel(text, group);
+        label->setGeometry(x, y, 120, 30);
+        return label;
+    };
+    auto addInput = [&](QGroupBox *group, const QString &text, const QString &key,
+                        const QString &objectName, const QPoint &labelPosition, const QPoint &boxPosition) {
+        QComboBox *box = new QComboBox(group);
+        addLabel(group, text, labelPosition.x(), labelPosition.y())->setBuddy(box);
+        box->setObjectName(objectName);
+        box->setGeometry(QRect(boxPosition, QSize(121, 30)));
+        box->addItems(PlcSerialPortSettings::choices().value(key));
+        box->setMaxVisibleItems(box->count());
+        box->setEnabled(sourceNotice.isEmpty());
+        inputs.insert(key, box);
+    };
+    name = new QLineEdit(port, connection);
+    name->setObjectName(QStringLiteral("edit_name"));
+    name->setReadOnly(true);
+    name->setGeometry(130, 39, 121, 30);
+    addLabel(connection, QStringLiteral("连接名称："), 20, 39)->setBuddy(name);
+    addInput(connection, QStringLiteral("在线模拟端口："), QStringLiteral("onlinePort"),
+             QStringLiteral("PlcPortOnline"), QPoint(270, 39), QPoint(400, 39));
+    addInput(protocol, QStringLiteral("波特率："), QStringLiteral("baudRate"),
+             QStringLiteral("PlcPortBaud"), QPoint(20, 19), QPoint(140, 19));
+    addInput(protocol, QStringLiteral("停  止位："), QStringLiteral("stopBits"),
+             QStringLiteral("PlcPortStopBits"), QPoint(280, 19), QPoint(400, 19));
+    addInput(protocol, QStringLiteral("检  验："), QStringLiteral("parity"),
+             QStringLiteral("PlcPortParity"), QPoint(20, 59), QPoint(140, 59));
+    addInput(protocol, QStringLiteral("通信方式："), QStringLiteral("mode"),
+             QStringLiteral("PlcPortMode"), QPoint(280, 59), QPoint(400, 59));
+    addInput(protocol, QStringLiteral("数据位："), QStringLiteral("dataBits"),
+             QStringLiteral("PlcPortDataBits"), QPoint(20, 99), QPoint(140, 99));
+    factory = PlcSerialPortSettings::defaults(port);
+    auto loadValues = [&inputs](const QJsonObject &values) {
+        QMap<QString, QComboBox *>::const_iterator entry;
+        for (entry = inputs.constBegin(); entry != inputs.constEnd(); ++entry)
+        {
+            entry.value()->setCurrentText(values.value(entry.key()).toString());
+        }
+    };
+    loadValues(*settings);
+    if (!sourceNotice.isEmpty())
+    {
+        addLabel(dialog, sourceNotice, 11, 279)->setFixedWidth(608);
+    }
+    defaultsButton = new QPushButton(QStringLiteral("恢复默认设置"), dialog);
+    defaultsButton->setObjectName(QStringLiteral("PlcPortDefaults"));
+    defaultsButton->setGeometry(11, 311, 209, 28);
+    defaultsButton->setEnabled(sourceNotice.isEmpty());
+    defaultsButton->setFocus();
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, dialog);
+    buttons->setGeometry(341, 311, 228, 28);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setEnabled(sourceNotice.isEmpty());
+    QObject::connect(defaultsButton, &QPushButton::clicked, dialog, [&]() { loadValues(factory); });
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+    QObject::connect(buttons, &QDialogButtonBox::helpRequested, dialog, [&]() {
+        QMessageBox::information(dialog, QStringLiteral("连接设置帮助"),
+            QStringLiteral("连接名称是触摸屏上的串口。在线模拟端口是电脑上的串口。\n"
+                           "恢复默认设置只更新本窗口，确定后才写入工程。"));
+    });
+    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog, [&]() {
+        QMap<QString, QComboBox *>::const_iterator entry;
+        for (entry = inputs.constBegin(); entry != inputs.constEnd(); ++entry)
+        {
+            staged.insert(entry.key(), entry.value()->currentText());
+        }
+        dialog->accept();
+    });
+    result = dialog->exec();
+    if (dialog.isNull())
+    {
+        return false;
+    }
+    delete dialog.data();
+    if (result != QDialog::Accepted || !PlcSerialPortSettings::validate(staged))
+    {
+        return false;
+    }
+    *settings = staged;
+    return true;
 }
 
 /******************************************************************************

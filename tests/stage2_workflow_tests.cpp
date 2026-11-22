@@ -59,6 +59,8 @@ private slots:
     void invalidDraftAndNativeOverwriteAreAtomic();
     void reopenAfterCloseRestoresEditor();
     void recentFilesAreBoundedAndIsolated();
+    void openedProjectShowsProtocolsUnderTheirOwnPorts(); //20261122-6 add
+    void serialPortSettingsAreIndependentAndPersisted(); //20261122-6 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -646,6 +648,124 @@ void Stage2WorkflowTests::reopenAfterCloseRestoresEditor() //20261110-7 add
     QVERIFY(window.m_pageTabs->isEnabled());
     QVERIFY(window.m_systemSettingsTree->isEnabled());
     QVERIFY(window.m_commands.value(QStringLiteral("action_USBdownload"))->isEnabled());
+}
+
+/******************************************************************************
+ * Function Name   : openedProjectShowsProtocolsUnderTheirOwnPorts
+ * Description     : Reopen a saved project and check protocol ownership in the visible tree.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::openedProjectShowsProtocolsUnderTheirOwnPorts() //20261122-6 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    PlcConnection connection;
+    QString error;
+    QString path;
+    MainWindow window;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> ports;
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01");
+    connection.id = QStringLiteral("com2");
+    connection.channel = PlcChannel::Com2;
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.station = QStringLiteral("1");
+    project.connections.append(connection);
+    path = directory.filePath(QStringLiteral("port-com2.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    ports = tree->findItems(QStringLiteral("COM1"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(ports.size(), 1);
+    QCOMPARE(ports.first()->childCount(), 0);
+    ports = tree->findItems(QStringLiteral("COM2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(ports.size(), 1);
+    QCOMPARE(ports.first()->childCount(), 1);
+    QCOMPARE(ports.first()->child(0)->text(0), QStringLiteral("Modbus_RTU"));
+}
+
+/******************************************************************************
+ * Function Name   : serialPortSettingsAreIndependentAndPersisted
+ * Description     : Open either port from the tree and exercise cancel, save, reopen and reset.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2WorkflowTests::serialPortSettingsAreIndependentAndPersisted() //20261122-6 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    MainWindow window;
+    MainWindow reopened;
+    QString error;
+    QString path;
+    QTreeWidget *tree;
+    auto editPort = [](QTreeWidget *settings, const QString &port, const QString &baud,
+                       const QString &online, bool confirm, bool reset) {
+        QStringList observed;
+        const QList<QTreeWidgetItem *> items = settings->findItems(port, Qt::MatchExactly | Qt::MatchRecursive);
+        if (items.size() != 1)
+        {
+            return observed;
+        }
+        QTimer::singleShot(0, settings, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            QLineEdit *name = dialog->findChild<QLineEdit *>(QStringLiteral("edit_name"));
+            QComboBox *speed = dialog->findChild<QComboBox *>(QStringLiteral("PlcPortBaud"));
+            QComboBox *pcPort = dialog->findChild<QComboBox *>(QStringLiteral("PlcPortOnline"));
+            QComboBox *mode = dialog->findChild<QComboBox *>(QStringLiteral("PlcPortMode"));
+            QDialogButtonBox *buttons = dialog->findChild<QDialogButtonBox *>();
+            QPushButton *defaults = dialog->findChild<QPushButton *>(QStringLiteral("PlcPortDefaults"));
+            if (dialog->windowTitle() != QStringLiteral("连接设置") || name == nullptr || !name->isReadOnly() ||
+                speed == nullptr || pcPort == nullptr || mode == nullptr || buttons == nullptr || defaults == nullptr)
+            {
+                observed.append(dialog->windowTitle());
+                dialog->reject();
+                return;
+            }
+            observed = {name->text(), speed->currentText(), pcPort->currentText(), mode->currentText()};
+            if (!baud.isEmpty()) { speed->setCurrentText(baud); }
+            if (!online.isEmpty()) { pcPort->setCurrentText(online); }
+            if (reset) { defaults->click(); }
+            buttons->button(confirm ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+        });
+        settings->itemDoubleClicked(items.first(), 0);
+        return observed;
+    };
+
+    QVERIFY(directory.isValid());
+    project.targetModel = QStringLiteral("AMZ070W01");
+    path = directory.filePath(QStringLiteral("serial-settings.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    QCOMPARE(editPort(tree, QStringLiteral("COM2"), QStringLiteral("19200"), QStringLiteral("COM11"), false, false),
+             (QStringList{QStringLiteral("COM2"), QStringLiteral("9600"), QStringLiteral("COM2"), QStringLiteral("232")}));
+    QVERIFY(!window.m_dirty);
+    QCOMPARE(editPort(tree, QStringLiteral("COM2"), QStringLiteral("19200"), QStringLiteral("COM11"), true, false),
+             (QStringList{QStringLiteral("COM2"), QStringLiteral("9600"), QStringLiteral("COM2"), QStringLiteral("232")}));
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    QCOMPARE(editPort(tree, QStringLiteral("COM1"), {}, {}, false, false),
+             (QStringList{QStringLiteral("COM1"), QStringLiteral("9600"), QStringLiteral("COM1"), QStringLiteral("485")}));
+    QCOMPARE(editPort(tree, QStringLiteral("COM2"), {}, {}, true, true),
+             (QStringList{QStringLiteral("COM2"), QStringLiteral("19200"), QStringLiteral("COM11"), QStringLiteral("232")}));
+    QCOMPARE(editPort(tree, QStringLiteral("COM2"), {}, {}, false, false),
+             (QStringList{QStringLiteral("COM2"), QStringLiteral("9600"), QStringLiteral("COM2"), QStringLiteral("232")}));
 }
 
 /******************************************************************************

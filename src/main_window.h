@@ -74,6 +74,7 @@ private slots:
     void deleteDataCollection(const QString &id);
     void configureLanguages();
     void configureConnections(); //20261109-0 add
+    void configureSerialPort(const QString &port); //20261122-6 add
     void configureMacroSdk(); //20261109-0 add
     void manageMacros(); //20261114-7 add
     void createBitButton(); //20261108-15 add

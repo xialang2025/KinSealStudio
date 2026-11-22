@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QJsonObject>
+#include <QMap>
 #include <QString>
 #include <QStringList>
 #include <QVector>
@@ -15,6 +16,13 @@ using u32 = unsigned int;
 enum class PlcAddressRole { Any, Bit, Word, Dword };
 enum class PlcAddressSpace { Internal, External };
 enum class PlcChannel { Unspecified, Com1, Com2 };
+
+struct PlcSerialPortSettings //20261122-6 add
+{
+    static const QMap<QString, QStringList> &choices();
+    static QJsonObject defaults(const QString &port);
+    static bool validate(const QJsonObject &settings, QString *error = nullptr);
+};
 
 struct PlcFamily
 {

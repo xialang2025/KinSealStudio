@@ -661,6 +661,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
+        else if (role == QStringLiteral("serialPort")) { configureSerialPort(pageId); } //20261122-6 add
         else if (role == QStringLiteral("alarm-bit") || role == QStringLiteral("alarm-condition")) { configureAlarmRegistration(role == QStringLiteral("alarm-bit") ? 0 : 1); } //20261113-2 add
         else if (role == QStringLiteral("recipe")) { configureRecipe(pageId); } //20261113-2 add
         else if (role == QStringLiteral("dataCollection")) { configureDataCollection(pageId); } //20261112-1 add
@@ -679,6 +680,13 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         QTreeWidgetItem *item = m_systemSettingsTree->itemAt(position);
         QString id;
         QMenu menu(this);
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("serialPort")) //20261122-6 add
+        {
+            id = item->data(0, Qt::UserRole + 1).toString();
+            menu.addAction(QStringLiteral("打开"), this, [this, id]() { configureSerialPort(id); });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
         if (item != nullptr && (item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") || item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-condition"))) //20261113-2 add
         {
             int family = item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") ? 0 : 1;
