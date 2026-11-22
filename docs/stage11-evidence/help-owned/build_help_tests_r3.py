@@ -1,7 +1,8 @@
 from pathlib import Path
 import os,subprocess,json,hashlib
 ROOT=Path.cwd(); EVIDENCE=ROOT/'docs/stage11-evidence/help-owned'
-OUTPUT=Path(r'Z:/Project/vscode_prj_temp/REA/.stage11-run-20261114/help-owned/build-r3'); OUTPUT.mkdir(parents=True,exist_ok=False)
+OUTPUT=Path(r'Z:/Project/vscode_prj_temp/REA/KinSealStudio/investigation/stage11-run-20261114/help-owned/build-r3')  #20261122-0 change
+OUTPUT.mkdir(parents=True,exist_ok=False)
 TEMP=OUTPUT/'temp'; TEMP.mkdir()
 QT=Path(r'G:/01_Professional/QT6/Installed/6.12.0/mingw_64'); CC=Path(r'G:/01_Professional/QT6/Installed/Tools/mingw1310_64/bin/g++.exe')
 ENV=os.environ.copy(); ENV['PATH']=os.pathsep.join((str(CC.parent),str(QT/'bin'),ENV.get('SYSTEMROOT',r'C:\Windows')+r'\System32'))

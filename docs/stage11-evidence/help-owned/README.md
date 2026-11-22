@@ -32,7 +32,7 @@ F1先接受 `ShortcutOverride`，再按 `KeyPress` 打开，避免主窗口动�
 - 最终r3：29通过、0失败、0跳过。包含真实Windows junction根/子目录拒绝，有限F1/WhatsThis，竞争QAction，外链/目录/路径跳转/子资源，过大/缺失/篡改索引与页面，真实锚点，关闭重开、owner与嵌套对话框销毁，以及实际8章目录审计。
 - `readonly-review-r3.json`为最终只读复核，9项检查通过，无阻断发现；编译日志无warning/error。Qt离屏插件的`propagateSizeHints`提示保留在测试日志，不伪称Windows真实显示/DPI已验。
 
-当前可复用harness位于 `.stage11-run-20261114/help-owned/build-r3/LocalHelpTests.exe`。独立构建/运行argv、输入哈希和程序哈希在`build-r3.json`；`tests-r3.txt`为原始结果。可用同一两份C++源与QtTest重新构建，无设备或SDK依赖。测试真实手册通过`KINSEAL_HELP_SOURCE_ROOT`指向待验help，发布默认路径仍由程序相对定位。
+当前可复用harness位于 `../../../investigation/stage11-run-20261114/help-owned/build-r3/LocalHelpTests.exe`。独立构建/运行argv、输入哈希和程序哈希在`build-r3.json`；`tests-r3.txt`为原始结果。可用同一两份C++源与QtTest重新构建，无设备或SDK依赖。测试真实手册通过`KINSEAL_HELP_SOURCE_ROOT`指向待验help，发布默认路径仍由程序相对定位。
 
 `cleanup-r3.json`记录仅清理本批旧构建、junction探针和重复脚本558393字节；保留最终harness供主任务复用及全部代表日志。未操作历史拒绝清理路径。
 

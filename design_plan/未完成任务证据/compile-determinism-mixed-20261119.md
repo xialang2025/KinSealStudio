@@ -2,24 +2,24 @@
 
 > 复放：使用本轮已识别的阶段11 r2 EXE，通过 `tools/run_stage10_performance.py --matrix mixed` 重建 100×8 KSP 输入，再用本报告的编译差分工具检查。以下原始路径为运行时临时位置，输入与各产物以哈希标识。
 - 生成时间：2026-11-19 06:44:50
-- 样例输入：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp`（SHA256 `7549635c98729ffd7543a6dca78fa5362e904ce77879efbd4acc9f7d153e153c`）
+- 样例输入：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp`（SHA256 `7549635c98729ffd7543a6dca78fa5362e904ce77879efbd4acc9f7d153e153c`）
 - 编译器：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe`
 - 重复次数：3 次独立 CLI 进程，输出目录：
-  - run1：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run1`
-  - run2：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run2`
-  - run3：`Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run3`
+  - run1：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run1`
+  - run2：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run2`
+  - run3：`Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run3`
 - 每次运行超时阈值：60 秒；超时按隐藏模态框挂死处理，杀进程后带 `QT_PLUGIN_PATH` 重试一次。
 - 运行环境：`QT_QPA_PLATFORM=offscreen`，`QT_PLUGIN_PATH=G:\01_Professional\QT6\Installed\6.12.0\mingw_64\plugins`。
 - 进程替代说明：CLI 为单命令进程，同进程内二次编译不可行；本工具以「3 次独立 CLI 进程」替代同进程重复（等价于"进程A跑2次+进程B跑1次"的进程间隔离方案），特此如实说明。
-- 工具命令行：`tools/verify_compile_determinism.py Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-followup-20261119/performance-mixed/inputs/mixed-o100-l8.ksp --exe Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --runs 3 --out-root Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-followup-20261119/determinism-mixed --report Z:/Project/vscode_prj_temp/REA/.scratch/kinseal-followup-20261119/determinism-mixed.md --timeout 60`
+- 工具命令行：`tools/verify_compile_determinism.py Z:/Project/vscode_prj_temp/REA/KinSealStudio/investigation/scratch/kinseal-followup-20261119/performance-mixed/inputs/mixed-o100-l8.ksp --exe Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --runs 3 --out-root Z:/Project/vscode_prj_temp/REA/KinSealStudio/investigation/scratch/kinseal-followup-20261119/determinism-mixed --report Z:/Project/vscode_prj_temp/REA/KinSealStudio/investigation/scratch/kinseal-followup-20261119/determinism-mixed.md --timeout 60`
 
 ## 编译命令与运行结果
 
 | 次数 | 命令行 | 退出码 | 编译返回消息 | 重试 |
 | --- | --- | --- | --- | --- |
-| run1 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run1` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
-| run2 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run2` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
-| run3 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\.scratch\kinseal-followup-20261119\determinism-mixed\run3` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
+| run1 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run1` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
+| run2 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run2` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
+| run3 | `Z:\Project\vscode_prj_temp\REA\KinSealStudio\dist\KinSealStudioLite-Stage11-release-r2\KinSealStudioLite.exe --compile-project Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\performance-mixed\inputs\mixed-o100-l8.ksp Z:\Project\vscode_prj_temp\REA\KinSealStudio\investigation\scratch\kinseal-followup-20261119\determinism-mixed\run3` | 0 | 工程设备数据编译完成，尚未访问USB。 | 否 |
 
 ## 各次产物 SHA256 清单
 

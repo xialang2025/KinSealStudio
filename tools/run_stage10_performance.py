@@ -266,7 +266,7 @@ def main() -> int:
     if digest(executable).lower() != args.expected_sha.lower():
         raise ValueError("Executable identity differs; no process started")
     output, temporary_root = args.output.resolve(), args.temporary_root.resolve()
-    allowed_temp = Path("Z:/Project/vscode_prj_temp/REA/.stage10-run-20261114/temp").resolve()
+    allowed_temp = Path("Z:/Project/vscode_prj_temp/REA/KinSealStudio/investigation/stage10-run-20261114/temp").resolve()  #20261122-0 change
     if temporary_root == allowed_temp or not temporary_root.is_relative_to(allowed_temp):
         raise ValueError("TEMP must be an exclusive child of the stage10 owned root outside .scratch")
     root = Path(__file__).resolve().parents[1]
