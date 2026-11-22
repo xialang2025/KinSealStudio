@@ -2,6 +2,8 @@
 #include "bit_button_dialog.h" //20261123-3 add
 #include "control_rendering.h" //20261123-2 add
 #include "kvg_library.h" //20261123-3 add
+#include "macro_workspace.h" //20261123-5 add
+#include "plc_address_dialog.h" //20261123-5 add
 #include "stage2_system_settings.h" //20261122-4 change
 
 #include <QCheckBox> //20261123-4 add
@@ -14,17 +16,21 @@
 #include <QFormLayout>
 #include <QGridLayout> //20261123-1 add
 #include <QGroupBox>
+#include <QHeaderView> //20261123-5 add
 #include <QHBoxLayout>
+#include <QJsonArray> //20261123-5 add
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPainter> //20261123-1 add
+#include <QPlainTextEdit> //20261123-5 add
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSignalBlocker>
 #include <QSpinBox>
 #include <QStackedWidget>
 #include <QTabWidget>
+#include <QTableWidget> //20261123-5 add
 #include <QUuid>
 #include <QVBoxLayout>
 
@@ -133,6 +139,289 @@ static bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArr
 }
 
 /******************************************************************************
+ * Function Name   : createStage2PageMacroSource
+ * Description     : Add an ordinary macro source to the script dialog's local transaction.
+ * Input Parameters: parent, project, selectedName.
+ * Return Value    : True after source creation succeeds.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool createStage2PageMacroSource(QWidget *parent, HmiProject &project, QString &selectedName) //20261123-5 add
+{
+    QDialog editor(parent);
+    QFormLayout layout(&editor);
+    QLineEdit name(&editor);
+    QPlainTextEdit source(MacroWorkspace::defaultSource(), &editor);
+    QLabel validation(&editor);
+    QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &editor);
+
+    editor.setWindowTitle(QStringLiteral("宏指令编辑器"));
+    editor.resize(640, 480);
+    layout.addRow(QStringLiteral("宏名称"), &name);
+    layout.addRow(&source);
+    validation.setWordWrap(true);
+    layout.addRow(&validation);
+    layout.addRow(&buttons);
+    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    QObject::connect(&buttons, &QDialogButtonBox::rejected, &editor, &QDialog::reject);
+    QObject::connect(&buttons, &QDialogButtonBox::accepted, &editor, [&]() {
+        QString error;
+
+        if (MacroWorkspace::create(&project, name.text(), source.toPlainText(), &error))
+        {
+            selectedName = name.text();
+            editor.accept();
+            return;
+        }
+        validation.setText(error);
+    });
+    return editor.exec() == QDialog::Accepted;
+}
+
+struct Stage2PageScript //20261123-5 add: One ordered invocation, independent from its shared macro definition.
+{
+    QString macroId;
+    QString address;
+    int frequency = 10;
+    int count = 0;
+};
+
+/******************************************************************************
+ * Function Name   : editStage2PageScript
+ * Description     : Edit an invocation and keep nested source changes in the page draft.
+ * Input Parameters: parent, project, script.
+ * Return Value    : True when a source and schedule are confirmed.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool editStage2PageScript(QWidget *parent, HmiProject &project, Stage2PageScript &script) //20261123-5 add
+{
+    QDialog dialog(parent);
+    QFormLayout layout(&dialog);
+    QWidget modeRow(&dialog);
+    QHBoxLayout modeLayout(&modeRow);
+    QRadioButton unconditional(QStringLiteral("无条件执行"), &modeRow);
+    QRadioButton triggered(QStringLiteral("地址触发"), &modeRow);
+    QSpinBox frequency(&dialog);
+    QSpinBox count(&dialog);
+    QWidget addressRow(&dialog);
+    QHBoxLayout addressLayout(&addressRow);
+    QLineEdit address(script.address.isEmpty() ? QStringLiteral("LB0") : script.address, &addressRow);
+    QPushButton editAddress(QStringLiteral("…"), &addressRow);
+    QComboBox macros(&dialog);
+    QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    QPushButton *write;
+    HmiProject draft = project;
+    QString selected = draft.macroIds.key(script.macroId);
+
+    dialog.resize(350, 297);
+    dialog.setWindowTitle(script.macroId.isEmpty() ? QStringLiteral("新建脚本") : QStringLiteral("修改脚本"));
+    modeLayout.setContentsMargins(0, 0, 0, 0);
+    modeLayout.addWidget(&unconditional);
+    modeLayout.addWidget(&triggered);
+    layout.addRow(&modeRow);
+    frequency.setObjectName(QStringLiteral("pageMacroFrequency"));
+    frequency.setRange(1, 9999);
+    frequency.setValue(script.frequency);
+    frequency.setSuffix(QStringLiteral(" x100MS"));
+    layout.addRow(QStringLiteral("执行频率"), &frequency);
+    count.setObjectName(QStringLiteral("pageMacroCount"));
+    count.setRange(0, 65535);
+    count.setValue(script.count);
+    layout.addRow(QStringLiteral("执行次数"), &count);
+    layout.addRow(new QLabel(QStringLiteral("0表示一直执行"), &dialog));
+    addressLayout.setContentsMargins(0, 0, 0, 0);
+    addressLayout.addWidget(new QLabel(QStringLiteral("受控地址"), &addressRow));
+    address.setReadOnly(true);
+    addressLayout.addWidget(&address);
+    addressLayout.addWidget(&editAddress);
+    layout.addRow(&addressRow);
+    triggered.setChecked(!script.address.isEmpty());
+    unconditional.setChecked(script.address.isEmpty());
+    addressRow.setVisible(triggered.isChecked());
+    macros.setObjectName(QStringLiteral("pageMacroSource"));
+    layout.addRow(QStringLiteral("脚本函数"), &macros);
+    layout.addRow(&buttons);
+    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    write = buttons.addButton(QStringLiteral("写宏"), QDialogButtonBox::ActionRole);
+    auto populateMacros = [&]() {
+        macros.clear();
+        macros.addItems(draft.macros.keys());
+        if (!selected.isEmpty())
+        {
+            macros.setCurrentText(selected);
+        }
+        buttons.button(QDialogButtonBox::Ok)->setEnabled(macros.count() != 0);
+    };
+    populateMacros();
+    QObject::connect(&triggered, &QRadioButton::toggled, &addressRow, &QWidget::setVisible);
+    QObject::connect(&editAddress, &QPushButton::clicked, &dialog, [&]() {
+        QString chosen = address.text();
+
+        if (editPlcAddress(&dialog, true, draft.connections, &chosen))
+        {
+            address.setText(chosen);
+        }
+    });
+    QObject::connect(write, &QPushButton::clicked, &dialog, [&]() {
+        if (createStage2PageMacroSource(&dialog, draft, selected))
+        {
+            populateMacros();
+        }
+    });
+    QObject::connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted || macros.currentIndex() < 0)
+    {
+        return false;
+    }
+    selected = macros.currentText();
+    if (!draft.macroIds.contains(selected))
+    {
+        draft.macroIds.insert(selected, QUuid::createUuid().toString(QUuid::WithoutBraces));
+    }
+    script.macroId = draft.macroIds.value(selected);
+    script.frequency = frequency.value();
+    script.count = count.value();
+    script.address = triggered.isChecked() ? address.text() : QString();
+    project = draft;
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : createStage2PageScriptList
+ * Description     : Display the ordered page invocation draft with bounded add, remove and edit actions.
+ * Input Parameters: parent, project, scripts.
+ * Return Value    : Editor widget owned by the ordinary page dialog.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
+                                           QList<Stage2PageScript> &scripts) //20261123-5 add
+{
+    QWidget *widget = new QWidget(parent);
+    QVBoxLayout *layout = new QVBoxLayout(widget);
+    QTableWidget *table = new QTableWidget(0, 5, widget);
+    QHBoxLayout *actions = new QHBoxLayout;
+    QPushButton *add = new QPushButton(QStringLiteral("新增"), widget);
+    QPushButton *remove = new QPushButton(QStringLiteral("删除"), widget);
+    QPushButton *edit = new QPushButton(QStringLiteral("修改"), widget);
+    QLabel *usage = new QLabel(widget);
+
+    layout->setContentsMargins(0, 0, 0, 0);
+    table->setHorizontalHeaderLabels({QStringLiteral("脚本函数"), QStringLiteral("执行频率"),
+        QStringLiteral("执行次数"), QStringLiteral("受控类型"), QStringLiteral("受控地址")});
+    table->verticalHeader()->hide();
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    layout->addWidget(table);
+    add->setObjectName(QStringLiteral("pageMacroAdd"));
+    actions->addWidget(add);
+    actions->addWidget(remove);
+    actions->addWidget(edit);
+    actions->addWidget(usage);
+    actions->addStretch();
+    layout->addLayout(actions);
+    auto refresh = [=, &project, &scripts](int selection) {
+        int row;
+        int column;
+
+        table->clearContents();
+        table->setRowCount(scripts.size());
+        for (row = 0; row < scripts.size(); ++row)
+        {
+            const Stage2PageScript &script = scripts.at(row);
+            const QStringList fields = {project.macroIds.key(script.macroId), QString::number(script.frequency),
+                QString::number(script.count), script.address.isEmpty() ? QStringLiteral("无条件执行") :
+                QStringLiteral("地址触发"), script.address};
+
+            for (column = 0; column < fields.size(); ++column)
+            {
+                table->setItem(row, column, new QTableWidgetItem(fields.at(column)));
+            }
+        }
+        if (selection >= 0 && selection < table->rowCount())
+        {
+            table->selectRow(selection);
+        }
+        add->setEnabled(scripts.size() < 25);
+        usage->setText(QStringLiteral("%1/25").arg(scripts.size()));
+        remove->setEnabled(!table->selectedItems().isEmpty());
+        edit->setEnabled(remove->isEnabled());
+    };
+    QObject::connect(table, &QTableWidget::itemSelectionChanged, widget, [=]() {
+        remove->setEnabled(!table->selectedItems().isEmpty());
+        edit->setEnabled(remove->isEnabled());
+    });
+    QObject::connect(add, &QPushButton::clicked, widget, [=, &project, &scripts]() {
+        Stage2PageScript script;
+
+        if (scripts.size() < 25 && editStage2PageScript(widget, project, script))
+        {
+            scripts.append(script);
+            refresh(scripts.size() - 1);
+        }
+    });
+    QObject::connect(remove, &QPushButton::clicked, widget, [=, &scripts]() {
+        const int row = table->currentRow();
+
+        if (row >= 0 && row < scripts.size())
+        {
+            scripts.removeAt(row);
+            refresh(qMin(row, int(scripts.size()) - 1));
+        }
+    });
+    QObject::connect(edit, &QPushButton::clicked, widget, [=, &project, &scripts]() {
+        const int row = table->currentRow();
+
+        if (row >= 0 && row < scripts.size() && editStage2PageScript(widget, project, scripts[row]))
+        {
+            refresh(row);
+        }
+    });
+    refresh(-1);
+    return widget;
+}
+
+/******************************************************************************
+ * Function Name   : storeStage2PageScripts
+ * Description     : Store the ordered invocation list with one stable macro reference per row.
+ * Input Parameters: project, pageId, scripts.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
+                                   const QList<Stage2PageScript> &scripts) //20261123-5 add
+{
+    HmiConfigurationNode node;
+    QJsonArray rows;
+    QString rowId;
+
+    if (scripts.isEmpty())
+    {
+        return;
+    }
+    node.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    node.kind = QStringLiteral("pageMacro");
+    node.name = QStringLiteral("画面宏");
+    node.ownerPageId = pageId;
+    node.implemented = true;
+    node.active = true;
+    for (const Stage2PageScript &script : scripts)
+    {
+        rowId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        rows.append(QJsonObject{{QStringLiteral("id"), rowId},
+            {QStringLiteral("frequency"), script.frequency}, {QStringLiteral("count"), script.count},
+            {QStringLiteral("address"), script.address}});
+        project.references.append({QUuid::createUuid().toString(QUuid::WithoutBraces),
+            QStringLiteral("configuration"), node.id, rowId, QStringLiteral("macro"), script.macroId});
+    }
+    node.properties.insert(QStringLiteral("scripts"), rows);
+    project.configurationNodes.append(node);
+}
+
+/******************************************************************************
  * Function Name   : editStage2NewNormalPage
  * Description     : Create and activate a normal page on a detached project after the user confirms.
  * Input Parameters: parent, project.
@@ -183,6 +472,8 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
+    HmiProject macroDraft = project; //20261123-5 add
+    QList<Stage2PageScript> scripts;
     QList<int> occupiedNumbers; //20261122-10 add
     QString suggestion;
     int pageNumber;
@@ -391,6 +682,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
             updateBackgroundPreview();
         }
     });
+    layout->addRow(createStage2PageScriptList(&dialog, macroDraft, scripts)); //20261123-5 add
     layout->addRow(validation);
     layout->addRow(buttons);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -411,7 +703,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         page.name = name->text();
         page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.
         page.background = fillDraft(); //20261123-1 change
-        candidate = project;
+        candidate = macroDraft; //20261123-5 change: Commit shared source edits only with the outer page.
         // Activate by the new ID so the device startup page is left independent.
         if (!validateStage2PageName(project, QString(), page.name, &error) ||
             !candidate.addPage(page, &error)) //20261123-4 change
@@ -453,6 +745,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
             // Keep selected directions if the master switch was turned back off before confirming.
             candidate.configurationNodes.append(slide);
         }
+        storeStage2PageScripts(candidate, page.id, scripts); //20261123-5 add
         if (!candidate.selectPage(page.id, &error))
         {
             validation->setText(error);

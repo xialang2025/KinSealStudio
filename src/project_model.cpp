@@ -945,6 +945,42 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         *node = candidate;
         return true;
     }
+    if (candidate.kind == QStringLiteral("pageMacro")) //20261123-5 add
+    {
+        const QJsonValue scripts = candidate.properties.value(QStringLiteral("scripts"));
+        const QJsonArray entries = scripts.toArray();
+        QSet<QString> rowIds;
+        QJsonValue entry;
+        QJsonObject row;
+        QString rowId;
+
+        if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
+            candidate.ownerPageId.isEmpty() || !candidate.implemented || !candidate.active ||
+            !knownKeys(candidate.properties, {QStringLiteral("scripts")}, QStringLiteral("pageMacro"), error) ||
+            !scripts.isArray() || entries.isEmpty() || entries.size() > 25 ||
+            !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
+        {
+            return modelError(error, QStringLiteral("画面宏配置必须含 1–25 个脚本。"));
+        }
+        Q_FOREACH (entry, entries)
+        {
+            row = entry.toObject();
+            rowId = row.value(QStringLiteral("id")).toString();
+            if (!entry.isObject() || !knownKeys(row, {QStringLiteral("id"), QStringLiteral("frequency"),
+                QStringLiteral("count"), QStringLiteral("address")}, QStringLiteral("pageMacro.scripts"), error) ||
+                rowId.trimmed().isEmpty() || rowId.size() > 256 || rowIds.contains(rowId) ||
+                !exactInteger(row.value(QStringLiteral("frequency"))) || row.value(QStringLiteral("frequency")).toInt() < 1 ||
+                row.value(QStringLiteral("frequency")).toInt() > 9999 || !exactInteger(row.value(QStringLiteral("count"))) ||
+                row.value(QStringLiteral("count")).toInt() < 0 || row.value(QStringLiteral("count")).toInt() > 65535 ||
+                !row.value(QStringLiteral("address")).isString() || row.value(QStringLiteral("address")).toString().size() > 512)
+            {
+                return modelError(error, QStringLiteral("画面宏的脚本标识、频率、次数或触发地址无效。"));
+            }
+            rowIds.insert(rowId);
+        }
+        *node = candidate;
+        return true;
+    }
     if (candidate.kind == QStringLiteral("pageSlide")) //20261123-4 add
     {
         const QJsonValue distance = candidate.properties.value(QStringLiteral("distance"));
@@ -1565,6 +1601,14 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     QSet<QString> referenceFields;
     QMap<QString, QString> navigationPageKinds; //20261112-0 add
     QMap<QString, QString> slideOwners; //20261123-4 add
+    QSet<QString> pagesWithScripts; //20261123-5 add
+    QMap<QString, QSet<QString>> pendingScriptBindings;
+    QJsonValue scriptRow;
+    QString scriptAddress;
+    PlcCatalog scriptCatalog;
+    PlcAddressContext scriptContext;
+    PlcAddress decodedScriptAddress;
+    bool scriptCatalogLoaded = false;
     QSet<QString> pagesWithSlide;
     const QStringList slideDirections = {QStringLiteral("left"), QStringLiteral("right"),
                                          QStringLiteral("up"), QStringLiteral("down")};
@@ -1704,6 +1748,38 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             slideOwners.insert(node.id, node.ownerPageId);
             pagesWithSlide.insert(node.ownerPageId);
         }
+        if (node.kind == QStringLiteral("pageMacro")) //20261123-5 add
+        {
+            if (navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") ||
+                pagesWithScripts.contains(node.ownerPageId))
+            {
+                return modelError(error, QStringLiteral("每个普通画面只能保存一组画面宏。"));
+            }
+            pagesWithScripts.insert(node.ownerPageId);
+            Q_FOREACH (scriptRow, node.properties.value(QStringLiteral("scripts")).toArray())
+            {
+                pendingScriptBindings[node.id].insert(scriptRow.toObject().value(QStringLiteral("id")).toString());
+                scriptAddress = scriptRow.toObject().value(QStringLiteral("address")).toString();
+                if (scriptAddress.isEmpty())
+                {
+                    continue;
+                }
+                if (!scriptCatalogLoaded)
+                {
+                    if (!scriptCatalog.load(QStringLiteral(":/plc/plc-catalog.json"), error))
+                    {
+                        return false;
+                    }
+                    scriptCatalogLoaded = true;
+                    scriptContext.connections = connections;
+                    scriptContext.role = PlcAddressRole::Bit;
+                }
+                if (!parseQualifiedPlcAddressText(scriptAddress, scriptContext, scriptCatalog, &decodedScriptAddress, error))
+                {
+                    return false;
+                }
+            }
+        }
         if (node.kind == QStringLiteral("system") && node.implemented && node.active) { hasSystemSettings = true; }
     }
     //20261112-1 add: Resolve collection identities over all pages before allowing a rename, removal or paste to publish.
@@ -1790,6 +1866,19 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
              slideOwners.value(reference.ownerId) == reference.targetId || !slideDirections.contains(reference.field)))
         {
             return modelError(error, QStringLiteral("滑动方向只能指向本页之外的普通画面。")); //20261123-4 add
+        }
+        if (reference.ownerKind == QStringLiteral("configuration") && pendingScriptBindings.contains(reference.ownerId) &&
+            (reference.targetKind != QStringLiteral("macro") ||
+             !pendingScriptBindings[reference.ownerId].remove(reference.field)))
+        {
+            return modelError(error, QStringLiteral("画面脚本必须各自绑定一个有效宏。")); //20261123-5 add
+        }
+    }
+    for (const QSet<QString> &unbound : std::as_const(pendingScriptBindings)) //20261123-5 add
+    {
+        if (!unbound.isEmpty())
+        {
+            return modelError(error, QStringLiteral("画面脚本缺少宏引用。"));
         }
     }
     if (!inactiveExtensions(extensions, QStringLiteral("project.extensions"), error)) { return false; }

@@ -82,6 +82,7 @@ private slots:
     void newPageProjectBitmapStretchesAndPersists(); //20261123-2 add
     void newPageSystemBitmapStretchesAndPersists(); //20261123-3 add
     void newPageSlideKeepsStableTargetAcrossSave(); //20261123-4 add
+    void newPageMacroDefaultsPersistWithStableSource(); //20261123-5 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1552,6 +1553,104 @@ void Stage2WorkflowTests::newPageSlideKeepsStableTargetAcrossSave() //20261123-4
     QCOMPARE(reopened.references.first().targetId, target.id);
     QVERIFY(!reopened.removePage(target.id, &error));
     QVERIFY(error.contains(QStringLiteral("被引用")));
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
+}
+
+/******************************************************************************
+ * Function Name   : newPageMacroDefaultsPersistWithStableSource
+ * Description     : Add a default screen script and verify its source stays bound across a rename and reload.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageMacroDefaultsPersistWithStableSource() //20261123-5 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    const QString initialName = QStringLiteral("up_test");
+    const QString renamed = QStringLiteral("page_tick");
+    QString error;
+    QString path;
+    QString macroId;
+    bool added = false;
+
+    QVERIFY(directory.isValid());
+    project.macros.insert(initialName, QStringLiteral("void main() {}"));
+    QTimer::singleShot(0, this, [&]() {
+        QDialog *page = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QPushButton *add;
+        QDialogButtonBox *pageButtons;
+
+        if (page == nullptr)
+        {
+            return;
+        }
+        add = page->findChild<QPushButton *>(QStringLiteral("pageMacroAdd"));
+        pageButtons = page->findChild<QDialogButtonBox *>();
+        if (add == nullptr || pageButtons == nullptr)
+        {
+            page->reject();
+            return;
+        }
+        QTimer::singleShot(0, page, [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QComboBox *macros;
+            QSpinBox *frequency;
+            QSpinBox *count;
+            QDialogButtonBox *buttons;
+
+            if (editor == nullptr || editor == page)
+            {
+                return;
+            }
+            macros = editor->findChild<QComboBox *>(QStringLiteral("pageMacroSource"));
+            frequency = editor->findChild<QSpinBox *>(QStringLiteral("pageMacroFrequency"));
+            count = editor->findChild<QSpinBox *>(QStringLiteral("pageMacroCount"));
+            buttons = editor->findChild<QDialogButtonBox *>();
+            if (editor->windowTitle() != QStringLiteral("新建脚本") || macros == nullptr ||
+                macros->currentText() != initialName || frequency == nullptr || count == nullptr || buttons == nullptr ||
+                frequency->value() != 10 || frequency->minimum() != 1 || frequency->maximum() != 9999 ||
+                count->value() != 0 || count->minimum() != 0 || count->maximum() != 65535)
+            {
+                editor->reject();
+                return;
+            }
+            added = true;
+            buttons->button(QDialogButtonBox::Ok)->click();
+            if (editor->isVisible())
+            {
+                editor->reject();
+            }
+        });
+        add->click();
+        if (added)
+        {
+            pageButtons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (page->isVisible())
+        {
+            page->reject();
+        }
+    });
+    const bool accepted = editStage2NewNormalPage(nullptr, project);
+    QVERIFY2(added && accepted, "New ordinary pages require a macro table that accepts existing macros.");
+    macroId = project.macroIds.value(initialName);
+    QVERIFY(!macroId.isEmpty());
+    QVERIFY2(project.renameMacro(initialName, renamed, &error), qPrintable(error));
+    path = directory.filePath(QStringLiteral("page-macro.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.macroIds.value(renamed), macroId);
+    QCOMPARE(reopened.configurationNodes.size(), 1);
+    QCOMPARE(reopened.configurationNodes.first().ownerPageId, project.activePageId);
+    const QJsonArray rows = reopened.configurationNodes.first().properties.value(QStringLiteral("scripts")).toArray();
+    QCOMPARE(rows.size(), 1);
+    QCOMPARE(rows.first().toObject().value(QStringLiteral("frequency")).toInt(), 10);
+    QCOMPARE(rows.first().toObject().value(QStringLiteral("count")).toInt(), 0);
+    QCOMPARE(rows.first().toObject().value(QStringLiteral("address")).toString(), QString());
+    QCOMPARE(reopened.references.size(), 1);
+    QCOMPARE(reopened.references.first().targetId, macroId);
     QVERIFY(!reopened.validateSinglePageBackend(&error));
 }
 
