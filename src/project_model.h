@@ -2,6 +2,7 @@
 #define PROJECT_MODEL_H
 
 #include <QBrush> //20261123-1 add
+#include <QImage> //20261123-2 add
 #include <QJsonObject>
 #include <QList>
 #include <QRect>
@@ -101,10 +102,11 @@ struct HmiPageBackground
     QString color;
     QString foregroundColor;
     int style = 0;
+    QString bitmapName; //20261123-2 add: Resolve this key from the project picture pool.
 
     static QColor defaultColor();
     bool isDefault() const;
-    QBrush brush(const QRectF &bounds) const;
+    QBrush brush(const QRectF &bounds, const QImage &bitmap = {}) const; //20261123-2 change
 };
 
 //20261110-5 add: These are editor entities; page kinds do not claim a recovered native layout.

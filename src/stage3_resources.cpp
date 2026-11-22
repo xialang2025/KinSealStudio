@@ -58,7 +58,7 @@ template<typename Visitor> void visitPictureStates(HmiObject &object, Visitor vi
 
 /******************************************************************************
  * Function Name   : updatePictureBindings
- * Description     : Remap only name-and-content matched embedded states while preserving detached same-name image bytes.
+ * Description     : Remap shared page-background keys and name-and-content matched embedded states.
  * Input Parameters: project, oldName, newName, oldPng, newPng
  * Return Value    : None
  * Date            : 2026.11.10
@@ -74,8 +74,16 @@ void updatePictureBindings(HmiProject *project, const QString &oldName, const QS
             state.picturePng = newPng;
         }
     };
+    if (project->activePageBackground.bitmapName == oldName) //20261123-2 add
+    {
+        project->activePageBackground.bitmapName = newName;
+    }
     for (object = project->objects.begin(); object != project->objects.end(); ++object) { visitPictureStates(*object, visitor); }
     for (page = project->inactivePages.begin(); page != project->inactivePages.end(); ++page) {
+        if (page->background.bitmapName == oldName) //20261123-2 add
+        {
+            page->background.bitmapName = newName;
+        }
         for (object = page->objects.begin(); object != page->objects.end(); ++object) { visitPictureStates(*object, visitor); }
     }
 }
@@ -83,7 +91,7 @@ void updatePictureBindings(HmiProject *project, const QString &oldName, const QS
 
 /******************************************************************************
  * Function Name   : stage3PictureUsage
- * Description     : Count pool-bound, detached same-name and explicit picture references across all pages.
+ * Description     : Count picture references from backgrounds, pool-bound states, detached states and entity links.
  * Input Parameters: project, name
  * Return Value    : Reference counts for deletion protection and resource identity inspection.
  * Date            : 2026.11.10
@@ -97,6 +105,10 @@ Stage3PictureUsage stage3PictureUsage(const HmiProject &project, const QString &
     QByteArray pool;
     pool = project.pictures.value(name);
     Q_FOREACH (page, project.allPages()) {
+        if (!name.isEmpty() && page.background.bitmapName == name) //20261123-2 add
+        {
+            ++usage.pageBackgrounds;
+        }
         Q_FOREACH (object, page.objects) {
             visitPictureStates(object, [&](const auto &state) {
                 if (state.picture == name) {
@@ -190,7 +202,7 @@ bool replaceStage3Picture(const HmiProject &source, const QString &name, const Q
 
 /******************************************************************************
  * Function Name   : deleteStage3Picture
- * Description     : Refuse deletion while any embedded named state or explicit reference still uses the pool entry.
+ * Description     : Refuse deletion while a page background, embedded named state or explicit link uses the picture.
  * Input Parameters: source, name, draft, error
  * Return Value    : True after removing an unreferenced entry from a valid candidate.
  * Date            : 2026.11.10
@@ -201,8 +213,8 @@ bool deleteStage3Picture(const HmiProject &source, const QString &name, HmiProje
     Stage3PictureUsage usage;
     if (draft == nullptr || !source.pictures.contains(name)) { return resourceError(error, QStringLiteral("待删除的工程图片不存在。")); }
     usage = stage3PictureUsage(source, name);
-    if (usage.boundStates + usage.detachedStates + usage.explicitReferences != 0) {
-        return resourceError(error, QStringLiteral("图片仍被状态或显式引用使用，请先在控件属性中解除引用。"));
+    if (usage.boundStates + usage.detachedStates + usage.explicitReferences + usage.pageBackgrounds != 0) { //20261123-2 change
+        return resourceError(error, QStringLiteral("图片仍被画面背景、控件状态或显式引用使用。"));
     }
     candidate = source;
     candidate.pictures.remove(name);
@@ -232,11 +244,11 @@ Stage3PicturesDialog::Stage3PicturesDialog(const HmiProject &project, QWidget *p
     setWindowTitle(QStringLiteral("工程图片管理"));
     resize(880, 500);
     layout = new QVBoxLayout(this);
-    layout->addWidget(new QLabel(QStringLiteral("导入后图片内嵌于工程；重命名和替换同步更新使用该图片的控件。"), this));
+    layout->addWidget(new QLabel(QStringLiteral("导入后图片内嵌于工程。重命名和替换会同步更新引用该图片的背景与控件。"), this)); //20261123-2 change
     m_table->setObjectName(QStringLiteral("Stage3PicturesTable"));
     m_table->setColumnCount(6);
     m_table->setHorizontalHeaderLabels({QStringLiteral("名称"), QStringLiteral("像素"), QStringLiteral("预览"),
-        QStringLiteral("内容SHA256"), QStringLiteral("绑定/独立/显式引用"), QStringLiteral("字节")});
+        QStringLiteral("内容SHA256"), QStringLiteral("绑定/独立/显式引用/背景"), QStringLiteral("字节")}); //20261123-2 change
     m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_table->setSelectionMode(QAbstractItemView::SingleSelection);
     m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -298,7 +310,8 @@ void Stage3PicturesDialog::rebuild() //20261110-8 add
         item->setData(Qt::DecorationRole, QPixmap::fromImage(image.scaled(64, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
         m_table->setItem(row, 2, item);
         m_table->setItem(row, 3, new QTableWidgetItem(QString::fromLatin1(QCryptographicHash::hash(picture.value(), QCryptographicHash::Sha256).toHex())));
-        m_table->setItem(row, 4, new QTableWidgetItem(QStringLiteral("%1 / %2 / %3").arg(usage.boundStates).arg(usage.detachedStates).arg(usage.explicitReferences)));
+        m_table->setItem(row, 4, new QTableWidgetItem(QStringLiteral("%1 / %2 / %3 / %4").arg(usage.boundStates)
+            .arg(usage.detachedStates).arg(usage.explicitReferences).arg(usage.pageBackgrounds))); //20261123-2 change
         m_table->setItem(row, 5, new QTableWidgetItem(QString::number(picture.value().size())));
         m_table->setRowHeight(row, 44);
         ++row;

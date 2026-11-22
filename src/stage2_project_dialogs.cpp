@@ -1,4 +1,5 @@
 #include "stage2_project_dialogs.h"
+#include "control_rendering.h" //20261123-2 add
 #include "stage2_system_settings.h" //20261122-4 change
 
 #include <QColorDialog>
@@ -63,6 +64,71 @@ static bool validateStage2PageName(const HmiProject &project, const QString &id,
 }
 
 /******************************************************************************
+ * Function Name   : chooseStage2PageBitmap
+ * Description     : Select an existing decoded picture without changing the project gallery.
+ * Input Parameters: parent, pictures, name.
+ * Return Value    : True after confirming a picture.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArray> &pictures,
+                                   QString &name) //20261123-2 add
+{
+    QDialog dialog(parent);
+    QVBoxLayout *layout;
+    QListWidget *items;
+    QDialogButtonBox *buttons;
+    QMap<QString, QByteArray>::const_iterator picture;
+    QImage icon;
+    QListWidgetItem *entry;
+
+    dialog.setWindowTitle(QStringLiteral("工程图库"));
+    dialog.resize(490, 340);
+    layout = new QVBoxLayout(&dialog);
+    items = new QListWidget(&dialog);
+    items->setObjectName(QStringLiteral("pageBitmapGalleryItems"));
+    items->setViewMode(QListView::IconMode);
+    items->setResizeMode(QListView::Adjust);
+    items->setMovement(QListView::Static);
+    items->setIconSize(QSize(80, 60));
+    items->setSpacing(6);
+    layout->addWidget(items);
+    for (picture = pictures.cbegin(); picture != pictures.cend(); ++picture)
+    {
+        icon = decodedControlPng(picture.value());
+        if (!icon.isNull())
+        {
+            entry = new QListWidgetItem(QIcon(QPixmap::fromImage(icon.scaled(items->iconSize(),
+                Qt::KeepAspectRatio, Qt::SmoothTransformation))), picture.key(), items);
+            if (picture.key() == name)
+            {
+                items->setCurrentItem(entry);
+            }
+        }
+    }
+    if (items->count() == 0)
+    {
+        layout->addWidget(new QLabel(QStringLiteral("工程中没有可用图片。可在工程图片管理中添加。"), &dialog));
+    }
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    buttons->button(QDialogButtonBox::Ok)->setEnabled(items->currentItem() != nullptr);
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    layout->addWidget(buttons);
+    QObject::connect(items, &QListWidget::currentItemChanged, &dialog, [buttons](QListWidgetItem *current) {
+        buttons->button(QDialogButtonBox::Ok)->setEnabled(current != nullptr);
+    });
+    QObject::connect(items, &QListWidget::itemDoubleClicked, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted || items->currentItem() == nullptr)
+    {
+        return false;
+    }
+    name = items->currentItem()->text();
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : editStage2NewNormalPage
  * Description     : Create and activate a normal page on a detached project after the user confirms.
  * Input Parameters: parent, project.
@@ -77,12 +143,23 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QSpinBox *number;
     QGroupBox *background;
     QGridLayout *backgroundLayout; //20261123-1 change
+    QRadioButton *defaultMode; //20261123-2 add
+    QRadioButton *bitmapMode;
+    QStackedWidget *backgroundOptions;
+    QWidget *colorOptions;
+    QWidget *bitmapOptions;
+    QGridLayout *colorLayout;
+    QVBoxLayout *bitmapLayout;
     QPushButton *backgroundColorButton;
     QPushButton *foregroundColorButton;
     QComboBox *backgroundStyle;
     QLabel *backgroundPreview;
+    QLineEdit *bitmapPath;
+    QPushButton *projectGallery;
     QColor backgroundColor = HmiPageBackground::defaultColor(); //20261123-1 change
     QColor foregroundColor = HmiPageBackground::defaultColor();
+    QString bitmapName;
+    QImage bitmap;
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
@@ -124,32 +201,62 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     layout->addRow(QStringLiteral("编号"), number);
     background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
     backgroundLayout = new QGridLayout(background); //20261123-1 change
-    backgroundColorButton = new QPushButton(background);
+    defaultMode = new QRadioButton(QStringLiteral("默认"), background); //20261123-2 add
+    defaultMode->setChecked(true);
+    bitmapMode = new QRadioButton(QStringLiteral("位图"), background);
+    bitmapMode->setObjectName(QStringLiteral("newPageBitmapMode"));
+    backgroundOptions = new QStackedWidget(background);
+    colorOptions = new QWidget(backgroundOptions);
+    colorLayout = new QGridLayout(colorOptions);
+    colorLayout->setContentsMargins(0, 0, 0, 0);
+    bitmapOptions = new QWidget(backgroundOptions);
+    bitmapLayout = new QVBoxLayout(bitmapOptions);
+    bitmapLayout->setContentsMargins(0, 0, 0, 0);
+    bitmapPath = new QLineEdit(bitmapOptions);
+    bitmapPath->setReadOnly(true);
+    bitmapPath->setAccessibleName(QStringLiteral("背景图片"));
+    projectGallery = new QPushButton(QStringLiteral("工程图库"), bitmapOptions);
+    projectGallery->setObjectName(QStringLiteral("newPageProjectGallery"));
+    bitmapLayout->addWidget(bitmapPath);
+    bitmapLayout->addWidget(projectGallery, 0, Qt::AlignRight);
+    bitmapLayout->addStretch();
+    backgroundOptions->addWidget(colorOptions);
+    backgroundOptions->addWidget(bitmapOptions);
+    backgroundColorButton = new QPushButton(colorOptions);
     backgroundColorButton->setObjectName(QStringLiteral("newPageBackgroundColor"));
     backgroundColorButton->setMinimumWidth(180);
     backgroundColorButton->setAccessibleName(QStringLiteral("背景色"));
-    foregroundColorButton = new QPushButton(background);
+    foregroundColorButton = new QPushButton(colorOptions);
     foregroundColorButton->setObjectName(QStringLiteral("newPageForegroundColor"));
     foregroundColorButton->setAccessibleName(QStringLiteral("前景色"));
-    backgroundStyle = new QComboBox(background);
+    backgroundStyle = new QComboBox(colorOptions);
     backgroundStyle->setObjectName(QStringLiteral("newPageBackgroundStyle"));
     backgroundStyle->addItems({QStringLiteral("纯色"), QStringLiteral("横向过渡"), QStringLiteral("横向对称过渡"),
         QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"),
         QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"),
         QStringLiteral("右上角辐射"), QStringLiteral("左上角辐射"), QStringLiteral("中心辐射")});
     backgroundPreview = new QLabel(background);
+    backgroundPreview->setObjectName(QStringLiteral("newPageBackgroundPreview")); //20261123-2 add
     backgroundPreview->setFixedSize(110, 110);
     backgroundPreview->setAccessibleName(QStringLiteral("背景预览"));
-    backgroundLayout->addWidget(new QLabel(QStringLiteral("背景色"), background), 0, 0);
-    backgroundLayout->addWidget(backgroundColorButton, 0, 1);
-    backgroundLayout->addWidget(new QLabel(QStringLiteral("前景色"), background), 1, 0);
-    backgroundLayout->addWidget(foregroundColorButton, 1, 1);
-    backgroundLayout->addWidget(new QLabel(QStringLiteral("样式"), background), 2, 0);
-    backgroundLayout->addWidget(backgroundStyle, 2, 1);
-    backgroundLayout->addWidget(backgroundPreview, 0, 2, 3, 1, Qt::AlignCenter);
+    colorLayout->addWidget(new QLabel(QStringLiteral("背景色"), colorOptions), 0, 0); //20261123-2 change
+    colorLayout->addWidget(backgroundColorButton, 0, 1);
+    colorLayout->addWidget(new QLabel(QStringLiteral("前景色"), colorOptions), 1, 0);
+    colorLayout->addWidget(foregroundColorButton, 1, 1);
+    colorLayout->addWidget(new QLabel(QStringLiteral("样式"), colorOptions), 2, 0);
+    colorLayout->addWidget(backgroundStyle, 2, 1);
+    backgroundLayout->addWidget(defaultMode, 0, 0);
+    backgroundLayout->addWidget(bitmapMode, 1, 0);
+    backgroundLayout->addWidget(backgroundOptions, 0, 1, 2, 1);
+    backgroundLayout->addWidget(backgroundPreview, 0, 2, 2, 1, Qt::AlignCenter);
     layout->addRow(background);
     auto fillDraft = [&]() {
         HmiPageBackground fill;
+        if (bitmapMode->isChecked()) //20261123-2 add: Preserve the color choices on the draft while serializing only the selected mode.
+        {
+            fill.bitmapName = bitmapName;
+            return fill;
+        }
         if (backgroundColor != HmiPageBackground::defaultColor())
         {
             fill.color = backgroundColor.name();
@@ -163,10 +270,12 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     };
     auto updateBackgroundPreview = [&]() { //20261123-1 change: Preview and active canvas share the recovered brush geometry.
         QPixmap sample(backgroundPreview->size());
-        QPainter painter(&sample);
+        QPainter painter;
         backgroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(backgroundColor.name()));
         foregroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(foregroundColor.name()));
-        painter.fillRect(sample.rect(), fillDraft().brush(sample.rect()));
+        sample.fill(Qt::transparent); //20261123-2 add: Keep transparent source pixels in the preview.
+        painter.begin(&sample);
+        painter.fillRect(sample.rect(), fillDraft().brush(sample.rect(), bitmap));
         painter.end();
         backgroundPreview->setPixmap(sample);
     };
@@ -183,6 +292,20 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QObject::connect(backgroundColorButton, &QPushButton::clicked, &dialog, [&]() { chooseColor(backgroundColor); });
     QObject::connect(foregroundColorButton, &QPushButton::clicked, &dialog, [&]() { chooseColor(foregroundColor); });
     QObject::connect(backgroundStyle, &QComboBox::currentIndexChanged, &dialog, updateBackgroundPreview);
+    QObject::connect(bitmapMode, &QRadioButton::toggled, &dialog, [&](bool enabled) { //20261123-2 add
+        backgroundOptions->setCurrentWidget(enabled ? bitmapOptions : colorOptions);
+        validation->clear();
+        updateBackgroundPreview();
+    });
+    QObject::connect(projectGallery, &QPushButton::clicked, &dialog, [&]() {
+        if (chooseStage2PageBitmap(&dialog, project.pictures, bitmapName))
+        {
+            bitmap = decodedControlPng(project.pictures.value(bitmapName));
+            bitmapPath->setText(bitmapName);
+            validation->clear();
+            updateBackgroundPreview();
+        }
+    });
     layout->addRow(validation);
     layout->addRow(buttons);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -190,6 +313,11 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         HmiPage page;
         QString error;
 
+        if (bitmapMode->isChecked() && bitmap.isNull()) //20261123-2 add
+        {
+            validation->setText(QStringLiteral("请从工程图库选择一张有效的背景图片。"));
+            return;
+        }
         page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         page.name = name->text();
         page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.

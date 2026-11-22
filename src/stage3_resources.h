@@ -13,6 +13,7 @@ struct Stage3PictureUsage
     int boundStates = 0;
     int detachedStates = 0;
     int explicitReferences = 0;
+    int pageBackgrounds = 0; //20261123-2 add
 };
 
 Stage3PictureUsage stage3PictureUsage(const HmiProject &project, const QString &name);

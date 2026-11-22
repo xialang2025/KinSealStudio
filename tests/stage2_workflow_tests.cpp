@@ -2,21 +2,26 @@
 #include "hmi_canvas.h"
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
+#include "stage3_resources.h" //20261123-2 add
 #include "text_payload_compiler.h"
 #include "independent_downloader.h"
 #include <QAction>
 #include <QAbstractButton>
 #include <QApplication>
+#include <QBuffer>
 #include <QClipboard>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
+#include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QJsonDocument>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QSettings>
 #include <QSpinBox>
 #include <QTabBar>
@@ -70,6 +75,7 @@ private slots:
     void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
     void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
+    void newPageProjectBitmapStretchesAndPersists(); //20261123-2 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1153,6 +1159,169 @@ void Stage2WorkflowTests::newPageGradientKeepsNativeSymmetryAndPersists() //2026
     QVERIFY(!window.m_dirty);
     QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
     QCOMPARE(scan(reopened.m_canvas), values);
+}
+
+/******************************************************************************
+ * Function Name   : newPageProjectBitmapStretchesAndPersists
+ * Description     : Select an asymmetric PNG through the new-page gallery and check both axes, persistence and resource protection.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageProjectBitmapStretchesAndPersists() //20261123-2 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject renamed;
+    HmiProject unused;
+    HmiProject single;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QImage bitmap(16, 4, QImage::Format_RGB32);
+    QImage preview;
+    QByteArray png;
+    QBuffer buffer(&png);
+    QString name = QStringLiteral("四色背景");
+    QString newName = QStringLiteral("已改名背景");
+    QString error;
+    QString path;
+    QString pageId;
+    QColor quadrant;
+    bool picked = false;
+    int x;
+    int y;
+    QPoint point;
+
+    QVERIFY(directory.isValid());
+    for (y = 0; y < bitmap.height(); ++y)
+    {
+        for (x = 0; x < bitmap.width(); ++x)
+        {
+            quadrant = y < 2 ? (x < 8 ? QColor(Qt::red) : QColor(Qt::green)) :
+                               (x < 8 ? QColor(Qt::blue) : QColor(Qt::yellow));
+            bitmap.setPixelColor(x, y, quadrant);
+        }
+    }
+    QVERIFY(buffer.open(QIODevice::WriteOnly));
+    QVERIFY(bitmap.save(&buffer, "PNG"));
+    project.pictures.insert(name, png);
+    path = directory.filePath(QStringLiteral("page-bitmap.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QRadioButton *bitmapMode;
+        QPushButton *gallery;
+        QLabel *sample;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        bitmapMode = dialog->findChild<QRadioButton *>(QStringLiteral("newPageBitmapMode"));
+        gallery = dialog->findChild<QPushButton *>(QStringLiteral("newPageProjectGallery"));
+        sample = dialog->findChild<QLabel *>(QStringLiteral("newPageBackgroundPreview"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (bitmapMode == nullptr || gallery == nullptr || sample == nullptr || buttons == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        bitmapMode->click();
+        QTimer::singleShot(0, dialog, [&]() {
+            QDialog *picker = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QListWidget *items;
+            QList<QListWidgetItem *> matches;
+            QDialogButtonBox *pickerButtons;
+
+            if (picker == nullptr || picker == dialog)
+            {
+                return;
+            }
+            items = picker->findChild<QListWidget *>(QStringLiteral("pageBitmapGalleryItems"));
+            pickerButtons = picker->findChild<QDialogButtonBox *>();
+            if (items == nullptr || pickerButtons == nullptr)
+            {
+                picker->reject();
+                return;
+            }
+            matches = items->findItems(name, Qt::MatchExactly);
+            if (matches.size() != 1)
+            {
+                picker->reject();
+                return;
+            }
+            items->setCurrentItem(matches.first());
+            picked = true;
+            pickerButtons->button(QDialogButtonBox::Ok)->click();
+        });
+        gallery->click();
+        if (!picked)
+        {
+            dialog->reject();
+            return;
+        }
+        preview = sample->pixmap().toImage();
+        buttons->button(QDialogButtonBox::Ok)->click();
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    }));
+    QVERIFY2(picked, "A new bitmap page must let the user choose an existing PNG in the project gallery.");
+    QVERIFY(!preview.isNull());
+    QCOMPARE(preview.width(), preview.height());
+    const QImage expectedPreview = bitmap.scaled(preview.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    Q_FOREACH (point, QList<QPoint>({QPoint(0, 0), QPoint(preview.width() - 1, 0), QPoint(0, preview.height() - 1),
+                                   QPoint(preview.width() - 1, preview.height() - 1), preview.rect().center()}))
+    {
+        QCOMPARE(preview.pixelColor(point), expectedPreview.pixelColor(point));
+    }
+    auto renderPage = [](QGraphicsView *view) {
+        QImage pixels(800, 480, QImage::Format_RGB32);
+        QPainter painter(&pixels);
+        view->scene()->render(&painter, QRectF(0, 0, 800, 480), QRectF(0, 0, 800, 480));
+        painter.end();
+        return pixels;
+    };
+    const QImage expectedPage = bitmap.scaled(800, 480, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    const QList<QPoint> samples = {QPoint(0, 0), QPoint(799, 0), QPoint(0, 479), QPoint(799, 479),
+                                   QPoint(399, 239), QPoint(401, 241)};
+    pageId = window.currentEditorProject().activePageId;
+    QVERIFY(pageId != project.activePageId);
+    const QImage drawn = renderPage(window.m_canvas);
+    Q_FOREACH (point, samples)
+    {
+        QCOMPARE(drawn.pixelColor(point), expectedPage.pixelColor(point));
+    }
+    QVERIFY(window.activatePageId(project.activePageId));
+    QVERIFY(!deleteStage3Picture(window.currentEditorProject(), name, &unused, &error));
+    QVERIFY2(renameStage3Picture(window.currentEditorProject(), name, newName, &renamed, &error), qPrintable(error));
+    QVERIFY2(window.commitProjectDraft(renamed, &error), qPrintable(error));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QVERIFY(reopened.activatePageId(pageId));
+    QVERIFY(!deleteStage3Picture(reopened.currentEditorProject(), newName, &unused, &error));
+    const QImage reopenedPage = renderPage(reopened.m_canvas);
+    Q_FOREACH (point, samples)
+    {
+        QCOMPARE(reopenedPage.pixelColor(point), expectedPage.pixelColor(point));
+    }
+    single = reopened.currentEditorProject();
+    single.startupPageId = pageId;
+    single.activePageNumber = 0;
+    QVERIFY2(single.removePage(project.activePageId, &error), qPrintable(error));
+    QVERIFY(!single.validateSinglePageBackend(&error));
+    QVERIFY(error.contains(QStringLiteral("背景")));
 }
 
 /******************************************************************************

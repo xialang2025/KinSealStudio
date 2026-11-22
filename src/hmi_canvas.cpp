@@ -1,4 +1,5 @@
 #include "hmi_canvas.h"
+#include "control_rendering.h" //20261123-2 add
 #include "static_text_renderer.h" //20261108-14 add
 #include "chart_dialog.h" //20261112-1 add
 #include "trend_dialog.h" //20261112-1 add
@@ -299,6 +300,8 @@ void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
     m_pageWidth = project.pageWidth;
     m_pageHeight = project.pageHeight;
     m_pageBackground = project.activePageBackground; //20261123-1 change
+    m_pageBackgroundBitmap = m_pageBackground.bitmapName.isEmpty() ? QImage() :
+        decodedControlPng(project.pictures.value(m_pageBackground.bitmapName)); //20261123-2 add
     m_previousSelectionValid = false;
     m_language = project.activeLanguage; //20261108-14 add
     m_draftRect = nullptr;
@@ -735,6 +738,8 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     HmiControlItem *existing_control;
     QList<HmiObject> previous_objects;
     QGraphicsRectItem *page_item;
+    QRectF page_bounds; //20261123-2 add
+    QPen page_outline;
     int item_index;
 
     existing_items = m_scene->items();
@@ -751,14 +756,15 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     m_draftRect = nullptr; //20261108-14 add
     m_pageWidth = width;
     m_pageHeight = height;
-    page_item = m_scene->addRect(QRectF(0.0, 0.0, width, height),
-                                 QPen(Qt::black, 1.0) /*20261111-1 change: Preserve the native one-pixel page outline.*/,
-                                 m_pageBackground.brush(QRectF(0, 0, width, height))); //20261123-1 change
+    page_bounds = QRectF(0, 0, width, height); //20261123-2 change
+    // Bitmap backgrounds draw across the full page without covering the edge pixels with an outline.
+    page_outline = m_pageBackgroundBitmap.isNull() ? QPen(Qt::black, 1.0) : QPen(Qt::NoPen);
+    page_item = m_scene->addRect(page_bounds, page_outline, m_pageBackground.brush(page_bounds, m_pageBackgroundBitmap));
     page_item->setZValue(-10.0);
     page_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
     page_item->setFlag(QGraphicsItem::ItemIsMovable, false);
     m_pageItem = page_item;
-    m_scene->setSceneRect(QRectF(0.0, 0.0, width, height));
+    m_scene->setSceneRect(page_bounds);
     setZoomPercent(m_zoomPercent);
 
     for (item_index = 0; item_index < previous_objects.size(); ++item_index)

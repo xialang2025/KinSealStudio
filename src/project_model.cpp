@@ -640,17 +640,17 @@ QColor HmiPageBackground::defaultColor() //20261123-1 add
  ******************************************************************************/
 bool HmiPageBackground::isDefault() const //20261123-1 add
 {
-    return color.isEmpty() && foregroundColor.isEmpty() && style == 0;
+    return bitmapName.isEmpty() && color.isEmpty() && foregroundColor.isEmpty() && style == 0; //20261123-2 change
 }
 
 /******************************************************************************
  * Function Name   : HmiPageBackground::brush
- * Description     : Reproduce the V5.1 page preview fill for the selected style.
- * Input Parameters: bounds.
- * Return Value    : A solid, linear or radial brush for the supplied rectangle.
+ * Description     : Reproduce the V5.1 page fill or stretch a decoded bitmap to the supplied rectangle.
+ * Input Parameters: bounds, bitmap.
+ * Return Value    : A solid, gradient or bitmap texture brush for the page origin.
  * Date            : 2026.11.23
  ******************************************************************************/
-QBrush HmiPageBackground::brush(const QRectF &bounds) const //20261123-1 add
+QBrush HmiPageBackground::brush(const QRectF &bounds, const QImage &bitmap) const //20261123-2 change
 {
     const QColor back = color.isEmpty() ? defaultColor() : QColor(color);
     const QColor front = foregroundColor.isEmpty() ? defaultColor() : QColor(foregroundColor);
@@ -661,6 +661,11 @@ QBrush HmiPageBackground::brush(const QRectF &bounds) const //20261123-1 add
     bool reverse;
     bool symmetric;
 
+    if (!bitmapName.isEmpty() && !bitmap.isNull())
+    {
+        // The reference editor fills both the square preview and the canvas without letterboxing.
+        return QBrush(bitmap.scaled(bounds.size().toSize(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    }
     switch (style)
     {
     case 1:
@@ -732,6 +737,7 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     if (!background.color.isEmpty()) { json.insert(QStringLiteral("backgroundColor"), background.color); } //20261123-1 change
     if (!background.foregroundColor.isEmpty()) { json.insert(QStringLiteral("foregroundColor"), background.foregroundColor); }
     if (background.style != 0) { json.insert(QStringLiteral("backgroundStyle"), background.style); }
+    if (!background.bitmapName.isEmpty()) { json.insert(QStringLiteral("backgroundBitmap"), background.bitmapName); } //20261123-2 add
     return json;
 }
 
@@ -750,13 +756,14 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonValue item;
     QJsonValue savedNumber; //20261122-10 add
     QJsonValue savedStyle; //20261123-1 add
+    QJsonValue savedBitmap; //20261123-2 add
     QString key;
     QSet<QString> ids;
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
         QStringLiteral("number"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor"),
-        QStringLiteral("backgroundStyle")}, QStringLiteral("page"), error)) { return false; } //20261123-1 change
+        QStringLiteral("backgroundStyle"), QStringLiteral("backgroundBitmap")}, QStringLiteral("page"), error)) { return false; } //20261123-2 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
     {
         if (!json.value(key).isString() || json.value(key).toString().trimmed().isEmpty())
@@ -811,6 +818,17 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
         return modelError(error, QStringLiteral("普通画面填充颜色必须为 #RRGGBB，背景样式为 0–11。"));
     }
     candidate.background.style = savedStyle.toInt(0);
+    savedBitmap = json.value(QStringLiteral("backgroundBitmap")); //20261123-2 add
+    if (!savedBitmap.isUndefined())
+    {
+        candidate.background.bitmapName = savedBitmap.toString();
+        if (!savedBitmap.isString() || candidate.background.bitmapName.trimmed().isEmpty() ||
+            candidate.background.bitmapName.size() > 256 || !candidate.background.color.isEmpty() ||
+            !candidate.background.foregroundColor.isEmpty() || candidate.background.style != 0)
+        {
+            return modelError(error, QStringLiteral("普通画面的位图背景必须引用有效的工程图片名称，且只能使用一种背景模式。"));
+        }
+    }
     if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal"))
     {
         return modelError(error, QStringLiteral("现有背景字段适用于普通画面。"));
@@ -1556,6 +1574,10 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("页面%1无效或稳定ID重复。%2").arg(page.id, error == nullptr ? QString() : *error));
         }
         pageIds.insert(page.id);
+        if (!page.background.bitmapName.isEmpty() && !pictures.contains(page.background.bitmapName)) //20261123-2 add
+        {
+            return modelError(error, QStringLiteral("画面%1引用的背景图片%2不存在。").arg(page.name, page.background.bitmapName));
+        }
         if (page.number.has_value()) //20261122-10 add: Reject duplicate assignments in imported KSP as well as editor transactions.
         {
             if (explicitPageNumbers.contains(*page.number))

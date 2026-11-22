@@ -95,6 +95,7 @@ private:
     int m_pageWidth;
     int m_pageHeight;
     HmiPageBackground m_pageBackground; //20261123-1 change
+    QImage m_pageBackgroundBitmap; //20261123-2 add
     int m_zoomPercent;
     HmiObject m_previousSelection;
     bool m_previousSelectionValid;

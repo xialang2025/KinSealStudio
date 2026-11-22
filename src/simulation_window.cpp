@@ -1,5 +1,6 @@
 #include "simulation_window.h"
 #include "bit_button_renderer.h"
+#include "control_rendering.h" //20261123-2 add
 #include "static_text_renderer.h"
 
 #include <QCloseEvent>
@@ -52,12 +53,18 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
     QList<const HmiObject *> ordered;
     const HmiObject *object;
     const BitButtonState *appearance;
+    const HmiProject &project = runtime.project(); //20261123-2 add
+    QImage bitmap;
     int state;
 
     frame.fill(Qt::transparent);
     painter.begin(&frame);
     painter.setClipRect(QRect(0, 0, 800, 480));
-    painter.fillRect(frame.rect(), runtime.project().activePageBackground.brush(frame.rect())); //20261123-1 change
+    if (!project.activePageBackground.bitmapName.isEmpty()) //20261123-2 add
+    {
+        bitmap = decodedControlPng(project.pictures.value(project.activePageBackground.bitmapName));
+    }
+    painter.fillRect(frame.rect(), project.activePageBackground.brush(frame.rect(), bitmap)); //20261123-2 change
     ordered = orderedSimulationObjects(runtime);
     Q_FOREACH (object, ordered)
     {
