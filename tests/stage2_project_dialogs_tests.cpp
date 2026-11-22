@@ -12,7 +12,6 @@
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QStackedWidget>
-#include <QTabWidget>
 #include <QTemporaryDir>
 #include "stage2_project_dialogs.h"
 #include "stage2_system_settings.h"
@@ -1068,10 +1067,10 @@ void Stage2ProjectDialogsTests::systemDialogSelectsModelAndStartupPage() //20261
     HmiPage popup;
     QComboBox *model;
     QComboBox *startup;
-    QTabWidget *tabs;
     QDialogButtonBox *buttons;
+    QLineEdit *password;
     QString error;
-    int passwordFields = 0;
+    int level;
 
     QVERIFY2(project.addPage(secondPage(), &error), qPrintable(error));
     popup.id = QStringLiteral("window-test");
@@ -1083,27 +1082,25 @@ void Stage2ProjectDialogsTests::systemDialogSelectsModelAndStartupPage() //20261
     Stage2SystemSettingsDialog dialog(project);
     model = child<QComboBox>(&dialog, "systemTargetModelCombo");
     startup = child<QComboBox>(&dialog, "systemStartupPageCombo");
-    tabs = child<QTabWidget>(&dialog, "systemSettingsTabs");
     buttons = child<QDialogButtonBox>(&dialog, "buttonBox");
+    QCOMPARE(dialog.size(), QSize(625, 627)); //20261122-5 add: Check the reference client rectangle from the real dialog.
+    QCOMPARE(model->geometry(), QRect(109, 110, 205, 22));
+    QCOMPARE(startup->geometry(), QRect(119, 270, 161, 22));
     QCOMPARE(model->currentData().toString(), project.targetModel);
     QCOMPARE(startup->currentData().toString(), project.startupPageId);
     QCOMPARE(startup->findData(popup.id), -1);
-    QCOMPARE(tabs->count(), 2);
-    tabs->setCurrentIndex(1);
-    for (QLineEdit *password : tabs->currentWidget()->findChildren<QLineEdit *>())
+    for (level = 1; level <= 8; ++level)
     {
-        if (password->echoMode() == QLineEdit::Password)
-        {
-            ++passwordFields;
-            QVERIFY(!password->isEnabled());
-            QVERIFY(password->text().isEmpty());
-        }
+        password = dialog.findChild<QLineEdit *>(QStringLiteral("systemPasswordLevel%1").arg(level));
+        QVERIFY(password != nullptr);
+        QCOMPARE(password->geometry(), QRect(419, 60 + (level - 1) * 30, 170, 20));
+        QCOMPARE(password->text(), QString::number(level).repeated(4));
+        QVERIFY(password->isReadOnly());
     }
-    QCOMPARE(passwordFields, 10);
     QSignalSpy help(&dialog, &Stage2SystemSettingsDialog::helpRequested);
     buttons->button(QDialogButtonBox::Help)->click();
     QCOMPARE(help.size(), 1);
-    model->setCurrentIndex(model->findText(QStringLiteral("AMZ070W01R")));
+    model->setCurrentIndex(model->findText(QStringLiteral("AMZ070W01")));
     startup->setCurrentIndex(startup->findData(secondPage().id));
     buttons->button(QDialogButtonBox::Ok)->click();
     QCOMPARE(dialog.result(), int(QDialog::Accepted));
