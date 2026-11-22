@@ -1,5 +1,7 @@
 #include "stage2_project_dialogs.h"
+#include "bit_button_dialog.h" //20261123-3 add
 #include "control_rendering.h" //20261123-2 add
+#include "kvg_library.h" //20261123-3 add
 #include "stage2_system_settings.h" //20261122-4 change
 
 #include <QColorDialog>
@@ -150,15 +152,18 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QWidget *bitmapOptions;
     QGridLayout *colorLayout;
     QVBoxLayout *bitmapLayout;
+    QHBoxLayout *galleryButtons; //20261123-3 add
     QPushButton *backgroundColorButton;
     QPushButton *foregroundColorButton;
     QComboBox *backgroundStyle;
     QLabel *backgroundPreview;
     QLineEdit *bitmapPath;
     QPushButton *projectGallery;
+    QPushButton *systemGallery; //20261123-3 add
     QColor backgroundColor = HmiPageBackground::defaultColor(); //20261123-1 change
     QColor foregroundColor = HmiPageBackground::defaultColor();
     QString bitmapName;
+    QString systemPicture; //20261123-3 add
     QImage bitmap;
     QLabel *validation;
     QDialogButtonBox *buttons;
@@ -217,8 +222,13 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     bitmapPath->setAccessibleName(QStringLiteral("背景图片"));
     projectGallery = new QPushButton(QStringLiteral("工程图库"), bitmapOptions);
     projectGallery->setObjectName(QStringLiteral("newPageProjectGallery"));
+    systemGallery = new QPushButton(QStringLiteral("系统图库"), bitmapOptions); //20261123-3 add
+    systemGallery->setObjectName(QStringLiteral("newPageSystemGallery"));
+    galleryButtons = new QHBoxLayout;
+    galleryButtons->addWidget(systemGallery);
+    galleryButtons->addWidget(projectGallery);
     bitmapLayout->addWidget(bitmapPath);
-    bitmapLayout->addWidget(projectGallery, 0, Qt::AlignRight);
+    bitmapLayout->addLayout(galleryButtons); //20261123-3 change
     bitmapLayout->addStretch();
     backgroundOptions->addWidget(colorOptions);
     backgroundOptions->addWidget(bitmapOptions);
@@ -255,6 +265,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         if (bitmapMode->isChecked()) //20261123-2 add: Preserve the color choices on the draft while serializing only the selected mode.
         {
             fill.bitmapName = bitmapName;
+            fill.systemPicture = systemPicture; //20261123-3 add
             return fill;
         }
         if (backgroundColor != HmiPageBackground::defaultColor())
@@ -300,8 +311,35 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QObject::connect(projectGallery, &QPushButton::clicked, &dialog, [&]() {
         if (chooseStage2PageBitmap(&dialog, project.pictures, bitmapName))
         {
+            systemPicture.clear(); //20261123-3 add: The last confirmed gallery choice owns the background.
             bitmap = decodedControlPng(project.pictures.value(bitmapName));
             bitmapPath->setText(bitmapName);
+            validation->clear();
+            updateBackgroundPreview();
+        }
+    });
+    QObject::connect(systemGallery, &QPushButton::clicked, &dialog, [&]() { //20261123-3 add
+        HmiObject adapter;
+        QString selected = systemPicture;
+        QByteArray galleryPng;
+        QMap<QString, QByteArray> galleryPool;
+
+        // The shared picker owns browsing and selection; only its catalog ID enters the page draft.
+        adapter.type = QStringLiteral("switch");
+        adapter.address = QStringLiteral("LB0");
+        adapter.hasBitButtonProperties = true;
+        BitButtonDialog picker(adapter, project, &dialog);
+        if (picker.choosePictureForControl(false, &selected, &galleryPng, &galleryPool) && !selected.isEmpty())
+        {
+            if (kvgPictureImage(selected, QSize(1, 1), 0).isNull())
+            {
+                validation->setText(QStringLiteral("无法解析所选系统图片，请选择其他背景。"));
+                return;
+            }
+            systemPicture = selected;
+            bitmapName.clear();
+            bitmap = QImage();
+            bitmapPath->setText(kvgPictureResource(systemPicture));
             validation->clear();
             updateBackgroundPreview();
         }
@@ -313,9 +351,9 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         HmiPage page;
         QString error;
 
-        if (bitmapMode->isChecked() && bitmap.isNull()) //20261123-2 add
+        if (bitmapMode->isChecked() && bitmap.isNull() && systemPicture.isEmpty()) //20261123-3 change
         {
-            validation->setText(QStringLiteral("请从工程图库选择一张有效的背景图片。"));
+            validation->setText(QStringLiteral("请从系统图库或工程图库选择一张有效的背景图片。"));
             return;
         }
         page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);

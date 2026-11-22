@@ -1,5 +1,6 @@
 #include "project_model.h"
 #include "device_target.h" //20261122-3 add
+#include "kvg_library.h" //20261123-3 add
 #include "native_test_project.h" //20261108-9 add
 #include "native_project_codec.h" //20261109-0 add
 #include "stage2_system_settings.h" //20261110-7 add: Validate only the explicitly recovered system-property schema.
@@ -640,7 +641,8 @@ QColor HmiPageBackground::defaultColor() //20261123-1 add
  ******************************************************************************/
 bool HmiPageBackground::isDefault() const //20261123-1 add
 {
-    return bitmapName.isEmpty() && color.isEmpty() && foregroundColor.isEmpty() && style == 0; //20261123-2 change
+    return bitmapName.isEmpty() && systemPicture.isEmpty() && color.isEmpty() &&
+           foregroundColor.isEmpty() && style == 0; //20261123-3 change
 }
 
 /******************************************************************************
@@ -658,9 +660,18 @@ QBrush HmiPageBackground::brush(const QRectF &bounds, const QImage &bitmap) cons
     QPointF end;
     QLinearGradient linear;
     QRadialGradient radial;
+    QImage systemImage; //20261123-3 add
     bool reverse;
     bool symmetric;
 
+    if (!systemPicture.isEmpty()) //20261123-3 add: Render the source at each target size, independently of the thumbnail.
+    {
+        systemImage = kvgPictureImage(systemPicture, bounds.size().toSize(), 0);
+        if (!systemImage.isNull())
+        {
+            return QBrush(systemImage);
+        }
+    }
     if (!bitmapName.isEmpty() && !bitmap.isNull())
     {
         // The reference editor fills both the square preview and the canvas without letterboxing.
@@ -738,6 +749,7 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     if (!background.foregroundColor.isEmpty()) { json.insert(QStringLiteral("foregroundColor"), background.foregroundColor); }
     if (background.style != 0) { json.insert(QStringLiteral("backgroundStyle"), background.style); }
     if (!background.bitmapName.isEmpty()) { json.insert(QStringLiteral("backgroundBitmap"), background.bitmapName); } //20261123-2 add
+    if (!background.systemPicture.isEmpty()) { json.insert(QStringLiteral("backgroundSystemPicture"), background.systemPicture); } //20261123-3 add
     return json;
 }
 
@@ -757,13 +769,15 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonValue savedNumber; //20261122-10 add
     QJsonValue savedStyle; //20261123-1 add
     QJsonValue savedBitmap; //20261123-2 add
+    QJsonValue savedSystemPicture; //20261123-3 add
     QString key;
     QSet<QString> ids;
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
         QStringLiteral("number"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor"),
-        QStringLiteral("backgroundStyle"), QStringLiteral("backgroundBitmap")}, QStringLiteral("page"), error)) { return false; } //20261123-2 change
+        QStringLiteral("backgroundStyle"), QStringLiteral("backgroundBitmap"),
+        QStringLiteral("backgroundSystemPicture")}, QStringLiteral("page"), error)) { return false; } //20261123-3 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
     {
         if (!json.value(key).isString() || json.value(key).toString().trimmed().isEmpty())
@@ -827,6 +841,17 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
             !candidate.background.foregroundColor.isEmpty() || candidate.background.style != 0)
         {
             return modelError(error, QStringLiteral("普通画面的位图背景必须引用有效的工程图片名称，且只能使用一种背景模式。"));
+        }
+    }
+    savedSystemPicture = json.value(QStringLiteral("backgroundSystemPicture")); //20261123-3 add
+    if (!savedSystemPicture.isUndefined())
+    {
+        candidate.background.systemPicture = savedSystemPicture.toString();
+        if (!savedSystemPicture.isString() || kvgPictureResource(candidate.background.systemPicture).isEmpty() ||
+            !candidate.background.bitmapName.isEmpty() || !candidate.background.color.isEmpty() ||
+            !candidate.background.foregroundColor.isEmpty() || candidate.background.style != 0)
+        {
+            return modelError(error, QStringLiteral("普通画面的系统背景必须引用有效的图库图片，且只能使用一种背景模式。"));
         }
     }
     if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal"))

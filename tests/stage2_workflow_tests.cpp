@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
+#include "simulation_window.h" //20261123-3 add
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
 #include "stage3_resources.h" //20261123-2 add
@@ -27,6 +28,7 @@
 #include <QTabBar>
 #include <QTabWidget>
 #include <QTemporaryDir>
+#include <QSvgRenderer> //20261123-3 add
 #include <QTest>
 #include <QTimer>
 #include <QToolBar>
@@ -76,6 +78,7 @@ private slots:
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
     void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
     void newPageProjectBitmapStretchesAndPersists(); //20261123-2 add
+    void newPageSystemBitmapStretchesAndPersists(); //20261123-3 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1321,6 +1324,141 @@ void Stage2WorkflowTests::newPageProjectBitmapStretchesAndPersists() //20261123-
     single.activePageNumber = 0;
     QVERIFY2(single.removePage(project.activePageId, &error), qPrintable(error));
     QVERIFY(!single.validateSinglePageBackend(&error));
+    QVERIFY(error.contains(QStringLiteral("背景")));
+}
+
+/******************************************************************************
+ * Function Name   : newPageSystemBitmapStretchesAndPersists
+ * Description     : Select a catalog vector in the ordinary-page editor and verify preview and canvas after reopening.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageSystemBitmapStretchesAndPersists() //20261123-3 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    const QString originalPageId = project.activePageId;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QString path;
+    QString error;
+    QString pageId;
+    QImage preview;
+    QImage expected;
+    QImage drawn(800, 480, QImage::Format_ARGB32_Premultiplied);
+    QPainter painter;
+    SimulationRuntime runtime;
+    QSvgRenderer source(QStringLiteral(":/system-gallery/default/switch_OFF.kvg"));
+    bool picked = false;
+
+    QVERIFY(directory.isValid());
+    QVERIFY(source.isValid());
+    path = directory.filePath(QStringLiteral("system-bitmap.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QRadioButton *bitmapMode;
+        QPushButton *gallery;
+        QLabel *sample;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        bitmapMode = dialog->findChild<QRadioButton *>(QStringLiteral("newPageBitmapMode"));
+        gallery = dialog->findChild<QPushButton *>(QStringLiteral("newPageSystemGallery"));
+        sample = dialog->findChild<QLabel *>(QStringLiteral("newPageBackgroundPreview"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (bitmapMode == nullptr || gallery == nullptr || sample == nullptr || buttons == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        bitmapMode->click();
+        QTimer::singleShot(0, dialog, [&]() {
+            QDialog *picker = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QLineEdit *search;
+            QListWidget *items;
+            QDialogButtonBox *pickerButtons;
+            QList<QListWidgetItem *> matches;
+
+            if (picker == nullptr || picker == dialog)
+            {
+                return;
+            }
+            search = picker->findChild<QLineEdit *>(QStringLiteral("GallerySearch"));
+            items = picker->findChild<QListWidget *>(QStringLiteral("GalleryItems"));
+            pickerButtons = picker->findChild<QDialogButtonBox *>();
+            if (search == nullptr || items == nullptr || pickerButtons == nullptr)
+            {
+                picker->reject();
+                return;
+            }
+            search->setText(QStringLiteral("switch_OFF.kvg"));
+            if (!QTest::qWaitFor([&]() {
+                matches = items->findItems(QStringLiteral("switch_OFF.kvg"), Qt::MatchExactly);
+                return matches.size() == 1;
+            }, 3000))
+            {
+                picker->reject();
+                return;
+            }
+            items->setCurrentItem(matches.first());
+            picked = true;
+            pickerButtons->button(QDialogButtonBox::Ok)->click();
+        });
+        gallery->click();
+        preview = sample->pixmap().toImage();
+        buttons->button(QDialogButtonBox::Ok)->click();
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    }));
+    QVERIFY2(picked, "A bitmap background must let the user select a vector from the system gallery.");
+    QVERIFY(!preview.isNull());
+    expected = QImage(preview.size(), QImage::Format_ARGB32_Premultiplied);
+    expected.fill(Qt::transparent);
+    QVERIFY(painter.begin(&expected));
+    source.setAspectRatioMode(Qt::IgnoreAspectRatio);
+    source.render(&painter, expected.rect());
+    painter.end();
+    QCOMPARE(preview.convertToFormat(expected.format()), expected);
+    pageId = window.currentEditorProject().activePageId;
+    QVERIFY(pageId != project.activePageId);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QVERIFY(reopened.activatePageId(pageId));
+    QCOMPARE(reopened.currentEditorProject().pictures, project.pictures);
+    drawn.fill(Qt::transparent);
+    QVERIFY(painter.begin(&drawn));
+    reopened.m_canvas->scene()->render(&painter, drawn.rect(), drawn.rect());
+    painter.end();
+    expected = QImage(drawn.size(), drawn.format());
+    expected.fill(Qt::transparent);
+    QVERIFY(painter.begin(&expected));
+    source.render(&painter, expected.rect());
+    painter.end();
+    QCOMPARE(drawn.pixelColor(400, 40), expected.pixelColor(400, 40));
+    QCOMPARE(drawn.pixelColor(400, 240), expected.pixelColor(400, 240));
+    project = reopened.currentEditorProject();
+    project.startupPageId = pageId;
+    project.activePageNumber = 0;
+    QVERIFY2(project.removePage(originalPageId, &error), qPrintable(error));
+    QVERIFY2(runtime.start(project, &error), qPrintable(error));
+    QCOMPARE(simulationFrame(runtime), expected);
+    QVERIFY(!project.validateSinglePageBackend(&error));
     QVERIFY(error.contains(QStringLiteral("背景")));
 }
 

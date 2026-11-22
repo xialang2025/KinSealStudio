@@ -310,12 +310,12 @@ bool paintKvgPicture(QPainter *painter, const QRectF &rect, const QString &pictu
 
 /******************************************************************************
  * Function Name   : kvgPictureImage
- * Description     : Render a bounded transparent thumbnail for either vector or raster artwork.
- * Input Parameters: picture, size: requested thumbnail bounds.
- * Return Value    : Transparent thumbnail, or a null image when decoding fails.
- * Date            : 2026.11.09
+ * Description     : Render bounded gallery artwork into a transparent image using the requested fit.
+ * Input Parameters: picture, size, imageMode (stretch, fit, or original size).
+ * Return Value    : Rendered image, or a null image when decoding fails.
+ * Date            : 2026.11.23
  ******************************************************************************/
-QImage kvgPictureImage(const QString &picture, const QSize &size) //20261109-0 add
+QImage kvgPictureImage(const QString &picture, const QSize &size, int imageMode) //20261123-3 change
 {
     QImage image;
     QPainter painter;
@@ -327,7 +327,11 @@ QImage kvgPictureImage(const QString &picture, const QSize &size) //20261109-0 a
     image = QImage(size, QImage::Format_ARGB32_Premultiplied);
     image.fill(Qt::transparent);
     painter.begin(&image);
-    rendered = paintKvgPicture(&painter, image.rect(), picture, 1);
+    if (imageMode == 0) //20261123-3 add: Stretch raster catalog entries with the same interpolation as project backgrounds.
+    {
+        painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    }
+    rendered = paintKvgPicture(&painter, image.rect(), picture, imageMode); //20261123-3 change
     painter.end();
     return rendered ? image : QImage();
 }

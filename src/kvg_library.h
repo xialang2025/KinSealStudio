@@ -29,7 +29,7 @@ QList<KvgLibraryCategory> kvgLibraryCategories();
 QList<KvgLibraryBranch> kvgLibraryBranches(); //20261109-3 add
 QString kvgPictureResource(const QString &picture);
 QString kvgPictureWarning(const QString &picture); //20261109-0 add
-QImage kvgPictureImage(const QString &picture, const QSize &size);
+QImage kvgPictureImage(const QString &picture, const QSize &size, int imageMode = 1); //20261123-3 change
 bool paintKvgPicture(QPainter *painter, const QRectF &rect, const QString &picture, int imageMode);
 QImage importKvgImage(const QByteArray &bytes, QString *error);
 

@@ -103,6 +103,7 @@ struct HmiPageBackground
     QString foregroundColor;
     int style = 0;
     QString bitmapName; //20261123-2 add: Resolve this key from the project picture pool.
+    QString systemPicture; //20261123-3 add: Resolve a catalog identifier from the bundled system gallery.
 
     static QColor defaultColor();
     bool isDefault() const;

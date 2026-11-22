@@ -758,7 +758,8 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     m_pageHeight = height;
     page_bounds = QRectF(0, 0, width, height); //20261123-2 change
     // Bitmap backgrounds draw across the full page without covering the edge pixels with an outline.
-    page_outline = m_pageBackgroundBitmap.isNull() ? QPen(Qt::black, 1.0) : QPen(Qt::NoPen);
+    page_outline = m_pageBackgroundBitmap.isNull() && m_pageBackground.systemPicture.isEmpty() ?
+        QPen(Qt::black, 1.0) : QPen(Qt::NoPen); //20261123-3 change
     page_item = m_scene->addRect(page_bounds, page_outline, m_pageBackground.brush(page_bounds, m_pageBackgroundBitmap));
     page_item->setZValue(-10.0);
     page_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
