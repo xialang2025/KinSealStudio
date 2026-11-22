@@ -29,6 +29,7 @@
 #include <QSpinBox>
 #include <QTabBar>
 #include <QTabWidget>
+#include <QTableWidget> //20261123-6 add
 #include <QTemporaryDir>
 #include <QSvgRenderer> //20261123-3 add
 #include <QTest>
@@ -83,6 +84,7 @@ private slots:
     void newPageSystemBitmapStretchesAndPersists(); //20261123-3 add
     void newPageSlideKeepsStableTargetAcrossSave(); //20261123-4 add
     void newPageMacroDefaultsPersistWithStableSource(); //20261123-5 add
+    void ordinaryPagePropertiesRestoreAndUpdateDraft(); //20261123-6 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1652,6 +1654,141 @@ void Stage2WorkflowTests::newPageMacroDefaultsPersistWithStableSource() //202611
     QCOMPARE(reopened.references.size(), 1);
     QCOMPARE(reopened.references.first().targetId, macroId);
     QVERIFY(!reopened.validateSinglePageBackend(&error));
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPagePropertiesRestoreAndUpdateDraft
+ * Description     : Open an existing page from the tree and verify cancel, target filtering and saved edits.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPagePropertiesRestoreAndUpdateDraft() //20261123-6 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    HmiPage target;
+    MainWindow window;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> treePages;
+    HmiConfigurationNode slide;
+    HmiConfigurationNode macro; //20261123-6 add
+    const QString pageId = project.activePageId;
+    QString error;
+    QString path;
+    bool restored = false;
+    int attempt; //20261123-6 change
+
+    QVERIFY(directory.isValid());
+    target.id = QStringLiteral("target-005");
+    target.name = QStringLiteral("滑动目标");
+    target.number = 5;
+    QVERIFY2(project.addPage(target, &error), qPrintable(error));
+    project.activePageBackground.systemPicture = QStringLiteral("switch_OFF.kvg");
+    slide.id = QStringLiteral("existing-slide");
+    slide.name = QStringLiteral("滑动打开画面");
+    slide.ownerPageId = pageId;
+    slide.kind = QStringLiteral("pageSlide");
+    slide.active = true;
+    slide.implemented = true;
+    slide.properties = {{QStringLiteral("enabled"), true}, {QStringLiteral("distance"), 75}};
+    project.configurationNodes.append(slide);
+    project.references.append({QStringLiteral("existing-left"), QStringLiteral("configuration"),
+        slide.id, QStringLiteral("left"), QStringLiteral("page"), target.id});
+    project.macros.insert(QStringLiteral("page_tick"), QStringLiteral("void main() {}")); //20261123-6 add
+    project.macroIds.insert(QStringLiteral("page_tick"), QStringLiteral("source-id"));
+    macro.id = QStringLiteral("existing-scripts");
+    macro.name = QStringLiteral("画面宏");
+    macro.ownerPageId = pageId;
+    macro.kind = QStringLiteral("pageMacro");
+    macro.active = true;
+    macro.implemented = true;
+    macro.properties = {{QStringLiteral("scripts"), QJsonArray{QJsonObject{
+        {QStringLiteral("id"), QStringLiteral("existing-row")},
+        {QStringLiteral("frequency"), 12}, {QStringLiteral("count"), 3},
+        {QStringLiteral("address"), QStringLiteral("LB7")}}}}};
+    project.configurationNodes.append(macro);
+    project.references.append({QStringLiteral("existing-macro-binding"), QStringLiteral("configuration"),
+        macro.id, QStringLiteral("existing-row"), QStringLiteral("macro"), QStringLiteral("source-id")});
+    project.configurationNodes.swapItemsAt(0, 1); //20261123-6 add: Keep the saved order even when the editor rebuilds both records.
+    project.references.swapItemsAt(0, 1);
+    path = directory.filePath(QStringLiteral("page-properties.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    treePages = tree->findItems(QStringLiteral("000:%1").arg(project.pageName), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(treePages.size(), 1);
+
+    for (attempt = 0; attempt < 3; ++attempt) //20261123-6 change
+    {
+        restored = false;
+        QVERIFY(triggerSettingsTreeAction(tree, treePages.first(), QStringLiteral("属性"), [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QLineEdit *name;
+            QSpinBox *distance;
+            QGroupBox *group;
+            QRadioButton *bitmapMode;
+            QCheckBox *left;
+            QComboBox *targetList;
+            QTableWidget *scriptTable; //20261123-6 add
+            QDialogButtonBox *buttons;
+
+            if (editor == nullptr)
+            {
+                return;
+            }
+            name = editor->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+            group = editor->findChild<QGroupBox *>(QStringLiteral("pageSlideGroup"));
+            bitmapMode = editor->findChild<QRadioButton *>(QStringLiteral("newPageBitmapMode"));
+            distance = editor->findChild<QSpinBox *>(QStringLiteral("pageSlideDistance"));
+            left = editor->findChild<QCheckBox *>(QStringLiteral("pageSlideLeft"));
+            targetList = editor->findChild<QComboBox *>(QStringLiteral("pageSlideLeftTarget"));
+            scriptTable = editor->findChild<QTableWidget *>(); //20261123-6 add
+            buttons = editor->findChild<QDialogButtonBox *>();
+            if (editor->windowTitle() != QStringLiteral("画面属性") || name == nullptr || distance == nullptr ||
+                group == nullptr || left == nullptr || targetList == nullptr || buttons == nullptr ||
+                bitmapMode == nullptr || !bitmapMode->isChecked() || !group->isChecked() || !left->isChecked() ||
+                targetList->count() != 1 || targetList->currentData().toString() != target.id || distance->value() != 75 ||
+                scriptTable == nullptr || scriptTable->rowCount() != 1 || scriptTable->item(0, 4) == nullptr ||
+                scriptTable->item(0, 4)->text() != QStringLiteral("LB7")) //20261123-6 change
+            {
+                editor->reject();
+                return;
+            }
+            restored = true;
+            if (attempt != 1) //20261123-6 add: First cancel edits, then accept an unchanged dialog, then commit actual edits.
+            {
+                name->setText(QStringLiteral("属性修改后的画面"));
+                distance->setValue(90);
+            }
+            buttons->button(attempt == 0 ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok)->click();
+            if (editor->isVisible())
+            {
+                editor->reject();
+            }
+        }));
+        QVERIFY2(restored, "The page properties menu must restore the existing bitmap and left swipe without including the current page.");
+        if (attempt < 2) //20261123-6 change
+        {
+            QVERIFY(!window.m_dirty);
+            QCOMPARE(window.currentEditorProject().pageName, project.pageName);
+        }
+    }
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.pageName, QStringLiteral("属性修改后的画面"));
+    QCOMPARE(reopened.startupPageId, pageId);
+    QCOMPARE(reopened.activePageBackground.systemPicture, project.activePageBackground.systemPicture);
+    QCOMPARE(reopened.configurationNodes.last().id, slide.id); //20261123-6 change
+    QCOMPARE(reopened.configurationNodes.last().properties.value(QStringLiteral("distance")).toInt(), 90);
+    QCOMPARE(reopened.references.last().targetId, target.id);
+    QCOMPARE(reopened.configurationNodes.first().toJson(), macro.toJson());
+    QCOMPARE(reopened.references.first().id, QStringLiteral("existing-macro-binding"));
 }
 
 /******************************************************************************

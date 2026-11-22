@@ -687,6 +687,22 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
         }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("page") &&
+            item->parent() != nullptr && item->parent()->data(0, Qt::UserRole).toString() == QStringLiteral("normalPages"))
+        {
+            id = item->data(0, Qt::UserRole + 1).toString(); //20261123-6 add
+            menu.addAction(QStringLiteral("属性"), this, [this, id]() {
+                HmiProject draft = currentEditorProject();
+                QString error;
+
+                if (editStage2NormalPageProperties(this, draft, id) && !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("画面属性未提交"), error);
+                }
+            });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
         if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("serialPort")) //20261122-6 add
         {
             id = item->data(0, Qt::UserRole + 1).toString();

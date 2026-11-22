@@ -33,6 +33,7 @@
 #include <QTableWidget> //20261123-5 add
 #include <QUuid>
 #include <QVBoxLayout>
+#include <algorithm> //20261123-6 add
 
 /******************************************************************************
  * Function Name   : stage2Error
@@ -180,6 +181,8 @@ static bool createStage2PageMacroSource(QWidget *parent, HmiProject &project, QS
 
 struct Stage2PageScript //20261123-5 add: One ordered invocation, independent from its shared macro definition.
 {
+    QString rowId; //20261123-6 add: Preserve existing row and reference identities when editing a page.
+    QString bindingId;
     QString macroId;
     QString address;
     int frequency = 10;
@@ -387,14 +390,15 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
 /******************************************************************************
  * Function Name   : storeStage2PageScripts
  * Description     : Store the ordered invocation list with one stable macro reference per row.
- * Input Parameters: project, pageId, scripts.
+ * Input Parameters: project, pageId, scripts, previous.
  * Return Value    : None.
  * Date            : 2026.11.23
  ******************************************************************************/
 static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
-                                   const QList<Stage2PageScript> &scripts) //20261123-5 add
+                                   const QList<Stage2PageScript> &scripts,
+                                   const HmiConfigurationNode &previous) //20261123-6 change
 {
-    HmiConfigurationNode node;
+    HmiConfigurationNode node = previous;
     QJsonArray rows;
     QString rowId;
 
@@ -402,7 +406,10 @@ static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
     {
         return;
     }
-    node.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    if (node.id.isEmpty()) //20261123-6 add
+    {
+        node.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    }
     node.kind = QStringLiteral("pageMacro");
     node.name = QStringLiteral("画面宏");
     node.ownerPageId = pageId;
@@ -410,11 +417,12 @@ static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
     node.active = true;
     for (const Stage2PageScript &script : scripts)
     {
-        rowId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        rowId = script.rowId.isEmpty() ? QUuid::createUuid().toString(QUuid::WithoutBraces) : script.rowId; //20261123-6 change
         rows.append(QJsonObject{{QStringLiteral("id"), rowId},
             {QStringLiteral("frequency"), script.frequency}, {QStringLiteral("count"), script.count},
             {QStringLiteral("address"), script.address}});
-        project.references.append({QUuid::createUuid().toString(QUuid::WithoutBraces),
+        project.references.append({script.bindingId.isEmpty() ? QUuid::createUuid().toString(QUuid::WithoutBraces) :
+            script.bindingId, //20261123-6 change
             QStringLiteral("configuration"), node.id, rowId, QStringLiteral("macro"), script.macroId});
     }
     node.properties.insert(QStringLiteral("scripts"), rows);
@@ -422,13 +430,55 @@ static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
 }
 
 /******************************************************************************
- * Function Name   : editStage2NewNormalPage
- * Description     : Create and activate a normal page on a detached project after the user confirms.
- * Input Parameters: parent, project.
- * Return Value    : True after the complete page transaction is accepted.
- * Date            : 2026.11.22
+ * Function Name   : loadStage2PageScripts
+ * Description     : Read existing invocation rows in order and resolve their stable source references.
+ * Input Parameters: project, node.
+ * Return Value    : Existing page script draft.
+ * Date            : 2026.11.23
  ******************************************************************************/
-bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 add
+static QList<Stage2PageScript> loadStage2PageScripts(const HmiProject &project,
+                                                   const HmiConfigurationNode &node) //20261123-6 add
+{
+    QList<Stage2PageScript> scripts;
+    QMap<QString, HmiReference> bindings;
+    Stage2PageScript script;
+    QJsonObject row;
+    HmiReference binding;
+
+    if (node.id.isEmpty())
+    {
+        return scripts;
+    }
+    for (const HmiReference &reference : project.references)
+    {
+        if (reference.ownerKind == QStringLiteral("configuration") && reference.ownerId == node.id)
+        {
+            bindings.insert(reference.field, reference);
+        }
+    }
+    for (const QJsonValue &value : node.properties.value(QStringLiteral("scripts")).toArray())
+    {
+        row = value.toObject();
+        script.rowId = row.value(QStringLiteral("id")).toString();
+        script.address = row.value(QStringLiteral("address")).toString();
+        script.frequency = row.value(QStringLiteral("frequency")).toInt();
+        script.count = row.value(QStringLiteral("count")).toInt();
+        binding = bindings.value(script.rowId);
+        script.bindingId = binding.id;
+        script.macroId = binding.targetId;
+        scripts.append(script);
+    }
+    return scripts;
+}
+
+/******************************************************************************
+ * Function Name   : editStage2NormalPage
+ * Description     : Create a new ordinary page or edit an existing one in a detached transaction.
+ * Input Parameters: parent, project, pageId (empty for creation).
+ * Return Value    : True after a valid transaction is confirmed.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-6 change
 {
     QDialog dialog(parent);
     QFormLayout *layout;
@@ -466,6 +516,11 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     const QList<HmiPage> targetPages = project.allPages();
     int directionIndex;
     int column;
+    const bool editing = !pageId.isEmpty(); //20261123-6 add
+    HmiPage existing;
+    HmiConfigurationNode priorSlide;
+    HmiConfigurationNode priorScripts;
+    QMap<QString, HmiReference> priorDirections;
     QString bitmapName;
     QString systemPicture; //20261123-3 add
     QImage bitmap;
@@ -480,20 +535,74 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     int nameNumber;
     bool confirmed = false;
 
-    pageNumber = project.pageCount();
-    nameNumber = pageNumber + 1;
-    occupiedNumbers = project.ordinaryPageNumbers().values();
-    while (occupiedNumbers.contains(pageNumber)) //20261122-10 add: Keep the established order-based suggestion wherever it is available.
+    if (editing) //20261123-6 add
     {
-        ++pageNumber;
+        if (!ordinaryNumbers.contains(pageId))
+        {
+            return false;
+        }
+        for (const HmiPage &page : targetPages)
+        {
+            if (page.id == pageId)
+            {
+                existing = page;
+                break;
+            }
+        }
+        for (const HmiConfigurationNode &node : project.configurationNodes)
+        {
+            if (node.ownerPageId != pageId)
+            {
+                continue;
+            }
+            if (node.kind == QStringLiteral("pageSlide"))
+            {
+                priorSlide = node;
+            }
+            else if (node.kind == QStringLiteral("pageMacro"))
+            {
+                priorScripts = node;
+            }
+        }
+        for (const HmiReference &reference : project.references)
+        {
+            if (reference.ownerKind == QStringLiteral("configuration") && reference.ownerId == priorSlide.id)
+            {
+                priorDirections.insert(reference.field, reference);
+            }
+        }
+        scripts = loadStage2PageScripts(project, priorScripts);
+        suggestion = existing.name;
+        pageNumber = ordinaryNumbers.value(pageId);
+        bitmapName = existing.background.bitmapName;
+        systemPicture = existing.background.systemPicture;
+        bitmap = decodedControlPng(project.pictures.value(bitmapName));
+        if (!existing.background.color.isEmpty())
+        {
+            backgroundColor = QColor(existing.background.color);
+        }
+        if (!existing.background.foregroundColor.isEmpty())
+        {
+            foregroundColor = QColor(existing.background.foregroundColor);
+        }
     }
-    suggestion = QStringLiteral("画面%1").arg(nameNumber);
-    while (!validateStage2PageName(project, QString(), suggestion, nullptr))
+    else
     {
-        suggestion = QStringLiteral("画面%1").arg(++nameNumber);
+        pageNumber = project.pageCount();
+        nameNumber = pageNumber + 1;
+        occupiedNumbers = ordinaryNumbers.values();
+        while (occupiedNumbers.contains(pageNumber)) //20261122-10 add: Keep the established order-based suggestion wherever it is available.
+        {
+            ++pageNumber;
+        }
+        suggestion = QStringLiteral("画面%1").arg(nameNumber);
+        while (!validateStage2PageName(project, QString(), suggestion, nullptr))
+        {
+            suggestion = QStringLiteral("画面%1").arg(++nameNumber);
+        }
     }
 
-    dialog.setWindowTitle(QStringLiteral("新建画面"));
+    dialog.setWindowTitle(editing ? QStringLiteral("画面属性") : QStringLiteral("新建画面")); //20261123-6 change
     layout = new QFormLayout(&dialog);
     name = new QLineEdit(suggestion, &dialog);
     name->setObjectName(QStringLiteral("newPageNameEdit"));
@@ -525,6 +634,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     bitmapLayout->setContentsMargins(0, 0, 0, 0);
     bitmapPath = new QLineEdit(bitmapOptions);
     bitmapPath->setReadOnly(true);
+    bitmapPath->setText(systemPicture.isEmpty() ? bitmapName : kvgPictureResource(systemPicture)); //20261123-6 add
     bitmapPath->setAccessibleName(QStringLiteral("背景图片"));
     projectGallery = new QPushButton(QStringLiteral("工程图库"), bitmapOptions);
     projectGallery->setObjectName(QStringLiteral("newPageProjectGallery"));
@@ -551,6 +661,12 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"),
         QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"),
         QStringLiteral("右上角辐射"), QStringLiteral("左上角辐射"), QStringLiteral("中心辐射")});
+    backgroundStyle->setCurrentIndex(existing.background.style); //20261123-6 add
+    if (!bitmapName.isEmpty() || !systemPicture.isEmpty())
+    {
+        bitmapMode->setChecked(true);
+        backgroundOptions->setCurrentWidget(bitmapOptions);
+    }
     backgroundPreview = new QLabel(background);
     backgroundPreview->setObjectName(QStringLiteral("newPageBackgroundPreview")); //20261123-2 add
     backgroundPreview->setFixedSize(110, 110);
@@ -573,7 +689,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     slideDistance = new QSpinBox(slideGroup);
     slideDistance->setObjectName(QStringLiteral("pageSlideDistance"));
     slideDistance->setRange(5, 480);
-    slideDistance->setValue(50);
+    slideDistance->setValue(priorSlide.properties.value(QStringLiteral("distance")).toInt(50)); //20261123-6 change
     slideLayout->addWidget(new QLabel(QStringLiteral("滑动距离："), slideGroup), 0, 0);
     slideLayout->addWidget(slideDistance, 0, 1);
     for (directionIndex = 0; directionIndex < 4; ++directionIndex)
@@ -585,17 +701,23 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
         for (const HmiPage &target : targetPages)
         {
-            if (ordinaryNumbers.contains(target.id))
+            if (target.id != pageId && ordinaryNumbers.contains(target.id)) //20261123-6 change
             {
                 // The label reflects renumbering or renaming while the data carries a stable ID.
                 slideTargets[directionIndex]->addItem(QStringLiteral("%1:%2")
                     .arg(ordinaryNumbers.value(target.id), 3, 10, QLatin1Char('0')).arg(target.name), target.id);
             }
         }
+        const HmiReference previous = priorDirections.value(slideKeys.at(directionIndex).toLower()); //20261123-6 add
+        if (!previous.id.isEmpty())
+        {
+            slideDirections[directionIndex]->setChecked(true);
+            slideTargets[directionIndex]->setCurrentIndex(slideTargets[directionIndex]->findData(previous.targetId));
+        }
         slideLayout->addWidget(slideDirections[directionIndex], 1 + directionIndex / 2, column);
         slideLayout->addWidget(slideTargets[directionIndex], 1 + directionIndex / 2, column + 1);
     }
-    slideGroup->setChecked(false);
+    slideGroup->setChecked(priorSlide.properties.value(QStringLiteral("enabled")).toBool()); //20261123-6 change
     backgroundLayout->addWidget(slideGroup, 2, 0, 1, 3);
     layout->addRow(background);
     auto fillDraft = [&]() {
@@ -689,7 +811,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
         HmiPage page;
         QString error;
-        HmiConfigurationNode slide; //20261123-4 add
+        HmiConfigurationNode slide = priorSlide; //20261123-6 change
         HmiReference target;
         bool preserveSlide;
         int direction;
@@ -699,19 +821,44 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
             validation->setText(QStringLiteral("请从系统图库或工程图库选择一张有效的背景图片。"));
             return;
         }
-        page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        if (editing && number->value() != pageNumber && ordinaryNumbers.values().contains(number->value())) //20261123-6 add
+        {
+            validation->setText(QStringLiteral("普通画面编号 %1 已被使用。").arg(number->value()));
+            return;
+        }
+        page = existing; //20261123-6 add: Preserve dimensions, controls and extensions on an existing page.
+        page.id = editing ? pageId : QUuid::createUuid().toString(QUuid::WithoutBraces);
         page.name = name->text();
-        page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.
+        if (!editing || existing.number.has_value() || number->value() != pageNumber)
+        {
+            page.number = number->value();
+        }
         page.background = fillDraft(); //20261123-1 change
         candidate = macroDraft; //20261123-5 change: Commit shared source edits only with the outer page.
-        // Activate by the new ID so the device startup page is left independent.
-        if (!validateStage2PageName(project, QString(), page.name, &error) ||
-            !candidate.addPage(page, &error)) //20261123-4 change
+        if (!validateStage2PageName(project, pageId, page.name, &error) ||
+            (editing ? !candidate.selectPage(pageId, &error) : !candidate.addPage(page, &error))) //20261123-6 change
         {
             validation->setText(error);
             return;
         }
-        slide.id = QUuid::createUuid().toString(QUuid::WithoutBraces); //20261123-4 add
+        if (editing) //20261123-6 add
+        {
+            candidate.pageName = page.name;
+            candidate.activePageNumber = page.number;
+            candidate.activePageBackground = page.background;
+            // Replace the owned draft records and their outgoing bindings as one transaction.
+            candidate.configurationNodes.removeIf([&](const HmiConfigurationNode &node) {
+                return node.id == priorSlide.id || node.id == priorScripts.id;
+            });
+            candidate.references.removeIf([&](const HmiReference &reference) {
+                return reference.ownerKind == QStringLiteral("configuration") &&
+                    (reference.ownerId == priorSlide.id || reference.ownerId == priorScripts.id);
+            });
+        }
+        if (slide.id.isEmpty())
+        {
+            slide.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        }
         slide.kind = QStringLiteral("pageSlide");
         slide.name = slideGroup->title();
         slide.ownerPageId = page.id;
@@ -719,20 +866,24 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         slide.active = true;
         slide.properties = {{QStringLiteral("enabled"), slideGroup->isChecked()},
                             {QStringLiteral("distance"), slideDistance->value()}};
-        preserveSlide = slideGroup->isChecked() || slideDistance->value() != 50;
+        preserveSlide = !priorSlide.id.isEmpty() || slideGroup->isChecked() || slideDistance->value() != 50; //20261123-6 change
         for (direction = 0; direction < 4; ++direction)
         {
             if (!slideDirections[direction]->isChecked())
             {
                 continue;
             }
+            target = priorDirections.value(slideKeys.at(direction).toLower()); //20261123-6 add
             target.targetId = slideTargets[direction]->currentData().toString();
             if (target.targetId.isEmpty())
             {
                 validation->setText(QStringLiteral("请选择“%1”的目标画面。").arg(slideLabels.at(direction)));
                 return;
             }
-            target.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            if (target.id.isEmpty())
+            {
+                target.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            }
             target.ownerKind = QStringLiteral("configuration");
             target.ownerId = slide.id;
             target.targetKind = QStringLiteral("page");
@@ -745,8 +896,26 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
             // Keep selected directions if the master switch was turned back off before confirming.
             candidate.configurationNodes.append(slide);
         }
-        storeStage2PageScripts(candidate, page.id, scripts); //20261123-5 add
-        if (!candidate.selectPage(page.id, &error))
+        storeStage2PageScripts(candidate, page.id, scripts, priorScripts); //20261123-6 change
+        if (editing) //20261123-6 add: Keeping the original record order makes a no-op confirmation leave the project clean.
+        {
+            auto keepOrder = [](const auto &previous, auto &updated) {
+                QMap<QString, qsizetype> positions;
+                qsizetype index;
+
+                for (index = 0; index < previous.size(); ++index)
+                {
+                    positions.insert(previous.at(index).id, index);
+                }
+                std::stable_sort(updated.begin(), updated.end(), [&](const auto &left, const auto &right) {
+                    return positions.value(left.id, previous.size()) < positions.value(right.id, previous.size());
+                });
+            };
+            keepOrder(project.configurationNodes, candidate.configurationNodes);
+            keepOrder(project.references, candidate.references);
+        }
+        // Editing keeps the active canvas independent; creation opens the new page.
+        if (!candidate.selectPage(editing ? project.activePageId : page.id, &error))
         {
             validation->setText(error);
             return;
@@ -761,6 +930,34 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     }
     project = candidate;
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : editStage2NewNormalPage
+ * Description     : Open the ordinary page creation dialog.
+ * Input Parameters: parent, project.
+ * Return Value    : True when a new page is created.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261123-6 change
+{
+    return editStage2NormalPage(parent, project, QString());
+}
+
+/******************************************************************************
+ * Function Name   : editStage2NormalPageProperties
+ * Description     : Open the property dialog for the ordinary page selected in the tree.
+ * Input Parameters: parent, project, pageId.
+ * Return Value    : True after the new property values are accepted.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool editStage2NormalPageProperties(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-6 add
+{
+    if (pageId.isEmpty())
+    {
+        return false;
+    }
+    return editStage2NormalPage(parent, project, pageId);
 }
 
 /******************************************************************************

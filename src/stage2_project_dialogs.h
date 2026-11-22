@@ -14,6 +14,7 @@ class QSpinBox;
 class QStackedWidget;
 
 bool editStage2NewNormalPage(QWidget *parent, HmiProject &project); //20261122-9 add
+bool editStage2NormalPageProperties(QWidget *parent, HmiProject &project, const QString &pageId); //20261123-6 add
 
 //20261110-7 add: Callers publish these detached values only after QDialog::Accepted.
 class Stage2NewProjectDialog : public QDialog
