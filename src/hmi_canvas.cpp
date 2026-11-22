@@ -298,6 +298,8 @@ void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
     m_arrangementReferenceId.clear(); //20261110-8 add: An explicit reference belongs only to the current page selection.
     m_pageWidth = project.pageWidth;
     m_pageHeight = project.pageHeight;
+    m_pageBackgroundColor = project.activePageBackgroundColor.isEmpty()
+        ? QColor(197, 222, 255) : QColor(project.activePageBackgroundColor); //20261123-0 add
     m_previousSelectionValid = false;
     m_language = project.activeLanguage; //20261108-14 add
     m_draftRect = nullptr;
@@ -752,7 +754,7 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     m_pageHeight = height;
     page_item = m_scene->addRect(QRectF(0.0, 0.0, width, height),
                                  QPen(Qt::black, 1.0) /*20261111-1 change: Preserve the native one-pixel page outline.*/,
-                                 QBrush(QColor(197, 222, 255))); //20261111-1 change: Match the original editor default page fill.
+                                 QBrush(m_pageBackgroundColor)); //20261123-0 change: Reuse the active page color on undo and scene rebuild.
     page_item->setZValue(-10.0);
     page_item->setFlag(QGraphicsItem::ItemIsSelectable, false);
     page_item->setFlag(QGraphicsItem::ItemIsMovable, false);

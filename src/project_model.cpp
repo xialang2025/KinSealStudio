@@ -171,6 +171,7 @@ HmiPage activePage(const HmiProject &project)
     page.id = project.activePageId; page.kind = project.activePageKind;
     page.name = project.pageName; page.width = project.pageWidth; page.height = project.pageHeight;
     page.number = project.activePageNumber; //20261122-10 add: Preserve the number when the page becomes inactive.
+    page.backgroundColor = project.activePageBackgroundColor; //20261123-0 add
     page.objects = project.objects; page.extensions = project.activePageExtensions;
     return page;
 }
@@ -187,6 +188,7 @@ void assignActivePage(HmiProject *project, const HmiPage &page)
     project->activePageId = page.id; project->activePageKind = page.kind;
     project->pageName = page.name; project->pageWidth = page.width; project->pageHeight = page.height;
     project->activePageNumber = page.number; //20261122-10 add: Restore the selected page's optional number independently of its ID.
+    project->activePageBackgroundColor = page.backgroundColor; //20261123-0 add
     project->objects = page.objects; project->activePageExtensions = page.extensions;
 }
 
@@ -202,6 +204,7 @@ bool hasStage1Data(const HmiProject &project)
     HmiObject object;
 
     if (project.activePageNumber.has_value()) { return true; } //20261122-10 add: Legacy top-level page fields cannot carry an assigned number.
+    if (!project.activePageBackgroundColor.isEmpty()) { return true; } //20261123-0 add
     if (project.projectId != QStringLiteral("project-1") || !project.inactivePages.isEmpty() || project.activePageId != QStringLiteral("page-1") ||
         project.activePageKind != QStringLiteral("normal") || !project.activePageExtensions.isEmpty() ||
         project.pageOrder != QStringList{QStringLiteral("page-1")} || project.startupPageId != QStringLiteral("page-1") ||
@@ -632,6 +635,7 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     json.insert(QStringLiteral("height"), height); json.insert(QStringLiteral("objects"), items);
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); }
     if (number.has_value()) { json.insert(QStringLiteral("number"), *number); } //20261122-10 add
+    if (!backgroundColor.isEmpty()) { json.insert(QStringLiteral("backgroundColor"), backgroundColor); } //20261123-0 add
     return json;
 }
 
@@ -654,7 +658,7 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
-        QStringLiteral("number")}, QStringLiteral("page"), error)) { return false; } //20261122-10 change
+        QStringLiteral("number"), QStringLiteral("backgroundColor")}, QStringLiteral("page"), error)) { return false; } //20261123-0 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
     {
         if (!json.value(key).isString() || json.value(key).toString().trimmed().isEmpty())
@@ -686,6 +690,16 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
             return modelError(error, QStringLiteral("仅普通画面可保存编号，编号必须为 0–999 的整数。"));
         }
         candidate.number = savedNumber.toInt();
+    }
+    if (json.contains(QStringLiteral("backgroundColor"))) //20261123-0 add: Accept only opaque RGB values for ordinary pages.
+    {
+        const QString rgb = json.value(QStringLiteral("backgroundColor")).toString();
+        if (candidate.kind != QStringLiteral("normal") || rgb.size() != 7 ||
+            !rgb.startsWith(QLatin1Char('#')) || !QColor(rgb).isValid())
+        {
+            return modelError(error, QStringLiteral("普通画面背景色必须为 #RRGGBB。"));
+        }
+        candidate.backgroundColor = rgb.toLower();
     }
     items = json.value(QStringLiteral("objects")).toArray();
     if (items.size() > 100) { return modelError(error, QStringLiteral("页面超过Lite每页100控件保护上限。")); }
@@ -1603,6 +1617,10 @@ bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 ad
     if (activePageNumber.value_or(0) != 0) //20261122-10 add: The verified single-page source and device formats use page zero.
     {
         return modelError(error, QStringLiteral("当前源/设备后端仅支持普通画面编号 000。"));
+    }
+    if (!activePageBackgroundColor.isEmpty()) //20261123-0 add: Both source and device backends still use the verified default fill.
+    {
+        return modelError(error, QStringLiteral("自定义画面背景尚未核对原厂源和设备编码。"));
     }
     return true;
 }

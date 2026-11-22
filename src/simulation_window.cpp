@@ -54,7 +54,8 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
     const BitButtonState *appearance;
     int state;
 
-    frame.fill(QColor(197, 222, 255));
+    const QString backgroundColor = runtime.project().activePageBackgroundColor; //20261123-0 add
+    frame.fill(backgroundColor.isEmpty() ? QColor(197, 222, 255) : QColor(backgroundColor));
     painter.begin(&frame);
     painter.setClipRect(QRect(0, 0, 800, 480));
     ordered = orderedSimulationObjects(runtime);

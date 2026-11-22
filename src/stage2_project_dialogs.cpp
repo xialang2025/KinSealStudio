@@ -1,11 +1,13 @@
 #include "stage2_project_dialogs.h"
 #include "stage2_system_settings.h" //20261122-4 change
 
+#include <QColorDialog>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileInfo>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -71,6 +73,11 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     QFormLayout *layout;
     QLineEdit *name;
     QSpinBox *number;
+    QGroupBox *background;
+    QFormLayout *backgroundLayout;
+    QPushButton *backgroundColorButton;
+    QLabel *backgroundPreview;
+    QColor backgroundColor(197, 222, 255); //20261123-0 add
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
@@ -110,6 +117,33 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
     layout->addRow(QStringLiteral("名称"), name);
     layout->addRow(QStringLiteral("编号"), number);
+    background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
+    backgroundLayout = new QFormLayout(background);
+    backgroundColorButton = new QPushButton(background);
+    backgroundColorButton->setObjectName(QStringLiteral("newPageBackgroundColor"));
+    backgroundColorButton->setMinimumWidth(180);
+    backgroundColorButton->setAccessibleName(QStringLiteral("背景色"));
+    backgroundPreview = new QLabel(background);
+    backgroundPreview->setFixedSize(110, 110);
+    backgroundPreview->setAccessibleName(QStringLiteral("背景预览"));
+    backgroundLayout->addRow(QStringLiteral("背景色"), backgroundColorButton);
+    backgroundLayout->addRow(QStringLiteral("预览"), backgroundPreview);
+    layout->addRow(background);
+    auto updateBackgroundPreview = [&]() {
+        const QString style = QStringLiteral("background-color: %1").arg(backgroundColor.name());
+        backgroundColorButton->setStyleSheet(style);
+        backgroundPreview->setStyleSheet(style);
+    };
+    updateBackgroundPreview();
+    QObject::connect(backgroundColorButton, &QPushButton::clicked, &dialog, [&]() {
+        const QColor chosen = QColorDialog::getColor(backgroundColor, &dialog, QStringLiteral("选择颜色"),
+                                                       QColorDialog::DontUseNativeDialog);
+        if (chosen.isValid())
+        {
+            backgroundColor = chosen;
+            updateBackgroundPreview();
+        }
+    });
     layout->addRow(validation);
     layout->addRow(buttons);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -120,6 +154,10 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261122-9 
         page.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         page.name = name->text();
         page.number = number->value(); //20261122-10 add: The chosen value participates in the model's add-page transaction.
+        if (backgroundColor != QColor(197, 222, 255))
+        {
+            page.backgroundColor = backgroundColor.name(); //20261123-0 add
+        }
         candidate = project;
         // Activate by the new ID so the device startup page is left independent.
         if (!validateStage2PageName(project, QString(), page.name, &error) ||

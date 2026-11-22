@@ -8,6 +8,7 @@
 #include <QAbstractButton>
 #include <QApplication>
 #include <QClipboard>
+#include <QColorDialog>
 #include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
@@ -67,6 +68,7 @@ private slots:
     void deletingProtocolProtectsProjectReferences(); //20261122-7 add
     void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
     void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
+    void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -991,6 +993,82 @@ void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9
     QCOMPARE(groups.size(), 1);
     QCOMPARE(groups.first()->childCount(), 2);
     QCOMPARE(groups.first()->child(1)->text(0), QStringLiteral("001:画面2"));
+}
+
+/******************************************************************************
+ * Function Name   : newPageBackgroundRendersAndSurvivesReopen
+ * Description     : Choose a solid background, save the project and observe the same color on the reopened canvas.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageBackgroundRendersAndSurvivesReopen() //20261123-0 add
+{
+    QTemporaryDir directory;
+    HmiProject original = workflowProject();
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QColor selected(QStringLiteral("#32658a"));
+    QColor initial;
+    QString error;
+    QString path;
+
+    QVERIFY(directory.isValid());
+    original.targetModel = QStringLiteral("AMZ070W01");
+    path = directory.filePath(QStringLiteral("page-color.ksp"));
+    QVERIFY2(original.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    groups = tree->findItems(QStringLiteral("画面"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("新建画面"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QPushButton *color;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        color = dialog->findChild<QPushButton *>(QStringLiteral("newPageBackgroundColor"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (color == nullptr || buttons == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        QTimer::singleShot(0, dialog, [&]() {
+            QColorDialog *picker = qobject_cast<QColorDialog *>(QApplication::activeModalWidget());
+            if (picker == nullptr)
+            {
+                return;
+            }
+            initial = picker->currentColor();
+            picker->setCurrentColor(selected);
+            picker->accept();
+        });
+        color->click();
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QCOMPARE(initial, QColor(QStringLiteral("#c5deff")));
+    auto sampledCanvasColor = [](QGraphicsView *view) {
+        QImage pixels(800, 480, QImage::Format_RGB32);
+        QPainter painter(&pixels);
+        view->scene()->render(&painter, QRectF(0, 0, 800, 480), QRectF(0, 0, 800, 480));
+        painter.end();
+        return pixels.pixelColor(400, 240);
+    };
+    QCOMPARE(sampledCanvasColor(window.m_canvas), selected);
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(sampledCanvasColor(reopened.m_canvas), selected);
 }
 
 /******************************************************************************

@@ -105,6 +105,7 @@ struct HmiPage
     QList<HmiObject> objects;
     QJsonObject extensions;
     std::optional<int> number; //20261122-10 add: Independent ordinary page number. Earlier projects derive it from page order.
+    QString backgroundColor; //20261123-0 add: Empty uses the editor's legacy page color.
 
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &json, HmiPage *page, QString *error = nullptr);
@@ -160,6 +161,7 @@ struct HmiProject
     QString activePageKind = QStringLiteral("normal");
     QJsonObject activePageExtensions;
     std::optional<int> activePageNumber; //20261122-10 add
+    QString activePageBackgroundColor; //20261123-0 add
     QList<HmiPage> inactivePages;
     QStringList pageOrder = {QStringLiteral("page-1")};
     QString startupPageId = QStringLiteral("page-1");
