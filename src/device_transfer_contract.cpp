@@ -1,5 +1,6 @@
 #include "device_transfer_contract.h"
 #include "device_transfer_plan.h"
+#include "device_target.h" //20261122-3 add
 
 #include <QCryptographicHash>
 #include <QJsonArray>
@@ -125,11 +126,13 @@ bool buildDeviceTransferContract(const QVector<QByteArray> &payloads,
     QJsonObject prepared;
     QJsonObject row;
     QJsonObject segment;
+    QString targetModel;
+    int modelByte;
     int index;
 
-    if (contract == nullptr ||
-        identity.value(QStringLiteral("targetModel")).toString() != QStringLiteral("AMT070W124-L800X480R") ||
-        (startOptions != QByteArray::fromHex("000000") && startOptions != QByteArray::fromHex("010101")))
+    targetModel = identity.value(QStringLiteral("targetModel")).toString();
+    modelByte = deviceTargetIdentityByte(targetModel);
+    if (contract == nullptr || modelByte < 0 || !deviceTargetAcceptsStartOptions(targetModel, startOptions))
     {
         if (error != nullptr)
         {
@@ -141,7 +144,7 @@ bool buildDeviceTransferContract(const QVector<QByteArray> &payloads,
     {
         return false;
     }
-    operations.append(contractCommand(0x31, QByteArray(1, char(2)), QStringLiteral("identify"), 24, 0x4c));
+    operations.append(contractCommand(0x31, QByteArray(1, char(2)), QStringLiteral("identify"), 24, modelByte)); //20261122-3 change: Freeze the same model byte the USB engine will require.
     operations.append(contractCommand(0x53, QByteArray(1, char(0)), QStringLiteral("parameters"), 24, 0x00));
     operations.append(contractCommand(0x34, startOptions, QStringLiteral("begin"), 1, 0x4f));
     operations.append(contractCommand(0x35, QByteArray(), QStringLiteral("begin-status"), 1, 0x4f));

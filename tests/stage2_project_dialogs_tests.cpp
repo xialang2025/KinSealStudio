@@ -28,6 +28,7 @@ private slots:
     void wizardValidation();
     void wizardCannotReplaceExistingFile();
     void wizardNativeDefaultCommunicationAndLogoBoundary();
+    void amzTargetPersistsThroughProjectDialogs(); //20261122-3 add
     void projectCancelKeepsOriginal();
     void pageAddRenameSelectAndReopen();
     void pageErrorsAreAtomic();
@@ -126,6 +127,49 @@ static void advanceWizard(Stage2NewProjectDialog *dialog) //20261110-7 add
         child<QPushButton>(dialog, "wizardNextButton")->click();
         if (steps->currentIndex() == previous) { return; }
     }
+}
+
+/******************************************************************************
+ * Function Name   : amzTargetPersistsThroughProjectDialogs
+ * Description     : Exercise AMZ selection, persistence and target editing through the real dialogs.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void Stage2ProjectDialogsTests::amzTargetPersistsThroughProjectDialogs() //20261122-3 add
+{
+    QTemporaryDir directory;
+    HmiProject seed;
+    HmiProject reloaded;
+    QString error;
+    QString path = directory.filePath(QStringLiteral("amz.ksp"));
+    Stage2NewProjectDialog wizard(seed, path);
+    QComboBox *target = child<QComboBox>(&wizard, "targetModelEdit");
+    int modelIndex;
+
+    QVERIFY(directory.isValid());
+    QVERIFY(target != nullptr);
+    QCOMPARE(target->currentData().toString(), seed.targetModel);
+    modelIndex = target->findText(QStringLiteral("AMZ070W01R"));
+    QVERIFY(modelIndex >= 0);
+    target->setCurrentIndex(modelIndex);
+    child<QLineEdit>(&wizard, "projectNameEdit")->setText(QStringLiteral("AMZ target"));
+    advanceWizard(&wizard);
+    child<QPushButton>(&wizard, "wizardFinishButton")->click();
+    QCOMPARE(wizard.result(), int(QDialog::Accepted));
+    QCOMPARE(wizard.draftProject().targetModel, QStringLiteral("AMZ070W01"));
+    QVERIFY2(wizard.draftProject().save(path, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(path, &reloaded, &error), qPrintable(error));
+    QCOMPARE(reloaded.targetModel, QStringLiteral("AMZ070W01"));
+
+    Stage2ProjectDialog settings(reloaded);
+    target = child<QComboBox>(&settings, "targetModelEdit");
+    QVERIFY(target != nullptr);
+    QCOMPARE(target->currentText(), QStringLiteral("AMZ070W01R"));
+    target->setCurrentIndex(target->findData(seed.targetModel));
+    acceptSettings(&settings);
+    QCOMPARE(settings.result(), int(QDialog::Accepted));
+    QCOMPARE(settings.draftProject().targetModel, seed.targetModel);
 }
 
 /******************************************************************************

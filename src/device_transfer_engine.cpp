@@ -1,4 +1,5 @@
 #include "device_transfer_engine.h"
+#include "device_target.h" //20261122-3 add
 
 #include <QCryptographicHash>
 #include <QJsonArray>
@@ -171,8 +172,9 @@ bool readExpectedReply(DeviceTransferResult *result, const DeviceTransferIo &io,
     {
         return rememberFailure(result, QStringLiteral("reply_byte"), phase, command, segment,
                                capacity, returned,
-                               QStringLiteral("%1：设备应答字节不符合预期，已停止，屏内状态未确认。")
-                                   .arg(phase), expectedLength);
+                               QStringLiteral("%1：设备应答首字节为0x%2，预期0x%3，已停止。") //20261122-3 change: Make model mismatches visible in the returned diagnostic.
+                                   .arg(phase).arg(int(u8(buffer.at(0))), 2, 16, QLatin1Char('0'))
+                                   .arg(expectedByte, 2, 16, QLatin1Char('0')), expectedLength);
     }
     return true;
 }
@@ -225,13 +227,14 @@ bool sendCommand(DeviceTransferResult *result, const DeviceTransferIo &io,
 
 /******************************************************************************
  * Function Name   : executePlan
- * Description     : Execute observed AMT command order and finish its post-reset read after an acknowledged commit.
- * Input Parameters: result, io, options, steps
+ * Description     : Verify the target model before starting a transfer and finish its post-reset read after commit.
+ * Input Parameters: result, io, options, steps, modelByte
  * Return Value    : True after the qualified post-reset read returns.
  * Date            : 2026.11.14
  ******************************************************************************/
 bool executePlan(DeviceTransferResult *result, const DeviceTransferIo &io,
-                 const DeviceTransferOptions &options, const QVector<HmiDownloadStep> &steps) //20261114-5 add
+                 const DeviceTransferOptions &options, const QVector<HmiDownloadStep> &steps,
+                 int modelByte) //20261122-3 change
 {
     DeviceTransferEvent event;
     HmiDownloadStep step;
@@ -240,7 +243,7 @@ bool executePlan(DeviceTransferResult *result, const DeviceTransferIo &io,
     int returned;
 
     if (!sendCommand(result, io, options, QStringLiteral("identify"), 0x31,
-                      QByteArray(1, char(2)), QString(), 24, 0x4c, &result->modelReply) ||
+                      QByteArray(1, char(2)), QString(), 24, modelByte, &result->modelReply) ||
         !sendCommand(result, io, options, QStringLiteral("parameters"), 0x53,
                       QByteArray(1, char(0)), QString(), 24, 0x00, &result->parametersReply) ||
         !sendCommand(result, io, options, QStringLiteral("start"), 0x34,
@@ -407,6 +410,7 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
     DeviceTransferEvent event;
     QVector<HmiDownloadStep> steps;
     QString error;
+    int modelByte;
     bool executed;
     int claimed;
     int index;
@@ -414,14 +418,18 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
     result.payloadBlocks = int(payloads.size());
     result.startOptions = options.startOptions;
     result.timeoutMs = options.timeoutMs;
+    modelByte = deviceTargetIdentityByte(options.targetModel);
     if (!io.open || !io.claim || !io.write || !io.read || !io.release || !io.close)
     {
         rememberFailure(&result, QStringLiteral("callbacks"), QStringLiteral("preflight"), -1, QString(), 0, 0,
                         QStringLiteral("传输回调不完整，尚未打开设备。"));
     }
-    else if (options.timeoutMs <= 0 ||
-             (options.startOptions != QByteArray::fromHex("010101") &&
-              options.startOptions != QByteArray::fromHex("000000")))
+    else if (modelByte < 0) //20261122-3 add: Unsupported project models must not open a device.
+    {
+        rememberFailure(&result, QStringLiteral("model"), QStringLiteral("preflight"), -1, QString(), 0, 0,
+                        QStringLiteral("工程目标型号%1不在已验证范围内，尚未打开设备。").arg(options.targetModel));
+    }
+    else if (options.timeoutMs <= 0 || !deviceTargetAcceptsStartOptions(options.targetModel, options.startOptions))
     {
         rememberFailure(&result, QStringLiteral("options"), QStringLiteral("preflight"), -1, QString(), 0, 0,
                         QStringLiteral("超时或开始下载选项未在已验证范围内，尚未打开设备。"));
@@ -483,7 +491,7 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
             }
             else
             {
-                executed = executePlan(&result, io, options, steps);
+                executed = executePlan(&result, io, options, steps, modelByte);
                 Q_UNUSED(executed);
             }
         }

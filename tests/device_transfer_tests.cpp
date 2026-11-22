@@ -23,6 +23,7 @@ private slots:
     void nativeMacroHostOrder(); //20261109-0 add
     void incompletePayloadIsRejected();
     void offlineContracts(); //20261114-5 add
+    void amzOfflineContract(); //20261122-3 add
     void rejectedContractPreservesOutput();
     void contractSourceAliases(); //20261114-5 add
 };
@@ -202,6 +203,8 @@ void DeviceTransferTests::offlineContracts() //20261114-5 add
         QCOMPARE(operations.size(), 3 * count + 11);
         QCOMPARE(operations.first().toObject().value(QStringLiteral("frameHex")).toString(),
                  QStringLiteral("4b696e5365616c53747564696f4b697373310200000000000000000000000000"));
+        QCOMPARE(operations.first().toObject().value(QStringLiteral("expectedReply")).toObject()
+                     .value(QStringLiteral("firstByte")).toString(), QStringLiteral("4c")); //20261122-3 add
         QCOMPARE(operations.at(2).toObject().value(QStringLiteral("optionsHex")).toString(), QStringLiteral("000000"));
         payloadCount = 0;
         for (index = 0; index < operations.size(); ++index)
@@ -228,6 +231,36 @@ void DeviceTransferTests::offlineContracts() //20261114-5 add
 }
 
 /******************************************************************************
+ * Function Name   : DeviceTransferTests::amzOfflineContract
+ * Description     : Match the AMZ identity reply and approved begin options in an offline contract.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void DeviceTransferTests::amzOfflineContract() //20261122-3 add
+{
+    const QStringList targets = {QStringLiteral("AMZ070W01"), QStringLiteral("AMZ070W01R")};
+    const QVector<QByteArray> payloads = markerPayloads(10);
+    QJsonObject identity;
+    QJsonObject contract;
+    QJsonArray operations;
+    QJsonObject reply;
+    QString target;
+    QString error;
+
+    Q_FOREACH (target, targets)
+    {
+        identity.insert(QStringLiteral("targetModel"), target);
+        QVERIFY2(buildDeviceTransferContract(payloads, identity, &contract, &error), qPrintable(error));
+        operations = contract.value(QStringLiteral("operations")).toArray();
+        reply = operations.first().toObject().value(QStringLiteral("expectedReply")).toObject();
+        QCOMPARE(reply.value(QStringLiteral("firstByte")).toString(), QStringLiteral("46"));
+        QCOMPARE(reply.value(QStringLiteral("length")).toInt(), 24);
+        QCOMPARE(operations.at(2).toObject().value(QStringLiteral("optionsHex")).toString(), QStringLiteral("000000"));
+    }
+}
+
+/******************************************************************************
  * Function Name   : DeviceTransferTests::rejectedContractPreservesOutput
  * Description     : Keep previous output intact for invalid target, options, or missing segments.
  * Input Parameters: None
@@ -250,6 +283,9 @@ void DeviceTransferTests::rejectedContractPreservesOutput() //20261114-5 add
     QCOMPARE(output, before);
     identity.insert(QStringLiteral("targetModel"), QStringLiteral("other"));
     QVERIFY(!buildDeviceTransferContract(markerPayloads(10), identity, &output, &error));
+    QCOMPARE(output, before);
+    identity.insert(QStringLiteral("targetModel"), QStringLiteral("AMZ070W01")); //20261122-3 add
+    QVERIFY(!buildDeviceTransferContract(markerPayloads(10), identity, &output, &error, QByteArray::fromHex("010101")));
     QCOMPARE(output, before);
 }
 

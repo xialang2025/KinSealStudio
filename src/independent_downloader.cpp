@@ -1,4 +1,5 @@
 #include "independent_downloader.h"
+#include "device_target.h" //20261122-3 add
 #include "device_roundrect_raster.h" //20261113-16 add
 #include "device_polygon_raster.h" //20261114-1 add
 #include "device_sector_raster.h" //20261114-3 add
@@ -874,12 +875,13 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     {
         hasSwitch = hasSwitch || object.type == QStringLiteral("switch");
     }
-    if (project.objects.size() == 1 && project.objects.first().type == QStringLiteral("text") && !hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.objects.size() == 1 && project.connections.isEmpty() && project.languages.size() == 1 &&
+    // The legacy single-text path can generate an AMT-native snapshot. AMZ uses the ordinary Lite snapshot.
+    if (!isAmz070Target(project.targetModel) && project.objects.size() == 1 && project.objects.first().type == QStringLiteral("text") && !hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.connections.isEmpty() && project.languages.size() == 1 && //20261122-3 change
         (!project.objects.first().hasStaticTextProperties || !project.objects.first().staticText.visibilityEnabled)) //20261109-0 change: Keep the proven single-text raster for non-dynamic text.
     {
         return buildSingleTextPayload(project, payloads, error);
     }
-    if (payloads == nullptr || project.targetModel != QStringLiteral("AMT070W124-L800X480R") ||
+    if (payloads == nullptr || deviceTargetIdentityByte(project.targetModel) < 0 || //20261122-3 change
         project.pageWidth != 800 || project.pageHeight != 480 || project.objects.isEmpty() ||
         project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8)
     {
@@ -1561,7 +1563,7 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
         return false;
     }
 #ifdef Q_OS_WIN
-    io.open = [&library, &usb, &handle](QString *openError) {
+    io.open = [&library, &usb, &handle, &options](QString *openError) { //20261122-3 change
         UsbBus *bus;
         UsbDevice *device;
         UsbDevice *target = nullptr;
@@ -1576,7 +1578,7 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
             return false;
         }
         bus = usb.getBusses();
-        while (bus != nullptr && busCount < 64 && target == nullptr)
+        while (bus != nullptr && busCount < 64)
         {
             device = bus->devices;
             deviceCount = 0;
@@ -1584,14 +1586,21 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
             {
                 if (device->descriptor.vendorId == 0x7365 && device->descriptor.productId == 0x616c)
                 {
+                    // Two AMZ panels can share both the USB descriptor and the model reply.
+                    if (target != nullptr) //20261122-3 add
+                    {
+                        if (openError != nullptr) { *openError = QStringLiteral("检测到多台USB触摸屏，请只保留要下载的AMZ触摸屏。"); }
+                        return false;
+                    }
                     target = device;
-                    break;
+                    if (!isAmz070Target(options.targetModel)) { break; } // Keep the historical AMT selection.
                 }
                 device = device->next;
                 ++deviceCount;
             }
             bus = bus->next;
             ++busCount;
+            if (target != nullptr && !isAmz070Target(options.targetModel)) { break; }
         }
         if (target == nullptr)
         {
@@ -1666,6 +1675,7 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
 {
     QVector<QByteArray> payloads;
     QJsonObject rejected;
+    DeviceTransferOptions targetOptions = options; //20261122-3 add
 
     if (!buildProjectPayload(project, &payloads, error))
     {
@@ -1676,7 +1686,8 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
         if (result != nullptr) { *result = rejected; }
         return false;
     }
-    return downloadPreparedPayload(payloads, error, result, options);
+    targetOptions.targetModel = project.targetModel; //20261122-3 add: Bind the USB gate to the model that produced the bytes.
+    return downloadPreparedPayload(payloads, error, result, targetOptions);
 }
 
 /******************************************************************************

@@ -1,4 +1,5 @@
 #include "stage2_project_dialogs.h"
+#include "device_target.h" //20261122-3 add
 
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -47,6 +48,24 @@ static void addLanguageChoices(QComboBox *combo, const HmiProject &project, bool
 }
 
 /******************************************************************************
+ * Function Name   : addTargetChoices
+ * Description     : Expose both screen profiles and keep an existing AMZ key stable.
+ * Input Parameters: combo, model
+ * Return Value    : None.
+ * Date            : 2026.11.22
+ ******************************************************************************/
+static void addTargetChoices(QComboBox *combo, const QString &model) //20261122-3 add
+{
+    QString amt = QStringLiteral("AMT070W124-L800X480R");
+    QString amz = isAmz070Target(model) ? model : QStringLiteral("AMZ070W01");
+
+    combo->setObjectName(QStringLiteral("targetModelEdit"));
+    combo->addItem(amt, amt);
+    combo->addItem(QStringLiteral("AMZ070W01R"), amz);
+    combo->setCurrentIndex(combo->findData(model));
+}
+
+/******************************************************************************
  * Function Name   : Stage2NewProjectDialog::Stage2NewProjectDialog
  * Description     : Build the observed three-step workflow without creating a directory or file.
  * Input Parameters: seed, suggestedPath, parent
@@ -65,7 +84,6 @@ Stage2NewProjectDialog::Stage2NewProjectDialog(const HmiProject &seed, const QSt
     QWidget *identityStep;
     QWidget *connectionStep;
     QWidget *pageStep;
-    QLineEdit *target;
     QLineEdit *manufacturer;
     QLineEdit *series;
     QLineEdit *connectionName;
@@ -88,12 +106,11 @@ Stage2NewProjectDialog::Stage2NewProjectDialog(const HmiProject &seed, const QSt
     m_name->setMaxLength(32767);
     m_path = new QLineEdit(suggestedPath, identityStep);
     m_path->setObjectName(QStringLiteral("projectPathEdit"));
-    target = new QLineEdit(QStringLiteral("AMT070W124-L800X480R"), identityStep);
-    target->setObjectName(QStringLiteral("targetModelEdit"));
-    target->setReadOnly(true);
+    m_target = new QComboBox(identityStep); //20261122-3 change
+    addTargetChoices(m_target, seed.targetModel);
     identityForm->addRow(QStringLiteral("工程名称"), m_name);
     identityForm->addRow(QStringLiteral("工程文件（.ksp）"), m_path);
-    identityForm->addRow(QStringLiteral("目标型号"), target);
+    identityForm->addRow(QStringLiteral("目标型号"), m_target);
     identityForm->addRow(QStringLiteral("分辨率"), new QLabel(QStringLiteral("800 × 480"), identityStep));
     identityForm->addRow(QStringLiteral("显示方向"), new QLabel(QStringLiteral("水平"), identityStep));
     connectionStep = new QWidget(m_steps);
@@ -238,6 +255,7 @@ bool Stage2NewProjectDialog::collectDraft(HmiProject *candidate, bool includePag
     }
     *candidate = m_working;
     candidate->name = m_name->text();
+    candidate->targetModel = m_target->currentData().toString(); //20261122-3 add
     if (includePage)
     {
         candidate->pageName = m_pageName->text();
@@ -304,7 +322,6 @@ Stage2ProjectDialog::Stage2ProjectDialog(const HmiProject &project, QWidget *par
     QTabWidget *tabs;
     QWidget *projectTab;
     QWidget *pagesTab;
-    QLineEdit *target;
     QPushButton *add;
     QPushButton *rename;
     QPushButton *copy;
@@ -322,9 +339,9 @@ Stage2ProjectDialog::Stage2ProjectDialog(const HmiProject &project, QWidget *par
     m_projectName = new QLineEdit(project.name, projectTab);
     m_projectName->setObjectName(QStringLiteral("projectNameEdit"));
     m_projectName->setMaxLength(qMax<int>(32767, project.name.size()));
-    target = new QLineEdit(project.targetModel, projectTab);
-    target->setObjectName(QStringLiteral("targetModelEdit"));
-    target->setReadOnly(true);
+    m_target = new QComboBox(projectTab); //20261122-3 change
+    addTargetChoices(m_target, project.targetModel);
+    m_target->setEnabled(project.nativeSourceSnapshot.isEmpty()); // The native snapshot retains its own model selector.
     m_editorPage = new QComboBox(projectTab);
     m_editorPage->setObjectName(QStringLiteral("editorPageCombo"));
     m_startupPage = new QComboBox(projectTab);
@@ -336,7 +353,7 @@ Stage2ProjectDialog::Stage2ProjectDialog(const HmiProject &project, QWidget *par
     addLanguageChoices(m_editorLanguage, project, false);
     addLanguageChoices(m_startupLanguage, project, true);
     projectForm->addRow(QStringLiteral("工程名称"), m_projectName);
-    projectForm->addRow(QStringLiteral("目标型号"), target);
+    projectForm->addRow(QStringLiteral("目标型号"), m_target);
     projectForm->addRow(QStringLiteral("当前编辑画面"), m_editorPage);
     projectForm->addRow(QStringLiteral("设备启动画面"), m_startupPage);
     projectForm->addRow(QStringLiteral("当前编辑语言"), m_editorLanguage);
@@ -763,6 +780,7 @@ void Stage2ProjectDialog::accept() //20261110-7 add
 
     candidate = m_working;
     candidate.name = m_projectName->text();
+    candidate.targetModel = m_target->currentData().toString(); //20261122-3 add
     candidate.startupPageId = m_startupPage->currentData().toString();
     candidate.startupLanguage = m_startupLanguage->currentData().toString();
     candidate.activeLanguage = m_editorLanguage->currentData().toString();

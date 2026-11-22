@@ -96,6 +96,7 @@ struct DeviceTransferOptions
     int timeoutMs = 10000;
     std::function<bool()> cancelRequested;
     std::function<void(const DeviceTransferEvent &)> onEvent;
+    QString targetModel = QStringLiteral("AMT070W124-L800X480R"); //20261122-3 add: Match the connected panel to the compiled project before starting a download.
 };
 
 /******************************************************************************

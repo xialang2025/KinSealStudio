@@ -1,4 +1,5 @@
 #include "native_project_codec.h"
+#include "device_target.h" //20261122-3 add
 #include "project_model.h"
 
 #include <QCryptographicHash>
@@ -1253,7 +1254,12 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     if (result.name.isEmpty()) {
         result.name = QStringLiteral("NativeProject");
     }
-    result.targetModel = document.value(QStringLiteral("header.2")).toString();
+    // V5.1 can retain the original template model in the header after choosing a new screen.
+    result.targetModel = document.value(QStringLiteral("system.identity.1")).toString(); //20261122-3 change
+    if (deviceTargetIdentityByte(result.targetModel) < 0)
+    {
+        return fail(error, QStringLiteral("尚未核实原生工程的实际目标型号：%1。").arg(result.targetModel));
+    }
     result.pageName = document.value(QStringLiteral("page.head.18")).toString();
     if (document.value(QStringLiteral("config.head.4")).toString() != result.pageName ||
         document.value(QStringLiteral("config.head.11")).toString() != result.pageName ||
@@ -3058,7 +3064,7 @@ bool inspectNativeProjectEnvelope(const QByteArray &data, NativeProjectEnvelope 
     if (!reader.string(&result.targetModel)) {
         return fail(error, QStringLiteral("原生工程型号 QString 被截断或长度无效。"));
     }
-    if (result.targetModel != QStringLiteral("AMT070W124-L800X480R")) {
+    if (deviceTargetIdentityByte(result.targetModel) < 0) { //20261122-3 change
         return fail(error, QStringLiteral("尚未核实该型号的原生工程结构：%1。")
                                .arg(result.targetModel));
     }
@@ -3213,7 +3219,11 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
         }
         languageNames.append(name);
     }
-    // Normalize only the independently observed language settings before checking every other original byte.
+    // Normalize the AMZ selector and observed language fields while still hashing the remaining settings.
+    if (isAmz070Target(document.value(QStringLiteral("system.identity.1")).toString())) //20261122-3 add
+    {
+        updates.set(QStringLiteral("system.identity.1"), QStringLiteral("AMT070W124-L800X480R"));
+    }
     updates.set(QStringLiteral("system.identity.15"), 1);
     updates.set(QStringLiteral("system.identity.16"), 0);
     if (document.value(QStringLiteral("config.290.0")).toInt() < 0 ||
@@ -3301,6 +3311,11 @@ bool nativeProjectInitialLanguageIndex(const HmiProject &project, u16 *index,
     }
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: A multi-page snapshot cannot supply startup settings for a flattened single-page model.
         return fail(error, QStringLiteral("原生快照含多个页面，不能为单页活动模型派生启动语言。"));
+    }
+    if (deviceTargetIdentityByte(document.value(QStringLiteral("system.identity.1")).toString()) !=
+        deviceTargetIdentityByte(project.targetModel)) //20261122-3 add
+    {
+        return fail(error, QStringLiteral("原生快照的目标型号与当前工程不符。"));
     }
     count = document.value(QStringLiteral("system.164.count")).toInt();
     initial = document.value(QStringLiteral("system.identity.16")).toInt();
@@ -3482,6 +3497,10 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
 
     if (data == nullptr) {
         return fail(error, QStringLiteral("原生工程编码输出为空。"));
+    }
+    if (isAmz070Target(project.targetModel)) //20261122-3 add: AMT-derived source seeds are not validated for AMZ export.
+    {
+        return fail(error, QStringLiteral("AMZ070W01R 目前使用 .ksp 保存和设备编译；原厂 .sm 导出尚未验证。"));
     }
     if (!project.validateSinglePageBackend(error)) { //20261110-5 add: Never flatten multi-page/configuration entities into only the legacy active-page view.
         return false;

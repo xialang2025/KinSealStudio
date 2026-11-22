@@ -1,4 +1,5 @@
 #include "project_capabilities.h"
+#include "device_target.h" //20261122-3 add
 #include "device_compile_plan.h" //20261113-11 add
 #include "project_model.h"
 #include "native_project_codec.h"
@@ -39,7 +40,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
 
     modelAllowed = project.validateModel(&modelError);
     backendAllowed = modelAllowed && project.validateSinglePageBackend(&backendError);
-    targetAllowed = project.targetModel == QStringLiteral("AMT070W124-L800X480R") &&
+    targetAllowed = deviceTargetIdentityByte(project.targetModel) >= 0 && //20261122-3 change
                     project.pageWidth == 800 && project.pageHeight == 480;
     defaultsAllowed = project.nativeSourceSnapshot.isEmpty() ||
                       nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot, &defaultsError);
@@ -53,11 +54,15 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     }
     if (modelAllowed && backendAllowed && !targetAllowed)
     {
-        backendError = QStringLiteral("原厂源与设备后端目前只核定AMT070W124-L800X480R、800×480目标。");
+        backendError = QStringLiteral("原厂源与设备后端目前只核定 800×480 的 AMT070W124 或 AMZ070W01R。");
     }
     if (modelAllowed && backendAllowed && !nativeObjectsAllowed)
     {
         backendError = QStringLiteral("所含对象类型尚未恢复原厂源或设备编码。");
+    }
+    if (modelAllowed && isAmz070Target(project.targetModel)) //20261122-3 add
+    {
+        backendError = QStringLiteral("AMZ070W01R 原厂 .sm 导出尚未验证。");
     }
     deviceAllowed = prepareDeviceCompilePlan(project,&compilePlan,&deviceError,&compileIssue); //20261113-11 change: Source and device eligibility are independent.
     if (deviceAllowed && !defaultsAllowed)
@@ -76,7 +81,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
         deviceAllowed = false; // Pure offline preparation also identifies known unsupported connection routes.
     }
     target.insert(QStringLiteral("model"), project.targetModel);
-    target.insert(QStringLiteral("knownBackend"), targetAllowed ? QStringLiteral("AMT070W124-L800X480R-single-page") : QString());
+    target.insert(QStringLiteral("knownBackend"), targetAllowed ? project.targetModel + QStringLiteral("-single-page") : QString()); //20261122-3 change
     target.insert(QStringLiteral("firmwareVersionConfirmed"), false);
     target.insert(QStringLiteral("sourceVersion"), 122);
     result.insert(QStringLiteral("target"), target);
@@ -88,7 +93,8 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     model.insert(QStringLiteral("reason"), modelError);
     model.insert(QStringLiteral("format"), QStringLiteral("KSP-schema1-to9-and11-to12")); //20261112-0 change
     result.insert(QStringLiteral("modelPersistence"), model);
-    native.insert(QStringLiteral("status"), backendAllowed && targetAllowed && nativeObjectsAllowed ? QStringLiteral("candidate") : QStringLiteral("blocked"));
+    native.insert(QStringLiteral("status"), backendAllowed && targetAllowed && nativeObjectsAllowed &&
+                  !isAmz070Target(project.targetModel) ? QStringLiteral("candidate") : QStringLiteral("blocked")); //20261122-3 change
     native.insert(QStringLiteral("reason"), !modelAllowed ? modelError : backendError);
     native.insert(QStringLiteral("actualExportRequired"), true);
     native.insert(QStringLiteral("opaqueBodyEditable"), false);

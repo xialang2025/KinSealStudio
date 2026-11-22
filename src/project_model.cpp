@@ -1,4 +1,5 @@
 #include "project_model.h"
+#include "device_target.h" //20261122-3 add
 #include "native_test_project.h" //20261108-9 add
 #include "native_project_codec.h" //20261109-0 add
 #include "stage2_system_settings.h" //20261110-7 add: Validate only the explicitly recovered system-property schema.
@@ -1311,7 +1312,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     int subtypeCount;
 
     if (projectId.trimmed().isEmpty() || projectId.size() > 256 || name.trimmed().isEmpty() ||
-        targetModel != QStringLiteral("AMT070W124-L800X480R") || pageCount() > 200 ||
+        deviceTargetIdentityByte(targetModel) < 0 || pageCount() > 200 || //20261122-3 change
         configurationNodes.size() > 256 || references.size() > 4096 || nativeSourceSnapshot.size() > 16 * 1024 * 1024 ||
         nativeSourceWarnings.size() > 128 || (!nativeSourceWarnings.isEmpty() && nativeSourceSnapshot.isEmpty()))
     {

@@ -1,4 +1,5 @@
 #include "device_macro_compiler.h"
+#include "device_target.h" //20261122-3 add
 #include "project_model.h"
 
 #include <QDir>
@@ -763,7 +764,7 @@ bool compileDeviceMacros(const HmiProject &project, const QString &toolchainDire
         if (frozenMacros.isEmpty()) { ok = true; break; }
         if (frozenMacros.size() > 100)
         { macroRecordFailure(&context, QStringLiteral("macro-count-limit"), QStringLiteral("设备最多支持100条宏。")); break; }
-        if (targetModel != QStringLiteral("AMT070W124-L800X480R") && targetModel != QStringLiteral("AMZ070W01"))
+        if (deviceTargetIdentityByte(targetModel) < 0) //20261122-3 change
         { macroRecordFailure(&context, QStringLiteral("unsupported-model"), QStringLiteral("型号%1的宏内存配置尚未核定。").arg(targetModel.left(256))); break; }
         for (macro = frozenMacros.constBegin(); macro != frozenMacros.constEnd(); ++macro)
         {

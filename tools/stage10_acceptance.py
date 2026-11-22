@@ -133,9 +133,11 @@ def _contract_shape(contract):
     """
     count = contract.get("payloadCount")
     require(type(count) is int and count in (10, 12, 14), "unsupported payload count")
-    require(contract.get("identity", {}).get("targetModel") == "AMT070W124-L800X480R",
-            "unsupported contract target model")
-    require(contract.get("startOptionsHex") in ("000000", "010101"), "unsupported start options")
+    target = contract.get("identity", {}).get("targetModel")  # //20261122-3 change
+    model_replies = {"AMT070W124-L800X480R": "4c", "AMZ070W01": "46", "AMZ070W01R": "46"}
+    require(isinstance(target, str) and target in model_replies, "unsupported contract target model")
+    allowed_options = ("000000", "010101") if model_replies[target] == "4c" else ("000000",)
+    require(contract.get("startOptionsHex") in allowed_options, "unsupported start options")
     segments = contract.get("segments")
     require(isinstance(segments, list) and len(segments) == count and
             all(isinstance(item, dict) for item in segments), "contract segments/payload count mismatch")
@@ -185,7 +187,7 @@ def _contract_shape(contract):
         if kind == "command":
             frame = b"KinSealStudioKiss" + bytes((code,)) + bytes.fromhex(options)
             frame = frame.ljust(32, b"\0")
-            length, first = (24, "4c") if code == 0x31 else (24, "00") if code == 0x53 else (0, "") if code == 0x1a else (1, "4f")
+            length, first = (24, model_replies[target]) if code == 0x31 else (24, "00") if code == 0x53 else (0, "") if code == 0x1a else (1, "4f")
             reply = {"length": length, "firstByte": first, "readRequestBytes": 32 if length == 24 else 4 if length else 0}
             require(actual.get("commandHex") == f"{code:02x}" and actual.get("optionsHex") == options and
                     actual.get("frameHex") == frame.hex() and actual.get("wireBytes") == 32 and

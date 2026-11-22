@@ -18,6 +18,7 @@ struct FakeTransferIo
     int closeCount = 0;
     int payloadCount = 0;
     int lastCommand = -1;
+    int modelReplyByte = 0x4c; //20261122-3 add: The same fake can present either USB identity.
     int expectedTimeout = 10000;
     bool openSucceeds = true;
     int claimResult = 0;
@@ -134,7 +135,7 @@ struct FakeTransferIo
         {
             returned = 24;
             response = QByteArray(24, char(0));
-            response[0] = lastCommand == 0x31 ? char(0x4c) : char(0);
+            response[0] = lastCommand == 0x31 ? char(modelReplyByte) : char(0); //20261122-3 change
             if (maximum != 32) { problem = QStringLiteral("wrong identification capacity"); }
         }
         else if (lastCommand == 0x1a)
@@ -189,6 +190,8 @@ class DeviceTransferEngineTests : public QObject
 private slots:
     void normalPlans_data();
     void normalPlans();
+    void targetHandshake_data(); //20261122-3 add
+    void targetHandshake();
     void preflightRejections_data();
     void preflightRejections();
     void openAndClaimFailures_data();
@@ -290,6 +293,66 @@ void DeviceTransferEngineTests::normalPlans() //20261114-5 add
 }
 
 /******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::targetHandshake_data
+ * Description     : Cover both AMZ model names and both directions of model mismatch.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void DeviceTransferEngineTests::targetHandshake_data() //20261122-3 add
+{
+    QTest::addColumn<QString>("targetModel");
+    QTest::addColumn<int>("modelByte");
+    QTest::addColumn<bool>("matched");
+    QTest::newRow("amz") << QStringLiteral("AMZ070W01") << 0x46 << true;
+    QTest::newRow("amz-label-alias") << QStringLiteral("AMZ070W01R") << 0x46 << true;
+    QTest::newRow("amz-project-amt-panel") << QStringLiteral("AMZ070W01") << 0x4c << false;
+    QTest::newRow("amt-project-amz-panel") << QStringLiteral("AMT070W124-L800X480R") << 0x46 << false;
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::targetHandshake
+ * Description     : Permit matching targets and stop cross-model attempts before any operation can start a download.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.22
+ ******************************************************************************/
+void DeviceTransferEngineTests::targetHandshake() //20261122-3 add
+{
+    QFETCH(QString, targetModel);
+    QFETCH(int, modelByte);
+    QFETCH(bool, matched);
+    FakeTransferIo fake;
+    DeviceTransferOptions options;
+    DeviceTransferResult result;
+
+    fake.modelReplyByte = modelByte;
+    options.targetModel = targetModel;
+    result = runDeviceTransfer(markerPayloads(10), fake.callbacks(), options);
+    QCOMPARE(result.success, matched);
+    QCOMPARE(result.startAccepted, matched);
+    QCOMPARE(result.modelReply.size(), 24);
+    QCOMPARE(int(u8(result.modelReply.at(0))), modelByte);
+    QCOMPARE(fake.releaseCount, 1);
+    QCOMPARE(fake.closeCount, 1);
+    if (matched)
+    {
+        QCOMPARE(fake.commands.left(4).toHex(), QByteArray("31533435"));
+        QCOMPARE(fake.payloadCount, 10);
+        QVERIFY(result.commitAccepted && result.postResetReadCompleted);
+    }
+    else
+    {
+        QCOMPARE(fake.commands.toHex(), QByteArray("31"));
+        QCOMPARE(fake.payloadCount, 0);
+        QVERIFY(!result.commitWriteAttempted && !result.resetWritten);
+        QCOMPARE(result.firstError.phase, QStringLiteral("identify"));
+        QCOMPARE(result.firstError.kind, QStringLiteral("reply_byte"));
+        QCOMPARE(result.outcome, QStringLiteral("stopped_before_download_start"));
+    }
+}
+
+/******************************************************************************
  * Function Name   : DeviceTransferEngineTests::preflightRejections_data
  * Description     : Prepare invalid counts, missing data/callbacks, and unsupported options without device access.
  * Input Parameters: None
@@ -318,6 +381,8 @@ void DeviceTransferEngineTests::preflightRejections_data() //20261114-5 add
     QTest::newRow("negative-timeout") << 3 << -1;
     QTest::newRow("unknown-options") << 4 << 0;
     QTest::newRow("short-options") << 4 << 1;
+    QTest::newRow("unknown-target") << 5 << 0; //20261122-3 add
+    QTest::newRow("amz-legacy-options") << 6 << 0;
 }
 
 /******************************************************************************
@@ -351,6 +416,12 @@ void DeviceTransferEngineTests::preflightRejections() //20261114-5 add
     }
     if (scenario == 3) { options.timeoutMs = argument; }
     if (scenario == 4) { options.startOptions = argument == 0 ? QByteArray::fromHex("000100") : QByteArray::fromHex("0000"); }
+    if (scenario == 5) { options.targetModel = QStringLiteral("unknown"); } //20261122-3 add
+    if (scenario == 6)
+    {
+        options.targetModel = QStringLiteral("AMZ070W01");
+        options.startOptions = QByteArray::fromHex("010101");
+    }
     result = runDeviceTransfer(payloads, io, options);
     QVERIFY(!result.success && !result.planValidated && !result.opened && !result.interfaceClaimed);
     QVERIFY(result.firstError.present);

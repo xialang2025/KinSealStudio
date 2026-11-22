@@ -29,6 +29,7 @@ private:
     QLineEdit *m_name;
     QLineEdit *m_path;
     QLineEdit *m_pageName;
+    QComboBox *m_target; //20261122-3 add
     QComboBox *m_startupLanguage;
     QLabel *m_error;
     QStackedWidget *m_steps;
@@ -58,6 +59,7 @@ protected:
 private:
     HmiProject m_working;
     QLineEdit *m_projectName;
+    QComboBox *m_target; //20261122-3 add
     QLineEdit *m_pageName;
     QListWidget *m_pages;
     QComboBox *m_pageKind;

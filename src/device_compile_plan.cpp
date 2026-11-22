@@ -1,4 +1,5 @@
 #include "device_compile_plan.h"
+#include "device_target.h" //20261122-3 add
 #include "native_project_codec.h"
 #include <QJsonArray>
 #include <algorithm>
@@ -247,7 +248,7 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
 
     if (plan == nullptr) { return compilationIssue(project,empty,QStringLiteral("output"),QJsonValue(),QStringLiteral("编译计划输出为空。"),error,issue); }
     if (!project.validateSinglePageBackend(&diagnostic)) { return compilationIssue(project,empty,QStringLiteral("project.topology"),project.pageCount(),diagnostic,error,issue); }
-    if (project.targetModel != QStringLiteral("AMT070W124-L800X480R") || project.pageWidth != 800 || project.pageHeight != 480 || project.objects.isEmpty() || project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8)
+    if (deviceTargetIdentityByte(project.targetModel) < 0 || project.pageWidth != 800 || project.pageHeight != 480 || project.objects.isEmpty() || project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8) //20261122-3 change
     { return compilationIssue(project,empty,QStringLiteral("project.target"),project.targetModel,QStringLiteral("只支持800×480、1..100对象、1..8语言的已核型号。"),error,issue); }
     if (!project.nativeSourceSnapshot.isEmpty() && !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot,&diagnostic))
     { return compilationIssue(project,empty,QStringLiteral("nativeSourceSnapshot"),QStringLiteral("retained"),diagnostic,error,issue); }

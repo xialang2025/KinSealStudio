@@ -1,4 +1,5 @@
 #include "device_package.h"
+#include "device_target.h" //20261122-3 add
 #include "device_transfer_plan.h"
 #include "native_project_codec.h"
 #include "lzokay.hpp"
@@ -208,6 +209,7 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     QDir dir(directory);
     QFile file(dir.filePath(QStringLiteral("compiler-manifest.json")));
     QJsonObject candidate;
+    QJsonDocument snapshot; //20261122-3 add
     QJsonObject entries;
     QJsonObject entry;
     QVector<HmiDownloadStep> steps;
@@ -224,7 +226,12 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
 
     if (!file.open(QIODevice::ReadOnly)) { return packageFailure(error,QStringLiteral("缺少设备包完成清单。")); }
     candidate = QJsonDocument::fromJson(file.readAll()).object(); entries = candidate.value(QStringLiteral("files")).toObject(); count = entries.size();
-    if (candidate.value(QStringLiteral("packageFormat")).toString() != QStringLiteral("kinseal-device-package-v1") || !candidate.value(QStringLiteral("complete")).isBool() || !candidate.value(QStringLiteral("complete")).toBool() || candidate.value(QStringLiteral("targetModel")).toString() != QStringLiteral("AMT070W124-L800X480R") || !candidate.value(QStringLiteral("deviceAcknowledged")).isBool() || candidate.value(QStringLiteral("deviceAcknowledged")).toBool() || !candidate.value(QStringLiteral("usbAccessed")).isBool() || candidate.value(QStringLiteral("usbAccessed")).toBool() || (count != 10 && count != 12 && count != 14))
+    if (candidate.value(QStringLiteral("packageFormat")).toString() != QStringLiteral("kinseal-device-package-v1") ||
+        !candidate.value(QStringLiteral("complete")).isBool() || !candidate.value(QStringLiteral("complete")).toBool() ||
+        deviceTargetIdentityByte(candidate.value(QStringLiteral("targetModel")).toString()) < 0 || //20261122-3 change
+        !candidate.value(QStringLiteral("deviceAcknowledged")).isBool() || candidate.value(QStringLiteral("deviceAcknowledged")).toBool() ||
+        !candidate.value(QStringLiteral("usbAccessed")).isBool() || candidate.value(QStringLiteral("usbAccessed")).toBool() ||
+        (count != 10 && count != 12 && count != 14))
     { return packageFailure(error,QStringLiteral("设备包标识、目标、离线状态或段数量错误。")); }
     expected.append(QStringLiteral("compiler-manifest.json"));
     for (index=0;index<count;++index)
@@ -242,8 +249,15 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     if (!validateDevicePayloadStructure(payloads,error)) { return false; }
     if (!packageSnapshotKind(payloads[7],&snapshotKind,error) || candidate.value(QStringLiteral("sourceSnapshot")).toString() != snapshotKind)
     { return packageFailure(error,QStringLiteral("清单源快照身份与实际内容不一致。")); }
-    if (snapshotKind == QStringLiteral("lite-project-json") && candidate.value(QStringLiteral("inputProjectSha256")).toString() != packageSha(QJsonDocument::fromJson(qUncompress(payloads[7])).toJson(QJsonDocument::Compact)))
-    { return packageFailure(error,QStringLiteral("源快照与输入工程SHA256不一致。")); }
+    if (snapshotKind == QStringLiteral("lite-project-json")) //20261122-3 change
+    {
+        snapshot = QJsonDocument::fromJson(qUncompress(payloads[7]));
+        if (snapshot.object().value(QStringLiteral("targetModel")) != candidate.value(QStringLiteral("targetModel")) ||
+            candidate.value(QStringLiteral("inputProjectSha256")).toString() != packageSha(snapshot.toJson(QJsonDocument::Compact)))
+        {
+            return packageFailure(error,QStringLiteral("源快照与清单目标型号或输入工程SHA256不一致。"));
+        }
+    }
     if (!buildDeviceTransferPlan(payloads,&steps,error)) { return false; }
     Q_FOREACH (step,steps) { transfer.append(QJsonObject{{QStringLiteral("command"),int(step.command)},{QStringLiteral("name"),step.name},
         {QStringLiteral("optionsHex"),QString::fromLatin1(step.options.toHex())},{QStringLiteral("wireBytes"),int(step.bytes.size())},{QStringLiteral("wireSha256"),packageSha(step.bytes)}}); }
