@@ -33,6 +33,7 @@
 #include <QTemporaryDir>
 #include <QSvgRenderer> //20261123-3 add
 #include <QTest>
+#include <QTextBrowser> //20261123-10 add
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton> //20261111-1 add
@@ -88,6 +89,7 @@ private slots:
     void ordinaryPageMenuOpensAndReorders(); //20261123-7 add
     void ordinaryPageMenuCopiesOwnedContent(); //20261123-8 add
     void ordinaryPageMenuDeletionProtectsTargets(); //20261123-9 add
+    void ordinaryPageHelpAndSlideVisibilityFollowDraft(); //20261123-10 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -2078,6 +2080,66 @@ void Stage2WorkflowTests::ordinaryPageMenuDeletionProtectsTargets() //20261123-9
     QCOMPARE(reopened.pageOrder, (QStringList{startupId, target.id}));
     QCOMPARE(reopened.startupPageId, startupId);
     QCOMPARE(reopened.references.first().targetId, target.id);
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageHelpAndSlideVisibilityFollowDraft
+ * Description     : Check that the optional targets appear only when enabled and context help leaves the dialog draft intact.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageHelpAndSlideVisibilityFollowDraft() //20261123-10 add
+{
+    HmiProject project = workflowProject();
+    const QJsonObject original = project.toJson();
+    bool correct = false;
+
+    QTimer::singleShot(0, this, [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QGroupBox *slide;
+        QComboBox *target;
+        QLineEdit *name;
+        QDialogButtonBox *buttons;
+        QDialog *help;
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        slide = editor->findChild<QGroupBox *>(QStringLiteral("pageSlideGroup"));
+        target = editor->findChild<QComboBox *>(QStringLiteral("pageSlideLeftTarget"));
+        name = editor->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+        buttons = editor->findChild<QDialogButtonBox *>();
+        if (slide == nullptr || target == nullptr || name == nullptr || buttons == nullptr ||
+            buttons->button(QDialogButtonBox::Help) == nullptr || target->isVisible())
+        {
+            editor->reject();
+            return;
+        }
+        slide->setChecked(true);
+        if (!target->isVisible() || !target->isEnabled())
+        {
+            editor->reject();
+            return;
+        }
+        slide->setChecked(false);
+        name->setText(QStringLiteral("帮助窗口返回后保留"));
+        buttons->button(QDialogButtonBox::Help)->click();
+        help = editor->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        correct = !target->isVisible() && help != nullptr && help->isVisible() &&
+            help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser")) != nullptr &&
+            editor->property("localHelpTopic").toString() == QStringLiteral("screen-properties") &&
+            name->text() == QStringLiteral("帮助窗口返回后保留");
+        if (help != nullptr)
+        {
+            help->close();
+        }
+        editor->reject();
+    });
+    QVERIFY(!editStage2NewNormalPage(nullptr, project));
+    QVERIFY(correct);
+    QCOMPARE(project.toJson(), original);
 }
 
 /******************************************************************************

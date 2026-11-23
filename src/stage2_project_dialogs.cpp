@@ -2,6 +2,7 @@
 #include "bit_button_dialog.h" //20261123-3 add
 #include "control_rendering.h" //20261123-2 add
 #include "kvg_library.h" //20261123-3 add
+#include "local_help.h" //20261123-10 add
 #include "macro_workspace.h" //20261123-5 add
 #include "plc_address_dialog.h" //20261123-5 add
 #include "stage2_system_settings.h" //20261122-4 change
@@ -605,6 +606,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     }
 
     dialog.setWindowTitle(editing ? QStringLiteral("画面属性") : QStringLiteral("新建画面")); //20261123-6 change
+    dialog.setProperty("localHelpTopic", QStringLiteral("screen-properties")); //20261123-10 add
     layout = new QFormLayout(&dialog);
     name = new QLineEdit(suggestion, &dialog);
     name->setObjectName(QStringLiteral("newPageNameEdit"));
@@ -616,9 +618,11 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     number->setToolTip(QStringLiteral("同一工程内普通画面编号不可重复。")); //20261122-10 change
     validation = new QLabel(&dialog);
     validation->setWordWrap(true);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
+                                   QDialogButtonBox::Help, &dialog); //20261123-10 change
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261123-10 add
     layout->addRow(QStringLiteral("名称"), name);
     layout->addRow(QStringLiteral("编号"), number);
     background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
@@ -699,6 +703,12 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         column = 2 * (directionIndex % 2);
         slideDirections[directionIndex] = new QCheckBox(slideLabels.at(directionIndex), slideGroup);
         slideTargets[directionIndex] = new QComboBox(slideGroup);
+        QSizePolicy targetSizePolicy = slideTargets[directionIndex]->sizePolicy(); //20261123-10 add
+
+        // Hiding the targets must keep the two columns aligned with their checkboxes.
+        targetSizePolicy.setRetainSizeWhenHidden(true);
+        slideTargets[directionIndex]->setSizePolicy(targetSizePolicy);
+        QObject::connect(slideGroup, &QGroupBox::toggled, slideTargets[directionIndex], &QWidget::setVisible);
         slideDirections[directionIndex]->setObjectName(QStringLiteral("pageSlide") + slideKeys.at(directionIndex));
         slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
         for (const HmiPage &target : targetPages)
@@ -809,6 +819,15 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     layout->addRow(createStage2PageScriptList(&dialog, macroDraft, scripts)); //20261123-5 add
     layout->addRow(validation);
     layout->addRow(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [&dialog]() { //20261123-10 add
+        LocalHelpController *help = dialog.findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
+
+        if (help == nullptr)
+        {
+            help = new LocalHelpController(&dialog);
+        }
+        help->showTopic(QStringLiteral("screen-properties"), &dialog);
+    });
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
         HmiPage page;
