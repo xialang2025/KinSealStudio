@@ -17,6 +17,7 @@
 
 using u16 = unsigned short;
 using u32 = unsigned int;
+using u8 = unsigned char;
 
 //20261113-11 add: Names are fixed by segment identity, never supplied by a manifest path.
 static const char *packageNames[] = {"SysPara.dat","SheetPara.dat","AlarmPara.dat","Collect.dat","AddrPara.dat",
@@ -63,6 +64,75 @@ static u32 packageU32(const QByteArray &bytes, int offset) //20261113-11 add
     if (offset < 0 || offset > bytes.size()-4) { return 0; }
     for (index=0;index<4;++index) { value |= u32(static_cast<unsigned char>(bytes.at(offset+index))) << (index*8); }
     return value;
+}
+
+/******************************************************************************
+ * Function Name   : validateMacroSchedulePayloads
+ * Description     : Validate that schedule rows address the actual macro image and have safe local trigger offsets.
+ * Input Parameters: payloads, staticMacros, error
+ * Return Value    : True if there is no schedule or all serialized schedule rows can be resolved.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool validateMacroSchedulePayloads(const QVector<QByteArray> &payloads, bool staticMacros,
+                                          QString *error) //20261123-22 add
+{
+    const QByteArray &system = payloads.at(0);
+    const int global = u8(system.at(0x528));
+    const int initial = u8(system.at(0x82c));
+    const int macroVarIndex = staticMacros ? 10 : 12;
+    int macroCount;
+    int row;
+    int trigger;
+    u16 mode;
+    u16 bodySize;
+    qsizetype imageSize;
+
+    if (global == 0 && initial == 0)
+    {
+        return true;
+    }
+    if (global > 64 || initial > 16 || payloads.size() != macroVarIndex + 2 ||
+        payloads.last().size() <= 1024 || payloads.last().size() > 0x20000)
+    {
+        return packageFailure(error, QStringLiteral("调度宏行数无效或设备包缺少宏编译数据。"));
+    }
+    macroCount = u8(payloads.last().at(0));
+    if (macroCount < 1 || macroCount > 100 || payloads.at(macroVarIndex).size() != macroCount * 904)
+    {
+        return packageFailure(error, QStringLiteral("调度宏数量和宏变量长度不匹配。"));
+    }
+    imageSize = 1024;
+    for (row = 0; row < macroCount; ++row)
+    {
+        bodySize = qFromLittleEndian<u16>(payloads.last().constData() + 102 + row * 2);
+        if (bodySize == 0)
+        {
+            return packageFailure(error, QStringLiteral("调度宏包包含没有机器码的宏。"));
+        }
+        imageSize += bodySize;
+    }
+    if (imageSize != payloads.last().size())
+    {
+        return packageFailure(error, QStringLiteral("调度宏包的机器码长度与目录不匹配。"));
+    }
+    for (row = 0; row < initial; ++row)
+    {
+        if (u8(system.at(0x844 + row)) >= macroCount)
+        {
+            return packageFailure(error, QStringLiteral("第%1条初始化宏的索引超出已编译宏列表。").arg(row + 1));
+        }
+    }
+    for (row = 0; row < global; ++row)
+    {
+        trigger = 0x882 + row * 40;
+        mode = qFromLittleEndian<u16>(system.constData() + trigger);
+        if (u8(system.at(0x52c + row * 12)) >= macroCount || packageU32(system, 0x534 + row * 12) > 65535 ||
+            mode > 1 || (mode == 1 && (u8(system.at(trigger + 6)) != 100 || packageU32(system, trigger + 12) > 4096)))
+        {
+            return packageFailure(error, QStringLiteral("第%1条全局宏的索引、次数或本地触发地址无效。").arg(row + 1));
+        }
+    }
+    return true;
 }
 
 /******************************************************************************
@@ -119,6 +189,7 @@ static bool decodePackageFrame(const QByteArray &compressed, u32 rawLength) //20
  ******************************************************************************/
 bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString *error) //20261113-11 add
 {
+    const bool staticMacros = hasStaticMacroPayloads(payloads); //20261123-22 add
     QVector<HmiDownloadStep> steps;
     QByteArray record;
     QByteArray chunk;
@@ -139,10 +210,22 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     int slot;
     QString snapshotKind;
 
-    if (!buildDeviceTransferPlan(payloads,&steps,error)) { return false; }
+    if (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
+    if (staticMacros)
+    {
+        // The native files establish an offline shape. The live planner still requires its known segment combinations.
+        for (const QByteArray &bytes : payloads)
+        {
+            if (bytes.isEmpty() || bytes.size() > 0x7fffffff)
+            {
+                return packageFailure(error, QStringLiteral("静态调度宏包包含空段或超长段。"));
+            }
+        }
+    }
     if (!packageSnapshotKind(payloads[7],&snapshotKind,error)) { return false; }
     if (payloads[0].size() != 4998 || payloads[1].size() != 72 || payloads[5].size() < 2400 || (payloads[5].size()-2400)%12 != 0)
     { return packageFailure(error,QStringLiteral("设备段头长度或图像索引长度错误。")); }
+    if (!validateMacroSchedulePayloads(payloads, staticMacros, error)) { return false; } //20261123-22 add
     if (!decodePackageFrame(payloads[8],768000)) { return packageFailure(error,QStringLiteral("页面背景LZO解压长度错误。")); }
     lengths = &payloads[5];
     pictureCount = packageU32(*lengths,0x640);
@@ -157,10 +240,10 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
         }
     }
     count = static_cast<unsigned char>(payloads[1][2]);
-    if (payloads.size() == 10)
+    if (payloads.size() == 10 || staticMacros) //20261123-22 change
     {
         if (count != 0 || pictureCount != 0 || packageU32(*lengths,0x320) != 0 || qFromLittleEndian<u32>(payloads[1].constData()+0x44) != 0)
-        { return packageFailure(error,QStringLiteral("静态十段包残留动态控件或图片索引。")); }
+        { return packageFailure(error,QStringLiteral("静态包残留动态控件或图片索引。")); }
         return true;
     }
     if (count == 0 || payloads[10].size() != count*640 || packageU32(*lengths,0x320) != u32(payloads[11].size()))
@@ -223,6 +306,7 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     QString snapshotKind;
     int count;
     int index;
+    bool staticMacros; //20261123-22 add
 
     if (!file.open(QIODevice::ReadOnly)) { return packageFailure(error,QStringLiteral("缺少设备包完成清单。")); }
     candidate = QJsonDocument::fromJson(file.readAll()).object(); entries = candidate.value(QStringLiteral("files")).toObject(); count = entries.size();
@@ -233,10 +317,12 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
         !candidate.value(QStringLiteral("usbAccessed")).isBool() || candidate.value(QStringLiteral("usbAccessed")).toBool() ||
         (count != 10 && count != 12 && count != 14))
     { return packageFailure(error,QStringLiteral("设备包标识、目标、离线状态或段数量错误。")); }
+    staticMacros = count == 12 && entries.contains(QStringLiteral("MarcoVar.dat")) && entries.contains(QStringLiteral("MarcoRun.dat"));
     expected.append(QStringLiteral("compiler-manifest.json"));
     for (index=0;index<count;++index)
     {
-        name = QString::fromLatin1(packageNames[index]); expected.append(name); entry = entries.value(name).toObject();
+        name = QString::fromLatin1(packageNames[index + (staticMacros && index >= 10 ? 2 : 0)]); //20261123-22 change
+        expected.append(name); entry = entries.value(name).toObject();
         file.close(); file.setFileName(dir.filePath(name));
         if (QFileInfo(file).isSymLink() || !file.open(QIODevice::ReadOnly)) { return packageFailure(error,QStringLiteral("设备包文件缺失或为重定向链接：%1").arg(name)); }
         bytes = file.readAll();
@@ -246,6 +332,9 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     }
     actual = dir.entryList(QDir::AllEntries|QDir::NoDotAndDotDot|QDir::Hidden|QDir::System); expected.sort(); actual.sort();
     if (actual != expected) { return packageFailure(error,QStringLiteral("设备包包含额外旧文件或未知目录。")); }
+    if (staticMacros != hasStaticMacroPayloads(payloads) ||
+        (staticMacros && candidate.value(QStringLiteral("offlineOnly")) != QJsonValue(true))) //20261123-22 add
+    { return packageFailure(error, QStringLiteral("设备包静态调度布局、文件名或离线属性不一致。")); }
     if (!validateDevicePayloadStructure(payloads,error)) { return false; }
     if (!packageSnapshotKind(payloads[7],&snapshotKind,error) || candidate.value(QStringLiteral("sourceSnapshot")).toString() != snapshotKind)
     { return packageFailure(error,QStringLiteral("清单源快照身份与实际内容不一致。")); }
@@ -258,7 +347,7 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
             return packageFailure(error,QStringLiteral("源快照与清单目标型号或输入工程SHA256不一致。"));
         }
     }
-    if (!buildDeviceTransferPlan(payloads,&steps,error)) { return false; }
+    if (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
     Q_FOREACH (step,steps) { transfer.append(QJsonObject{{QStringLiteral("command"),int(step.command)},{QStringLiteral("name"),step.name},
         {QStringLiteral("optionsHex"),QString::fromLatin1(step.options.toHex())},{QStringLiteral("wireBytes"),int(step.bytes.size())},{QStringLiteral("wireSha256"),packageSha(step.bytes)}}); }
     if (candidate.value(QStringLiteral("transferPlan")).toArray() != transfer)
@@ -293,6 +382,7 @@ static bool writePackageFile(const QString &path, const QByteArray &bytes, QStri
 bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &payloads, const QString &directory,
                           QString *error, const DevicePackageWriter &writer) //20261113-11 add
 {
+    const bool staticMacros = hasStaticMacroPayloads(payloads); //20261123-22 add
     QFileInfo target(directory);
     QDir parent(target.absolutePath());
     QJsonObject metadata;
@@ -310,13 +400,13 @@ bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &
 
     if (directory.trimmed().isEmpty() || target.exists() || target.isSymLink() || target.fileName().isEmpty())
     { return packageFailure(error,QStringLiteral("请使用尚不存在的新包目录；现有目录和有效包保持不变。")); }
-    if (!validateDevicePayloadStructure(payloads,error) || !buildDeviceTransferPlan(payloads,&steps,error)) { return false; }
+    if (!validateDevicePayloadStructure(payloads,error) || (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error))) { return false; } //20261123-22 change
     if (!parent.exists() && !QDir().mkpath(parent.absolutePath())) { return packageFailure(error,QStringLiteral("无法建立输出父目录。")); }
     staging = std::make_unique<QTemporaryDir>(parent.filePath(QStringLiteral(".kinseal-compile-XXXXXX")));
     if (!staging->isValid()) { return packageFailure(error,QStringLiteral("无法在输出所在卷建立暂存目录。")); }
     for (index=0;index<payloads.size();++index)
     {
-        name = QString::fromLatin1(packageNames[index]);
+        name = QString::fromLatin1(packageNames[index + (staticMacros && index >= 10 ? 2 : 0)]); //20261123-22 change
         if (!write(QDir(staging->path()).filePath(name),payloads[index],error)) { return false; }
         entry = {{QStringLiteral("length"),int(payloads[index].size())},{QStringLiteral("sha256"),packageSha(payloads[index])}};
         entries.insert(name,entry);
@@ -330,6 +420,7 @@ bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &
         {QStringLiteral("inputProjectSha256"),packageSha(QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact))},
         {QStringLiteral("sourceSnapshot"),snapshot.isObject() && snapshot.object().value(QStringLiteral("format")).toString() == QStringLiteral("KinSealStudio-Prototype") ? QStringLiteral("lite-project-json") : QStringLiteral("native-sm")},
         {QStringLiteral("transferPlan"),transfer}};
+    if (staticMacros) { metadata.insert(QStringLiteral("offlineOnly"), true); } //20261123-22 add
     if (program.open(QIODevice::ReadOnly)) { metadata.insert(QStringLiteral("compilerExecutableSha256"),packageSha(program.readAll())); }
     if (!write(QDir(staging->path()).filePath(QStringLiteral("compiler-manifest.json")),QJsonDocument(metadata).toJson(QJsonDocument::Indented),error) || !verifyDevicePackage(staging->path(),nullptr,error)) { return false; }
     if (QFileInfo::exists(target.absoluteFilePath()) || !parent.rename(QFileInfo(staging->path()).fileName(),target.fileName()))

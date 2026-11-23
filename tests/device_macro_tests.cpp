@@ -1,4 +1,8 @@
 #include "device_macro_compiler.h"
+#include "device_package.h" //20261123-22 add
+#include "device_transfer_plan.h"
+#include "independent_downloader.h"
+#include "macro_schedule.h"
 #include "project_model.h"
 
 #include <QCryptographicHash>
@@ -8,6 +12,7 @@
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QElapsedTimer>
+#include <QtEndian>
 #include <QtTest>
 
 //20261109-0 add: Real ARM compiler cases run only with an explicitly configured SDK.
@@ -27,6 +32,7 @@ private slots:
     void syntheticProcessFailures_data();
     void syntheticProcessFailures();
     void realManifestRepeatabilityAndConstantChange();
+    void realProjectSchedulePackage(); //20261123-22 add
 };
 
 /******************************************************************************
@@ -499,5 +505,81 @@ void DeviceMacroTests::realManifestRepeatabilityAndConstantChange() //20261114-7
     QCOMPARE(changed.marcoRun.size(), 1048);
 }
 
-QTEST_GUILESS_MAIN(DeviceMacroTests)
+/******************************************************************************
+ * Function Name   : DeviceMacroTests::realProjectSchedulePackage
+ * Description     : Compile both scheduled macros using their stable source identities through the public package API.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void DeviceMacroTests::realProjectSchedulePackage() //20261123-22 add
+{
+    HmiProject project;
+    MacroScheduleRow initial;
+    MacroScheduleRow gated;
+    MacroScheduleRow continuous;
+    QVector<QByteArray> payloads;
+    QVector<HmiDownloadStep> steps;
+    QByteArray sys;
+    QTemporaryDir temporary;
+    QJsonObject manifest;
+    QString target;
+    QString error;
+
+    if (qEnvironmentVariableIsEmpty("KINSEAL_ARM_SDK"))
+    {
+        QSKIP("An explicit ARM SDK is needed for the real scheduled project compiler test.");
+    }
+    QVERIFY2(HmiProject::load(QDir(QFINDTESTDATA("../samples/bit-button")).filePath(
+        QStringLiteral("默认交替位按钮.ksp")), &project, &error), qPrintable(error));
+    project.macros = {{QStringLiteral("Global"), setBitSource()}, {QStringLiteral("Startup"), setBitSource()}};
+    project.macroIds = {{QStringLiteral("Global"), QStringLiteral("global-id")},
+                        {QStringLiteral("Startup"), QStringLiteral("startup-id")}};
+    initial.macroId = QStringLiteral("startup-id");
+    gated.macroId = QStringLiteral("global-id");
+    gated.frequency = 300;
+    gated.count = 3;
+    gated.address = QStringLiteral("LB17");
+    continuous.macroId = gated.macroId;
+    QVERIFY2(replaceMacroSchedule(&project, true, {initial}, &error), qPrintable(error));
+    QVERIFY2(replaceMacroSchedule(&project, false, {gated, continuous}, &error), qPrintable(error));
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QVERIFY2(validateDevicePayloadStructure(payloads, &error), qPrintable(error));
+    QCOMPARE(payloads.size(), 14);
+    QCOMPARE(u8(payloads[13].at(0)), u8(2));
+    sys = payloads[0];
+    QCOMPARE(u8(sys.at(0x528)), u8(2));
+    QCOMPARE(sys.mid(0x52c, 12), QByteArray::fromHex("002c00000000000003000000"));
+    QCOMPARE(sys.mid(0x538, 12), QByteArray::fromHex("000100000000000000000000"));
+    QCOMPARE(sys.mid(0x82c, 4), QByteArray::fromHex("01000000"));
+    QCOMPARE(u8(sys.at(0x844)), u8(1));
+    QCOMPARE(qFromLittleEndian<u16>(sys.constData() + 0x882), u16(1));
+    QCOMPARE(u8(sys.at(0x888)), u8(100));
+    QCOMPARE(qFromLittleEndian<u32>(sys.constData() + 0x88e), u32(17));
+    QCOMPARE(sys.mid(0x8aa, 40), QByteArray(40, char(0)));
+
+    // A manifest hash alone cannot make an out-of-range compiled macro index valid.
+    payloads[0][0x844] = char(2);
+    QVERIFY(!validateDevicePayloadStructure(payloads, &error));
+
+    project.objects.clear();
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(payloads.size(), 12);
+    QVERIFY(hasStaticMacroPayloads(payloads));
+    QCOMPARE(payloads[0], sys);
+    QVERIFY(!buildDeviceTransferPlan(payloads, &steps, &error));
+    QVERIFY(steps.isEmpty());
+    QVERIFY(temporary.isValid());
+    target = temporary.filePath(QStringLiteral("scheduled-static-package"));
+    QVERIFY2(publishDevicePackage(project, payloads, target, &error), qPrintable(error));
+    QVERIFY2(verifyDevicePackage(target, &manifest, &error), qPrintable(error));
+    QVERIFY(manifest.value(QStringLiteral("offlineOnly")).toBool());
+    QVERIFY(manifest.value(QStringLiteral("transferPlan")).toArray().isEmpty());
+    QVERIFY(QFileInfo::exists(QDir(target).filePath(QStringLiteral("MarcoRun.dat"))));
+    QVERIFY(QFileInfo::exists(QDir(target).filePath(QStringLiteral("MarcoVar.dat"))));
+    QVERIFY(!QFileInfo::exists(QDir(target).filePath(QStringLiteral("ControlPara.dat"))));
+    QVERIFY(!QFileInfo::exists(QDir(target).filePath(QStringLiteral("ControlPixel.dat"))));
+}
+
+QTEST_MAIN(DeviceMacroTests) //20261123-22 change: The scheduled project compiles actual QImage control sprites.
 #include "device_macro_tests.moc"

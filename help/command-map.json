@@ -47,6 +47,14 @@
       "file": "compile.html",
       "title": "设备编译与宏"
     },
+    "global-macro": {
+      "file": "compile.html#global-macro",
+      "title": "全局宏"
+    },
+    "init-macro": {
+      "file": "compile.html#init-macro",
+      "title": "初始化宏"
+    },
     "usb": {
       "file": "usb.html",
       "title": "下载、上载、介质与恢复"
@@ -165,8 +173,8 @@
     },
     "action_GlobalMacro": {
       "label": "全局宏",
-      "topic": "compile",
-      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "topic": "global-macro",
+      "capability": "全局宏调度编辑和 KSP 保存。设备编译支持已核的本地 LB 触发。",
       "coverage": "chapter-summary"
     },
     "action_H": {
@@ -177,8 +185,8 @@
     },
     "action_InitMacro": {
       "label": "初始化宏",
-      "topic": "compile",
-      "capability": "宏源码/引用/外部SDK及设备编译范围；无SDK或不支持布局明确拒绝。",
+      "topic": "init-macro",
+      "capability": "初始化宏有序绑定、KSP 保存及设备调度编译。",
       "coverage": "chapter-summary"
     },
     "action_KinSeal": {

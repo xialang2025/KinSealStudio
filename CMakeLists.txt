@@ -21,6 +21,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/main_window_simulation.cpp #20261114-6 add
     src/main_window_macros.cpp #20261114-7 add
     src/macro_manager_dialog.cpp src/macro_manager_dialog.h
+    src/macro_schedule.cpp src/macro_schedule.h #20261123-20 add
+    src/macro_schedule_dialogs.cpp src/macro_schedule_dialogs.h #20261123-20 add
     src/macro_compiler_cli.cpp src/macro_compiler_cli.h
     src/macro_workspace.cpp src/macro_workspace.h
     macro_library.qrc #20261114-7 add: Verbatim library examples are separate from executable SDK inputs.

@@ -81,6 +81,7 @@ private slots:
     void deleteProtocol(const QString &id); //20261122-7 add
     void configureMacroSdk(); //20261109-0 add
     void manageMacros(); //20261114-7 add
+    void manageMacroSchedule(bool initialization); //20261123-20 add
     void createBitButton(); //20261108-15 add
     void createWordButton(); //20261109-6 add
     void createLamp(); //20261109-8 add

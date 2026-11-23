@@ -1,5 +1,6 @@
 #include "device_compile_plan.h"
 #include "device_target.h" //20261122-3 add
+#include "macro_schedule.h" //20261123-22 add
 #include "native_project_codec.h"
 #include <QJsonArray>
 #include <algorithm>
@@ -245,11 +246,14 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
     QPointF absolute;
     bool first;
     QString diagnostic;
+    const bool hasSchedule = std::any_of(project.configurationNodes.cbegin(), project.configurationNodes.cend(),
+        [](const HmiConfigurationNode &node) { return isProjectMacroSchedule(node.kind); }); //20261123-22 add
 
     if (plan == nullptr) { return compilationIssue(project,empty,QStringLiteral("output"),QJsonValue(),QStringLiteral("编译计划输出为空。"),error,issue); }
     if (!project.validateSinglePageBackend(&diagnostic)) { return compilationIssue(project,empty,QStringLiteral("project.topology"),project.pageCount(),diagnostic,error,issue); }
-    if (deviceTargetIdentityByte(project.targetModel) < 0 || project.pageWidth != 800 || project.pageHeight != 480 || project.objects.isEmpty() || project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8) //20261122-3 change
-    { return compilationIssue(project,empty,QStringLiteral("project.target"),project.targetModel,QStringLiteral("只支持800×480、1..100对象、1..8语言的已核型号。"),error,issue); }
+    if (deviceTargetIdentityByte(project.targetModel) < 0 || project.pageWidth != 800 || project.pageHeight != 480 || //20261123-22 change
+        (project.objects.isEmpty() && !hasSchedule) || project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8)
+    { return compilationIssue(project,empty,QStringLiteral("project.target"),project.targetModel,QStringLiteral("仅支持800×480、最多100个对象、1..8种语言的已核型号。空白画面须配置项目宏调度。"),error,issue); }
     if (!project.nativeSourceSnapshot.isEmpty() && !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot,&diagnostic))
     { return compilationIssue(project,empty,QStringLiteral("nativeSourceSnapshot"),QStringLiteral("retained"),diagnostic,error,issue); }
     prepared.objects = project.objects;

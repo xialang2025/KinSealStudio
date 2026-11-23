@@ -16,6 +16,8 @@ struct HmiDownloadStep
     QByteArray bytes;
 };
 
+bool hasStaticMacroPayloads(const QVector<QByteArray> &payloads); //20261123-22 add
+
 /******************************************************************************
  * Function Name   : buildDeviceTransferPlan
  * Description     : Prepare the observed static or bit-button transfer order offline.

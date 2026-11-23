@@ -3,6 +3,20 @@
 using u32 = unsigned int;
 
 /******************************************************************************
+ * Function Name   : hasStaticMacroPayloads
+ * Description     : Recognize the twelve-file layout that includes macro images without control segments.
+ * Input Parameters: payloads
+ * Return Value    : True for the static macro layout before structural validation.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool hasStaticMacroPayloads(const QVector<QByteArray> &payloads) //20261123-22 add
+{
+    return payloads.size() == 12 && payloads.at(0).size() == 4998 &&
+        payloads.at(1).size() == 72 && payloads.at(1).at(2) == 0 &&
+        (payloads.at(0).at(0x528) != 0 || payloads.at(0).at(0x82c) != 0);
+}
+
+/******************************************************************************
  * Function Name   : buildDeviceTransferPlan
  * Description     : Frame the source snapshot and insert only observed control segments.
  * Input Parameters: payloads, steps, error
@@ -40,6 +54,14 @@ bool buildDeviceTransferPlan(const QVector<QByteArray> &payloads,
         if (error != nullptr)
         {
             *error = QStringLiteral("下载数据段数量不完整，未生成传输计划。");
+        }
+        return false;
+    }
+    if (hasStaticMacroPayloads(payloads)) //20261123-22 add: Never interpret macro files as unverified control transfer segments.
+    {
+        if (error != nullptr)
+        {
+            *error = QStringLiteral("静态调度宏包已编译，可离线导出。该段组合的直连下载尚未验证。");
         }
         return false;
     }

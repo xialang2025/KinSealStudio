@@ -20,6 +20,7 @@
 #include "native_static_text_control.h" //20261109-0 add
 #include "static_text_payload_compiler.h"
 #include "device_macro_compiler.h"
+#include "macro_schedule.h" //20261123-22 add
 #include "native_project_codec.h" //20261109-0 add
 
 #include <QByteArray>
@@ -641,6 +642,15 @@ bool buildSingleTextPayload(const HmiProject &project,
     {
         return false;
     }
+    if (std::any_of(project.configurationNodes.cbegin(), project.configurationNodes.cend(),
+        [](const HmiConfigurationNode &node) { return isProjectMacroSchedule(node.kind); })) //20261123-22 add
+    {
+        if (error != nullptr)
+        {
+            *error = QStringLiteral("单文本专用入口无法编译项目宏调度，请使用工程编译。");
+        }
+        return false;
+    }
     if ((!project.nativeSourceSnapshot.isEmpty() &&
          !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot, error)) ||
         !addressCompiler.prepare(project, &addressScan, error)) //20261110-5 add: Direct legacy compilation obeys the same configuration gates as the project entry.
@@ -809,6 +819,104 @@ static void storePayloadLength(QByteArray *bytes, int offset, u32 value) //20261
 }
 
 /******************************************************************************
+ * Function Name   : writeProjectMacroSchedules
+ * Description     : Encode ordered project invocations using compiled macro indices and recovered SysPara slots.
+ * Input Parameters: project, macros, initial, global, system, error
+ * Return Value    : True after encoding all rows, including empty schedules.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static bool writeProjectMacroSchedules(const HmiProject &project, const DeviceMacroPackage &macros,
+                                       const QList<MacroScheduleRow> &initial, const QList<MacroScheduleRow> &global,
+                                       QByteArray *system, QString *error) //20261123-22 add
+{
+    constexpr int globalHeader = 0x528;
+    constexpr int initialHeader = 0x82c;
+    constexpr int triggerTable = 0x882;
+    constexpr int globalStride = 12;
+    constexpr int triggerStride = 40;
+    QMap<QString, u8> compiledIndices;
+    QMap<QString, u8>::const_iterator macro;
+    QMap<QString, u8>::const_iterator target;
+    PlcAddressContext addressContext;
+    PlcCatalog catalog;
+    PlcAddress address;
+    QString id;
+    int rowIndex;
+    int position;
+    int trigger;
+
+    if (initial.isEmpty() && global.isEmpty())
+    {
+        return true;
+    }
+    for (macro = macros.macroIndices.cbegin(); macro != macros.macroIndices.cend(); ++macro)
+    {
+        id = project.macroIds.value(macro.key());
+        if (!id.isEmpty())
+        {
+            compiledIndices.insert(id, macro.value());
+        }
+    }
+    (*system)[initialHeader] = char(initial.size());
+    for (rowIndex = 0; rowIndex < initial.size(); ++rowIndex)
+    {
+        target = compiledIndices.constFind(initial.at(rowIndex).macroId);
+        if (target == compiledIndices.cend())
+        {
+            if (error != nullptr)
+            {
+                *error = QStringLiteral("第%1条初始化宏缺少已编译的宏定义。").arg(rowIndex + 1);
+            }
+            return false;
+        }
+        (*system)[initialHeader + 0x18 + rowIndex] = char(target.value());
+    }
+    // The native package clears this byte whenever its startup invocation list is populated.
+    if (!initial.isEmpty())
+    {
+        (*system)[initialHeader + 2] = 0;
+    }
+    (*system)[globalHeader] = char(global.size());
+    addressContext.role = PlcAddressRole::Bit;
+    for (rowIndex = 0; rowIndex < global.size(); ++rowIndex)
+    {
+        const MacroScheduleRow &row = global.at(rowIndex);
+
+        target = compiledIndices.constFind(row.macroId);
+        if (target == compiledIndices.cend())
+        {
+            if (error != nullptr)
+            {
+                *error = QStringLiteral("第%1条全局宏缺少已编译的宏定义。").arg(rowIndex + 1);
+            }
+            return false;
+        }
+        position = globalHeader + 4 + rowIndex * globalStride;
+        (*system)[position] = char(target.value());
+        // The source accepts 16 bits; the original device compiler writes the low eight bits.
+        (*system)[position + 1] = char(u8(row.frequency));
+        qToLittleEndian<u32>(u32(row.count), system->data() + position + 8);
+        if (row.address.isEmpty())
+        {
+            continue;
+        }
+        if (!parsePlcAddressText(row.address, QString(), addressContext, catalog, &address))
+        {
+            if (error != nullptr)
+            {
+                *error = QStringLiteral("第%1条全局宏的触发地址须为本地位地址 LB0–LB4096。").arg(rowIndex + 1);
+            }
+            return false;
+        }
+        trigger = triggerTable + rowIndex * triggerStride;
+        qToLittleEndian<u16>(1, system->data() + trigger);
+        (*system)[trigger + 6] = char(100);        // Native local-bit address code.
+        qToLittleEndian<u32>(address.value.toUInt(), system->data() + trigger + 12);
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : buildProjectPayload
  * Description     : Generate control records, RGB565 sprites and a recoverable Lite project snapshot.
  * Input Parameters: project, payloads, error
@@ -820,7 +928,6 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
 {
     DeviceCompilePlan compilePlan; //20261113-11 add: Freeze bounded semantics before the existing five-family compilers run.
     QVector<QByteArray> generated;
-    QVector<HmiDownloadStep> plan;
     QList<HmiObject> objects;
     QList<HmiObject> overlays; //20261109-0 add
     HmiObject object;
@@ -843,6 +950,9 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     DeviceAddressCompiler addressCompiler; //20261109-0 add
     QByteArray addressScan;
     DeviceMacroPackage macros;
+    const QList<MacroScheduleRow> initial = macroScheduleRows(project, true); //20261123-22 add
+    const QList<MacroScheduleRow> global = macroScheduleRows(project, false);
+    const bool hasSchedule = !initial.isEmpty() || !global.isEmpty();
     QList<int> stateIndices;
     QString sdk;
     QString language; //20261109-0 add
@@ -882,12 +992,12 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         return buildSingleTextPayload(project, payloads, error);
     }
     if (payloads == nullptr || deviceTargetIdentityByte(project.targetModel) < 0 || //20261122-3 change
-        project.pageWidth != 800 || project.pageHeight != 480 || project.objects.isEmpty() ||
+        project.pageWidth != 800 || project.pageHeight != 480 || (project.objects.isEmpty() && !hasSchedule) || //20261123-22 change
         project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8)
     {
         if (error != nullptr)
         {
-            *error = QStringLiteral("设备编译需要目标型号的800×480画面、1至8种语言，控件数量为1至100。");
+            *error = QStringLiteral("设备编译需要目标型号的800×480画面、1至8种语言和最多100个控件。空白画面须配置项目宏调度。");
         }
         return false;
     }
@@ -898,7 +1008,8 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     backgroundLanguage = project.languages.first(); //20261109-0 add: Runtime images are emitted in saved language order.
     if (!nativeProjectInitialLanguageIndex(project, &initialLanguageIndex, error)) { return false; } //20261109-0 add
     sdk = deviceMacroSdkDirectory(); //20261109-0 change: GUI and background workers share the persisted selection.
-    if (!compileDeviceMacros(project, sdk, &macros, error))
+    if (!compileDeviceMacros(project, sdk, &macros, error) || //20261123-22 change: Keep SysPara and macro image preparation atomic.
+        !writeProjectMacroSchedules(project, macros, initial, global, &generated[0], error))
     {
         return false;
     }
@@ -1133,7 +1244,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     }
     if (!macros.marcoRun.isEmpty())
     {
-        if (!hasSwitch) //20261109-0 change: Type28 text records are not macro call sites.
+        if (!hasSwitch && !hasSchedule) //20261123-22 change: Native projects with schedules can omit control segments entirely.
         {
             if (error != nullptr)
             {
@@ -1144,7 +1255,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         generated.append(macros.marcoVar);
         generated.append(macros.marcoRun);
     }
-    if (!validateDevicePayloadStructure(generated,error) || !buildDeviceTransferPlan(generated, &plan, error)) //20261113-11 change
+    if (!validateDevicePayloadStructure(generated,error)) //20261123-22 change: Offline validation selects either the observed wire plan or static macro files.
     {
         return false;
     }
@@ -1684,6 +1795,18 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
         rejected.insert(QStringLiteral("outcome"), QStringLiteral("compile_rejected"));
         rejected.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("工程编译失败。"));
         if (result != nullptr) { *result = rejected; }
+        return false;
+    }
+    if (hasStaticMacroPayloads(payloads)) //20261123-22 add: Require a captured device transfer before enabling the new static layout on USB.
+    {
+        const QString message = QStringLiteral("静态调度宏包已编译，可离线导出。该段组合的直连下载尚未验证。");
+
+        rejected = deviceTransferResultToJson(DeviceTransferResult());
+        rejected.insert(QStringLiteral("compiled"), true);
+        rejected.insert(QStringLiteral("outcome"), QStringLiteral("transfer_layout_unverified"));
+        rejected.insert(QStringLiteral("message"), message);
+        if (result != nullptr) { *result = rejected; }
+        if (error != nullptr) { *error = message; }
         return false;
     }
     targetOptions.targetModel = project.targetModel; //20261122-3 add: Bind the USB gate to the model that produced the bytes.

@@ -1,6 +1,7 @@
 #include "project_model.h"
 #include "device_target.h" //20261122-3 add
 #include "kvg_library.h" //20261123-3 add
+#include "macro_schedule.h" //20261123-20 add
 #include "native_test_project.h" //20261108-9 add
 #include "native_project_codec.h" //20261109-0 add
 #include "stage2_file_protection.h" //20261123-17 add
@@ -973,36 +974,46 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         *node = candidate;
         return true;
     }
-    if (candidate.kind == QStringLiteral("pageMacro")) //20261123-5 add
+    if (candidate.kind == QStringLiteral("pageMacro") || isProjectMacroSchedule(candidate.kind)) //20261123-20 change
     {
+        const bool pageScope = candidate.kind == QStringLiteral("pageMacro");
+        const bool initialization = candidate.kind == QStringLiteral("initMacro");
+        const int maximumRows = pageScope ? 25 : initialization ? 16 : 64;
         const QJsonValue scripts = candidate.properties.value(QStringLiteral("scripts"));
         const QJsonArray entries = scripts.toArray();
+        const QStringList rowKeys = initialization ? QStringList{QStringLiteral("id")} :
+            QStringList{QStringLiteral("id"), QStringLiteral("frequency"), QStringLiteral("count"), QStringLiteral("address")};
         QSet<QString> rowIds;
         QJsonValue entry;
         QJsonObject row;
         QString rowId;
 
         if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
-            candidate.ownerPageId.isEmpty() || !candidate.implemented || !candidate.active ||
-            !knownKeys(candidate.properties, {QStringLiteral("scripts")}, QStringLiteral("pageMacro"), error) ||
-            !scripts.isArray() || entries.isEmpty() || entries.size() > 25 ||
+            (pageScope && candidate.ownerPageId.isEmpty()) || (!pageScope && !candidate.ownerPageId.isEmpty()) ||
+            !candidate.implemented || !candidate.active ||
+            !knownKeys(candidate.properties, {QStringLiteral("scripts")}, candidate.kind, error) ||
+            !scripts.isArray() || entries.isEmpty() || entries.size() > maximumRows ||
             !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
         {
-            return modelError(error, QStringLiteral("画面宏配置必须含 1–25 个脚本。"));
+            return modelError(error, QStringLiteral("%1配置必须含 1–%2 个脚本并使用正确的归属。").arg(candidate.name).arg(maximumRows));
         }
         Q_FOREACH (entry, entries)
         {
             row = entry.toObject();
             rowId = row.value(QStringLiteral("id")).toString();
-            if (!entry.isObject() || !knownKeys(row, {QStringLiteral("id"), QStringLiteral("frequency"),
-                QStringLiteral("count"), QStringLiteral("address")}, QStringLiteral("pageMacro.scripts"), error) ||
-                rowId.trimmed().isEmpty() || rowId.size() > 256 || rowIds.contains(rowId) ||
-                !exactInteger(row.value(QStringLiteral("frequency"))) || row.value(QStringLiteral("frequency")).toInt() < 1 ||
-                row.value(QStringLiteral("frequency")).toInt() > 9999 || !exactInteger(row.value(QStringLiteral("count"))) ||
-                row.value(QStringLiteral("count")).toInt() < 0 || row.value(QStringLiteral("count")).toInt() > 65535 ||
-                !row.value(QStringLiteral("address")).isString() || row.value(QStringLiteral("address")).toString().size() > 512)
+            if (!entry.isObject() || !knownKeys(row, rowKeys, candidate.kind + QStringLiteral(".scripts"), error) ||
+                rowId.trimmed().isEmpty() || rowId.size() > 256 || rowIds.contains(rowId))
             {
-                return modelError(error, QStringLiteral("画面宏的脚本标识、频率、次数或触发地址无效。"));
+                return modelError(error, QStringLiteral("宏调度的脚本标识无效或重复。"));
+            }
+            if (!initialization && (
+                !exactInteger(row.value(QStringLiteral("frequency"))) || row.value(QStringLiteral("frequency")).toInt() < 1 ||
+                row.value(QStringLiteral("frequency")).toInt() > (pageScope ? 9999 : 65535) ||
+                !exactInteger(row.value(QStringLiteral("count"))) ||
+                row.value(QStringLiteral("count")).toInt() < 0 || row.value(QStringLiteral("count")).toInt() > 65535 ||
+                !row.value(QStringLiteral("address")).isString() || row.value(QStringLiteral("address")).toString().size() > 512))
+            {
+                return modelError(error, QStringLiteral("宏调度的执行频率、次数或触发地址无效。"));
             }
             rowIds.insert(rowId);
         }
@@ -1681,6 +1692,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     QMap<QString, QString> navigationPageKinds; //20261112-0 add
     QMap<QString, QString> slideOwners; //20261123-4 add
     QSet<QString> pagesWithScripts; //20261123-5 add
+    QSet<QString> projectScheduleKinds; //20261123-20 add
     QMap<QString, QSet<QString>> pendingScriptBindings;
     QJsonValue scriptRow;
     QString scriptAddress;
@@ -1857,15 +1869,26 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             }
             windowsWithPlacement.insert(node.ownerPageId);
         }
-        if (node.kind == QStringLiteral("pageMacro")) //20261123-5 add
+        if (node.kind == QStringLiteral("pageMacro") || isProjectMacroSchedule(node.kind)) //20261123-20 change
         {
-            if ((navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") &&
-                 navigationPageKinds.value(node.ownerPageId) != QStringLiteral("window")) || //20261123-12 change
-                pagesWithScripts.contains(node.ownerPageId))
+            if (node.kind == QStringLiteral("pageMacro"))
             {
-                return modelError(error, QStringLiteral("每个普通画面或窗口只能保存一组脚本。"));
+                if ((navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") &&
+                     navigationPageKinds.value(node.ownerPageId) != QStringLiteral("window")) ||
+                    pagesWithScripts.contains(node.ownerPageId))
+                {
+                    return modelError(error, QStringLiteral("每个普通画面或窗口只能保存一组脚本。"));
+                }
+                pagesWithScripts.insert(node.ownerPageId);
             }
-            pagesWithScripts.insert(node.ownerPageId);
+            else
+            {
+                if (projectScheduleKinds.contains(node.kind))
+                {
+                    return modelError(error, QStringLiteral("每个工程只能保存一组%1。").arg(node.name));
+                }
+                projectScheduleKinds.insert(node.kind);
+            }
             Q_FOREACH (scriptRow, node.properties.value(QStringLiteral("scripts")).toArray())
             {
                 pendingScriptBindings[node.id].insert(scriptRow.toObject().value(QStringLiteral("id")).toString());
@@ -1981,14 +2004,14 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             (reference.targetKind != QStringLiteral("macro") ||
              !pendingScriptBindings[reference.ownerId].remove(reference.field)))
         {
-            return modelError(error, QStringLiteral("画面脚本必须各自绑定一个有效宏。")); //20261123-5 add
+            return modelError(error, QStringLiteral("每条宏调度必须绑定一个有效宏。")); //20261123-20 change
         }
     }
     for (const QSet<QString> &unbound : std::as_const(pendingScriptBindings)) //20261123-5 add
     {
         if (!unbound.isEmpty())
         {
-            return modelError(error, QStringLiteral("画面脚本缺少宏引用。"));
+            return modelError(error, QStringLiteral("宏调度条目缺少宏引用。")); //20261123-20 change
         }
     }
     if (!inactiveExtensions(extensions, QStringLiteral("project.extensions"), error)) { return false; }
@@ -2004,10 +2027,16 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
  ******************************************************************************/
 bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 add
 {
+    QSet<QString> scheduleOwners; //20261123-22 add: Other configuration types and reference owners still lack device mappings.
+
     if (!validateModel(error)) { return false; }
     for (const HmiConfigurationNode &node : configurationNodes) //20261123-15 add: A saved editor setting requires an explicit backend mapping.
     {
-        if (node.kind == QStringLiteral("hmiStatus") || node.kind == QStringLiteral("plcControl") ||
+        if (isProjectMacroSchedule(node.kind))
+        {
+            scheduleOwners.insert(node.id);
+        }
+        else if (node.kind == QStringLiteral("hmiStatus") || node.kind == QStringLiteral("plcControl") ||
             node.kind == QStringLiteral("clockSettings") || node.kind == QStringLiteral("panelProtection"))
         {
             return modelError(error, QStringLiteral("项目已保存「%1」配置，其原厂源和设备编码尚未验收。").arg(node.name));
@@ -2016,7 +2045,10 @@ bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 ad
     if (!animations.isEmpty()) //20261112-0 add: Unreferenced GIF resources also need a recovered native resource format.
     { return modelError(error, QStringLiteral("工程包含尚未恢复原厂源/设备格式的GIF动画资源。")); }
     if (pageCount() != 1 || activePageKind != QStringLiteral("normal") || startupPageId != activePageId ||
-        pageWidth != 800 || pageHeight != 480 || !configurationNodes.isEmpty() || !references.isEmpty())
+        pageWidth != 800 || pageHeight != 480 || scheduleOwners.size() != configurationNodes.size() ||
+        std::any_of(references.cbegin(), references.cend(), [&](const HmiReference &reference) {
+            return reference.ownerKind != QStringLiteral("configuration") || !scheduleOwners.contains(reference.ownerId);
+        }))
     {
         return modelError(error, QStringLiteral("当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。"));
     }

@@ -6,6 +6,9 @@
 #include "stage3_resources.h" //20261123-2 add
 #include "text_payload_compiler.h"
 #include "independent_downloader.h"
+#include "macro_schedule.h" //20261123-20 add
+#include "macro_workspace.h"
+#include "native_project_codec.h" //20261123-23 add
 #include <QAction>
 #include <QAbstractButton>
 #include <QApplication>
@@ -101,6 +104,10 @@ private slots:
     void extendedSystemSettingsPersist();
     void fileProtectionGatesProjectReopen(); //20261123-17 add
     void nativeFileProtectionIsCheckedBeforeImport(); //20261123-17 add
+    void macroScheduleCommandsOpenTheirManagers_data(); //20261123-20 add
+    void macroScheduleCommandsOpenTheirManagers();
+    void projectMacroSchedulesSaveOrderedBindings(); //20261123-20 add
+    void nativeProjectMacroSchedulesRoundTrip(); //20261123-23 add
     void emptyWindowKeepsZeroWidthAcrossSave(); //20261123-13 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
@@ -2899,6 +2906,288 @@ void Stage2WorkflowTests::nativeFileProtectionIsCheckedBeforeImport() //20261123
     QVERIFY2(HmiProject::load(plainFile, &reopened, &error), qPrintable(error));
     QVERIFY(!reopened.nativeSourceSnapshot.isEmpty());
     QVERIFY(!reopened.nativeSourceSnapshot.contains(nativePassword));
+}
+
+/******************************************************************************
+ * Function Name   : macroScheduleCommandsOpenTheirManagers_data
+ * Description     : Define the two original tool-bar actions and their corresponding tree entries.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::macroScheduleCommandsOpenTheirManagers_data() //20261123-20 add
+{
+    QTest::addColumn<QString>("actionName");
+    QTest::addColumn<QString>("treeLabel");
+    QTest::addColumn<QString>("managerName");
+    QTest::newRow("global") << QStringLiteral("action_GlobalMacro") << QStringLiteral("全局宏")
+        << QStringLiteral("GlobalMacroManager");
+    QTest::newRow("initialization") << QStringLiteral("action_InitMacro") << QStringLiteral("初始化宏")
+        << QStringLiteral("InitMacroManager");
+}
+
+/******************************************************************************
+ * Function Name   : macroScheduleCommandsOpenTheirManagers
+ * Description     : Check the shared native tool-bar and project-tree entry points for each macro manager.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::macroScheduleCommandsOpenTheirManagers() //20261123-20 add
+{
+    QFETCH(QString, actionName);
+    QFETCH(QString, treeLabel);
+    QFETCH(QString, managerName);
+    MainWindow window;
+    QAction *action;
+    QTreeWidget *tree;
+    bool foundButton = false;
+    bool managerOpened;
+    int entry;
+
+    window.setProject(workflowProject(), QString());
+    window.show();
+    action = window.m_commands.value(actionName);
+    QVERIFY(action != nullptr);
+    QVERIFY(action->isEnabled());
+    QVERIFY(!action->property("nativeShellPending").toBool());
+    for (const QToolButton *button : window.findChildren<QToolButton *>())
+    {
+        foundButton |= button->defaultAction() == action;
+    }
+    QVERIFY(foundButton);
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    const auto nodes = tree->findItems(treeLabel, Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(nodes.size(), 1);
+    for (entry = 0; entry < 2; ++entry)
+    {
+        managerOpened = false;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+
+            if (dialog != nullptr)
+            {
+                managerOpened = dialog->objectName() == managerName;
+                dialog->reject();
+            }
+        });
+        if (entry == 0)
+        {
+            action->trigger();
+        }
+        else
+        {
+            Q_EMIT tree->itemDoubleClicked(nodes.first(), 0);
+        }
+        QVERIFY(managerOpened);
+    }
+    QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : projectMacroSchedulesSaveOrderedBindings
+ * Description     : Verify global and startup drafts, ordered targets and persistent reference protection.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::projectMacroSchedulesSaveOrderedBindings() //20261123-20 add
+{
+    HmiProject seed = workflowProject();
+    HmiProject loaded;
+    QTemporaryDir directory;
+    MainWindow window;
+    QList<MacroScheduleRow> rows;
+    QString error;
+    QString path;
+    QString macroId;
+    bool checked;
+
+    QVERIFY(directory.isValid());
+    QVERIFY2(MacroWorkspace::create(&seed, QStringLiteral("Alpha"), MacroWorkspace::defaultSource(), &error), qPrintable(error));
+    QVERIFY2(MacroWorkspace::create(&seed, QStringLiteral("Startup"), MacroWorkspace::defaultSource(), &error), qPrintable(error));
+    macroId = seed.macroIds.value(QStringLiteral("Alpha"));
+    path = directory.filePath(QStringLiteral("macro-schedules.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+
+    auto schedule = [&](bool initialization, bool keep) {
+        QAction *command = window.m_commands.value(initialization ? QStringLiteral("action_InitMacro") :
+            QStringLiteral("action_GlobalMacro"));
+
+        checked = false;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *manager = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QTableWidget *table;
+            QPushButton *add;
+            QPushButton *confirm;
+            bool defaults;
+
+            if (manager == nullptr)
+            {
+                return;
+            }
+            table = manager->findChild<QTableWidget *>(QStringLiteral("MacroScheduleTable"));
+            add = manager->findChild<QPushButton *>(QStringLiteral("MacroScheduleAdd"));
+            confirm = manager->findChild<QPushButton *>(QStringLiteral("MacroScheduleConfirm"));
+            if (table == nullptr || add == nullptr || confirm == nullptr)
+            {
+                manager->reject();
+                return;
+            }
+            auto addRow = [&](const QString &name) {
+                defaults = false;
+                QTimer::singleShot(0, manager, [&]() {
+                    QDialog *row = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+                    QComboBox *source;
+                    QPushButton *ok;
+                    QSpinBox *frequency;
+                    QSpinBox *count;
+                    QCheckBox *trigger;
+                    QLineEdit *address;
+
+                    if (row == nullptr)
+                    {
+                        return;
+                    }
+                    source = row->findChild<QComboBox *>(QStringLiteral("MacroScheduleSource"));
+                    ok = row->findChild<QPushButton *>(QStringLiteral("MacroScheduleConfirm"));
+                    if (source == nullptr || ok == nullptr || source->findText(name) == -1)
+                    {
+                        row->reject();
+                        return;
+                    }
+                    source->setCurrentText(name);
+                    if (initialization)
+                    {
+                        defaults = row->windowTitle() == QStringLiteral("新建初始化宏");
+                    }
+                    else
+                    {
+                        frequency = row->findChild<QSpinBox *>(QStringLiteral("MacroScheduleFrequency"));
+                        count = row->findChild<QSpinBox *>(QStringLiteral("MacroScheduleCount"));
+                        trigger = row->findChild<QCheckBox *>(QStringLiteral("MacroScheduleTrigger"));
+                        address = row->findChild<QLineEdit *>(QStringLiteral("MacroScheduleAddress"));
+                        if (frequency != nullptr && count != nullptr && trigger != nullptr && address != nullptr)
+                        {
+                            defaults = frequency->value() == 1 && frequency->maximum() == 65535 &&
+                                count->value() == 0 && !trigger->isChecked() && !address->isEnabled();
+                            frequency->setValue(65535);
+                            count->setValue(3);
+                            trigger->click();
+                            defaults = defaults && address->isEnabled();
+                        }
+                    }
+                    if (defaults)
+                    {
+                        ok->click();
+                    }
+                    else
+                    {
+                        row->reject();
+                    }
+                });
+                add->click();
+                return defaults;
+            };
+            checked = addRow(initialization ? QStringLiteral("Startup") : QStringLiteral("Alpha"));
+            if (initialization && checked)
+            {
+                checked = addRow(QStringLiteral("Alpha"));
+            }
+            checked = checked && table->rowCount() == (initialization ? 2 : 1);
+            if (!initialization && checked)
+            {
+                checked = table->item(0, 1) != nullptr && table->item(0, 1)->text() == QStringLiteral("6553500");
+            }
+            if (keep && checked)
+            {
+                if (initialization)
+                {
+                    confirm->click();
+                }
+                else
+                {
+                    manager->close(); //20261123-20 add: The native title-bar close retains confirmed rows.
+                }
+            }
+            else
+            {
+                QTest::keyClick(manager, Qt::Key_Escape);
+            }
+        });
+        command->trigger();
+        return checked;
+    };
+    QVERIFY(schedule(false, true));
+    QVERIFY(schedule(true, false));
+    QVERIFY(macroScheduleRows(window.currentEditorProject(), true).isEmpty());
+    QVERIFY(schedule(true, true));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &loaded, &error), qPrintable(error));
+    rows = macroScheduleRows(loaded, false);
+    QCOMPARE(rows.size(), 1);
+    QCOMPARE(rows.first().macroId, macroId);
+    QCOMPARE(rows.first().frequency, 65535);
+    QCOMPARE(rows.first().count, 3);
+    QCOMPARE(rows.first().address, QStringLiteral("LB0"));
+    rows = macroScheduleRows(loaded, true);
+    QCOMPARE(rows.size(), 2);
+    QCOMPARE(rows.first().macroId, seed.macroIds.value(QStringLiteral("Startup")));
+    QCOMPARE(rows.last().macroId, macroId);
+    QVERIFY(!MacroWorkspace::remove(&loaded, QStringLiteral("Alpha"), &error));
+    QVERIFY2(MacroWorkspace::rename(&loaded, QStringLiteral("Alpha"), QStringLiteral("Renamed"), &error), qPrintable(error));
+    QCOMPARE(loaded.macroIds.value(QStringLiteral("Renamed")), macroId);
+    QCOMPARE(macroScheduleRows(loaded, false).first().macroId, macroId);
+    QVERIFY2(loaded.validateSinglePageBackend(&error), qPrintable(error));
+}
+
+/******************************************************************************
+ * Function Name   : nativeProjectMacroSchedulesRoundTrip
+ * Description     : Reopen the original editor's two schedules, preserve unchanged bytes and verify edits.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeProjectMacroSchedulesRoundTrip() //20261123-23 add
+{
+    QFile file(QFINDTESTDATA("fixtures/native-source/macro-schedule/amt070-blank-schedules.sm"));
+    QByteArray original;
+    QByteArray exported;
+    HmiProject source;
+    HmiProject reopened;
+    QList<MacroScheduleRow> global;
+    QList<MacroScheduleRow> initialization;
+    QString error;
+
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    original = file.readAll();
+    QVERIFY2(importNativeProjectSource(original, &source, &error), qPrintable(error));
+    global = macroScheduleRows(source, false);
+    initialization = macroScheduleRows(source, true);
+    QCOMPARE(global.size(), 1);
+    QCOMPARE(initialization.size(), 1);
+    QCOMPARE(global.first().macroId, source.macroIds.value(QStringLiteral("SetLB1")));
+    QCOMPARE(initialization.first().macroId, global.first().macroId);
+    QVERIFY2(exportNativeProjectSource(source, &exported, &error), qPrintable(error));
+    QCOMPARE(exported, original);
+
+    global.first().frequency = 300;
+    global.first().count = 3;
+    global.first().address = QStringLiteral("LB17");
+    QVERIFY2(replaceMacroSchedule(&source, false, global, &error), qPrintable(error));
+    QVERIFY2(replaceMacroSchedule(&source, true, {}, &error), qPrintable(error));
+    QVERIFY2(exportNativeProjectSource(source, &exported, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(exported, &reopened, &error), qPrintable(error));
+    global = macroScheduleRows(reopened, false);
+    QCOMPARE(global.size(), 1);
+    QCOMPARE(global.first().macroId, reopened.macroIds.value(QStringLiteral("SetLB1")));
+    QCOMPARE(global.first().frequency, 300);
+    QCOMPARE(global.first().count, 3);
+    QCOMPARE(global.first().address, QStringLiteral("LB17"));
+    QVERIFY(macroScheduleRows(reopened, true).isEmpty());
 }
 
 /******************************************************************************

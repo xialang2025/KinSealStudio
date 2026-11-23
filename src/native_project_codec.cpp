@@ -1,6 +1,7 @@
 #include "native_project_codec.h"
 #include "device_target.h" //20261122-3 add
 #include "project_model.h"
+#include "macro_schedule.h" //20261123-23 add
 
 #include <QCryptographicHash>
 #include <QDataStream>
@@ -10,6 +11,7 @@
 #include <QMap>
 #include <QRegularExpression>
 #include <QSet>
+#include <QUuid>
 #include <QVariant>
 #include <cmath>
 #include <memory>
@@ -1210,6 +1212,106 @@ bool sourceLampMonitoring(const SourceDocument &document, const QString &prefix,
 }
 
 /******************************************************************************
+ * Function Name   : readSourceMacroSchedule
+ * Description     : Map the observed MACRO_MAIN and local bit condition records to editable rows.
+ * Input Parameters: document, initialization, rows, error
+ * Return Value    : True for a supported complete schedule.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool readSourceMacroSchedule(const SourceDocument &document, bool initialization,
+                             QList<MacroScheduleRow> *rows, QString *error) //20261123-23 add
+{
+    const QString path = initialization ? QStringLiteral("system.174") : QStringLiteral("system.178");
+    const int count = document.value(path + QStringLiteral(".count")).toInt();
+    const QRegularExpression localBit(QStringLiteral("^LB([0-9]+)$"));
+    MacroScheduleRow row;
+    QString prefix;
+    QString head;
+    QString address;
+    QString text;
+    QString numeric;
+    QRegularExpressionMatch match;
+    int number;
+    int index;
+    bool controlled;
+    bool validNumber;
+
+    if (count > (initialization ? 16 : 64)) {
+        return fail(error, QStringLiteral("原厂宏调度表数量超出已验证范围。"));
+    }
+    for (index = 0; index < count; ++index) {
+        row = MacroScheduleRow();
+        prefix = SourceDocument::indexed(path, index);
+        head = initialization ? prefix : prefix + QStringLiteral(".head");
+        row.macroId = document.value(head + QStringLiteral(".0")).toString(); // Resolve the native name after loading the source registry.
+        if (row.macroId.isEmpty() || document.value(head + QStringLiteral(".1")).toString() != QStringLiteral("MACRO_MAIN")) {
+            return fail(error, QStringLiteral("原厂宏调度须引用有效名称及 MACRO_MAIN 入口。"));
+        }
+        if (!initialization) {
+            row.frequency = document.value(head + QStringLiteral(".2")).toInt();
+            row.count = document.value(prefix + QStringLiteral(".tail.1")).toInt();
+            controlled = document.value(head + QStringLiteral(".3")).toBool();
+            address = prefix + QStringLiteral(".address");
+            text = document.value(address + QStringLiteral(".0")).toString();
+            match = localBit.match(text);
+            numeric = document.value(address + QStringLiteral(".4")).toString();
+            number = match.captured(1).toInt(&validNumber);
+            if (row.frequency < 1 || row.frequency > 65535 || row.count < 0 || row.count > 65535 ||
+                document.value(head + QStringLiteral(".4")).toInt() != 0 ||
+                document.value(prefix + QStringLiteral(".tail.0")).toInt() != int(controlled) ||
+                !validNumber || number > 4096 || (!controlled && number != 0) ||
+                numeric != match.captured(1) || document.value(address + QStringLiteral(".5")).toString() != QStringLiteral("LB") ||
+                document.value(address + QStringLiteral(".1")).toInt() != 0 || document.value(address + QStringLiteral(".2")).toInt() != 0 ||
+                document.value(address + QStringLiteral(".3")).toInt() != (controlled ? 100 : 0) ||
+                document.value(address + QStringLiteral(".6")).toInt() != 0 || document.value(address + QStringLiteral(".7")).toInt() != 1 ||
+                !document.value(address + QStringLiteral(".8")).toString().isEmpty()) {
+                return fail(error, QStringLiteral("原厂全局宏 %1 的触发条件含尚未映射的地址或标记。").arg(row.macroId));
+            }
+            if (controlled) {
+                row.address = QStringLiteral("LB") + QString::number(number);
+            }
+        }
+        rows->append(row);
+    }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : importSourceMacroSchedules
+ * Description     : Bind source names to stable identities after the macro registry has been loaded.
+ * Input Parameters: document, project, error
+ * Return Value    : True after both schedules have been added to the local import draft.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool importSourceMacroSchedules(const SourceDocument &document, HmiProject *project, QString *error) //20261123-23 add
+{
+    QList<MacroScheduleRow> rows;
+    QString id;
+
+    for (const bool initialization : {false, true}) {
+        rows.clear();
+        if (!readSourceMacroSchedule(document, initialization, &rows, error)) {
+            return false;
+        }
+        for (MacroScheduleRow &row : rows) {
+            if (!project->macros.contains(row.macroId)) {
+                return fail(error, QStringLiteral("原厂宏调度引用的源码不存在：%1。").arg(row.macroId));
+            }
+            id = project->macroIds.value(row.macroId);
+            if (id.isEmpty()) {
+                id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+                project->macroIds.insert(row.macroId, id);
+            }
+            row.macroId = id;
+        }
+        if (!rows.isEmpty() && !replaceMacroSchedule(project, initialization, rows, error)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : sourceProject
  * Description     : Convert verified native controls and retain the complete original source snapshot.
  * Input Parameters: document, project, error
@@ -1579,7 +1681,7 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         result.nativeSourceWarnings.append(QStringLiteral("另有 %1 条休眠字段诊断未逐条展示；全部原始值仍完整保留在 nativeSourceSnapshot，可通过 typed 字段检查定位。此汇总不表示未知活动语义已支持。")
                                               .arg(summarizedWarnings));
     }
-    if (!result.validateSinglePageBackend(error)) { //20261110-5 add: Syntax acceptance cannot bypass the active-model capability gate.
+    if (!importSourceMacroSchedules(document, &result, error) || !result.validateSinglePageBackend(error)) { //20261123-23 change
         return false;
     }
     *project = result;
@@ -3027,6 +3129,95 @@ bool patchSourceMacros(const SourceDocument &document, const HmiProject &origina
     return true;
 }
 
+/******************************************************************************
+ * Function Name   : sameSourceMacroSchedule
+ * Description     : Compare the names, order and settings carried by SM; KSP identities stay local.
+ * Input Parameters: left, right, initialization
+ * Return Value    : True when both schedules represent the same source records.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool sameSourceMacroSchedule(const HmiProject &left, const HmiProject &right, bool initialization) //20261123-23 add
+{
+    const QList<MacroScheduleRow> first = macroScheduleRows(left, initialization);
+    const QList<MacroScheduleRow> second = macroScheduleRows(right, initialization);
+
+    return std::equal(first.cbegin(), first.cend(), second.cbegin(), second.cend(),
+                      [&](const MacroScheduleRow &a, const MacroScheduleRow &b) {
+        return left.macroIds.key(a.macroId) == right.macroIds.key(b.macroId) &&
+            a.frequency == b.frequency && a.count == b.count && a.address == b.address;
+    });
+}
+
+/******************************************************************************
+ * Function Name   : patchSourceMacroSchedules
+ * Description     : Replace the two typed system lists while preserving the surrounding source bytes.
+ * Input Parameters: document, original, current, updates, error
+ * Return Value    : True if all edited rows have a verified source encoding.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool patchSourceMacroSchedules(const SourceDocument &document, const HmiProject &original,
+                               const HmiProject &current, SourceUpdates *updates, QString *error) //20261123-23 add
+{
+    const QRegularExpression localBit(QStringLiteral("^LB([0-9]+)$"));
+    QList<MacroScheduleRow> rows;
+    QByteArray block;
+    QByteArray encodedAddress;
+    NativeSourceAddress address;
+    QRegularExpressionMatch match;
+    QString path;
+    QString next;
+    int number;
+    bool validNumber;
+    bool controlled;
+    qsizetype start;
+    qsizetype end;
+
+    for (const bool initialization : {false, true}) {
+        if (sameSourceMacroSchedule(original, current, initialization)) {
+            continue;
+        }
+        rows = macroScheduleRows(current, initialization);
+        block.clear();
+        appendWord(&block, u32(rows.size()));
+        for (const MacroScheduleRow &row : std::as_const(rows)) {
+            if (!appendString(&block, current.macroIds.key(row.macroId))) {
+                return fail(error, QStringLiteral("原厂宏调度的宏名称超过 QString 长度。"));
+            }
+            appendString(&block, QStringLiteral("MACRO_MAIN"));
+            if (initialization) {
+                continue;
+            }
+            controlled = !row.address.isEmpty();
+            match = localBit.match(controlled ? row.address : QStringLiteral("LB0"));
+            number = match.captured(1).toInt(&validNumber);
+            if (!validNumber || number > 4096 || match.captured(1) != QString::number(number)) {
+                return fail(error, QStringLiteral("原厂全局宏源目前仅支持 LB0 至 LB4096 触发。"));
+            }
+            appendWord(&block, u32(row.frequency));
+            block.append(char(controlled));
+            appendWord(&block, 0);
+            address.text = QStringLiteral("LB") + QString::number(number);
+            address.numericText = QString::number(number);
+            address.registerText = QStringLiteral("LB");
+            address.auxiliary = QStringLiteral("");
+            address.field2 = controlled ? 100 : 0;
+            address.rawLength = 1;
+            if (!writeNativeSourceAddress(address, &encodedAddress, error)) {
+                return false;
+            }
+            block.append(encodedAddress);
+            appendWord(&block, u32(controlled));
+            appendWord(&block, u32(row.count));
+        }
+        path = initialization ? QStringLiteral("system.174.count") : QStringLiteral("system.178.count");
+        next = initialization ? QStringLiteral("system.178.count") : QStringLiteral("system.16c.count");
+        start = document.values.value(path).start;
+        end = document.values.value(next).start;
+        updates->replacements.insert(start, qMakePair(end, block));
+    }
+    return true;
+}
+
 }
 
 /******************************************************************************
@@ -3186,6 +3377,8 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     QByteArray languages;
     QByteArray normalizedSystem;
     QByteArray normalizedConfig;
+    QByteArray emptySchedules; //20261123-23 add
+    QList<MacroScheduleRow> schedule;
     SourceUpdates updates(document);
     QStringList languageNames;
     QStringList presets;
@@ -3236,6 +3429,15 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     registryStart = document.values.value(QStringLiteral("system.164.count")).start;
     registryEnd = document.values.value(QStringLiteral("system.flags.0")).start;
     updates.replacements.insert(registryStart, qMakePair(registryEnd, languages));
+    // The independent device compiler rebuilds both schedules from the model. Keep every other system byte in the hash.
+    if (!readSourceMacroSchedule(document, true, &schedule, error) ||
+        !readSourceMacroSchedule(document, false, &schedule, error)) { //20261123-23 add
+        return false;
+    }
+    emptySchedules = QByteArray(8, char(0));
+    registryStart = document.values.value(QStringLiteral("system.174.count")).start;
+    registryEnd = document.values.value(QStringLiteral("system.16c.count")).start;
+    updates.replacements.insert(registryStart, qMakePair(registryEnd, emptySchedules));
     presets = QStringList{QStringLiteral("中文"), QStringLiteral("English"), QStringLiteral("德语"),
                           QStringLiteral("韩语"), QStringLiteral("日语"), QStringLiteral("法语")};
     nativePresets = QStringList{QStringLiteral("中文"), QStringLiteral("English"), QStringLiteral("µÂÓï"),
@@ -3654,12 +3856,13 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     before.remove(QStringLiteral("startupLanguage")); after.remove(QStringLiteral("startupLanguage"));
     before.remove(QStringLiteral("projectId")); after.remove(QStringLiteral("projectId"));
     before.remove(QStringLiteral("macroIds")); after.remove(QStringLiteral("macroIds"));
-    before.remove(QStringLiteral("configurationNodes")); after.remove(QStringLiteral("configurationNodes")); // The capability gate above already requires these collections to be empty.
+    before.remove(QStringLiteral("configurationNodes")); after.remove(QStringLiteral("configurationNodes")); //20261123-23 change: Only project macro schedules pass the topology gate.
     before.remove(QStringLiteral("references")); after.remove(QStringLiteral("references"));
     if (project.pictures != original.pictures) {
         return fail(error, QStringLiteral("原生源保存尚未验证图库条目的改写，已取消保存。"));
     }
-    if (!patchSourceMacros(document, original, project, &updates, error)) {
+    if (!patchSourceMacros(document, original, project, &updates, error) ||
+        !patchSourceMacroSchedules(document, original, project, &updates, error)) { //20261123-23 change
         return false;
     }
     before.remove(QStringLiteral("macros")); after.remove(QStringLiteral("macros"));
@@ -3910,6 +4113,10 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     }
     if (verifiedProject.objects.size() != project.objects.size()) {
         return fail(error, QStringLiteral("原生源输出控件数与活动工程不一致，已取消保存。"));
+    }
+    if (!sameSourceMacroSchedule(project, verifiedProject, false) ||
+        !sameSourceMacroSchedule(project, verifiedProject, true)) { //20261123-23 add
+        return fail(error, QStringLiteral("原厂宏调度写回后与当前工程不一致，已取消保存。"));
     }
     *data = result;
     clearError(error);
