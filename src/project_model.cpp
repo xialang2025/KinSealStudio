@@ -770,6 +770,7 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonValue savedStyle; //20261123-1 add
     QJsonValue savedBitmap; //20261123-2 add
     QJsonValue savedSystemPicture; //20261123-3 add
+    int minimumSize; //20261123-13 add
     QString key;
     QSet<QString> ids;
 
@@ -794,8 +795,9 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     candidate.id = json.value(QStringLiteral("id")).toString(); candidate.kind = json.value(QStringLiteral("kind")).toString();
     candidate.name = json.value(QStringLiteral("name")).toString(); candidate.width = json.value(QStringLiteral("width")).toInt();
     candidate.height = json.value(QStringLiteral("height")).toInt(); candidate.extensions = json.value(QStringLiteral("extensions")).toObject();
+    minimumSize = candidate.kind == QStringLiteral("window") ? 0 : 1; //20261123-13 add: The native editor saves empty windows with a zero dimension.
     if (!QStringList{QStringLiteral("normal"), QStringLiteral("window"), QStringLiteral("keyboard"), QStringLiteral("logo")}.contains(candidate.kind) ||
-        candidate.width < 1 || candidate.height < 1 || candidate.width > 800 || candidate.height > 480 ||
+        candidate.width < minimumSize || candidate.height < minimumSize || candidate.width > 800 || candidate.height > 480 ||
         !inactiveExtensions(candidate.extensions, QStringLiteral("page.extensions"), error))
     {
         return modelError(error, QStringLiteral("页面类型或尺寸超出当前AMT编辑范围。"));
@@ -1553,23 +1555,24 @@ int HmiProject::pageCount() const //20261110-5 add
 }
 
 /******************************************************************************
- * Function Name   : numberedPagesOfKind
- * Description     : Keep assigned numbers and derive missing numbers for one page kind from project order.
- * Input Parameters: pages, kind.
- * Return Value    : Stable page IDs and their display numbers.
+ * Function Name   : HmiProject::screenAndWindowNumbers
+ * Description     : Resolve normal screen and popup numbers in the original editor's common number space.
+ * Input Parameters: None.
+ * Return Value    : Display numbers by stable page ID.
  * Date            : 2026.11.23
  ******************************************************************************/
-static QMap<QString, int> numberedPagesOfKind(const QList<HmiPage> &pages, const QString &kind) //20261123-12 change
+QMap<QString, int> HmiProject::screenAndWindowNumbers() const //20261123-13 change
 {
     QMap<QString, int> numbers;
     QSet<int> assigned;
+    const QList<HmiPage> pages = allPages();
     HmiPage page;
     int ordinal = 0;
     int fallback;
 
     Q_FOREACH (page, pages)
     {
-        if (page.kind == kind && page.number.has_value()) //20261123-12 change
+        if ((page.kind == QStringLiteral("normal") || page.kind == QStringLiteral("window")) && page.number.has_value())
         {
             numbers.insert(page.id, *page.number);
             assigned.insert(*page.number);
@@ -1577,9 +1580,9 @@ static QMap<QString, int> numberedPagesOfKind(const QList<HmiPage> &pages, const
     }
     Q_FOREACH (page, pages)
     {
-        if (page.kind == kind && !page.number.has_value()) //20261123-12 change
+        if ((page.kind == QStringLiteral("normal") || page.kind == QStringLiteral("window")) && !page.number.has_value())
         {
-            // Assigned numbers survive deletion and reordering. Only legacy projections may shift.
+            // Historical unnumbered pages keep their ordinal when neither role has claimed it.
             fallback = ordinal;
             while (assigned.contains(fallback))
             {
@@ -1591,30 +1594,6 @@ static QMap<QString, int> numberedPagesOfKind(const QList<HmiPage> &pages, const
         ++ordinal;
     }
     return numbers;
-}
-
-/******************************************************************************
- * Function Name   : HmiProject::ordinaryPageNumbers
- * Description     : Derive labels for ordinary screen targets.
- * Input Parameters: None.
- * Return Value    : Ordinary screen numbers by stable page ID.
- * Date            : 2026.11.23
- ******************************************************************************/
-QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261123-12 change
-{
-    return numberedPagesOfKind(allPages(), QStringLiteral("normal"));
-}
-
-/******************************************************************************
- * Function Name   : HmiProject::windowPageNumbers
- * Description     : Derive labels for popup window targets within their own numbering scope.
- * Input Parameters: None.
- * Return Value    : Popup window numbers by stable page ID.
- * Date            : 2026.11.23
- ******************************************************************************/
-QMap<QString, int> HmiProject::windowPageNumbers() const //20261123-12 add
-{
-    return numberedPagesOfKind(allPages(), QStringLiteral("window"));
 }
 
 /******************************************************************************
@@ -2008,15 +1987,10 @@ bool HmiProject::addPage(const HmiPage &page, QString *error) //20261110-5 add
 {
     HmiProject candidate;
 
-    if (page.kind == QStringLiteral("normal") && page.number.has_value() &&
-        ordinaryPageNumbers().values().contains(*page.number)) //20261122-10 add
+    if ((page.kind == QStringLiteral("normal") || page.kind == QStringLiteral("window")) &&
+        page.number.has_value() && screenAndWindowNumbers().values().contains(*page.number)) //20261123-13 change
     {
-        return modelError(error, QStringLiteral("普通画面编号 %1 已被使用。").arg(*page.number));
-    }
-    if (page.kind == QStringLiteral("window") && page.number.has_value() && //20261123-12 add
-        windowPageNumbers().values().contains(*page.number))
-    {
-        return modelError(error, QStringLiteral("窗口编号 %1 已被使用。").arg(*page.number));
+        return modelError(error, QStringLiteral("画面和窗口编号不能重复"));
     }
     candidate = *this; candidate.inactivePages.append(page); candidate.pageOrder.append(page.id);
     if (!candidate.validateModel(error)) { return false; }

@@ -752,7 +752,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                 HmiProject draft = currentEditorProject();
                 QString error;
 
-                if (copyStage2NormalPage(this, draft, id) && !commitProjectDraft(draft, &error))
+                if (copyStage2Page(this, draft, id, false) && !commitProjectDraft(draft, &error)) //20261123-13 change
                 {
                     QMessageBox::warning(this, QStringLiteral("画面复制未提交"), error);
                 }
@@ -777,7 +777,35 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         {
             id = item->data(0, Qt::UserRole + 1).toString();
             menu.addAction(QStringLiteral("打开(&O)"), this, [this, id]() { activatePageId(id); });
+            menu.addAction(QStringLiteral("删除(&D)"), this, [this, id]() { //20261123-13 add
+                HmiProject draft = currentEditorProject();
+                QString error;
+                QMessageBox confirmation(QMessageBox::Question, QStringLiteral("KinSealStudio"),
+                    QStringLiteral("是否删除所选窗口?"), QMessageBox::Ok | QMessageBox::No, this);
+
+                confirmation.button(QMessageBox::Ok)->setText(QStringLiteral("确定"));
+                confirmation.button(QMessageBox::No)->setText(QStringLiteral("否"));
+                confirmation.setEscapeButton(QMessageBox::No);
+                if (confirmation.exec() != QMessageBox::Ok)
+                {
+                    return;
+                }
+                // Validate on a draft so that a window used by another page keeps its bindings.
+                if (!draft.removePage(id, &error) || !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("窗口删除未提交"), error);
+                }
+            });
             menu.addAction(QStringLiteral("属性(&P)"), this, [this, id]() { configureWindowPage(id); });
+            menu.addAction(QStringLiteral("复制(&C)"), this, [this, id]() { //20261123-13 add
+                HmiProject draft = currentEditorProject();
+                QString error;
+
+                if (copyStage2Page(this, draft, id, true) && !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("窗口复制未提交"), error);
+                }
+            });
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
         }

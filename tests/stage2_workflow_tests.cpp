@@ -92,6 +92,9 @@ private slots:
     void ordinaryPageHelpAndSlideVisibilityFollowDraft(); //20261123-10 add
     void ordinaryPageDialogUsesNativeClientLayout(); //20261123-11 add
     void windowTreeCreatesAndReopensPlacement(); //20261123-12 add
+    void screenAndWindowRejectTheSameNumber(); //20261123-13 add
+    void windowMenuCopiesAndConfirmsDeletion(); //20261123-13 add
+    void emptyWindowKeepsZeroWidthAcrossSave(); //20261123-13 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1836,6 +1839,7 @@ void Stage2WorkflowTests::ordinaryPageMenuOpensAndReorders() //20261123-7 add
     popup.id = QStringLiteral("interleaved-window");
     popup.name = QStringLiteral("弹出窗口");
     popup.kind = QStringLiteral("window");
+    popup.number = 11; //20261123-13 add: Keep the interleaved window independent from ordinary screen 002.
     third.id = QStringLiteral("ordinary-two");
     third.name = QStringLiteral("第三个普通画面");
     third.number = 2;
@@ -2213,6 +2217,296 @@ void Stage2WorkflowTests::ordinaryPageDialogUsesNativeClientLayout() //20261123-
 }
 
 /******************************************************************************
+ * Function Name   : screenAndWindowRejectTheSameNumber
+ * Description     : Submit duplicate numbers from each tree entry and keep the project unchanged.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::screenAndWindowRejectTheSameNumber() //20261123-13 add
+{
+    HmiProject original = workflowProject();
+    HmiPage popup;
+    MainWindow window;
+    QTreeWidget *tree;
+    QString error;
+    const QStringList groups = {QStringLiteral("窗口"), QStringLiteral("画面")};
+    int index;
+
+    popup.id = QStringLiteral("window-number-test");
+    popup.name = QStringLiteral("测试窗口");
+    popup.kind = QStringLiteral("window");
+    popup.number = 17;
+    QVERIFY2(original.addPage(popup, &error), qPrintable(error));
+    window.setProject(original, QString());
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+
+    for (index = 0; index < groups.size(); ++index)
+    {
+        const QList<QTreeWidgetItem *> entries = tree->findItems(groups.at(index), Qt::MatchExactly | Qt::MatchRecursive);
+        bool rejected = false;
+        QString message;
+
+        QCOMPARE(entries.size(), 1);
+        QVERIFY(triggerSettingsTreeAction(tree, entries.first(), QStringLiteral("新建") + groups.at(index), [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QSpinBox *number;
+            QDialogButtonBox *buttons;
+
+            if (editor == nullptr)
+            {
+                return;
+            }
+            number = editor->findChild<QSpinBox *>(QStringLiteral("newPageNumberSpin"));
+            buttons = editor->findChild<QDialogButtonBox *>();
+            if (number != nullptr && buttons != nullptr)
+            {
+                number->setValue(index == 0 ? 0 : 17);
+                QTimer::singleShot(0, editor, [&]() {
+                    QMessageBox *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+
+                    if (warning != nullptr)
+                    {
+                        message = warning->text();
+                        warning->accept();
+                    }
+                });
+                buttons->button(QDialogButtonBox::Ok)->click();
+                rejected = editor->isVisible();
+            }
+            editor->reject();
+        }));
+        QVERIFY(rejected);
+        QCOMPARE(message, QStringLiteral("画面和窗口编号不能重复"));
+        QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
+        QVERIFY(!window.m_dirty);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : windowMenuCopiesAndConfirmsDeletion
+ * Description     : Exercise the original window menu, copy placement and confirm or cancel deletion.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::windowMenuCopiesAndConfirmsDeletion() //20261123-13 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    HmiPage popup;
+    HmiObject control;
+    HmiConfigurationNode placement;
+    MainWindow window;
+    QTreeWidget *tree;
+    QString error;
+    QString path;
+    QString copyId;
+    QStringList actions;
+    bool copyDialogSeen = false;
+    bool confirmationSeen;
+    bool confirmed;
+    const auto expectedMenu = QStringList{QStringLiteral("打开(&O)"), QStringLiteral("删除(&D)"),
+        QStringLiteral("属性(&P)"), QStringLiteral("复制(&C)")};
+
+    QVERIFY(directory.isValid());
+    popup.id = QStringLiteral("popup-original");
+    popup.name = QStringLiteral("源窗口");
+    popup.kind = QStringLiteral("window");
+    popup.number = 17; //20261123-13 change: Exercise the lowest available number when the project contains a gap.
+    popup.width = 320;
+    popup.height = 200;
+    control = project.objects.first();
+    control.id = QStringLiteral("popup-control");
+    control.geometry = QRect(10, 10, 120, 40);
+    popup.objects = {control};
+    QVERIFY2(project.addPage(popup, &error), qPrintable(error));
+    placement.id = QStringLiteral("popup-placement");
+    placement.name = QStringLiteral("窗口显示位置");
+    placement.ownerPageId = popup.id;
+    placement.kind = QStringLiteral("windowPlacement");
+    placement.implemented = true;
+    placement.active = true;
+    placement.properties = {{QStringLiteral("centered"), false}, {QStringLiteral("closeButton"), false},
+        {QStringLiteral("x"), 55}, {QStringLiteral("y"), 66}};
+    project.configurationNodes.append(placement);
+    path = directory.filePath(QStringLiteral("window-menu.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    auto findEntry = [tree](const QString &label) {
+        const QList<QTreeWidgetItem *> matches = tree->findItems(label, Qt::MatchExactly | Qt::MatchRecursive);
+
+        return matches.size() == 1 ? matches.first() : nullptr;
+    };
+    QVERIFY(findEntry(QStringLiteral("017:源窗口")) != nullptr);
+    QVERIFY(triggerSettingsTreeAction(tree, findEntry(QStringLiteral("017:源窗口")),
+        QStringLiteral("打开(&O)"), {}, &actions));
+    QCOMPARE(actions, expectedMenu);
+    QCOMPARE(window.currentEditorProject().activePageId, popup.id);
+    QVERIFY(!window.m_dirty);
+
+    QVERIFY(triggerSettingsTreeAction(tree, findEntry(QStringLiteral("017:源窗口")), QStringLiteral("复制(&C)"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name;
+        QPushButton *ok;
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        name = editor->findChild<QLineEdit *>(QStringLiteral("lineEdit"));
+        ok = editor->findChild<QPushButton *>(QStringLiteral("pushButton_ok"));
+        if (editor->windowTitle() == QStringLiteral("复制到当前窗口") && editor->size() == QSize(268, 69) &&
+            name != nullptr && name->text().isEmpty() && ok != nullptr)
+        {
+            copyDialogSeen = true;
+            name->setText(QStringLiteral("窗口副本"));
+            ok->click();
+        }
+        if (editor->isVisible())
+        {
+            editor->reject();
+        }
+    }));
+    QVERIFY(copyDialogSeen);
+    const HmiProject copied = window.currentEditorProject();
+    copyId = copied.activePageId;
+    QVERIFY(copyId != popup.id);
+    QCOMPARE(copied.startupPageId, project.startupPageId);
+    QCOMPARE(copied.activePageNumber.value_or(-1), 1);
+    QVERIFY(findEntry(QStringLiteral("001:窗口副本")) != nullptr);
+    QCOMPARE(copied.objects.size(), 1);
+    QVERIFY(copied.objects.first().id != control.id);
+    QCOMPARE(copied.configurationNodes.size(), 2);
+    QCOMPARE(copied.configurationNodes.last().ownerPageId, copyId);
+    QCOMPARE(copied.configurationNodes.last().properties, placement.properties);
+
+    for (confirmed = false; ; confirmed = true)
+    {
+        confirmationSeen = false;
+        QVERIFY(triggerSettingsTreeAction(tree, findEntry(QStringLiteral("001:窗口副本")), QStringLiteral("删除(&D)"), [&]() {
+            QMessageBox *dialog = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+            QAbstractButton *ok;
+            QAbstractButton *no;
+
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            ok = dialog->button(QMessageBox::Ok);
+            no = dialog->button(QMessageBox::No);
+            confirmationSeen = dialog->text() == QStringLiteral("是否删除所选窗口?") &&
+                ok != nullptr && no != nullptr && ok->text() == QStringLiteral("确定") && no->text() == QStringLiteral("否");
+            if (confirmationSeen)
+            {
+                (confirmed ? ok : no)->click();
+            }
+            else
+            {
+                dialog->reject();
+            }
+        }));
+        QVERIFY(confirmationSeen);
+        if (confirmed)
+        {
+            break;
+        }
+        QCOMPARE(window.currentEditorProject().toJson(), copied.toJson());
+    }
+
+    QVERIFY(findEntry(QStringLiteral("001:窗口副本")) == nullptr);
+    QCOMPARE(window.currentEditorProject().activePageId, project.startupPageId);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.toJson(), project.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : emptyWindowKeepsZeroWidthAcrossSave
+ * Description     : Preserve an empty zero-width window through save and fresh editor properties.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::emptyWindowKeepsZeroWidthAcrossSave() //20261123-13 add
+{
+    const HmiProject seed = workflowProject();
+    QTemporaryDir directory;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QTreeWidgetItem *group;
+    QString path;
+    QString error;
+    bool widthRestored = false;
+
+    QVERIFY(directory.isValid());
+    path = directory.filePath(QStringLiteral("zero-width.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    const auto groups = tree->findItems(QStringLiteral("窗口"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    group = groups.first();
+    QVERIFY(triggerSettingsTreeAction(tree, group, QStringLiteral("新建窗口"), []() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QSpinBox *width;
+        QDialogButtonBox *buttons;
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        width = editor->findChild<QSpinBox *>(QStringLiteral("windowWidth"));
+        buttons = editor->findChild<QDialogButtonBox *>();
+        if (width != nullptr && buttons != nullptr)
+        {
+            width->setValue(0);
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (editor->isVisible())
+        {
+            editor->reject();
+        }
+    }));
+    QCOMPARE(window.currentEditorProject().activePageKind, QStringLiteral("window"));
+    QCOMPARE(window.currentEditorProject().pageWidth, 0);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    reopened.show();
+    tree = reopened.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    const auto entries = tree->findItems(QStringLiteral("001:窗口2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(entries.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, entries.first(), QStringLiteral("属性(&P)"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QSpinBox *width;
+        QSpinBox *height;
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        width = editor->findChild<QSpinBox *>(QStringLiteral("windowWidth"));
+        height = editor->findChild<QSpinBox *>(QStringLiteral("windowHeight"));
+        widthRestored = width != nullptr && height != nullptr && width->value() == 0 && height->value() == 180;
+        editor->reject();
+    }));
+    QVERIFY(widthRestored);
+    QVERIFY(!reopened.currentEditorProject().validateSinglePageBackend(&error));
+}
+
+/******************************************************************************
  * Function Name   : windowTreeCreatesAndReopensPlacement
  * Description     : Open the native window entries and verify dimensions, position and close-button persistence.
  * Input Parameters: None.
@@ -2473,6 +2767,14 @@ void Stage2WorkflowTests::ordinaryPageNumbersAreEditableAndPersisted() //2026112
         }
         numberIsEditable = !number->isReadOnly() && number->minimum() == 0 && number->maximum() == 999;
         number->setValue(0);
+        QTimer::singleShot(0, dialog, []() { //20261123-13 add: Acknowledge the original editor's duplicate-number message.
+            QMessageBox *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+
+            if (warning != nullptr)
+            {
+                warning->accept();
+            }
+        });
         buttons->button(QDialogButtonBox::Ok)->click();
         duplicateRejected = dialog->isVisible();
         if (duplicateRejected)

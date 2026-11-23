@@ -626,7 +626,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
                                    QStringLiteral("Up"), QStringLiteral("Down")};
     const bool popup = kind == QStringLiteral("window"); //20261123-12 add
     const QString pageLabel = popup ? QStringLiteral("窗口") : QStringLiteral("画面");
-    const QMap<QString, int> pageNumbers = popup ? project.windowPageNumbers() : project.ordinaryPageNumbers();
+    const QMap<QString, int> pageNumbers = project.screenAndWindowNumbers(); //20261123-13 change
     const QList<HmiPage> targetPages = project.allPages();
     int directionIndex;
     int column;
@@ -654,7 +654,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
 
     if (editing) //20261123-6 add
     {
-        if (!pageNumbers.contains(pageId)) //20261123-12 change
+        if (!pageNumbers.contains(pageId))
         {
             return false;
         }
@@ -665,6 +665,10 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
                 existing = page;
                 break;
             }
+        }
+        if (existing.kind != kind) //20261123-13 add: Do not open an ordinary screen through the popup property editor.
+        {
+            return false;
         }
         for (const HmiConfigurationNode &node : project.configurationNodes)
         {
@@ -758,7 +762,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
     number->setObjectName(QStringLiteral("newPageNumberSpin"));
     number->setRange(0, 999);
     number->setValue(pageNumber);
-    number->setToolTip(QStringLiteral("同一工程内%1编号不可重复。").arg(popup ? pageLabel : QStringLiteral("普通画面"))); //20261123-12 change
+    number->setToolTip(QStringLiteral("画面和窗口编号不能重复")); //20261123-13 change
     number->setGeometry(popup ? QRect(290, 10, 111, 25) : QRect(428, 10, 161, 30));
     validation = new QLabel(&dialog);
     validation->setWordWrap(true);
@@ -875,7 +879,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
             slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
             for (const HmiPage &target : targetPages)
             {
-                if (target.id != pageId && pageNumbers.contains(target.id)) //20261123-6 change
+                if (target.id != pageId && target.kind == QStringLiteral("normal")) //20261123-13 change
                 {
                     // The label reflects renumbering or renaming while the data carries a stable ID.
                     slideTargets[directionIndex]->addItem(QStringLiteral("%1:%2")
@@ -1007,9 +1011,10 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
             validation->setText(QStringLiteral("请从系统图库或工程图库选择一张有效的背景图片。"));
             return;
         }
-        if (editing && number->value() != pageNumber && pageNumbers.values().contains(number->value())) //20261123-12 change
+        if ((!editing || number->value() != pageNumber) &&
+            pageNumbers.values().contains(number->value())) //20261123-13 change
         {
-            validation->setText(QStringLiteral("%1编号 %2 已被使用。").arg(pageLabel).arg(number->value()));
+            QMessageBox::critical(&dialog, QStringLiteral("错误"), QStringLiteral("画面和窗口编号不能重复"));
             return;
         }
         page = existing; //20261123-6 add: Preserve dimensions, controls and extensions on an existing page.
@@ -1024,11 +1029,6 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
         {
             page.width = windowFields.width->value();
             page.height = windowFields.height->value();
-            if (page.width == 0 || page.height == 0)
-            {
-                validation->setText(QStringLiteral("窗口宽度和高度必须大于 0。"));
-                return;
-            }
         }
         candidate = macroDraft; //20261123-5 change: Commit shared source edits only with the outer page.
         if (!validateStage2PageName(project, pageId, page.name, &error) ||
@@ -1178,36 +1178,36 @@ bool editStage2Window(QWidget *parent, HmiProject &project, const QString &pageI
 }
 
 /******************************************************************************
- * Function Name   : copyStage2NormalPage
- * Description     : Request a new name and publish a validated ordinary page copy when confirmed.
- * Input Parameters: parent, project, pageId.
+ * Function Name   : copyStage2Page
+ * Description     : Request a new name and publish a validated screen or window copy when confirmed.
+ * Input Parameters: parent, project, pageId, popup (selects the original window dialog).
  * Return Value    : True after the copy and its outgoing references are ready to commit.
  * Date            : 2026.11.23
  ******************************************************************************/
-bool copyStage2NormalPage(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-8 add
+bool copyStage2Page(QWidget *parent, HmiProject &project, const QString &pageId, bool popup) //20261123-13 change
 {
     QDialog dialog(parent);
-    QLabel label(QStringLiteral("画面名称："), &dialog);
+    QLabel label(popup ? QStringLiteral("窗口名称：") : QStringLiteral("画面名称："), &dialog);
     QLineEdit name(&dialog);
-    QPushButton confirm(QStringLiteral(" 确定 "), &dialog);
+    QPushButton confirm(popup ? QStringLiteral("确定") : QStringLiteral(" 确定 "), &dialog);
     QPushButton cancel(QStringLiteral("取消"), &dialog);
     QPalette palette = dialog.palette();
     HmiProject candidate;
 
-    dialog.setObjectName(QStringLiteral("QCopyScreenDlg"));
-    dialog.setWindowTitle(QStringLiteral("复制到当前画面"));
-    dialog.setFixedSize(273, 72);
+    dialog.setObjectName(popup ? QStringLiteral("QCopyWindowDlg") : QStringLiteral("QCopyScreenDlg"));
+    dialog.setWindowTitle(popup ? QStringLiteral("复制到当前窗口") : QStringLiteral("复制到当前画面"));
+    dialog.setFixedSize(popup ? QSize(268, 69) : QSize(273, 72));
     palette.setColor(QPalette::Window, QColor(224, 237, 254));
     dialog.setPalette(palette);
     // Original V5.1 client geometry, measured in the dialog's logical pixels.
-    label.setGeometry(6, 11, 70, 21);
-    name.setGeometry(80, 10, 181, 20);
+    label.setGeometry(popup ? QRect(7, 10, 80, 21) : QRect(6, 11, 70, 21));
+    name.setGeometry(popup ? QRect(90, 10, 170, 20) : QRect(80, 10, 181, 20));
     name.setObjectName(QStringLiteral("lineEdit"));
     name.setMaxLength(32767);
-    confirm.setGeometry(110, 40, 75, 23);
+    confirm.setGeometry(popup ? QRect(107, 40, 75, 23) : QRect(110, 40, 75, 23));
     confirm.setObjectName(QStringLiteral("pushButton_ok"));
     confirm.setDefault(true);
-    cancel.setGeometry(190, 40, 75, 23);
+    cancel.setGeometry(popup ? QRect(187, 40, 75, 23) : QRect(190, 40, 75, 23));
     cancel.setObjectName(QStringLiteral("pushButton_cancle"));
     name.setFocus();
 
@@ -1218,8 +1218,16 @@ bool copyStage2NormalPage(QWidget *parent, HmiProject &project, const QString &p
 
         if (name.text().trimmed().isEmpty())
         {
-            QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"),
-                QStringLiteral("画面名字不可以为空，请输入一个名字"));
+            const QString message = QStringLiteral("画面名字不可以为空，请输入一个名字");
+
+            if (popup)
+            {
+                QMessageBox::information(&dialog, QStringLiteral("KinSealStudio5"), message);
+            }
+            else
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"), message);
+            }
             return;
         }
         candidate = project;
@@ -1228,6 +1236,22 @@ bool copyStage2NormalPage(QWidget *parent, HmiProject &project, const QString &p
         {
             QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"), error);
             return;
+        }
+        if (popup) //20261123-13 add: The native copy takes the lowest free shared screen number.
+        {
+            const QList<int> occupied = project.screenAndWindowNumbers().values();
+            int number = 0;
+
+            while (occupied.contains(number))
+            {
+                ++number;
+            }
+            if (number > 999)
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("错误"), QStringLiteral("没有可用的窗口编号。"));
+                return;
+            }
+            candidate.activePageNumber = number;
         }
         dialog.accept();
     });

@@ -627,8 +627,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     const PlcProfile *profile;
     PlcChannel channel;
     QString label;
-    QMap<QString, int> ordinaryNumbers; //20261122-10 add
-    QMap<QString, int> windowNumbers; //20261123-12 add
+    QMap<QString, int> screenAndWindowNumbers; //20261123-13 change
     int number;
     QSignalBlocker blocker(m_systemSettingsTree);
 
@@ -669,15 +668,14 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     windows = new QTreeWidgetItem(settings, {QStringLiteral("窗口")});
     keyboards = new QTreeWidgetItem(settings, {QStringLiteral("自定义键盘")});
     logos = new QTreeWidgetItem(settings, {QStringLiteral("开机Logo")});
-    ordinaryNumbers = m_project.ordinaryPageNumbers(); //20261122-10 add: Other page roles keep the historical order-based labels.
-    windowNumbers = m_project.windowPageNumbers(); //20261123-12 add
+    screenAndWindowNumbers = m_project.screenAndWindowNumbers(); //20261123-13 change
     number = 0;
     Q_FOREACH (page, m_project.allPages())
     {
         parent = page.kind == QStringLiteral("normal") ? normal : page.kind == QStringLiteral("window") ? windows :
                  page.kind == QStringLiteral("keyboard") ? keyboards : logos;
         item = new QTreeWidgetItem(parent, {QStringLiteral("%1:%2") //20261123-12 change
-            .arg(ordinaryNumbers.value(page.id, windowNumbers.value(page.id, number)), 3, 10, QLatin1Char('0')).arg(page.name)});
+            .arg(screenAndWindowNumbers.value(page.id, number), 3, 10, QLatin1Char('0')).arg(page.name)});
         ++number;
         item->setData(0, Qt::UserRole, QStringLiteral("page"));
         item->setData(0, Qt::UserRole + 1, page.id);
