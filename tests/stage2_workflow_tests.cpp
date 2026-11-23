@@ -87,6 +87,7 @@ private slots:
     void ordinaryPagePropertiesRestoreAndUpdateDraft(); //20261123-6 add
     void ordinaryPageMenuOpensAndReorders(); //20261123-7 add
     void ordinaryPageMenuCopiesOwnedContent(); //20261123-8 add
+    void ordinaryPageMenuDeletionProtectsTargets(); //20261123-9 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -888,12 +889,13 @@ void Stage2WorkflowTests::protocolTreeEditsAreScopedToTheirInstance() //20261122
 /******************************************************************************
  * Function Name   : triggerSettingsTreeAction
  * Description     : Select an action from the actual settings tree context menu.
- * Input Parameters: tree, item, actionText, whileDialogOpen.
+ * Input Parameters: tree, item, actionText, whileDialogOpen, observedActions.
  * Return Value    : True if the menu exposes the requested action.
  * Date            : 2026.11.22
  ******************************************************************************/
 static bool triggerSettingsTreeAction(QTreeWidget *tree, QTreeWidgetItem *item, const QString &actionText,
-                                      const std::function<void()> &whileDialogOpen = {}) //20261122-7 add
+                                      const std::function<void()> &whileDialogOpen = {},
+                                      QStringList *observedActions = nullptr) //20261123-9 change
 {
     bool triggered = false;
     QTimer menuSelection;
@@ -910,6 +912,14 @@ static bool triggerSettingsTreeAction(QTreeWidget *tree, QTreeWidgetItem *item, 
         }
         actions = menu->actions();
         menu->close();
+        if (observedActions != nullptr) //20261123-9 add
+        {
+            observedActions->clear();
+            Q_FOREACH (action, actions)
+            {
+                observedActions->append(action->text());
+            }
+        }
         Q_FOREACH (action, actions)
         {
             if (action->text() == actionText && action->isEnabled())
@@ -1972,6 +1982,102 @@ void Stage2WorkflowTests::ordinaryPageMenuCopiesOwnedContent() //20261123-8 add
     QCOMPARE(reopened.references.size(), 2);
     QCOMPARE(reopened.references.last().ownerId, reopened.configurationNodes.last().id);
     QCOMPARE(reopened.references.last().targetId, target.id);
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageMenuDeletionProtectsTargets
+ * Description     : Confirm native menu order, protected-page warnings and removal of only the selected page.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageMenuDeletionProtectsTargets() //20261123-9 add
+{
+    QTemporaryDir directory;
+    HmiProject original = workflowProject();
+    HmiProject reopened;
+    HmiPage target;
+    HmiPage disposable;
+    HmiConfigurationNode slide;
+    const QString startupId = original.startupPageId;
+    const QString startupLabel = QStringLiteral("000:%1").arg(original.pageName);
+    MainWindow window;
+    QTreeWidget *tree;
+    QString path;
+    QString error;
+    QString warning;
+    QStringList observedActions;
+    const QStringList expectedActions = {QStringLiteral("打开(&O)"), QStringLiteral("删除(&D)"),
+        QStringLiteral("属性(&P)"), QStringLiteral("复制(&C)"), QStringLiteral("上一个画面"), QStringLiteral("下一个画面")};
+
+    QVERIFY(directory.isValid());
+    target.id = QStringLiteral("protected-target");
+    target.name = QStringLiteral("受引用画面");
+    target.number = 3;
+    disposable.id = QStringLiteral("unused-page");
+    disposable.name = QStringLiteral("可删除画面");
+    disposable.number = 7;
+    QVERIFY2(original.addPage(target, &error), qPrintable(error));
+    QVERIFY2(original.addPage(disposable, &error), qPrintable(error));
+    slide.id = QStringLiteral("startup-slide");
+    slide.kind = QStringLiteral("pageSlide");
+    slide.name = QStringLiteral("滑动打开画面");
+    slide.ownerPageId = startupId;
+    slide.active = true;
+    slide.implemented = true;
+    slide.properties = {{QStringLiteral("enabled"), true}, {QStringLiteral("distance"), 75}};
+    original.configurationNodes.append(slide);
+    original.references.append({QStringLiteral("startup-left"), QStringLiteral("configuration"), slide.id,
+        QStringLiteral("left"), QStringLiteral("page"), target.id});
+    path = directory.filePath(QStringLiteral("delete-page.ksp"));
+    QVERIFY2(original.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    auto found = [tree](const QString &label) -> QTreeWidgetItem * {
+        const QList<QTreeWidgetItem *> entries = tree->findItems(label, Qt::MatchExactly | Qt::MatchRecursive);
+
+        return entries.size() == 1 ? entries.first() : nullptr;
+    };
+    auto dismissWarning = [&]() {
+        QMessageBox *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+
+        if (box != nullptr)
+        {
+            warning = box->text();
+            box->accept();
+        }
+    };
+    QVERIFY(found(startupLabel) != nullptr);
+    QVERIFY(triggerSettingsTreeAction(tree, found(startupLabel), QStringLiteral("删除(&D)"),
+        dismissWarning, &observedActions));
+    QCOMPARE(observedActions, expectedActions);
+    QVERIFY(warning.contains(QStringLiteral("启动页")));
+    QVERIFY(!window.m_dirty);
+    warning.clear();
+    QVERIFY(found(QStringLiteral("003:受引用画面")) != nullptr);
+    QVERIFY(triggerSettingsTreeAction(tree, found(QStringLiteral("003:受引用画面")), QStringLiteral("删除(&D)"), dismissWarning));
+    QVERIFY(warning.contains(QStringLiteral("被引用")));
+    QCOMPARE(window.currentEditorProject().pageOrder, original.pageOrder);
+    QVERIFY(!window.m_dirty);
+    QVERIFY(found(QStringLiteral("007:可删除画面")) != nullptr);
+    QVERIFY(triggerSettingsTreeAction(tree, found(QStringLiteral("007:可删除画面")), QStringLiteral("打开(&O)")));
+    QCOMPARE(window.currentEditorProject().activePageId, disposable.id);
+    QVERIFY(triggerSettingsTreeAction(tree, found(QStringLiteral("007:可删除画面")), QStringLiteral("删除(&D)")));
+    QCOMPARE(window.currentEditorProject().activePageId, startupId);
+    QCOMPARE(window.currentEditorProject().pageOrder, (QStringList{startupId, target.id}));
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger(); //20261123-9 add
+    QCOMPARE(window.currentEditorProject().pageOrder, original.pageOrder);
+    window.m_commands.value(QStringLiteral("action_redo"))->trigger();
+    QCOMPARE(window.currentEditorProject().pageOrder, (QStringList{startupId, target.id}));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.pageOrder, (QStringList{startupId, target.id}));
+    QCOMPARE(reopened.startupPageId, startupId);
+    QCOMPARE(reopened.references.first().targetId, target.id);
 }
 
 /******************************************************************************

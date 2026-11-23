@@ -723,6 +723,21 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                 }
             };
             menu.addAction(QStringLiteral("打开(&O)"), this, [this, id]() { activatePageId(id); });
+            menu.addAction(QStringLiteral("删除(&D)"), this, [this, id, onlyPage = siblings->childCount() == 1]() { //20261123-9 add
+                HmiProject draft = currentEditorProject();
+                QString error;
+
+                if (!draft.removePage(id, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("提示"),
+                        onlyPage ? QStringLiteral("最后一个画面不可以删除") : error);
+                    return;
+                }
+                if (!commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("画面删除未提交"), error);
+                }
+            });
             menu.addAction(QStringLiteral("属性(&P)"), this, [this, id]() { //20261123-7 change
                 HmiProject draft = currentEditorProject();
                 QString error;
