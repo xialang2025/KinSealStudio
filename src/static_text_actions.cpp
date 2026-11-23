@@ -5,8 +5,6 @@
 #include "plc_address_dialog.h" //20261109-0 add
 #include <QMessageBox>
 #include <QComboBox>
-#include <QInputDialog>
-#include <QRegularExpression>
 #include <QStatusBar>
 #include <QTreeWidget>
 #include <algorithm>
@@ -298,52 +296,7 @@ void MainWindow::editBitButton() //20261108-15 add
     delete dialog;
 }
 
-/******************************************************************************
- * Function Name   : MainWindow::configureLanguages
- * Description     : Let project languages drive the text dialog and canvas language selector.
- * Input Parameters: None
- * Return Value    : None
- * Date            : 2026.11.08
- ******************************************************************************/
-void MainWindow::configureLanguages() //20261110-5 change
-{
-    bool accepted;
-    QString input;
-    QStringList languages;
-    QString language;
-    QString error;
-    QString selectedId;
-    HmiProject candidate;
-
-    input = QInputDialog::getText(this, QStringLiteral("工程语言设置"),
-                                  QStringLiteral("语言名称，以逗号分隔（例如：中文,English）"),
-                                  QLineEdit::Normal, m_project.languages.join(QStringLiteral(",")), &accepted);
-    if (!accepted) { return; }
-    Q_FOREACH (language, input.split(QRegularExpression(QStringLiteral("[,，]")), Qt::SkipEmptyParts))
-    {
-        language = language.trimmed();
-        if (!language.isEmpty() && !languages.contains(language)) { languages.append(language); }
-    }
-    if (languages.isEmpty()) { return; }
-    candidate = m_project;
-    candidate.objects = m_canvas->objects();
-    if (!candidate.setLanguages(languages, &error))
-    {
-        QMessageBox::warning(this, QStringLiteral("语言设置未提交"), error);
-        return;
-    }
-    m_project = candidate;
-    m_languageCombo->blockSignals(true);
-    m_languageCombo->clear(); m_languageCombo->addItems(languages);
-    m_languageCombo->setCurrentText(m_project.activeLanguage);
-    m_languageCombo->blockSignals(false);
-    // Rebuild from remapped function-language targets, not stale canvas property copies.
-    selectedId = m_selectedId; //20261110-5 add: Rebuilding remapped object copies must retain the user's selected property target.
-    m_canvas->setProject(m_project);
-    if (!selectedId.isEmpty()) { m_canvas->selectObject(selectedId); }
-    rebuildProjectTree();
-    setDirty(true);
-}
+//20261123-19 change: The numbered language dialog is implemented in stage2_language_settings.cpp.
 
 /******************************************************************************
  * Function Name   : MainWindow::configureConnections

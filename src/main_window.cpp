@@ -660,6 +660,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         else if (role == QStringLiteral("project") || role == QStringLiteral("normalPages") ||
                  role == QStringLiteral("windowPages")) { configureProject(); } //20261123-12 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
+        else if (role == QStringLiteral("extendedSystemSetting")) { configureExtendedSystemSetting(pageId, label); } //20261123-15 add
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
         else if (role == QStringLiteral("serialPort")) { configureSerialPort(pageId); } //20261122-6 add

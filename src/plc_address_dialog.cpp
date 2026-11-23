@@ -698,7 +698,7 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
  * Date            : 2026.11.09
  ******************************************************************************/
 bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &connections,
-                    QString *qualifiedText, int transferCount) //20261109-6 change //20261114-8 change
+                    QString *qualifiedText, int transferCount, u32 localAddressCount) //20261123-15 change
 {
     PlcCatalog catalog;
     PlcAddressContext context;
@@ -734,7 +734,8 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     int index;
     int selected;
 
-    if (qualifiedText == nullptr || transferCount < 1 || transferCount > 2) //20261109-6 change
+    if (qualifiedText == nullptr || transferCount < 1 || transferCount > 2 ||
+        localAddressCount < u32(transferCount) || localAddressCount > 65536) //20261123-15 change
     {
         return false;
     }
@@ -746,6 +747,7 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     context.connections = connections;
     context.role = bit ? PlcAddressRole::Bit : PlcAddressRole::Word;
     context.transferCount = u32(transferCount); //20261109-6 add: Validate the complete DWORD span in the live picker as well as the compiler.
+    context.localAddressCount = localAddressCount; //20261123-15 add: Global settings use the wider range shown by the original editor.
     body = qualifiedText->trimmed();
     if (body.isEmpty())
     {
@@ -907,7 +909,8 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
                     (selectedProfile != nullptr && plcNativeFamilyRule(*selectedProfile, family, &rule)); //20261109-0 change
         standardRadix = memory->currentData().toString().isEmpty() ||
                         (selectedProfile != nullptr && plcProfileHasModbusCodec(*selectedProfile));
-        rangeText = memory->currentData().toString().isEmpty() ? QStringLiteral("地址范围：0~%1").arg(4097 - transferCount) : QString(); //20261109-6 change
+        rangeText = memory->currentData().toString().isEmpty() ?
+            QStringLiteral("地址范围：0~%1").arg(context.localAddressCount - context.transferCount) : QString(); //20261123-15 change
         if (selectedProfile != nullptr)
         {
             for (familyIndex = 0; familyIndex < selectedProfile->families.size(); ++familyIndex)

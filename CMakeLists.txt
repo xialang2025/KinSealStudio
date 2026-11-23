@@ -38,6 +38,10 @@ qt_add_executable(KinSealStudioLite WIN32
     src/stage2_global_tools.cpp
     src/stage2_system_settings.h #20261110-7 add: Keep recovered editor-only parameters behind the existing device gate.
     src/stage2_system_settings.cpp
+    src/stage2_io_settings.cpp src/stage2_io_settings.h #20261123-15 add
+    src/stage2_clock_panel.cpp src/stage2_clock_panel.h #20261123-16 add
+    src/stage2_file_protection.cpp src/stage2_file_protection.h #20261123-17 add
+    src/stage2_language_settings.cpp #20261123-19 add
     src/project_model.cpp
     src/project_model.h
     src/project_capabilities.h #20261110-5 add
@@ -502,6 +506,7 @@ foreach(KINSEAL_WORD_MODEL_TARGET KinSealDeviceMacroTests KinSealNativeSourceTes
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/lamp_properties.cpp src/lamp_properties.h) #20261109-8 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/function_button_properties.cpp src/function_button_properties.h) #20261110-0 add
     target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/stage2_system_settings.cpp src/stage2_system_settings.h) #20261110-7 add: Link the strict schema validator in every project-model consumer.
+    target_sources(${KINSEAL_WORD_MODEL_TARGET} PRIVATE src/stage2_file_protection.cpp src/stage2_file_protection.h) #20261123-17 add
 endforeach()
 
 if(MINGW)
@@ -542,6 +547,9 @@ foreach(KINSEAL_HELP_TARGET IN LISTS KINSEAL_HELP_TARGETS)
     get_target_property(KINSEAL_HELP_SOURCES ${KINSEAL_HELP_TARGET} SOURCES)
     if("src/main_window.cpp" IN_LIST KINSEAL_HELP_SOURCES)
         target_sources(${KINSEAL_HELP_TARGET} PRIVATE src/local_help.cpp src/local_help.h)
+    endif()
+    if(WIN32 AND "src/stage2_file_protection.cpp" IN_LIST KINSEAL_HELP_SOURCES)
+        target_link_libraries(${KINSEAL_HELP_TARGET} PRIVATE bcrypt) #20261123-17 add
     endif()
 endforeach()
 

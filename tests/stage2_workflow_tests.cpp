@@ -14,6 +14,7 @@
 #include <QCheckBox> //20261123-4 add
 #include <QColorDialog>
 #include <QComboBox>
+#include <QDateEdit> //20261123-18 add
 #include <QFile>
 #include <QFileDialog>
 #include <QGroupBox> //20261123-4 add
@@ -95,6 +96,11 @@ private slots:
     void screenAndWindowRejectTheSameNumber(); //20261123-13 add
     void windowMenuCopiesAndConfirmsDeletion(); //20261123-13 add
     void projectSettingsWindowCopyKeepsAssignedNumber(); //20261123-14 add
+    void languageTreeUsesEditableRowsAndPreservesTranslations(); //20261123-19 add
+    void extendedSystemSettingsPersist_data(); //20261123-15 add
+    void extendedSystemSettingsPersist();
+    void fileProtectionGatesProjectReopen(); //20261123-17 add
+    void nativeFileProtectionIsCheckedBeforeImport(); //20261123-17 add
     void emptyWindowKeepsZeroWidthAcrossSave(); //20261123-13 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
@@ -2492,6 +2498,407 @@ void Stage2WorkflowTests::projectSettingsWindowCopyKeepsAssignedNumber() //20261
     QCOMPARE(reopened.allPages().last().number.value_or(-1), 1);
     QCOMPARE(reopened.allPages().at(1).number.value_or(-1), 17);
     QCOMPARE(reopened.startupPageId, seed.startupPageId);
+}
+
+/******************************************************************************
+ * Function Name   : languageTreeUsesEditableRowsAndPreservesTranslations
+ * Description     : Rename a language slot through the settings tree and retain its text after reopening.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::languageTreeUsesEditableRowsAndPreservesTranslations() //20261123-19 add
+{
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    QTemporaryDir directory;
+    MainWindow window;
+    QTreeWidget *tree;
+    QString error;
+    QString path;
+    bool confirmed;
+    bool correctDialog;
+
+    QVERIFY(directory.isValid());
+    project.objects.first().hasStaticTextProperties = true;
+    project.objects.first().staticText.languageTexts.insert(QStringLiteral("中文"), QStringLiteral("保留本行文字"));
+    project.startupLanguage = QStringLiteral("中文");
+    path = directory.filePath(QStringLiteral("languages.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    for (confirmed = false; ; confirmed = true)
+    {
+        const auto items = tree->findItems(QStringLiteral("语言设置"), Qt::MatchExactly | Qt::MatchRecursive);
+
+        QCOMPARE(items.size(), 1);
+        correctDialog = false;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QComboBox *count;
+            QComboBox *current;
+            QLineEdit *first;
+            QLineEdit *third;
+            QDialogButtonBox *buttons;
+
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            count = dialog->findChild<QComboBox *>(QStringLiteral("lanComboBox"));
+            current = dialog->findChild<QComboBox *>(QStringLiteral("curLanComboBox"));
+            first = dialog->findChild<QLineEdit *>(QStringLiteral("lineEdit_1"));
+            third = dialog->findChild<QLineEdit *>(QStringLiteral("lineEdit_3"));
+            buttons = dialog->findChild<QDialogButtonBox *>();
+            if (dialog->windowTitle() == QStringLiteral("语言设置") && count != nullptr && current != nullptr &&
+                first != nullptr && third != nullptr && buttons != nullptr && count->count() == 6 && !third->isVisible())
+            {
+                count->setCurrentIndex(2);
+                first->setText(QStringLiteral("简体中文"));
+                current->setCurrentIndex(2);
+                correctDialog = third->isVisible() && current->currentText() == QStringLiteral("德语");
+                buttons->button(confirmed ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+            }
+            if (dialog->isVisible())
+            {
+                dialog->reject();
+            }
+        });
+        Q_EMIT tree->itemDoubleClicked(items.first(), 0);
+        QVERIFY(correctDialog);
+        if (confirmed)
+        {
+            break;
+        }
+        QCOMPARE(window.currentEditorProject().toJson(), project.toJson());
+        QVERIFY(!window.m_dirty);
+    }
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.languages, (QStringList{QStringLiteral("简体中文"), QStringLiteral("英语"), QStringLiteral("德语")}));
+    QCOMPARE(reopened.activeLanguage, QStringLiteral("德语"));
+    QCOMPARE(reopened.startupLanguage, QStringLiteral("简体中文"));
+    QCOMPARE(reopened.objects.first().staticText.languageTexts.value(QStringLiteral("简体中文")), QStringLiteral("保留本行文字"));
+}
+
+/******************************************************************************
+ * Function Name   : extendedSystemSettingsPersist_data
+ * Description     : Supply each group of device-facing settings and its original tree label.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::extendedSystemSettingsPersist_data() //20261123-15 add
+{
+    QTest::addColumn<QString>("label");
+    QTest::addColumn<QString>("kind");
+    QTest::newRow("hmi-status") << QStringLiteral("HMI状态") << QStringLiteral("hmiStatus");
+    QTest::newRow("plc-control") << QStringLiteral("PLC控制") << QStringLiteral("plcControl");
+    QTest::newRow("clock") << QStringLiteral("时钟") << QStringLiteral("clockSettings");
+    QTest::newRow("panel") << QStringLiteral("HMI保护") << QStringLiteral("panelProtection");
+}
+
+/******************************************************************************
+ * Function Name   : extendedSystemSettingsPersist
+ * Description     : Open each real editor, apply its dependent fields and reopen the saved KSP.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::extendedSystemSettingsPersist() //20261123-15 add
+{
+    QFETCH(QString, label);
+    QFETCH(QString, kind);
+    const HmiProject seed = workflowProject();
+    HmiProject reopened;
+    QTemporaryDir directory;
+    MainWindow window;
+    QTreeWidget *tree;
+    QJsonObject stored;
+    QString error;
+    QString path;
+    bool changed = false;
+
+    QVERIFY(directory.isValid());
+    path = directory.filePath(QStringLiteral("settings.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    const auto entries = tree->findItems(label, Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(entries.size(), 1);
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (kind == QStringLiteral("hmiStatus") || kind == QStringLiteral("plcControl"))
+        {
+            const bool status = kind == QStringLiteral("hmiStatus");
+            QCheckBox *enable = dialog->findChild<QCheckBox *>(status ? QStringLiteral("bCurSceneId") :
+                QStringLiteral("bCtlRecipeWrite"));
+            QLineEdit *address = dialog->findChild<QLineEdit *>(status ? QStringLiteral("lineEdit_screen") :
+                QStringLiteral("lineEdit_sWriteRecipeAddr"));
+
+            if (enable != nullptr && address != nullptr && !address->isEnabled())
+            {
+                enable->click();
+                address->setText(status ? QStringLiteral("LW65535") : QStringLiteral("LW22"));
+                changed = address->isEnabled();
+            }
+        }
+        else if (kind == QStringLiteral("clockSettings"))
+        {
+            QGroupBox *write = dialog->findChild<QGroupBox *>(QStringLiteral("bWriteToPLC"));
+            QGroupBox *read = dialog->findChild<QGroupBox *>(QStringLiteral("bReadFromPLC"));
+            QSpinBox *interval = dialog->findChild<QSpinBox *>(QStringLiteral("nWriteTimeInterval"));
+
+            if (write != nullptr && read != nullptr && interval != nullptr)
+            {
+                write->setChecked(true);
+                interval->setValue(2);
+                changed = !read->isEnabled() && interval->isEnabled();
+            }
+        }
+        else
+        {
+            QCheckBox *enable = dialog->findChild<QCheckBox *>(QStringLiteral("bEnabled"));
+            QComboBox *count = dialog->findChild<QComboBox *>(QStringLiteral("nProtectNum"));
+            QAbstractButton *level = dialog->findChild<QAbstractButton *>(QStringLiteral("ProtectButton2"));
+            QDateEdit *date = dialog->findChild<QDateEdit *>(QStringLiteral("mExpiredDate"));
+            QLineEdit *password = dialog->findChild<QLineEdit *>(QStringLiteral("sUnlockPWD"));
+
+            if (enable != nullptr && count != nullptr && level != nullptr && date != nullptr &&
+                password != nullptr && !count->isEnabled())
+            {
+                enable->click();
+                count->setCurrentIndex(1);
+                password->setText(QStringLiteral("12345"));
+                level->click();
+                password->setText(QStringLiteral("26901"));
+                date->setDate(QDate(2030, 5, 2));
+                changed = date->isEnabled();
+            }
+        }
+        if (changed && buttons != nullptr)
+        {
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    });
+    Q_EMIT tree->itemDoubleClicked(entries.first(), 0);
+    QVERIFY(changed);
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.configurationNodes.size(), seed.configurationNodes.size() + 1);
+    QCOMPARE(reopened.configurationNodes.last().kind, kind);
+    QVERIFY(reopened.configurationNodes.last().active);
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
+    QVERIFY(error.contains(label));
+    stored = reopened.configurationNodes.last().properties;
+    if (kind == QStringLiteral("hmiStatus"))
+    {
+        QCOMPARE(stored.value(QStringLiteral("screenIndex")).toObject().value(QStringLiteral("address")).toString(),
+            QStringLiteral("LW65535"));
+    }
+    else if (kind == QStringLiteral("plcControl"))
+    {
+        QCOMPARE(stored.value(QStringLiteral("writeRecipe")).toObject().value(QStringLiteral("address")).toString(),
+            QStringLiteral("LW22"));
+    }
+    else if (kind == QStringLiteral("clockSettings"))
+    {
+        QCOMPARE(stored.value(QStringLiteral("write")).toObject().value(QStringLiteral("interval")).toInt(), 2);
+    }
+    else
+    {
+        QCOMPARE(stored.value(QStringLiteral("levelCount")).toInt(), 2);
+        QCOMPARE(stored.value(QStringLiteral("levels")).toArray().at(1).toObject().value(QStringLiteral("date")).toString(),
+            QStringLiteral("2030-05-02"));
+        const auto current = tree->findItems(label, Qt::MatchExactly | Qt::MatchRecursive);
+
+        QCOMPARE(current.size(), 1);
+        QTimer::singleShot(0, &window, []() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QComboBox *count;
+            QDialogButtonBox *buttons;
+
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            count = dialog->findChild<QComboBox *>(QStringLiteral("nProtectNum"));
+            buttons = dialog->findChild<QDialogButtonBox *>();
+            if (count != nullptr && buttons != nullptr)
+            {
+                count->setCurrentIndex(0);
+                buttons->button(QDialogButtonBox::Ok)->click();
+            }
+            if (dialog->isVisible())
+            {
+                dialog->reject();
+            }
+        });
+        Q_EMIT tree->itemDoubleClicked(current.first(), 0);
+        window.m_commands.value(QStringLiteral("action_save"))->trigger();
+        QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+        stored = reopened.configurationNodes.last().properties;
+        QCOMPARE(stored.value(QStringLiteral("levelCount")).toInt(), 1);
+        QCOMPARE(stored.value(QStringLiteral("levels")).toArray().at(1).toObject().value(QStringLiteral("date")).toString(),
+            QStringLiteral("2021-01-01"));
+        QVERIFY(stored.value(QStringLiteral("levels")).toArray().at(1).toObject().value(QStringLiteral("password")).toString().isEmpty());
+    }
+}
+
+/******************************************************************************
+ * Function Name   : fileProtectionGatesProjectReopen
+ * Description     : Enable file protection and verify an independent editor can open it with the saved password.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::fileProtectionGatesProjectReopen() //20261123-17 add
+{
+#ifndef Q_OS_WIN
+    QSKIP("File protection uses the Windows cryptography provider.");
+#else
+    HmiProject seed = workflowProject();
+    HmiProject unauthenticated;
+    QTemporaryDir directory;
+    MainWindow window;
+    MainWindow reopened;
+    QTreeWidget *tree;
+    QFile file;
+    const QString password = QStringLiteral("KspCase7");
+    QString error;
+    QString path;
+    bool needsPassword = false;
+
+    QVERIFY(directory.isValid());
+    seed.name = QStringLiteral("ProtectedWorkflowFixture");
+    path = directory.filePath(QStringLiteral("protected.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    const auto entries = tree->findItems(QStringLiteral("文件保护"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(entries.size(), 1);
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QCheckBox *enabled;
+        QLineEdit *field;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        enabled = dialog->findChild<QCheckBox *>(QStringLiteral("bUsePWD"));
+        field = dialog->findChild<QLineEdit *>(QStringLiteral("sPWD"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (enabled != nullptr && field != nullptr && field->maxLength() == 11 && buttons != nullptr)
+        {
+            enabled->click();
+            field->setText(password);
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    });
+    Q_EMIT tree->itemDoubleClicked(entries.first(), 0);
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!HmiProject::load(path, &unauthenticated, &error, {}, &needsPassword));
+    QVERIFY(needsPassword);
+    QVERIFY(!HmiProject::load(path, &unauthenticated, &error, password.toLower(), &needsPassword));
+    QVERIFY(needsPassword);
+    file.setFileName(path);
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    const QByteArray bytes = file.readAll();
+    file.close();
+    QVERIFY(!bytes.contains(seed.name.toUtf8()));
+    QVERIFY(!bytes.contains(password.toUtf8()));
+    QTimer::singleShot(0, &reopened, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *field;
+        QPushButton *ok;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        field = dialog->findChild<QLineEdit *>(QStringLiteral("FilePassWordEntry"));
+        ok = dialog->findChild<QPushButton *>(QStringLiteral("OKBtn"));
+        if (field == nullptr || ok == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        field->setText(password);
+        ok->click();
+    });
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(reopened.currentEditorProject().name, seed.name);
+#endif
+}
+
+/******************************************************************************
+ * Function Name   : nativeFileProtectionIsCheckedBeforeImport
+ * Description     : Reject protected vendor files before import and preserve access policy during migration.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeFileProtectionIsCheckedBeforeImport() //20261123-17 add
+{
+    const QString path = QFINDTESTDATA("fixtures/native-source/file-protection-probe.sm");
+    const QString password = QStringLiteral("ProbeA01");
+    const QByteArray nativePassword = QByteArray::fromHex("00500072006f00620065004100300031");
+    QTemporaryDir directory;
+    HmiProject imported = workflowProject();
+    HmiProject reopened;
+    const QString originalName = imported.name;
+    QString error;
+    QString plainFile;
+    bool requiresPassword = false;
+
+    QVERIFY(!path.isEmpty());
+    QVERIFY(directory.isValid());
+    QVERIFY(!HmiProject::load(path, &imported, &error, {}, &requiresPassword));
+    QVERIFY(requiresPassword);
+    QVERIFY(!HmiProject::load(path, &imported, &error, password.toLower(), &requiresPassword));
+    QVERIFY(requiresPassword);
+    QCOMPARE(imported.name, originalName);
+    QVERIFY2(HmiProject::load(path, &imported, &error, password, &requiresPassword), qPrintable(error));
+    QCOMPARE(imported.filePassword, password);
+    QVERIFY(imported.nativeSourceSnapshot.contains(nativePassword));
+#ifdef Q_OS_WIN
+    const QString encryptedFile = directory.filePath(QStringLiteral("migrated-protected.ksp"));
+    QVERIFY2(imported.save(encryptedFile, &error), qPrintable(error));
+    QVERIFY(!HmiProject::load(encryptedFile, &reopened, &error, {}, &requiresPassword));
+    QVERIFY(requiresPassword);
+    QVERIFY2(HmiProject::load(encryptedFile, &reopened, &error, password), qPrintable(error));
+#endif
+    imported.filePassword.clear();
+    plainFile = directory.filePath(QStringLiteral("migrated-unprotected.ksp"));
+    QVERIFY2(imported.save(plainFile, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(plainFile, &reopened, &error), qPrintable(error));
+    QVERIFY(!reopened.nativeSourceSnapshot.isEmpty());
+    QVERIFY(!reopened.nativeSourceSnapshot.contains(nativePassword));
 }
 
 /******************************************************************************

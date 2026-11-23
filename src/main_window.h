@@ -51,6 +51,7 @@ private slots:
     void closeProject(); //20261110-7 add
     void configureProject();
     void configureSystemSettings(); //20261110-7 add
+    void configureExtendedSystemSetting(const QString &kind, const QString &label); //20261123-15 add
     void showGlobalTool(int kind);
     void showMacroSource(const QString &name, int line);
     void replaceProjectAddresses();

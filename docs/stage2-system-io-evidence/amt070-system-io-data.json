@@ -1,0 +1,1870 @@
+{
+  "date": "2026-11-23",
+  "editorOriginalSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "privateRuntimeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "privateRuntimePatch": {
+    "offset": "0x7c4",
+    "before": "5589e5",
+    "after": "b001c3"
+  },
+  "model": "AMT070W124-L800X480R",
+  "sourceSeedGitPath": "df5f5cde:docs/stage2-evidence/native/system-baseline-native-ui.sm",
+  "sourceSeedSha256": "cd54adc6dfe25c0ee366775a38f4cbad0d6178e583ce0cf619c5a856854c6735",
+  "method": "Owned private desktop, editor UI save. Offline action_offline_simulation writes to the private working copy. Offline simulation executable absent so no simulator started. No download, USB, PLC or caller desktop input.",
+  "capturedReopen": [
+    {
+      "window": "HMI状态",
+      "field": "lineEdit_screen",
+      "address": "LW321"
+    },
+    {
+      "window": "PLC控制",
+      "field": "lineEdit_sSwitchSceneAddr",
+      "address": "LW789"
+    }
+  ],
+  "sourceEdits": [
+    {
+      "before": "io-baseline.sm",
+      "after": "hmi-flag.sm",
+      "beforeSha256": "42163cbf82395adc4387eef56a488f47d2a7710af657ff357ae98e88048b8629",
+      "afterSha256": "40aa92c26004260b87292072154fde3eaefce20dacde87b33bf51d4108eec539",
+      "changedFields": {
+        "config.13c.0": {
+          "before": {
+            "type": "b",
+            "start": 2056,
+            "end": 2057,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "b",
+            "start": 2056,
+            "end": 2057,
+            "hex": "01",
+            "value": 1
+          }
+        }
+      }
+    },
+    {
+      "before": "hmi-flag.sm",
+      "after": "hmi-addr.sm",
+      "beforeSha256": "40aa92c26004260b87292072154fde3eaefce20dacde87b33bf51d4108eec539",
+      "afterSha256": "3bce934bfb3d8da5757e4c209e33e3d326510e159d4c2b5e9d7a20f323bb0221",
+      "changedFields": {
+        "config.140.0": {
+          "before": {
+            "type": "q",
+            "start": 2059,
+            "end": 2069,
+            "hex": "00000006004c00570030",
+            "value": "LW0"
+          },
+          "after": {
+            "type": "q",
+            "start": 2059,
+            "end": 2073,
+            "hex": "0000000a004c0057003300320031",
+            "value": "LW321"
+          }
+        },
+        "config.140.3": {
+          "before": {
+            "type": "a",
+            "start": 2071,
+            "end": 2072,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "a",
+            "start": 2075,
+            "end": 2076,
+            "hex": "64",
+            "value": 100
+          }
+        },
+        "config.140.4": {
+          "before": {
+            "type": "q",
+            "start": 2072,
+            "end": 2078,
+            "hex": "000000020030",
+            "value": "0"
+          },
+          "after": {
+            "type": "q",
+            "start": 2076,
+            "end": 2086,
+            "hex": "00000006003300320031",
+            "value": "321"
+          }
+        }
+      }
+    },
+    {
+      "before": "hmi-addr.sm",
+      "after": "hmi-disabled-address-retention.sm",
+      "beforeSha256": "3bce934bfb3d8da5757e4c209e33e3d326510e159d4c2b5e9d7a20f323bb0221",
+      "afterSha256": "bda4965b90040989dbe330919143765cb807b0d1c9941f60af84c8beef64268d",
+      "changedFields": {
+        "config.13c.0": {
+          "before": {
+            "type": "b",
+            "start": 2056,
+            "end": 2057,
+            "hex": "01",
+            "value": 1
+          },
+          "after": {
+            "type": "b",
+            "start": 2056,
+            "end": 2057,
+            "hex": "00",
+            "value": 0
+          }
+        }
+      }
+    },
+    {
+      "before": "hmi-disabled-address-retention.sm",
+      "after": "plc-flag.sm",
+      "beforeSha256": "bda4965b90040989dbe330919143765cb807b0d1c9941f60af84c8beef64268d",
+      "afterSha256": "191bc5d55675a39fdb7722e087ed732ac267563106f4f1a3cca8dae035a913b3",
+      "changedFields": {
+        "config.188.0": {
+          "before": {
+            "type": "b",
+            "start": 2175,
+            "end": 2176,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "b",
+            "start": 2175,
+            "end": 2176,
+            "hex": "01",
+            "value": 1
+          }
+        },
+        "config.18c.2": {
+          "before": {
+            "type": "a",
+            "start": 2190,
+            "end": 2191,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "a",
+            "start": 2190,
+            "end": 2191,
+            "hex": "01",
+            "value": 1
+          }
+        },
+        "config.18c.6": {
+          "before": {
+            "type": "a",
+            "start": 2206,
+            "end": 2207,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "a",
+            "start": 2206,
+            "end": 2207,
+            "hex": "01",
+            "value": 1
+          }
+        }
+      }
+    },
+    {
+      "before": "plc-flag.sm",
+      "after": "plc-addr.sm",
+      "beforeSha256": "191bc5d55675a39fdb7722e087ed732ac267563106f4f1a3cca8dae035a913b3",
+      "afterSha256": "5f0570c982f8b75059d50249a31c9f1ed8083213e18727bfaa353aaef8d1deaa",
+      "changedFields": {
+        "config.18c.0": {
+          "before": {
+            "type": "q",
+            "start": 2179,
+            "end": 2189,
+            "hex": "00000006004c00570030",
+            "value": "LW0"
+          },
+          "after": {
+            "type": "q",
+            "start": 2179,
+            "end": 2193,
+            "hex": "0000000a004c0057003700380039",
+            "value": "LW789"
+          }
+        },
+        "config.18c.3": {
+          "before": {
+            "type": "a",
+            "start": 2191,
+            "end": 2192,
+            "hex": "00",
+            "value": 0
+          },
+          "after": {
+            "type": "a",
+            "start": 2195,
+            "end": 2196,
+            "hex": "64",
+            "value": 100
+          }
+        },
+        "config.18c.4": {
+          "before": {
+            "type": "q",
+            "start": 2192,
+            "end": 2198,
+            "hex": "000000020030",
+            "value": "0"
+          },
+          "after": {
+            "type": "q",
+            "start": 2196,
+            "end": 2206,
+            "hex": "00000006003700380039",
+            "value": "789"
+          }
+        }
+      }
+    }
+  ],
+  "compilations": [
+    {
+      "label": "steady-io-baseline-r1",
+      "sourceSha256": "d57b5dc4fbc78d4e7f1003dfcfc569999b0b64fd42daff492d79caded1563855",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "217980677474ff359c4fdda216e3368a5d9845542afb343178b1f8f5cd4419ee",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "4ce148eca9a9b41a7aa926de3e5885176d36cb2716acca1d500dc677057ab242",
+          "bytes": 11830
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "c28a9baf7b83e1272ef7f636acfb1e3852d6dccad7993cfa7344e34f8d65b510",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "34d168960bc118b43dc877349b85715bbfb3d172cc61378973714d9ed564df77",
+          "bytes": 1128
+        },
+        "Usbload.bin": {
+          "sha256": "cca6440d512b10b14ca2ace0ff80e20472c9bfc66165fe7b84a987f8ba9db157",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-io-baseline-r2",
+      "sourceSha256": "de00cdc367653646a8a61410bf6b44f31f9ec4aaf2c5d92ce724c2358d465404",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "ae5784d5efa852a502272ef4f7a8c104f3e2bf3d87fde3e78dfe29e2e9ec743a",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "65e1adcbf373d666ebe65abba3fd1e36f1b2efc57fe7b4d2d6f4b9e8f1db29d7",
+          "bytes": 11743
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "9dc2bcc70c23735eb1f44f4f070ad08c83ceeca935e78f71fd48358d849b556f",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "763b2dacaa266c3a99c45bdd29cc39bf77c023497b0e616f8ffcca3b6d5eba1b",
+          "bytes": 1129
+        },
+        "Usbload.bin": {
+          "sha256": "ed91f270bbed7122f8a657e1401d97650f5bc54f325193e98e626c6eaf292959",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-hmi-lw0-r1",
+      "sourceSha256": "2e1d132a36eba196281fd3d5221ffc04fccee21a2acef59402ce5130820ef2fe",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "0739bb2c45c986e59cc7bb63788467eb99c2b442958dd8443db000ddc4849772",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "ea79a10f44d6cdece375463613efefa22879d3cfc721539a6cd0a411bc1e020a",
+          "bytes": 11734
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "6298e04ccf903da26384c8a9b9bba6c84951b9ca3a307f565ca7757b2e81e17f",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "d7ea4cce1672bb81977599ac927cd2133bf751030a950f1dc6ba3e6b783aeea2",
+          "bytes": 1130
+        },
+        "Usbload.bin": {
+          "sha256": "559de27c2753b372e0e9c3b86a99796765c8bc5ec9609ff5b91953643145cc19",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-hmi-lw0-r2",
+      "sourceSha256": "2e1d132a36eba196281fd3d5221ffc04fccee21a2acef59402ce5130820ef2fe",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "bf217a0c538910304a0e7dbf15a9ef8867f1f1b5c6822fa1dc198a116ec6071a",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "7f8669082e61b0fa64edb315a1419ecfa635c95fbe79e5f5e00f8789625cbf8a",
+          "bytes": 11744
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "1b147cd6a817d9c83850a5488e7a6d9de4f38012bfc69000ec6abdba9c34cd10",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "d7ea4cce1672bb81977599ac927cd2133bf751030a950f1dc6ba3e6b783aeea2",
+          "bytes": 1130
+        },
+        "Usbload.bin": {
+          "sha256": "c1afcf8c07aa58cf5c8119a6d30906fc35cdc5b6502d1bafd7e4bc6361730a78",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-hmi-lw321-r1",
+      "sourceSha256": "a56b2ff40930b2856f340e914c878bd6dc5a8a1963a28929d828189a6b21c795",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "e8e164fcc121c3d6f824090753ce9c2fed9a1caf77fe460730ef8b8376eaaa66",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "a28eae816f411ba437a239068c0ff697ddd872bf3f4de4b549eb2687205e83c1",
+          "bytes": 11766
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "823ebdfaebe8f972893508ea0ffbc717c88a135daabfc274d732f512f516c449",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "f4407e951fd8601622d2a5c1e239556941a416952b85d4bea2831f09336d2b23",
+          "bytes": 1139
+        },
+        "Usbload.bin": {
+          "sha256": "242f16d24f9678e47793d39afd78f5beb1bc69c794764ea4b7a7f534172279e4",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-hmi-lw321-r2",
+      "sourceSha256": "a56b2ff40930b2856f340e914c878bd6dc5a8a1963a28929d828189a6b21c795",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "40ce26c479b7ad805de01052e969c0cc469264788d1db3b72c6270e2703b8c9f",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "22dafdcfd73ab4faaf5327a5c2ee78422ef8ea8e440bac6330a8591a1c6ab682",
+          "bytes": 11775
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "7d2792d4e9f43c1af16d8a0d605ca3587059c32611b348f039de09292925f3e0",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "f4407e951fd8601622d2a5c1e239556941a416952b85d4bea2831f09336d2b23",
+          "bytes": 1139
+        },
+        "Usbload.bin": {
+          "sha256": "3f5341a89437cf716701ff906d2d584e348204b9e7821f0b86fa894ebb5f5317",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-baseline-r1",
+      "sourceSha256": "ae88aa3d30d9917214a470e14e123eff35f009a7cc3a32468e54620487ac7759",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "5ab433af28589d42ca58fd714069d6f8b7849b422474458ae0428fc7afe13e9f",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "350b9d05b65a132f70dc6ce6f94c86f81d38b11ccbf13c594a7bcac18899b1ef",
+          "bytes": 11646
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "4c3ae3abdb0ec64caf3942cdd2e5607467fa47a0c56481c3e7fba384c656c38b",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "da1f7b2656e926af56e038854c508c36ef258569c9d2b2d5fc2472ed9fd9b222",
+          "bytes": 1139
+        },
+        "Usbload.bin": {
+          "sha256": "8651bbaf4037d5f9c54357322c66656f6902f08b715911295c50e74edfe062f6",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-baseline-r2",
+      "sourceSha256": "ae88aa3d30d9917214a470e14e123eff35f009a7cc3a32468e54620487ac7759",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "7e441a0380d377c72c39082aa70b9b20d811884d95ba9798b83c3e35e8a9e810",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "d78ca8c9010ad9e185b2132714355718920f15e3dd33cde23dddbefebec15eb7",
+          "bytes": 11695
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "b60d661d88ca99b2414bd19b5b3aad7049f8afda6f5a525eb1229f53aeb266c5",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "da1f7b2656e926af56e038854c508c36ef258569c9d2b2d5fc2472ed9fd9b222",
+          "bytes": 1139
+        },
+        "Usbload.bin": {
+          "sha256": "b02be74fa7d0a5169190903dda50afedec77a10769bee780d486a1b922805ede",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-lw0-r1",
+      "sourceSha256": "b6010c109ed09a50c270ca8d386aff7fca0aa051ff51c4a318c8ccb0f276bad1",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "cca4a31a2fcd9d048a9ddd879232151b1904748217ec336c85124618b43a3114",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "a4c562e1ad5e88148f15044a4753dd6f52caa800469f740b70ec8d255cee9ee9",
+          "bytes": 11678
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "55af5f0f878d7922afac37cbc1ca79a46ef378d05e89ba88cf82a5503a4412a2",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "887fc77a7a8b7635c34ddd51d3a02160216d2469fafc25a8c86ed1539f53fd66",
+          "bytes": 1143
+        },
+        "Usbload.bin": {
+          "sha256": "98fe1ea8d5f53672224b7d44211408b4c6322450e9e65dcb54cdea45c8952fc0",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-lw0-r2",
+      "sourceSha256": "b6010c109ed09a50c270ca8d386aff7fca0aa051ff51c4a318c8ccb0f276bad1",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "a25daccceca657fd69f927d156cd96f71a17847729492e9ad63a940b621a1f95",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "5a9c10fc1e9153d4b4771cc6201adea4d962ac05801284861df8385386d9b9e9",
+          "bytes": 11652
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "e2524534b51ec052fcb20531d9c1abd8da217cc247304c4ec8f73108238e125c",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "887fc77a7a8b7635c34ddd51d3a02160216d2469fafc25a8c86ed1539f53fd66",
+          "bytes": 1143
+        },
+        "Usbload.bin": {
+          "sha256": "1a4ac9b09b651026bd4a5f2e535dccbc1ced55bdca6eec1747d0dde9cd90f4fc",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-lw789-r1",
+      "sourceSha256": "555d8c514438706c976529e9256d5f35b41e1bc76362ef8f5253dde000a11b54",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "9609fcb1705908828115d577c1bd408009f5f10b5042b5a3eab9a72e452cb6cd",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "e4ed2c5bdfcb490787a7325dc938a412a7ff539af6b3b28396358decdb30525b",
+          "bytes": 11729
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "25a9b252109c9b7f553deb5baa29a04159cf015fc05b94ee7bc420149a040000",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "a26795bfd05f225344fd3f10549e9aeda93358a9063f073b1c241d95b54ee17a",
+          "bytes": 1149
+        },
+        "Usbload.bin": {
+          "sha256": "e8ae1af08ef7452280cc24860ec3581008dcdaca13b8da1f332c1bfc72f466bd",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    },
+    {
+      "label": "steady-plc-lw789-r2",
+      "sourceSha256": "555d8c514438706c976529e9256d5f35b41e1bc76362ef8f5253dde000a11b54",
+      "files": {
+        "AddrPara.dat": {
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+          "bytes": 200
+        },
+        "AlarmMuti.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "AlarmPara.dat": {
+          "sha256": "e1aa56fd12431a7d24a08b4bc6c8991a6d58bf515baa178eb46afc1bb65be8e0",
+          "bytes": 47840
+        },
+        "Collect.dat": {
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+          "bytes": 1424
+        },
+        "Curve.dat": {
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+          "bytes": 501
+        },
+        "load.bin": {
+          "sha256": "dbec4f5769adb681d6039240546fc2204284a065f7a6ef63bb42c6f2cfb52b72",
+          "bytes": 253
+        },
+        "load.kns": {
+          "sha256": "8638f01decc798e94d32c3b29486701e6d72732c2058b792a0fafedbc514d07c",
+          "bytes": 11664
+        },
+        "MarcoVar.dat": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "Modbus_RTU_com1.bin": {
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+          "bytes": 12496
+        },
+        "PicLenPara.dat": {
+          "sha256": "fbcd494595c1c67c51efaa7e98b003d30591875be305874d8619cf0f41eab27d",
+          "bytes": 2400
+        },
+        "SheetPara.dat": {
+          "sha256": "2d795de4bb7222e379de22709e60699ab9da68b144890a45c4b10ce437299556",
+          "bytes": 72
+        },
+        "SheetPixel.dat": {
+          "sha256": "ea3aeed6d83fe39111cbd3add758b643e3472894fae355aabab3c64953dd3eca",
+          "bytes": 3919
+        },
+        "SysPara.dat": {
+          "sha256": "cd633f9458e6fc0343aa17a62c68e2dd44e33591b2153cc81d64e5cdd65dab9f",
+          "bytes": 4998
+        },
+        "upLoad.knr": {
+          "sha256": "a26795bfd05f225344fd3f10549e9aeda93358a9063f073b1c241d95b54ee17a",
+          "bytes": 1149
+        },
+        "Usbload.bin": {
+          "sha256": "24bb94bf16be346e1811bc284ddff7aa6b2001993af752150c364dc880a99972",
+          "bytes": 1704
+        }
+      },
+      "usbWriteCommandsInvoked": false,
+      "method": "actual native action_offline_simulation compiler phase; captured WORK/compile after fresh SysPara mtime and success log; no download/transfer button invoked",
+      "compileSuccess": true
+    }
+  ],
+  "comparisonRule": "Stable within two copies in each compared condition. Equal repeats alone do not establish semantic causality.",
+  "comparisons": [
+    {
+      "before": "steady-io-baseline",
+      "after": "steady-hmi-lw0",
+      "pairedEqualWithinConditionChangedOffsets": [
+        [
+          352,
+          0,
+          1
+        ]
+      ],
+      "unstableWithinEitherConditionOffsets": [
+        180,
+        181,
+        182,
+        184,
+        185,
+        186,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        203,
+        220,
+        221,
+        222,
+        223,
+        256,
+        258,
+        264,
+        265,
+        266,
+        268,
+        269,
+        270,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        312,
+        313,
+        324,
+        328,
+        370,
+        384,
+        385,
+        386,
+        387,
+        420,
+        421,
+        422,
+        424,
+        425,
+        426,
+        429,
+        430,
+        440,
+        442,
+        443,
+        760,
+        762,
+        763,
+        820,
+        821,
+        822,
+        824,
+        825,
+        826,
+        829,
+        830,
+        850,
+        864,
+        865,
+        866,
+        867,
+        879,
+        894,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911
+      ],
+      "byteIdenticalFiles": [
+        "AddrPara.dat",
+        "AlarmMuti.dat",
+        "Collect.dat",
+        "Curve.dat",
+        "MarcoVar.dat",
+        "Modbus_RTU_com1.bin",
+        "PicLenPara.dat",
+        "SheetPara.dat",
+        "SheetPixel.dat",
+        "load.bin"
+      ]
+    },
+    {
+      "before": "steady-hmi-lw0",
+      "after": "steady-hmi-lw321",
+      "pairedEqualWithinConditionChangedOffsets": [
+        [
+          358,
+          0,
+          100
+        ],
+        [
+          364,
+          0,
+          65
+        ],
+        [
+          365,
+          0,
+          1
+        ],
+        [
+          386,
+          89,
+          105
+        ],
+        [
+          387,
+          14,
+          4
+        ],
+        [
+          440,
+          144,
+          192
+        ],
+        [
+          442,
+          89,
+          105
+        ],
+        [
+          443,
+          14,
+          4
+        ],
+        [
+          760,
+          144,
+          192
+        ],
+        [
+          762,
+          89,
+          105
+        ],
+        [
+          763,
+          14,
+          4
+        ],
+        [
+          866,
+          89,
+          105
+        ],
+        [
+          867,
+          14,
+          4
+        ]
+      ],
+      "unstableWithinEitherConditionOffsets": [
+        180,
+        181,
+        184,
+        185,
+        188,
+        189,
+        192,
+        193,
+        196,
+        197,
+        220,
+        221,
+        256,
+        264,
+        265,
+        268,
+        269,
+        272,
+        273,
+        276,
+        277,
+        280,
+        281,
+        284,
+        285,
+        304,
+        305,
+        308,
+        309,
+        312,
+        313,
+        324,
+        328,
+        370,
+        371,
+        384,
+        385,
+        399,
+        424,
+        425,
+        799,
+        824,
+        825,
+        850,
+        851,
+        864,
+        865,
+        879,
+        894,
+        895,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911
+      ],
+      "byteIdenticalFiles": [
+        "AddrPara.dat",
+        "AlarmMuti.dat",
+        "Collect.dat",
+        "Curve.dat",
+        "MarcoVar.dat",
+        "Modbus_RTU_com1.bin",
+        "PicLenPara.dat",
+        "SheetPara.dat",
+        "SheetPixel.dat",
+        "load.bin"
+      ]
+    },
+    {
+      "before": "steady-io-baseline",
+      "after": "steady-plc-baseline",
+      "pairedEqualWithinConditionChangedOffsets": [
+        [
+          328,
+          23,
+          24
+        ],
+        [
+          358,
+          0,
+          100
+        ],
+        [
+          364,
+          0,
+          65
+        ],
+        [
+          365,
+          0,
+          1
+        ],
+        [
+          371,
+          17,
+          11
+        ],
+        [
+          399,
+          17,
+          11
+        ],
+        [
+          799,
+          17,
+          11
+        ],
+        [
+          851,
+          17,
+          11
+        ],
+        [
+          895,
+          17,
+          11
+        ]
+      ],
+      "unstableWithinEitherConditionOffsets": [
+        180,
+        181,
+        182,
+        184,
+        185,
+        186,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        203,
+        220,
+        221,
+        222,
+        223,
+        256,
+        258,
+        264,
+        265,
+        266,
+        268,
+        269,
+        270,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        312,
+        313,
+        324,
+        370,
+        384,
+        385,
+        386,
+        387,
+        420,
+        421,
+        422,
+        424,
+        425,
+        426,
+        429,
+        430,
+        440,
+        442,
+        443,
+        760,
+        762,
+        763,
+        820,
+        821,
+        822,
+        824,
+        825,
+        826,
+        829,
+        830,
+        850,
+        864,
+        865,
+        866,
+        867,
+        879,
+        894,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911
+      ],
+      "byteIdenticalFiles": [
+        "AddrPara.dat",
+        "AlarmMuti.dat",
+        "Collect.dat",
+        "Curve.dat",
+        "MarcoVar.dat",
+        "Modbus_RTU_com1.bin",
+        "PicLenPara.dat",
+        "SheetPara.dat",
+        "SheetPixel.dat",
+        "load.bin"
+      ]
+    },
+    {
+      "before": "steady-plc-baseline",
+      "after": "steady-plc-lw0",
+      "pairedEqualWithinConditionChangedOffsets": [
+        [
+          370,
+          53,
+          193
+        ],
+        [
+          371,
+          11,
+          1
+        ],
+        [
+          399,
+          11,
+          1
+        ],
+        [
+          752,
+          0,
+          1
+        ],
+        [
+          757,
+          95,
+          87
+        ],
+        [
+          799,
+          11,
+          1
+        ],
+        [
+          850,
+          53,
+          193
+        ],
+        [
+          851,
+          11,
+          1
+        ],
+        [
+          894,
+          53,
+          193
+        ],
+        [
+          895,
+          11,
+          1
+        ]
+      ],
+      "unstableWithinEitherConditionOffsets": [
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        192,
+        193,
+        194,
+        196,
+        197,
+        220,
+        221,
+        222,
+        256,
+        258,
+        259,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        284,
+        285,
+        286,
+        287,
+        304,
+        305,
+        306,
+        308,
+        309,
+        312,
+        313,
+        324,
+        384,
+        385,
+        386,
+        387,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425,
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        440,
+        442,
+        443,
+        760,
+        762,
+        763,
+        820,
+        821,
+        822,
+        823,
+        824,
+        825,
+        826,
+        827,
+        828,
+        829,
+        830,
+        831,
+        864,
+        865,
+        866,
+        867,
+        879,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911
+      ],
+      "byteIdenticalFiles": [
+        "AddrPara.dat",
+        "AlarmMuti.dat",
+        "Collect.dat",
+        "Curve.dat",
+        "MarcoVar.dat",
+        "Modbus_RTU_com1.bin",
+        "PicLenPara.dat",
+        "SheetPara.dat",
+        "SheetPixel.dat",
+        "load.bin"
+      ]
+    },
+    {
+      "before": "steady-plc-lw0",
+      "after": "steady-plc-lw789",
+      "pairedEqualWithinConditionChangedOffsets": [
+        [
+          328,
+          24,
+          25
+        ],
+        [
+          758,
+          0,
+          100
+        ],
+        [
+          764,
+          0,
+          21
+        ],
+        [
+          765,
+          0,
+          3
+        ]
+      ],
+      "unstableWithinEitherConditionOffsets": [
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        192,
+        193,
+        194,
+        196,
+        197,
+        203,
+        220,
+        221,
+        222,
+        256,
+        258,
+        259,
+        264,
+        265,
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        312,
+        313,
+        324,
+        370,
+        371,
+        384,
+        385,
+        386,
+        387,
+        399,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425,
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        440,
+        442,
+        443,
+        760,
+        762,
+        763,
+        799,
+        820,
+        821,
+        822,
+        823,
+        824,
+        825,
+        826,
+        827,
+        828,
+        829,
+        830,
+        831,
+        850,
+        851,
+        864,
+        865,
+        866,
+        867,
+        879,
+        894,
+        895,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911
+      ],
+      "byteIdenticalFiles": [
+        "AddrPara.dat",
+        "AlarmMuti.dat",
+        "Collect.dat",
+        "Curve.dat",
+        "MarcoVar.dat",
+        "Modbus_RTU_com1.bin",
+        "PicLenPara.dat",
+        "SheetPara.dat",
+        "SheetPixel.dat",
+        "load.bin"
+      ]
+    }
+  ],
+  "sysParaRowSpans": {
+    "steady-io-baseline-r1": {
+      "[352:368]": "00000000005700000800000000000000",
+      "[752:768]": "00000000005f00029000590e00000000"
+    },
+    "steady-io-baseline-r2": {
+      "[352:368]": "00000000005700000800000000000000",
+      "[752:768]": "00000000005f0002f800600400000000"
+    },
+    "steady-hmi-lw0-r1": {
+      "[352:368]": "01000000005700000800000000000000",
+      "[752:768]": "00000000005f00029000590e00000000"
+    },
+    "steady-hmi-lw0-r2": {
+      "[352:368]": "01000000005700000800000000000000",
+      "[752:768]": "00000000005f00029000590e00000000"
+    },
+    "steady-hmi-lw321-r1": {
+      "[352:368]": "01000000005764000800000041010000",
+      "[752:768]": "00000000005f0002c000690400000000"
+    },
+    "steady-hmi-lw321-r2": {
+      "[352:368]": "01000000005764000800000041010000",
+      "[752:768]": "00000000005f0002c000690400000000"
+    },
+    "steady-plc-baseline-r1": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "00000000005f0002c000690400000000"
+    },
+    "steady-plc-baseline-r2": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "00000000005f0002c000690400000000"
+    },
+    "steady-plc-lw0-r1": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "0100000000570002c000690400000000"
+    },
+    "steady-plc-lw0-r2": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "01000000005700029000590e00000000"
+    },
+    "steady-plc-lw789-r1": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "0100000000576402c000690415030000"
+    },
+    "steady-plc-lw789-r2": {
+      "[352:368]": "00000000005764000800000041010000",
+      "[752:768]": "010000000057640288007b0e15030000"
+    }
+  },
+  "runtimeVerified": false
+}

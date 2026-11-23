@@ -1,6 +1,9 @@
 #include "main_window.h"
 #include "hmi_canvas.h"
 #include "local_help.h" //20261122-4 add
+#include "stage2_file_protection.h" //20261123-17 add
+#include "stage2_io_settings.h" //20261123-15 add
+#include "stage2_clock_panel.h" //20261123-16 add
 #include "plc_address_dialog.h" //20261122-6 add
 #include "stage2_project_dialogs.h"
 #include "stage2_global_tools.h"
@@ -8,9 +11,11 @@
 #include "stage3_resources.h" //20261110-8 add
 
 #include <QAction>
+#include <QAbstractButton> //20261123-17 add
 #include <QAbstractSpinBox>
 #include <QApplication>
 #include <QComboBox>
+#include <QCryptographicHash> //20261123-17 add
 #include <QDialogButtonBox>
 #include <QFileInfo>
 #include <QGraphicsScene>
@@ -59,6 +64,11 @@ QJsonObject projectContent(const HmiProject &project) //20261110-7 add
         });
     }
     content = normalized.toJson();
+    if (!project.filePassword.isEmpty()) //20261123-17 add: Detect access-policy changes for undo and dirty tracking without serializing the password.
+    {
+        content.insert(QStringLiteral("fileProtectionState"), QString::fromLatin1(
+            QCryptographicHash::hash(project.filePassword.toUtf8(), QCryptographicHash::Sha256).toHex()));
+    }
     content.remove(QStringLiteral("activePageId"));
     content.remove(QStringLiteral("activeLanguage"));
     if (content.value(QStringLiteral("schemaVersion")).toInt() >= 9) { content.remove(QStringLiteral("resolution")); }
@@ -204,11 +214,47 @@ bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110
 {
     HmiProject candidate;
     bool native;
+    QString password; //20261123-17 add
 
-    if (!HmiProject::load(path, &candidate, error)) { return false; }
+    auto loadCandidate = [&]() {
+        QString failure;
+        bool passwordRequired;
+        bool entered = !password.isEmpty();
+
+        while (!HmiProject::load(path, &candidate, &failure, password, &passwordRequired))
+        {
+            if (!passwordRequired)
+            {
+                if (error != nullptr)
+                {
+                    *error = failure;
+                }
+                return false;
+            }
+            if (entered)
+            {
+                QMessageBox warning(QMessageBox::Warning, QStringLiteral("KinSealStudio"), failure,
+                                    QMessageBox::Ok, this);
+
+                warning.button(QMessageBox::Ok)->setText(QStringLiteral("确定"));
+                warning.exec();
+            }
+            if (!requestStage2FilePassword(this, &password))
+            {
+                if (error != nullptr)
+                {
+                    error->clear();
+                }
+                return false;
+            }
+            entered = true;
+        }
+        return true;
+    };
+    if (!loadCandidate()) { return false; }
     if (!confirmDiscardChanges()) { return false; }
     //20261110-7 add: Saving unsaved work may replace this exact path; never adopt the stale pre-prompt candidate.
-    if (!HmiProject::load(path, &candidate, error)) { return false; }
+    if (!loadCandidate()) { return false; }
     native = QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0;
     setProject(candidate, native ? QString() : path);
     updateRecentProjects(path);
@@ -354,6 +400,82 @@ void MainWindow::configureSystemSettings() //20261122-4 change
     });
     if (dialog.exec() == QDialog::Accepted && !commitProjectDraft(dialog.draftProject(), &error)) {
         QMessageBox::warning(this, QStringLiteral("系统参数未提交"), error);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::configureExtendedSystemSetting
+ * Description     : Publish one confirmed system dialog as an atomic editor transaction.
+ * Input Parameters: kind, label
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void MainWindow::configureExtendedSystemSetting(const QString &kind, const QString &label) //20261123-15 add
+{
+    HmiProject draft = currentEditorProject();
+    HmiConfigurationNode node;
+    QJsonObject defaults;
+    QJsonObject properties;
+    QString error;
+    int index;
+    bool accepted;
+    const bool io = kind == QStringLiteral("hmiStatus") || kind == QStringLiteral("plcControl");
+
+    if (!m_hasProject)
+    {
+        return;
+    }
+    if (kind == QStringLiteral("fileProtection"))
+    {
+        if (editStage2FileProtection(this, draft.filePassword, &draft.filePassword) && !commitProjectDraft(draft, &error))
+        {
+            QMessageBox::warning(this, label, error);
+        }
+        return;
+    }
+    defaults = io ? defaultStage2IoSettings(kind) : defaultStage2ClockPanel(kind);
+    for (index = 0; index < draft.configurationNodes.size(); ++index)
+    {
+        if (draft.configurationNodes.at(index).kind == kind)
+        {
+            node = draft.configurationNodes.at(index);
+            break;
+        }
+    }
+    properties = node.id.isEmpty() ? defaults : node.properties;
+    accepted = io ? editStage2IoSettings(this, draft, kind, properties, &properties) :
+        editStage2ClockPanel(this, draft, kind, properties, &properties);
+    if (!accepted)
+    {
+        return;
+    }
+    if (properties == defaults)
+    {
+        if (index < draft.configurationNodes.size())
+        {
+            draft.configurationNodes.removeAt(index);
+        }
+    }
+    else
+    {
+        node.id = QStringLiteral("system-") + kind;
+        node.kind = kind;
+        node.name = label;
+        node.implemented = true;
+        node.active = io ? stage2IoSettingsActive(kind, properties) : stage2ClockPanelActive(kind, properties);
+        node.properties = properties;
+        if (index < draft.configurationNodes.size())
+        {
+            draft.configurationNodes[index] = node;
+        }
+        else
+        {
+            draft.configurationNodes.append(node);
+        }
+    }
+    if (!commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, label, error);
     }
 }
 
@@ -683,13 +805,21 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     normal->setData(0, Qt::UserRole, QStringLiteral("normalPages")); //20261122-9 change: Route the ordinary page group to its own context actions.
     windows->setData(0, Qt::UserRole, QStringLiteral("windowPages")); //20261123-12 change
     system = new QTreeWidgetItem(settings, {QStringLiteral("系统设置")});
-    Q_FOREACH (label, (QStringList{QStringLiteral("参数设置"), QStringLiteral("HMI状态"), QStringLiteral("PLC控制"),
-        QStringLiteral("时钟"), QStringLiteral("文件保护"), QStringLiteral("HMI保护"), QStringLiteral("语言设置")}))
+    item = new QTreeWidgetItem(system, {QStringLiteral("参数设置")});
+    item->setData(0, Qt::UserRole, QStringLiteral("system"));
+    for (const auto &entry : (QList<QPair<QString, QString>>{
+        {QStringLiteral("HMI状态"), QStringLiteral("hmiStatus")},
+        {QStringLiteral("PLC控制"), QStringLiteral("plcControl")},
+        {QStringLiteral("时钟"), QStringLiteral("clockSettings")},
+        {QStringLiteral("文件保护"), QStringLiteral("fileProtection")},
+        {QStringLiteral("HMI保护"), QStringLiteral("panelProtection")}})) //20261123-15 add
     {
-        item = new QTreeWidgetItem(system, {label});
-        item->setData(0, Qt::UserRole, label == QStringLiteral("参数设置") ? QStringLiteral("system") :
-                      label == QStringLiteral("语言设置") ? QStringLiteral("languages") : QStringLiteral("unsupported"));
+        item = new QTreeWidgetItem(system, {entry.first});
+        item->setData(0, Qt::UserRole, QStringLiteral("extendedSystemSetting"));
+        item->setData(0, Qt::UserRole + 1, entry.second);
     }
+    item = new QTreeWidgetItem(system, {QStringLiteral("语言设置")});
+    item->setData(0, Qt::UserRole, QStringLiteral("languages"));
     item = new QTreeWidgetItem(settings, {QStringLiteral("数据采集")});
     item->setData(0, Qt::UserRole, QStringLiteral("dataCollection")); //20261112-1 change
     Q_FOREACH (collection, m_project.configurationNodes)

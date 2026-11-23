@@ -3,7 +3,10 @@
 #include "kvg_library.h" //20261123-3 add
 #include "native_test_project.h" //20261108-9 add
 #include "native_project_codec.h" //20261109-0 add
+#include "stage2_file_protection.h" //20261123-17 add
 #include "stage2_system_settings.h" //20261110-7 add: Validate only the explicitly recovered system-property schema.
+#include "stage2_io_settings.h" //20261123-15 add
+#include "stage2_clock_panel.h" //20261123-16 add
 
 #include <QBrush> //20261123-1 add
 #include <QFile>
@@ -18,6 +21,7 @@
 #include <QSet>
 #include <QUuid> //20261110-5 add
 #include <limits>
+#include <utility> //20261123-17 add
 #include <cmath> //20261108-14 add
 
 static constexpr int maxProtocolsPerPort = 128; //20261122-7 add: Match the existing native source parser's per-port bound.
@@ -1035,6 +1039,30 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         *node = candidate;
         return true;
     }
+    if (candidate.kind == QStringLiteral("hmiStatus") || candidate.kind == QStringLiteral("plcControl") ||
+        candidate.kind == QStringLiteral("clockSettings") || candidate.kind == QStringLiteral("panelProtection")) //20261123-15 add
+    {
+        const bool io = candidate.kind == QStringLiteral("hmiStatus") || candidate.kind == QStringLiteral("plcControl");
+
+        if (candidate.id != QStringLiteral("system-") + candidate.kind || candidate.name.trimmed().isEmpty() ||
+            !candidate.ownerPageId.isEmpty() || !candidate.implemented ||
+            !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
+        {
+            return modelError(error, QStringLiteral("系统设置的全局配置标识无效。"));
+        }
+        if (io ? !validateStage2IoSettings(candidate.kind, candidate.properties, error) :
+                 !validateStage2ClockPanel(candidate.kind, candidate.properties, error))
+        {
+            return false;
+        }
+        if (candidate.active != (io ? stage2IoSettingsActive(candidate.kind, candidate.properties) :
+                stage2ClockPanelActive(candidate.kind, candidate.properties)))
+        {
+            return modelError(error, QStringLiteral("系统设置节点与已启用选项不一致。"));
+        }
+        *node = candidate;
+        return true;
+    }
     if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
         !QStringList{QStringLiteral("system"), QStringLiteral("project"), QStringLiteral("dataCollection"),
         QStringLiteral("alarm"), QStringLiteral("recipe"), QStringLiteral("macro"), QStringLiteral("dataTransfer")}.contains(candidate.kind) ||
@@ -1471,6 +1499,7 @@ bool HmiProject::save(const QString &path, QString *error) const //20261107-6 ad
 {
     QSaveFile file(path);
     QByteArray bytes;
+    QByteArray envelope; //20261123-17 add
     QJsonDocument document;
 
     if (!validateModel(error)) //20261110-5 change: Validate every page and resource before opening the atomic replacement.
@@ -1482,6 +1511,33 @@ bool HmiProject::save(const QString &path, QString *error) const //20261107-6 ad
         if (error != nullptr) { *error = QStringLiteral("原厂工程元数据快照超过16 MiB。"); }
         return false;
     }
+    if (filePassword.isEmpty() && !nativeSourceSnapshot.isEmpty()) //20261123-17 add
+    {
+        HmiProject sanitized = *this;
+
+        if (!discardNativeFilePassword(&sanitized.nativeSourceSnapshot, error))
+        {
+            return false;
+        }
+        document = QJsonDocument(sanitized.toJson());
+    }
+    else
+    {
+        document = QJsonDocument(toJson()); //20261123-17 change: Seal the project before opening the replacement file.
+    }
+    bytes = document.toJson(QJsonDocument::Indented);
+    if (!filePassword.isEmpty())
+    {
+        if (QFileInfo(path).suffix().compare(QStringLiteral("ksp"), Qt::CaseInsensitive) != 0)
+        {
+            return modelError(error, QStringLiteral("受密码保护的工程仅可保存为 .ksp。"));
+        }
+        if (!protectStage2ProjectFile(bytes, filePassword, &envelope, error))
+        {
+            return false;
+        }
+        bytes = std::move(envelope);
+    }
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         if (error != nullptr)
@@ -1491,8 +1547,6 @@ bool HmiProject::save(const QString &path, QString *error) const //20261107-6 ad
         return false;
     }
 
-    document = QJsonDocument(toJson());
-    bytes = document.toJson(QJsonDocument::Indented);
     if (file.write(bytes) != bytes.size())
     {
         if (error != nullptr)
@@ -1764,6 +1818,26 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             return modelError(error, QStringLiteral("配置节点%1重复、悬空或包含未恢复活动字段。").arg(node.id));
         }
         nodeIds.insert(node.id);
+        if (node.active && (node.kind == QStringLiteral("hmiStatus") || node.kind == QStringLiteral("plcControl")) &&
+            !validateStage2IoAddresses(node.kind, node.properties, connections, error)) //20261123-15 add
+        {
+            return false;
+        }
+        if (node.active && node.kind == QStringLiteral("clockSettings") &&
+            !validateStage2ClockPanelAddresses(node.kind, node.properties, connections, error)) //20261123-16 add
+        {
+            return false;
+        }
+        if (node.active && node.kind == QStringLiteral("panelProtection")) //20261123-18 add
+        {
+            for (const QString &pageId : stage2ActivePanelTargets(node.properties))
+            {
+                if (navigationPageKinds.value(pageId) != QStringLiteral("normal"))
+                {
+                    return modelError(error, QStringLiteral("HMI保护的到期提示画面缺失或不是普通画面。"));
+                }
+            }
+        }
         if (node.kind == QStringLiteral("pageSlide")) //20261123-4 add
         {
             if (navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") ||
@@ -1931,6 +2005,14 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
 bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 add
 {
     if (!validateModel(error)) { return false; }
+    for (const HmiConfigurationNode &node : configurationNodes) //20261123-15 add: A saved editor setting requires an explicit backend mapping.
+    {
+        if (node.kind == QStringLiteral("hmiStatus") || node.kind == QStringLiteral("plcControl") ||
+            node.kind == QStringLiteral("clockSettings") || node.kind == QStringLiteral("panelProtection"))
+        {
+            return modelError(error, QStringLiteral("项目已保存「%1」配置，其原厂源和设备编码尚未验收。").arg(node.name));
+        }
+    }
     if (!animations.isEmpty()) //20261112-0 add: Unreferenced GIF resources also need a recovered native resource format.
     { return modelError(error, QStringLiteral("工程包含尚未恢复原厂源/设备格式的GIF动画资源。")); }
     if (pageCount() != 1 || activePageKind != QStringLiteral("normal") || startupPageId != activePageId ||
@@ -2430,28 +2512,27 @@ bool HmiProject::validatePlcConfiguration(QString *error) const //20261109-0 add
 /******************************************************************************
  * Function Name   : HmiProject::load
  * Description     : Read a prototype project or the verified native one-text project.
- * Input Parameters: path, project, error
+ * Input Parameters: path, project, error, password, passwordRequired
  * Return Value    : True when the file contains a supported project schema.
  * Date            : 2026.11.07
  ******************************************************************************/
-bool HmiProject::load(const QString &path, HmiProject *project, QString *error) //20261108-9 change
+bool HmiProject::load(const QString &path, HmiProject *project, QString *error,
+                      const QString &password, bool *passwordRequired) //20261123-17 change
 {
     QFile file(path);
     HmiProject imported; //20261110-5 add: Legacy and typed importers never receive the caller's live model.
     QByteArray bytes;
     QJsonParseError parse_error;
     QJsonDocument document;
+    const bool native = QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0;
+    bool protectedFile;
 
-    if (project == nullptr) { return modelError(error, QStringLiteral("工程接收位置为空。")); }
-    if (QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0) //20261108-9 add
+    if (passwordRequired != nullptr)
     {
-        if (importNativeTestProject(path, &imported, error)) //20261110-5 change
-        {
-            if (!imported.validateModel(error)) { return false; }
-            *project = imported; return true;
-        }
+        *passwordRequired = false;
     }
 
+    if (project == nullptr) { return modelError(error, QStringLiteral("工程接收位置为空。")); }
     if (!file.open(QIODevice::ReadOnly))
     {
         if (error != nullptr)
@@ -2461,16 +2542,40 @@ bool HmiProject::load(const QString &path, HmiProject *project, QString *error) 
         return false;
     }
 
-    if (file.size() > 128 * 1024 * 1024) //20261110-5 add: Carrier allocation guard, not a native limit.
+    protectedFile = !native && isStage2ProtectedFile(file.peek(stage2ProtectedFileOverhead)); //20261123-17 add
+    if (file.size() > 128 * 1024 * 1024 + (protectedFile ? stage2ProtectedFileOverhead : 0))
     {
         return modelError(error, QStringLiteral("工程文件超过128 MiB的Lite读取保护上限。"));
     }
     bytes = file.readAll();
     if (file.error() != QFileDevice::NoError) { return modelError(error, file.errorString()); }
-    if (QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0) //20261109-0 add
+    if (native) //20261123-17 change
     {
-        if (!importNativeProjectSource(bytes, &imported, error) || !imported.validateModel(error)) { return false; } //20261110-5 change
+        // Authenticate the parsed native password before either native import path sees the document.
+        if (!authenticateNativeProjectFile(bytes, password, &protectedFile, passwordRequired, error))
+        {
+            return false;
+        }
+        if (protectedFile || !importNativeTestProject(path, &imported, error))
+        {
+            if (!importNativeProjectSource(bytes, &imported, error))
+            {
+                return false;
+            }
+        }
+        if (!imported.validateModel(error))
+        {
+            return false;
+        }
+        if (protectedFile)
+        {
+            imported.filePassword = password; // Preserve protection when the authenticated project is saved as KSP.
+        }
         *project = imported; return true;
+    }
+    if (protectedFile && !unprotectStage2ProjectFile(bytes, password, &bytes, passwordRequired, error))
+    {
+        return false;
     }
     document = QJsonDocument::fromJson(bytes, &parse_error);
     if (parse_error.error != QJsonParseError::NoError || !document.isObject())
@@ -2481,7 +2586,16 @@ bool HmiProject::load(const QString &path, HmiProject *project, QString *error) 
         }
         return false;
     }
-    return fromJson(document.object(), project, error);
+    if (!fromJson(document.object(), &imported, error)) //20261123-17 change: Keep the caller's model intact until both checks pass.
+    {
+        return false;
+    }
+    if (protectedFile)
+    {
+        imported.filePassword = password;
+    }
+    *project = imported;
+    return true;
 }
 
 /******************************************************************************

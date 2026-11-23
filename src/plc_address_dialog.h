@@ -24,11 +24,11 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
 /******************************************************************************
  * Function Name   : editPlcAddress
  * Description     : Edit internal or explicitly qualified external bit/word addresses.
- * Input Parameters: parent, bit, connections, qualifiedText, transferCount (explicit 1..2 span)
+ * Input Parameters: parent, bit, connections, qualifiedText, transferCount (explicit 1..2 span), localAddressCount
  * Return Value    : True only after parser validation; cancellation or owner loss preserves output.
  * Date            : 2026.11.09
  ******************************************************************************/
 bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &connections,
-                    QString *qualifiedText, int transferCount = 1); //20261109-6 change //20261114-8 change
+                    QString *qualifiedText, int transferCount = 1, u32 localAddressCount = 4097); //20261123-15 change
 
 #endif

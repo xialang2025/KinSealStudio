@@ -88,6 +88,26 @@ bool validateNativeProjectSourceStructure(const QByteArray &data,
                                            QString *error = nullptr); //20261109-0 add
 
 /******************************************************************************
+ * Function Name   : authenticateNativeProjectFile
+ * Description     : Verify the original V5.1 file password only for active protection.
+ * Input Parameters: data, password, protectedFile, passwordRequired, error
+ * Return Value    : True for unprotected files or an exact password match.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool authenticateNativeProjectFile(const QByteArray &data, const QString &password,
+                                    bool *protectedFile, bool *passwordRequired,
+                                    QString *error = nullptr); //20261123-17 add
+
+/******************************************************************************
+ * Function Name   : discardNativeFilePassword
+ * Description     : Clear the original protection flag and stored secret in a KSP snapshot copy.
+ * Input Parameters: data, error
+ * Return Value    : True when the copy can be saved unencrypted.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool discardNativeFilePassword(QByteArray *data, QString *error = nullptr); //20261123-17 add
+
+/******************************************************************************
  * Function Name   : nativeProjectUsesSupportedDeviceDefaults
  * Description     : Check exact observed native system and project configuration fingerprints.
  * Input Parameters: data, error

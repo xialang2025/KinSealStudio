@@ -34,7 +34,6 @@
 #include <QJsonArray>
 #include <QGroupBox>
 #include <QGraphicsScene> //20261109-4 add
-#include <QInputDialog>
 #include <QJsonDocument>
 #include <QLineEdit>
 #include <QLabel> //20261109-1 add
@@ -168,31 +167,39 @@ void StaticTextTests::propertyRoundTrip() //20261108-14 add
 void StaticTextTests::languagePropertySynchronization() //20261108-14 add
 {
     MainWindow window;
+    QTemporaryDir directory; //20261123-19 add
     ScreenCanvas *canvas;
     QComboBox *language;
     QPlainTextEdit *editor;
     HmiProject project;
     HmiObject object;
     bool selected;
+    QString path;
+    QString error;
 
     object = textObject();
     object.staticText.languageTexts.insert(QStringLiteral("中文"), QStringLiteral("中文内容"));
     object.staticText.languageTexts.insert(QStringLiteral("English"), QStringLiteral("English text"));
     project.objects.append(object);
+    QVERIFY(directory.isValid());
+    path = directory.filePath(QStringLiteral("language-sync.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
     window.show(); QApplication::processEvents();
     canvas = window.findChild<ScreenCanvas *>();
     language = window.findChild<QComboBox *>(QStringLiteral("ProjectLanguage"));
     editor = window.findChild<QPlainTextEdit *>();
     QVERIFY(canvas != nullptr && language != nullptr && editor != nullptr);
-    canvas->setProject(project); canvas->documentChanged(); canvas->selectObject(object.id);
+    canvas->selectObject(object.id);
     QCOMPARE(editor->toPlainText(), QStringLiteral("中文内容"));
     QTimer::singleShot(0, &window, [&window]() {
-        QInputDialog *dialog;
-        dialog = window.findChild<QInputDialog *>();
+        QDialog *dialog;
+        dialog = window.findChild<QDialog *>(QStringLiteral("Kns_MulLanguageDlg"));
         if (dialog != nullptr)
         {
-            dialog->setTextValue(QStringLiteral("中文,English"));
-            dialog->accept();
+            dialog->findChild<QComboBox *>(QStringLiteral("lanComboBox"))->setCurrentIndex(1);
+            dialog->findChild<QLineEdit *>(QStringLiteral("lineEdit_2"))->setText(QStringLiteral("English"));
+            dialog->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click();
         }
     });
     QVERIFY(QMetaObject::invokeMethod(&window, "configureLanguages", Qt::DirectConnection));

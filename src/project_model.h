@@ -204,8 +204,10 @@ struct HmiProject
     bool validatePlcConfiguration(QString *error) const; //20261109-0 add
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &json, HmiProject *project, QString *error);
+    QString filePassword; //20261123-17 add: Session-only key material for the KSP file envelope.
     bool save(const QString &path, QString *error) const;
-    static bool load(const QString &path, HmiProject *project, QString *error);
+    static bool load(const QString &path, HmiProject *project, QString *error,
+                     const QString &password = {}, bool *passwordRequired = nullptr); //20261123-17 change
 };
 
 #endif

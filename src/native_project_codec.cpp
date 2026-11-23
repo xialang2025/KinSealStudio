@@ -3278,6 +3278,110 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
 }
 
 /******************************************************************************
+ * Function Name   : authenticateNativeProjectFile
+ * Description     : Validate the recovered protection flag and compare the original Qt string without returning it.
+ * Input Parameters: data, password, protectedFile, passwordRequired, error
+ * Return Value    : True after structural and optional password checks pass.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool authenticateNativeProjectFile(const QByteArray &data, const QString &password,
+                                    bool *protectedFile, bool *passwordRequired,
+                                    QString *error) //20261123-17 add
+{
+    SourceDocument document(data);
+    int enabled;
+    QString expected;
+
+    if (passwordRequired != nullptr)
+    {
+        *passwordRequired = false;
+    }
+    if (protectedFile != nullptr)
+    {
+        *protectedFile = false;
+    }
+    if (!document.parse())
+    {
+        return fail(error, document.error);
+    }
+
+    enabled = document.value(QStringLiteral("config.270.0")).toInt();
+    if (enabled == 0)
+    {
+        // Disabled files may still carry a dormant password. The original open dialog only checks active protection.
+        clearError(error);
+        return true;
+    }
+    expected = document.value(QStringLiteral("config.270.1")).toString();
+    if (enabled != 1 || expected.isEmpty() || expected.size() > 11 || !expected.isValidUtf16())
+    {
+        return fail(error, QStringLiteral("原厂工程文件保护记录无效。"));
+    }
+    if (password != expected)
+    {
+        if (passwordRequired != nullptr)
+        {
+            *passwordRequired = true;
+        }
+        return fail(error, password.isEmpty() ? QStringLiteral("该文件有密码保护") :
+            QStringLiteral("请输入正确的文件密码！"));
+    }
+    if (protectedFile != nullptr)
+    {
+        *protectedFile = true;
+    }
+    clearError(error);
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : discardNativeFilePassword
+ * Description     : Remove the confirmed legacy file password fields before a snapshot enters unencrypted KSP JSON.
+ * Input Parameters: data, error
+ * Return Value    : True after validating the sanitized snapshot.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool discardNativeFilePassword(QByteArray *data, QString *error) //20261123-17 add
+{
+    SourceField enabled;
+    SourceField password;
+    QByteArray replacement(1, char(0));
+    QByteArray clean;
+
+    if (data == nullptr)
+    {
+        return fail(error, QStringLiteral("原厂工程快照输出为空。"));
+    }
+    SourceDocument document(*data);
+    if (!document.parse())
+    {
+        return fail(error, document.error);
+    }
+    enabled = document.values.value(QStringLiteral("config.270.0"));
+    password = document.values.value(QStringLiteral("config.270.1"));
+    if (enabled.kind != 'b' || password.kind != 'q' || enabled.end != password.start)
+    {
+        return fail(error, QStringLiteral("无法识别原厂文件密码记录。"));
+    }
+    if (enabled.value.toInt() == 0 && password.value.toString().isEmpty())
+    {
+        clearError(error);
+        return true;
+    }
+
+    // Keep the original project bytes in memory. Alter only the legacy flag and QString in the KSP copy.
+    appendWord(&replacement, NullQString);
+    clean = *data;
+    clean.replace(enabled.start, password.end - enabled.start, replacement);
+    if (!validateNativeProjectSourceStructure(clean, error))
+    {
+        return false;
+    }
+    *data = clean;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : nativeProjectInitialLanguageIndex
  * Description     : Resolve the original startup language by name without confusing transient editor selection with firmware settings.
  * Input Parameters: project, index, error
