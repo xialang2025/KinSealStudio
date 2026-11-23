@@ -732,6 +732,15 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                     QMessageBox::warning(this, QStringLiteral("画面属性未提交"), error);
                 }
             });
+            menu.addAction(QStringLiteral("复制(&C)"), this, [this, id]() { //20261123-8 add
+                HmiProject draft = currentEditorProject();
+                QString error;
+
+                if (copyStage2NormalPage(this, draft, id) && !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("画面复制未提交"), error);
+                }
+            });
             menu.addAction(QStringLiteral("上一个画面"), this, [reorder, previous = siblingId(siblingIndex - 1)]() { //20261123-7 add
                 reorder(previous);
             });

@@ -22,7 +22,9 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMessageBox> //20261123-8 add
 #include <QPainter> //20261123-1 add
+#include <QPalette> //20261123-8 add
 #include <QPlainTextEdit> //20261123-5 add
 #include <QPushButton>
 #include <QRadioButton>
@@ -958,6 +960,68 @@ bool editStage2NormalPageProperties(QWidget *parent, HmiProject &project, const 
         return false;
     }
     return editStage2NormalPage(parent, project, pageId);
+}
+
+/******************************************************************************
+ * Function Name   : copyStage2NormalPage
+ * Description     : Request a new name and publish a validated ordinary page copy when confirmed.
+ * Input Parameters: parent, project, pageId.
+ * Return Value    : True after the copy and its outgoing references are ready to commit.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool copyStage2NormalPage(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-8 add
+{
+    QDialog dialog(parent);
+    QLabel label(QStringLiteral("画面名称："), &dialog);
+    QLineEdit name(&dialog);
+    QPushButton confirm(QStringLiteral(" 确定 "), &dialog);
+    QPushButton cancel(QStringLiteral("取消"), &dialog);
+    QPalette palette = dialog.palette();
+    HmiProject candidate;
+
+    dialog.setObjectName(QStringLiteral("QCopyScreenDlg"));
+    dialog.setWindowTitle(QStringLiteral("复制到当前画面"));
+    dialog.setFixedSize(273, 72);
+    palette.setColor(QPalette::Window, QColor(224, 237, 254));
+    dialog.setPalette(palette);
+    // Original V5.1 client geometry, measured in the dialog's logical pixels.
+    label.setGeometry(6, 11, 70, 21);
+    name.setGeometry(80, 10, 181, 20);
+    name.setObjectName(QStringLiteral("lineEdit"));
+    name.setMaxLength(32767);
+    confirm.setGeometry(110, 40, 75, 23);
+    confirm.setObjectName(QStringLiteral("pushButton_ok"));
+    confirm.setDefault(true);
+    cancel.setGeometry(190, 40, 75, 23);
+    cancel.setObjectName(QStringLiteral("pushButton_cancle"));
+    name.setFocus();
+
+    QObject::connect(&cancel, &QPushButton::clicked, &dialog, &QDialog::reject);
+    QObject::connect(&confirm, &QPushButton::clicked, &dialog, [&]() {
+        QString copyId;
+        QString error;
+
+        if (name.text().trimmed().isEmpty())
+        {
+            QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"),
+                QStringLiteral("画面名字不可以为空，请输入一个名字"));
+            return;
+        }
+        candidate = project;
+        if (!validateStage2PageName(project, QString(), name.text(), &error) ||
+            !candidate.copyPage(pageId, name.text(), &copyId, &error) || !candidate.selectPage(copyId, &error))
+        {
+            QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"), error);
+            return;
+        }
+        dialog.accept();
+    });
+    if (dialog.exec() != QDialog::Accepted)
+    {
+        return false;
+    }
+    project = candidate;
+    return true;
 }
 
 /******************************************************************************

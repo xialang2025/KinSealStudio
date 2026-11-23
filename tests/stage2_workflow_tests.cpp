@@ -86,6 +86,7 @@ private slots:
     void newPageMacroDefaultsPersistWithStableSource(); //20261123-5 add
     void ordinaryPagePropertiesRestoreAndUpdateDraft(); //20261123-6 add
     void ordinaryPageMenuOpensAndReorders(); //20261123-7 add
+    void ordinaryPageMenuCopiesOwnedContent(); //20261123-8 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1866,6 +1867,111 @@ void Stage2WorkflowTests::ordinaryPageMenuOpensAndReorders() //20261123-7 add
     window.m_commands.value(QStringLiteral("action_undo"))->trigger();
     QCOMPARE(window.currentEditorProject().pageOrder, reopened.pageOrder);
     QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageMenuCopiesOwnedContent
+ * Description     : Copy an ordinary page from the tree and check its new identities and preserved external target.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageMenuCopiesOwnedContent() //20261123-8 add
+{
+    QTemporaryDir directory;
+    HmiProject original = workflowProject();
+    HmiProject reopened;
+    HmiPage target;
+    HmiConfigurationNode slide;
+    const QString baseId = original.activePageId;
+    const QString sourceLabel = QStringLiteral("000:%1").arg(original.pageName);
+    MainWindow window;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> pages;
+    QString path;
+    QString error;
+    QString copyId;
+    bool dialogSeen;
+    bool confirm;
+
+    QVERIFY(directory.isValid());
+    target.id = QStringLiteral("copy-slide-target");
+    target.name = QStringLiteral("滑动目的页");
+    QVERIFY2(original.addPage(target, &error), qPrintable(error));
+    slide.id = QStringLiteral("source-slide");
+    slide.kind = QStringLiteral("pageSlide");
+    slide.name = QStringLiteral("滑动打开画面");
+    slide.ownerPageId = baseId;
+    slide.active = true;
+    slide.implemented = true;
+    slide.properties = {{QStringLiteral("enabled"), true}, {QStringLiteral("distance"), 75}};
+    original.configurationNodes.append(slide);
+    original.references.append({QStringLiteral("source-slide-left"), QStringLiteral("configuration"), slide.id,
+        QStringLiteral("left"), QStringLiteral("page"), target.id});
+    path = directory.filePath(QStringLiteral("copy-page.ksp"));
+    QVERIFY2(original.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    for (confirm = false; ; confirm = true)
+    {
+        dialogSeen = false;
+        pages = tree->findItems(sourceLabel, Qt::MatchExactly | Qt::MatchRecursive);
+        QCOMPARE(pages.size(), 1);
+        QVERIFY(triggerSettingsTreeAction(tree, pages.first(), QStringLiteral("复制(&C)"), [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QLineEdit *name;
+            QPushButton *button;
+
+            if (editor == nullptr)
+            {
+                return;
+            }
+            name = editor->findChild<QLineEdit *>(QStringLiteral("lineEdit"));
+            button = editor->findChild<QPushButton *>(confirm ? QStringLiteral("pushButton_ok") :
+                QStringLiteral("pushButton_cancle"));
+            if (editor->windowTitle() != QStringLiteral("复制到当前画面") ||
+                editor->size() != QSize(273, 72) || name == nullptr || !name->text().isEmpty() || button == nullptr)
+            {
+                editor->reject();
+                return;
+            }
+            dialogSeen = true;
+            name->setText(QStringLiteral("画面副本"));
+            button->click();
+            if (editor->isVisible())
+            {
+                editor->reject();
+            }
+        }));
+        QVERIFY(dialogSeen);
+        if (confirm)
+        {
+            break;
+        }
+        QCOMPARE(window.currentEditorProject().pageCount(), original.pageCount());
+        QVERIFY(!window.m_dirty);
+    }
+    copyId = window.currentEditorProject().activePageId;
+    QVERIFY(copyId != baseId && copyId != target.id);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.startupPageId, baseId);
+    QCOMPARE(reopened.activePageId, copyId);
+    QCOMPARE(reopened.pageName, QStringLiteral("画面副本"));
+    QCOMPARE(reopened.pageCount(), 3);
+    QCOMPARE(reopened.objects.size(), original.objects.size());
+    QCOMPARE(reopened.objects.first().text, original.objects.first().text);
+    QVERIFY(reopened.objects.first().id != original.objects.first().id);
+    QCOMPARE(reopened.configurationNodes.size(), 2);
+    QCOMPARE(reopened.configurationNodes.last().ownerPageId, copyId);
+    QVERIFY(reopened.configurationNodes.last().id != slide.id);
+    QCOMPARE(reopened.references.size(), 2);
+    QCOMPARE(reopened.references.last().ownerId, reopened.configurationNodes.last().id);
+    QCOMPARE(reopened.references.last().targetId, target.id);
 }
 
 /******************************************************************************
