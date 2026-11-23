@@ -14,6 +14,8 @@
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QFileInfo>
+#include <QFont> //20261123-11 add
+#include <QFrame> //20261123-11 add
 #include <QFormLayout>
 #include <QGridLayout> //20261123-1 add
 #include <QGroupBox>
@@ -305,30 +307,32 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
                                            QList<Stage2PageScript> &scripts) //20261123-5 add
 {
     QWidget *widget = new QWidget(parent);
-    QVBoxLayout *layout = new QVBoxLayout(widget);
     QTableWidget *table = new QTableWidget(0, 5, widget);
-    QHBoxLayout *actions = new QHBoxLayout;
     QPushButton *add = new QPushButton(QStringLiteral("新增"), widget);
     QPushButton *remove = new QPushButton(QStringLiteral("删除"), widget);
     QPushButton *edit = new QPushButton(QStringLiteral("修改"), widget);
     QLabel *usage = new QLabel(widget);
 
-    layout->setContentsMargins(0, 0, 0, 0);
+    // The script list and its actions occupy the same client rectangles as in V5.1.
+    table->setObjectName(QStringLiteral("pageMacroTable")); //20261123-11 add
+    table->setGeometry(0, 0, 601, 221);
     table->setHorizontalHeaderLabels({QStringLiteral("脚本函数"), QStringLiteral("执行频率"),
         QStringLiteral("执行次数"), QStringLiteral("受控类型"), QStringLiteral("受控地址")});
     table->verticalHeader()->hide();
+    table->horizontalHeader()->setDefaultSectionSize(100); //20261123-11 add
+    table->horizontalHeader()->setFixedHeight(25);
     table->horizontalHeader()->setStretchLastSection(true);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    layout->addWidget(table);
     add->setObjectName(QStringLiteral("pageMacroAdd"));
-    actions->addWidget(add);
-    actions->addWidget(remove);
-    actions->addWidget(edit);
-    actions->addWidget(usage);
-    actions->addStretch();
-    layout->addLayout(actions);
+    add->setGeometry(0, 230, 75, 31); //20261123-11 add
+    remove->setGeometry(80, 230, 75, 31);
+    edit->setGeometry(160, 230, 75, 31);
+    usage->setGeometry(253, 230, 71, 30);
+    add->setAutoDefault(false);
+    remove->setAutoDefault(false);
+    edit->setAutoDefault(false);
     auto refresh = [=, &project, &scripts](int selection) {
         int row;
         int column;
@@ -353,13 +357,7 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
         }
         add->setEnabled(scripts.size() < 25);
         usage->setText(QStringLiteral("%1/25").arg(scripts.size()));
-        remove->setEnabled(!table->selectedItems().isEmpty());
-        edit->setEnabled(remove->isEnabled());
     };
-    QObject::connect(table, &QTableWidget::itemSelectionChanged, widget, [=]() {
-        remove->setEnabled(!table->selectedItems().isEmpty());
-        edit->setEnabled(remove->isEnabled());
-    });
     QObject::connect(add, &QPushButton::clicked, widget, [=, &project, &scripts]() {
         Stage2PageScript script;
 
@@ -372,7 +370,7 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
     QObject::connect(remove, &QPushButton::clicked, widget, [=, &scripts]() {
         const int row = table->currentRow();
 
-        if (row >= 0 && row < scripts.size())
+        if (row >= 0 && row < scripts.size() && !table->selectedItems().isEmpty()) //20261123-11 change
         {
             scripts.removeAt(row);
             refresh(qMin(row, int(scripts.size()) - 1));
@@ -381,7 +379,8 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
     QObject::connect(edit, &QPushButton::clicked, widget, [=, &project, &scripts]() {
         const int row = table->currentRow();
 
-        if (row >= 0 && row < scripts.size() && editStage2PageScript(widget, project, scripts[row]))
+        if (row >= 0 && row < scripts.size() && !table->selectedItems().isEmpty() && //20261123-11 change
+            editStage2PageScript(widget, project, scripts[row]))
         {
             refresh(row);
         }
@@ -484,22 +483,25 @@ static QList<Stage2PageScript> loadStage2PageScripts(const HmiProject &project,
 static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-6 change
 {
     QDialog dialog(parent);
-    QFormLayout *layout;
     QLineEdit *name;
     QSpinBox *number;
+    QLabel *nameLabel; //20261123-11 add
+    QLabel *numberLabel;
     QGroupBox *background;
-    QGridLayout *backgroundLayout; //20261123-1 change
     QRadioButton *defaultMode; //20261123-2 add
     QRadioButton *bitmapMode;
     QStackedWidget *backgroundOptions;
     QWidget *colorOptions;
     QWidget *bitmapOptions;
-    QGridLayout *colorLayout;
-    QVBoxLayout *bitmapLayout;
-    QHBoxLayout *galleryButtons; //20261123-3 add
+    QLabel *backgroundLabel; //20261123-11 add
+    QLabel *foregroundLabel;
+    QLabel *styleLabel;
+    QFrame *previewFrame;
     QPushButton *backgroundColorButton;
     QPushButton *foregroundColorButton;
     QComboBox *backgroundStyle;
+    QPixmap solidStyleIcon(16, 16); //20261123-11 add
+    QPainter stylePainter;
     QLabel *backgroundPreview;
     QLineEdit *bitmapPath;
     QPushButton *projectGallery;
@@ -507,7 +509,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     QColor backgroundColor = HmiPageBackground::defaultColor(); //20261123-1 change
     QColor foregroundColor = HmiPageBackground::defaultColor();
     QGroupBox *slideGroup; //20261123-4 add
-    QGridLayout *slideLayout;
+    QLabel *distanceLabel; //20261123-11 add
     QSpinBox *slideDistance;
     QCheckBox *slideDirections[4];
     QComboBox *slideTargets[4];
@@ -519,6 +521,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     const QList<HmiPage> targetPages = project.allPages();
     int directionIndex;
     int column;
+    int row; //20261123-11 add
     const bool editing = !pageId.isEmpty(); //20261123-6 add
     HmiPage existing;
     HmiConfigurationNode priorSlide;
@@ -607,108 +610,139 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
 
     dialog.setWindowTitle(editing ? QStringLiteral("画面属性") : QStringLiteral("新建画面")); //20261123-6 change
     dialog.setProperty("localHelpTopic", QStringLiteral("screen-properties")); //20261123-10 add
-    layout = new QFormLayout(&dialog);
+    dialog.setObjectName(QStringLiteral("ordinaryPageEditor")); //20261123-11 add
+    dialog.setWindowFlag(Qt::WindowContextHelpButtonHint);
+    dialog.setFont(QFont(QStringLiteral("SimSun"), 9));
+    dialog.setFixedSize(638, 662);
+    dialog.setStyleSheet(QStringLiteral(
+        "QDialog#ordinaryPageEditor { background: #f0f0f0; } "
+        "QLineEdit#newPageNameEdit, QSpinBox#newPageNumberSpin, QComboBox#newPageBackgroundStyle,"
+        "QSpinBox#pageSlideDistance, QComboBox[pageSlideTarget='true'], QTableWidget#pageMacroTable "
+        "{ background: #caeace; } "
+        "QLineEdit#pageBitmapPath, QSpinBox#pageSlideDistance:disabled { background: #b1ceed; } "
+        "QComboBox[pageSlideTarget='true']:disabled { background: #f0f0f0; } "
+        "QFrame#pageBackgroundPreviewFrame { background: #caeace; border: 1px solid #888; } "
+        "QTableWidget#pageMacroTable QHeaderView::section { background: white; border: none;"
+        "border-right: 1px solid #dcdcdc; }"));
+    nameLabel = new QLabel(QStringLiteral("名称："), &dialog);
+    nameLabel->setGeometry(10, 5, 81, 30);
+    numberLabel = new QLabel(QStringLiteral("编号："), &dialog);
+    numberLabel->setGeometry(370, 10, 51, 30);
     name = new QLineEdit(suggestion, &dialog);
     name->setObjectName(QStringLiteral("newPageNameEdit"));
     name->setMaxLength(32767);
+    name->setGeometry(90, 5, 191, 30); //20261123-11 add
     number = new QSpinBox(&dialog);
     number->setObjectName(QStringLiteral("newPageNumberSpin"));
     number->setRange(0, 999);
     number->setValue(pageNumber);
     number->setToolTip(QStringLiteral("同一工程内普通画面编号不可重复。")); //20261122-10 change
+    number->setGeometry(428, 10, 161, 30); //20261123-11 add
     validation = new QLabel(&dialog);
     validation->setWordWrap(true);
+    validation->setGeometry(10, 43, 601, 34); //20261123-11 add
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
                                    QDialogButtonBox::Help, &dialog); //20261123-10 change
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
     buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261123-10 add
-    layout->addRow(QStringLiteral("名称"), name);
-    layout->addRow(QStringLiteral("编号"), number);
+    buttons->setGeometry(360, 620, 251, 31); //20261123-11 add
+    buttons->layout()->setContentsMargins(0, 0, 0, 0);
+    buttons->layout()->setSpacing(9);
+    buttons->button(QDialogButtonBox::Ok)->setFixedSize(81, 31);
+    buttons->button(QDialogButtonBox::Cancel)->setFixedSize(81, 31);
+    buttons->button(QDialogButtonBox::Help)->setFixedSize(71, 31);
     background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
-    backgroundLayout = new QGridLayout(background); //20261123-1 change
+    background->setObjectName(QStringLiteral("newPageBackground")); //20261123-11 add
+    background->setGeometry(10, 80, 601, 301);
     defaultMode = new QRadioButton(QStringLiteral("默认"), background); //20261123-2 add
+    defaultMode->setGeometry(10, 30, 70, 25); //20261123-11 add
     defaultMode->setChecked(true);
     bitmapMode = new QRadioButton(QStringLiteral("位图"), background);
+    bitmapMode->setGeometry(10, 118, 70, 21); //20261123-11 add
     bitmapMode->setObjectName(QStringLiteral("newPageBitmapMode"));
     backgroundOptions = new QStackedWidget(background);
+    backgroundOptions->setGeometry(80, 30, 340, 140); //20261123-11 add
     colorOptions = new QWidget(backgroundOptions);
-    colorLayout = new QGridLayout(colorOptions);
-    colorLayout->setContentsMargins(0, 0, 0, 0);
     bitmapOptions = new QWidget(backgroundOptions);
-    bitmapLayout = new QVBoxLayout(bitmapOptions);
-    bitmapLayout->setContentsMargins(0, 0, 0, 0);
     bitmapPath = new QLineEdit(bitmapOptions);
+    bitmapPath->setGeometry(6, 88, 331, 21); //20261123-11 add
+    bitmapPath->setObjectName(QStringLiteral("pageBitmapPath"));
     bitmapPath->setReadOnly(true);
     bitmapPath->setText(systemPicture.isEmpty() ? bitmapName : kvgPictureResource(systemPicture)); //20261123-6 add
     bitmapPath->setAccessibleName(QStringLiteral("背景图片"));
     projectGallery = new QPushButton(QStringLiteral("工程图库"), bitmapOptions);
     projectGallery->setObjectName(QStringLiteral("newPageProjectGallery"));
+    projectGallery->setGeometry(220, 115, 120, 25); //20261123-11 add
+    projectGallery->setAutoDefault(false);
     systemGallery = new QPushButton(QStringLiteral("系统图库"), bitmapOptions); //20261123-3 add
     systemGallery->setObjectName(QStringLiteral("newPageSystemGallery"));
-    galleryButtons = new QHBoxLayout;
-    galleryButtons->addWidget(systemGallery);
-    galleryButtons->addWidget(projectGallery);
-    bitmapLayout->addWidget(bitmapPath);
-    bitmapLayout->addLayout(galleryButtons); //20261123-3 change
-    bitmapLayout->addStretch();
+    systemGallery->setGeometry(0, 115, 120, 25); //20261123-11 add
+    systemGallery->setAutoDefault(false);
     backgroundOptions->addWidget(colorOptions);
     backgroundOptions->addWidget(bitmapOptions);
     backgroundColorButton = new QPushButton(colorOptions);
     backgroundColorButton->setObjectName(QStringLiteral("newPageBackgroundColor"));
-    backgroundColorButton->setMinimumWidth(180);
+    backgroundColorButton->setGeometry(89, 0, 181, 23); //20261123-11 change
+    backgroundColorButton->setAutoDefault(false);
     backgroundColorButton->setAccessibleName(QStringLiteral("背景色"));
     foregroundColorButton = new QPushButton(colorOptions);
     foregroundColorButton->setObjectName(QStringLiteral("newPageForegroundColor"));
+    foregroundColorButton->setGeometry(90, 30, 181, 23); //20261123-11 add
+    foregroundColorButton->setAutoDefault(false);
     foregroundColorButton->setAccessibleName(QStringLiteral("前景色"));
     backgroundStyle = new QComboBox(colorOptions);
     backgroundStyle->setObjectName(QStringLiteral("newPageBackgroundStyle"));
+    backgroundStyle->setGeometry(89, 60, 251, 20); //20261123-11 add
     backgroundStyle->addItems({QStringLiteral("纯色"), QStringLiteral("横向过渡"), QStringLiteral("横向对称过渡"),
         QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"),
         QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"),
         QStringLiteral("右上角辐射"), QStringLiteral("左上角辐射"), QStringLiteral("中心辐射")});
+    solidStyleIcon.fill(Qt::white); //20261123-11 add: Reproduce the bordered pure-color sample in the reference field.
+    stylePainter.begin(&solidStyleIcon);
+    stylePainter.drawRect(0, 0, 15, 15);
+    stylePainter.end();
+    backgroundStyle->setItemIcon(0, QIcon(solidStyleIcon));
     backgroundStyle->setCurrentIndex(existing.background.style); //20261123-6 add
     if (!bitmapName.isEmpty() || !systemPicture.isEmpty())
     {
         bitmapMode->setChecked(true);
         backgroundOptions->setCurrentWidget(bitmapOptions);
     }
-    backgroundPreview = new QLabel(background);
+    previewFrame = new QFrame(background); //20261123-11 add
+    previewFrame->setObjectName(QStringLiteral("pageBackgroundPreviewFrame"));
+    previewFrame->setGeometry(430, 30, 151, 131);
+    backgroundPreview = new QLabel(previewFrame);
     backgroundPreview->setObjectName(QStringLiteral("newPageBackgroundPreview")); //20261123-2 add
-    backgroundPreview->setFixedSize(110, 110);
+    backgroundPreview->setGeometry(20, 10, 110, 110); //20261123-11 change
     backgroundPreview->setAccessibleName(QStringLiteral("背景预览"));
-    colorLayout->addWidget(new QLabel(QStringLiteral("背景色"), colorOptions), 0, 0); //20261123-2 change
-    colorLayout->addWidget(backgroundColorButton, 0, 1);
-    colorLayout->addWidget(new QLabel(QStringLiteral("前景色"), colorOptions), 1, 0);
-    colorLayout->addWidget(foregroundColorButton, 1, 1);
-    colorLayout->addWidget(new QLabel(QStringLiteral("样式"), colorOptions), 2, 0);
-    colorLayout->addWidget(backgroundStyle, 2, 1);
-    backgroundLayout->addWidget(defaultMode, 0, 0);
-    backgroundLayout->addWidget(bitmapMode, 1, 0);
-    backgroundLayout->addWidget(backgroundOptions, 0, 1, 2, 1);
-    backgroundLayout->addWidget(backgroundPreview, 0, 2, 2, 1, Qt::AlignCenter);
+    backgroundLabel = new QLabel(QStringLiteral("背景色："), colorOptions); //20261123-11 add
+    backgroundLabel->setGeometry(10, 0, 73, 23);
+    foregroundLabel = new QLabel(QStringLiteral("前景色："), colorOptions);
+    foregroundLabel->setGeometry(11, 30, 73, 23);
+    styleLabel = new QLabel(QStringLiteral("样  式："), colorOptions);
+    styleLabel->setGeometry(10, 60, 73, 21);
 
     slideGroup = new QGroupBox(QStringLiteral("滑动打开画面"), background); //20261123-4 add
     slideGroup->setObjectName(QStringLiteral("pageSlideGroup"));
     slideGroup->setCheckable(true);
-    slideLayout = new QGridLayout(slideGroup);
+    slideGroup->setGeometry(20, 185, 571, 111); //20261123-11 change
+    distanceLabel = new QLabel(QStringLiteral("滑动距离："), slideGroup);
+    distanceLabel->setGeometry(10, 25, 61, 16);
     slideDistance = new QSpinBox(slideGroup);
     slideDistance->setObjectName(QStringLiteral("pageSlideDistance"));
     slideDistance->setRange(5, 480);
     slideDistance->setValue(priorSlide.properties.value(QStringLiteral("distance")).toInt(50)); //20261123-6 change
-    slideLayout->addWidget(new QLabel(QStringLiteral("滑动距离："), slideGroup), 0, 0);
-    slideLayout->addWidget(slideDistance, 0, 1);
+    slideDistance->setGeometry(80, 20, 151, 22); //20261123-11 change
     for (directionIndex = 0; directionIndex < 4; ++directionIndex)
     {
-        column = 2 * (directionIndex % 2);
+        column = 312 * (directionIndex % 2); //20261123-11 change
+        row = 55 + 30 * (directionIndex / 2);
         slideDirections[directionIndex] = new QCheckBox(slideLabels.at(directionIndex), slideGroup);
         slideTargets[directionIndex] = new QComboBox(slideGroup);
-        QSizePolicy targetSizePolicy = slideTargets[directionIndex]->sizePolicy(); //20261123-10 add
-
-        // Hiding the targets must keep the two columns aligned with their checkboxes.
-        targetSizePolicy.setRetainSizeWhenHidden(true);
-        slideTargets[directionIndex]->setSizePolicy(targetSizePolicy);
-        QObject::connect(slideGroup, &QGroupBox::toggled, slideTargets[directionIndex], &QWidget::setVisible);
+        slideDirections[directionIndex]->setGeometry(13 + column, row, 58, 20); //20261123-11 add
+        slideTargets[directionIndex]->setGeometry(78 + column, row, 151, 21);
+        slideTargets[directionIndex]->setProperty("pageSlideTarget", true);
         slideDirections[directionIndex]->setObjectName(QStringLiteral("pageSlide") + slideKeys.at(directionIndex));
         slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
         for (const HmiPage &target : targetPages)
@@ -726,12 +760,10 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             slideDirections[directionIndex]->setChecked(true);
             slideTargets[directionIndex]->setCurrentIndex(slideTargets[directionIndex]->findData(previous.targetId));
         }
-        slideLayout->addWidget(slideDirections[directionIndex], 1 + directionIndex / 2, column);
-        slideLayout->addWidget(slideTargets[directionIndex], 1 + directionIndex / 2, column + 1);
+        // A populated target stays visible while disabled; an empty target list is hidden.
+        slideTargets[directionIndex]->setVisible(slideTargets[directionIndex]->count() != 0); //20261123-11 change
     }
     slideGroup->setChecked(priorSlide.properties.value(QStringLiteral("enabled")).toBool()); //20261123-6 change
-    backgroundLayout->addWidget(slideGroup, 2, 0, 1, 3);
-    layout->addRow(background);
     auto fillDraft = [&]() {
         HmiPageBackground fill;
         if (bitmapMode->isChecked()) //20261123-2 add: Preserve the color choices on the draft while serializing only the selected mode.
@@ -756,6 +788,11 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         QPainter painter;
         backgroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(backgroundColor.name()));
         foregroundColorButton->setStyleSheet(QStringLiteral("background-color: %1").arg(foregroundColor.name()));
+        if (bitmapMode->isChecked() && bitmapName.isEmpty() && systemPicture.isEmpty()) //20261123-11 add
+        {
+            backgroundPreview->clear();
+            return;
+        }
         sample.fill(Qt::transparent); //20261123-2 add: Keep transparent source pixels in the preview.
         painter.begin(&sample);
         painter.fillRect(sample.rect(), fillDraft().brush(sample.rect(), bitmap));
@@ -816,9 +853,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             updateBackgroundPreview();
         }
     });
-    layout->addRow(createStage2PageScriptList(&dialog, macroDraft, scripts)); //20261123-5 add
-    layout->addRow(validation);
-    layout->addRow(buttons);
+    createStage2PageScriptList(&dialog, macroDraft, scripts)->setGeometry(10, 390, 601, 261); //20261123-11 change
     QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [&dialog]() { //20261123-10 add
         LocalHelpController *help = dialog.findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
 

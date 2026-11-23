@@ -90,6 +90,7 @@ private slots:
     void ordinaryPageMenuCopiesOwnedContent(); //20261123-8 add
     void ordinaryPageMenuDeletionProtectsTargets(); //20261123-9 add
     void ordinaryPageHelpAndSlideVisibilityFollowDraft(); //20261123-10 add
+    void ordinaryPageDialogUsesNativeClientLayout(); //20261123-11 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -2112,7 +2113,7 @@ void Stage2WorkflowTests::ordinaryPageHelpAndSlideVisibilityFollowDraft() //2026
         name = editor->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
         buttons = editor->findChild<QDialogButtonBox *>();
         if (slide == nullptr || target == nullptr || name == nullptr || buttons == nullptr ||
-            buttons->button(QDialogButtonBox::Help) == nullptr || target->isVisible())
+            buttons->button(QDialogButtonBox::Help) == nullptr || !target->isVisible() || target->isEnabled()) //20261123-11 change
         {
             editor->reject();
             return;
@@ -2127,7 +2128,7 @@ void Stage2WorkflowTests::ordinaryPageHelpAndSlideVisibilityFollowDraft() //2026
         name->setText(QStringLiteral("帮助窗口返回后保留"));
         buttons->button(QDialogButtonBox::Help)->click();
         help = editor->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
-        correct = !target->isVisible() && help != nullptr && help->isVisible() &&
+        correct = target->isVisible() && !target->isEnabled() && help != nullptr && help->isVisible() && //20261123-11 change
             help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser")) != nullptr &&
             editor->property("localHelpTopic").toString() == QStringLiteral("screen-properties") &&
             name->text() == QStringLiteral("帮助窗口返回后保留");
@@ -2140,6 +2141,74 @@ void Stage2WorkflowTests::ordinaryPageHelpAndSlideVisibilityFollowDraft() //2026
     QVERIFY(!editStage2NewNormalPage(nullptr, project));
     QVERIFY(correct);
     QCOMPARE(project.toJson(), original);
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageDialogUsesNativeClientLayout
+ * Description     : Check both entry points against the captured V5.1 client geometry and target availability.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageDialogUsesNativeClientLayout() //20261123-11 add
+{
+    HmiProject project = workflowProject();
+    const QString captures = qEnvironmentVariable("KINSEAL_SCREEN_DIALOG_CAPTURE_DIR");
+    bool existing;
+    bool geometryMatches;
+    bool targetMatches;
+    bool captured;
+
+    for (existing = false; ; existing = true)
+    {
+        geometryMatches = false;
+        targetMatches = false;
+        captured = captures.isEmpty();
+        QTimer::singleShot(0, this, [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            const QList<QPair<QString, QRect>> expected = {
+                {QStringLiteral("newPageNameEdit"), QRect(90, 5, 191, 30)},
+                {QStringLiteral("newPageNumberSpin"), QRect(428, 10, 161, 30)},
+                {QStringLiteral("newPageBackground"), QRect(10, 80, 601, 301)},
+                {QStringLiteral("newPageBackgroundPreview"), QRect(460, 120, 110, 110)},
+                {QStringLiteral("pageSlideGroup"), QRect(30, 265, 571, 111)},
+                {QStringLiteral("pageMacroTable"), QRect(10, 390, 601, 221)},
+                {QStringLiteral("pageMacroAdd"), QRect(10, 620, 75, 31)}
+            };
+            QWidget *field;
+            QComboBox *target;
+
+            if (editor == nullptr)
+            {
+                return;
+            }
+            geometryMatches = editor->size() == QSize(638, 662);
+            for (const auto &entry : expected)
+            {
+                field = editor->findChild<QWidget *>(entry.first);
+                geometryMatches = geometryMatches && field != nullptr &&
+                    QRect(field->mapTo(editor, QPoint()), field->size()) == entry.second;
+            }
+            target = editor->findChild<QComboBox *>(QStringLiteral("pageSlideLeftTarget"));
+            targetMatches = target != nullptr && target->isVisible() == !existing && !target->isEnabled();
+            if (!captures.isEmpty())
+            {
+                captured = editor->grab().save(QDir(captures).filePath(existing ?
+                    QStringLiteral("lite-page-properties.png") : QStringLiteral("lite-page-new.png")));
+            }
+            editor->reject();
+        });
+        const bool accepted = existing ? editStage2NormalPageProperties(nullptr, project, project.activePageId) :
+                                        editStage2NewNormalPage(nullptr, project);
+        QVERIFY(!accepted);
+        QVERIFY(geometryMatches);
+        QVERIFY(targetMatches);
+        QVERIFY(captured);
+        if (existing)
+        {
+            break;
+        }
+    }
 }
 
 /******************************************************************************
