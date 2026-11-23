@@ -85,6 +85,7 @@ private slots:
     void newPageSlideKeepsStableTargetAcrossSave(); //20261123-4 add
     void newPageMacroDefaultsPersistWithStableSource(); //20261123-5 add
     void ordinaryPagePropertiesRestoreAndUpdateDraft(); //20261123-6 add
+    void ordinaryPageMenuOpensAndReorders(); //20261123-7 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -1726,7 +1727,7 @@ void Stage2WorkflowTests::ordinaryPagePropertiesRestoreAndUpdateDraft() //202611
     for (attempt = 0; attempt < 3; ++attempt) //20261123-6 change
     {
         restored = false;
-        QVERIFY(triggerSettingsTreeAction(tree, treePages.first(), QStringLiteral("属性"), [&]() {
+        QVERIFY(triggerSettingsTreeAction(tree, treePages.first(), QStringLiteral("属性(&P)"), [&]() { //20261123-7 change
             QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
             QLineEdit *name;
             QSpinBox *distance;
@@ -1789,6 +1790,82 @@ void Stage2WorkflowTests::ordinaryPagePropertiesRestoreAndUpdateDraft() //202611
     QCOMPARE(reopened.references.last().targetId, target.id);
     QCOMPARE(reopened.configurationNodes.first().toJson(), macro.toJson());
     QCOMPARE(reopened.references.first().id, QStringLiteral("existing-macro-binding"));
+}
+
+/******************************************************************************
+ * Function Name   : ordinaryPageMenuOpensAndReorders
+ * Description     : Open a page and move it among ordinary siblings without changing startup or other page slots.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::ordinaryPageMenuOpensAndReorders() //20261123-7 add
+{
+    QTemporaryDir directory;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    const QString startupId = project.startupPageId;
+    const QString firstLabel = QStringLiteral("000:%1").arg(project.pageName);
+    HmiPage second;
+    HmiPage popup;
+    HmiPage third;
+    MainWindow window;
+    QTreeWidget *tree;
+    QString path;
+    QString error;
+
+    QVERIFY(directory.isValid());
+    second.id = QStringLiteral("ordinary-nine");
+    second.name = QStringLiteral("第二个普通画面");
+    second.number = 9;
+    popup.id = QStringLiteral("interleaved-window");
+    popup.name = QStringLiteral("弹出窗口");
+    popup.kind = QStringLiteral("window");
+    third.id = QStringLiteral("ordinary-two");
+    third.name = QStringLiteral("第三个普通画面");
+    third.number = 2;
+    QVERIFY2(project.addPage(second, &error), qPrintable(error));
+    QVERIFY2(project.addPage(popup, &error), qPrintable(error));
+    QVERIFY2(project.addPage(third, &error), qPrintable(error));
+    project.references.append({QStringLiteral("stable-page-target"), QStringLiteral("page"), startupId,
+        QStringLiteral("test-target"), QStringLiteral("page"), third.id}); //20261123-7 add
+    path = directory.filePath(QStringLiteral("ordinary-navigation.ksp"));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    auto navigate = [tree](const QString &label, const QString &action) {
+        const QList<QTreeWidgetItem *> entries = tree->findItems(label, Qt::MatchExactly | Qt::MatchRecursive);
+
+        return entries.size() == 1 && triggerSettingsTreeAction(tree, entries.first(), action);
+    };
+    QVERIFY(navigate(QStringLiteral("002:第三个普通画面"), QStringLiteral("打开(&O)")));
+    QCOMPARE(window.currentEditorProject().activePageId, third.id);
+    QVERIFY(!window.m_dirty);
+    QVERIFY(navigate(QStringLiteral("002:第三个普通画面"), QStringLiteral("下一个画面")));
+    QVERIFY(navigate(firstLabel, QStringLiteral("上一个画面")));
+    QCOMPARE(window.currentEditorProject().pageOrder, project.pageOrder);
+    QVERIFY(!window.m_dirty);
+    QVERIFY(navigate(QStringLiteral("002:第三个普通画面"), QStringLiteral("上一个画面")));
+    QCOMPARE(window.currentEditorProject().pageOrder, (QStringList{startupId, third.id, popup.id, second.id}));
+    QCOMPARE(window.currentEditorProject().activePageId, third.id);
+    QVERIFY(window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger(); //20261123-7 add
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.pageOrder, (QStringList{startupId, third.id, popup.id, second.id}));
+    QCOMPARE(reopened.startupPageId, startupId);
+    QCOMPARE(reopened.references.first().targetId, third.id);
+    QVERIFY(navigate(QStringLiteral("002:第三个普通画面"), QStringLiteral("下一个画面")));
+    QCOMPARE(window.currentEditorProject().pageOrder, project.pageOrder);
+    QCOMPARE(window.currentEditorProject().activePageId, third.id);
+    QCOMPARE(window.currentEditorProject().startupPageId, startupId);
+    QVERIFY(window.m_dirty); //20261123-7 change: The saved checkpoint is now the moved order.
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger();
+    QCOMPARE(window.currentEditorProject().pageOrder, reopened.pageOrder);
+    QVERIFY(!window.m_dirty);
 }
 
 /******************************************************************************

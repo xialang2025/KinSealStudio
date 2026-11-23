@@ -691,7 +691,39 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
             item->parent() != nullptr && item->parent()->data(0, Qt::UserRole).toString() == QStringLiteral("normalPages"))
         {
             id = item->data(0, Qt::UserRole + 1).toString(); //20261123-6 add
-            menu.addAction(QStringLiteral("属性"), this, [this, id]() {
+            const QTreeWidgetItem *siblings = item->parent(); //20261123-7 add
+            const int siblingIndex = siblings->indexOfChild(item);
+            const auto siblingId = [siblings](int index) {
+                const QTreeWidgetItem *neighbor = siblings->child(index);
+
+                return neighbor == nullptr ? QString() : neighbor->data(0, Qt::UserRole + 1).toString();
+            };
+            const auto reorder = [this, id](const QString &neighbor) {
+                HmiProject draft;
+                qsizetype from;
+                qsizetype to;
+                QString error;
+
+                if (neighbor.isEmpty())
+                {
+                    return;
+                }
+                draft = currentEditorProject();
+                from = draft.pageOrder.indexOf(id);
+                to = draft.pageOrder.indexOf(neighbor);
+                if (from < 0 || to < 0)
+                {
+                    return;
+                }
+                // Swap only ordinary page slots; relative window and keyboard placement is unaffected.
+                draft.pageOrder.swapItemsAt(from, to);
+                if (!draft.selectPage(id, &error) || !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("画面顺序未修改"), error);
+                }
+            };
+            menu.addAction(QStringLiteral("打开(&O)"), this, [this, id]() { activatePageId(id); });
+            menu.addAction(QStringLiteral("属性(&P)"), this, [this, id]() { //20261123-7 change
                 HmiProject draft = currentEditorProject();
                 QString error;
 
@@ -699,6 +731,12 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                 {
                     QMessageBox::warning(this, QStringLiteral("画面属性未提交"), error);
                 }
+            });
+            menu.addAction(QStringLiteral("上一个画面"), this, [reorder, previous = siblingId(siblingIndex - 1)]() { //20261123-7 add
+                reorder(previous);
+            });
+            menu.addAction(QStringLiteral("下一个画面"), this, [reorder, next = siblingId(siblingIndex + 1)]() {
+                reorder(next);
             });
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
