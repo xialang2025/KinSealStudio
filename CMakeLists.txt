@@ -36,6 +36,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/control_rendering.cpp
     src/stage2_project_dialogs.h
     src/stage2_project_dialogs.cpp
+    src/stage2_keyboard_dialogs.cpp src/stage2_keyboard_dialogs.h #20261123-24 add
+    src/keyboard_preview.cpp src/keyboard_preview.h #20261123-26 add
     src/stage2_global_tools.h
     src/stage2_global_tools.cpp
     src/stage2_system_settings.h #20261110-7 add: Keep recovered editor-only parameters behind the existing device gate.

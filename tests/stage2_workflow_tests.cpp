@@ -9,6 +9,7 @@
 #include "macro_schedule.h" //20261123-20 add
 #include "macro_workspace.h"
 #include "native_project_codec.h" //20261123-23 add
+#include "number_display_dialog.h" //20261123-25 add
 #include <QAction>
 #include <QAbstractButton>
 #include <QApplication>
@@ -96,6 +97,7 @@ private slots:
     void ordinaryPageHelpAndSlideVisibilityFollowDraft(); //20261123-10 add
     void ordinaryPageDialogUsesNativeClientLayout(); //20261123-11 add
     void windowTreeCreatesAndReopensPlacement(); //20261123-12 add
+    void keyboardTreeAddsSelectedTemplates(); //20261123-24 add
     void screenAndWindowRejectTheSameNumber(); //20261123-13 add
     void windowMenuCopiesAndConfirmsDeletion(); //20261123-13 add
     void projectSettingsWindowCopyKeepsAssignedNumber(); //20261123-14 add
@@ -3265,6 +3267,178 @@ void Stage2WorkflowTests::emptyWindowKeepsZeroWidthAcrossSave() //20261123-13 ad
     }));
     QVERIFY(widthRestored);
     QVERIFY(!reopened.currentEditorProject().validateSinglePageBackend(&error));
+}
+
+/******************************************************************************
+ * Function Name   : keyboardTreeAddsSelectedTemplates
+ * Description     : Create all four keyboard templates from the project tree and reopen their editable pages.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::keyboardTreeAddsSelectedTemplates() //20261123-24 add
+{
+    QTemporaryDir directory;
+    const QString path = directory.filePath(QStringLiteral("keyboard.ksp"));
+    const HmiProject seed = workflowProject();
+    const QStringList names = {QStringLiteral("Keyboard_Number"), QStringLiteral("Keyboard_Ascii_Small"),
+        QStringLiteral("Keyboard_Ascii_Full"), QStringLiteral("Keyboard_Hex")};
+    MainWindow window;
+    HmiProject reopened;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> groups;
+    QList<QCheckBox *> selections;
+    QList<HmiPage> pages;
+    QList<QTreeWidgetItem *> keyboardEntries;
+    QString error;
+    int index;
+    bool defaultSelection = false;
+    bool propertyEdited = false;
+    bool previewTyped = false;
+
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    groups = tree->findItems(QStringLiteral("自定义键盘"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(groups.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, groups.first(), QStringLiteral("添加自定义键盘"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QDialogButtonBox *buttons;
+
+        if (editor == nullptr) { return; }
+        selections = editor->findChildren<QCheckBox *>();
+        buttons = editor->findChild<QDialogButtonBox *>();
+        if (editor->windowTitle() != QStringLiteral("添加自定义键盘") || selections.size() != 4 || buttons == nullptr)
+        {
+            editor->reject();
+            return;
+        }
+        defaultSelection = selections.first()->text() == names.first() && selections.first()->isChecked();
+        for (QCheckBox *choice : std::as_const(selections))
+        {
+            choice->setChecked(true);
+        }
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QVERIFY(defaultSelection);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    pages = reopened.allPages();
+    pages.removeIf([](const HmiPage &page) { return page.kind != QStringLiteral("keyboard"); });
+    QCOMPARE(pages.size(), 4);
+    for (index = 0; index < names.size(); ++index)
+    {
+        QCOMPARE(pages.at(index).name, names.at(index));
+        QCOMPARE(pages.at(index).number.value_or(-1), index);
+        QVERIFY(!pages.at(index).objects.isEmpty());
+    }
+    QCOMPARE(QSize(pages.first().width, pages.first().height), QSize(320, 266));
+    keyboardEntries = tree->findItems(QStringLiteral("000:Keyboard_Number"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(keyboardEntries.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, keyboardEntries.first(), QStringLiteral("属性(&P)"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name;
+        QSpinBox *number;
+        QSpinBox *width;
+        QComboBox *type;
+        QDialogButtonBox *buttons;
+
+        if (editor == nullptr) { return; }
+        name = editor->findChild<QLineEdit *>(QStringLiteral("Stage2KeyboardName"));
+        number = editor->findChild<QSpinBox *>(QStringLiteral("Stage2KeyboardNumber"));
+        width = editor->findChild<QSpinBox *>(QStringLiteral("Stage2KeyboardWidth"));
+        type = editor->findChild<QComboBox *>(QStringLiteral("Stage2KeyboardType"));
+        buttons = editor->findChild<QDialogButtonBox *>();
+        if (!name || !number || !width || !type || !buttons || type->isEnabled() ||
+            type->currentText() != QStringLiteral("10进制键盘") || number->value() != 0 || width->value() != 320)
+        {
+            editor->reject();
+            return;
+        }
+        propertyEdited = true;
+        name->setText(QStringLiteral("自定义数字输入"));
+        number->setValue(12);
+        width->setValue(340);
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QVERIFY(propertyEdited);
+    keyboardEntries = tree->findItems(QStringLiteral("012:自定义数字输入"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(keyboardEntries.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, keyboardEntries.first(), QStringLiteral("按键预览"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *input;
+        QWidget *surface;
+        QPoint seven;
+        QPoint minus;
+        QPoint backspace;
+        QPoint enter;
+
+        if (editor == nullptr) { return; }
+        input = editor->findChild<QLineEdit *>(QStringLiteral("KeyboardPreviewInput"));
+        surface = editor->findChild<QWidget *>(QStringLiteral("KeyboardPreviewSurface"));
+        if (input == nullptr || surface == nullptr)
+        {
+            editor->reject();
+            return;
+        }
+        for (const HmiObject &object : pages.first().objects)
+        {
+            if (!object.hasFunctionButtonProperties) { continue; }
+            if (object.functionButton.keyboardText == QStringLiteral("7")) { seven = object.geometry.center(); }
+            if (object.functionButton.keyboardText == QStringLiteral("-")) { minus = object.geometry.center(); }
+            if (object.functionButton.keyboardKey == 1) { backspace = object.geometry.center(); }
+            if (object.functionButton.keyboardKey == 0) { enter = object.geometry.center(); }
+        }
+        if (seven.isNull() || minus.isNull() || backspace.isNull() || enter.isNull())
+        {
+            editor->reject();
+            return;
+        }
+        QTest::mouseClick(surface, Qt::LeftButton, Qt::NoModifier, minus);
+        QTest::mouseClick(surface, Qt::LeftButton, Qt::NoModifier, seven);
+        QTest::mouseClick(surface, Qt::LeftButton, Qt::NoModifier, backspace);
+        previewTyped = input->text() == QStringLiteral("-");
+        QTest::mouseClick(surface, Qt::LeftButton, Qt::NoModifier, enter);
+        if (editor->isVisible()) { editor->reject(); }
+    }));
+    QVERIFY(previewTyped);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QVERIFY2(reopened.selectPage(pages.first().id, &error), qPrintable(error));
+    QCOMPARE(reopened.pageName, QStringLiteral("自定义数字输入"));
+    QCOMPARE(reopened.activePageNumber.value_or(-1), 12);
+    QCOMPARE(reopened.pageWidth, 340);
+    QCOMPARE(reopened.activePageKeyboardType.value_or(-1), 0);
+
+    QVERIFY2(reopened.selectPage(reopened.startupPageId, &error), qPrintable(error));
+    HmiObject numeric;
+    numeric.id = QStringLiteral("numeric-keyboard-reference");
+    numeric.name = QStringLiteral("数值显示器");
+    numeric.type = QStringLiteral("number");
+    numeric.hasNumberDisplayProperties = true;
+    numeric.geometry = QRect(40, 200, 130, 45);
+    numeric.address = QStringLiteral("LW20");
+    NumberDisplayDialog inputEditor(numeric, reopened);
+    auto *binding = inputEditor.findChild<QComboBox *>(QStringLiteral("Number_keyboardPageId"));
+    auto *useKeyboard = inputEditor.findChild<QCheckBox *>(QStringLiteral("Number_customKeyboard"));
+    QVERIFY(binding != nullptr && useKeyboard != nullptr);
+    QCOMPARE(binding->count(), 4);
+    QCOMPARE(binding->currentIndex(), -1);
+    index = binding->findData(pages.first().id);
+    QVERIFY(index >= 0);
+    QCOMPARE(binding->itemText(index), QStringLiteral("012:自定义数字输入"));
+    useKeyboard->setChecked(true);
+    binding->setCurrentIndex(index);
+    numeric = inputEditor.object();
+    QCOMPARE(numeric.numberDisplay.keyboardPageId, pages.first().id);
+    reopened.objects.append(numeric);
+    QVERIFY2(reopened.validateModel(&error), qPrintable(error));
+    QVERIFY(!reopened.removePage(pages.first().id, &error));
+    QCOMPARE(reopened.keyboardNumbers().value(pages.first().id), 12);
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
 }
 
 /******************************************************************************

@@ -180,6 +180,7 @@ HmiPage activePage(const HmiProject &project)
     page.id = project.activePageId; page.kind = project.activePageKind;
     page.name = project.pageName; page.width = project.pageWidth; page.height = project.pageHeight;
     page.number = project.activePageNumber; //20261122-10 add: Preserve the number when the page becomes inactive.
+    page.keyboardType = project.activePageKeyboardType; //20261123-24 add
     page.background = project.activePageBackground; //20261123-1 change
     page.objects = project.objects; page.extensions = project.activePageExtensions;
     return page;
@@ -197,6 +198,7 @@ void assignActivePage(HmiProject *project, const HmiPage &page)
     project->activePageId = page.id; project->activePageKind = page.kind;
     project->pageName = page.name; project->pageWidth = page.width; project->pageHeight = page.height;
     project->activePageNumber = page.number; //20261122-10 add: Restore the selected page's optional number independently of its ID.
+    project->activePageKeyboardType = page.keyboardType; //20261123-24 add
     project->activePageBackground = page.background; //20261123-1 change
     project->objects = page.objects; project->activePageExtensions = page.extensions;
 }
@@ -684,6 +686,8 @@ QBrush HmiPageBackground::brush(const QRectF &bounds, const QImage &bitmap) cons
     }
     switch (style)
     {
+    case 12: //20261123-24 add: Only keyboard pages expose a fully transparent default fill.
+        return QBrush(Qt::transparent);
     case 1:
     case 2:
         start = bounds.bottomLeft();
@@ -750,6 +754,7 @@ QJsonObject HmiPage::toJson() const //20261110-5 add
     json.insert(QStringLiteral("height"), height); json.insert(QStringLiteral("objects"), items);
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); }
     if (number.has_value()) { json.insert(QStringLiteral("number"), *number); } //20261122-10 add
+    if (keyboardType.has_value()) { json.insert(QStringLiteral("keyboardType"), *keyboardType); } //20261123-24 add
     if (!background.color.isEmpty()) { json.insert(QStringLiteral("backgroundColor"), background.color); } //20261123-1 change
     if (!background.foregroundColor.isEmpty()) { json.insert(QStringLiteral("foregroundColor"), background.foregroundColor); }
     if (background.style != 0) { json.insert(QStringLiteral("backgroundStyle"), background.style); }
@@ -772,6 +777,7 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonArray items;
     QJsonValue item;
     QJsonValue savedNumber; //20261122-10 add
+    QJsonValue savedKeyboardType; //20261123-24 add
     QJsonValue savedStyle; //20261123-1 add
     QJsonValue savedBitmap; //20261123-2 add
     QJsonValue savedSystemPicture; //20261123-3 add
@@ -781,7 +787,7 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
 
     if (page == nullptr || !knownKeys(json, {QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("objects"), QStringLiteral("extensions"),
-        QStringLiteral("number"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor"),
+        QStringLiteral("number"), QStringLiteral("keyboardType"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor"), //20261123-24 change
         QStringLiteral("backgroundStyle"), QStringLiteral("backgroundBitmap"),
         QStringLiteral("backgroundSystemPicture")}, QStringLiteral("page"), error)) { return false; } //20261123-3 change
     Q_FOREACH (key, (QStringList{QStringLiteral("id"), QStringLiteral("kind"), QStringLiteral("name")}))
@@ -800,7 +806,7 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     candidate.id = json.value(QStringLiteral("id")).toString(); candidate.kind = json.value(QStringLiteral("kind")).toString();
     candidate.name = json.value(QStringLiteral("name")).toString(); candidate.width = json.value(QStringLiteral("width")).toInt();
     candidate.height = json.value(QStringLiteral("height")).toInt(); candidate.extensions = json.value(QStringLiteral("extensions")).toObject();
-    minimumSize = candidate.kind == QStringLiteral("window") ? 0 : 1; //20261123-13 add: The native editor saves empty windows with a zero dimension.
+    minimumSize = (candidate.kind == QStringLiteral("window") || candidate.kind == QStringLiteral("keyboard")) ? 0 : 1; //20261123-24 change
     if (!QStringList{QStringLiteral("normal"), QStringLiteral("window"), QStringLiteral("keyboard"), QStringLiteral("logo")}.contains(candidate.kind) ||
         candidate.width < minimumSize || candidate.height < minimumSize || candidate.width > 800 || candidate.height > 480 ||
         !inactiveExtensions(candidate.extensions, QStringLiteral("page.extensions"), error))
@@ -810,13 +816,29 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     if (json.contains(QStringLiteral("number"))) //20261123-12 change
     {
         savedNumber = json.value(QStringLiteral("number"));
-        if ((candidate.kind != QStringLiteral("normal") && candidate.kind != QStringLiteral("window")) ||
-            !exactInteger(savedNumber) || //20261123-12 change
-            savedNumber.toInt() < 0 || savedNumber.toInt() > 999)
+        if (candidate.kind == QStringLiteral("keyboard")) //20261123-24 add
+        {
+            if (!exactInteger(savedNumber) || savedNumber.toInt() < 0 || savedNumber.toInt() > 99)
+            {
+                return modelError(error, QStringLiteral("键盘编号必须为 0–99 的整数。"));
+            }
+        }
+        else if ((candidate.kind != QStringLiteral("normal") && candidate.kind != QStringLiteral("window")) ||
+                 !exactInteger(savedNumber) || savedNumber.toInt() < 0 || savedNumber.toInt() > 999)
         {
             return modelError(error, QStringLiteral("普通画面和窗口编号必须为 0–999 的整数。"));
         }
         candidate.number = savedNumber.toInt();
+    }
+    savedKeyboardType = json.value(QStringLiteral("keyboardType")); //20261123-24 add
+    if (!savedKeyboardType.isUndefined())
+    {
+        if (candidate.kind != QStringLiteral("keyboard") || !exactInteger(savedKeyboardType) ||
+            savedKeyboardType.toInt() < 0 || savedKeyboardType.toInt() > 3)
+        {
+            return modelError(error, QStringLiteral("自定义键盘类型无效。"));
+        }
+        candidate.keyboardType = savedKeyboardType.toInt();
     }
     auto readFillColor = [&](const QString &field, QString *output) {
         QString rgb;
@@ -833,7 +855,8 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
         return true;
     };
     savedStyle = json.value(QStringLiteral("backgroundStyle")); //20261123-1 change
-    if ((!savedStyle.isUndefined() && (!exactInteger(savedStyle) || savedStyle.toInt() < 0 || savedStyle.toInt() > 11)) ||
+    if ((!savedStyle.isUndefined() && (!exactInteger(savedStyle) || savedStyle.toInt() < 0 ||
+        savedStyle.toInt() > (candidate.kind == QStringLiteral("keyboard") ? 12 : 11))) || //20261123-24 change
         !readFillColor(QStringLiteral("backgroundColor"), &candidate.background.color) ||
         !readFillColor(QStringLiteral("foregroundColor"), &candidate.background.foregroundColor))
     {
@@ -863,9 +886,9 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
         }
     }
     if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal") &&
-        candidate.kind != QStringLiteral("window")) //20261123-12 change
+        candidate.kind != QStringLiteral("window") && candidate.kind != QStringLiteral("keyboard")) //20261123-24 change
     {
-        return modelError(error, QStringLiteral("自定义背景适用于普通画面和窗口。"));
+        return modelError(error, QStringLiteral("自定义背景适用于普通画面、窗口和键盘。"));
     }
     items = json.value(QStringLiteral("objects")).toArray();
     if (items.size() > 100) { return modelError(error, QStringLiteral("页面超过Lite每页100控件保护上限。")); }
@@ -1662,6 +1685,42 @@ QMap<QString, int> HmiProject::screenAndWindowNumbers() const //20261123-13 chan
 }
 
 /******************************************************************************
+ * Function Name   : HmiProject::keyboardNumbers
+ * Description     : Allocate independent display numbers for legacy unnumbered keyboard pages.
+ * Input Parameters: None.
+ * Return Value    : Display numbers by stable keyboard page ID.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+QMap<QString, int> HmiProject::keyboardNumbers() const //20261123-24 add
+{
+    const QList<HmiPage> pages = allPages();
+    QMap<QString, int> numbers;
+    QSet<int> assigned;
+    int fallback = 0;
+
+    for (const HmiPage &page : pages)
+    {
+        if (page.kind == QStringLiteral("keyboard") && page.number.has_value())
+        {
+            assigned.insert(*page.number);
+            numbers.insert(page.id, *page.number);
+        }
+    }
+    for (const HmiPage &page : pages)
+    {
+        if (page.kind == QStringLiteral("keyboard") && !page.number.has_value())
+        {
+            while (assigned.contains(fallback))
+            {
+                ++fallback;
+            }
+            numbers.insert(page.id, fallback++);
+        }
+    }
+    return numbers;
+}
+
+/******************************************************************************
  * Function Name   : HmiProject::validateModel
  * Description     : Check all K entities and stable references before any transaction commits.
  * Input Parameters: error
@@ -1763,6 +1822,10 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
         {
             if (explicitPageNumbers.value(page.kind).contains(*page.number)) //20261123-12 change
             {
+                if (page.kind == QStringLiteral("keyboard")) //20261123-24 add
+                {
+                    return modelError(error, QStringLiteral("键盘编号 %1 已被使用。").arg(*page.number));
+                }
                 return modelError(error, (page.kind == QStringLiteral("window") ?
                     QStringLiteral("窗口编号 %1 已被使用。") : QStringLiteral("普通画面编号 %1 已被使用。")).arg(*page.number));
             }

@@ -86,7 +86,7 @@ static bool validateStage2PageName(const HmiProject &project, const QString &id,
  * Return Value    : True after confirming a picture.
  * Date            : 2026.11.23
  ******************************************************************************/
-static bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArray> &pictures,
+bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArray> &pictures, //20261123-24 change
                                    QString &name) //20261123-2 add
 {
     QDialog dialog(parent);

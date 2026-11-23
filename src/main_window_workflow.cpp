@@ -6,6 +6,7 @@
 #include "stage2_clock_panel.h" //20261123-16 add
 #include "plc_address_dialog.h" //20261122-6 add
 #include "stage2_project_dialogs.h"
+#include "stage2_keyboard_dialogs.h" //20261123-24 add
 #include "stage2_global_tools.h"
 #include "stage2_system_settings.h"
 #include "stage3_resources.h" //20261110-8 add
@@ -346,6 +347,31 @@ void MainWindow::configureWindowPage(const QString &id) //20261123-12 add
     if (editStage2Window(this, draft, id) && !commitProjectDraft(draft, &error))
     {
         QMessageBox::warning(this, QStringLiteral("窗口未提交"), error);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::configureKeyboardPage
+ * Description     : Publish an accepted keyboard creation or properties edit as one history entry.
+ * Input Parameters: id (empty for creation).
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void MainWindow::configureKeyboardPage(const QString &id) //20261123-24 add
+{
+    HmiProject draft;
+    QString error;
+    bool accepted;
+
+    if (!m_hasProject)
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    accepted = id.isEmpty() ? addStage2Keyboards(this, draft) : editStage2KeyboardProperties(this, draft, id);
+    if (accepted && !commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("自定义键盘未提交"), error);
     }
 }
 
@@ -737,6 +763,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     QTreeWidgetItem *normal;
     QTreeWidgetItem *windows;
     QTreeWidgetItem *keyboards;
+    QMap<QString, int> keyboardNumbers; //20261123-24 add
     QTreeWidgetItem *logos;
     QTreeWidgetItem *system;
     QTreeWidgetItem *item;
@@ -791,19 +818,22 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     keyboards = new QTreeWidgetItem(settings, {QStringLiteral("自定义键盘")});
     logos = new QTreeWidgetItem(settings, {QStringLiteral("开机Logo")});
     screenAndWindowNumbers = m_project.screenAndWindowNumbers(); //20261123-13 change
+    keyboardNumbers = m_project.keyboardNumbers(); //20261123-24 add
     number = 0;
     Q_FOREACH (page, m_project.allPages())
     {
         parent = page.kind == QStringLiteral("normal") ? normal : page.kind == QStringLiteral("window") ? windows :
                  page.kind == QStringLiteral("keyboard") ? keyboards : logos;
         item = new QTreeWidgetItem(parent, {QStringLiteral("%1:%2") //20261123-12 change
-            .arg(screenAndWindowNumbers.value(page.id, number), 3, 10, QLatin1Char('0')).arg(page.name)});
+            .arg(keyboardNumbers.value(page.id, screenAndWindowNumbers.value(page.id, number)),
+                3, 10, QLatin1Char('0')).arg(page.name)}); //20261123-24 change
         ++number;
         item->setData(0, Qt::UserRole, QStringLiteral("page"));
         item->setData(0, Qt::UserRole + 1, page.id);
     }
     normal->setData(0, Qt::UserRole, QStringLiteral("normalPages")); //20261122-9 change: Route the ordinary page group to its own context actions.
     windows->setData(0, Qt::UserRole, QStringLiteral("windowPages")); //20261123-12 change
+    keyboards->setData(0, Qt::UserRole, QStringLiteral("keyboardPages")); //20261123-24 add
     system = new QTreeWidgetItem(settings, {QStringLiteral("系统设置")});
     item = new QTreeWidgetItem(system, {QStringLiteral("参数设置")});
     item->setData(0, Qt::UserRole, QStringLiteral("system"));

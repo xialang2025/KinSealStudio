@@ -17,6 +17,7 @@ bool editStage2NewNormalPage(QWidget *parent, HmiProject &project); //20261122-9
 bool editStage2NormalPageProperties(QWidget *parent, HmiProject &project, const QString &pageId); //20261123-6 add
 bool copyStage2Page(QWidget *parent, HmiProject &project, const QString &pageId, bool popup); //20261123-13 change
 bool editStage2Window(QWidget *parent, HmiProject &project, const QString &pageId); //20261123-12 add
+bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArray> &pictures, QString &name); //20261123-24 add
 
 //20261110-7 add: Callers publish these detached values only after QDialog::Accepted.
 class Stage2NewProjectDialog : public QDialog

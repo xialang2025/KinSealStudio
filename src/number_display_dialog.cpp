@@ -267,6 +267,7 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     QGroupBox *preview;
     QVBoxLayout *previewLayout;
     HmiPage keyboardPage;
+    const QMap<QString, int> keyboardNumbers = project.keyboardNumbers(); //20261123-25 add
     QString key;
     QStringList names;
     QJsonArray connections;
@@ -337,7 +338,14 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("noticeWord"), QStringLiteral("通知字"), box)); row->addWidget(address(QStringLiteral("noticeWordAddress"), false, box)); form->addRow(row); form->addRow(QStringLiteral("数据类型:"), combo(QStringLiteral("noticeWordType"), StaticTextProperties::dataTypes(), box)); form->addRow(QStringLiteral("数值:"), line(QStringLiteral("noticeWordValue"), box)); layout->addWidget(box);
     row = new QHBoxLayout(); row->addWidget(check(QStringLiteral("pressTimeEnabled"), QStringLiteral("按压时间"), page)); row->addWidget(spin(QStringLiteral("pressTime"), 0, 255, page)); m_pressUnits = new QLabel(QStringLiteral("x100毫秒"), page); row->addWidget(m_pressUnits); layout->addLayout(row); layout->addStretch(); tabs->addTab(page, QStringLiteral("权限设置"));
     page = new QWidget(tabs); m_otherPage = page; layout = new QVBoxLayout(page); box = new QGroupBox(QStringLiteral("键盘设置"), page); form = new QFormLayout(box); form->addRow(check(QStringLiteral("customKeyboard"), QStringLiteral("使用自定义键盘"), box)); form->addRow(check(QStringLiteral("asciiModifyInput"), QStringLiteral("修改输入"), box)); qobject_cast<QCheckBox *>(m_fields.value(QStringLiteral("asciiModifyInput")))->setChecked(m_asciiDraft.modifyInput); keyboard = new QComboBox(box); keyboard->setObjectName(QStringLiteral("Number_keyboardPageId"));
-    Q_FOREACH (keyboardPage, project.allPages()) { if (keyboardPage.kind == QStringLiteral("keyboard")) { keyboard->addItem(keyboardPage.name, keyboardPage.id); } }
+    Q_FOREACH (keyboardPage, project.allPages()) //20261123-25 change: Present the native number/name label while binding by stable page ID.
+    {
+        if (keyboardNumbers.contains(keyboardPage.id))
+        {
+            keyboard->addItem(QStringLiteral("%1:%2").arg(keyboardNumbers.value(keyboardPage.id), 3, 10, QLatin1Char('0'))
+                              .arg(keyboardPage.name), keyboardPage.id);
+        }
+    }
     keyboard->setCurrentIndex(keyboard->findData(m_draft.keyboardPageId)); m_fields.insert(QStringLiteral("keyboardPageId"), keyboard); form->addRow(QStringLiteral("窗口编号:"), keyboard); m_keyboardLabel = form->labelForField(keyboard);
     box = group(QStringLiteral("keyboardPosition"), QStringLiteral("键盘自定义位置"), box); form->addRow(box); form = new QFormLayout(box); form->addRow(QStringLiteral("X位置:"), spin(QStringLiteral("keyboardX"), 0, 800, box)); form->addRow(QStringLiteral("Y位置:"), spin(QStringLiteral("keyboardY"), 0, 480, box)); layout->addWidget(box->parentWidget()); layout->addStretch(); tabs->addTab(page, QStringLiteral("其它"));
     preview = new QGroupBox(QStringLiteral("预览"), this); preview->setFixedWidth(170); previewLayout = new QVBoxLayout(preview); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("NumberPreview")); m_preview->setFixedSize(145, 190); previewLayout->addWidget(m_preview); previewLayout->addStretch(); content->addWidget(preview); root->addLayout(content, 1);

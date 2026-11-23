@@ -154,6 +154,7 @@ private:
     bool activatePageId(const QString &pageId, const QString &objectId = QString());
     void createNormalPage(); //20261122-9 add
     void configureWindowPage(const QString &id); //20261123-12 add
+    void configureKeyboardPage(const QString &id); //20261123-24 add
     void refreshPageNavigation();
     void rebuildSystemSettings();
     void dispatchEditCommand(const QString &command);

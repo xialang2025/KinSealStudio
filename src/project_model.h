@@ -121,6 +121,7 @@ struct HmiPage
     QList<HmiObject> objects;
     QJsonObject extensions;
     std::optional<int> number; //20261122-10 add: Independent ordinary page number. Earlier projects derive it from page order.
+    std::optional<int> keyboardType; //20261123-24 add: Legacy keyboard documents may have no type.
     HmiPageBackground background; //20261123-1 change
 
     QJsonObject toJson() const;
@@ -178,6 +179,7 @@ struct HmiProject
     QJsonObject activePageExtensions;
     std::optional<int> activePageNumber; //20261122-10 add
     HmiPageBackground activePageBackground; //20261123-1 change
+    std::optional<int> activePageKeyboardType; //20261123-24 add
     QList<HmiPage> inactivePages;
     QStringList pageOrder = {QStringLiteral("page-1")};
     QString startupPageId = QStringLiteral("page-1");
@@ -190,6 +192,7 @@ struct HmiProject
     HmiProject();
     QList<HmiPage> allPages() const;
     QMap<QString, int> screenAndWindowNumbers() const; //20261123-13 change
+    QMap<QString, int> keyboardNumbers() const; //20261123-24 add
     int pageCount() const;
     bool selectPage(const QString &id, QString *error = nullptr);
     bool addPage(const HmiPage &page, QString *error = nullptr);

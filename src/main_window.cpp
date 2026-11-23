@@ -8,6 +8,7 @@
 #include "native_project_codec.h" //20261109-0 add
 #include "device_macro_compiler.h" //20261109-0 add
 #include "stage2_project_dialogs.h" //20261110-7 add
+#include "keyboard_preview.h" //20261123-26 add
 #include "device_download_session.h" //20261114-5 add
 #include <QSettings>
 #include <QSaveFile>
@@ -657,6 +658,7 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         pageId = item->data(0, Qt::UserRole + 1).toString();
         label = item->text(0);
         if (role == QStringLiteral("page")) { activatePageId(pageId); }
+        else if (role == QStringLiteral("keyboardPages")) { configureKeyboardPage(QString()); } //20261123-24 add
         else if (role == QStringLiteral("project") || role == QStringLiteral("normalPages") ||
                  role == QStringLiteral("windowPages")) { configureProject(); } //20261123-12 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
@@ -805,6 +807,45 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                 if (copyStage2Page(this, draft, id, true) && !commitProjectDraft(draft, &error))
                 {
                     QMessageBox::warning(this, QStringLiteral("窗口复制未提交"), error);
+                }
+            });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("keyboardPages")) //20261123-24 add
+        {
+            menu.addAction(QStringLiteral("添加自定义键盘"), this, [this]() { configureKeyboardPage(QString()); });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("page") &&
+            item->parent() != nullptr && item->parent()->data(0, Qt::UserRole).toString() == QStringLiteral("keyboardPages"))
+        {
+            id = item->data(0, Qt::UserRole + 1).toString();
+            menu.addAction(QStringLiteral("打开(&O)"), this, [this, id]() { activatePageId(id); });
+            menu.addAction(QStringLiteral("删除键盘(&D)"), this, [this, id]() {
+                HmiProject draft = currentEditorProject();
+                QString error;
+
+                if (!draft.removePage(id, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("键盘删除未提交"), error);
+                    return;
+                }
+                if (QMessageBox::question(this, QStringLiteral("删除键盘"), QStringLiteral("是否删除所选键盘？")) ==
+                    QMessageBox::Yes && !commitProjectDraft(draft, &error))
+                {
+                    QMessageBox::warning(this, QStringLiteral("键盘删除未提交"), error);
+                }
+            });
+            menu.addAction(QStringLiteral("属性(&P)"), this, [this, id]() { configureKeyboardPage(id); });
+            menu.addAction(QStringLiteral("按键预览"), this, [this, id]() { //20261123-26 add
+                HmiProject snapshot = currentEditorProject();
+                QString error;
+
+                if (snapshot.selectPage(id, &error))
+                {
+                    showStage2KeyboardPreview(this, snapshot);
                 }
             });
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
