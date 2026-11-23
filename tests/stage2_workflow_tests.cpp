@@ -91,6 +91,7 @@ private slots:
     void ordinaryPageMenuDeletionProtectsTargets(); //20261123-9 add
     void ordinaryPageHelpAndSlideVisibilityFollowDraft(); //20261123-10 add
     void ordinaryPageDialogUsesNativeClientLayout(); //20261123-11 add
+    void windowTreeCreatesAndReopensPlacement(); //20261123-12 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
@@ -2209,6 +2210,210 @@ void Stage2WorkflowTests::ordinaryPageDialogUsesNativeClientLayout() //20261123-
             break;
         }
     }
+}
+
+/******************************************************************************
+ * Function Name   : windowTreeCreatesAndReopensPlacement
+ * Description     : Open the native window entries and verify dimensions, position and close-button persistence.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::windowTreeCreatesAndReopensPlacement() //20261123-12 add
+{
+    QTemporaryDir directory;
+    HmiProject seed = workflowProject();
+    HmiProject reopened;
+    MainWindow window;
+    MainWindow loaded;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> entries;
+    QString path;
+    QString error;
+    QString id;
+    bool cancel;
+    bool observed;
+    const QString captures = qEnvironmentVariable("KINSEAL_SCREEN_DIALOG_CAPTURE_DIR");
+
+    QVERIFY(directory.isValid());
+    seed.macros.insert(QStringLiteral("windowTick"), QStringLiteral("void main() {}")); //20261123-12 add
+    path = directory.filePath(QStringLiteral("popup-window.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree != nullptr);
+    for (cancel = true; ; cancel = false)
+    {
+        observed = false;
+        entries = tree->findItems(QStringLiteral("窗口"), Qt::MatchExactly | Qt::MatchRecursive);
+        QCOMPARE(entries.size(), 1);
+        QVERIFY(triggerSettingsTreeAction(tree, entries.first(), QStringLiteral("新建窗口"), [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QSpinBox *number;
+            QSpinBox *width;
+            QSpinBox *height;
+            QSpinBox *x;
+            QSpinBox *y;
+            QRadioButton *position;
+            QCheckBox *close;
+            QLineEdit *name;
+            QDialogButtonBox *buttons;
+            QPushButton *backgroundButton; //20261123-12 add
+            QPushButton *addScript;
+            bool colorChosen = false;
+            bool scriptChosen = false;
+
+            if (editor == nullptr)
+            {
+                return;
+            }
+            number = editor->findChild<QSpinBox *>(QStringLiteral("newPageNumberSpin"));
+            width = editor->findChild<QSpinBox *>(QStringLiteral("windowWidth"));
+            height = editor->findChild<QSpinBox *>(QStringLiteral("windowHeight"));
+            x = editor->findChild<QSpinBox *>(QStringLiteral("windowX"));
+            y = editor->findChild<QSpinBox *>(QStringLiteral("windowY"));
+            position = editor->findChild<QRadioButton *>(QStringLiteral("windowSpecified"));
+            close = editor->findChild<QCheckBox *>(QStringLiteral("windowClose"));
+            name = editor->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+            buttons = editor->findChild<QDialogButtonBox *>();
+            if (editor->windowTitle() != QStringLiteral("新建窗口") || editor->size() != QSize(631, 620) ||
+                number == nullptr || width == nullptr || height == nullptr || x == nullptr || y == nullptr ||
+                close == nullptr || position == nullptr || name == nullptr || buttons == nullptr ||
+                name->text() != QStringLiteral("窗口2") || number->value() != 1 || width->value() != 240 ||
+                height->value() != 180 || !close->isChecked() || x->isVisible() || y->isVisible())
+            {
+                editor->reject();
+                return;
+            }
+            if (!captures.isEmpty() && !editor->grab().save(QDir(captures).filePath(QStringLiteral("lite-window-new.png"))))
+            {
+                editor->reject();
+                return;
+            }
+            position->click();
+            observed = x->isVisible() && y->isVisible() && x->maximum() == 1000 && y->maximum() == 1000;
+            if (!captures.isEmpty() && !editor->grab().save(QDir(captures).filePath(QStringLiteral("lite-window-position.png"))))
+            {
+                observed = false;
+            }
+            number->setValue(12);
+            width->setValue(320);
+            height->setValue(200);
+            x->setValue(55);
+            y->setValue(66);
+            close->setChecked(false);
+            if (!cancel && observed) //20261123-12 add: Exercise popup appearance and script editing through their real dialogs.
+            {
+                backgroundButton = editor->findChild<QPushButton *>(QStringLiteral("newPageBackgroundColor"));
+                addScript = editor->findChild<QPushButton *>(QStringLiteral("pageMacroAdd"));
+                if (backgroundButton == nullptr || addScript == nullptr)
+                {
+                    observed = false;
+                    editor->reject();
+                    return;
+                }
+                QTimer::singleShot(0, editor, [&]() {
+                    QColorDialog *colors = qobject_cast<QColorDialog *>(QApplication::activeModalWidget());
+
+                    if (colors != nullptr)
+                    {
+                        colors->setCurrentColor(QColor(QStringLiteral("#158040")));
+                        colorChosen = true;
+                        colors->accept();
+                    }
+                });
+                backgroundButton->click();
+                QTimer::singleShot(0, editor, [&]() {
+                    QDialog *script = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+                    QDialogButtonBox *scriptButtons;
+                    QComboBox *source;
+
+                    if (script == nullptr || script == editor)
+                    {
+                        return;
+                    }
+                    scriptButtons = script->findChild<QDialogButtonBox *>();
+                    source = script->findChild<QComboBox *>(QStringLiteral("pageMacroSource"));
+                    scriptChosen = scriptButtons != nullptr && source != nullptr &&
+                        source->currentText() == QStringLiteral("windowTick");
+                    if (scriptChosen)
+                    {
+                        scriptButtons->button(QDialogButtonBox::Ok)->click();
+                    }
+                    else
+                    {
+                        script->reject();
+                    }
+                });
+                addScript->click();
+                observed = colorChosen && scriptChosen;
+            }
+            buttons->button(cancel ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok)->click();
+            if (editor->isVisible())
+            {
+                editor->reject();
+            }
+        }));
+        QVERIFY(observed);
+        if (!cancel)
+        {
+            break;
+        }
+        QCOMPARE(window.currentEditorProject().pageCount(), 1);
+        QVERIFY(!window.m_dirty);
+    }
+    id = window.currentEditorProject().activePageId;
+    QVERIFY(id != seed.activePageId);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.activePageId, id);
+    QCOMPARE(reopened.activePageKind, QStringLiteral("window"));
+    QCOMPARE(reopened.startupPageId, seed.startupPageId);
+    QCOMPARE(reopened.activePageNumber.value_or(-1), 12);
+    QCOMPARE(QSize(reopened.pageWidth, reopened.pageHeight), QSize(320, 200));
+    QCOMPARE(reopened.activePageBackground.color, QStringLiteral("#158040")); //20261123-12 add
+    QCOMPARE(reopened.configurationNodes.size(), 2);
+    QCOMPARE(reopened.configurationNodes.last().ownerPageId, id);
+    QCOMPARE(reopened.configurationNodes.last().name, QStringLiteral("窗口宏"));
+    QCOMPARE(reopened.references.size(), 1);
+    QCOMPARE(reopened.references.first().targetId, reopened.macroIds.value(QStringLiteral("windowTick")));
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
+    QVERIFY2(loaded.openProjectPath(path, &error), qPrintable(error));
+    loaded.resize(1353, 708);
+    loaded.show();
+    tree = loaded.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    entries = tree->findItems(QStringLiteral("012:窗口2"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(entries.size(), 1);
+    observed = false;
+    QVERIFY(triggerSettingsTreeAction(tree, entries.first(), QStringLiteral("属性(&P)"), [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QRadioButton *position;
+        QSpinBox *x;
+        QSpinBox *y;
+        QCheckBox *close;
+        QTableWidget *scripts; //20261123-12 add
+
+        if (editor == nullptr)
+        {
+            return;
+        }
+        position = editor->findChild<QRadioButton *>(QStringLiteral("windowSpecified"));
+        x = editor->findChild<QSpinBox *>(QStringLiteral("windowX"));
+        y = editor->findChild<QSpinBox *>(QStringLiteral("windowY"));
+        close = editor->findChild<QCheckBox *>(QStringLiteral("windowClose"));
+        scripts = editor->findChild<QTableWidget *>(QStringLiteral("pageMacroTable")); //20261123-12 add
+        observed = editor->windowTitle() == QStringLiteral("窗口属性") && position != nullptr &&
+            x != nullptr && y != nullptr && close != nullptr && position->isChecked() &&
+            x->value() == 55 && y->value() == 66 && !close->isChecked() &&
+            scripts != nullptr && scripts->rowCount() == 1 && scripts->item(0, 0) != nullptr &&
+            scripts->item(0, 0)->text() == QStringLiteral("windowTick"); //20261123-12 change
+        editor->reject();
+    }));
+    QVERIFY(observed);
+    QVERIFY(!loaded.m_dirty);
 }
 
 /******************************************************************************

@@ -299,12 +299,12 @@ static bool editStage2PageScript(QWidget *parent, HmiProject &project, Stage2Pag
 /******************************************************************************
  * Function Name   : createStage2PageScriptList
  * Description     : Display the ordered page invocation draft with bounded add, remove and edit actions.
- * Input Parameters: parent, project, scripts.
- * Return Value    : Editor widget owned by the ordinary page dialog.
+ * Input Parameters: parent, project, scripts, popup.
+ * Return Value    : Editor widget owned by the page dialog.
  * Date            : 2026.11.23
  ******************************************************************************/
 static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
-                                           QList<Stage2PageScript> &scripts) //20261123-5 add
+                                           QList<Stage2PageScript> &scripts, bool popup) //20261123-12 change
 {
     QWidget *widget = new QWidget(parent);
     QTableWidget *table = new QTableWidget(0, 5, widget);
@@ -315,7 +315,7 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
 
     // The script list and its actions occupy the same client rectangles as in V5.1.
     table->setObjectName(QStringLiteral("pageMacroTable")); //20261123-11 add
-    table->setGeometry(0, 0, 601, 221);
+    table->setGeometry(0, 0, popup ? 591 : 601, popup ? 211 : 221); //20261123-12 change
     table->setHorizontalHeaderLabels({QStringLiteral("脚本函数"), QStringLiteral("执行频率"),
         QStringLiteral("执行次数"), QStringLiteral("受控类型"), QStringLiteral("受控地址")});
     table->verticalHeader()->hide();
@@ -326,10 +326,10 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     add->setObjectName(QStringLiteral("pageMacroAdd"));
-    add->setGeometry(0, 230, 75, 31); //20261123-11 add
-    remove->setGeometry(80, 230, 75, 31);
-    edit->setGeometry(160, 230, 75, 31);
-    usage->setGeometry(253, 230, 71, 30);
+    add->setGeometry(popup ? QRect(0, 220, 61, 31) : QRect(0, 230, 75, 31)); //20261123-12 change
+    remove->setGeometry(popup ? QRect(70, 220, 71, 31) : QRect(80, 230, 75, 31));
+    edit->setGeometry(popup ? QRect(150, 220, 71, 31) : QRect(160, 230, 75, 31));
+    usage->setGeometry(popup ? QRect(260, 220, 100, 30) : QRect(253, 230, 71, 30));
     add->setAutoDefault(false);
     remove->setAutoDefault(false);
     edit->setAutoDefault(false);
@@ -392,11 +392,11 @@ static QWidget *createStage2PageScriptList(QWidget *parent, HmiProject &project,
 /******************************************************************************
  * Function Name   : storeStage2PageScripts
  * Description     : Store the ordered invocation list with one stable macro reference per row.
- * Input Parameters: project, pageId, scripts, previous.
+ * Input Parameters: project, page, scripts, previous.
  * Return Value    : None.
  * Date            : 2026.11.23
  ******************************************************************************/
-static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
+static void storeStage2PageScripts(HmiProject &project, const HmiPage &page, //20261123-12 change
                                    const QList<Stage2PageScript> &scripts,
                                    const HmiConfigurationNode &previous) //20261123-6 change
 {
@@ -413,8 +413,8 @@ static void storeStage2PageScripts(HmiProject &project, const QString &pageId,
         node.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
     }
     node.kind = QStringLiteral("pageMacro");
-    node.name = QStringLiteral("画面宏");
-    node.ownerPageId = pageId;
+    node.name = page.kind == QStringLiteral("window") ? QStringLiteral("窗口宏") : QStringLiteral("画面宏"); //20261123-12 change
+    node.ownerPageId = page.id;
     node.implemented = true;
     node.active = true;
     for (const Stage2PageScript &script : scripts)
@@ -473,14 +473,121 @@ static QList<Stage2PageScript> loadStage2PageScripts(const HmiProject &project,
     return scripts;
 }
 
+struct Stage2WindowFields //20261123-12 add
+{
+    QSpinBox *width = nullptr;
+    QSpinBox *height = nullptr;
+    QSpinBox *x = nullptr;
+    QSpinBox *y = nullptr;
+    QRadioButton *position = nullptr;
+    QCheckBox *close = nullptr;
+};
+
 /******************************************************************************
- * Function Name   : editStage2NormalPage
- * Description     : Create a new ordinary page or edit an existing one in a detached transaction.
- * Input Parameters: parent, project, pageId (empty for creation).
+ * Function Name   : createStage2WindowFields
+ * Description     : Lay out the observed popup size and position fields and restore their draft values.
+ * Input Parameters: dialog, page, placement.
+ * Return Value    : Window form controls owned by the dialog.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static Stage2WindowFields createStage2WindowFields(QDialog &dialog, const HmiPage &page,
+                                                   const QJsonObject &placement) //20261123-12 add
+{
+    QGroupBox *size = new QGroupBox(QStringLiteral("窗口显示大小"), &dialog);
+    QGroupBox *position = new QGroupBox(QStringLiteral("窗口显示位置"), &dialog);
+    QLabel *widthLabel = new QLabel(QStringLiteral("窗口宽度："), size);
+    QLabel *heightLabel = new QLabel(QStringLiteral("窗口高度："), size);
+    QLabel *xLabel = new QLabel(QStringLiteral("坐标X位置："), position);
+    QLabel *yLabel = new QLabel(QStringLiteral("坐标Y位置："), position);
+    QRadioButton *center = new QRadioButton(QStringLiteral("屏幕居中显示"), position);
+    Stage2WindowFields fields;
+
+    size->setGeometry(10, 210, 431, 51);
+    position->setGeometry(10, 270, 431, 81);
+    widthLabel->setGeometry(20, 20, 71, 25);
+    heightLabel->setGeometry(240, 20, 71, 25);
+    xLabel->setGeometry(15, 50, 80, 25);
+    yLabel->setGeometry(225, 50, 80, 25);
+    auto makeSpin = [](QWidget *host, const QString &name, const QRect &bounds, int limit, int value) {
+        QSpinBox *spin = new QSpinBox(host);
+
+        spin->setObjectName(name);
+        spin->setProperty("referenceWindowSpin", true);
+        spin->setGeometry(bounds);
+        spin->setRange(0, limit);
+        spin->setValue(value);
+        return spin;
+    };
+    fields.width = makeSpin(size, QStringLiteral("windowWidth"), QRect(100, 20, 101, 25), 800, page.width);
+    fields.height = makeSpin(size, QStringLiteral("windowHeight"), QRect(320, 20, 101, 25), 480, page.height);
+    fields.x = makeSpin(position, QStringLiteral("windowX"), QRect(100, 50, 91, 25),
+                        1000, placement.value(QStringLiteral("x")).toInt());
+    fields.y = makeSpin(position, QStringLiteral("windowY"), QRect(310, 50, 91, 25),
+                        1000, placement.value(QStringLiteral("y")).toInt());
+    center->setGeometry(15, 23, 140, 16);
+    fields.position = new QRadioButton(QStringLiteral("指定坐标位置"), position);
+    fields.position->setObjectName(QStringLiteral("windowSpecified"));
+    fields.position->setGeometry(160, 23, 140, 16);
+    fields.close = new QCheckBox(QStringLiteral("关闭按钮"), position);
+    fields.close->setObjectName(QStringLiteral("windowClose"));
+    fields.close->setGeometry(305, 23, 100, 16);
+    fields.close->setChecked(placement.value(QStringLiteral("closeButton")).toBool(true));
+    center->setChecked(placement.value(QStringLiteral("centered")).toBool(true));
+    fields.position->setChecked(!center->isChecked());
+    auto showCoordinates = [fields, xLabel, yLabel](bool shown) {
+        xLabel->setVisible(shown);
+        yLabel->setVisible(shown);
+        fields.x->setVisible(shown);
+        fields.y->setVisible(shown);
+    };
+    QObject::connect(fields.position, &QRadioButton::toggled, position, showCoordinates);
+    showCoordinates(fields.position->isChecked());
+    return fields;
+}
+
+/******************************************************************************
+ * Function Name   : storeStage2WindowPlacement
+ * Description     : Retain one stable nondefault placement record owned by the popup page.
+ * Input Parameters: project, pageId, fields, previous.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+static void storeStage2WindowPlacement(HmiProject &project, const QString &pageId, const Stage2WindowFields &fields,
+                                       const HmiConfigurationNode &previous) //20261123-12 add
+{
+    HmiConfigurationNode placement = previous;
+    const bool centered = !fields.position->isChecked();
+    const bool close = fields.close->isChecked();
+    const int x = fields.x->value();
+    const int y = fields.y->value();
+
+    if (placement.id.isEmpty() && centered && close && x == 0 && y == 0)
+    {
+        return;
+    }
+    if (placement.id.isEmpty())
+    {
+        placement.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        placement.name = QStringLiteral("窗口显示位置");
+        placement.kind = QStringLiteral("windowPlacement");
+        placement.ownerPageId = pageId;
+        placement.active = true;
+        placement.implemented = true;
+    }
+    placement.properties = {{QStringLiteral("centered"), centered}, {QStringLiteral("x"), x},
+                            {QStringLiteral("y"), y}, {QStringLiteral("closeButton"), close}};
+    project.configurationNodes.append(placement);
+}
+
+/******************************************************************************
+ * Function Name   : editStage2DesignerPage
+ * Description     : Create or edit an ordinary screen or popup in a detached transaction.
+ * Input Parameters: parent, project, pageId (empty for creation), kind.
  * Return Value    : True after a valid transaction is confirmed.
  * Date            : 2026.11.23
  ******************************************************************************/
-static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-6 change
+static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const QString &pageId,
+                                    const QString &kind) //20261123-12 change
 {
     QDialog dialog(parent);
     QLineEdit *name;
@@ -517,7 +624,9 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
                                      QStringLiteral("向上"), QStringLiteral("向下")};
     const QStringList slideKeys = {QStringLiteral("Left"), QStringLiteral("Right"),
                                    QStringLiteral("Up"), QStringLiteral("Down")};
-    const QMap<QString, int> ordinaryNumbers = project.ordinaryPageNumbers();
+    const bool popup = kind == QStringLiteral("window"); //20261123-12 add
+    const QString pageLabel = popup ? QStringLiteral("窗口") : QStringLiteral("画面");
+    const QMap<QString, int> pageNumbers = popup ? project.windowPageNumbers() : project.ordinaryPageNumbers();
     const QList<HmiPage> targetPages = project.allPages();
     int directionIndex;
     int column;
@@ -526,6 +635,8 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     HmiPage existing;
     HmiConfigurationNode priorSlide;
     HmiConfigurationNode priorScripts;
+    HmiConfigurationNode priorPlacement; //20261123-12 add
+    Stage2WindowFields windowFields;
     QMap<QString, HmiReference> priorDirections;
     QString bitmapName;
     QString systemPicture; //20261123-3 add
@@ -543,7 +654,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
 
     if (editing) //20261123-6 add
     {
-        if (!ordinaryNumbers.contains(pageId))
+        if (!pageNumbers.contains(pageId)) //20261123-12 change
         {
             return false;
         }
@@ -569,6 +680,10 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             {
                 priorScripts = node;
             }
+            else if (node.kind == QStringLiteral("windowPlacement")) //20261123-12 add
+            {
+                priorPlacement = node;
+            }
         }
         for (const HmiReference &reference : project.references)
         {
@@ -579,7 +694,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         }
         scripts = loadStage2PageScripts(project, priorScripts);
         suggestion = existing.name;
-        pageNumber = ordinaryNumbers.value(pageId);
+        pageNumber = pageNumbers.value(pageId); //20261123-12 change
         bitmapName = existing.background.bitmapName;
         systemPicture = existing.background.systemPicture;
         bitmap = decodedControlPng(project.pictures.value(bitmapName));
@@ -594,30 +709,37 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
     }
     else
     {
+        existing.kind = kind; //20261123-12 add
+        if (popup)
+        {
+            existing.width = 240;
+            existing.height = 180;
+        }
         pageNumber = project.pageCount();
         nameNumber = pageNumber + 1;
-        occupiedNumbers = ordinaryNumbers.values();
+        occupiedNumbers = pageNumbers.values(); //20261123-12 change
         while (occupiedNumbers.contains(pageNumber)) //20261122-10 add: Keep the established order-based suggestion wherever it is available.
         {
             ++pageNumber;
         }
-        suggestion = QStringLiteral("画面%1").arg(nameNumber);
+        suggestion = pageLabel + QString::number(nameNumber); //20261123-12 change
         while (!validateStage2PageName(project, QString(), suggestion, nullptr))
         {
-            suggestion = QStringLiteral("画面%1").arg(++nameNumber);
+            suggestion = pageLabel + QString::number(++nameNumber); //20261123-12 change
         }
     }
 
-    dialog.setWindowTitle(editing ? QStringLiteral("画面属性") : QStringLiteral("新建画面")); //20261123-6 change
-    dialog.setProperty("localHelpTopic", QStringLiteral("screen-properties")); //20261123-10 add
+    dialog.setWindowTitle(editing ? pageLabel + QStringLiteral("属性") : QStringLiteral("新建") + pageLabel); //20261123-12 change
+    dialog.setProperty("localHelpTopic", popup ? QStringLiteral("project") : QStringLiteral("screen-properties"));
     dialog.setObjectName(QStringLiteral("ordinaryPageEditor")); //20261123-11 add
     dialog.setWindowFlag(Qt::WindowContextHelpButtonHint);
     dialog.setFont(QFont(QStringLiteral("SimSun"), 9));
-    dialog.setFixedSize(638, 662);
+    dialog.setFixedSize(popup ? QSize(631, 620) : QSize(638, 662)); //20261123-12 change
     dialog.setStyleSheet(QStringLiteral(
         "QDialog#ordinaryPageEditor { background: #f0f0f0; } "
         "QLineEdit#newPageNameEdit, QSpinBox#newPageNumberSpin, QComboBox#newPageBackgroundStyle,"
-        "QSpinBox#pageSlideDistance, QComboBox[pageSlideTarget='true'], QTableWidget#pageMacroTable "
+        "QSpinBox#pageSlideDistance, QSpinBox[referenceWindowSpin='true'],"
+        "QComboBox[pageSlideTarget='true'], QTableWidget#pageMacroTable " //20261123-12 change
         "{ background: #caeace; } "
         "QLineEdit#pageBitmapPath, QSpinBox#pageSlideDistance:disabled { background: #b1ceed; } "
         "QComboBox[pageSlideTarget='true']:disabled { background: #f0f0f0; } "
@@ -625,75 +747,75 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         "QTableWidget#pageMacroTable QHeaderView::section { background: white; border: none;"
         "border-right: 1px solid #dcdcdc; }"));
     nameLabel = new QLabel(QStringLiteral("名称："), &dialog);
-    nameLabel->setGeometry(10, 5, 81, 30);
+    nameLabel->setGeometry(popup ? QRect(10, 10, 41, 25) : QRect(10, 5, 81, 30)); //20261123-12 change
     numberLabel = new QLabel(QStringLiteral("编号："), &dialog);
-    numberLabel->setGeometry(370, 10, 51, 30);
+    numberLabel->setGeometry(popup ? QRect(240, 10, 41, 25) : QRect(370, 10, 51, 30)); //20261123-12 change
     name = new QLineEdit(suggestion, &dialog);
     name->setObjectName(QStringLiteral("newPageNameEdit"));
     name->setMaxLength(32767);
-    name->setGeometry(90, 5, 191, 30); //20261123-11 add
+    name->setGeometry(popup ? QRect(60, 10, 131, 25) : QRect(90, 5, 191, 30)); //20261123-12 change
     number = new QSpinBox(&dialog);
     number->setObjectName(QStringLiteral("newPageNumberSpin"));
     number->setRange(0, 999);
     number->setValue(pageNumber);
-    number->setToolTip(QStringLiteral("同一工程内普通画面编号不可重复。")); //20261122-10 change
-    number->setGeometry(428, 10, 161, 30); //20261123-11 add
+    number->setToolTip(QStringLiteral("同一工程内%1编号不可重复。").arg(popup ? pageLabel : QStringLiteral("普通画面"))); //20261123-12 change
+    number->setGeometry(popup ? QRect(290, 10, 111, 25) : QRect(428, 10, 161, 30));
     validation = new QLabel(&dialog);
     validation->setWordWrap(true);
-    validation->setGeometry(10, 43, 601, 34); //20261123-11 add
+    validation->setGeometry(popup ? QRect(411, 4, 210, 36) : QRect(10, 43, 601, 34)); //20261123-12 change
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
                                    QDialogButtonBox::Help, &dialog); //20261123-10 change
     buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
     buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
     buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261123-10 add
-    buttons->setGeometry(360, 620, 251, 31); //20261123-11 add
+    buttons->setGeometry(popup ? QRect(400, 580, 201, 31) : QRect(360, 620, 251, 31)); //20261123-12 change
     buttons->layout()->setContentsMargins(0, 0, 0, 0);
     buttons->layout()->setSpacing(9);
-    buttons->button(QDialogButtonBox::Ok)->setFixedSize(81, 31);
-    buttons->button(QDialogButtonBox::Cancel)->setFixedSize(81, 31);
-    buttons->button(QDialogButtonBox::Help)->setFixedSize(71, 31);
+    buttons->button(QDialogButtonBox::Ok)->setFixedSize(popup ? 61 : 81, 31); //20261123-12 change
+    buttons->button(QDialogButtonBox::Cancel)->setFixedSize(popup ? 61 : 81, 31);
+    buttons->button(QDialogButtonBox::Help)->setFixedSize(popup ? 61 : 71, 31);
     background = new QGroupBox(QStringLiteral("背景"), &dialog); //20261123-0 add
     background->setObjectName(QStringLiteral("newPageBackground")); //20261123-11 add
-    background->setGeometry(10, 80, 601, 301);
+    background->setGeometry(popup ? QRect(10, 40, 591, 161) : QRect(10, 80, 601, 301)); //20261123-12 change
     defaultMode = new QRadioButton(QStringLiteral("默认"), background); //20261123-2 add
-    defaultMode->setGeometry(10, 30, 70, 25); //20261123-11 add
+    defaultMode->setGeometry(popup ? QRect(18, 30, 65, 22) : QRect(10, 30, 70, 25)); //20261123-12 change
     defaultMode->setChecked(true);
     bitmapMode = new QRadioButton(QStringLiteral("位图"), background);
-    bitmapMode->setGeometry(10, 118, 70, 21); //20261123-11 add
+    bitmapMode->setGeometry(popup ? QRect(18, 100, 65, 22) : QRect(10, 118, 70, 21)); //20261123-12 change
     bitmapMode->setObjectName(QStringLiteral("newPageBitmapMode"));
     backgroundOptions = new QStackedWidget(background);
-    backgroundOptions->setGeometry(80, 30, 340, 140); //20261123-11 add
+    backgroundOptions->setGeometry(popup ? QRect(90, 30, 491, 126) : QRect(80, 30, 340, 140)); //20261123-12 change
     colorOptions = new QWidget(backgroundOptions);
     bitmapOptions = new QWidget(backgroundOptions);
     bitmapPath = new QLineEdit(bitmapOptions);
-    bitmapPath->setGeometry(6, 88, 331, 21); //20261123-11 add
+    bitmapPath->setGeometry(popup ? QRect(0, 70, 491, 22) : QRect(6, 88, 331, 21)); //20261123-12 change
     bitmapPath->setObjectName(QStringLiteral("pageBitmapPath"));
     bitmapPath->setReadOnly(true);
     bitmapPath->setText(systemPicture.isEmpty() ? bitmapName : kvgPictureResource(systemPicture)); //20261123-6 add
     bitmapPath->setAccessibleName(QStringLiteral("背景图片"));
     projectGallery = new QPushButton(QStringLiteral("工程图库"), bitmapOptions);
     projectGallery->setObjectName(QStringLiteral("newPageProjectGallery"));
-    projectGallery->setGeometry(220, 115, 120, 25); //20261123-11 add
+    projectGallery->setGeometry(popup ? QRect(370, 100, 120, 25) : QRect(220, 115, 120, 25)); //20261123-12 change
     projectGallery->setAutoDefault(false);
     systemGallery = new QPushButton(QStringLiteral("系统图库"), bitmapOptions); //20261123-3 add
     systemGallery->setObjectName(QStringLiteral("newPageSystemGallery"));
-    systemGallery->setGeometry(0, 115, 120, 25); //20261123-11 add
+    systemGallery->setGeometry(popup ? QRect(0, 100, 120, 25) : QRect(0, 115, 120, 25)); //20261123-12 change
     systemGallery->setAutoDefault(false);
     backgroundOptions->addWidget(colorOptions);
     backgroundOptions->addWidget(bitmapOptions);
     backgroundColorButton = new QPushButton(colorOptions);
     backgroundColorButton->setObjectName(QStringLiteral("newPageBackgroundColor"));
-    backgroundColorButton->setGeometry(89, 0, 181, 23); //20261123-11 change
+    backgroundColorButton->setGeometry(popup ? QRect(85, 0, 157, 26) : QRect(89, 0, 181, 23)); //20261123-12 change
     backgroundColorButton->setAutoDefault(false);
     backgroundColorButton->setAccessibleName(QStringLiteral("背景色"));
     foregroundColorButton = new QPushButton(colorOptions);
     foregroundColorButton->setObjectName(QStringLiteral("newPageForegroundColor"));
-    foregroundColorButton->setGeometry(90, 30, 181, 23); //20261123-11 add
+    foregroundColorButton->setGeometry(popup ? QRect(333, 0, 157, 26) : QRect(90, 30, 181, 23)); //20261123-12 change
     foregroundColorButton->setAutoDefault(false);
     foregroundColorButton->setAccessibleName(QStringLiteral("前景色"));
     backgroundStyle = new QComboBox(colorOptions);
     backgroundStyle->setObjectName(QStringLiteral("newPageBackgroundStyle"));
-    backgroundStyle->setGeometry(89, 60, 251, 20); //20261123-11 add
+    backgroundStyle->setGeometry(popup ? QRect(85, 32, 406, 26) : QRect(89, 60, 251, 20)); //20261123-12 change
     backgroundStyle->addItems({QStringLiteral("纯色"), QStringLiteral("横向过渡"), QStringLiteral("横向对称过渡"),
         QStringLiteral("纵向过渡"), QStringLiteral("纵向对称过渡"), QStringLiteral("斜上过渡"),
         QStringLiteral("斜上对称过渡"), QStringLiteral("斜下过渡"), QStringLiteral("斜下对称过渡"),
@@ -709,61 +831,68 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         bitmapMode->setChecked(true);
         backgroundOptions->setCurrentWidget(bitmapOptions);
     }
-    previewFrame = new QFrame(background); //20261123-11 add
+    previewFrame = new QFrame(popup ? static_cast<QWidget *>(&dialog) : background); //20261123-12 change
     previewFrame->setObjectName(QStringLiteral("pageBackgroundPreviewFrame"));
-    previewFrame->setGeometry(430, 30, 151, 131);
+    previewFrame->setGeometry(popup ? QRect(450, 220, 151, 131) : QRect(430, 30, 151, 131)); //20261123-12 change
     backgroundPreview = new QLabel(previewFrame);
     backgroundPreview->setObjectName(QStringLiteral("newPageBackgroundPreview")); //20261123-2 add
     backgroundPreview->setGeometry(20, 10, 110, 110); //20261123-11 change
     backgroundPreview->setAccessibleName(QStringLiteral("背景预览"));
     backgroundLabel = new QLabel(QStringLiteral("背景色："), colorOptions); //20261123-11 add
-    backgroundLabel->setGeometry(10, 0, 73, 23);
+    backgroundLabel->setGeometry(popup ? QRect(0, 0, 81, 26) : QRect(10, 0, 73, 23)); //20261123-12 change
     foregroundLabel = new QLabel(QStringLiteral("前景色："), colorOptions);
-    foregroundLabel->setGeometry(11, 30, 73, 23);
-    styleLabel = new QLabel(QStringLiteral("样  式："), colorOptions);
-    styleLabel->setGeometry(10, 60, 73, 21);
+    foregroundLabel->setGeometry(popup ? QRect(247, 0, 81, 26) : QRect(11, 30, 73, 23)); //20261123-12 change
+    styleLabel = new QLabel(popup ? QStringLiteral("样式：") : QStringLiteral("样  式："), colorOptions);
+    styleLabel->setGeometry(popup ? QRect(0, 32, 81, 26) : QRect(10, 60, 73, 21));
 
-    slideGroup = new QGroupBox(QStringLiteral("滑动打开画面"), background); //20261123-4 add
-    slideGroup->setObjectName(QStringLiteral("pageSlideGroup"));
-    slideGroup->setCheckable(true);
-    slideGroup->setGeometry(20, 185, 571, 111); //20261123-11 change
-    distanceLabel = new QLabel(QStringLiteral("滑动距离："), slideGroup);
-    distanceLabel->setGeometry(10, 25, 61, 16);
-    slideDistance = new QSpinBox(slideGroup);
-    slideDistance->setObjectName(QStringLiteral("pageSlideDistance"));
-    slideDistance->setRange(5, 480);
-    slideDistance->setValue(priorSlide.properties.value(QStringLiteral("distance")).toInt(50)); //20261123-6 change
-    slideDistance->setGeometry(80, 20, 151, 22); //20261123-11 change
-    for (directionIndex = 0; directionIndex < 4; ++directionIndex)
+    if (popup) //20261123-12 add
     {
-        column = 312 * (directionIndex % 2); //20261123-11 change
-        row = 55 + 30 * (directionIndex / 2);
-        slideDirections[directionIndex] = new QCheckBox(slideLabels.at(directionIndex), slideGroup);
-        slideTargets[directionIndex] = new QComboBox(slideGroup);
-        slideDirections[directionIndex]->setGeometry(13 + column, row, 58, 20); //20261123-11 add
-        slideTargets[directionIndex]->setGeometry(78 + column, row, 151, 21);
-        slideTargets[directionIndex]->setProperty("pageSlideTarget", true);
-        slideDirections[directionIndex]->setObjectName(QStringLiteral("pageSlide") + slideKeys.at(directionIndex));
-        slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
-        for (const HmiPage &target : targetPages)
-        {
-            if (target.id != pageId && ordinaryNumbers.contains(target.id)) //20261123-6 change
-            {
-                // The label reflects renumbering or renaming while the data carries a stable ID.
-                slideTargets[directionIndex]->addItem(QStringLiteral("%1:%2")
-                    .arg(ordinaryNumbers.value(target.id), 3, 10, QLatin1Char('0')).arg(target.name), target.id);
-            }
-        }
-        const HmiReference previous = priorDirections.value(slideKeys.at(directionIndex).toLower()); //20261123-6 add
-        if (!previous.id.isEmpty())
-        {
-            slideDirections[directionIndex]->setChecked(true);
-            slideTargets[directionIndex]->setCurrentIndex(slideTargets[directionIndex]->findData(previous.targetId));
-        }
-        // A populated target stays visible while disabled; an empty target list is hidden.
-        slideTargets[directionIndex]->setVisible(slideTargets[directionIndex]->count() != 0); //20261123-11 change
+        windowFields = createStage2WindowFields(dialog, existing, priorPlacement.properties);
     }
-    slideGroup->setChecked(priorSlide.properties.value(QStringLiteral("enabled")).toBool()); //20261123-6 change
+    else
+    {
+        slideGroup = new QGroupBox(QStringLiteral("滑动打开画面"), background); //20261123-4 add
+        slideGroup->setObjectName(QStringLiteral("pageSlideGroup"));
+        slideGroup->setCheckable(true);
+        slideGroup->setGeometry(20, 185, 571, 111); //20261123-11 change
+        distanceLabel = new QLabel(QStringLiteral("滑动距离："), slideGroup);
+        distanceLabel->setGeometry(10, 25, 61, 16);
+        slideDistance = new QSpinBox(slideGroup);
+        slideDistance->setObjectName(QStringLiteral("pageSlideDistance"));
+        slideDistance->setRange(5, 480);
+        slideDistance->setValue(priorSlide.properties.value(QStringLiteral("distance")).toInt(50)); //20261123-6 change
+        slideDistance->setGeometry(80, 20, 151, 22); //20261123-11 change
+        for (directionIndex = 0; directionIndex < 4; ++directionIndex)
+        {
+            column = 312 * (directionIndex % 2); //20261123-11 change
+            row = 55 + 30 * (directionIndex / 2);
+            slideDirections[directionIndex] = new QCheckBox(slideLabels.at(directionIndex), slideGroup);
+            slideTargets[directionIndex] = new QComboBox(slideGroup);
+            slideDirections[directionIndex]->setGeometry(13 + column, row, 58, 20); //20261123-11 add
+            slideTargets[directionIndex]->setGeometry(78 + column, row, 151, 21);
+            slideTargets[directionIndex]->setProperty("pageSlideTarget", true);
+            slideDirections[directionIndex]->setObjectName(QStringLiteral("pageSlide") + slideKeys.at(directionIndex));
+            slideTargets[directionIndex]->setObjectName(slideDirections[directionIndex]->objectName() + QStringLiteral("Target"));
+            for (const HmiPage &target : targetPages)
+            {
+                if (target.id != pageId && pageNumbers.contains(target.id)) //20261123-6 change
+                {
+                    // The label reflects renumbering or renaming while the data carries a stable ID.
+                    slideTargets[directionIndex]->addItem(QStringLiteral("%1:%2")
+                        .arg(pageNumbers.value(target.id), 3, 10, QLatin1Char('0')).arg(target.name), target.id);
+                }
+            }
+            const HmiReference previous = priorDirections.value(slideKeys.at(directionIndex).toLower()); //20261123-6 add
+            if (!previous.id.isEmpty())
+            {
+                slideDirections[directionIndex]->setChecked(true);
+                slideTargets[directionIndex]->setCurrentIndex(slideTargets[directionIndex]->findData(previous.targetId));
+            }
+            // A populated target stays visible while disabled; an empty target list is hidden.
+            slideTargets[directionIndex]->setVisible(slideTargets[directionIndex]->count() != 0); //20261123-11 change
+        }
+        slideGroup->setChecked(priorSlide.properties.value(QStringLiteral("enabled")).toBool()); //20261123-6 change
+    }
     auto fillDraft = [&]() {
         HmiPageBackground fill;
         if (bitmapMode->isChecked()) //20261123-2 add: Preserve the color choices on the draft while serializing only the selected mode.
@@ -853,7 +982,8 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             updateBackgroundPreview();
         }
     });
-    createStage2PageScriptList(&dialog, macroDraft, scripts)->setGeometry(10, 390, 601, 261); //20261123-11 change
+    createStage2PageScriptList(&dialog, macroDraft, scripts, popup)->setGeometry(
+        popup ? QRect(10, 360, 591, 251) : QRect(10, 390, 601, 261)); //20261123-12 change
     QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [&dialog]() { //20261123-10 add
         LocalHelpController *help = dialog.findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
 
@@ -861,7 +991,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
         {
             help = new LocalHelpController(&dialog);
         }
-        help->showTopic(QStringLiteral("screen-properties"), &dialog);
+        help->showTopic(dialog.property("localHelpTopic").toString(), &dialog); //20261123-12 change
     });
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
@@ -877,9 +1007,9 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             validation->setText(QStringLiteral("请从系统图库或工程图库选择一张有效的背景图片。"));
             return;
         }
-        if (editing && number->value() != pageNumber && ordinaryNumbers.values().contains(number->value())) //20261123-6 add
+        if (editing && number->value() != pageNumber && pageNumbers.values().contains(number->value())) //20261123-12 change
         {
-            validation->setText(QStringLiteral("普通画面编号 %1 已被使用。").arg(number->value()));
+            validation->setText(QStringLiteral("%1编号 %2 已被使用。").arg(pageLabel).arg(number->value()));
             return;
         }
         page = existing; //20261123-6 add: Preserve dimensions, controls and extensions on an existing page.
@@ -890,6 +1020,16 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             page.number = number->value();
         }
         page.background = fillDraft(); //20261123-1 change
+        if (popup) //20261123-12 add
+        {
+            page.width = windowFields.width->value();
+            page.height = windowFields.height->value();
+            if (page.width == 0 || page.height == 0)
+            {
+                validation->setText(QStringLiteral("窗口宽度和高度必须大于 0。"));
+                return;
+            }
+        }
         candidate = macroDraft; //20261123-5 change: Commit shared source edits only with the outer page.
         if (!validateStage2PageName(project, pageId, page.name, &error) ||
             (editing ? !candidate.selectPage(pageId, &error) : !candidate.addPage(page, &error))) //20261123-6 change
@@ -902,57 +1042,66 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
             candidate.pageName = page.name;
             candidate.activePageNumber = page.number;
             candidate.activePageBackground = page.background;
+            candidate.pageWidth = page.width; //20261123-12 add
+            candidate.pageHeight = page.height;
             // Replace the owned draft records and their outgoing bindings as one transaction.
             candidate.configurationNodes.removeIf([&](const HmiConfigurationNode &node) {
-                return node.id == priorSlide.id || node.id == priorScripts.id;
+                return node.id == priorSlide.id || node.id == priorScripts.id || node.id == priorPlacement.id; //20261123-12 change
             });
             candidate.references.removeIf([&](const HmiReference &reference) {
                 return reference.ownerKind == QStringLiteral("configuration") &&
                     (reference.ownerId == priorSlide.id || reference.ownerId == priorScripts.id);
             });
         }
-        if (slide.id.isEmpty())
+        if (popup) //20261123-12 add
         {
-            slide.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            storeStage2WindowPlacement(candidate, page.id, windowFields, priorPlacement);
         }
-        slide.kind = QStringLiteral("pageSlide");
-        slide.name = slideGroup->title();
-        slide.ownerPageId = page.id;
-        slide.implemented = true;
-        slide.active = true;
-        slide.properties = {{QStringLiteral("enabled"), slideGroup->isChecked()},
-                            {QStringLiteral("distance"), slideDistance->value()}};
-        preserveSlide = !priorSlide.id.isEmpty() || slideGroup->isChecked() || slideDistance->value() != 50; //20261123-6 change
-        for (direction = 0; direction < 4; ++direction)
+        else
         {
-            if (!slideDirections[direction]->isChecked())
+            if (slide.id.isEmpty())
             {
-                continue;
+                slide.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
             }
-            target = priorDirections.value(slideKeys.at(direction).toLower()); //20261123-6 add
-            target.targetId = slideTargets[direction]->currentData().toString();
-            if (target.targetId.isEmpty())
+            slide.kind = QStringLiteral("pageSlide");
+            slide.name = slideGroup->title();
+            slide.ownerPageId = page.id;
+            slide.implemented = true;
+            slide.active = true;
+            slide.properties = {{QStringLiteral("enabled"), slideGroup->isChecked()},
+                                {QStringLiteral("distance"), slideDistance->value()}};
+            preserveSlide = !priorSlide.id.isEmpty() || slideGroup->isChecked() || slideDistance->value() != 50; //20261123-6 change
+            for (direction = 0; direction < 4; ++direction)
             {
-                validation->setText(QStringLiteral("请选择“%1”的目标画面。").arg(slideLabels.at(direction)));
-                return;
+                if (!slideDirections[direction]->isChecked())
+                {
+                    continue;
+                }
+                target = priorDirections.value(slideKeys.at(direction).toLower()); //20261123-6 add
+                target.targetId = slideTargets[direction]->currentData().toString();
+                if (target.targetId.isEmpty())
+                {
+                    validation->setText(QStringLiteral("请选择“%1”的目标画面。").arg(slideLabels.at(direction)));
+                    return;
+                }
+                if (target.id.isEmpty())
+                {
+                    target.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+                }
+                target.ownerKind = QStringLiteral("configuration");
+                target.ownerId = slide.id;
+                target.targetKind = QStringLiteral("page");
+                target.field = slideKeys.at(direction).toLower();
+                candidate.references.append(target);
+                preserveSlide = true;
             }
-            if (target.id.isEmpty())
+            if (preserveSlide)
             {
-                target.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+                // Keep selected directions if the master switch was turned back off before confirming.
+                candidate.configurationNodes.append(slide);
             }
-            target.ownerKind = QStringLiteral("configuration");
-            target.ownerId = slide.id;
-            target.targetKind = QStringLiteral("page");
-            target.field = slideKeys.at(direction).toLower();
-            candidate.references.append(target);
-            preserveSlide = true;
         }
-        if (preserveSlide)
-        {
-            // Keep selected directions if the master switch was turned back off before confirming.
-            candidate.configurationNodes.append(slide);
-        }
-        storeStage2PageScripts(candidate, page.id, scripts, priorScripts); //20261123-6 change
+        storeStage2PageScripts(candidate, page, scripts, priorScripts); //20261123-12 change
         if (editing) //20261123-6 add: Keeping the original record order makes a no-op confirmation leave the project clean.
         {
             auto keepOrder = [](const auto &previous, auto &updated) {
@@ -997,7 +1146,7 @@ static bool editStage2NormalPage(QWidget *parent, HmiProject &project, const QSt
  ******************************************************************************/
 bool editStage2NewNormalPage(QWidget *parent, HmiProject &project) //20261123-6 change
 {
-    return editStage2NormalPage(parent, project, QString());
+    return editStage2DesignerPage(parent, project, QString(), QStringLiteral("normal")); //20261123-12 change
 }
 
 /******************************************************************************
@@ -1013,7 +1162,19 @@ bool editStage2NormalPageProperties(QWidget *parent, HmiProject &project, const 
     {
         return false;
     }
-    return editStage2NormalPage(parent, project, pageId);
+    return editStage2DesignerPage(parent, project, pageId, QStringLiteral("normal")); //20261123-12 change
+}
+
+/******************************************************************************
+ * Function Name   : editStage2Window
+ * Description     : Use the popup-specific form while sharing the page appearance and macro draft.
+ * Input Parameters: parent, project, pageId (empty for creation).
+ * Return Value    : True for a confirmed window edit.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool editStage2Window(QWidget *parent, HmiProject &project, const QString &pageId) //20261123-12 add
+{
+    return editStage2DesignerPage(parent, project, pageId, QStringLiteral("window"));
 }
 
 /******************************************************************************

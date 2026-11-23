@@ -657,7 +657,8 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         pageId = item->data(0, Qt::UserRole + 1).toString();
         label = item->text(0);
         if (role == QStringLiteral("page")) { activatePageId(pageId); }
-        else if (role == QStringLiteral("project") || role == QStringLiteral("normalPages")) { configureProject(); } //20261122-9 change
+        else if (role == QStringLiteral("project") || role == QStringLiteral("normalPages") ||
+                 role == QStringLiteral("windowPages")) { configureProject(); } //20261123-12 change
         else if (role == QStringLiteral("system")) { configureSystemSettings(); } //20261110-7 add
         else if (role == QStringLiteral("languages")) { configureLanguages(); }
         else if (role == QStringLiteral("connections")) { configureConnections(); }
@@ -762,6 +763,21 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
             menu.addAction(QStringLiteral("下一个画面"), this, [reorder, next = siblingId(siblingIndex + 1)]() {
                 reorder(next);
             });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("windowPages")) //20261123-12 add
+        {
+            menu.addAction(QStringLiteral("新建窗口"), this, [this]() { configureWindowPage(QString()); });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("page") &&
+            item->parent() != nullptr && item->parent()->data(0, Qt::UserRole).toString() == QStringLiteral("windowPages"))
+        {
+            id = item->data(0, Qt::UserRole + 1).toString();
+            menu.addAction(QStringLiteral("打开(&O)"), this, [this, id]() { activatePageId(id); });
+            menu.addAction(QStringLiteral("属性(&P)"), this, [this, id]() { configureWindowPage(id); });
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
         }

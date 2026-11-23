@@ -800,13 +800,14 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     {
         return modelError(error, QStringLiteral("页面类型或尺寸超出当前AMT编辑范围。"));
     }
-    if (json.contains(QStringLiteral("number"))) //20261122-10 add: Only ordinary page numbering has been specified.
+    if (json.contains(QStringLiteral("number"))) //20261123-12 change
     {
         savedNumber = json.value(QStringLiteral("number"));
-        if (candidate.kind != QStringLiteral("normal") || !exactInteger(savedNumber) ||
+        if ((candidate.kind != QStringLiteral("normal") && candidate.kind != QStringLiteral("window")) ||
+            !exactInteger(savedNumber) || //20261123-12 change
             savedNumber.toInt() < 0 || savedNumber.toInt() > 999)
         {
-            return modelError(error, QStringLiteral("仅普通画面可保存编号，编号必须为 0–999 的整数。"));
+            return modelError(error, QStringLiteral("普通画面和窗口编号必须为 0–999 的整数。"));
         }
         candidate.number = savedNumber.toInt();
     }
@@ -854,9 +855,10 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
             return modelError(error, QStringLiteral("普通画面的系统背景必须引用有效的图库图片，且只能使用一种背景模式。"));
         }
     }
-    if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal"))
+    if (!candidate.background.isDefault() && candidate.kind != QStringLiteral("normal") &&
+        candidate.kind != QStringLiteral("window")) //20261123-12 change
     {
-        return modelError(error, QStringLiteral("现有背景字段适用于普通画面。"));
+        return modelError(error, QStringLiteral("自定义背景适用于普通画面和窗口。"));
     }
     items = json.value(QStringLiteral("objects")).toArray();
     if (items.size() > 100) { return modelError(error, QStringLiteral("页面超过Lite每页100控件保护上限。")); }
@@ -942,6 +944,26 @@ bool HmiConfigurationNode::fromJson(const QJsonObject &json, HmiConfigurationNod
         if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
             !validateStage2SystemSettingsProperties(candidate.properties, error) ||
             !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error)) { return false; }
+        *node = candidate;
+        return true;
+    }
+    if (candidate.kind == QStringLiteral("windowPlacement")) //20261123-12 add
+    {
+        const QJsonValue x = candidate.properties.value(QStringLiteral("x"));
+        const QJsonValue y = candidate.properties.value(QStringLiteral("y"));
+
+        if (candidate.id.trimmed().isEmpty() || candidate.name.trimmed().isEmpty() ||
+            candidate.ownerPageId.isEmpty() || !candidate.implemented || !candidate.active ||
+            !knownKeys(candidate.properties, {QStringLiteral("centered"), QStringLiteral("x"),
+                QStringLiteral("y"), QStringLiteral("closeButton")}, QStringLiteral("windowPlacement"), error) ||
+            !candidate.properties.value(QStringLiteral("centered")).isBool() ||
+            !candidate.properties.value(QStringLiteral("closeButton")).isBool() ||
+            !exactInteger(x) || x.toInt() < 0 || x.toInt() > 1000 ||
+            !exactInteger(y) || y.toInt() < 0 || y.toInt() > 1000 ||
+            !inactiveExtensions(candidate.extensions, QStringLiteral("configurationNode.extensions"), error))
+        {
+            return modelError(error, QStringLiteral("窗口位置须包含居中、关闭按钮和 0–1000 的坐标。"));
+        }
         *node = candidate;
         return true;
     }
@@ -1531,15 +1553,14 @@ int HmiProject::pageCount() const //20261110-5 add
 }
 
 /******************************************************************************
- * Function Name   : HmiProject::ordinaryPageNumbers
- * Description     : Keep assigned numbers and derive missing ordinary page numbers from page order.
- * Input Parameters: None.
- * Return Value    : Ordinary page numbers indexed by stable page ID.
- * Date            : 2026.11.22
+ * Function Name   : numberedPagesOfKind
+ * Description     : Keep assigned numbers and derive missing numbers for one page kind from project order.
+ * Input Parameters: pages, kind.
+ * Return Value    : Stable page IDs and their display numbers.
+ * Date            : 2026.11.23
  ******************************************************************************/
-QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261122-10 add
+static QMap<QString, int> numberedPagesOfKind(const QList<HmiPage> &pages, const QString &kind) //20261123-12 change
 {
-    QList<HmiPage> pages = allPages();
     QMap<QString, int> numbers;
     QSet<int> assigned;
     HmiPage page;
@@ -1548,7 +1569,7 @@ QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261122-10 add
 
     Q_FOREACH (page, pages)
     {
-        if (page.kind == QStringLiteral("normal") && page.number.has_value())
+        if (page.kind == kind && page.number.has_value()) //20261123-12 change
         {
             numbers.insert(page.id, *page.number);
             assigned.insert(*page.number);
@@ -1556,7 +1577,7 @@ QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261122-10 add
     }
     Q_FOREACH (page, pages)
     {
-        if (page.kind == QStringLiteral("normal") && !page.number.has_value())
+        if (page.kind == kind && !page.number.has_value()) //20261123-12 change
         {
             // Assigned numbers survive deletion and reordering. Only legacy projections may shift.
             fallback = ordinal;
@@ -1570,6 +1591,30 @@ QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261122-10 add
         ++ordinal;
     }
     return numbers;
+}
+
+/******************************************************************************
+ * Function Name   : HmiProject::ordinaryPageNumbers
+ * Description     : Derive labels for ordinary screen targets.
+ * Input Parameters: None.
+ * Return Value    : Ordinary screen numbers by stable page ID.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+QMap<QString, int> HmiProject::ordinaryPageNumbers() const //20261123-12 change
+{
+    return numberedPagesOfKind(allPages(), QStringLiteral("normal"));
+}
+
+/******************************************************************************
+ * Function Name   : HmiProject::windowPageNumbers
+ * Description     : Derive labels for popup window targets within their own numbering scope.
+ * Input Parameters: None.
+ * Return Value    : Popup window numbers by stable page ID.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+QMap<QString, int> HmiProject::windowPageNumbers() const //20261123-12 add
+{
+    return numberedPagesOfKind(allPages(), QStringLiteral("window"));
 }
 
 /******************************************************************************
@@ -1592,7 +1637,8 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     HmiReference reference;
     HmiReference parsedReference;
     QSet<QString> pageIds;
-    QSet<int> explicitPageNumbers; //20261122-10 add
+    QMap<QString, QSet<int>> explicitPageNumbers; //20261123-12 change
+    QSet<QString> windowsWithPlacement;
     QSet<QString> objectIds;
     QSet<QString> nodeIds;
     QSet<QString> referenceIds;
@@ -1670,11 +1716,12 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
         }
         if (page.number.has_value()) //20261122-10 add: Reject duplicate assignments in imported KSP as well as editor transactions.
         {
-            if (explicitPageNumbers.contains(*page.number))
+            if (explicitPageNumbers.value(page.kind).contains(*page.number)) //20261123-12 change
             {
-                return modelError(error, QStringLiteral("普通画面编号 %1 已被使用。").arg(*page.number));
+                return modelError(error, (page.kind == QStringLiteral("window") ?
+                    QStringLiteral("窗口编号 %1 已被使用。") : QStringLiteral("普通画面编号 %1 已被使用。")).arg(*page.number));
             }
-            explicitPageNumbers.insert(*page.number);
+            explicitPageNumbers[page.kind].insert(*page.number); //20261123-12 change
         }
         Q_FOREACH (object, page.objects)
         {
@@ -1748,12 +1795,22 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             slideOwners.insert(node.id, node.ownerPageId);
             pagesWithSlide.insert(node.ownerPageId);
         }
+        if (node.kind == QStringLiteral("windowPlacement")) //20261123-12 add
+        {
+            if (navigationPageKinds.value(node.ownerPageId) != QStringLiteral("window") ||
+                windowsWithPlacement.contains(node.ownerPageId))
+            {
+                return modelError(error, QStringLiteral("每个窗口只能保存一组位置设置。"));
+            }
+            windowsWithPlacement.insert(node.ownerPageId);
+        }
         if (node.kind == QStringLiteral("pageMacro")) //20261123-5 add
         {
-            if (navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") ||
+            if ((navigationPageKinds.value(node.ownerPageId) != QStringLiteral("normal") &&
+                 navigationPageKinds.value(node.ownerPageId) != QStringLiteral("window")) || //20261123-12 change
                 pagesWithScripts.contains(node.ownerPageId))
             {
-                return modelError(error, QStringLiteral("每个普通画面只能保存一组画面宏。"));
+                return modelError(error, QStringLiteral("每个普通画面或窗口只能保存一组脚本。"));
             }
             pagesWithScripts.insert(node.ownerPageId);
             Q_FOREACH (scriptRow, node.properties.value(QStringLiteral("scripts")).toArray())
@@ -1955,6 +2012,11 @@ bool HmiProject::addPage(const HmiPage &page, QString *error) //20261110-5 add
         ordinaryPageNumbers().values().contains(*page.number)) //20261122-10 add
     {
         return modelError(error, QStringLiteral("普通画面编号 %1 已被使用。").arg(*page.number));
+    }
+    if (page.kind == QStringLiteral("window") && page.number.has_value() && //20261123-12 add
+        windowPageNumbers().values().contains(*page.number))
+    {
+        return modelError(error, QStringLiteral("窗口编号 %1 已被使用。").arg(*page.number));
     }
     candidate = *this; candidate.inactivePages.append(page); candidate.pageOrder.append(page.id);
     if (!candidate.validateModel(error)) { return false; }

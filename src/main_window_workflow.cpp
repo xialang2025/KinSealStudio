@@ -281,6 +281,29 @@ void MainWindow::createNormalPage() //20261122-9 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::configureWindowPage
+ * Description     : Open a popup editor and publish its accepted transaction.
+ * Input Parameters: id (empty for creation).
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void MainWindow::configureWindowPage(const QString &id) //20261123-12 add
+{
+    HmiProject draft;
+    QString error;
+
+    if (!m_hasProject)
+    {
+        return;
+    }
+    draft = currentEditorProject();
+    if (editStage2Window(this, draft, id) && !commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("窗口未提交"), error);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::activatePageId
  * Description     : Synchronize the active canvas before navigating by a stable page and optional object identity.
  * Input Parameters: pageId, objectId
@@ -605,6 +628,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     PlcChannel channel;
     QString label;
     QMap<QString, int> ordinaryNumbers; //20261122-10 add
+    QMap<QString, int> windowNumbers; //20261123-12 add
     int number;
     QSignalBlocker blocker(m_systemSettingsTree);
 
@@ -646,18 +670,20 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
     keyboards = new QTreeWidgetItem(settings, {QStringLiteral("自定义键盘")});
     logos = new QTreeWidgetItem(settings, {QStringLiteral("开机Logo")});
     ordinaryNumbers = m_project.ordinaryPageNumbers(); //20261122-10 add: Other page roles keep the historical order-based labels.
+    windowNumbers = m_project.windowPageNumbers(); //20261123-12 add
     number = 0;
     Q_FOREACH (page, m_project.allPages())
     {
         parent = page.kind == QStringLiteral("normal") ? normal : page.kind == QStringLiteral("window") ? windows :
                  page.kind == QStringLiteral("keyboard") ? keyboards : logos;
-        item = new QTreeWidgetItem(parent, {QStringLiteral("%1:%2").arg(ordinaryNumbers.value(page.id, number), 3, 10, QLatin1Char('0')).arg(page.name)}); //20261122-10 change
+        item = new QTreeWidgetItem(parent, {QStringLiteral("%1:%2") //20261123-12 change
+            .arg(ordinaryNumbers.value(page.id, windowNumbers.value(page.id, number)), 3, 10, QLatin1Char('0')).arg(page.name)});
         ++number;
         item->setData(0, Qt::UserRole, QStringLiteral("page"));
         item->setData(0, Qt::UserRole + 1, page.id);
     }
     normal->setData(0, Qt::UserRole, QStringLiteral("normalPages")); //20261122-9 change: Route the ordinary page group to its own context actions.
-    windows->setData(0, Qt::UserRole, QStringLiteral("project"));
+    windows->setData(0, Qt::UserRole, QStringLiteral("windowPages")); //20261123-12 change
     system = new QTreeWidgetItem(settings, {QStringLiteral("系统设置")});
     Q_FOREACH (label, (QStringList{QStringLiteral("参数设置"), QStringLiteral("HMI状态"), QStringLiteral("PLC控制"),
         QStringLiteral("时钟"), QStringLiteral("文件保护"), QStringLiteral("HMI保护"), QStringLiteral("语言设置")}))

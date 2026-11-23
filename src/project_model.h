@@ -190,6 +190,7 @@ struct HmiProject
     HmiProject();
     QList<HmiPage> allPages() const;
     QMap<QString, int> ordinaryPageNumbers() const; //20261122-10 add
+    QMap<QString, int> windowPageNumbers() const; //20261123-12 add
     int pageCount() const;
     bool selectPage(const QString &id, QString *error = nullptr);
     bool addPage(const HmiPage &page, QString *error = nullptr);
