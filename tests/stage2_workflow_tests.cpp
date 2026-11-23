@@ -94,6 +94,7 @@ private slots:
     void windowTreeCreatesAndReopensPlacement(); //20261123-12 add
     void screenAndWindowRejectTheSameNumber(); //20261123-13 add
     void windowMenuCopiesAndConfirmsDeletion(); //20261123-13 add
+    void projectSettingsWindowCopyKeepsAssignedNumber(); //20261123-14 add
     void emptyWindowKeepsZeroWidthAcrossSave(); //20261123-13 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
@@ -2427,6 +2428,70 @@ void Stage2WorkflowTests::windowMenuCopiesAndConfirmsDeletion() //20261123-13 ad
     window.m_commands.value(QStringLiteral("action_save"))->trigger();
     QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
     QCOMPARE(reopened.toJson(), project.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : projectSettingsWindowCopyKeepsAssignedNumber
+ * Description     : Copy a window through project settings and reopen it with the same number as the tree command.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+void Stage2WorkflowTests::projectSettingsWindowCopyKeepsAssignedNumber() //20261123-14 add
+{
+    HmiProject seed = workflowProject();
+    HmiProject reopened;
+    HmiPage popup;
+    QTemporaryDir directory;
+    MainWindow window;
+    QString path;
+    QString error;
+
+    QVERIFY(directory.isValid());
+    popup.id = QStringLiteral("settings-source-window");
+    popup.name = QStringLiteral("窗口原件");
+    popup.kind = QStringLiteral("window");
+    popup.number = 17;
+    QVERIFY2(seed.addPage(popup, &error), qPrintable(error));
+    path = directory.filePath(QStringLiteral("settings-window-copy.ksp"));
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    QTimer::singleShot(0, &window, []() {
+        Stage2ProjectDialog *dialog = qobject_cast<Stage2ProjectDialog *>(QApplication::activeModalWidget());
+        QListWidget *pages;
+        QLineEdit *name;
+        QPushButton *copy;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr)
+        {
+            return;
+        }
+        pages = dialog->findChild<QListWidget *>(QStringLiteral("pageList"));
+        name = dialog->findChild<QLineEdit *>(QStringLiteral("pageNameEdit"));
+        copy = dialog->findChild<QPushButton *>(QStringLiteral("copyPageButton"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (pages != nullptr && pages->count() == 2 && name != nullptr && copy != nullptr && buttons != nullptr)
+        {
+            pages->setCurrentRow(1);
+            name->setText(QStringLiteral("设置窗口副本"));
+            copy->click();
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (dialog->isVisible())
+        {
+            dialog->reject();
+        }
+    });
+    window.m_commands.value(QStringLiteral("action_project_settings"))->trigger();
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.pageCount(), 3);
+    QCOMPARE(reopened.allPages().last().name, QStringLiteral("设置窗口副本"));
+    QCOMPARE(reopened.allPages().last().number.value_or(-1), 1);
+    QCOMPARE(reopened.allPages().at(1).number.value_or(-1), 17);
+    QCOMPARE(reopened.startupPageId, seed.startupPageId);
 }
 
 /******************************************************************************

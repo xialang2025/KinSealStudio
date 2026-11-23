@@ -2037,7 +2037,9 @@ bool HmiProject::copyPage(const QString &id, const QString &newName, QString *ne
     HmiReference reference;
     QMap<QString, QString> ids;
     QMap<QString, QString> groups;
+    QList<int> occupiedNumbers; //20261123-14 add
     QString key;
+    int windowNumber;
     int index;
     bool found;
 
@@ -2046,7 +2048,24 @@ bool HmiProject::copyPage(const QString &id, const QString &newName, QString *ne
     Q_FOREACH (page, allPages()) { if (page.id == id) { copy = page; found = true; break; } }
     if (!found) { return modelError(error, QStringLiteral("待复制页面不存在。")); }
     copy.id = QUuid::createUuid().toString(QUuid::WithoutBraces); copy.name = newName;
-    copy.number.reset(); //20261122-10 add: The copy derives its own ordinary page number.
+    if (copy.kind == QStringLiteral("window")) //20261123-14 add: Every copy entry point persists the first free shared number.
+    {
+        occupiedNumbers = screenAndWindowNumbers().values();
+        windowNumber = 0;
+        while (occupiedNumbers.contains(windowNumber))
+        {
+            ++windowNumber;
+        }
+        if (windowNumber > 999)
+        {
+            return modelError(error, QStringLiteral("没有可用的窗口编号。"));
+        }
+        copy.number = windowNumber;
+    }
+    else
+    {
+        copy.number.reset(); //20261122-10 add: Ordinary copies keep their existing derived numbering behavior.
+    }
     ids.insert(QStringLiteral("page/") + id, copy.id);
     for (index = 0; index < copy.objects.size(); ++index)
     {

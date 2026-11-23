@@ -1237,22 +1237,6 @@ bool copyStage2Page(QWidget *parent, HmiProject &project, const QString &pageId,
             QMessageBox::warning(&dialog, QStringLiteral("KinSealStudio"), error);
             return;
         }
-        if (popup) //20261123-13 add: The native copy takes the lowest free shared screen number.
-        {
-            const QList<int> occupied = project.screenAndWindowNumbers().values();
-            int number = 0;
-
-            while (occupied.contains(number))
-            {
-                ++number;
-            }
-            if (number > 999)
-            {
-                QMessageBox::warning(&dialog, QStringLiteral("错误"), QStringLiteral("没有可用的窗口编号。"));
-                return;
-            }
-            candidate.activePageNumber = number;
-        }
         dialog.accept();
     });
     if (dialog.exec() != QDialog::Accepted)
