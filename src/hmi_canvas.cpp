@@ -268,7 +268,9 @@ ScreenCanvas::ScreenCanvas(QWidget *parent) //20261107-6 add
       m_previousSelectionValid(false)
 {
     setScene(m_scene);
-    setBackgroundBrush(QBrush(Qt::white));
+    // The editor scrolls over the original 2048 by 1536 workspace. The scene keeps the device page bounds for editing.
+    QGraphicsView::setSceneRect(0.0, 0.0, 2048.0, 1536.0); //20261124-4 add
+    setBackgroundBrush(QBrush(QColor(QStringLiteral("#caeace")))); //20261124-4 change
     setFrameShape(QFrame::NoFrame);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
     setDragMode(QGraphicsView::RubberBandDrag);

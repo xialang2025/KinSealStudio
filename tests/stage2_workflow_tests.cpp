@@ -46,6 +46,8 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QScrollArea>
+#include <QScrollBar> //20261124-4 add
+#include <QStyleOptionSlider> //20261124-4 add
 #include <QStatusBar>
 #include <QDir>
 #include <QTreeWidget>
@@ -60,6 +62,7 @@ private:
 private slots:
     void initTestCase();
     void sharedCommandsAndAvailability();
+    void editorCanvasHasScrollableWorkspace(); //20261124-4 add
     void canvasKeysUseWholeProjectHistory();
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
@@ -190,6 +193,67 @@ void Stage2WorkflowTests::sharedCommandsAndAvailability() //20261110-7 add
     QVERIFY(!window.m_commands.value(QStringLiteral("action_USBdownload"))->isEnabled());
     QVERIFY(!window.m_commands.value(QStringLiteral("action_project_settings"))->isEnabled());
     QVERIFY(window.m_commands.value(QStringLiteral("action_open_pro"))->isEnabled());
+}
+
+/******************************************************************************
+ * Function Name   : editorCanvasHasScrollableWorkspace
+ * Description     : Verify the right scrollbar moves the view even when the device page fits.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::editorCanvasHasScrollableWorkspace() //20261124-4 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    ScreenCanvas *canvas = window.m_canvas;
+    QScrollBar *vertical = canvas->verticalScrollBar();
+    QScrollBar *horizontal = canvas->horizontalScrollBar();
+    QAction *zoomIn;
+    QStyleOptionSlider slider;
+    QPoint handle;
+    QPoint before;
+    bool moved;
+
+    window.setProject(project, QString());
+    window.resize(1353, 760);
+    window.show();
+    QTRY_VERIFY(canvas->viewport()->height() >= project.pageHeight);
+    QTRY_VERIFY2(vertical->isVisibleTo(canvas) && vertical->maximum() > vertical->minimum(),
+                 "The right scrollbar needs room to pan when the editor can already show the device page height.");
+    QCOMPARE(vertical->maximum(), 1536 - canvas->viewport()->height());
+    QCOMPARE(horizontal->maximum(), 2048 - canvas->viewport()->width());
+    QCOMPARE(canvas->scene()->sceneRect(), QRectF(0, 0, project.pageWidth, project.pageHeight));
+
+    // Use the real thumb exposed by the Windows scrollbar style, through the main window's hit test.
+    slider.initFrom(vertical);
+    slider.orientation = Qt::Vertical;
+    slider.minimum = vertical->minimum();
+    slider.maximum = vertical->maximum();
+    slider.sliderPosition = vertical->sliderPosition();
+    slider.sliderValue = vertical->value();
+    slider.pageStep = vertical->pageStep();
+    slider.singleStep = vertical->singleStep();
+    handle = vertical->style()->subControlRect(QStyle::CC_ScrollBar, &slider, QStyle::SC_ScrollBarSlider,
+                                               vertical).center();
+    handle = vertical->mapTo(&window, handle);
+    QCOMPARE(window.childAt(handle), vertical);
+    before = canvas->mapFromScene(QPointF(0, 0));
+    QTest::mousePress(window.windowHandle(), Qt::LeftButton, Qt::NoModifier, handle);
+    moved = vertical->isSliderDown();
+    QTest::mouseMove(window.windowHandle(), handle + QPoint(0, 32));
+    QTest::mouseRelease(window.windowHandle(), Qt::LeftButton, Qt::NoModifier, handle + QPoint(0, 32));
+    QVERIFY(moved);
+    QVERIFY(vertical->value() > 0);
+    QVERIFY(canvas->mapFromScene(QPointF(0, 0)).y() < before.y());
+
+    zoomIn = window.findChild<QAction *>(QStringLiteral("action_zoonbig"));
+    QVERIFY(zoomIn != nullptr && zoomIn->isEnabled());
+    zoomIn->trigger();
+    QTRY_COMPARE(vertical->maximum(), 1920 - canvas->viewport()->height());
+    QCOMPARE(canvas->scene()->sceneRect(), QRectF(0, 0, project.pageWidth, project.pageHeight));
+    QVERIFY(!window.m_dirty);
+    QCOMPARE(window.currentEditorProject().objects.first().geometry, project.objects.first().geometry);
 }
 
 /******************************************************************************
