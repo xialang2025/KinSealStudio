@@ -93,6 +93,7 @@ private slots:
     void addingProtocolKeepsExistingProtocolsOnThePort(); //20261122-7 add
     void deletingProtocolProtectsProjectReferences(); //20261122-7 add
     void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
+    void newPageFromToolbarCancelsOrReopens(); //20261124-9 add
     void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
     void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
@@ -1445,6 +1446,86 @@ void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9
     QCOMPARE(groups.size(), 1);
     QCOMPARE(groups.first()->childCount(), 2);
     QCOMPARE(groups.first()->child(1)->text(0), QStringLiteral("001:画面2"));
+}
+
+/******************************************************************************
+ * Function Name   : newPageFromToolbarCancelsOrReopens
+ * Description     : Click the actual New Page toolbar button and exercise the page transaction.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens() //20261124-9 add
+{
+    QTemporaryDir directory;
+    const HmiProject original = workflowProject();
+    const QString path = directory.filePath(QStringLiteral("toolbar-page.ksp"));
+    MainWindow window;
+    MainWindow reopened;
+    QAction *action = window.m_commands.value(QStringLiteral("action_new_screen"));
+    QToolBar *toolbar = window.findChild<QToolBar *>(QStringLiteral("standardToolBar"));
+    QToolButton *button;
+    QString error;
+    QStringList defaults;
+    QPoint clickPoint;
+    HmiProject created;
+    int historySize;
+
+    QVERIFY(directory.isValid() && toolbar != nullptr && action != nullptr);
+    button = qobject_cast<QToolButton *>(toolbar->widgetForAction(action));
+    QVERIFY(button != nullptr);
+    window.closeProject();
+    QVERIFY(!button->isEnabled());
+    QVERIFY2(original.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    QTRY_VERIFY(button->isVisible() && button->isEnabled());
+    clickPoint = button->mapTo(&window, button->rect().center());
+    QCOMPARE(window.childAt(clickPoint), button);
+    historySize = window.m_projectHistory.size();
+    for (bool accept : {false, true})
+    {
+        defaults.clear();
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            QLineEdit *name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+            QSpinBox *number = dialog->findChild<QSpinBox *>(QStringLiteral("newPageNumberSpin"));
+            QDialogButtonBox *buttons = dialog->findChild<QDialogButtonBox *>(QString(), Qt::FindDirectChildrenOnly);
+            if (name == nullptr || number == nullptr || buttons == nullptr)
+            {
+                dialog->reject();
+                return;
+            }
+            defaults = {dialog->windowTitle(), name->text(), QString::number(number->value())};
+            name->setText(QStringLiteral("参数画面"));
+            buttons->button(accept ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+        });
+        QTest::mouseClick(window.windowHandle(), Qt::LeftButton, Qt::NoModifier, clickPoint);
+        QCOMPARE(defaults, (QStringList{QStringLiteral("新建画面"), QStringLiteral("画面2"), QStringLiteral("1")}));
+        if (!accept)
+        {
+            QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
+            QCOMPARE(window.m_projectHistory.size(), historySize);
+        }
+    }
+    created = window.currentEditorProject();
+    QCOMPARE(created.pageCount(), 2);
+    QCOMPARE(created.pageName, QStringLiteral("参数画面"));
+    QCOMPARE(created.startupPageId, original.startupPageId);
+    QCOMPARE(window.m_projectHistory.size(), historySize + 1);
+    QVERIFY(window.m_dirty);
+
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(reopened.currentEditorProject().toJson(), created.toJson());
+    window.closeProject();
+    QVERIFY(!button->isEnabled());
 }
 
 /******************************************************************************
