@@ -22,6 +22,7 @@
 #include <QDateEdit> //20261123-18 add
 #include <QFile>
 #include <QFileDialog>
+#include <QFocusEvent> //20261124-12 add
 #include <QGroupBox> //20261123-4 add
 #include <QInputDialog> //20261124-7 add
 #include <QLabel>
@@ -72,6 +73,7 @@ private slots:
     void toolbarPreviewsWholePageAndSelectedStates(); //20261124-5 add
     void canvasKeysUseWholeProjectHistory();
     void canvasControlDragDuplicatesSelection(); //20261124-11 add
+    void canvasControlDragCancelsInterruptedInput(); //20261124-12 add
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
@@ -594,6 +596,78 @@ void Stage2WorkflowTests::canvasControlDragDuplicatesSelection() //20261124-11 a
     QVERIFY2(window.m_project.save(path, &error), qPrintable(error));
     QVERIFY2(HmiProject::load(path, &reloaded, &error), qPrintable(error));
     QCOMPARE(reloaded.objects.last().toJson(), window.m_project.objects.last().toJson());
+
+    // The second drag used a different source ID; Paste must still use the earlier Ctrl+C.
+    QCOMPARE(window.m_objectClipboard.objectIds, QStringList{original.id}); //20261124-12 add
+    canvas->setFocus();
+    window.dispatchEditCommand(QStringLiteral("paste"));
+    QCOMPARE(window.m_project.objects.size(), 4);
+    expected = original;
+    expected.id = window.m_project.objects.last().id;
+    expected.geometry.translate(16, 16);
+    QCOMPARE(window.m_project.objects.last().toJson(), expected.toJson());
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::canvasControlDragCancelsInterruptedInput
+ * Description     : Prevent a lost release or a focus change from turning later input into a duplicate.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::canvasControlDragCancelsInterruptedInput() //20261124-12 add
+{
+    MainWindow window;
+    HmiProject project;
+    ScreenCanvas *canvas;
+    QWidget *viewport;
+    QPoint start;
+    QPoint drop;
+    int history;
+
+    project = workflowProject();
+    window.setProject(project, QString());
+    window.resize(1353, 708);
+    window.show();
+    canvas = window.m_canvas;
+    viewport = canvas->viewport();
+    start = canvas->mapFromScene(project.objects.first().geometry.center());
+    drop = start + QPoint(100, 60);
+    QVERIFY(viewport->rect().contains(start));
+    QVERIFY(viewport->rect().contains(drop));
+    history = window.m_projectHistory.size();
+
+    auto beginCopy = [&]() {
+        canvas->selectObject(project.objects.first().id);
+        QTest::mousePress(viewport, Qt::LeftButton, Qt::ControlModifier, start);
+        QMouseEvent drag(QEvent::MouseMove, drop, viewport->mapToGlobal(drop),
+                         Qt::NoButton, Qt::LeftButton, Qt::ControlModifier);
+        QApplication::sendEvent(viewport, &drag);
+    };
+
+    beginCopy();
+    QVERIFY(canvas->hasActiveInteraction());
+    QMouseEvent hover(QEvent::MouseMove, drop, viewport->mapToGlobal(drop),
+                      Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    QApplication::sendEvent(viewport, &hover);
+    QVERIFY(!canvas->hasActiveInteraction());
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, drop);
+
+    beginCopy();
+    QVERIFY(canvas->hasActiveInteraction());
+    QFocusEvent focusOut(QEvent::FocusOut, Qt::ActiveWindowFocusReason);
+    QApplication::sendEvent(canvas, &focusOut);
+    QVERIFY(!canvas->hasActiveInteraction());
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, drop);
+
+    beginCopy();
+    QVERIFY(canvas->hasActiveInteraction());
+    QTest::mouseClick(viewport, Qt::LeftButton, Qt::NoModifier, drop);
+    QVERIFY(!canvas->hasActiveInteraction());
+    QCOMPARE(window.currentEditorProject().objects.size(), 1);
+    QCOMPARE(window.currentEditorProject().objects.first().toJson(), project.objects.first().toJson());
+    QCOMPARE(window.m_projectHistory.size(), history);
+    QVERIFY(!window.m_dirty);
 }
 
 /******************************************************************************

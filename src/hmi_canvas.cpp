@@ -644,6 +644,22 @@ void ScreenCanvas::wheelEvent(QWheelEvent *event) //20261124-6 add
 }
 
 /******************************************************************************
+ * Function Name   : ScreenCanvas::focusOutEvent
+ * Description     : Discard a copy preview when input focus leaves the canvas.
+ * Input Parameters: event
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void ScreenCanvas::focusOutEvent(QFocusEvent *event) //20261124-12 add
+{
+    if (!m_copySourceId.isEmpty())
+    {
+        cancelInteraction();
+    }
+    QGraphicsView::focusOutEvent(event);
+}
+
+/******************************************************************************
  * Function Name   : ScreenCanvas::setActiveTool
  * Description     : Select placement mode or normal object selection mode.
  * Input Parameters: type
@@ -720,6 +736,11 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
     if (event->button() == Qt::RightButton && hasActiveInteraction())
     {
         cancelInteraction(); event->accept(); return;
+    }
+    if (event->button() == Qt::LeftButton && !m_copySourceId.isEmpty()) //20261124-12 add
+    {
+        // A new press supersedes a copy gesture whose release never reached the canvas.
+        cancelInteraction();
     }
     if (event->button() == Qt::LeftButton && m_hasPending)
     {
@@ -836,11 +857,16 @@ void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261110-8 change
 
     point = mapToScene(event->position().toPoint()).toPoint(); emit pageCoordinatesChanged(point);
     if (graphicMove(event, point)) { return; } //20261113-2 add
-    if (!m_copySourceId.isEmpty()) //20261124-11 add
+    if (!m_copySourceId.isEmpty()) //20261124-12 change
     {
-        updateCopyPreview(event->position().toPoint());
-        event->accept();
-        return;
+        if (event->buttons().testFlag(Qt::LeftButton))
+        {
+            updateCopyPreview(event->position().toPoint());
+            event->accept();
+            return;
+        }
+        // Hover input confirms the button was released outside the canvas's event sequence.
+        cancelInteraction();
     }
     if (m_drawing && m_draftRect != nullptr)
     {
