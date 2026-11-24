@@ -550,6 +550,8 @@ void Stage9OnlineUiTests::capabilitiesRemainConservative() //20261114-8 add
     int eligible = 0;
     int eligibleRow = -1;
     int index;
+    QString id;
+    bool mapped;
 
     QVERIFY(report.value(QStringLiteral("ok")).toBool()); QCOMPARE(profiles.size(), 139);
     QCOMPARE(table->rowCount(), 139); QCOMPARE(table->columnCount(), 6);
@@ -557,8 +559,10 @@ void Stage9OnlineUiTests::capabilitiesRemainConservative() //20261114-8 add
     {
         profile = profiles.at(index).toObject();
         QCOMPARE(table->item(index, 0)->text(), profile.value(QStringLiteral("profileId")).toString());
-        QCOMPARE(table->item(index, 4)->text(), QStringLiteral("未接入"));
-        QVERIFY(!profile.value(QStringLiteral("pcProfileMapped")).toBool());
+        id = profile.value(QStringLiteral("profileId")).toString();
+        mapped = id == QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini") || id == QStringLiteral("Link/serial/MODBUS/Modbus_RTU.ini");
+        QCOMPARE(profile.value(QStringLiteral("pcProfileMapped")).toBool(), mapped); //20261124-13 change
+        QCOMPARE(table->item(index, 4)->text(), mapped ? QStringLiteral("单站 RTU") : QStringLiteral("未接入"));
         QVERIFY(!profile.value(QStringLiteral("physicalPlcVerified")).toBool()); QVERIFY(!profile.value(QStringLiteral("hmiPlcVerified")).toBool());
         if (profile.value(QStringLiteral("deviceCompileEligible")).toBool())
         {

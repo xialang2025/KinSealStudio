@@ -247,13 +247,56 @@ void addError(QJsonArray *errors, const QString &id, const QString &property, co
 }
 
 /******************************************************************************
+ * Function Name   : simulationExternalAddress
+ * Description     : Identify explicitly qualified project addresses.
+ * Input Parameters: address
+ * Return Value    : True for an address that requires a connection binding.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool simulationExternalAddress(const QString &address) //20261124-13 add
+{
+    return address.trimmed().startsWith(QChar(u'@'));
+}
+
+/******************************************************************************
+ * Function Name   : checkSimulationAddress
+ * Description     : Keep LB/LW isolated and delegate only qualified addresses to the online plan.
+ * Input Parameters: address, bit, span, write, external, error
+ * Return Value    : True for an executable address range.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool checkSimulationAddress(const QString &address, bool bit, int span, bool write,
+                            const SimulationExternalAccess &external, QString *error) //20261124-13 add
+{
+    if (external.check && simulationExternalAddress(address))
+    {
+        return external.check(address, bit, span, write, error);
+    }
+    return localIndex(address, bit, span, nullptr, error);
+}
+
+/******************************************************************************
+ * Function Name   : numberMonitorType
+ * Description     : Map the numeric display's signed, unsigned, BCD and float choices to runtime types.
+ * Input Parameters: dataType
+ * Return Value    : Runtime word type, or -1 for unsupported radix and special encodings.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+int numberMonitorType(int dataType) //20261124-13 add
+{
+    static const int types[] = {2, 0, 4, -1, -1, 3, 1, 5, 6};
+
+    return dataType >= 0 && dataType < 9 ? types[dataType] : -1;
+}
+
+/******************************************************************************
  * Function Name   : checkCondition
  * Description     : Admit one known condition while refusing unverified condition composition or tolerance semantics.
  * Input Parameters: properties, error
  * Return Value    : True for a bounded local-only gate.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool checkCondition(const StaticTextProperties &properties, QString *error) //20261114-6 add
+bool checkCondition(const StaticTextProperties &properties, const SimulationExternalAccess &external, QString *error) //20261114-6 add
 {
     int active;
     double number;
@@ -265,12 +308,12 @@ bool checkCondition(const StaticTextProperties &properties, QString *error) //20
     active = int(properties.bitEnabled) + int(properties.levelEnabled) + int(properties.wordEnabled);
     if (active == 0) { return fail(error, QStringLiteral("权限已启用但没有活动条件，其原厂语义未核定。")); }
     if (active > 1) { return fail(error, QStringLiteral("多条件AND/OR尚未核定，离线模拟拒绝该权限组合。")); }
-    if (properties.bitEnabled && !localIndex(properties.bitAddress, true, 1, nullptr, error)) { return false; }
+    if (properties.bitEnabled && !checkSimulationAddress(properties.bitAddress, true, 1, false, external, error)) { return false; }
     if (properties.wordEnabled)
     {
         tolerance = properties.tolerance.toDouble(&numeric);
         if (!numeric || tolerance != 0) { return fail(error, QStringLiteral("非零容差语义未核定，离线模拟拒绝该条件。")); }
-        if (!localIndex(properties.wordAddress, false, wordSpan(conditionType(properties.dataType)), nullptr, error) ||
+        if (!checkSimulationAddress(properties.wordAddress, false, wordSpan(conditionType(properties.dataType)), false, external, error) ||
             !parseNumber(properties.compareValue, conditionType(properties.dataType), &number, error)) { return false; }
     }
     return true;
@@ -318,24 +361,41 @@ bool checkNotice(const HmiObject &object, QString *error) //20261114-6 add
  * Return Value    : True for one of the five bounded control families.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool checkObject(const HmiObject &object, const HmiProject &project, QString *error) //20261114-6 add
+bool checkObject(const HmiObject &object, const HmiProject &project, const SimulationExternalAccess &external, QString *error) //20261114-6 add
 {
     const BitButtonProperties &shared = object.bitButton;
     BitButtonState appearance;
+    bool remote;
+    int monitorType;
 
     if (object.type == QStringLiteral("text"))
-    { return !object.hasStaticTextProperties || checkCondition(object.staticText, error); }
+    { return !object.hasStaticTextProperties || checkCondition(object.staticText, external, error); }
+    if (external.check && object.type == QStringLiteral("number") && object.hasNumberDisplayProperties)
+    {
+        const NumberDisplayProperties &number = object.numberDisplay;
+        monitorType = numberMonitorType(number.dataType);
+        if (monitorType < 0 || number.allowInput || number.offsetEnabled || number.scaling ||
+            number.displayRange || number.customDisplay)
+        { return fail(error, QStringLiteral("在线数值显示仅支持基础监视，请关闭输入、偏移、比例、范围和自定义显示。")); }
+        return number.validate(error) && checkCondition(number.visibility, external, error) &&
+            checkSimulationAddress(number.monitorAddress, false, wordSpan(monitorType), false, external, error);
+    }
     if (object.type != QStringLiteral("switch") || !object.hasBitButtonProperties)
     { return fail(error, QStringLiteral("离线模拟尚不支持此对象类型：%1。").arg(object.type)); }
-    if (!shared.validate(error, object.hasFunctionButtonProperties) || !checkCondition(shared.visibility, error) ||
-        !checkCondition(shared.touch, error) || !checkNotice(object, error)) { return false; }
+    if (!shared.validate(error, object.hasFunctionButtonProperties) || !checkCondition(shared.visibility, external, error) ||
+        !checkCondition(shared.touch, external, error) || !checkNotice(object, error)) { return false; }
+    remote = external.check && simulationExternalAddress(object.address) &&
+        !object.hasFunctionButtonProperties && !object.hasLampProperties;
+    if (remote && (shared.notice || (!object.hasWordButtonProperties && shared.operation == 2) ||
+                   (object.hasWordButtonProperties && object.wordButton.operation >= 3)))
+    { return fail(error, QStringLiteral("外部写入暂不执行通知、点动和字寄存器加减或绕回操作。")); }
     if (shared.pressTimeEnabled || shared.states[0].flash || shared.states[1].flash)
     { return fail(error, QStringLiteral("按压计时/闪烁时序尚未核定，离线模拟不推测单位或帧率。")); }
     if (shared.states[0].text.visibilityEnabled || shared.states[1].text.visibilityEnabled)
     { return fail(error, QStringLiteral("按钮状态内嵌文字的独立权限尚未接入模拟，不能静默忽略。")); }
     if (object.hasWordButtonProperties)
     {
-        if (!object.wordButton.validate(error) || !localIndex(object.address, false, object.wordButton.transferWordCount(), nullptr, error)) { return false; }
+        if (!object.wordButton.validate(error) || !checkSimulationAddress(object.address, false, object.wordButton.transferWordCount(), true, external, error)) { return false; }
         if (object.wordButton.operation == 1 && object.wordButton.dataType != 6 && object.wordButton.decimalDigits != 0)
         { return fail(error, QStringLiteral("整数字的定点小数缩放未核定，离线模拟不缩放输入。")); }
         return true;
@@ -358,13 +418,15 @@ bool checkObject(const HmiObject &object, const HmiProject &project, QString *er
             { return fail(error, QStringLiteral("多态灯的闪烁/状态内嵌文字权限未核定。")); }
         }
         if (object.lamp.monitorMode == 2)
-        { return localIndex(object.lamp.multiMonitorAddress, false, object.lamp.transferWordCount(), nullptr, error); }
+        { return checkSimulationAddress(object.lamp.multiMonitorAddress, false, object.lamp.transferWordCount(), false, external, error); }
+        if (external.check && shared.indicator && shared.dualMonitor && shared.monitorSame)
+        { return checkSimulationAddress(object.address, true, 1, false, external, error); }
     }
-    else if (!localIndex(object.address, true, 1, nullptr, error)) { return false; }
+    else if (!checkSimulationAddress(object.address, true, 1, true, external, error)) { return false; }
     if (shared.indicator && shared.dualMonitor && !shared.monitorSame)
     {
-        return localIndex(shared.monitorType == 0 ? shared.monitorBitAddress : shared.monitorWordAddress,
-                          shared.monitorType == 0, 1, nullptr, error);
+        return checkSimulationAddress(shared.monitorType == 0 ? shared.monitorBitAddress : shared.monitorWordAddress,
+                                      shared.monitorType == 0, 1, false, external, error);
     }
     return true;
 }
@@ -377,7 +439,7 @@ bool checkObject(const HmiObject &object, const HmiProject &project, QString *er
  * Return Value    : Structured support and warning report.
  * Date            : 2026.11.14
  ******************************************************************************/
-QJsonObject SimulationRuntime::capabilities(const HmiProject &project) //20261114-6 add
+QJsonObject SimulationRuntime::capabilities(const HmiProject &project, const SimulationExternalAccess &external) //20261114-6 add
 {
     QJsonObject result;
     QJsonArray errors;
@@ -387,20 +449,23 @@ QJsonObject SimulationRuntime::capabilities(const HmiProject &project) //2026111
     HmiConfigurationNode node;
 
     if (!project.validateModel(&error)) { addError(&errors, QString(), QStringLiteral("model"), error); }
-    if (project.pageCount() != 1 || project.activePageKind != QStringLiteral("normal") ||
-        project.startupPageId != project.activePageId || project.pageWidth != 800 || project.pageHeight != 480)
-    { addError(&errors, QString(), QStringLiteral("pages"), QStringLiteral("离线运行器只支持单个800×480普通启动画面。")); }
+    if (project.activePageKind != QStringLiteral("normal") || project.pageWidth != 800 || project.pageHeight != 480 ||
+        (!external.check && (project.pageCount() != 1 || project.startupPageId != project.activePageId)))
+    { addError(&errors, QString(), QStringLiteral("pages"), external.check
+        ? QStringLiteral("在线模拟要求打开一个800×480普通画面。")
+        : QStringLiteral("离线运行器只支持单个800×480普通启动画面。")); }
     if (!project.nativeSourceSnapshot.isEmpty())
     { addError(&errors, QString(), QStringLiteral("nativeSourceSnapshot"), QStringLiteral("不透明原厂快照的初值/保持及全局行为未核定；请使用明确的Lite模型。")); }
     Q_FOREACH (node, project.configurationNodes)
     {
-        if (node.active) { addError(&errors, node.id, QStringLiteral("configuration"), QStringLiteral("活动全局配置尚未接入离线调度：%1。").arg(node.kind)); }
+        if (node.active && (!external.check || node.kind != QStringLiteral("serialPort")))
+        { addError(&errors, node.id, QStringLiteral("configuration"), QStringLiteral("活动全局配置尚未接入模拟调度：%1。").arg(node.kind)); }
     }
     if (!project.animations.isEmpty()) { addError(&errors, QString(), QStringLiteral("animations"), QStringLiteral("动画时序尚未实现。")); }
     Q_FOREACH (object, project.objects)
     {
         error.clear();
-        if (!checkObject(object, project, &error)) { addError(&errors, object.id, QStringLiteral("runtime"), error); }
+        if (!checkObject(object, project, external, &error)) { addError(&errors, object.id, QStringLiteral("runtime"), error); }
         if (object.hasBitButtonProperties && object.bitButton.macroEnabled && warnings.size() < 128)
         { warnings.append(QStringLiteral("对象%1绑定宏%2；离线模式跳过执行。").arg(object.id.left(256), object.bitButton.macroName.left(128))); }
     }
@@ -445,15 +510,16 @@ void SimulationRuntime::appendEvent(const QString &kind, const QString &id, cons
  * Return Value    : True after a new zero-initialized session is published.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool SimulationRuntime::start(const HmiProject &project, QString *error) //20261114-6 add
+bool SimulationRuntime::start(const HmiProject &project, QString *error, const SimulationExternalAccess &external) //20261114-6 add
 {
     QJsonObject report;
 
-    report = capabilities(project);
+    report = capabilities(project, external);
     if (!report.value(QStringLiteral("supported")).toBool())
     { return fail(error, QString::fromUtf8(QJsonDocument(report.value(QStringLiteral("errors")).toArray()).toJson(QJsonDocument::Compact))); }
     if (m_running) { stop(QStringLiteral("session-replaced")); }
     m_project = project;
+    m_external = external; //20261124-13 add: Endpoints and register caches remain owned by the online UI.
     m_bits.fill(0, kLocalCount);
     m_words.fill(0, kLocalCount);
     m_warnings = report.value(QStringLiteral("warnings")).toArray();
@@ -578,7 +644,15 @@ bool SimulationRuntime::readBit(const QString &address, bool *value, QString *er
 {
     int index;
 
+    QVector<u16> words;
+
     if (value == nullptr) { return fail(error, QStringLiteral("位读取输出为空。")); }
+    if (m_external.read && simulationExternalAddress(address))
+    {
+        if (!m_external.read(address, true, 1, &words, error)) { return false; }
+        *value = words.first() != 0;
+        return true;
+    }
     if (!localIndex(address, true, 1, &index, error)) { return false; }
     *value = m_bits.at(index) != 0;
     return true;
@@ -616,14 +690,53 @@ bool SimulationRuntime::writeWord(const QString &address, int type, const QStrin
  ******************************************************************************/
 bool SimulationRuntime::readWord(const QString &address, int type, QString *value, QString *error) const //20261114-6 add
 {
-    int index;
     double number;
 
     if (value == nullptr) { return fail(error, QStringLiteral("字读取输出为空。")); }
-    if (!localIndex(address, false, wordSpan(type), &index, error) || !readNumber(m_words, index, type, &number, error)) { return false; }
+    if (!readNumeric(address, type, &number, error)) { return false; }
     *value = numberText(number, type);
     if (error != nullptr) { error->clear(); }
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntime::readNumeric
+ * Description     : Decode local or PLC-confirmed words using the same typed interpretation.
+ * Input Parameters: address, type, value, error
+ * Return Value    : True if a complete value has been read.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool SimulationRuntime::readNumeric(const QString &address, int type, double *value, QString *error) const //20261124-13 add
+{
+    int index;
+    QVector<u16> words;
+
+    if (m_external.read && simulationExternalAddress(address))
+    {
+        return m_external.read(address, false, wordSpan(type), &words, error) &&
+            readNumber(words, 0, type, value, error);
+    }
+    return localIndex(address, false, wordSpan(type), &index, error) &&
+        readNumber(m_words, index, type, value, error);
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntime::numberDisplayValue
+ * Description     : Format a monitored number or mark it unavailable until a complete reply arrives.
+ * Input Parameters: object
+ * Return Value    : Live display text.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+QString SimulationRuntime::numberDisplayValue(const HmiObject &object) const //20261124-13 add
+{
+    const NumberDisplayProperties &number = object.numberDisplay;
+    int type = numberMonitorType(number.dataType);
+    double value;
+
+    if (!readNumeric(number.monitorAddress, type, &value, nullptr)) { return QStringLiteral("—"); }
+    if (number.decimalDigits == 0) { return numberText(value, type); }
+    return QString::number(type == 6 ? value : value / std::pow(10.0, number.decimalDigits),
+                           'f', number.decimalDigits);
 }
 
 /******************************************************************************
@@ -654,7 +767,6 @@ const HmiObject *SimulationRuntime::findObject(const QString &id) const //202611
 bool SimulationRuntime::condition(const StaticTextProperties &properties) const //20261114-6 add
 {
     bool bit;
-    int index;
     int type;
     double value;
     double expected;
@@ -665,8 +777,8 @@ bool SimulationRuntime::condition(const StaticTextProperties &properties) const 
     if (properties.levelEnabled) { return m_userLevel >= properties.minimumLevel; }
     if (!properties.wordEnabled) { return true; }
     type = conditionType(properties.dataType);
-    if (!localIndex(properties.wordAddress, false, wordSpan(type), &index, nullptr) ||
-        !readNumber(m_words, index, type, &value, nullptr) || !parseNumber(properties.compareValue, type, &expected, nullptr)) { return false; }
+    if (!readNumeric(properties.wordAddress, type, &value, nullptr) ||
+        !parseNumber(properties.compareValue, type, &expected, nullptr)) { return false; }
     switch (properties.comparison)
     {
     case 0: return value < expected;
@@ -692,6 +804,7 @@ bool SimulationRuntime::isVisible(const HmiObject &object) const //20261114-6 ad
 
     owned = findObject(object.id);
     if (!m_running || owned == nullptr) { return false; }
+    if (owned->hasNumberDisplayProperties) { return condition(owned->numberDisplay.visibility); } //20261124-13 add
     return owned->type == QStringLiteral("text") ? (!owned->hasStaticTextProperties || condition(owned->staticText))
                                                   : condition(owned->bitButton.visibility);
 }
@@ -706,10 +819,15 @@ bool SimulationRuntime::isVisible(const HmiObject &object) const //20261114-6 ad
 bool SimulationRuntime::touchAllowed(const HmiObject &object) const //20261114-6 add
 {
     const HmiObject *owned;
+    QVector<u16> values;
+    bool bit;
 
     owned = findObject(object.id);
-    return owned != nullptr && owned->type == QStringLiteral("switch") && !owned->hasLampProperties &&
-           isVisible(*owned) && condition(owned->bitButton.touch);
+    if (owned == nullptr || owned->type != QStringLiteral("switch") || owned->hasLampProperties ||
+        !isVisible(*owned) || !condition(owned->bitButton.touch)) { return false; }
+    if (!m_external.read || owned->hasFunctionButtonProperties || !simulationExternalAddress(owned->address)) { return true; }
+    bit = !owned->hasWordButtonProperties;
+    return m_external.read(owned->address, bit, bit ? 1 : owned->wordButton.transferWordCount(), &values, nullptr);
 }
 
 /******************************************************************************
@@ -725,6 +843,18 @@ void SimulationRuntime::enforceAccess() //20261114-6 add
 
     object = findObject(m_pressed.isEmpty() ? m_pendingInput : m_pressed);
     if (object != nullptr && !touchAllowed(*object)) { cancel(QStringLiteral("access-changed")); }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntime::refreshExternalValues
+ * Description     : Drop held or pending actions when confirmed PLC access conditions change.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void SimulationRuntime::refreshExternalValues() //20261124-13 add
+{
+    if (m_running && online()) { enforceAccess(); }
 }
 
 /******************************************************************************
@@ -750,6 +880,9 @@ bool SimulationRuntime::applyAction(const HmiObject &object, const QString *inpu
     double value = 0;
     QString digits;
     int point;
+    u32 raw;
+    QVector<u16> externalWords;
+    bool remote = m_external.write && simulationExternalAddress(object.address); //20261124-13 add
 
     if (object.hasFunctionButtonProperties)
     {
@@ -759,8 +892,7 @@ bool SimulationRuntime::applyAction(const HmiObject &object, const QString *inpu
     }
     else if (object.hasWordButtonProperties)
     {
-        if (!localIndex(object.address, false, word.transferWordCount(), &index, error)) { return false; }
-        if (word.operation >= 3 && !readNumber(words, index, word.dataType, &current, error)) { return false; }
+        if (word.operation >= 3 && !readNumeric(object.address, word.dataType, &current, error)) { return false; }
         if ((word.usesConstant() && !parseNumber(word.constantValue, word.dataType, &constant, error)) ||
             (word.usesMinimum() && !parseNumber(word.minimumValue, word.dataType, &minimum, error)) ||
             (word.usesMaximum() && !parseNumber(word.maximumValue, word.dataType, &maximum, error))) { return false; }
@@ -791,10 +923,21 @@ bool SimulationRuntime::applyAction(const HmiObject &object, const QString *inpu
             else if ((word.operation == 3 && value > maximum) || (word.operation == 4 && value < minimum))
             { return fail(error, QStringLiteral("加减运算超出配置边界，事务未写入。")); }
         }
+        if (remote) //20261124-13 add: Keep displayed registers at their last confirmed scan values.
+        {
+            if (!encodeNumber(value, word.dataType, &raw, error)) { return false; }
+            externalWords.append(u16(raw));
+            if (word.transferWordCount() == 2) { externalWords.append(u16(raw >> 16)); }
+            return m_external.write(object.address, false, externalWords, false, error);
+        }
         if (!storeNumber(&words, object.address, word.dataType, value, error)) { return false; }
     }
     else
     {
+        if (remote) //20261124-13 add: The link reads the coil in the same serial sequence for toggle.
+        {
+            return m_external.write(object.address, true, {u16(shared.operation == 0)}, shared.operation == 3, error);
+        }
         if (!localIndex(object.address, true, 1, &index, error)) { return false; }
         if (shared.operation == 0 || shared.operation == 2) { bits[index] = 1; }
         else if (shared.operation == 1) { bits[index] = 0; }
@@ -832,6 +975,7 @@ bool SimulationRuntime::press(const QString &id, QString *error) //20261114-6 ad
 {
     const HmiObject *object;
     int index;
+    QString current;
 
     if (!m_running || !m_pressed.isEmpty() || !m_pendingInput.isEmpty())
     { return fail(error, QStringLiteral("模拟未启动或已有尚未结束的按压/输入。")); }
@@ -839,6 +983,8 @@ bool SimulationRuntime::press(const QString &id, QString *error) //20261114-6 ad
     if (object == nullptr || !touchAllowed(*object)) { return fail(error, QStringLiteral("对象不可触摸、隐藏或权限不足。")); }
     if (object->hasWordButtonProperties && (object->wordButton.operation == 1 || object->wordButton.operation == 2))
     {
+        if (m_external.read && simulationExternalAddress(object->address) &&
+            !readWord(object->address, object->wordButton.dataType, &current, error)) { return false; }
         m_pendingInput = id;
         m_pressed = id;
         appendEvent(QStringLiteral("input-requested"), id);
@@ -951,7 +1097,7 @@ int SimulationRuntime::visualState(const HmiObject &object) const //20261114-6 a
 {
     const HmiObject *owned;
     const BitButtonProperties *shared;
-    int index;
+    QString word;
     double value;
     bool bit;
 
@@ -963,8 +1109,8 @@ int SimulationRuntime::visualState(const HmiObject &object) const //20261114-6 a
     if (owned->hasFunctionButtonProperties) { return owned->functionButton.pressedEffect && isPressed(owned->id) ? 1 : 0; }
     if (owned->hasLampProperties && owned->lamp.monitorMode == 2)
     {
-        if (!localIndex(owned->lamp.multiMonitorAddress, false, owned->lamp.transferWordCount(), &index, nullptr) ||
-            !readNumber(m_words, index, owned->lamp.multiDataType, &value, nullptr) || value >= owned->lamp.stateCount()) { return -1; }
+        if (!readNumeric(owned->lamp.multiMonitorAddress, owned->lamp.multiDataType, &value, nullptr) ||
+            value >= owned->lamp.stateCount()) { return -1; }
         return int(value);
     }
     if (!shared->indicator || !shared->dualMonitor) { return 0; }
@@ -972,8 +1118,8 @@ int SimulationRuntime::visualState(const HmiObject &object) const //20261114-6 a
     { return readBit(owned->address, &bit, nullptr) ? int(bit) : -1; }
     if (shared->monitorType == 0)
     { return readBit(shared->monitorBitAddress, &bit, nullptr) ? int(bit) : -1; }
-    if (!localIndex(shared->monitorWordAddress, false, 1, &index, nullptr)) { return -1; }
-    return int((m_words.at(index) >> shared->bitIndex) & 1u);
+    if (!readWord(shared->monitorWordAddress, 0, &word)) { return -1; }
+    return int((word.toUInt() >> shared->bitIndex) & 1u);
 }
 
 /******************************************************************************

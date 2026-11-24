@@ -63,6 +63,10 @@
       "file": "simulation.html",
       "title": "离线模拟与PC串口"
     },
+    "online-simulation": {
+      "file": "simulation.html#online",
+      "title": "在线模拟与 PLC 连接"
+    },
     "limits": {
       "file": "limits.html",
       "title": "限制与常见提示"
@@ -564,13 +568,13 @@
     "action_offline_simulation": {
       "label": "离线\n模拟",
       "topic": "simulation",
-      "capability": "内部地址快照离线模拟与显式PC Modbus RTU工具；不自动联动工程画面，不代替实物PLC。",
+      "capability": "在当前工程快照中模拟内部 LB/LW 地址和基础控件。",
       "coverage": "chapter-summary"
     },
     "action_online_simulation": {
       "label": "在线模拟",
-      "topic": "simulation",
-      "capability": "内部地址快照离线模拟与显式PC Modbus RTU工具；不自动联动工程画面，不代替实物PLC。",
+      "topic": "online-simulation",
+      "capability": "在当前工程画面上与显式连接的单站 Modbus RTU 从站读写。",
       "coverage": "chapter-summary"
     },
     "action_open_pro": {

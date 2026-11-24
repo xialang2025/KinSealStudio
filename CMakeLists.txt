@@ -86,6 +86,7 @@ qt_add_executable(KinSealStudioLite WIN32
     src/device_download_session.cpp #20261114-5 add: Own the cancellable worker and immutable input snapshot.
     src/device_download_session.h
     src/simulation_runtime.cpp #20261114-6 add: Execute a bounded immutable internal-address runtime.
+    src/online_simulation_link.cpp src/online_simulation_link.h #20261124-13 add
     src/simulation_runtime.h
     src/simulation_window.cpp
     src/simulation_window.h

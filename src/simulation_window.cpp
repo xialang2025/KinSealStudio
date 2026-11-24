@@ -2,6 +2,8 @@
 #include "bit_button_renderer.h"
 #include "control_rendering.h" //20261123-2 add
 #include "static_text_renderer.h"
+#include "number_display_dialog.h" //20261124-13 add
+#include "online_simulation_link.h"
 
 #include <QCloseEvent>
 #include <QComboBox>
@@ -17,6 +19,7 @@
 #include <QPushButton>
 #include <QPointer>
 #include <QSignalBlocker>
+#include <QSerialPortInfo> //20261124-13 add
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <algorithm>
@@ -72,6 +75,13 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
         if (object->type == QStringLiteral("text"))
         {
             paintStaticText(&painter, QRectF(object->geometry), staticTextContent(*object, runtime.language()), object->staticText);
+            continue;
+        }
+        if (runtime.online() && object->hasNumberDisplayProperties) //20261124-13 add
+        {
+            NumberDisplayProperties appearance = object->numberDisplay;
+            appearance.decimalDigits = 0; // The runtime has already placed the decimal point.
+            paintNumberDisplay(&painter, QRectF(object->geometry), appearance, runtime.numberDisplayValue(*object));
             continue;
         }
         state = runtime.visualState(*object);
@@ -180,6 +190,7 @@ void SimulationViewport::mousePressEvent(QMouseEvent *event) //20261114-6 add
     object = hitObject(event->position().toPoint());
     if (object != nullptr && m_runtime->press(object->id, &error)) { m_activeObject = object->id; }
     changed();
+    if (!error.isEmpty()) { emit touchRejected(error); } //20261124-13 add
 }
 
 /******************************************************************************
@@ -371,6 +382,11 @@ SimulationWindow::~SimulationWindow() //20261114-6 add
     delete m_viewport; //20261114-6 change: Destroy the callback-bearing child while the value-owned runtime is still alive.
     m_viewport = nullptr;
     m_runtime.stop(QStringLiteral("window-destroyed"));
+    if (m_link != nullptr) //20261124-13 add: Join the PLC worker before destroying the view.
+    {
+        m_link->disconnect(this);
+        delete m_link;
+    }
 }
 
 /******************************************************************************
@@ -383,6 +399,83 @@ SimulationWindow::~SimulationWindow() //20261114-6 add
 bool SimulationWindow::initialize(const HmiProject &project, QString *error) //20261114-6 add
 {
     if (!m_runtime.start(project, error)) { return false; }
+    refreshRuntime();
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationWindow::initializeOnline
+ * Description     : Validate a detached engineering page and expose an explicit PC port connection.
+ * Input Parameters: project, error, factory
+ * Return Value    : True after building the online simulation UI without opening the serial port.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool SimulationWindow::initializeOnline(const HmiProject &project, QString *error, const PlcSerialIoFactory &factory) //20261124-13 add
+{
+    QHBoxLayout *controls;
+    QComboBox *port;
+    QPushButton *connectButton;
+    QLabel *route;
+    QLabel *scope;
+    QString portName;
+    PlcSerialSettings serial;
+    QSerialPortInfo info;
+
+    if (m_runtime.running() || m_link != nullptr) { return false; }
+    m_link = new OnlineSimulationLink(project, factory, this);
+    if (!m_runtime.start(project, error, m_link->access()))
+    {
+        delete m_link;
+        m_link = nullptr;
+        return false;
+    }
+    m_link->disconnectPort();
+    setObjectName(QStringLiteral("onlineSimulationWindow"));
+    setWindowTitle(QStringLiteral("在线模拟 — %1").arg(project.pageName));
+    scope = findChild<QLabel *>(QStringLiteral("simulationScope"));
+    scope->setText(QStringLiteral("本页使用工程快照和 PC 串口，连接后读取 PLC。控件写入以 PLC 应答为准。"));
+    controls = new QHBoxLayout();
+    port = new QComboBox(this);
+    port->setObjectName(QStringLiteral("onlineSimulationPort"));
+    port->setEditable(true);
+    Q_FOREACH (info, QSerialPortInfo::availablePorts()) { port->addItem(info.portName()); }
+    serial = m_link->settings();
+    portName = m_link->available() ? serial.portName : QString();
+    port->setCurrentIndex(-1);
+    port->setEditText(portName);
+    route = new QLabel(m_link->available() ? QStringLiteral("Modbus RTU · 站 %1 · %2 bps").arg(m_link->station()).arg(serial.baudRate)
+                                         : QStringLiteral("本页只有内部地址"), this);
+    connectButton = new QPushButton(QStringLiteral("连接 PLC"), this);
+    connectButton->setObjectName(QStringLiteral("onlineSimulationConnect"));
+    connectButton->setEnabled(m_link->available());
+    port->setEnabled(m_link->available());
+    controls->addWidget(new QLabel(QStringLiteral("电脑串口"), this));
+    controls->addWidget(port);
+    controls->addWidget(connectButton);
+    controls->addWidget(route);
+    controls->addStretch();
+    static_cast<QVBoxLayout *>(layout())->insertLayout(1, controls);
+
+    connect(connectButton, &QPushButton::clicked, this, [this, port]() {
+        QString failure;
+
+        if (m_link->active()) { m_link->disconnectPort(); }
+        else if (!m_link->connectPort(port->currentText(), &failure)) { m_status->setText(failure); }
+    });
+    const auto syncLink = [this, port, connectButton]() {
+        port->setEnabled(m_link->available() && !m_link->active());
+        connectButton->setText(m_link->active() ? QStringLiteral("断开 PLC") : QStringLiteral("连接 PLC"));
+        m_runtime.refreshExternalValues();
+        refreshRuntime();
+    };
+    connect(m_link, &OnlineSimulationLink::updated, this, syncLink);
+    connect(m_viewport, &SimulationViewport::touchRejected, m_status, &QLabel::setText);
+    connect(this, &QDialog::finished, this, [this]() {
+        if (!m_runtime.running()) { return; }
+        m_viewport->cancelInteraction(QStringLiteral("online-dialog-finished"));
+        m_runtime.stop(QStringLiteral("online-dialog-finished"));
+        m_link->disconnectPort();
+    });
     refreshRuntime();
     return true;
 }
@@ -435,7 +528,8 @@ void SimulationWindow::refreshRuntime() //20261114-6 add
     else { ok = m_runtime.readWord(m_address->text(), m_type->currentIndex() - 1, &value, &error); }
     m_value->setText(ok ? value : error);
     m_status->setText(QStringLiteral("%1 · 语言：%2 · 等级：%3").arg(
-        m_runtime.running() ? QStringLiteral("模拟运行中") : QStringLiteral("模拟已停止"), m_runtime.language()).arg(m_runtime.userLevel()));
+        m_link != nullptr ? m_link->status() : m_runtime.running() ? QStringLiteral("模拟运行中") : QStringLiteral("模拟已停止"),
+        m_runtime.language()).arg(m_runtime.userLevel())); //20261124-13 change
     m_viewport->update();
 }
 
@@ -496,7 +590,7 @@ void SimulationWindow::requestNumericInput() //20261114-6 add
     while (m_runtime.running() && m_runtime.pendingInputObjectId() == id) //20261114-6 change: Preserve a visible correction or cancel path after invalid input.
     {
         value = QInputDialog::getText(this, QStringLiteral("模拟输入"),
-            (error.isEmpty() ? QString() : error + QLatin1Char('\n')) + QStringLiteral("输入内部地址 %1 的值").arg(address),
+            (error.isEmpty() ? QString() : error + QLatin1Char('\n')) + QStringLiteral("输入地址 %1 的值").arg(address),
             password ? QLineEdit::Password : QLineEdit::Normal, value, &accepted);
         if (lifetime.isNull()) { return; }
         if (!accepted) { m_runtime.cancel(QStringLiteral("numeric-input-cancelled")); break; }
@@ -516,6 +610,7 @@ void SimulationWindow::closeEvent(QCloseEvent *event) //20261114-6 add
 {
     m_viewport->cancelInteraction(QStringLiteral("window-closed"));
     m_runtime.stop(QStringLiteral("window-closed"));
+    if (m_link != nullptr) { m_link->disconnectPort(); } //20261124-13 add
     event->accept();
 }
 

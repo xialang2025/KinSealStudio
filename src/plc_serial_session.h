@@ -20,6 +20,8 @@ struct PlcSerialSettings
 using PlcSerialIoFactory = std::function<SimulationModbusIo(const PlcSerialSettings &,
                                                             const std::function<bool()> &)>;
 
+SimulationModbusIo makePlcSerialIo(const PlcSerialSettings &settings, const std::function<bool()> &cancelled); //20261124-13 add
+
 /******************************************************************************
  * Function Name   : validatePlcSerialSettings
  * Description     : Reject invalid explicit PC port parameters before creating a transport.

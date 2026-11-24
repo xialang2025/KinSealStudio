@@ -5,13 +5,25 @@
 
 #include <QJsonArray>
 #include <QVector>
+#include <functional>
+
+//20261124-13 add: External values come only from acknowledged serial reads.
+struct SimulationExternalAccess
+{
+    std::function<bool(const QString &, bool, int, bool, QString *)> check;
+    std::function<bool(const QString &, bool, int, QVector<u16> *, QString *)> read;
+    std::function<bool(const QString &, bool, const QVector<u16> &, bool, QString *)> write;
+};
 
 //20261114-6 add: This value owner has no timer, driver, process, device or physical I/O dependency.
 class SimulationRuntime
 {
 public:
-    bool start(const HmiProject &project, QString *error = nullptr);
+    bool start(const HmiProject &project, QString *error = nullptr, const SimulationExternalAccess &external = {}); //20261124-13 change
     bool running() const;
+    bool online() const { return bool(m_external.check); } //20261124-13 add
+    void refreshExternalValues();
+    QString numberDisplayValue(const HmiObject &object) const;
     void stop(const QString &reason = QString());
     const HmiProject &project() const;
     QString language() const;
@@ -32,7 +44,7 @@ public:
     bool isPressed(const QString &id) const;
     QJsonObject snapshot() const;
     QJsonArray events() const;
-    static QJsonObject capabilities(const HmiProject &project);
+    static QJsonObject capabilities(const HmiProject &project, const SimulationExternalAccess &external = {}); //20261124-13 change
 
 private:
     const HmiObject *findObject(const QString &id) const;
@@ -41,6 +53,8 @@ private:
     void appendEvent(const QString &kind, const QString &id = QString(), const QString &detail = QString());
     void enforceAccess();
 
+    bool readNumeric(const QString &address, int type, double *value, QString *error) const; //20261124-13 add
+    SimulationExternalAccess m_external;
     HmiProject m_project;
     QVector<u8> m_bits = QVector<u8>(4097, 0);
     QVector<u16> m_words = QVector<u16>(4097, 0);

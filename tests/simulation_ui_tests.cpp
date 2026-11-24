@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QDialogButtonBox>
 #include <QFocusEvent>
+#include <QElapsedTimer> //20261124-13 add
 #include <QJsonDocument>
 #include <QInputDialog>
 #include <QLabel>
@@ -17,6 +18,7 @@
 #include <QSettings>
 #include <QTemporaryDir>
 #include <QTimer>
+#include <QThread> //20261124-13 add
 #include <QtTest>
 
 class SimulationUiTests : public QObject //20261114-6 add
@@ -33,7 +35,9 @@ private slots:
     void duplicateActionOwnsOneWindow();
     void unsupportedProjectDoesNotStart();
     void parentCloseEndsRuntime();
-    void onlineToolRequiresExplicitPort(); //20261114-8 change
+    void onlineToolRequiresExplicitPort(); //20261124-13 change
+    void onlinePollsWritesAndRecovers();
+    void onlineRejectsUnsafeOrOutOfRangeMapping();
     void invalidNumericInputCanRecover(); //20261114-6 add
     void directOwnerDeletionWithHeldViewport();
     void ownerDeletionInsideInputDialog();
@@ -309,20 +313,203 @@ void SimulationUiTests::parentCloseEndsRuntime() //20261114-6 add
 }
 
 /******************************************************************************
+ * Function Name   : onlineTestProject
+ * Description     : Describe one configured fixture with a coil, a numeric monitor and a two-register write.
+ * Input Parameters: None
+ * Return Value    : Controlled Modbus project.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+static HmiProject onlineTestProject() //20261124-13 add
+{
+    HmiProject project = simulationTestProject();
+    PlcConnection connection;
+    HmiConfigurationNode serial;
+    HmiObject number;
+    HmiObject word;
+
+    connection.id = QStringLiteral("test-rtu");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.channel = PlcChannel::Com1;
+    connection.station = QStringLiteral("7");
+    connection.timeoutMs = 1000;
+    project.connections = {connection};
+    serial.id = QStringLiteral("serial-port-com1");
+    serial.kind = QStringLiteral("serialPort");
+    serial.name = QStringLiteral("COM1");
+    serial.active = true;
+    serial.implemented = true;
+    serial.properties = PlcSerialPortSettings::defaults(serial.name);
+    serial.properties.insert(QStringLiteral("onlinePort"), QStringLiteral("COM8"));
+    serial.properties.insert(QStringLiteral("baudRate"), QStringLiteral("19200"));
+    serial.properties.insert(QStringLiteral("parity"), QStringLiteral("EVEN"));
+    project.configurationNodes.append(serial);
+    project.objects[0].address = QStringLiteral("@test-rtu:0x17");
+    project.objects[2].bitButton.monitorBitAddress = project.objects[0].address;
+
+    number.id = QStringLiteral("numeric");
+    number.name = number.id;
+    number.type = QStringLiteral("number");
+    number.address = QStringLiteral("@test-rtu:4x_dw24");
+    number.geometry = QRect(350, 20, 125, 60);
+    number.hasNumberDisplayProperties = true;
+    number.numberDisplay.changeDataType(6);
+    number.numberDisplay.allowInput = false;
+    number.numberDisplay.monitorAddress = number.address;
+    project.objects.append(number);
+
+    word = project.objects.first();
+    word.id = QStringLiteral("set-word");
+    word.name = word.id;
+    word.address = number.address;
+    word.geometry = QRect(350, 100, 125, 60);
+    word.hasWordButtonProperties = true;
+    word.bitButton.indicator = false;
+    word.bitButton.dualMonitor = false;
+    word.wordButton.resetDefaultsForDataType(1);
+    word.wordButton.constantValue = QStringLiteral("131077");
+    project.objects.append(word);
+    return project;
+}
+
+struct OnlineSlave //20261124-13 add: Shared observations are atomic because the real serial worker drives the fake.
+{
+    std::atomic_int opens{0};
+    std::atomic_int closes{0};
+    std::atomic_int coilWrites{0};
+    std::atomic_int wordWrites{0};
+    std::atomic_bool settingsMatch{false};
+    std::atomic_bool framesMatch{true};
+    std::atomic_bool holdCoilAck{true};
+    std::atomic_bool failNextCoilAck{false};
+    bool coil = false;               // Owned only by the one worker for this phase of the session.
+    u16 low = 321;
+    u16 high = 1;
+};
+
+/******************************************************************************
+ * Function Name   : onlineSlave
+ * Description     : Make a controlled RTU responder that checks actual station, offsets, CRC and write data.
+ * Input Parameters: slave
+ * Return Value    : Injected transport factory with no physical endpoint.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave) //20261124-13 add
+{
+    return [slave](const PlcSerialSettings &settings, const std::function<bool()> &cancelled) {
+        struct Reply { QByteArray bytes; bool wait = false; bool timeout = false; bool sent = false; };
+        const auto reply = std::make_shared<Reply>();
+        SimulationModbusIo io;
+
+        io.open = [slave, settings](QString *) {
+            slave->settingsMatch = settings.portName == QStringLiteral("TEST-RTU") && settings.baudRate == 19200 &&
+                                   settings.parity == 2 && settings.timeoutMs == 1000;
+            ++slave->opens;
+            return true;
+        };
+        io.write = [slave, reply](const QByteArray &frame, int) {
+            const QByteArray payload = frame.left(frame.size() - 2);
+            const int function = frame.size() > 1 ? u8(frame[1]) : 0;
+            const u16 crc = simulationModbusCrc16(payload);
+            QByteArray data;
+
+            *reply = {};
+            if (frame.size() < 8 || u8(frame[0]) != 7 || u8(frame[frame.size() - 2]) != u8(crc) ||
+                u8(frame.back()) != u8(crc >> 8))
+            {
+                slave->framesMatch = false;
+                return -1;
+            }
+            data = payload.left(2);
+            if (function == 1 && payload.mid(2) == QByteArray::fromHex("00110001"))
+            {
+                data.append(char(1)); data.append(char(slave->coil));
+            }
+            else if (function == 3 && payload.mid(2) == QByteArray::fromHex("00180002"))
+            {
+                data.append(char(4)); data.append(char(slave->low >> 8)); data.append(char(slave->low));
+                data.append(char(slave->high >> 8)); data.append(char(slave->high));
+            }
+            else if (function == 5 && payload.mid(2, 2) == QByteArray::fromHex("0011") &&
+                     (payload.mid(4) == QByteArray::fromHex("ff00") || payload.mid(4) == QByteArray::fromHex("0000")))
+            {
+                slave->coil = u8(payload[4]) != 0;
+                reply->wait = true;
+                reply->timeout = slave->failNextCoilAck.exchange(false);
+                data = payload;
+                ++slave->coilWrites;
+            }
+            else if (function == 16 && payload.mid(2) == QByteArray::fromHex("001800020400050002"))
+            {
+                slave->low = 5; slave->high = 2;
+                data = payload.left(6);
+                ++slave->wordWrites;
+            }
+            else
+            {
+                slave->framesMatch = false;
+                return -1;
+            }
+            const u16 replyCrc = simulationModbusCrc16(data);
+            data.append(char(replyCrc)); data.append(char(replyCrc >> 8));
+            reply->bytes = data;
+            return int(frame.size());
+        };
+        io.read = [slave, reply, cancelled](int, int timeoutMs) {
+            SimulationModbusReadChunk chunk;
+            QElapsedTimer wait;
+
+            if (reply->timeout) { chunk.timedOut = true; return chunk; }
+            wait.start();
+            while (reply->wait && slave->holdCoilAck && !cancelled() && wait.elapsed() < timeoutMs)
+            {
+                QThread::msleep(1);
+            }
+            if (reply->wait && slave->holdCoilAck) { chunk.timedOut = true; return chunk; }
+            if (reply->sent) { chunk.endOfFrame = true; }
+            else { chunk.bytes = reply->bytes; reply->sent = true; }
+            return chunk;
+        };
+        io.close = [slave](QString *) { ++slave->closes; return true; };
+        return io;
+    };
+}
+
+/******************************************************************************
  * Function Name   : SimulationUiTests::onlineToolRequiresExplicitPort
- * Description     : Open the Stage9 manual PC tool without selecting a port, starting I/O or mutating the editor.
+ * Description     : Open the engineering simulation from the menu and wait for an explicit Connect click.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void SimulationUiTests::onlineToolRequiresExplicitPort() //20261114-8 change
+void SimulationUiTests::onlineToolRequiresExplicitPort() //20261124-13 change
 {
     MainWindow window;
     QJsonObject before;
+    SimulationWindow *online;
+    SimulationWindow preflight;
+    QString error;
+    QComboBox *pcPort;
+    QLabel *status;
+    QAction *diagnostics;
+    bool bit;
     bool explained = false;
 
-    window.setProject(simulationTestProject(), QString());
+    window.setProject(onlineTestProject(), QString());
     before = window.currentEditorProject().toJson();
+    QVERIFY2(preflight.initializeOnline(window.currentEditorProject(), &error), qPrintable(error));
+    window.m_commands.value(QStringLiteral("action_online_simulation"))->trigger();
+    online = window.m_simulationWindow;
+    QVERIFY(online != nullptr && online->runtime().online());
+    pcPort = online->findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"));
+    status = online->findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    QVERIFY(pcPort != nullptr && status != nullptr);
+    QCOMPARE(pcPort->currentText(), QStringLiteral("COM8"));
+    QVERIFY(status->text().contains(QStringLiteral("PLC 未连接")));
+    QVERIFY(!online->runtime().readBit(QStringLiteral("@test-rtu:0x17"), &bit));
+    online->close();
+    QApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    diagnostics = window.findChild<QAction *>(QStringLiteral("PlcSerialDiagnostics"));
+    QVERIFY(diagnostics != nullptr);
     QTimer::singleShot(0, &window, [&explained]() {
         QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
 
@@ -336,10 +523,96 @@ void SimulationUiTests::onlineToolRequiresExplicitPort() //20261114-8 change
             dialog->reject();
         }
     });
-    window.m_commands.value(QStringLiteral("action_online_simulation"))->trigger();
+    diagnostics->trigger();
     QVERIFY(explained);
     QCOMPARE(window.currentEditorProject().toJson(), before);
     QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlinePollsWritesAndRecovers
+ * Description     : Verify polling, confirmed writes and recovery through the actual online viewport.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void SimulationUiTests::onlinePollsWritesAndRecovers() //20261124-13 add
+{
+    const auto slave = std::make_shared<OnlineSlave>();
+    const HmiProject project = onlineTestProject();
+    SimulationWindow window;
+    SimulationViewport *view;
+    QPushButton *connect;
+    QComboBox *port;
+    QLabel *status;
+    QString error;
+    bool bit = false;
+
+    QVERIFY2(window.initializeOnline(project, &error, onlineSlave(slave)), qPrintable(error));
+    window.show();
+    QApplication::processEvents();
+    view = window.findChild<SimulationViewport *>();
+    connect = window.findChild<QPushButton *>(QStringLiteral("onlineSimulationConnect"));
+    port = window.findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"));
+    status = window.findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    QVERIFY(view != nullptr && connect != nullptr && port != nullptr && status != nullptr);
+    QCOMPARE(slave->opens.load(), 0);
+    port->setEditText(QStringLiteral("TEST-RTU"));
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("65857"));
+    QVERIFY(window.runtime().readBit(project.objects[0].address, &bit) && !bit);
+    QCOMPARE(slave->opens.load(), 1);
+    QVERIFY(slave->settingsMatch.load());
+
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects[0].geometry.center());
+    QTRY_COMPARE(slave->coilWrites.load(), 1);
+    QVERIFY(window.runtime().readBit(project.objects[0].address, &bit) && !bit);
+    slave->holdCoilAck = false;
+    QTRY_COMPARE(window.runtime().visualState(project.objects[2]), 1);
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects.last().geometry.center());
+    QTRY_COMPARE(slave->wordWrites.load(), 1);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("131077"));
+
+    slave->failNextCoilAck = true;
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects[0].geometry.center());
+    QTRY_VERIFY(status->text().contains(QStringLiteral("写入结果未确认")));
+    QVERIFY(!window.runtime().readBit(project.objects[0].address, &bit));
+    QCOMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("—"));
+    QCOMPARE(slave->coilWrites.load(), 2);
+    QCOMPARE(slave->closes.load(), 1);
+
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_VERIFY(window.runtime().readBit(project.objects[0].address, &bit) && !bit);
+    QCOMPARE(slave->opens.load(), 2);
+    QCOMPARE(slave->coilWrites.load(), 2);
+    QVERIFY(slave->framesMatch.load());
+    QTest::keyClick(&window, Qt::Key_Escape);
+    QCOMPARE(slave->closes.load(), 2);
+    QVERIFY(!window.runtime().running());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineRejectsUnsafeOrOutOfRangeMapping
+ * Description     : Refuse read-only targets and offsets that a 16-bit Modbus PDU cannot carry.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void SimulationUiTests::onlineRejectsUnsafeOrOutOfRangeMapping() //20261124-13 add
+{
+    const auto slave = std::make_shared<OnlineSlave>();
+    HmiProject project = onlineTestProject();
+    SimulationWindow window;
+    QString error;
+
+    project.objects[0].address = QStringLiteral("@test-rtu:1x17");
+    QVERIFY(!window.initializeOnline(project, &error, onlineSlave(slave)));
+    QVERIFY(error.contains(QStringLiteral("在线写入仅支持")));
+    project.objects[0].address = QStringLiteral("@test-rtu:0x17");
+    project.objects[2].bitButton.monitorBitAddress = QStringLiteral("@test-rtu:1x65536");
+    QVERIFY(!window.initializeOnline(project, &error, onlineSlave(slave)));
+    QVERIFY(error.contains(QStringLiteral("零起始地址")));
+    QCOMPARE(slave->opens.load(), 0);
 }
 
 /******************************************************************************

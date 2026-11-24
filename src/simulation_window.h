@@ -2,6 +2,7 @@
 #define SIMULATION_WINDOW_H
 
 #include "simulation_runtime.h"
+#include "plc_serial_session.h" //20261124-13 add
 #include <QDialog>
 #include <QImage>
 #include <QWidget>
@@ -15,6 +16,7 @@ class QCloseEvent;
 class QMouseEvent;
 class QFocusEvent;
 class QPaintEvent;
+class OnlineSimulationLink;
 
 QImage simulationFrame(const SimulationRuntime &runtime); //20261114-6 add
 
@@ -26,6 +28,8 @@ public:
     void setChangedCallback(const std::function<void(bool)> &callback);
     void cancelInteraction(const QString &reason);
     bool pointerDown() const;
+signals:
+    void touchRejected(const QString &reason); //20261124-13 add
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -48,6 +52,7 @@ public:
     explicit SimulationWindow(QWidget *parent = nullptr);
     ~SimulationWindow() override;
     bool initialize(const HmiProject &project, QString *error = nullptr);
+    bool initializeOnline(const HmiProject &project, QString *error = nullptr, const PlcSerialIoFactory &factory = {}); //20261124-13 add
     SimulationRuntime &runtime();
     const SimulationRuntime &runtime() const;
     void refreshRuntime();
@@ -57,6 +62,7 @@ protected:
 private:
     void writeInternalValue();
     void requestNumericInput();
+    OnlineSimulationLink *m_link = nullptr; //20261124-13 add: Own asynchronous PLC I/O only for online windows.
     SimulationRuntime m_runtime;
     SimulationViewport *m_viewport;
     QLabel *m_status;

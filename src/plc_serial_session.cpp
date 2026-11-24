@@ -99,6 +99,18 @@ SimulationModbusIo qtSerialIo(const PlcSerialSettings &settings, const std::func
 }
 
 /******************************************************************************
+ * Function Name   : makePlcSerialIo
+ * Description     : Create the same PC serial adapter for a long-lived online session.
+ * Input Parameters: settings, cancelled
+ * Return Value    : Callback set owned by the thread that created it.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+SimulationModbusIo makePlcSerialIo(const PlcSerialSettings &settings, const std::function<bool()> &cancelled) //20261124-13 add
+{
+    return qtSerialIo(settings, cancelled);
+}
+
+/******************************************************************************
  * Function Name   : validatePlcSerialSettings
  * Description     : Validate explicit port, RTU framing and adopted transaction budgets without touching a device.
  * Input Parameters: settings, error

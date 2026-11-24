@@ -28,7 +28,7 @@ void MainWindow::startOfflineSimulation() //20261114-6 add
     if (!m_simulationWindow.isNull())
     {
         m_simulationWindow->show();
-        statusBar()->showMessage(QStringLiteral("当前离线会话仍在运行；关闭后可按新工程重新启动。"), 8000);
+        statusBar()->showMessage(QStringLiteral("当前模拟会话仍在运行；关闭后可按新工程重新启动。"), 8000);
         return;
     }
     m_canvas->cancelInteraction();
@@ -48,13 +48,52 @@ void MainWindow::startOfflineSimulation() //20261114-6 add
 
 /******************************************************************************
  * Function Name   : MainWindow::showOnlineSimulationOptions
- * Description     : Open the explicit PC RTU tool without mapping or mutating the editor project.
+ * Description     : Launch the current engineering page as a detached online simulation.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void MainWindow::showOnlineSimulationOptions() //20261114-8 change
+void MainWindow::showOnlineSimulationOptions() //20261124-13 change
 {
+    HmiProject snapshot;
+    SimulationWindow *simulation;
+    QString error;
+
+    if (!m_hasProject || downloadInProgress()) { return; }
+    if (!m_simulationWindow.isNull())
+    {
+        m_simulationWindow->show();
+        statusBar()->showMessage(QStringLiteral("当前模拟会话仍在运行；关闭后可切换模式。"), 8000);
+        return;
+    }
+    m_canvas->cancelInteraction();
+    snapshot = currentEditorProject();
+    simulation = new SimulationWindow(this);
+    if (!simulation->initializeOnline(snapshot, &error))
+    {
+        delete simulation;
+        QMessageBox::warning(this, QStringLiteral("工程暂不支持在线模拟"), error);
+        return;
+    }
+    simulation->setAttribute(Qt::WA_DeleteOnClose);
+    m_simulationWindow = simulation;
+    simulation->show();
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::showPlcSerialDiagnostics
+ * Description     : Open the pre-existing manual RTU transaction tool.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void MainWindow::showPlcSerialDiagnostics() //20261124-13 add
+{
+    if (!m_simulationWindow.isNull() && m_simulationWindow->runtime().online())
+    {
+        statusBar()->showMessage(QStringLiteral("关闭在线模拟后可运行串口诊断。"), 5000);
+        return;
+    }
     QPointer<PlcOnlineDialog> dialog = new PlcOnlineDialog({}, this);
 
     dialog->exec();

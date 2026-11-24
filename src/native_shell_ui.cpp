@@ -408,6 +408,9 @@ void MainWindow::initializeNativeShell() //20261111-1 add
         {
             if (!placed.contains(action) && !action->property("nativeShellPending").toBool()) { extra->addAction(action); }
         }
+        action = extra->addAction(QStringLiteral("PLC 串口诊断...")); //20261124-13 add
+        action->setObjectName(QStringLiteral("PlcSerialDiagnostics"));
+        connect(action, &QAction::triggered, this, &MainWindow::showPlcSerialDiagnostics);
         action = extra->addAction(QStringLiteral("简易属性（名称与坐标）..."));
         action->setObjectName(QStringLiteral("ShellQuickProperties"));
         connect(action, &QAction::triggered, this, [this]() {

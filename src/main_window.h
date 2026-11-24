@@ -163,6 +163,7 @@ private:
     bool downloadInProgress() const; //20261114-5 add
     void startOfflineSimulation(); //20261114-6 add
     void showOnlineSimulationOptions(); //20261114-6 add
+    void showPlcSerialDiagnostics(); //20261124-13 add
     void resetProjectHistory();
     void recordProjectHistory();
     bool projectIsModified() const;

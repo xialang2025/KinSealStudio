@@ -52,7 +52,7 @@ PlcOnlineDialog::PlcOnlineDialog(const PlcSerialIoFactory &factory, QWidget *par
     setObjectName(QStringLiteral("PlcOnlineDialog")); setWindowTitle(QStringLiteral("PLC通信与协议能力")); resize(1000, 720);
     layout = new QVBoxLayout(this); tabs = new QTabWidget(this); layout->addWidget(tabs);
     serial = new QWidget(tabs); serialLayout = new QVBoxLayout(serial);
-    scope = new QLabel(QStringLiteral("PC串口调试：地址按0起始PDU输入。选择端口，将参数设为与从站一致，再执行一次请求。工程画面联动尚未开放。"), serial);
+    scope = new QLabel(QStringLiteral("PC 串口诊断使用从 0 开始的 PDU 地址。选择端口并匹配从站参数后，可执行单次请求。工程画面请从「工具 → 在线模拟」打开。"), serial);
     scope->setWordWrap(true); serialLayout->addWidget(scope); form = new QFormLayout(); serialLayout->addLayout(form);
     m_port = new QComboBox(serial); m_port->setObjectName(QStringLiteral("PlcPcPort")); m_port->setEditable(true);
     for (const QSerialPortInfo &port : QSerialPortInfo::availablePorts()) { m_port->addItem(port.portName()); }
@@ -84,7 +84,9 @@ PlcOnlineDialog::PlcOnlineDialog(const PlcSerialIoFactory &factory, QWidget *par
         profile = profiles.at(index).toObject();
         cells = {profile.value(QStringLiteral("profileId")).toString(), profile.value(QStringLiteral("driverName")).toString(),
             QStringLiteral("%1/%2").arg(profile.value(QStringLiteral("grammarFamilyCount")).toInt()).arg(profile.value(QStringLiteral("familyCount")).toInt()),
-            profile.value(QStringLiteral("deviceCompileEligible")).toBool() ? QStringLiteral("受限COM1/站1") : QStringLiteral("未开放"), QStringLiteral("未接入"), QStringLiteral("未验证")};
+            profile.value(QStringLiteral("deviceCompileEligible")).toBool() ? QStringLiteral("受限COM1/站1") : QStringLiteral("未开放"),
+            profile.value(QStringLiteral("pcProfileMapped")).toBool() ? QStringLiteral("单站 RTU") : QStringLiteral("未接入"),
+            QStringLiteral("未验证")}; //20261124-13 change
         for (column = 0; column < cells.size(); ++column) { table->setItem(index, column, new QTableWidgetItem(cells.at(column))); }
     }
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents); tabs->addTab(table, QStringLiteral("协议能力"));

@@ -75,7 +75,7 @@ QJsonObject plcProtocolCapabilities(const QString &model) //20261114-8 add
             {QStringLiteral("driverName"), profile.driverName}, {QStringLiteral("catalogVisible"), true},
             {QStringLiteral("connectionMetadataStorable"), true}, {QStringLiteral("families"), families},
             {QStringLiteral("grammarFamilyCount"), supportedCount}, {QStringLiteral("familyCount"), profile.families.size()},
-            {QStringLiteral("deviceCompileEligible"), eligible}, {QStringLiteral("pcProfileMapped"), false},
+            {QStringLiteral("deviceCompileEligible"), eligible}, {QStringLiteral("pcProfileMapped"), defaultCodec}, //20261124-13 change
             {QStringLiteral("physicalPlcVerified"), false}, {QStringLiteral("hmiPlcVerified"), false},
             {QStringLiteral("nativeDllAbiImplemented"), false}, {QStringLiteral("filesObserved"), source},
             {QStringLiteral("serialDefaultsRaw"), profile.serialDefaults},
@@ -92,6 +92,12 @@ QJsonObject plcProtocolCapabilities(const QString &model) //20261114-8 add
     result.insert(QStringLiteral("ok"), true); result.insert(QStringLiteral("profiles"), rows);
     result.insert(QStringLiteral("profileCount"), rows.size()); result.insert(QStringLiteral("catalogSha256"), audit.value(QStringLiteral("catalogSha256")));
     result.insert(QStringLiteral("fileAuditModel"), audit.value(QStringLiteral("model")));
+    result.insert(QStringLiteral("pcOnlineSimulation"), QJsonObject{
+        {QStringLiteral("scope"), QStringLiteral("single-station-modbus-rtu")},
+        {QStringLiteral("scanFamilies"), QJsonArray{QStringLiteral("0x"), QStringLiteral("1x"), QStringLiteral("3x"),
+            QStringLiteral("4x"), QStringLiteral("3x_dw"), QStringLiteral("4x_dw"), QStringLiteral("3x_bit"), QStringLiteral("4x_bit")}},
+        {QStringLiteral("writeFamilies"), QJsonArray{QStringLiteral("0x"), QStringLiteral("4x"), QStringLiteral("4x_dw")}},
+        {QStringLiteral("physicalEndpointVerified"), false}}); //20261124-13 add
     result.insert(QStringLiteral("pcRawRtu"), QJsonObject{{QStringLiteral("functions"), QJsonArray{1, 2, 3, 4, 5, 6, 15, 16}},
         {QStringLiteral("explicitZeroBasedPduAddress"), true}, {QStringLiteral("serialBackendImplemented"), true},
         {QStringLiteral("automaticProjectMapping"), false}, {QStringLiteral("physicalEndpointVerified"), false},
