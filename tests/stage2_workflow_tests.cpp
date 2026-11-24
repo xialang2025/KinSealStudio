@@ -12,6 +12,7 @@
 #include "number_display_dialog.h" //20261123-25 add
 #include <QAction>
 #include <QAbstractButton>
+#include <QAbstractItemView> //20261124-5 add
 #include <QApplication>
 #include <QBuffer>
 #include <QClipboard>
@@ -27,6 +28,7 @@
 #include <QListWidget>
 #include <QJsonDocument>
 #include <QMessageBox>
+#include <QPainter> //20261124-5 add
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRadioButton>
@@ -63,6 +65,7 @@ private slots:
     void initTestCase();
     void sharedCommandsAndAvailability();
     void editorCanvasHasScrollableWorkspace(); //20261124-4 add
+    void toolbarPreviewsWholePageAndSelectedStates(); //20261124-5 add
     void canvasKeysUseWholeProjectHistory();
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
@@ -254,6 +257,125 @@ void Stage2WorkflowTests::editorCanvasHasScrollableWorkspace() //20261124-4 add
     QCOMPARE(canvas->scene()->sceneRect(), QRectF(0, 0, project.pageWidth, project.pageHeight));
     QVERIFY(!window.m_dirty);
     QCOMPARE(window.currentEditorProject().objects.first().geometry, project.objects.first().geometry);
+}
+
+/******************************************************************************
+ * Function Name   : toolbarPreviewsWholePageAndSelectedStates
+ * Description     : Change state artwork through the editor toolbar and compare rendered pixels and project records.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::toolbarPreviewsWholePageAndSelectedStates() //20261124-5 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiObject bit;
+    HmiObject multi;
+    HmiObject picture;
+    QComboBox *state;
+    QJsonObject before;
+    const QList<QColor> colors = {QColor(Qt::red), QColor(Qt::green), QColor(Qt::blue)};
+    QPoint choicePoint;
+    int index;
+
+    bit.id = QStringLiteral("preview-bit");
+    bit.name = bit.id;
+    bit.type = QStringLiteral("switch");
+    bit.geometry = QRect(24, 24, 80, 48);
+    bit.address = QStringLiteral("LB0");
+    bit.hasBitButtonProperties = true;
+    multi.id = QStringLiteral("preview-multi");
+    multi.name = multi.id;
+    multi.type = QStringLiteral("multistate");
+    multi.geometry = QRect(124, 24, 80, 48);
+    picture.id = QStringLiteral("preview-image");
+    picture.name = picture.id;
+    picture.type = QStringLiteral("image");
+    picture.geometry = QRect(224, 24, 80, 48);
+    picture.hasImageDisplayProperties = true;
+    picture.imageDisplay.displayType = 1;
+    picture.imageDisplay.setStateCount(3);
+    for (index = 0; index < colors.size(); ++index)
+    {
+        QImage tile(8, 8, QImage::Format_RGB32);
+        QBuffer png(&picture.imageDisplay.states[index].picturePng);
+        tile.fill(colors.at(index));
+        QVERIFY(png.open(QIODevice::WriteOnly));
+        QVERIFY(tile.save(&png, "PNG"));
+        picture.imageDisplay.states[index].picture = QStringLiteral("state%1.png").arg(index);
+        multi.multiStateButton.state(index)->useImage = false;
+        multi.multiStateButton.state(index)->background = colors.at(index);
+        if (index < 2)
+        {
+            bit.bitButton.states[index].useImage = false;
+            bit.bitButton.states[index].background = colors.at(index);
+        }
+    }
+    project.objects.append(bit);
+    project.objects.append(multi);
+    project.objects.append(picture);
+    window.setProject(project, QString());
+    window.show();
+    state = window.findChild<QComboBox *>(QStringLiteral("NativeStatePreview"));
+    QVERIFY(state != nullptr);
+    before = window.currentEditorProject().toJson();
+
+    auto canvasColor = [&window](const HmiObject &object) {
+        QImage frame(800, 480, QImage::Format_RGB32);
+        QPainter painter(&frame);
+        window.m_canvas->scene()->render(&painter, QRectF(0, 0, 800, 480), QRectF(0, 0, 800, 480));
+        painter.end();
+        return frame.pixelColor(object.geometry.topLeft() + QPoint(8, 8));
+    };
+
+    window.m_canvas->selectObject(multi.id);
+    QCOMPARE(state->count(), 3);
+    state->setCurrentIndex(2);
+    QCOMPARE(canvasColor(multi), colors.at(2));
+    QCOMPARE(canvasColor(bit), colors.at(0));
+    window.m_canvas->selectObject(picture.id);
+    QCOMPARE(state->count(), 3);
+    state->setCurrentIndex(2);
+    QCOMPARE(canvasColor(picture), colors.at(2));
+
+    window.m_canvas->selectObjects({});
+    QVERIFY(state->isEnabled());
+    QCOMPARE(state->count(), 256);
+    QCOMPARE(state->currentIndex(), -1);
+    QCOMPARE(state->itemText(1), QStringLiteral("状态1"));
+    QTest::mouseClick(window.windowHandle(), Qt::LeftButton, Qt::NoModifier,
+                      state->mapTo(&window, QPoint(state->width() - 8, state->height() / 2)));
+    QTRY_VERIFY(state->view()->isVisible());
+    choicePoint = state->view()->visualRect(state->model()->index(1, 0)).center();
+    QCOMPARE(state->view()->indexAt(choicePoint).row(), 1);
+    QVERIFY(state->view()->viewport()->rect().contains(choicePoint));
+    // Qt suppresses the opening mouse release until its double-click timer expires.
+    QTest::qWait(QApplication::doubleClickInterval());
+    QTest::mouseMove(state->view()->viewport(), choicePoint);
+    QTest::mouseClick(state->view()->viewport(), Qt::LeftButton, Qt::NoModifier, choicePoint);
+    QTRY_COMPARE(state->currentIndex(), 1);
+    QCOMPARE(canvasColor(bit), colors.at(1));
+    QCOMPARE(canvasColor(multi), colors.at(1));
+    QCOMPARE(canvasColor(picture), colors.at(1));
+    state->setCurrentIndex(2);
+    QCOMPARE(canvasColor(bit), colors.at(1));
+    QCOMPARE(canvasColor(multi), colors.at(2));
+    QCOMPARE(canvasColor(picture), colors.at(2));
+
+    window.m_canvas->selectObjects({bit.id, multi.id, project.objects.first().id});
+    QCOMPARE(state->count(), 3);
+    state->setCurrentIndex(0);
+    QCOMPARE(canvasColor(bit), colors.at(0));
+    QCOMPARE(canvasColor(multi), colors.at(0));
+    QCOMPARE(canvasColor(picture), colors.at(2));
+    window.m_canvas->selectObject(project.objects.first().id);
+    QCOMPARE(state->count(), 0);
+    QVERIFY(!window.m_dirty);
+    QCOMPARE(window.m_projectHistory.size(), 1);
+    QCOMPARE(window.currentEditorProject().toJson(), before);
+    window.closeProject();
+    QVERIFY(!state->isEnabled());
 }
 
 /******************************************************************************

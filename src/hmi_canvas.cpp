@@ -94,6 +94,65 @@ void HmiControlItem::setObject(const HmiObject &object) //20261107-6 add
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     setZValue(object.layer); //20261108-14 change
+    if (previewState() != 0 && previewState() >= previewStateCount()) //20261124-5 add
+    {
+        setData(11, 0);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : HmiControlItem::previewStateCount
+ * Description     : Report the active artwork states supported by this item's renderer.
+ * Input Parameters: None
+ * Return Value    : Number of states, or zero for a control without preview states.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+int HmiControlItem::previewStateCount() const //20261124-5 add
+{
+    if (m_type == QStringLiteral("switch") && m_record.hasBitButtonProperties)
+    {
+        if (m_record.hasLampProperties) { return m_record.lamp.stateCount(); }
+        if (m_record.hasWordButtonProperties) { return m_record.wordButton.pressedEffect ? 2 : 1; }
+        if (m_record.hasFunctionButtonProperties) { return 1; }
+        return 2;
+    }
+    if (m_type == QStringLiteral("multistate")) { return m_record.multiStateButton.stateCount; }
+    if (m_type == QStringLiteral("multifunction")) { return m_record.multiFunctionButton.pressedEffect ? 2 : 1; }
+    if (m_type == QStringLiteral("screen")) { return 2; }
+    if (m_type == QStringLiteral("image") && m_record.hasImageDisplayProperties)
+    {
+        return m_record.imageDisplay.displayType == 0 ? 1 : m_record.imageDisplay.stateCount;
+    }
+    if (m_type == QStringLiteral("message")) { return m_record.messageDisplay.stateCount; }
+    return 0;
+}
+
+/******************************************************************************
+ * Function Name   : HmiControlItem::previewState
+ * Description     : Read the transient scene role used by the control painting paths.
+ * Input Parameters: None
+ * Return Value    : Current zero-based state.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+int HmiControlItem::previewState() const //20261124-5 add
+{
+    return data(11).toInt();
+}
+
+/******************************************************************************
+ * Function Name   : HmiControlItem::setPreviewState
+ * Description     : Repaint a supported state without modifying the stored object record.
+ * Input Parameters: index
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void HmiControlItem::setPreviewState(int index) //20261124-5 add
+{
+    if (index >= 0 && index < previewStateCount() && index != previewState())
+    {
+        setData(11, index);
+        update();
+    }
 }
 
 /******************************************************************************
@@ -758,6 +817,7 @@ void ScreenCanvas::rebuildPage(int width, int height, bool preserveItems) //2026
     m_draftRect = nullptr; //20261108-14 add
     m_pageWidth = width;
     m_pageHeight = height;
+    m_pagePreviewState = -1; //20261124-5 add: Rebuilt scene items start with their default artwork.
     page_bounds = QRectF(0, 0, width, height); //20261123-2 change
     // Bitmap backgrounds draw across the full page without covering the edge pixels with an outline.
     page_outline = m_pageBackgroundBitmap.isNull() && m_pageBackground.systemPicture.isEmpty() ?
@@ -789,6 +849,10 @@ void ScreenCanvas::publishSelection() //20261110-8 change
     HmiObject object;
 
     object = selectedObject(&selected);
+    if (!m_scene->selectedItems().isEmpty()) //20261124-5 add: Returning from a selection shows the blank whole-page choice.
+    {
+        m_pagePreviewState = -1;
+    }
     emit objectSelectionChanged(object, selected);
     m_previousSelection = object; m_previousSelectionValid = selected;
 }

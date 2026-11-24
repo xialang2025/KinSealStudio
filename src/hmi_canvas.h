@@ -5,6 +5,7 @@
 
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
+#include <QPair> //20261124-5 add
 #include <QPoint>
 #include <QString>
 #include <QVariant>
@@ -23,6 +24,9 @@ public:
     explicit HmiControlItem(const HmiObject &object);
     HmiObject toHmiObject() const;
     void setObject(const HmiObject &object);
+    int previewStateCount() const; //20261124-5 add
+    int previewState() const;
+    void setPreviewState(int index);
     QRectF boundingRect() const override; //20261113-2 add
     QPainterPath shape() const override;
 
@@ -61,6 +65,8 @@ public:
     void beginStaticTextPlacement(const HmiObject &object); //20261108-14 add
     void beginControlPlacement(const HmiObject &object); //20261108-15 add
     void executeEdit(const QString &command);
+    QPair<int, int> previewStateOptions() const; //20261124-5 add
+    void setPreviewState(int index);
     void requestEditCommand(const QString &command); //20261110-7 add: Route hosted menus and keys through the same whole-project transaction.
     void setExternalEditRouting(bool enabled) { m_externalEditRouting = enabled; }
     bool canExecuteEdit(const QString &command) const;
@@ -97,6 +103,7 @@ private:
     HmiPageBackground m_pageBackground; //20261123-1 change
     QImage m_pageBackgroundBitmap; //20261123-2 add
     int m_zoomPercent;
+    int m_pagePreviewState = -1; //20261124-5 add: Whole-page state shown while there is no selection.
     HmiObject m_previousSelection;
     bool m_previousSelectionValid;
     QString m_language = QStringLiteral("中文"); //20261108-14 add

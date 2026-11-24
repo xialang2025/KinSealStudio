@@ -214,6 +214,66 @@ void ScreenCanvas::restoreObjects(const QList<HmiObject> &records) //20261108-14
     publishSelection();
 }
 
+// The unselected toolbar offers every state index in the original page preview.
+static constexpr int PagePreviewStateCount = 256; //20261124-5 add
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::previewStateOptions
+ * Description     : Return the page-wide or selected-control state choices for the toolbar.
+ * Input Parameters: None
+ * Return Value    : Choice count and current index, with -1 for no shared state.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+QPair<int, int> ScreenCanvas::previewStateOptions() const //20261124-5 add
+{
+    QGraphicsItem *graphics;
+    const HmiControlItem *control;
+    int count = 0;
+    int index = -1;
+    int controlCount;
+
+    if (m_scene->selectedItems().isEmpty())
+    {
+        return {PagePreviewStateCount, m_pagePreviewState};
+    }
+    Q_FOREACH (graphics, m_scene->items())
+    {
+        control = dynamic_cast<const HmiControlItem *>(graphics);
+        if (control == nullptr || !control->isSelected()) { continue; }
+        controlCount = control->previewStateCount();
+        if (controlCount == 0) { continue; }
+        index = count == 0 || index == control->previewState() ? control->previewState() : -1;
+        count = qMax(count, controlCount);
+    }
+    return {count, index};
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::setPreviewState
+ * Description     : Preview a state on selected controls, or on the page when nothing is selected.
+ * Input Parameters: index
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void ScreenCanvas::setPreviewState(int index) //20261124-5 add
+{
+    const bool wholePage = m_scene->selectedItems().isEmpty();
+    QGraphicsItem *graphics;
+    HmiControlItem *control;
+
+    if (index < 0 || index >= PagePreviewStateCount) { return; }
+    if (wholePage) { m_pagePreviewState = index; }
+    Q_FOREACH (graphics, m_scene->items())
+    {
+        control = dynamic_cast<HmiControlItem *>(graphics);
+        // Qt treats a control in a selected graphics group as selected.
+        if (control != nullptr && (wholePage || control->isSelected()))
+        {
+            control->setPreviewState(index);
+        }
+    }
+}
+
 /******************************************************************************
  * Function Name   : ScreenCanvas::executeEdit
  * Description     : Share clipboard, arrangement, grouping and history operations across menus and keys.
@@ -259,16 +319,13 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
         return;
     }
     if (command == QStringLiteral("grid")) { m_grid = !m_grid; viewport()->update(); return; }
-    if (command.startsWith(QStringLiteral("simulate"))) //20261109-8 change: Lamp previews include all native multi-state indices.
+    if (command.startsWith(QStringLiteral("simulate"))) //20261124-5 change
     {
-        Q_FOREACH (graphicsItem, selected)
+        position = command.mid(8).toInt(&ok);
+        if (ok)
         {
-            item = dynamic_cast<HmiControlItem *>(graphicsItem);
-            if (item == nullptr) { continue; }
-            position = command.mid(8).toInt();
-            if (position < 0 || position >= (item->toHmiObject().type == QStringLiteral("message") ? item->toHmiObject().messageDisplay.stateCount : item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261112-0 change
-                item->toHmiObject().hasLampProperties ? item->toHmiObject().lamp.stateCount() : 2)) { continue; }
-            graphicsItem->setData(11, position); graphicsItem->update();
+            setPreviewState(position);
+            publishSelection();
         }
         return;
     }
@@ -486,13 +543,15 @@ void ScreenCanvas::contextMenuEvent(QContextMenuEvent *event) //20261108-14 add
     images->addAction(QStringLiteral("拉伸"))->setData(QStringLiteral("imageMode0"));
     images->addAction(QStringLiteral("保持比例"))->setData(QStringLiteral("imageMode1"));
     images->addAction(QStringLiteral("原始大小"))->setData(QStringLiteral("imageMode2"));
-    simulation = menu.addMenu(QStringLiteral("模拟状态"));
-    stateCount = item != nullptr && item->toHmiObject().type == QStringLiteral("message") ? item->toHmiObject().messageDisplay.stateCount : item != nullptr && item->toHmiObject().hasFunctionButtonProperties ? 1 : //20261112-0 change
-                 item != nullptr && item->toHmiObject().hasLampProperties ? item->toHmiObject().lamp.stateCount() : 2;
-    for (index = 0; index < stateCount; ++index)
+    stateCount = m_scene->selectedItems().isEmpty() ? 0 : previewStateOptions().first; //20261124-5 change
+    if (stateCount != 0)
     {
-        simulation->addAction(stateCount == 2 ? (index == 0 ? QStringLiteral("0 / OFF") : QStringLiteral("1 / ON")) :
-                              QStringLiteral("状态 %1").arg(index))->setData(QStringLiteral("simulate%1").arg(index));
+        simulation = menu.addMenu(QStringLiteral("模拟状态"));
+        for (index = 0; index < stateCount; ++index)
+        {
+            simulation->addAction(stateCount == 2 ? (index == 0 ? QStringLiteral("0 / OFF") : QStringLiteral("1 / ON")) :
+                                  QStringLiteral("状态%1").arg(index))->setData(QStringLiteral("simulate%1").arg(index));
+        }
     }
     action = menu.exec(event->globalPos());
     if (action != nullptr) { requestEditCommand(action->data().toString()); } //20261110-7 change

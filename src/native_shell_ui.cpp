@@ -14,7 +14,6 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QGridLayout>
-#include <QGraphicsScene>
 #include <QSignalBlocker>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -457,10 +456,9 @@ void MainWindow::createToolbars() //20261111-1 add
                 }
                 else
                 {
-                    combo->addItems({QStringLiteral("0"), QStringLiteral("1")}); combo->setCurrentIndex(-1);
-                    combo->setToolTip(QStringLiteral("选中控件的外观状态预览"));
+                    combo->setToolTip(QStringLiteral("预览整页或选中控件的外观状态")); //20261124-5 change
                     connect(combo, &QComboBox::currentIndexChanged, this, [this](int index) {
-                        if (index >= 0) { m_canvas->executeEdit(QStringLiteral("simulate%1").arg(index)); }
+                        if (m_hasProject && index >= 0) { m_canvas->setPreviewState(index); }
                     });
                 }
                 continue;
@@ -619,22 +617,25 @@ void MainWindow::updateNativeStatusBar() //20261111-1 add
     QMap<QString, QString>::const_iterator it;
     QComboBox *state;
     QLabel *typeLabel;
-    bool blocked;
-    int count;
+    QPair<int, int> choices;
     int index;
 
     object = m_canvas->selectedObject(&selected);
     state = findChild<QComboBox *>(QStringLiteral("NativeStatePreview"));
     if (state != nullptr)
     {
-        blocked = state->blockSignals(true);
-        count = !selected || object.type == QStringLiteral("recipe") || object.type == QStringLiteral("historydata") || object.type == QStringLiteral("historyalarm") || object.type == QStringLiteral("alarmdisplay") || object.type == QStringLiteral("alarmbar") || object.type == QStringLiteral("datagroup") || object.type == QStringLiteral("xycurve") || object.type == QStringLiteral("historytrend") || object.type == QStringLiteral("trend") || object.type == QStringLiteral("chart") || object.type == QStringLiteral("track") || object.type == QStringLiteral("wheel") || object.type == QStringLiteral("slider") || object.type == QStringLiteral("flow") || object.type == QStringLiteral("dropdown") || object.type == QStringLiteral("time") || object.type == QStringLiteral("ascii") || object.hasNumberDisplayProperties || object.type == QStringLiteral("text") || object.type == QStringLiteral("scale") || object.type == QStringLiteral("qrcode") || object.type == QStringLiteral("gif") ? 0 : object.type == QStringLiteral("multifunction") ? (object.multiFunctionButton.pressedEffect ? 2 : 1) : object.type == QStringLiteral("multistate") ? object.multiStateButton.stateCount : object.hasImageDisplayProperties ? object.imageDisplay.stateCount : object.type == QStringLiteral("message") ? object.messageDisplay.stateCount : object.hasLampProperties ? object.lamp.stateCount() : object.hasFunctionButtonProperties ? 1 : 2; //20261112-0 change
-        state->clear();
-        for (index = 0; index < count; ++index) { state->addItem(QString::number(index)); }
-        state->setEnabled(m_hasProject && count > 1);
-        if (count == 0) { state->setCurrentIndex(-1); }
-        else if (!m_canvas->scene()->selectedItems().isEmpty()) { state->setCurrentIndex(m_canvas->scene()->selectedItems().first()->data(11).toInt()); }
-        state->blockSignals(blocked);
+        const QSignalBlocker blocked(state); //20261124-5 change: Rebuilding the choices never applies a preview.
+        choices = m_hasProject ? m_canvas->previewStateOptions() : qMakePair(0, -1);
+        if (state->count() != choices.first)
+        {
+            state->clear();
+            for (index = 0; index < choices.first; ++index)
+            {
+                state->addItem(QStringLiteral("状态%1").arg(index));
+            }
+        }
+        state->setEnabled(m_hasProject);
+        state->setCurrentIndex(choices.second);
     }
     typeLabel = findChild<QLabel *>(QStringLiteral("NativeSelectionType"));
     if (typeLabel != nullptr)
