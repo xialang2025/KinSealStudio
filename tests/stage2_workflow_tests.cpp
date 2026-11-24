@@ -4081,6 +4081,9 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
     QString error;
     bool opened = false;
     bool multiOpened = false;
+    bool footerHit = false; //20261124-1 add
+    bool helpOpened = false;
+    bool cancelled = false;
 
     QVERIFY(directory.isValid());
     second.id = QStringLiteral("workflow-text-second");
@@ -4115,6 +4118,60 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
     window.m_canvas->selectObjects({});
     QVERIFY(gear->isEnabled());
 
+    QTimer::singleShot(0, &window, [&]() { //20261124-1 add: Send mouse input through the dialog surface, including obscured controls.
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name;
+        QDialogButtonBox *buttons;
+        QPushButton *helpButton;
+        QPushButton *cancelButton;
+        QDialog *help;
+        QTextBrowser *browser;
+        QPoint helpPoint;
+        QPoint cancelPoint;
+
+        if (dialog == nullptr) { return; }
+        name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (name == nullptr || buttons == nullptr || dialog->windowHandle() == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        helpButton = buttons->button(QDialogButtonBox::Help);
+        cancelButton = buttons->button(QDialogButtonBox::Cancel);
+        if (helpButton == nullptr || cancelButton == nullptr)
+        {
+            dialog->reject();
+            return;
+        }
+        helpPoint = helpButton->mapTo(dialog, helpButton->rect().center());
+        cancelPoint = cancelButton->mapTo(dialog, cancelButton->rect().center());
+        footerHit = dialog->childAt(helpPoint) == helpButton && dialog->childAt(cancelPoint) == cancelButton;
+        name->setText(changedName);
+        QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, helpPoint);
+        help = dialog->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        browser = help == nullptr ? nullptr : help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+        helpOpened = help != nullptr && help->isVisible() && browser != nullptr &&
+            browser->document()->baseUrl().fragment() == QStringLiteral("screen-properties") &&
+            name->text() == changedName;
+        if (help != nullptr)
+        {
+            help->close();
+        }
+        QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, cancelPoint);
+        cancelled = !dialog->isVisible() && dialog->result() == QDialog::Rejected;
+        if (!cancelled)
+        {
+            dialog->reject();
+        }
+    });
+    gear->click();
+    QVERIFY2(footerHit, "The visible Help or Cancel button is covered by another widget.");
+    QVERIFY(helpOpened);
+    QVERIFY(cancelled);
+    QCOMPARE(window.currentEditorProject().pageName, seed.pageName);
+    QVERIFY(!window.m_dirty);
+
     QTimer::singleShot(0, &window, [&]() {
         QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
         QLineEdit *name;
@@ -4127,7 +4184,9 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
         {
             opened = name->text() == seed.pageName;
             name->setText(changedName);
-            buttons->button(QDialogButtonBox::Ok)->click();
+            QPushButton *ok = buttons->button(QDialogButtonBox::Ok);
+            QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier,
+                              ok->mapTo(dialog, ok->rect().center()));
         }
         if (dialog->isVisible()) { dialog->reject(); }
     });

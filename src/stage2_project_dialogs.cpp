@@ -988,6 +988,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
     });
     createStage2PageScriptList(&dialog, macroDraft, scripts, popup)->setGeometry(
         popup ? QRect(10, 360, 591, 251) : QRect(10, 390, 601, 261)); //20261123-12 change
+    buttons->raise(); //20261124-1 add: Keep footer actions above the script pane's empty area in the shared row.
     QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [&dialog]() { //20261123-10 add
         LocalHelpController *help = dialog.findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);
 
