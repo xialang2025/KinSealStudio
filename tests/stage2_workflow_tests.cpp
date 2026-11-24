@@ -53,6 +53,7 @@
 #include <QStatusBar>
 #include <QDir>
 #include <QTreeWidget>
+#include <QWheelEvent> //20261124-6 add
 #include <functional>
 
 //20261110-7 add: Exercise the real main-window transactions without using physical input or USB.
@@ -65,6 +66,7 @@ private slots:
     void initTestCase();
     void sharedCommandsAndAvailability();
     void editorCanvasHasScrollableWorkspace(); //20261124-4 add
+    void editorCanvasZoomsWithControlWheel(); //20261124-6 add
     void toolbarPreviewsWholePageAndSelectedStates(); //20261124-5 add
     void canvasKeysUseWholeProjectHistory();
     void textClipboardDoesNotModifyCanvas();
@@ -257,6 +259,75 @@ void Stage2WorkflowTests::editorCanvasHasScrollableWorkspace() //20261124-4 add
     QCOMPARE(canvas->scene()->sceneRect(), QRectF(0, 0, project.pageWidth, project.pageHeight));
     QVERIFY(!window.m_dirty);
     QCOMPARE(window.currentEditorProject().objects.first().geometry, project.objects.first().geometry);
+}
+
+/******************************************************************************
+ * Function Name   : editorCanvasZoomsWithControlWheel
+ * Description     : Route wheel input through the viewport and compare zoom, scroll and project state.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::editorCanvasZoomsWithControlWheel() //20261124-6 add
+{
+    MainWindow window;
+    const HmiProject project = workflowProject();
+    ScreenCanvas *canvas = window.m_canvas;
+    QScrollBar *horizontal = canvas->horizontalScrollBar();
+    QScrollBar *vertical = canvas->verticalScrollBar();
+    const QPoint cursor(190, 150);
+    QPointF target;
+    QPoint scroll;
+    QJsonObject before;
+    QAction *zoomOut;
+    QAction *reset;
+
+    window.setProject(project, QString());
+    window.show();
+    QTRY_VERIFY(canvas->viewport()->rect().contains(cursor));
+    QTRY_VERIFY(horizontal->maximum() >= 150 && vertical->maximum() >= 150);
+    horizontal->setValue(145);
+    vertical->setValue(125);
+    target = canvas->mapToScene(cursor);
+    before = window.currentEditorProject().toJson();
+    auto turnWheel = [&](int delta, Qt::KeyboardModifiers modifiers) {
+        QWidget *viewport = canvas->viewport();
+        QWheelEvent event(cursor, viewport->mapToGlobal(cursor), QPoint(), QPoint(0, delta),
+                          Qt::NoButton, modifiers, Qt::NoScrollPhase, false);
+        QApplication::sendEvent(viewport, &event);
+    };
+
+    turnWheel(120, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 1.25);
+    QVERIFY((canvas->mapFromScene(target) - cursor).manhattanLength() <= 1);
+    turnWheel(60, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 1.25);
+    turnWheel(60, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 1.5);
+    turnWheel(-120, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 1.25);
+
+    zoomOut = window.m_commands.value(QStringLiteral("action_zoonsmall"));
+    reset = window.m_commands.value(QStringLiteral("action_zoonfit"));
+    QVERIFY(zoomOut != nullptr && reset != nullptr && zoomOut->isEnabled() && reset->isEnabled());
+    zoomOut->trigger();
+    QCOMPARE(canvas->transform().m11(), 1.0);
+    turnWheel(960, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 2.0);
+    scroll = QPoint(horizontal->value(), vertical->value());
+    turnWheel(120, Qt::ControlModifier);
+    QCOMPARE(QPoint(horizontal->value(), vertical->value()), scroll);
+    turnWheel(-960, Qt::ControlModifier);
+    QCOMPARE(canvas->transform().m11(), 0.25);
+
+    reset->trigger();
+    QCOMPARE(canvas->transform().m11(), 1.0);
+    vertical->setValue(125);
+    turnWheel(-120, Qt::NoModifier);
+    QVERIFY(vertical->value() > 125);
+    QCOMPARE(canvas->transform().m11(), 1.0);
+    QCOMPARE(window.currentEditorProject().toJson(), before);
+    QVERIFY(!window.m_dirty);
 }
 
 /******************************************************************************

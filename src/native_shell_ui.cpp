@@ -267,12 +267,15 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             }
             else if (id == QStringLiteral("action_zoonfit") || id == QStringLiteral("action_zoonbig") || id == QStringLiteral("action_zoonsmall"))
             {
-                connect(action, &QAction::triggered, this, [this, id]() {
-                    int zoom;
-                    zoom = m_canvas->property("nativeShellZoom").toInt();
-                    if (zoom == 0) { zoom = 100; }
-                    zoom = id == QStringLiteral("action_zoonfit") ? 100 : qBound(25, zoom + (id == QStringLiteral("action_zoonbig") ? 25 : -25), 200);
-                    m_canvas->setZoomPercent(zoom); m_canvas->setProperty("nativeShellZoom", zoom);
+                connect(action, &QAction::triggered, this, [this, id]() { //20261124-6 change
+                    if (id == QStringLiteral("action_zoonfit"))
+                    {
+                        m_canvas->setZoomPercent(100);
+                    }
+                    else
+                    {
+                        m_canvas->zoomBySteps(id == QStringLiteral("action_zoonbig") ? 1 : -1);
+                    }
                 });
             }
             else if (id == QStringLiteral("action_offline_simulation")) //20261114-6 add: Run a detached model snapshot instead of editing scene preview states.

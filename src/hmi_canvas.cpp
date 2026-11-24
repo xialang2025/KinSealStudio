@@ -32,8 +32,10 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
+#include <QScrollBar> //20261124-6 add
 #include <QStyleOptionGraphicsItem>
 #include <QUuid>
+#include <QWheelEvent> //20261124-6 add
 
 /******************************************************************************
  * Function Name   : HmiControlItem::HmiControlItem
@@ -556,6 +558,10 @@ void ScreenCanvas::updateSelectedObject(const HmiObject &object) //20261107-6 ad
     }
 }
 
+static constexpr int MinimumZoomPercent = 25; //20261124-6 add
+static constexpr int MaximumZoomPercent = 200;
+static constexpr int ZoomStepPercent = 25;
+
 /******************************************************************************
  * Function Name   : ScreenCanvas::setZoomPercent
  * Description     : Apply the selected percentage zoom used by the canvas status control.
@@ -567,11 +573,72 @@ void ScreenCanvas::setZoomPercent(int percent) //20261107-6 add
 {
     qreal factor;
 
-    m_zoomPercent = qBound(25, percent, 200);
+    m_zoomPercent = qBound(MinimumZoomPercent, percent, MaximumZoomPercent); //20261124-6 change
     factor = static_cast<qreal>(m_zoomPercent) / 100.0;
     resetTransform();
     scale(factor, factor);
     centerOn(0.0, 0.0);
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::zoomBySteps
+ * Description     : Apply the same relative zoom steps for the toolbar and the wheel.
+ * Input Parameters: steps
+ * Return Value    : True if the scale changed.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool ScreenCanvas::zoomBySteps(int steps) //20261124-6 add
+{
+    const int percent = qBound(MinimumZoomPercent, m_zoomPercent + ZoomStepPercent * steps, MaximumZoomPercent);
+
+    if (percent == m_zoomPercent)
+    {
+        return false;
+    }
+    setZoomPercent(percent);
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::wheelEvent
+ * Description     : Zoom around the cursor when Control is held and delegate ordinary scrolling to Qt.
+ * Input Parameters: event
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void ScreenCanvas::wheelEvent(QWheelEvent *event) //20261124-6 add
+{
+    constexpr int WheelNotch = 120;
+    qint64 delta;
+    int steps;
+    QPoint cursor;
+    QPointF target;
+    QPoint displacement;
+
+    if (!event->modifiers().testFlag(Qt::ControlModifier))
+    {
+        m_zoomWheelRemainder = 0;
+        QGraphicsView::wheelEvent(event);
+        return;
+    }
+    // A high-resolution wheel may report a fraction of a notch per event.
+    delta = qint64(m_zoomWheelRemainder) + event->angleDelta().y();
+    steps = int(delta / WheelNotch);
+    m_zoomWheelRemainder = int(delta % WheelNotch);
+    event->accept();
+    if (steps == 0)
+    {
+        return;
+    }
+    cursor = event->position().toPoint();
+    target = mapToScene(cursor);
+    if (zoomBySteps(steps))
+    {
+        // Scroll limits naturally constrain cursor anchoring at the edges of the workspace.
+        displacement = mapFromScene(target) - cursor;
+        horizontalScrollBar()->setValue(horizontalScrollBar()->value() + displacement.x());
+        verticalScrollBar()->setValue(verticalScrollBar()->value() + displacement.y());
+    }
 }
 
 /******************************************************************************

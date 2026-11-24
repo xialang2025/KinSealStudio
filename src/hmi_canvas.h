@@ -17,6 +17,7 @@ class QPainter;
 class QStyleOptionGraphicsItem;
 class QContextMenuEvent;
 class QKeyEvent;
+class QWheelEvent; //20261124-6 add
 
 class HmiControlItem : public QGraphicsRectItem
 {
@@ -56,6 +57,7 @@ public:
     void addControl(const QString &type, const QPointF &position);
     void updateSelectedObject(const HmiObject &object);
     void setZoomPercent(int percent);
+    bool zoomBySteps(int steps); //20261124-6 add
     void setActiveTool(const QString &type);
     void selectObject(const QString &id);
     void selectObjects(const QStringList &ids); //20261110-8 add: Stable programmatic selection without exposing graphics items.
@@ -92,6 +94,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override; //20261124-6 add
     void drawForeground(QPainter *painter, const QRectF &rect) override;
 
 private:
@@ -103,6 +106,7 @@ private:
     HmiPageBackground m_pageBackground; //20261123-1 change
     QImage m_pageBackgroundBitmap; //20261123-2 add
     int m_zoomPercent;
+    int m_zoomWheelRemainder = 0; //20261124-6 add
     int m_pagePreviewState = -1; //20261124-5 add: Whole-page state shown while there is no selection.
     HmiObject m_previousSelection;
     bool m_previousSelectionValid;
