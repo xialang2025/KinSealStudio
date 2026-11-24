@@ -114,6 +114,8 @@ private slots:
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
+    void nativePropertyToolbarEditsSelectedControl(); //20261124-0 add
+    void nativePropertyToolbarEditsCurrentPage(); //20261124-0 add
 };
 
 /******************************************************************************
@@ -3983,6 +3985,159 @@ void Stage2WorkflowTests::nativeShellResourcesAndNavigation() //20261111-1 add
     QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeControlCount"))->text(), QString());
     QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeResolution"))->text(), QString());
     QCOMPARE(field->text(), QString());
+}
+
+/******************************************************************************
+ * Function Name   : nativePropertyToolbarEditsSelectedControl
+ * Description     : Exercise the native gear's selected-control editor, cancel and persisted confirmation.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::nativePropertyToolbarEditsSelectedControl() //20261124-0 add
+{
+    QTemporaryDir directory;
+    const QString path = directory.filePath(QStringLiteral("properties.ksp"));
+    const HmiProject seed = workflowProject();
+    const QString changedText = QStringLiteral("属性设置回归");
+    MainWindow window;
+    HmiProject reopened;
+    QToolBar *toolbar;
+    QToolButton *gear;
+    QAction *settings;
+    QString error;
+    bool opened;
+
+    QVERIFY(directory.isValid());
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    toolbar = window.findChild<QToolBar *>(QStringLiteral("toolBar_Tool"));
+    settings = window.findChild<QAction *>(QStringLiteral("action_openpropertiset"));
+    QVERIFY(toolbar != nullptr && settings != nullptr);
+    gear = qobject_cast<QToolButton *>(toolbar->widgetForAction(settings));
+    QVERIFY(gear != nullptr);
+    window.m_canvas->selectObject(QStringLiteral("workflow-text"));
+    QVERIFY(window.m_canvas->selectedObjectIds().contains(QStringLiteral("workflow-text")));
+
+    const auto edit = [&](bool confirm) {
+        opened = false;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QPlainTextEdit *input;
+
+            if (dialog == nullptr) { return; }
+            input = dialog->findChild<QPlainTextEdit *>(QStringLiteral("StaticTextInput"));
+            if (input == nullptr)
+            {
+                dialog->reject();
+                return;
+            }
+            opened = input->toPlainText() == QStringLiteral("TEST");
+            input->setPlainText(changedText);
+            if (confirm)
+            {
+                dialog->accept();
+            }
+            else
+            {
+                dialog->reject();
+            }
+        });
+        gear->click();
+        return opened;
+    };
+    QVERIFY(edit(false));
+    QCOMPARE(window.currentEditorProject().objects.first().text, QStringLiteral("TEST"));
+    QVERIFY(!window.m_dirty);
+    QVERIFY(edit(true));
+    QVERIFY(window.m_dirty);
+    QCOMPARE(settings->shortcut(), QKeySequence(QStringLiteral("Ctrl+P")));
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().text, changedText);
+}
+
+/******************************************************************************
+ * Function Name   : nativePropertyToolbarEditsCurrentPage
+ * Description     : Route the empty selection to current page properties while rejecting multi-selection.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 add
+{
+    QTemporaryDir directory;
+    const QString path = directory.filePath(QStringLiteral("page-properties.ksp"));
+    const QString changedName = QStringLiteral("齿轮修改的画面");
+    HmiProject seed = workflowProject();
+    HmiProject reopened;
+    HmiObject second = seed.objects.first();
+    MainWindow window;
+    QToolBar *toolbar;
+    QToolButton *gear;
+    QAction *settings;
+    QString error;
+    bool opened = false;
+    bool multiOpened = false;
+
+    QVERIFY(directory.isValid());
+    second.id = QStringLiteral("workflow-text-second");
+    second.geometry.translate(0, 82);
+    seed.objects.append(second);
+    QVERIFY2(seed.save(path, &error), qPrintable(error));
+    window.closeProject();
+    settings = window.findChild<QAction *>(QStringLiteral("action_openpropertiset"));
+    QVERIFY(settings != nullptr && !settings->isEnabled());
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.resize(1353, 708);
+    window.show();
+    toolbar = window.findChild<QToolBar *>(QStringLiteral("toolBar_Tool"));
+    QVERIFY(toolbar != nullptr);
+    gear = qobject_cast<QToolButton *>(toolbar->widgetForAction(settings));
+    QVERIFY(gear != nullptr);
+    window.m_canvas->selectObjects({seed.objects.first().id, second.id});
+    QVERIFY(gear->isEnabled());
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+
+        if (dialog != nullptr)
+        {
+            multiOpened = true;
+            dialog->reject();
+        }
+    });
+    gear->click();
+    QCoreApplication::processEvents();
+    QVERIFY(!multiOpened);
+    QVERIFY(!window.m_dirty);
+    window.m_canvas->selectObjects({});
+    QVERIFY(gear->isEnabled());
+
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name;
+        QDialogButtonBox *buttons;
+
+        if (dialog == nullptr) { return; }
+        name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
+        buttons = dialog->findChild<QDialogButtonBox *>();
+        if (name != nullptr && buttons != nullptr && dialog->windowTitle() == QStringLiteral("画面属性"))
+        {
+            opened = name->text() == seed.pageName;
+            name->setText(changedName);
+            buttons->button(QDialogButtonBox::Ok)->click();
+        }
+        if (dialog->isVisible()) { dialog->reject(); }
+    });
+    gear->click();
+    QVERIFY(opened);
+    window.m_commands.value(QStringLiteral("action_save"))->trigger();
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.pageName, changedName);
+    QCOMPARE(reopened.objects.first().text, QStringLiteral("TEST"));
+    QCOMPARE(reopened.objects.size(), 2);
 }
 
 /******************************************************************************

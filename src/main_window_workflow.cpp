@@ -955,6 +955,33 @@ void MainWindow::dispatchEditCommand(const QString &command) //20261110-7 add
             else { statusBar()->showMessage(error, 8000); }
         }
     }
+    else if (command == QStringLiteral("properties")) //20261124-0 add
+    {
+        if (!m_canvas->selectedObjectIds().isEmpty())
+        {
+            if (m_canvas->canExecuteEdit(command))
+            {
+                m_canvas->executeEdit(command);
+            }
+        }
+        else if (m_project.activePageKind == QStringLiteral("normal"))
+        {
+            candidate = currentEditorProject();
+            if (editStage2NormalPageProperties(this, candidate, candidate.activePageId) &&
+                !commitProjectDraft(candidate, &error))
+            {
+                QMessageBox::warning(this, QStringLiteral("画面属性未提交"), error);
+            }
+        }
+        else if (m_project.activePageKind == QStringLiteral("window"))
+        {
+            configureWindowPage(m_project.activePageId);
+        }
+        else if (m_project.activePageKind == QStringLiteral("keyboard"))
+        {
+            configureKeyboardPage(m_project.activePageId);
+        }
+    }
     else {
         referenceId = m_canvas->arrangementReferenceObjectId(command); //20261110-8 add: Make the observed scene-order anchor visible to the editor user.
         m_canvas->executeEdit(command);
@@ -1003,6 +1030,8 @@ void MainWindow::updateCommandStates() //20261110-7 add
         } else if (id == QStringLiteral("action_script") || id == QStringLiteral("action_GlobalMacro") ||
                    id == QStringLiteral("action_InitMacro")) { //20261123-20 change
             enabled = m_hasProject && !downloadInProgress();
+        } else if (command == QStringLiteral("properties")) { //20261124-0 add: An empty selection still has page properties.
+            enabled = m_hasProject;
         } else if (!command.isEmpty()) {
             enabled = m_hasProject && (command == QStringLiteral("undo") ? m_projectHistoryIndex > 0 :
                 command == QStringLiteral("redo") ? m_projectHistoryIndex + 1 < m_projectHistory.size() :
