@@ -37,6 +37,7 @@ private slots:
     void parentCloseEndsRuntime();
     void onlineToolRequiresExplicitPort(); //20261124-13 change
     void onlinePollsWritesAndRecovers();
+    void onlineWaitsForFreshValuesAfterWrite(); //20261124-14 add
     void onlineRejectsUnsafeOrOutOfRangeMapping();
     void invalidNumericInputCanRecover(); //20261114-6 add
     void directOwnerDeletionWithHeldViewport();
@@ -381,6 +382,8 @@ struct OnlineSlave //20261124-13 add: Shared observations are atomic because the
     std::atomic_bool framesMatch{true};
     std::atomic_bool holdCoilAck{true};
     std::atomic_bool failNextCoilAck{false};
+    std::atomic_bool holdRegisterReads{false}; //20261124-14 add
+    std::atomic_int firstPollAfterWordWrite{0};
     bool coil = false;               // Owned only by the one worker for this phase of the session.
     u16 low = 321;
     u16 high = 1;
@@ -396,7 +399,7 @@ struct OnlineSlave //20261124-13 add: Shared observations are atomic because the
 static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave) //20261124-13 add
 {
     return [slave](const PlcSerialSettings &settings, const std::function<bool()> &cancelled) {
-        struct Reply { QByteArray bytes; bool wait = false; bool timeout = false; bool sent = false; };
+        struct Reply { QByteArray bytes; bool wait = false; bool holdRegisterRead = false; bool timeout = false; bool sent = false; };
         const auto reply = std::make_shared<Reply>();
         SimulationModbusIo io;
 
@@ -411,6 +414,7 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
             const int function = frame.size() > 1 ? u8(frame[1]) : 0;
             const u16 crc = simulationModbusCrc16(payload);
             QByteArray data;
+            int first = 0;
 
             *reply = {};
             if (frame.size() < 8 || u8(frame[0]) != 7 || u8(frame[frame.size() - 2]) != u8(crc) ||
@@ -418,6 +422,10 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
             {
                 slave->framesMatch = false;
                 return -1;
+            }
+            if (slave->wordWrites.load() > 0 && function >= 1 && function <= 4)
+            {
+                slave->firstPollAfterWordWrite.compare_exchange_strong(first, function);
             }
             data = payload.left(2);
             if (function == 1 && payload.mid(2) == QByteArray::fromHex("00110001"))
@@ -428,6 +436,16 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
             {
                 data.append(char(4)); data.append(char(slave->low >> 8)); data.append(char(slave->low));
                 data.append(char(slave->high >> 8)); data.append(char(slave->high));
+                reply->holdRegisterRead = slave->wordWrites.load() > 0;
+            }
+            else if (function == 3 && payload.mid(2) == QByteArray::fromHex("00190001"))
+            {
+                data.append(char(2)); data.append(char(slave->high >> 8)); data.append(char(slave->high));
+                reply->holdRegisterRead = slave->wordWrites.load() > 0;
+            }
+            else if (function == 4 && payload.mid(2) == QByteArray::fromHex("00190001"))
+            {
+                data.append(char(2)); data.append(char(0)); data.append(char(77));
             }
             else if (function == 5 && payload.mid(2, 2) == QByteArray::fromHex("0011") &&
                      (payload.mid(4) == QByteArray::fromHex("ff00") || payload.mid(4) == QByteArray::fromHex("0000")))
@@ -457,14 +475,17 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
         io.read = [slave, reply, cancelled](int, int timeoutMs) {
             SimulationModbusReadChunk chunk;
             QElapsedTimer wait;
+            const auto held = [&]() {
+                return (reply->wait && slave->holdCoilAck) || (reply->holdRegisterRead && slave->holdRegisterReads);
+            };
 
             if (reply->timeout) { chunk.timedOut = true; return chunk; }
             wait.start();
-            while (reply->wait && slave->holdCoilAck && !cancelled() && wait.elapsed() < timeoutMs)
+            while (held() && !cancelled() && wait.elapsed() < timeoutMs)
             {
                 QThread::msleep(1);
             }
-            if (reply->wait && slave->holdCoilAck) { chunk.timedOut = true; return chunk; }
+            if (held()) { chunk.timedOut = true; return chunk; }
             if (reply->sent) { chunk.endOfFrame = true; }
             else { chunk.bytes = reply->bytes; reply->sent = true; }
             return chunk;
@@ -585,10 +606,95 @@ void SimulationUiTests::onlinePollsWritesAndRecovers() //20261124-13 add
     QTRY_VERIFY(window.runtime().readBit(project.objects[0].address, &bit) && !bit);
     QCOMPARE(slave->opens.load(), 2);
     QCOMPARE(slave->coilWrites.load(), 2);
+
+    // Disconnect while a sent write is still awaiting an acknowledgement.
+    slave->holdCoilAck = true; //20261124-14 add
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects[0].geometry.center());
+    QTRY_COMPARE(slave->coilWrites.load(), 3);
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QVERIFY(status->text().contains(QStringLiteral("上一次写入未确认")));
+    QVERIFY(!window.runtime().readBit(project.objects[0].address, &bit));
+    QCOMPARE(slave->closes.load(), 2);
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_VERIFY(window.runtime().readBit(project.objects[0].address, &bit) && bit);
+    QCOMPARE(slave->opens.load(), 3);
+    QCOMPARE(slave->coilWrites.load(), 3);
     QVERIFY(slave->framesMatch.load());
     QTest::keyClick(&window, Qt::Key_Escape);
-    QCOMPARE(slave->closes.load(), 2);
+    QCOMPARE(slave->closes.load(), 3);
     QVERIFY(!window.runtime().running());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineWaitsForFreshValuesAfterWrite
+ * Description     : Ensure a write acknowledgement invalidates all overlapping scans until readback.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void SimulationUiTests::onlineWaitsForFreshValuesAfterWrite() //20261124-14 add
+{
+    const auto slave = std::make_shared<OnlineSlave>();
+    HmiProject project = onlineTestProject();
+    SimulationWindow window;
+    SimulationViewport *view;
+    QPushButton *connectButton;
+    QComboBox *port;
+    QLabel *status;
+    QString error;
+    QString value;
+    bool bit = false;
+    HmiObject &coil = project.objects[0];
+    const QRect writeButton = project.objects.last().geometry;
+    HmiObject input = project.objects.at(3);
+
+    coil.bitButton.touch.visibilityEnabled = true;
+    coil.bitButton.touch.wordEnabled = true;
+    coil.bitButton.touch.wordAddress = QStringLiteral("@test-rtu:4x25");
+    coil.bitButton.touch.comparison = 2;
+    coil.bitButton.touch.compareValue = QStringLiteral("1");
+    project.objects[2].bitButton.monitorBitAddress = QStringLiteral("@test-rtu:4x_bit25.00");
+
+    input.id = QStringLiteral("input-reg");
+    input.name = input.id;
+    input.address = QStringLiteral("@test-rtu:3x25");
+    input.geometry.translate(160, 0);
+    input.numberDisplay.changeDataType(1);
+    input.numberDisplay.monitorAddress = input.address;
+    project.objects.append(input);
+
+    QVERIFY2(window.initializeOnline(project, &error, onlineSlave(slave)), qPrintable(error));
+    window.show();
+    view = window.findChild<SimulationViewport *>();
+    connectButton = window.findChild<QPushButton *>(QStringLiteral("onlineSimulationConnect"));
+    port = window.findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"));
+    status = window.findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    QVERIFY(view != nullptr && connectButton != nullptr && port != nullptr && status != nullptr);
+    port->setEditText(QStringLiteral("TEST-RTU"));
+    QTest::mouseClick(connectButton, Qt::LeftButton);
+    QTRY_VERIFY(window.runtime().touchAllowed(project.objects[0]));
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("65857"));
+    QTRY_COMPARE(window.runtime().numberDisplayValue(input), QStringLiteral("77"));
+    QCOMPARE(window.runtime().visualState(project.objects.at(2)), 1);
+
+    slave->holdRegisterReads = true;
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, writeButton.center());
+    QTRY_VERIFY(status->text().contains(QStringLiteral("PLC 已确认写入")));
+    QVERIFY(!window.runtime().readWord(QStringLiteral("@test-rtu:4x25"), 0, &value));
+    QVERIFY(!window.runtime().readBit(QStringLiteral("@test-rtu:4x_bit25.00"), &bit));
+    QCOMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("—"));
+    QCOMPARE(window.runtime().numberDisplayValue(input), QStringLiteral("77"));
+    QVERIFY(!window.runtime().touchAllowed(project.objects[0]));
+    QTRY_COMPARE(slave->firstPollAfterWordWrite.load(), 3);
+    slave->holdRegisterReads = false;
+
+    QTRY_VERIFY(window.runtime().readWord(QStringLiteral("@test-rtu:4x25"), 0, &value));
+    QCOMPARE(value, QStringLiteral("2"));
+    QTRY_COMPARE(window.runtime().visualState(project.objects.at(2)), 0);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("131077"));
+    QVERIFY(!window.runtime().touchAllowed(project.objects[0]));
+    QCOMPARE(slave->coilWrites.load(), 0);
+    QVERIFY(slave->framesMatch.load());
 }
 
 /******************************************************************************

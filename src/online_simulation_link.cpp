@@ -1,5 +1,6 @@
 #include "online_simulation_link.h"
 
+#include <QQueue> //20261124-14 add
 #include <QThread>
 #include <QTimer>
 #include <optional>
@@ -29,6 +30,22 @@ bool linkError(QString *error, const QString &message) //20261124-13 add
 QString bindingKey(const QString &text, bool bit, int span) //20261124-13 add
 {
     return QStringLiteral("%1:%2:%3").arg(bit).arg(span).arg(text.trimmed());
+}
+
+/******************************************************************************
+ * Function Name   : writeOverlapsScan
+ * Description     : Match an acknowledged write to the same RTU address space and overlapping words or coils.
+ * Input Parameters: write, scan
+ * Return Value    : True when the scan's cached response can contain a changed value.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+bool writeOverlapsScan(const SimulationModbusRequest &write, const SimulationModbusRequest &scan) //20261124-14 add
+{
+    const SimulationModbusOperation read = write.operation == SimulationModbusOperation::WriteSingleCoil
+        ? SimulationModbusOperation::ReadCoils : SimulationModbusOperation::ReadHoldingRegisters;
+
+    return scan.operation == read && scan.address < write.address + write.count &&
+        write.address < scan.address + scan.count;
 }
 }
 
@@ -100,6 +117,7 @@ private:
     {
         if (m_timer != nullptr) { m_timer->stop(); }
         m_write.reset();
+        m_readback.clear(); //20261124-14 add: Drop pending readback on the same fail-closed path.
         m_transport.disconnectFromStation();
         QMetaObject::invokeMethod(m_link, [link = m_link, cancel = m_cancel, error]() {
             if (!cancel->load()) { link->failed(error); }
@@ -116,18 +134,23 @@ private:
     void step()
     {
         SimulationModbusRequest request;
+        SimulationModbusRequest scan;
         SimulationModbusResult result;
         bool writing;
         bool readForToggle;
         QString error;
 
         if (m_cancel->load()) { return; }
-        writing = m_write.has_value();
+        writing = m_readback.isEmpty() && m_write.has_value(); //20261124-14 change
         readForToggle = writing && m_toggle;
         if (writing)
         {
             request = *m_write;
             if (readForToggle) { request.operation = SimulationModbusOperation::ReadCoils; }
+        }
+        else if (!m_readback.isEmpty())
+        {
+            request = m_readback.dequeue(); //20261124-14 add
         }
         else
         {
@@ -150,7 +173,14 @@ private:
         }
         else
         {
-            if (writing) { m_write.reset(); }
+            if (writing) //20261124-14 change: Re-read affected ranges before the next normal poll or write.
+            {
+                Q_FOREACH (scan, m_scans)
+                {
+                    if (writeOverlapsScan(result.request, scan)) { m_readback.enqueue(scan); }
+                }
+                m_write.reset();
+            }
             QMetaObject::invokeMethod(m_link, [link = m_link, cancel = m_cancel, result, writing]() {
                 if (!cancel->load()) { link->receive(result, writing); }
             }, Qt::QueuedConnection);
@@ -163,6 +193,7 @@ private:
     PlcSerialIoFactory m_factory;
     std::shared_ptr<std::atomic_bool> m_cancel;
     QList<SimulationModbusRequest> m_scans;
+    QQueue<SimulationModbusRequest> m_readback; //20261124-14 add
     SimulationModbusTransport m_transport;
     std::optional<SimulationModbusRequest> m_write;
     QTimer *m_timer = nullptr;
@@ -421,10 +452,17 @@ void OnlineSimulationLink::disconnectPort() //20261124-13 add
  * Return Value    : None
  * Date            : 2026.11.24
  ******************************************************************************/
-void OnlineSimulationLink::receive(const SimulationModbusResult &result, bool write) //20261124-13 add
+void OnlineSimulationLink::receive(const SimulationModbusResult &result, bool write) //20261124-14 change
 {
+    SimulationModbusRequest scan;
+
     if (write)
     {
+        // An echo confirms the write, but the affected bits and words are unknown until read back.
+        Q_FOREACH (scan, m_scans)
+        {
+            if (writeOverlapsScan(result.request, scan)) { m_values.remove(scan.id); }
+        }
         m_writePending = false;
         m_status = QStringLiteral("PLC 已确认写入，画面值随读取刷新。");
     }
