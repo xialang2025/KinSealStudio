@@ -549,7 +549,7 @@ void Stage3CanvasTests::nativeArrangementGeometry() //20261110-8 add
 
 /******************************************************************************
  * Function Name   : arrangementReferencePolicy
- * Description     : Expose native list operands and a selected explicit override without presenting them as mouse chronology.
+ * Description     : Verify the most recently selected object and the explicit override share one alignment reference.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.10
@@ -564,7 +564,7 @@ void Stage3CanvasTests::arrangementReferencePolicy() //20261110-8 add
     project.objects = {canvasObject(QStringLiteral("A"), QRect(31, 47, 81, 39)), canvasObject(QStringLiteral("B"), QRect(233, 117, 125, 63)),
                        canvasObject(QStringLiteral("C"), QRect(487, 289, 57, 91))};
     canvas.setProject(project); canvas.selectObjects({QStringLiteral("A"), QStringLiteral("B"), QStringLiteral("C")});
-    selection = canvas.selectedObjectIds(); QCOMPARE(canvas.arrangementReferenceObjectId(QStringLiteral("alignLeft")), selection.first());
+    selection = canvas.selectedObjectIds(); QCOMPARE(canvas.arrangementReferenceObjectId(QStringLiteral("alignLeft")), selection.last());
     QCOMPARE(canvas.arrangementReferenceObjectId(QStringLiteral("alignSize")), selection.last());
     canvas.setArrangementReferenceObject(QStringLiteral("B")); QCOMPARE(canvas.arrangementReferenceObjectId(QStringLiteral("alignLeft")), QStringLiteral("B"));
     QCOMPARE(canvas.arrangementReferenceObjectId(QStringLiteral("alignSize")), QStringLiteral("B"));

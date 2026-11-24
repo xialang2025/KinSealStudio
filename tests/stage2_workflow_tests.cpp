@@ -78,6 +78,7 @@ private slots:
     void canvasControlDragCancelsInterruptedInput(); //20261124-12 add
     void toolbarFlipsArtworkAndPersists(); //20261124-15 add
     void flippedLineFollowsVisibleHandles();
+    void multiSelectionMarksLastObjectAndAlignsToIt(); //20261124-16 add
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
@@ -854,6 +855,112 @@ void Stage2WorkflowTests::flippedLineFollowsVisibleHandles() //20261124-15 add
     handles = graphicHandles(line.type, line.geometry, line.graphic);
     QCOMPARE(line.appearanceTransform(line.geometry).map(handles[0]).toPoint(), QPoint(183, 66));
     QCOMPARE(line.appearanceTransform(line.geometry).map(handles[1]).toPoint(), QPoint(90, 135));
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::multiSelectionMarksLastObjectAndAlignsToIt
+ * Description     : Verify real Ctrl clicks, rendered handles and the toolbar's common reference object.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::multiSelectionMarksLastObjectAndAlignsToIt() //20261124-16 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiObject a = project.objects.first();
+    HmiObject b = a;
+    HmiObject c = a;
+    ScreenCanvas *canvas;
+    QAction *left;
+    QAction *equalWidth;
+    QImage render;
+    QString command;
+    HmiObject object;
+    QPoint start;
+    QPoint end;
+    int history;
+    const QStringList alignments = {QStringLiteral("alignLeft"), QStringLiteral("alignRight"), QStringLiteral("alignTop"),
+        QStringLiteral("alignBottom"), QStringLiteral("alignCenter"), QStringLiteral("alignMiddle"),
+        QStringLiteral("alignWidth"), QStringLiteral("alignHeight"), QStringLiteral("alignSize")};
+    const auto handleColor = [&](const HmiObject &object) {
+        return render.pixelColor(canvas->mapFromScene(object.geometry.topLeft()));
+    };
+
+    a.id = QStringLiteral("A");
+    a.geometry = QRect(230, 70, 92, 54);
+    a.layer = 3;
+    b.id = QStringLiteral("B");
+    b.geometry = QRect(330, 165, 70, 40);
+    b.layer = 1;
+    c.id = QStringLiteral("C");
+    c.geometry = QRect(110, 263, 114, 64);
+    c.layer = 2;
+    project.objects = {a, b, c};
+    window.setProject(project, QString());
+    window.resize(1353, 708);
+    window.show();
+    canvas = window.m_canvas;
+    left = window.m_commands.value(QStringLiteral("action_left"));
+    equalWidth = window.m_commands.value(QStringLiteral("action_widthsame"));
+    QVERIFY(left != nullptr && equalWidth != nullptr);
+    QVERIFY(!left->isEnabled() && !equalWidth->isEnabled());
+    history = window.m_projectHistoryIndex;
+
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::NoModifier, canvas->mapFromScene(a.geometry.center()));
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::ControlModifier, canvas->mapFromScene(b.geometry.center()));
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::ControlModifier, canvas->mapFromScene(c.geometry.center()));
+    QVERIFY(left->isEnabled() && equalWidth->isEnabled());
+    render = canvas->viewport()->grab().toImage();
+    QCOMPARE(handleColor(a), QColor(Qt::white));
+    QCOMPARE(handleColor(b), QColor(Qt::white));
+    QCOMPARE(handleColor(c), QColor(Qt::black));
+    QCOMPARE(canvas->selectedObjectIds(), (QStringList{a.id, b.id, c.id}));
+    Q_FOREACH (command, alignments)
+    {
+        QCOMPARE(canvas->arrangementReferenceObjectId(command), c.id);
+    }
+    QCOMPARE(window.m_projectHistoryIndex, history);
+
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::ControlModifier, canvas->mapFromScene(c.geometry.center()));
+    QCOMPARE(canvas->arrangementReferenceObjectId(QStringLiteral("alignLeft")), b.id);
+    render = canvas->viewport()->grab().toImage();
+    QCOMPARE(handleColor(b), QColor(Qt::black));
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::ControlModifier, canvas->mapFromScene(c.geometry.center()));
+    left->trigger();
+    equalWidth->trigger();
+    QCOMPARE(window.m_projectHistoryIndex, history + 2);
+    QCOMPARE(canvas->arrangementReferenceObjectId(QStringLiteral("alignWidth")), c.id);
+    Q_FOREACH (object, canvas->objects())
+    {
+        QCOMPARE(object.geometry.x(), c.geometry.x());
+        QCOMPARE(object.geometry.width(), c.geometry.width());
+        if (object.id == c.id) { QCOMPARE(object.geometry, c.geometry); }
+    }
+
+    canvas->selectObjects({});
+    QVERIFY(!left->isEnabled() && !equalWidth->isEnabled());
+
+    // A marquee has one deterministic reference even though it selects several controls at once.
+    window.setProject(project, QString());
+    canvas->setZoomPercent(125);
+    start = canvas->mapFromScene(QPoint(80, 45));
+    end = canvas->mapFromScene(QPoint(421, 340));
+    QVERIFY(canvas->viewport()->rect().contains(start) && canvas->viewport()->rect().contains(end));
+    QTest::mousePress(canvas->viewport(), Qt::LeftButton, Qt::NoModifier, start);
+    QMouseEvent move(QEvent::MouseMove, end, canvas->viewport()->mapToGlobal(end),
+                     Qt::NoButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(canvas->viewport(), &move);
+    QTest::mouseRelease(canvas->viewport(), Qt::LeftButton, Qt::NoModifier, end);
+    QCOMPARE(canvas->selectedObjectIds(), (QStringList{b.id, c.id, a.id}));
+    QCOMPARE(canvas->arrangementReferenceObjectId(QStringLiteral("alignTop")), a.id);
+    render = canvas->viewport()->grab().toImage();
+    QCOMPARE(handleColor(a), QColor(Qt::black));
+    QCOMPARE(handleColor(b), QColor(Qt::white));
+    QCOMPARE(handleColor(c), QColor(Qt::white));
+    QCOMPARE(render.pixelColor(canvas->mapFromScene(a.geometry.topLeft()) - QPoint(2, 0)), QColor(Qt::white));
+    QCOMPARE(render.pixelColor(canvas->mapFromScene(b.geometry.topLeft()) - QPoint(2, 0)), QColor(Qt::black));
+    QCOMPARE(window.m_projectHistoryIndex, history);
 }
 
 /******************************************************************************

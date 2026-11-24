@@ -1014,7 +1014,7 @@ void MainWindow::dispatchEditCommand(const QString &command) //20261110-7 add
         }
     }
     else {
-        referenceId = m_canvas->arrangementReferenceObjectId(command); //20261110-8 add: Make the observed scene-order anchor visible to the editor user.
+        referenceId = m_canvas->arrangementReferenceObjectId(command); //20261124-16 change: Report the object marked by the filled handles.
         m_canvas->executeEdit(command);
         Q_FOREACH (reference, m_project.objects) {
             if (!referenceId.isEmpty() && reference.id == referenceId) {

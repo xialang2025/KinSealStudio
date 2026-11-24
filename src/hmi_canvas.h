@@ -145,7 +145,8 @@ private:
     QRect m_moveBounds;
     QList<HmiObject> m_interactionOriginal;
     QStringList m_interactionSelection;
-    QString m_arrangementReferenceId; //20261110-8 add: Optional explicit reference; empty keeps the observed native list-first/list-last policy.
+    QString m_arrangementReferenceId; //20261124-16 change: A selected explicit reference overrides the last selection.
+    QStringList m_selectionOrder; //20261124-16 add: Retain actual selection order independently of Qt's item collection.
 
     QMap<QString, QStringList> m_recipeTitles; //20261113-2 add: Transient resolved context is never copied into HmiObject or KSP.
     QMap<QString, int> m_recipeCounts;
@@ -153,6 +154,8 @@ private:
     void bindRecipeContext(HmiControlItem *item);
     void rebuildPage(int width, int height, bool preserveItems);
     void publishSelection();
+    QString primarySelectedObjectId() const; //20261124-16 add
+    void drawMultiSelectionHandles(QPainter *painter) const;
     void recordHistory();
     void restoreObjects(const QList<HmiObject> &objects);
     bool beginResize(const QPointF &point);

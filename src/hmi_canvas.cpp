@@ -275,7 +275,8 @@ void HmiControlItem::paint(QPainter *painter,
     }
 
     painter->restore(); //20261124-15 add
-    if ((option->state & QStyle::State_Selected) && !graphicUsesVertices(m_type)) //20261113-2 change: Directed lines use endpoint adornments only.
+    if ((option->state & QStyle::State_Selected) && !graphicUsesVertices(m_type) &&
+        (scene() == nullptr || scene()->selectedItems().size() == 1)) //20261124-16 change: Multi-selection paints fixed-pixel handles in the view.
     {
         selection_pen = QPen(QColor(36, 111, 206), 1.0, Qt::DashLine);
         painter->setPen(selection_pen);
@@ -365,6 +366,7 @@ void ScreenCanvas::setProject(const HmiProject &project) //20261107-6 add
     Q_FOREACH (recipe, project.configurationNodes) { if (recipe.kind != QStringLiteral("recipe") || !recipe.active || !recipe.implemented || !RecipeProperties::fromJson(recipe.properties, &properties)) { continue; } titles = QStringList{QStringLiteral("序号"), recipe.name}; titles.append(properties.itemNames.mid(0, properties.length)); m_recipeTitles.insert(recipe.id, titles); m_recipeCounts.insert(recipe.id, properties.count); }
     cancelInteraction(); //20261110-8 add: A page replacement cannot retain partial geometry or a placement draft.
     m_arrangementReferenceId.clear(); //20261110-8 add: An explicit reference belongs only to the current page selection.
+    m_selectionOrder.clear(); //20261124-16 add
     m_pageWidth = project.pageWidth;
     m_pageHeight = project.pageHeight;
     m_pageBackground = project.activePageBackground; //20261123-1 change
@@ -709,11 +711,15 @@ void ScreenCanvas::selectObjects(const QStringList &ids) //20261110-8 add
     QSignalBlocker blocker(m_scene);
 
     m_scene->clearSelection();
+    m_selectionOrder = ids; //20261124-16 add
     Q_FOREACH (graphics, m_scene->items())
     {
         item = dynamic_cast<HmiControlItem *>(graphics);
         if (item != nullptr) { item->setSelected(ids.contains(item->toHmiObject().id)); }
     }
+    // A group can expand the requested IDs. Keep the last explicitly selected member as the reference.
+    m_selectionOrder = selectedObjectIds(); //20261124-16 add
+    m_arrangementReferenceId = ids.isEmpty() ? QString() : ids.last();
     publishSelection(); viewport()->update();
 }
 
@@ -1010,7 +1016,16 @@ void ScreenCanvas::publishSelection() //20261110-8 change
 {
     bool selected;
     HmiObject object;
+    QStringList current;
 
+    current = selectedObjectIds(); //20261124-16 add: Keep click order while removing deselected operands.
+    if (current != m_selectionOrder)
+    {
+        m_arrangementReferenceId.clear();
+        // The old reference can stay selected, so its handles also need repainting.
+        viewport()->update();
+    }
+    m_selectionOrder = current;
     object = selectedObject(&selected);
     if (!m_scene->selectedItems().isEmpty()) //20261124-5 add: Returning from a selection shows the blank whole-page choice.
     {

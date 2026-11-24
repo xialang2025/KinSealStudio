@@ -488,7 +488,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
     }
     else
     {
-        referenceId = arrangementReferenceObjectId(command); //20261110-8 change: Native r2/r3 position and size operations use different list operands.
+        referenceId = arrangementReferenceObjectId(command); //20261124-16 change: Position and size share the filled-handle reference.
         Q_FOREACH (item, all)
         {
             if (item->toHmiObject().id == referenceId) { referenceGeometry = item->toHmiObject().geometry; break; }
@@ -603,6 +603,62 @@ void ScreenCanvas::keyPressEvent(QKeyEvent *event) //20261108-14 add
 }
 
 /******************************************************************************
+ * Function Name   : ScreenCanvas::drawMultiSelectionHandles
+ * Description     : Paint five-pixel handles and fill the active alignment reference.
+ * Input Parameters: painter
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void ScreenCanvas::drawMultiSelectionHandles(QPainter *painter) const //20261124-16 add
+{
+    const QString referenceId = primarySelectedObjectId();
+    const QTransform mapping = painter->worldTransform();
+    QList<QGraphicsItem *> roots;
+    QGraphicsItem *graphics;
+    QGraphicsItem *root;
+    QGraphicsItem *reference = nullptr;
+    HmiControlItem *control;
+    QRectF bounds;
+    QPoint center;
+    int index;
+    bool primary;
+
+    Q_FOREACH (graphics, m_scene->items())
+    {
+        control = dynamic_cast<HmiControlItem *>(graphics);
+        if (control == nullptr || control->toHmiObject().id != referenceId) { continue; }
+        reference = control;
+        while (reference->parentItem() != nullptr) { reference = reference->parentItem(); }
+        break;
+    }
+    Q_FOREACH (graphics, m_scene->selectedItems())
+    {
+        root = graphics;
+        while (root->parentItem() != nullptr) { root = root->parentItem(); }
+        if (!roots.contains(root)) { roots.append(root); }
+    }
+    if (roots.removeAll(reference) > 0) { roots.append(reference); } // Keep the reference visible when handles overlap.
+
+    painter->save();
+    painter->resetTransform();
+    Q_FOREACH (root, roots)
+    {
+        control = dynamic_cast<HmiControlItem *>(root);
+        bounds = control != nullptr ? control->mapRectToScene(control->rect()) : root->sceneBoundingRect();
+        primary = root == reference;
+        for (index = 0; index < 9; ++index)
+        {
+            if (index == 4) { continue; }
+            center = mapping.map(QPointF(bounds.x() + (index % 3) * bounds.width() / 2,
+                                         bounds.y() + (index / 3) * bounds.height() / 2)).toPoint();
+            painter->fillRect(QRect(center - QPoint(2, 2), QSize(5, 5)), primary ? Qt::white : Qt::black);
+            painter->fillRect(QRect(center - QPoint(1, 1), QSize(3, 3)), primary ? Qt::black : Qt::white);
+        }
+    }
+    painter->restore();
+}
+
+/******************************************************************************
  * Function Name   : ScreenCanvas::drawForeground
  * Description     : Paint an optional non-exported editor grid in page pixel coordinates.
  * Input Parameters: painter, rect
@@ -629,7 +685,12 @@ void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261
             for (x = 10; x < m_pageWidth; x += 10) { painter->drawPoint(x, y); }
         }
     }
-    if (m_scene->selectedItems().size() != 1) { return; }
+    if (m_scene->selectedItems().size() > 1) //20261124-16 add
+    {
+        drawMultiSelectionHandles(painter);
+        return;
+    }
+    if (m_scene->selectedItems().isEmpty()) { return; }
     graphics = m_scene->selectedItems().first(); item = dynamic_cast<HmiControlItem *>(graphics);
     if (item == nullptr) { return; }
     bounds = item->toHmiObject().geometry;
@@ -757,26 +818,31 @@ void ScreenCanvas::updateMove(const QPointF &point) //20261110-8 add
 QStringList ScreenCanvas::selectedObjectIds() const //20261110-7 add
 {
     QStringList ids;
+    QStringList selected;
     QGraphicsItem *graphics;
     HmiControlItem *item;
+    QString id;
 
-    Q_FOREACH (graphics, m_scene->selectedItems()) {
+    // Scan in stable scene order for objects introduced together by a marquee or Select All.
+    Q_FOREACH (graphics, m_scene->items(Qt::AscendingOrder)) //20261124-16 add
+    {
         item = dynamic_cast<HmiControlItem *>(graphics);
-        if (item != nullptr) { ids.append(item->toHmiObject().id); }
+        if (item != nullptr && item->isSelected()) { selected.append(item->toHmiObject().id); }
     }
+    Q_FOREACH (id, m_selectionOrder) { if (selected.contains(id) && !ids.contains(id)) { ids.append(id); } }
+    Q_FOREACH (id, selected) { if (!ids.contains(id)) { ids.append(id); } }
     return ids;
 }
 
 /******************************************************************************
  * Function Name   : ScreenCanvas::arrangementReferenceObjectId
- * Description     : Report the current position/size operand, keeping Qt collection-order uncertainty visible to the host.
+ * Description     : Return the same visible reference for edge, center and size alignment.
  * Input Parameters: command
  * Return Value    : Selected reference ID, or an empty string for operations without a reference
  * Date            : 2026.11.10
  ******************************************************************************/
 QString ScreenCanvas::arrangementReferenceObjectId(const QString &command) const //20261110-8 add
 {
-    QStringList ids;
     bool sizeCommand;
     bool positionCommand;
 
@@ -784,23 +850,35 @@ QString ScreenCanvas::arrangementReferenceObjectId(const QString &command) const
     positionCommand = command == QStringLiteral("alignLeft") || command == QStringLiteral("alignRight") || command == QStringLiteral("alignTop") ||
                       command == QStringLiteral("alignBottom") || command == QStringLiteral("alignCenter") || command == QStringLiteral("alignMiddle");
     if (!sizeCommand && !positionCommand) { return QString(); }
-    ids = selectedObjectIds();
-    if (ids.isEmpty()) { return QString(); }
-    if (ids.contains(m_arrangementReferenceId)) { return m_arrangementReferenceId; }
-    // Two native probes support list-first for position and list-last for size; neither establishes mouse selection chronology.
-    return sizeCommand ? ids.last() : ids.first();
+    return primarySelectedObjectId(); //20261124-16 change
+}
+
+/******************************************************************************
+ * Function Name   : ScreenCanvas::primarySelectedObjectId
+ * Description     : Resolve the visible reference against the live selection.
+ * Input Parameters: None
+ * Return Value    : Explicit reference, last selected ID, or empty.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+QString ScreenCanvas::primarySelectedObjectId() const //20261124-16 add
+{
+    const QStringList ids = selectedObjectIds();
+
+    if (ids == m_selectionOrder && ids.contains(m_arrangementReferenceId)) { return m_arrangementReferenceId; }
+    return ids.isEmpty() ? QString() : ids.last();
 }
 
 /******************************************************************************
  * Function Name   : ScreenCanvas::setArrangementReferenceObject
  * Description     : Allow an explicit selected reference without relying on cross-version Qt set iteration order.
- * Input Parameters: id; empty or unselected IDs restore the observed native operand policy
+ * Input Parameters: id; empty or unselected IDs restore the last selected reference
  * Return Value    : None
  * Date            : 2026.11.10
  ******************************************************************************/
 void ScreenCanvas::setArrangementReferenceObject(const QString &id) //20261110-8 add
 {
     m_arrangementReferenceId = selectedObjectIds().contains(id) ? id : QString();
+    viewport()->update(); //20261124-16 add: Redraw when an explicit reference changes.
 }
 
 /******************************************************************************
