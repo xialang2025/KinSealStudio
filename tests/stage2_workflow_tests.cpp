@@ -93,6 +93,7 @@ private slots:
     void addingProtocolKeepsExistingProtocolsOnThePort(); //20261122-7 add
     void deletingProtocolProtectsProjectReferences(); //20261122-7 add
     void newPageFromSettingsTreeCancelsOrReopens(); //20261122-9 add
+    void newPageFromToolbarCancelsOrReopens_data(); //20261124-10 add
     void newPageFromToolbarCancelsOrReopens(); //20261124-9 add
     void ordinaryPageNumbersAreEditableAndPersisted(); //20261122-10 add
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
@@ -1449,6 +1450,20 @@ void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9
 }
 
 /******************************************************************************
+ * Function Name   : newPageFromToolbarCancelsOrReopens_data
+ * Description     : Reuse the toolbar workflow with and without existing page identifiers in the way.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens_data() //20261124-10 add
+{
+    QTest::addColumn<bool>("withWindow");
+    QTest::newRow("single-page") << false;
+    QTest::newRow("existing-window-occupies-suggestions") << true;
+}
+
+/******************************************************************************
  * Function Name   : newPageFromToolbarCancelsOrReopens
  * Description     : Click the actual New Page toolbar button and exercise the page transaction.
  * Input Parameters: None.
@@ -1458,7 +1473,7 @@ void Stage2WorkflowTests::newPageFromSettingsTreeCancelsOrReopens() //20261122-9
 void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens() //20261124-9 add
 {
     QTemporaryDir directory;
-    const HmiProject original = workflowProject();
+    HmiProject original = workflowProject();
     const QString path = directory.filePath(QStringLiteral("toolbar-page.ksp"));
     MainWindow window;
     MainWindow reopened;
@@ -1469,9 +1484,25 @@ void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens() //20261124-9 add
     QStringList defaults;
     QPoint clickPoint;
     HmiProject created;
+    HmiPage existing;
     int historySize;
 
+    QFETCH(bool, withWindow); //20261124-10 add
     QVERIFY(directory.isValid() && toolbar != nullptr && action != nullptr);
+    original.targetModel = QStringLiteral("AMZ070W01");
+    if (withWindow)
+    {
+        existing.id = QStringLiteral("toolbar-existing-window");
+        existing.name = QStringLiteral("画面3");
+        existing.kind = QStringLiteral("window");
+        existing.number = 2;
+        existing.width = 240;
+        existing.height = 180;
+        QVERIFY2(original.addPage(existing, &error), qPrintable(error));
+    }
+    const QStringList expectedDefaults = {QStringLiteral("新建画面"),
+        withWindow ? QStringLiteral("画面4") : QStringLiteral("画面2"),
+        withWindow ? QStringLiteral("3") : QStringLiteral("1")};
     button = qobject_cast<QToolButton *>(toolbar->widgetForAction(action));
     QVERIFY(button != nullptr);
     window.closeProject();
@@ -1506,7 +1537,7 @@ void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens() //20261124-9 add
             buttons->button(accept ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
         });
         QTest::mouseClick(window.windowHandle(), Qt::LeftButton, Qt::NoModifier, clickPoint);
-        QCOMPARE(defaults, (QStringList{QStringLiteral("新建画面"), QStringLiteral("画面2"), QStringLiteral("1")}));
+        QCOMPARE(defaults, expectedDefaults); //20261124-10 change
         if (!accept)
         {
             QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
@@ -1514,16 +1545,26 @@ void Stage2WorkflowTests::newPageFromToolbarCancelsOrReopens() //20261124-9 add
         }
     }
     created = window.currentEditorProject();
-    QCOMPARE(created.pageCount(), 2);
+    QCOMPARE(created.pageCount(), original.pageCount() + 1); //20261124-10 change
     QCOMPARE(created.pageName, QStringLiteral("参数画面"));
+    QCOMPARE(created.activePageNumber.value_or(-1), expectedDefaults.last().toInt());
     QCOMPARE(created.startupPageId, original.startupPageId);
     QCOMPARE(window.m_projectHistory.size(), historySize + 1);
     QVERIFY(window.m_dirty);
 
+    //20261124-10 add: Exercise both history commands against the complete page records.
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger();
+    QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
+    QVERIFY(!window.m_dirty);
+    window.m_commands.value(QStringLiteral("action_redo"))->trigger();
+    QCOMPARE(window.currentEditorProject().toJson(), created.toJson());
+    QVERIFY(window.m_dirty);
     window.m_commands.value(QStringLiteral("action_save"))->trigger();
     QVERIFY(!window.m_dirty);
     QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
     QCOMPARE(reopened.currentEditorProject().toJson(), created.toJson());
+    QVERIFY(!reopened.currentEditorProject().validateSinglePageBackend(&error)); //20261124-10 add
+    QVERIFY(error.contains(QStringLiteral("多页")));
     window.closeProject();
     QVERIFY(!button->isEnabled());
 }
