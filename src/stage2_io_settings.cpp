@@ -1,4 +1,5 @@
 #include "stage2_io_settings.h"
+#include "dialog_button_text.h" //20261124-8 add
 
 #include "local_help.h"
 #include "plc_address_dialog.h"
@@ -182,9 +183,9 @@ bool editStage2IoSettings(QWidget *parent, const HmiProject &project, const QStr
         buttonLayout->setContentsMargins(0, 0, 0, 0);
         buttonLayout->setSpacing(8);
     }
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons.button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons.button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     Q_FOREACH (button, buttons.findChildren<QPushButton *>())
     {
         button->setFixedSize(73, 21);

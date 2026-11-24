@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "local_help.h"
 
 #include <QComboBox>
@@ -295,9 +296,9 @@ void MainWindow::configureLanguages() //20261123-19 change
     validation.setWordWrap(true);
     buttons.setObjectName(QStringLiteral("buttonBox"));
     buttons.setGeometry(135, 310 + extraHeight, 235, 32);
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons.button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons.button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     connect(&count, &QComboBox::currentIndexChanged, &dialog, updateRows);
     connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(&buttons, &QDialogButtonBox::helpRequested, &dialog, [this, &dialog]() {

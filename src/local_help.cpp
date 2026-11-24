@@ -439,7 +439,7 @@ void LocalHelpController::ensureDialog(QWidget *context) //20261114-10 add
     m_browser->setObjectName(QStringLiteral("LocalHelpBrowser"));
     layout->addWidget(m_browser, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Close, m_dialog);
-    buttons->button(QDialogButtonBox::Close)->setText(QStringLiteral("关闭"));
+    //20261124-8 change: Qt also updates the cached help dialog when the editor language changes.
     layout->addWidget(buttons);
     connect(contents, &QPushButton::clicked, this, [this]() { showTopic(QStringLiteral("start")); });
     connect(buttons, &QDialogButtonBox::rejected, m_dialog, &QDialog::reject);

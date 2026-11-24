@@ -1,4 +1,5 @@
 #include "gif_display_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "animation_resources.h"
 #include "hmi_property_widgets.h"
 #include "local_help.h" //20261119-2 add
@@ -75,7 +76,7 @@ GifDisplayDialog::GifDisplayDialog(const HmiObject &object, const HmiProject &pr
     security = new QWidget(tabs); securityLayout = new QVBoxLayout(security); m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("GifVisibility"), m_draft.visibility, false, security); m_visibility->setObjectName(QStringLiteral("GifVisibility")); securityLayout->addWidget(m_visibility); securityLayout->addStretch(); tabs->addTab(security, QStringLiteral("权限设置"));
     content->addWidget(tabs, 1); preview = new QGroupBox(QStringLiteral("预览"), this); preview->setFixedSize(170, 220); previewLayout = new QVBoxLayout(preview); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("GifPreview")); m_preview->setFixedSize(150, 180); m_preview->setAlignment(Qt::AlignCenter); m_preview->setStyleSheet(QStringLiteral("background:white; border:1px solid #8b929a;")); previewLayout->addWidget(m_preview); previewLayout->addStretch(); content->addWidget(preview, 0, Qt::AlignTop); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("GifButtons")); root->addWidget(buttons);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261112-0 change: Keep native Chinese captions independent of the system Qt translation installation.
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); //20261112-0 change: Keep native Chinese captions independent of the system Qt translation installation.
     connect(buttons, &QDialogButtonBox::accepted, this, &GifDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &GifDisplayDialog::reject);
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261119-2 add: Open the packaged controls chapter without applying the dialog draft.
         LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);

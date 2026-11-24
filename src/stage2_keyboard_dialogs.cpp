@@ -1,4 +1,5 @@
 #include "stage2_keyboard_dialogs.h"
+#include "dialog_button_text.h" //20261124-8 add
 
 #include "bit_button_dialog.h"
 #include "bit_button_renderer.h"
@@ -161,8 +162,8 @@ QPixmap templateImage(const HmiPage &page, const QString &language) //20261123-2
  ******************************************************************************/
 void formatButtons(QDialogButtonBox &buttons) //20261123-24 add
 {
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
 }
 
 } // namespace

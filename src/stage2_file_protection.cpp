@@ -1,4 +1,5 @@
 #include "stage2_file_protection.h"
+#include "dialog_button_text.h" //20261124-8 add
 
 #include <QCheckBox>
 #include <QDialog>
@@ -168,7 +169,7 @@ void passwordMessage(QWidget *parent, QMessageBox::Icon icon, const QString &tit
 {
     QMessageBox dialog(icon, title, message, QMessageBox::Ok, parent);
 
-    dialog.button(QMessageBox::Ok)->setText(QStringLiteral("确定"));
+    dialog.button(QMessageBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
     dialog.exec();
 }
 }
@@ -333,9 +334,9 @@ bool editStage2FileProtection(QWidget *parent, const QString &initialPassword, Q
     explanation.setWordWrap(true);
     buttons.setObjectName(QStringLiteral("buttonBox"));
     buttons.setGeometry(139, 187, 235, 21);
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons.button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons.button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     for (QAbstractButton *button : buttons.buttons())
     {
         button->setFixedSize(73, 21);
@@ -385,8 +386,8 @@ bool requestStage2FilePassword(QWidget *parent, QString *password) //20261123-17
     QLabel message(QStringLiteral("该文件有密码保护"), &dialog);
     QLabel label(QStringLiteral("请输入密码："), &dialog);
     QLineEdit input(&dialog);
-    QPushButton confirm(QStringLiteral("确定"), &dialog);
-    QPushButton cancel(QStringLiteral("取消"), &dialog);
+    QPushButton confirm(dialogButtonText(QStringLiteral("确定"), "OK"), &dialog);
+    QPushButton cancel(dialogButtonText(QStringLiteral("取消"), "Cancel"), &dialog);
 
     if (password == nullptr)
     {

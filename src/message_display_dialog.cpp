@@ -1,4 +1,5 @@
 #include "message_display_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "static_text_renderer.h"
 #include "plc_address_dialog.h"
@@ -141,7 +142,7 @@ MessageDisplayDialog::MessageDisplayDialog(const HmiObject &object, const HmiPro
     m_preview = new QLabel(previewGroup); m_preview->setObjectName(QStringLiteral("MessagePreview")); m_preview->setFixedSize(130, 141); previewLayout->addWidget(m_preview);
     content->addWidget(tabs, 1); content->addWidget(previewGroup, 0, Qt::AlignTop); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("MessageButtons"));
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); root->addWidget(buttons);
     buttons->button(QDialogButtonBox::Ok)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Cancel)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Help)->setMinimumSize(72, 28);
     connect(buttons, &QDialogButtonBox::accepted, this, &MessageDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("消息显示帮助"), QStringLiteral("参见design_plan/消息显示功能与交互复刻手册.md。监视地址选择状态，移动方向仅用于设备运行；当前PC预览不模拟PLC或滚动时序。")); });

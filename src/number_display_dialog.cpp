@@ -1,4 +1,5 @@
 #include "number_display_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "bit_button_dialog.h"
 #include "control_rendering.h"
 #include "hmi_property_widgets.h"
@@ -349,7 +350,7 @@ NumberDisplayDialog::NumberDisplayDialog(const HmiObject &object, const HmiProje
     keyboard->setCurrentIndex(keyboard->findData(m_draft.keyboardPageId)); m_fields.insert(QStringLiteral("keyboardPageId"), keyboard); form->addRow(QStringLiteral("窗口编号:"), keyboard); m_keyboardLabel = form->labelForField(keyboard);
     box = group(QStringLiteral("keyboardPosition"), QStringLiteral("键盘自定义位置"), box); form->addRow(box); form = new QFormLayout(box); form->addRow(QStringLiteral("X位置:"), spin(QStringLiteral("keyboardX"), 0, 800, box)); form->addRow(QStringLiteral("Y位置:"), spin(QStringLiteral("keyboardY"), 0, 480, box)); layout->addWidget(box->parentWidget()); layout->addStretch(); tabs->addTab(page, QStringLiteral("其它"));
     preview = new QGroupBox(QStringLiteral("预览"), this); preview->setFixedWidth(170); previewLayout = new QVBoxLayout(preview); m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("NumberPreview")); m_preview->setFixedSize(145, 190); previewLayout->addWidget(m_preview); previewLayout->addStretch(); content->addWidget(preview); root->addLayout(content, 1);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("NumberButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("NumberButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); root->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &NumberDisplayDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &NumberDisplayDialog::reject);
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261119-8 change: Resolve help from the currently selected family, including unsaved mode switches.
         LocalHelpController *help = findChild<LocalHelpController *>(QString(), Qt::FindDirectChildrenOnly);

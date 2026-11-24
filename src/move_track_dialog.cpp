@@ -1,4 +1,5 @@
 #include "move_track_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "bit_button_dialog.h"
 #include "control_rendering.h"
@@ -58,7 +59,7 @@ MoveTrackDialog::MoveTrackDialog(const HmiObject &object, const HmiProject &proj
     Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
     tabs->setObjectName(QStringLiteral("TrackTabs")); tabs->addTab(createAppearance(), QStringLiteral("外观设置")); tabs->addTab(createPermissions(), QStringLiteral("权限设置")); layout->addWidget(tabs, 0, 0); layout->setColumnStretch(0, 1);
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("TrackPreview")); m_preview->setFixedSize(130, 120); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("TrackButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("TrackButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); layout->addWidget(buttons, 1, 0, 1, 2);
     connect(buttons, &QDialogButtonBox::accepted, this, &MoveTrackDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("移动轨迹帮助"), QStringLiteral("设置写入地址、移动距离、方向、外观图形和常量或地址范围。预览只显示静态外观。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

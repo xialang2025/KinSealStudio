@@ -1,4 +1,5 @@
 #include "stage2_clock_panel.h"
+#include "dialog_button_text.h" //20261124-8 add
 
 #include "local_help.h"
 #include "plc_address_dialog.h"
@@ -89,9 +90,9 @@ QDialogButtonBox *addButtons(QDialog &dialog, const QRect &geometry, const QStri
     buttons->setGeometry(geometry);
     buttons->layout()->setContentsMargins(0, 0, 0, 0);
     buttons->layout()->setSpacing(8);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     buttons->button(QDialogButtonBox::Ok)->setDefault(true);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [help, topic, &dialog]() {

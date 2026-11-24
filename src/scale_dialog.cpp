@@ -1,4 +1,5 @@
 #include "scale_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -157,7 +158,7 @@ ScaleDialog::ScaleDialog(const HmiObject &object, QWidget *parent) //20261112-0 
     preview = new QGroupBox(QStringLiteral("预览"), this); previewLayout = new QVBoxLayout(preview);
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("ScalePreview")); m_preview->setFixedSize(150, 171); previewLayout->addWidget(m_preview); content->addWidget(preview, 0, Qt::AlignTop); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("ScaleButtons"));
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     buttons->button(QDialogButtonBox::Ok)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Cancel)->setMinimumSize(72, 28); buttons->button(QDialogButtonBox::Help)->setMinimumSize(72, 28); root->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &ScaleDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("刻度帮助"), QStringLiteral("参见design_plan/刻度功能与交互复刻手册.md。位置决定横向或竖向，方向决定数值排列；主刻度为带值刻度数量，副刻度为相邻主刻度间短线数量。")); });

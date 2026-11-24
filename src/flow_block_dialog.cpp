@@ -1,4 +1,5 @@
 #include "flow_block_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
@@ -102,7 +103,7 @@ FlowBlockDialog::FlowBlockDialog(const HmiObject &object, const HmiProject &proj
     tabs->setObjectName(QStringLiteral("FlowTabs")); tabs->addTab(createAppearance(), QStringLiteral("外观设置"));
     m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("FlowVisibility"), m_draft.visibility, false, permissions); m_visibility->configureUnchosenBitState(m_draft.visibilityBitChosen); m_visibility->setMaximumWidth(300); permissionLayout->addWidget(m_visibility, 0, Qt::AlignTop); permissionLayout->addStretch(); tabs->addTab(permissions, QStringLiteral("权限设置")); layout->addWidget(tabs, 0, 0); layout->setColumnStretch(0, 1); //20261112-0 change: The native display-only permission column keeps its natural height.
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("FlowPreview")); m_preview->setFixedSize(142, 161); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("FlowButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("FlowButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); layout->addWidget(buttons, 1, 0, 1, 2);
     connect(buttons, &QDialogButtonBox::accepted, this, &FlowBlockDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("流动块帮助"), QStringLiteral("设置触发位、方向、块数、颜色和显现条件。预览显示静态外观。\n设备端流动、速度帧频、触发扫描和原厂编码仍需验证。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

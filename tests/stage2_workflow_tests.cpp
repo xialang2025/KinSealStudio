@@ -778,11 +778,45 @@ void Stage2WorkflowTests::standardDialogsFollowInterfaceLanguage() //20261124-7 
         window.openProject();
         return labels;
     };
+    auto pagePropertyLabels = [&]() {
+        QStringList labels;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (dialog == nullptr)
+            {
+                return;
+            }
+            QDialogButtonBox *buttons = dialog->findChild<QDialogButtonBox *>(QString(), Qt::FindDirectChildrenOnly);
+            if (buttons != nullptr)
+            {
+                labels = {caption(buttons->button(QDialogButtonBox::Ok)), caption(buttons->button(QDialogButtonBox::Cancel)),
+                          caption(buttons->button(QDialogButtonBox::Help))};
+            }
+            dialog->reject();
+        });
+        window.m_commands.value(QStringLiteral("action_openpropertiset"))->trigger();
+        return labels;
+    };
+    auto helpCloseLabel = [&]() {
+        window.m_commands.value(QStringLiteral("action_H"))->trigger();
+        QApplication::processEvents();
+        QDialog *help = window.findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        QDialogButtonBox *buttons = help == nullptr ? nullptr : help->findChild<QDialogButtonBox *>();
+        if (buttons == nullptr)
+        {
+            return QString();
+        }
+        const QString text = caption(buttons->button(QDialogButtonBox::Close));
+        buttons->button(QDialogButtonBox::Close)->click();
+        return text;
+    };
 
     QCOMPARE(closeLabels(), (QStringList{QStringLiteral("保存"), QStringLiteral("丢弃"), QStringLiteral("取消")}));
     QVERIFY(window.m_dirty && window.isVisible());
     QVERIFY(chinese->isChecked());
     QCOMPARE(openLabels(), (QStringList{QStringLiteral("打开"), QStringLiteral("取消")}));
+    QCOMPARE(pagePropertyLabels(), (QStringList{QStringLiteral("确定"), QStringLiteral("取消"), QStringLiteral("帮助")})); //20261124-8 add
+    QCOMPARE(helpCloseLabel(), QStringLiteral("关闭"));
     {
         QMessageBox overwrite(QMessageBox::Question, QString(), QString(), QMessageBox::Yes | QMessageBox::No);
         QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Close | QDialogButtonBox::Help);
@@ -802,6 +836,8 @@ void Stage2WorkflowTests::standardDialogsFollowInterfaceLanguage() //20261124-7 
     english->trigger();
     const QStringList englishClose = closeLabels();
     const QStringList englishOpen = openLabels();
+    const QStringList englishPageProperties = pagePropertyLabels(); //20261124-8 add
+    const QString englishHelpClose = helpCloseLabel();
     QString englishInputCancel;
     bool englishChecked;
     {
@@ -814,10 +850,13 @@ void Stage2WorkflowTests::standardDialogsFollowInterfaceLanguage() //20261124-7 
     chinese->trigger();
     QCOMPARE(englishClose, (QStringList{QStringLiteral("Save"), QStringLiteral("Discard"), QStringLiteral("Cancel")}));
     QCOMPARE(englishOpen, (QStringList{QStringLiteral("Open"), QStringLiteral("Cancel")}));
+    QCOMPARE(englishPageProperties, (QStringList{QStringLiteral("OK"), QStringLiteral("Cancel"), QStringLiteral("Help")}));
+    QCOMPARE(englishHelpClose, QStringLiteral("Close"));
     QCOMPARE(englishInputCancel, QStringLiteral("Cancel"));
     QVERIFY(englishChecked);
     QCOMPARE(savedEnglish, QStringLiteral("en"));
     QCOMPARE(closeLabels(), (QStringList{QStringLiteral("保存"), QStringLiteral("丢弃"), QStringLiteral("取消")}));
+    QCOMPARE(helpCloseLabel(), QStringLiteral("关闭"));
     QVERIFY(window.m_dirty);
     settings.remove(QStringLiteral("uiLanguage"));
 }

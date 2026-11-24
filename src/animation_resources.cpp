@@ -1,4 +1,5 @@
 #include "animation_resources.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include <QCryptographicHash>
 #include <QDialogButtonBox>
 #include <QFile>
@@ -205,7 +206,7 @@ AnimationGalleryDialog::AnimationGalleryDialog(const HmiProject &project, const 
         });
     }
     actions->addStretch(); buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this); buttons->setObjectName(QStringLiteral("AnimationButtons")); actions->addWidget(buttons); root->addLayout(actions);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); //20261112-0 add
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); //20261112-0 add
     connect(buttons, &QDialogButtonBox::accepted, this, &AnimationGalleryDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &AnimationGalleryDialog::reject);
     connect(m_list, &QListWidget::currentRowChanged, this, [this]() { refreshMetadata(); }); rebuild(selection);
 }

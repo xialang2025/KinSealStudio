@@ -1,4 +1,5 @@
 #include "stage2_project_dialogs.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "bit_button_dialog.h" //20261123-3 add
 #include "control_rendering.h" //20261123-2 add
 #include "kvg_library.h" //20261123-3 add
@@ -130,8 +131,8 @@ static bool createStage2PageMacroSource(QWidget *parent, HmiProject &project, QS
     validation.setWordWrap(true);
     layout.addRow(&validation);
     layout.addRow(&buttons);
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     QObject::connect(&buttons, &QDialogButtonBox::rejected, &editor, &QDialog::reject);
     QObject::connect(&buttons, &QDialogButtonBox::accepted, &editor, [&]() {
         QString error;
@@ -212,8 +213,8 @@ static bool editStage2PageScript(QWidget *parent, HmiProject &project, Stage2Pag
     macros.setObjectName(QStringLiteral("pageMacroSource"));
     layout.addRow(QStringLiteral("脚本函数"), &macros);
     layout.addRow(&buttons);
-    buttons.button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons.button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons.button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons.button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     write = buttons.addButton(QStringLiteral("写宏"), QDialogButtonBox::ActionRole);
     auto populateMacros = [&]() {
         macros.clear();
@@ -732,9 +733,9 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
     validation->setGeometry(popup ? QRect(411, 4, 210, 36) : QRect(10, 43, 601, 34)); //20261123-12 change
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
                                    QDialogButtonBox::Help, &dialog); //20261123-10 change
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); //20261123-10 add
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); //20261123-10 add
     buttons->setGeometry(popup ? QRect(400, 580, 201, 31) : QRect(360, 620, 251, 31)); //20261123-12 change
     buttons->layout()->setContentsMargins(0, 0, 0, 0);
     buttons->layout()->setSpacing(9);
@@ -1157,7 +1158,7 @@ bool copyStage2Page(QWidget *parent, HmiProject &project, const QString &pageId,
     QLabel label(popup ? QStringLiteral("窗口名称：") : QStringLiteral("画面名称："), &dialog);
     QLineEdit name(&dialog);
     QPushButton confirm(popup ? QStringLiteral("确定") : QStringLiteral(" 确定 "), &dialog);
-    QPushButton cancel(QStringLiteral("取消"), &dialog);
+    QPushButton cancel(dialogButtonText(QStringLiteral("取消"), "Cancel"), &dialog);
     QPalette palette = dialog.palette();
     HmiProject candidate;
 
@@ -1343,7 +1344,7 @@ Stage2NewProjectDialog::Stage2NewProjectDialog(const HmiProject &seed, const QSt
     m_next->setObjectName(QStringLiteral("wizardNextButton"));
     m_finish = new QPushButton(QStringLiteral("完成"), this);
     m_finish->setObjectName(QStringLiteral("wizardFinishButton"));
-    cancel = new QPushButton(QStringLiteral("取消"), this);
+    cancel = new QPushButton(dialogButtonText(QStringLiteral("取消"), "Cancel"), this);
     cancel->setObjectName(QStringLiteral("wizardCancelButton"));
     navigation->addWidget(m_back);
     navigation->addWidget(m_next);

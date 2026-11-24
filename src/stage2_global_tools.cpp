@@ -1,4 +1,5 @@
 #include "stage2_global_tools.h"
+#include "dialog_button_text.h" //20261124-8 add
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -724,7 +725,7 @@ GlobalToolsDialog::GlobalToolsDialog(const HmiProject &project, Kind kind, QWidg
     configureTable(m_table, {QStringLiteral("画面"), QStringLiteral("控件/宏"), QStringLiteral("类型/字段"), QStringLiteral("语言/状态"), QStringLiteral("内容"), QStringLiteral("活动/休眠")});
     layout->addWidget(m_table, 1); m_status = new QLabel(this); m_status->setObjectName(QStringLiteral("Stage2GlobalStatus")); layout->addWidget(m_status);
     buttons = new QDialogButtonBox(QDialogButtonBox::Close, this);
-    buttons->button(QDialogButtonBox::Close)->setText(QStringLiteral("关闭"));
+    buttons->button(QDialogButtonBox::Close)->setText(dialogButtonText(QStringLiteral("关闭"), "Close"));
     locateButton = buttons->addButton(QStringLiteral("定位"), QDialogButtonBox::ActionRole);
     locateButton->setObjectName(QStringLiteral("Stage2GlobalLocate")); layout->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -836,7 +837,7 @@ AddressReplaceDialog::AddressReplaceDialog(const HmiProject &project, QWidget *p
     m_status->setObjectName(QStringLiteral("Stage2AddressStatus")); m_status->setWordWrap(true); layout->addWidget(m_status);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this); layout->addWidget(buttons);
     m_confirm = buttons->button(QDialogButtonBox::Ok); m_confirm->setObjectName(QStringLiteral("Stage2AddressConfirm")); m_confirm->setText(QStringLiteral("确定")); m_confirm->setEnabled(false);
-    buttons->button(QDialogButtonBox::Cancel)->setObjectName(QStringLiteral("Stage2AddressCancel")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons->button(QDialogButtonBox::Cancel)->setObjectName(QStringLiteral("Stage2AddressCancel")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     connect(previewButton, &QPushButton::clicked, this, [this]() { preview(); });
     connect(m_find, &QLineEdit::textChanged, this, [this]() { invalidatePreview(); });
     connect(m_replacement, &QLineEdit::textChanged, this, [this]() { invalidatePreview(); });

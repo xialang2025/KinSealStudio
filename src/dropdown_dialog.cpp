@@ -1,4 +1,5 @@
 #include "dropdown_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "word_button_properties.h"
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
@@ -62,7 +63,7 @@ DropdownDialog::DropdownDialog(const HmiObject &object, const HmiProject &projec
     Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
     tabs->setObjectName(QStringLiteral("DropdownTabs")); tabs->addTab(createGeneral(), QStringLiteral("基本属性"));
     m_table = new QTableWidget(this); m_table->setObjectName(QStringLiteral("DropdownTable")); m_table->setColumnCount(3); m_table->setHorizontalHeaderLabels({QStringLiteral("项目"), QStringLiteral("数据"), QStringLiteral("项目资料")}); m_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch); m_table->verticalHeader()->setVisible(false); loadRows(); tabs->addTab(m_table, QStringLiteral("下拉列表")); tabs->addTab(createPermissions(), QStringLiteral("权限设置")); layout->addWidget(tabs);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("DropdownButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Ok)->setDefault(true); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("DropdownButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Ok)->setDefault(true); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); layout->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &DropdownDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("下拉框帮助"), QStringLiteral("设置2至15个项目，分别编辑数据与项目资料。方向决定编辑外观箭头。\n选中项写值、原厂文本编译与屏端弹出行为仍需原生和设备验证。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

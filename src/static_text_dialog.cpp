@@ -1,4 +1,5 @@
 #include "static_text_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "static_text_renderer.h"
 #include "hmi_property_widgets.h" //20261108-15 add
 #include <QCheckBox>
@@ -292,9 +293,9 @@ StaticTextDialog::StaticTextDialog(const HmiObject &object, const QStringList &l
     previewLayout->addWidget(m_preview);
     layout->addWidget(previewGroup, 0, 1, Qt::AlignTop);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     layout->addWidget(buttons, 1, 0, 1, 2);
     layout->setColumnStretch(0, 1);
     connect(buttons, &QDialogButtonBox::accepted, this, &StaticTextDialog::accept);

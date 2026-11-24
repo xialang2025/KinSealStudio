@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "simulation_window.h" //20261114-6 add
 #include "local_help.h" //20261114-10 add
 #include "bit_button_renderer.h" //20261108-15 add
@@ -786,8 +787,8 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
                 QMessageBox confirmation(QMessageBox::Question, QStringLiteral("KinSealStudio"),
                     QStringLiteral("是否删除所选窗口?"), QMessageBox::Ok | QMessageBox::No, this);
 
-                confirmation.button(QMessageBox::Ok)->setText(QStringLiteral("确定"));
-                confirmation.button(QMessageBox::No)->setText(QStringLiteral("否"));
+                confirmation.button(QMessageBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+                confirmation.button(QMessageBox::No)->setText(dialogButtonText(QStringLiteral("否"), "No"));
                 confirmation.setEscapeButton(QMessageBox::No);
                 if (confirmation.exec() != QMessageBox::Ok)
                 {

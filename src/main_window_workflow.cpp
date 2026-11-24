@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_canvas.h"
 #include "local_help.h" //20261122-4 add
 #include "stage2_file_protection.h" //20261123-17 add
@@ -237,7 +238,7 @@ bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110
                 QMessageBox warning(QMessageBox::Warning, QStringLiteral("KinSealStudio"), failure,
                                     QMessageBox::Ok, this);
 
-                warning.button(QMessageBox::Ok)->setText(QStringLiteral("确定"));
+                warning.button(QMessageBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
                 warning.exec();
             }
             if (!requestStage2FilePassword(this, &password))

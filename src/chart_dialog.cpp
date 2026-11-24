@@ -1,4 +1,5 @@
 #include "chart_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
@@ -125,7 +126,7 @@ ChartDialog::ChartDialog(const HmiObject &object, const HmiProject &project, QWi
     m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("ChartVisible"), m_draft.visibility, false, permission); m_visibility->configureUnchosenBitState(m_draft.visibilityBitChosen); permissionLayout->addWidget(m_visibility); permissionLayout->addStretch();
     m_tabs->addTab(basic, QStringLiteral("基本")); m_tabs->addTab(m_appearance, QStringLiteral("外形")); m_tabs->addTab(permission, QStringLiteral("权限设置")); layout->addWidget(m_tabs, 0, 0); layout->setColumnStretch(0, 1);
     m_preview = new QLabel(preview); m_preview->setObjectName(QStringLiteral("ChartPreview")); m_preview->setFixedSize(130, 120); previewLayout->addWidget(m_preview); layout->addWidget(preview, 0, 1, Qt::AlignTop);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("ChartButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons, 1, 0, 1, 2);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("ChartButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); layout->addWidget(buttons, 1, 0, 1, 2);
     connect(group, &QButtonGroup::idClicked, this, &ChartDialog::selectShape); connect(buttons, &QDialogButtonBox::accepted, this, &ChartDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("图表帮助"), QStringLiteral("选择柱状图、仪表或圆环，配置监控地址、范围和显现条件。当前预览是静态编辑样例；各形态草稿独立保存。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

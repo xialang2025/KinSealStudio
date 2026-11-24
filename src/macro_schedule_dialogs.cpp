@@ -1,4 +1,5 @@
 #include "macro_schedule_dialogs.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "local_help.h"
 #include "macro_manager_dialog.h"
 #include "macro_schedule.h"
@@ -84,8 +85,8 @@ bool editScheduleRow(QWidget *parent, HmiProject *project, MacroScheduleRow *row
     QLineEdit address(row->address.isEmpty() ? QStringLiteral("LB0") : row->address, &triggerFields);
     QPushButton picker(QStringLiteral("…"), &triggerFields);
     QPushButton write(initialization ? QStringLiteral("写宏") : QStringLiteral("写脚本"), &dialog);
-    QPushButton confirm(QStringLiteral("确定"), &dialog);
-    QPushButton cancel(QStringLiteral("取消"), &dialog);
+    QPushButton confirm(dialogButtonText(QStringLiteral("确定"), "OK"), &dialog);
+    QPushButton cancel(dialogButtonText(QStringLiteral("取消"), "Cancel"), &dialog);
     QString selected = draft.macroIds.key(row->macroId);
     const bool editing = !row->macroId.isEmpty();
 
@@ -234,7 +235,7 @@ bool editMacroSchedules(QWidget *parent, HmiProject *project, bool initializatio
     QPushButton remove(QStringLiteral("删除"), &dialog);
     QPushButton edit(QStringLiteral("修改"), &dialog);
     QPushButton confirm(initialization ? QStringLiteral("退出") : QStringLiteral("确定"), &dialog);
-    QPushButton help(QStringLiteral("帮助"), &dialog);
+    QPushButton help(dialogButtonText(QStringLiteral("帮助"), "Help"), &dialog);
     LocalHelpController helpController(&dialog);
     QRect addGeometry;
     QRect removeGeometry;

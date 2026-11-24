@@ -1,4 +1,5 @@
 #include "graphic_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QCheckBox>
 #include <QColorDialog>
@@ -61,7 +62,7 @@ void GraphicDialog::initializeTableUi() //20261113-8 add
     m_horizontal = new QCheckBox(QStringLiteral("水平"),flags); m_horizontal->setObjectName(QStringLiteral("m_hcheck")); m_horizontal->setGeometry(160,20,70,20); m_horizontal->setChecked(m_draft.showHorizontal);
     m_outline = new QCheckBox(QStringLiteral("描边"),flags); m_outline->setObjectName(QStringLiteral("m_bordercheck")); m_outline->setGeometry(310,20,70,20); m_outline->setChecked(m_draft.showOutline);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel|QDialogButtonBox::Help,this); buttons->setObjectName(QStringLiteral("GraphicButtons")); outer->addWidget(buttons);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     connect(buttons,&QDialogButtonBox::accepted,this,&GraphicDialog::accept); connect(buttons,&QDialogButtonBox::rejected,this,&QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons,&QDialogButtonBox::helpRequested,this,[this]() { QMessageBox::information(this,QStringLiteral("帮助"),QStringLiteral("表格是纯图像底盘。文字或数值控件需叠放在表格上方。横向个数设置行数，纵向个数设置列数。")); });
     connect(buttons,&QDialogButtonBox::helpRequested,this,[this]() { //20261118-4 add: Open the closest packaged controls chapter for the table variant.

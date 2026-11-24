@@ -1,4 +1,5 @@
 #include "hmi_property_widgets.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "plc_address_dialog.h" //20261109-0 add
 #include <QJsonArray>
 #include <QComboBox>
@@ -209,8 +210,8 @@ void editHmiAddress(QWidget *parent, QLineEdit *field, bool bit, int transferCou
         }
     });
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("输入"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("离开"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("输入"), "Enter"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("离开"), "Exit"));
     layout->addWidget(buttons, 9, 0, 1, 4);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&dialog, number, radix, kind, field, maximumAddress]() { //20261109-6 change

@@ -1,4 +1,5 @@
 #include "plc_address_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "plc_native_catalog.h" //20261109-0 add
 
 #include <QCheckBox>
@@ -215,9 +216,9 @@ bool editPlcSerialPort(QWidget *parent, const QString &port, QJsonObject *settin
     defaultsButton->setFocus();
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, dialog);
     buttons->setGeometry(341, 311, 228, 28);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     buttons->button(QDialogButtonBox::Ok)->setEnabled(sourceNotice.isEmpty());
     QObject::connect(defaultsButton, &QPushButton::clicked, dialog, [&]() { loadValues(factory); });
     QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
@@ -431,9 +432,9 @@ bool editPlcProtocol(QWidget *parent, const QString &model, PlcConnection *conne
     QObject::connect(defaults, &QPushButton::clicked, dialog, [&]() { applyDefaults(false); });
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, dialog);
     buttons->setGeometry(191, 476, 198, 24);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     buttons->button(QDialogButtonBox::Ok)->setEnabled(!readOnly);
     Q_FOREACH (button, buttons->buttons())
     {
@@ -621,8 +622,8 @@ bool editPlcConnections(QWidget *parent, const QString &modelName,
     layout->addWidget(validation);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog.data());
     buttons->setObjectName(QStringLiteral("PlcConnectionButtons"));
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确认"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     layout->addWidget(buttons);
     QObject::connect(buttons, &QDialogButtonBox::rejected, dialog.data(), &QDialog::reject);
     QObject::connect(buttons, &QDialogButtonBox::accepted, dialog.data(), [&]() {
@@ -848,10 +849,10 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     // The input key spans the last two columns while Leave occupies the right return key.
     buttons->setGeometry(211, 201, 98, 78);
     buttons->layout()->setEnabled(false);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("输入"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("输入"), "Enter")); //20261124-8 change
     buttons->button(QDialogButtonBox::Ok)->setGeometry(0, 40, 98, 38);
     buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("离开"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("离开"), "Exit"));
     buttons->button(QDialogButtonBox::Cancel)->setGeometry(50, 0, 48, 38);
     buttons->button(QDialogButtonBox::Cancel)->setAutoDefault(false);
     memory->setGeometry(10, 10, 160, 22);

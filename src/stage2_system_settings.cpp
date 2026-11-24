@@ -1,4 +1,5 @@
 #include "stage2_system_settings.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "device_target.h" //20261122-4 add
 
 #include <QCheckBox>
@@ -575,12 +576,12 @@ Stage2SystemSettingsDialog::Stage2SystemSettingsDialog(const HmiProject &project
     m_buttons->setObjectName(QStringLiteral("buttonBox"));
     m_buttons->setGeometry(401, 594, 209, 21);
     m_buttons->layout()->setSpacing(8);
-    m_buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+    m_buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
     m_buttons->button(QDialogButtonBox::Ok)->setFixedSize(64, 21);
     m_buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-    m_buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    m_buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     m_buttons->button(QDialogButtonBox::Cancel)->setFixedSize(64, 21);
-    m_buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    m_buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     m_buttons->button(QDialogButtonBox::Help)->setFixedSize(65, 21);
 
     m_readable = readStage2SystemSettings(project, &settings, &error);

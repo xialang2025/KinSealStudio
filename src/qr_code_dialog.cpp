@@ -1,4 +1,5 @@
 #include "qr_code_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "../third_party/qrcodegen/qrcodegen.hpp"
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
@@ -121,7 +122,7 @@ QrCodeDialog::QrCodeDialog(const HmiObject &object, const HmiProject &project, Q
     m_preview->setToolTip(QStringLiteral("描述的离线预览使用UTF-8；空描述显示原厂默认网址。设备编码、字节互换及监视长度的实际效果待验证。"));
     previewLayout->addWidget(m_preview); content->addWidget(tabs, 1); content->addWidget(previewGroup, 0, Qt::AlignTop); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("QrButtons"));
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); root->addWidget(buttons);
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确认"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); root->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &QrCodeDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("二维码帮助"), QStringLiteral("描述用于二维码默认内容，监视地址用于运行时字符串。详见design_plan/二维码功能与交互复刻手册.md。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

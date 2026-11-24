@@ -1,4 +1,5 @@
 #include "bit_button_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "bit_button_renderer.h"
 #include "kvg_library.h" //20261109-0 add
 #include "hmi_property_widgets.h"
@@ -123,9 +124,9 @@ BitButtonDialog::BitButtonDialog(const HmiObject &object, const HmiProject &proj
     m_preview = new BitButtonPreview(preview); previewLayout->addWidget(m_preview);
     layout->addWidget(preview, 0, 1, Qt::AlignTop);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助"));
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help"));
     layout->addWidget(buttons, 1, 0, 1, 2);
     connect(buttons, &QDialogButtonBox::accepted, this, &BitButtonDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -1360,8 +1361,8 @@ bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); layout->addWidget(buttons, projectGallery ? 5 : 4, 2, 1, 2);
     if (projectGallery) //20261124-3 add: Use the project gallery's localized action labels.
     {
-        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+        buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     }
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);

@@ -1,4 +1,5 @@
 #include "data_collection_dialog.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "local_help.h" //20261118-4 add: Dialog help button routes through the packaged local help catalog.
 #include <QButtonGroup>
@@ -44,7 +45,7 @@ DataCollectionDialog::DataCollectionDialog(const HmiConfigurationNode &node, con
     setStyleSheet(QStringLiteral("QLineEdit, QComboBox, QSpinBox {background:#caeace; min-height:22px;} QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled {background:#b1ceed;} QTableWidget {background:#caeace;}"));
     Q_FOREACH (connection, project.connections) { connections.append(connection.toJson()); } setProperty("plcConnections", connections.toVariantList());
     tabs->setObjectName(QStringLiteral("CollectionTabs")); tabs->addTab(basicPage(), QStringLiteral("一般")); tabs->addTab(itemsPage(), QStringLiteral("数据项")); layout->addWidget(tabs);
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("CollectionButtons")); buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定")); buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消")); buttons->button(QDialogButtonBox::Help)->setText(QStringLiteral("帮助")); layout->addWidget(buttons);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("CollectionButtons")); buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); layout->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::accepted, this, &DataCollectionDialog::accept); connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject); //20261118-4 change: Help routing moved to the packaged local help viewer below, replacing the transient message box.
     //20261118-4 del: connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { QMessageBox::information(this, QStringLiteral("数据采集帮助"), QStringLiteral("定义取样长度、总数、共用数据类别及取样方式；数据项使用固定LH序号，名称和显示格式独立。采集内存上限为63 kbyte。")); });
     connect(buttons, &QDialogButtonBox::helpRequested, this, [this]() { //20261118-4 add: Open the closest packaged controls chapter for this dialog.

@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "dialog_button_text.h" //20261124-8 add
 #include "graphic_dialog.h" //20261113-8 add
 #include "hmi_canvas.h"
 
@@ -107,6 +108,7 @@ static void applyStandardDialogLanguage(bool english) //20261124-7 add
 
     // Qt dialogs honor the application's catalogs, including the Open, Save and Cancel buttons.
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+    qApp->setProperty(EnglishDialogButtonsProperty, english); //20261124-8 add
     if (translator == nullptr)
     {
         translator = new QTranslator(qApp);
