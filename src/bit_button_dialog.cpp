@@ -1358,6 +1358,11 @@ bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
     deletePicture = new QPushButton(QStringLiteral("删除图片"), &dialog); deletePicture->setObjectName(QStringLiteral("GalleryDelete")); deletePicture->setVisible(projectGallery); layout->addWidget(deletePicture, 5, 0);
     if (projectGallery) { import->setText(QStringLiteral("添加图片")); }
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); layout->addWidget(buttons, projectGallery ? 5 : 4, 2, 1, 2);
+    if (projectGallery) //20261124-3 add: Use the project gallery's localized action labels.
+    {
+        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    }
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
     connect(list, &QListWidget::itemDoubleClicked, &dialog, [&dialog]() { dialog.accept(); });
@@ -1501,18 +1506,20 @@ bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
         QString path;
         QStringList paths;
         QString name;
-        QImageReader reader;
         QImage image;
-        QFile source;
         QString error;
-        QByteArray png;
-        QBuffer buffer;
         QListWidgetItem *entry;
         int suffix;
         if (import->property("batchImport").toBool()) { paths = QFileDialog::getOpenFileNames(&dialog, QStringLiteral("批量添加图片"), QString(), QStringLiteral("图片 (*.png *.jpg *.jpeg *.bmp *.gif *.svg *.kvg)")); }
         else { paths.append(QFileDialog::getOpenFileName(&dialog, QStringLiteral("导入工程图片"), QString(), QStringLiteral("图片 (*.png *.jpg *.jpeg *.bmp *.gif *.svg *.kvg)"))); }
         Q_FOREACH (path, paths) //20261112-0 add: Stage every imported file inside this child dialog's private pool.
         {
+            //20261124-3 change: Each batch input needs its own decoder, source and PNG stream.
+            QImageReader reader;
+            QFile source;
+            QByteArray png;
+            QBuffer buffer(&png);
+
             if (path.isEmpty()) { continue; }
             reader.setFileName(path); reader.setDecideFormatFromContent(true);
             if (rejectGif && reader.format().toLower() == QByteArrayLiteral("gif")) //20261112-0 add: Never flatten an animated GIF into a static picture state.
@@ -1530,7 +1537,7 @@ bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
             } else if (reader.size().width() <= 4096 && reader.size().height() <= 4096) {
                 image = reader.read();
             }
-            buffer.setBuffer(&png); buffer.open(QIODevice::WriteOnly);
+            buffer.open(QIODevice::WriteOnly);
             if (image.isNull() || image.width() > 4096 || image.height() > 4096 || !image.save(&buffer, "PNG") || png.size() > 16 * 1024 * 1024)
             {
                 QMessageBox::warning(&dialog, QStringLiteral("导入失败"), error.isEmpty() ? QStringLiteral("无法读取图片或转换后的图片过大。") : error); return;
@@ -1542,31 +1549,37 @@ bool BitButtonDialog::selectPicture(bool projectGallery, bool rejectGif,
         }
     });
     connect(batchImport, &QPushButton::clicked, &dialog, [import]() { import->setProperty("batchImport", true); import->click(); import->setProperty("batchImport", false); }); //20261112-0 add
-    connect(deletePicture, &QPushButton::clicked, &dialog, [this, &dialog, list, &gallery, &pending, &cursor]() {
-        QListWidgetItem *entry = list->currentItem();
+    auto removePicture = [this, &dialog, &gallery, &pending, &cursor](QListWidgetItem *entry) { //20261124-3 change
         HmiProject candidate = m_project;
         Stage3PictureUsage usage;
+        QString name;
+
         if (entry == nullptr) { return; }
-        candidate.pictures = gallery; usage = stage3PictureUsage(candidate, entry->text());
-        if (usage.boundStates + usage.detachedStates + usage.explicitReferences != 0)
-        { QMessageBox::warning(&dialog, QStringLiteral("图片仍被使用"), QStringLiteral("图片仍被控件状态引用，请先解除引用。")); return; }
-        gallery.remove(entry->text()); if (pending.indexOf(entry->text()) >= cursor) { pending.removeAll(entry->text()); } delete entry;
+        name = entry->data(Qt::UserRole + 1).toString();
+        candidate.pictures = gallery;
+        usage = stage3PictureUsage(candidate, name);
+        // Page and keyboard backgrounds are project references alongside control images.
+        if (usage.boundStates + usage.detachedStates + usage.explicitReferences + usage.pageBackgrounds != 0)
+        {
+            QMessageBox::warning(&dialog, QStringLiteral("图片仍被使用"),
+                QStringLiteral("图片仍被画面背景或控件等引用，请先解除引用。"));
+            return;
+        }
+        gallery.remove(name);
+        if (pending.indexOf(name) >= cursor) { pending.removeAll(name); }
+        delete entry;
+    };
+    connect(deletePicture, &QPushButton::clicked, &dialog, [list, removePicture]() {
+        removePicture(list->currentItem());
     });
     list->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(list, &QListWidget::customContextMenuRequested, &dialog, [this, &dialog, list, projectGallery, &gallery, &pending, &cursor](const QPoint &point) {
+    connect(list, &QListWidget::customContextMenuRequested, &dialog, [list, projectGallery, removePicture](const QPoint &point) {
         QMenu menu;
         QListWidgetItem *entry;
-        Stage3PictureUsage usage;
-        HmiProject candidate;
         entry = list->itemAt(point); if (!projectGallery || entry == nullptr) { return; }
         menu.addAction(QStringLiteral("删除图片"));
         if (menu.exec(list->viewport()->mapToGlobal(point)) != nullptr) {
-            candidate = m_project; candidate.pictures = gallery; usage = stage3PictureUsage(candidate, entry->text()); //20261112-0 add
-            if (usage.boundStates + usage.detachedStates + usage.explicitReferences != 0)
-            { QMessageBox::warning(&dialog, QStringLiteral("图片仍被使用"), QStringLiteral("图片仍被控件状态引用，请先解除引用。")); return; }
-            gallery.remove(entry->text());
-            if (pending.indexOf(entry->text()) >= cursor) { pending.removeAll(entry->text()); }
-            delete entry;
+            removePicture(entry);
         }
     });
     dialogResult = dialog.exec();

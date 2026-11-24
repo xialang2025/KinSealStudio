@@ -81,66 +81,29 @@ static bool validateStage2PageName(const HmiProject &project, const QString &id,
 
 /******************************************************************************
  * Function Name   : chooseStage2PageBitmap
- * Description     : Select an existing decoded picture without changing the project gallery.
- * Input Parameters: parent, pictures, name.
- * Return Value    : True after confirming a picture.
- * Date            : 2026.11.23
+ * Description     : Edit the shared gallery on a page draft and return its selected picture.
+ * Input Parameters: parent, draft, name.
+ * Return Value    : True after confirming gallery edits or a picture.
+ * Date            : 2026.11.24
  ******************************************************************************/
-bool chooseStage2PageBitmap(QWidget *parent, const QMap<QString, QByteArray> &pictures, //20261123-24 change
-                                   QString &name) //20261123-2 add
+bool chooseStage2PageBitmap(QWidget *parent, HmiProject &draft, QString &name) //20261124-3 change
 {
-    QDialog dialog(parent);
-    QVBoxLayout *layout;
-    QListWidget *items;
-    QDialogButtonBox *buttons;
-    QMap<QString, QByteArray>::const_iterator picture;
-    QImage icon;
-    QListWidgetItem *entry;
+    HmiObject adapter;
+    QString selected = name;
+    QByteArray png = draft.pictures.value(name);
+    QMap<QString, QByteArray> pool;
 
-    dialog.setWindowTitle(QStringLiteral("工程图库"));
-    dialog.resize(490, 340);
-    layout = new QVBoxLayout(&dialog);
-    items = new QListWidget(&dialog);
-    items->setObjectName(QStringLiteral("pageBitmapGalleryItems"));
-    items->setViewMode(QListView::IconMode);
-    items->setResizeMode(QListView::Adjust);
-    items->setMovement(QListView::Static);
-    items->setIconSize(QSize(80, 60));
-    items->setSpacing(6);
-    layout->addWidget(items);
-    for (picture = pictures.cbegin(); picture != pictures.cend(); ++picture)
-    {
-        icon = decodedControlPng(picture.value());
-        if (!icon.isNull())
-        {
-            entry = new QListWidgetItem(QIcon(QPixmap::fromImage(icon.scaled(items->iconSize(),
-                Qt::KeepAspectRatio, Qt::SmoothTransformation))), picture.key(), items);
-            if (picture.key() == name)
-            {
-                items->setCurrentItem(entry);
-            }
-        }
-    }
-    if (items->count() == 0)
-    {
-        layout->addWidget(new QLabel(QStringLiteral("工程中没有可用图片。可在工程图片管理中添加。"), &dialog));
-    }
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确定"));
-    buttons->button(QDialogButtonBox::Ok)->setEnabled(items->currentItem() != nullptr);
-    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
-    layout->addWidget(buttons);
-    QObject::connect(items, &QListWidget::currentItemChanged, &dialog, [buttons](QListWidgetItem *current) {
-        buttons->button(QDialogButtonBox::Ok)->setEnabled(current != nullptr);
-    });
-    QObject::connect(items, &QListWidget::itemDoubleClicked, &dialog, &QDialog::accept);
-    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-    if (dialog.exec() != QDialog::Accepted || items->currentItem() == nullptr)
+    adapter.type = QStringLiteral("switch");
+    adapter.address = QStringLiteral("LB0");
+    adapter.hasBitButtonProperties = true;
+    BitButtonDialog picker(adapter, draft, parent);
+    if (!picker.choosePictureForControl(true, &selected, &png, &pool))
     {
         return false;
     }
-    name = items->currentItem()->text();
+    // A gallery-only edit can remove a picture selected during this unconfirmed page edit.
+    name = decodedControlPng(pool.value(selected)).isNull() ? QString() : selected;
+    draft.pictures = pool;
     return true;
 }
 
@@ -644,7 +607,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
     QLabel *validation;
     QDialogButtonBox *buttons;
     HmiProject candidate;
-    HmiProject macroDraft = project; //20261123-5 add
+    HmiProject projectDraft = project; //20261124-3 change: Stage macro sources and pictures together.
     QList<Stage2PageScript> scripts;
     QList<int> occupiedNumbers; //20261122-10 add
     QString suggestion;
@@ -951,11 +914,14 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
         updateBackgroundPreview();
     });
     QObject::connect(projectGallery, &QPushButton::clicked, &dialog, [&]() {
-        if (chooseStage2PageBitmap(&dialog, project.pictures, bitmapName))
+        if (chooseStage2PageBitmap(&dialog, projectDraft, bitmapName)) //20261124-3 change
         {
-            systemPicture.clear(); //20261123-3 add: The last confirmed gallery choice owns the background.
-            bitmap = decodedControlPng(project.pictures.value(bitmapName));
-            bitmapPath->setText(bitmapName);
+            if (!bitmapName.isEmpty())
+            {
+                systemPicture.clear();
+            }
+            bitmap = decodedControlPng(projectDraft.pictures.value(bitmapName));
+            bitmapPath->setText(systemPicture.isEmpty() ? bitmapName : kvgPictureResource(systemPicture));
             validation->clear();
             updateBackgroundPreview();
         }
@@ -986,7 +952,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
             updateBackgroundPreview();
         }
     });
-    createStage2PageScriptList(&dialog, macroDraft, scripts, popup)->setGeometry(
+    createStage2PageScriptList(&dialog, projectDraft, scripts, popup)->setGeometry( //20261124-3 change
         popup ? QRect(10, 360, 591, 251) : QRect(10, 390, 601, 261)); //20261123-12 change
     buttons->raise(); //20261124-1 add: Keep footer actions above the script pane's empty area in the shared row.
     QObject::connect(buttons, &QDialogButtonBox::helpRequested, &dialog, [&dialog]() { //20261123-10 add
@@ -1031,7 +997,7 @@ static bool editStage2DesignerPage(QWidget *parent, HmiProject &project, const Q
             page.width = windowFields.width->value();
             page.height = windowFields.height->value();
         }
-        candidate = macroDraft; //20261123-5 change: Commit shared source edits only with the outer page.
+        candidate = projectDraft; //20261124-3 change: Commit gallery and script edits only with the outer page.
         if (!validateStage2PageName(project, pageId, page.name, &error) ||
             (editing ? !candidate.selectPage(pageId, &error) : !candidate.addPage(page, &error))) //20261123-6 change
         {

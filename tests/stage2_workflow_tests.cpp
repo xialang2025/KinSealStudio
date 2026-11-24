@@ -87,6 +87,7 @@ private slots:
     void newPageBackgroundRendersAndSurvivesReopen(); //20261123-0 add
     void newPageGradientKeepsNativeSymmetryAndPersists(); //20261123-1 add
     void newPageProjectBitmapStretchesAndPersists(); //20261123-2 add
+    void pageProjectGalleryImportsFromProperties(); //20261124-3 add
     void newPageSystemBitmapStretchesAndPersists(); //20261123-3 add
     void newPageSlideKeepsStableTargetAcrossSave(); //20261123-4 add
     void newPageMacroDefaultsPersistWithStableSource(); //20261123-5 add
@@ -1292,9 +1293,10 @@ void Stage2WorkflowTests::newPageProjectBitmapStretchesAndPersists() //20261123-
             {
                 return;
             }
-            items = picker->findChild<QListWidget *>(QStringLiteral("pageBitmapGalleryItems"));
+            items = picker->findChild<QListWidget *>(QStringLiteral("GalleryItems")); //20261124-3 change
             pickerButtons = picker->findChild<QDialogButtonBox *>();
-            if (items == nullptr || pickerButtons == nullptr)
+            if (items == nullptr || pickerButtons == nullptr ||
+                !QTest::qWaitFor([items]() { return items->count() != 0; }, 1000))
             {
                 picker->reject();
                 return;
@@ -3444,29 +3446,246 @@ void Stage2WorkflowTests::keyboardTreeAddsSelectedTemplates() //20261123-24 add
 }
 
 /******************************************************************************
- * Function Name   : clickDialogButtonAtCenter
- * Description     : Click a visible dialog button through the window's mouse hit test.
- * Input Parameters: dialog, role.
- * Return Value    : True when the button is exposed and the click was sent.
+ * Function Name   : clickDialogWidgetAtCenter
+ * Description     : Click a visible control through the window's mouse hit test.
+ * Input Parameters: dialog, widget.
+ * Return Value    : True when the control is exposed and the click was sent.
  * Date            : 2026.11.24
  ******************************************************************************/
-static bool clickDialogButtonAtCenter(QDialog *dialog, QDialogButtonBox::StandardButton role) //20261124-2 add
+static bool clickDialogWidgetAtCenter(QDialog *dialog, QWidget *widget) //20261124-3 add
 {
-    QDialogButtonBox *box = dialog->findChild<QDialogButtonBox *>(QString(), Qt::FindDirectChildrenOnly);
-    QPushButton *button = box == nullptr ? nullptr : box->button(role);
     QPoint point;
 
-    if (button == nullptr || !button->isVisible() || !button->isEnabled() || dialog->windowHandle() == nullptr)
+    if (widget == nullptr || !widget->isVisible() || !widget->isEnabled() || dialog->windowHandle() == nullptr)
     {
         return false;
     }
-    point = button->mapTo(dialog, button->rect().center());
-    if (dialog->childAt(point) != button)
+    point = widget->mapTo(dialog, widget->rect().center());
+    if (dialog->childAt(point) != widget)
     {
         return false;
     }
     QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, point);
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : clickDialogButtonAtCenter
+ * Description     : Find and click a standard button using the dialog's mouse hit test.
+ * Input Parameters: dialog, role.
+ * Return Value    : True when the button is exposed and the click was sent.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+static bool clickDialogButtonAtCenter(QDialog *dialog, QDialogButtonBox::StandardButton role) //20261124-3 change
+{
+    QDialogButtonBox *box = dialog->findChild<QDialogButtonBox *>(QString(), Qt::FindDirectChildrenOnly);
+
+    return box != nullptr && clickDialogWidgetAtCenter(dialog, box->button(role));
+}
+
+/******************************************************************************
+ * Function Name   : pageProjectGalleryImportsFromProperties
+ * Description     : Import from an empty gallery and exercise both confirmation boundaries in the editor.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::pageProjectGalleryImportsFromProperties() //20261124-3 add
+{
+    QTemporaryDir directory;
+    HmiProject seed = workflowProject();
+    MainWindow window;
+    MainWindow reopened;
+    QImage source(8, 4, QImage::Format_RGB32);
+    QImage second(3, 5, QImage::Format_RGB32);
+    const QString pictureName = QStringLiteral("测试背景.png");
+    const QString secondName = QStringLiteral("批量图片.png");
+    const QString imagePath = directory.filePath(pictureName);
+    const QString projectPath = directory.filePath(QStringLiteral("gallery.ksp"));
+    QAction *properties;
+    QString error;
+    int attempt;
+    bool protectedBackground = false;
+    bool removedUnused = false;
+
+    QVERIFY(directory.isValid());
+    seed.pictures.clear();
+    source.fill(QColor(QStringLiteral("#158040")));
+    second.fill(QColor(QStringLiteral("#4433a1")));
+    QVERIFY(source.save(imagePath));
+    QVERIFY(second.save(directory.filePath(secondName)));
+    QVERIFY2(seed.save(projectPath, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(projectPath, &error), qPrintable(error));
+    window.show();
+    properties = window.findChild<QAction *>(QStringLiteral("action_openpropertiset"));
+    QVERIFY(properties != nullptr && properties->isEnabled());
+    for (attempt = 0; attempt < 3; ++attempt)
+    {
+        bool opened = false;
+        bool actionsAvailable = false;
+        bool imported = false;
+        bool previewMatches = false;
+        bool closed = false;
+
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (editor == nullptr)
+            {
+                return;
+            }
+            clickDialogWidgetAtCenter(editor, editor->findChild<QRadioButton *>(QStringLiteral("newPageBitmapMode")));
+            QTimer::singleShot(0, editor, [&]() {
+                QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+                if (gallery == nullptr || gallery == editor)
+                {
+                    return;
+                }
+                opened = true;
+                QPushButton *add = gallery->findChild<QPushButton *>(QStringLiteral("GalleryImport"));
+                QPushButton *batch = gallery->findChild<QPushButton *>(QStringLiteral("GalleryBatchImport"));
+                QPushButton *remove = gallery->findChild<QPushButton *>(QStringLiteral("GalleryDelete"));
+                QListWidget *items = gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems"));
+                actionsAvailable = add != nullptr && add->isEnabled() && batch != nullptr && batch->isVisible() &&
+                    remove != nullptr && remove->isVisible() && items != nullptr && items->count() == 0;
+                if (actionsAvailable)
+                {
+                    QTimer::singleShot(0, gallery, [&]() {
+                        QFileDialog *file = qobject_cast<QFileDialog *>(QApplication::activeModalWidget());
+                        if (file != nullptr)
+                        {
+                            if (attempt < 2)
+                            {
+                                file->selectFile(imagePath);
+                            }
+                            else
+                            {
+                                QLineEdit *fileNames = file->findChild<QLineEdit *>(QStringLiteral("fileNameEdit"));
+                                if (fileNames == nullptr)
+                                {
+                                    file->reject();
+                                    return;
+                                }
+                                file->setDirectory(directory.path());
+                                fileNames->setText(QStringLiteral("\"%1\" \"%2\"").arg(pictureName, secondName));
+                            }
+                            // The editor enters through the actual single or multi-file dialog.
+                            QMetaObject::invokeMethod(file, "accept", Qt::DirectConnection);
+                            if (file->isVisible())
+                            {
+                                file->reject();
+                            }
+                        }
+                    });
+                    const bool nativeDialogsDisabled = QApplication::testAttribute(Qt::AA_DontUseNativeDialogs);
+                    QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+                    clickDialogWidgetAtCenter(gallery, attempt < 2 ? add : batch);
+                    QApplication::setAttribute(Qt::AA_DontUseNativeDialogs, nativeDialogsDisabled);
+                    const QList<QListWidgetItem *> matches = items->findItems(pictureName, Qt::MatchExactly);
+                    imported = items->count() == (attempt < 2 ? 1 : 2) && matches.size() == 1;
+                    if (imported)
+                    {
+                        items->setCurrentItem(matches.first());
+                    }
+                    clickDialogButtonAtCenter(gallery, attempt == 0 ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok);
+                }
+                if (gallery->isVisible())
+                {
+                    gallery->reject();
+                }
+            });
+            clickDialogWidgetAtCenter(editor, editor->findChild<QPushButton *>(QStringLiteral("newPageProjectGallery")));
+            QLineEdit *path = editor->findChild<QLineEdit *>(QStringLiteral("pageBitmapPath"));
+            QLabel *sample = editor->findChild<QLabel *>(QStringLiteral("newPageBackgroundPreview"));
+            if (path != nullptr && sample != nullptr)
+            {
+                const QImage preview = sample->pixmap().toImage();
+                previewMatches = attempt == 0 ? path->text().isEmpty() && preview.isNull() :
+                    path->text() == pictureName && !preview.isNull() &&
+                    preview.pixelColor(preview.rect().center()) == source.pixelColor(0, 0);
+            }
+            closed = clickDialogButtonAtCenter(editor, attempt == 2 ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel) &&
+                !editor->isVisible();
+            if (editor->isVisible())
+            {
+                editor->reject();
+            }
+        });
+        properties->trigger();
+        QVERIFY2(opened, "A mouse click on Project Gallery must open the picker.");
+        QVERIFY2(actionsAvailable, "A new project's empty gallery must offer import, batch import and delete.");
+        QVERIFY2(imported, "The picture must be added and selected inside the gallery.");
+        QVERIFY(previewMatches);
+        QVERIFY(closed);
+        if (attempt < 2)
+        {
+            QVERIFY(window.currentEditorProject().pictures.isEmpty());
+            QVERIFY(window.currentEditorProject().activePageBackground.bitmapName.isEmpty());
+        }
+    }
+    QCOMPARE(window.currentEditorProject().activePageBackground.bitmapName, pictureName);
+    window.saveProject();
+    QVERIFY2(reopened.openProjectPath(projectPath, &error), qPrintable(error));
+    QCOMPARE(reopened.currentEditorProject().activePageBackground.bitmapName, pictureName);
+    QCOMPARE(QImage::fromData(reopened.currentEditorProject().pictures.value(pictureName)).pixelColor(0, 0),
+             source.pixelColor(0, 0));
+    const QImage reopenedSecond = QImage::fromData(reopened.currentEditorProject().pictures.value(secondName));
+    QCOMPARE(reopenedSecond.size(), second.size());
+    QCOMPARE(reopenedSecond.pixelColor(0, 0), second.pixelColor(0, 0));
+
+    reopened.show();
+    properties = reopened.findChild<QAction *>(QStringLiteral("action_openpropertiset"));
+    QVERIFY(properties != nullptr && properties->isEnabled());
+    QTimer::singleShot(0, &reopened, [&]() {
+        QDialog *editor = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (editor == nullptr)
+        {
+            return;
+        }
+        QTimer::singleShot(0, editor, [&]() {
+            QDialog *gallery = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            if (gallery == nullptr || gallery == editor)
+            {
+                return;
+            }
+            QListWidget *items = gallery->findChild<QListWidget *>(QStringLiteral("GalleryItems"));
+            QPushButton *remove = gallery->findChild<QPushButton *>(QStringLiteral("GalleryDelete"));
+            if (items != nullptr && QTest::qWaitFor([items]() { return items->count() == 2; }, 1000) &&
+                items->currentItem() != nullptr && items->currentItem()->text() == pictureName)
+            {
+                QTimer::singleShot(0, gallery, [&]() {
+                    QMessageBox *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+                    if (warning != nullptr)
+                    {
+                        protectedBackground = warning->windowTitle() == QStringLiteral("图片仍被使用");
+                        warning->accept();
+                    }
+                });
+                clickDialogWidgetAtCenter(gallery, remove);
+                const QList<QListWidgetItem *> unused = items->findItems(secondName, Qt::MatchExactly);
+                if (protectedBackground && items->count() == 2 && unused.size() == 1)
+                {
+                    items->setCurrentItem(unused.first());
+                    removedUnused = clickDialogWidgetAtCenter(gallery, remove) && items->count() == 1 &&
+                        clickDialogButtonAtCenter(gallery, QDialogButtonBox::Ok);
+                }
+            }
+            if (gallery->isVisible())
+            {
+                gallery->reject();
+            }
+        });
+        clickDialogWidgetAtCenter(editor, editor->findChild<QPushButton *>(QStringLiteral("newPageProjectGallery")));
+        clickDialogButtonAtCenter(editor, QDialogButtonBox::Ok);
+        if (editor->isVisible())
+        {
+            editor->reject();
+        }
+    });
+    properties->trigger();
+    QVERIFY(protectedBackground);
+    QVERIFY(removedUnused);
+    QCOMPARE(reopened.currentEditorProject().activePageBackground.bitmapName, pictureName);
+    QCOMPARE(reopened.currentEditorProject().pictures.keys(), QStringList{pictureName});
 }
 
 /******************************************************************************

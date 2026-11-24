@@ -321,6 +321,7 @@ bool editStage2KeyboardProperties(QWidget *parent, HmiProject &project, const QS
     QSpinBox height(&size);
     QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     HmiPage page;
+    HmiProject galleryDraft = project; //20261124-3 add: Keep resources private until the outer dialog is accepted.
     HmiProject draft;
     QString error;
     QString projectPicture;
@@ -413,9 +414,12 @@ bool editStage2KeyboardProperties(QWidget *parent, HmiProject &project, const QS
     QObject::connect(&foreground, &QPushButton::clicked, &dialog, [&]() { chooseColor(front); });
     QObject::connect(&backgroundColor, &QPushButton::clicked, &dialog, [&]() { chooseColor(back); });
     QObject::connect(&projectGallery, &QPushButton::clicked, &dialog, [&]() {
-        if (chooseStage2PageBitmap(&dialog, project.pictures, projectPicture))
+        if (chooseStage2PageBitmap(&dialog, galleryDraft, projectPicture)) //20261124-3 change
         {
-            systemPicture.clear();
+            if (!projectPicture.isEmpty())
+            {
+                systemPicture.clear();
+            }
             refresh();
         }
     });
@@ -474,7 +478,7 @@ bool editStage2KeyboardProperties(QWidget *parent, HmiProject &project, const QS
             page.background.foregroundColor = front.name();
             page.background.style = style.currentIndex() == 0 ? 12 : style.currentIndex() - 1;
         }
-        draft = project;
+        draft = galleryDraft; //20261124-3 change
         if (draft.activePageId == id)
         {
             draft.pageName = page.name;
