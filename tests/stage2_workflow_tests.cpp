@@ -3444,6 +3444,32 @@ void Stage2WorkflowTests::keyboardTreeAddsSelectedTemplates() //20261123-24 add
 }
 
 /******************************************************************************
+ * Function Name   : clickDialogButtonAtCenter
+ * Description     : Click a visible dialog button through the window's mouse hit test.
+ * Input Parameters: dialog, role.
+ * Return Value    : True when the button is exposed and the click was sent.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+static bool clickDialogButtonAtCenter(QDialog *dialog, QDialogButtonBox::StandardButton role) //20261124-2 add
+{
+    QDialogButtonBox *box = dialog->findChild<QDialogButtonBox *>(QString(), Qt::FindDirectChildrenOnly);
+    QPushButton *button = box == nullptr ? nullptr : box->button(role);
+    QPoint point;
+
+    if (button == nullptr || !button->isVisible() || !button->isEnabled() || dialog->windowHandle() == nullptr)
+    {
+        return false;
+    }
+    point = button->mapTo(dialog, button->rect().center());
+    if (dialog->childAt(point) != button)
+    {
+        return false;
+    }
+    QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, point);
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : windowTreeCreatesAndReopensPlacement
  * Description     : Open the native window entries and verify dimensions, position and close-button persistence.
  * Input Parameters: None.
@@ -3581,7 +3607,8 @@ void Stage2WorkflowTests::windowTreeCreatesAndReopensPlacement() //20261123-12 a
                 addScript->click();
                 observed = colorChosen && scriptChosen;
             }
-            buttons->button(cancel ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok)->click();
+            observed = clickDialogButtonAtCenter(editor, cancel ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok) &&
+                       !editor->isVisible() && observed; //20261124-2 change
             if (editor->isVisible())
             {
                 editor->reject();
@@ -3626,6 +3653,8 @@ void Stage2WorkflowTests::windowTreeCreatesAndReopensPlacement() //20261123-12 a
         QSpinBox *y;
         QCheckBox *close;
         QTableWidget *scripts; //20261123-12 add
+        QDialog *help; //20261124-2 add
+        QTextBrowser *browser;
 
         if (editor == nullptr)
         {
@@ -3641,10 +3670,31 @@ void Stage2WorkflowTests::windowTreeCreatesAndReopensPlacement() //20261123-12 a
             x->value() == 55 && y->value() == 66 && !close->isChecked() &&
             scripts != nullptr && scripts->rowCount() == 1 && scripts->item(0, 0) != nullptr &&
             scripts->item(0, 0)->text() == QStringLiteral("windowTick"); //20261123-12 change
-        editor->reject();
+        if (observed)
+        {
+            x->setValue(75); //20261124-2 add: Help must leave unsaved window coordinates available for editing.
+        }
+        observed = observed && clickDialogButtonAtCenter(editor, QDialogButtonBox::Help);
+        help = editor->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        browser = help == nullptr ? nullptr : help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+        observed = observed && help != nullptr && help->isVisible() && browser != nullptr &&
+                   QFileInfo(browser->document()->baseUrl().toLocalFile()).fileName() == QStringLiteral("project.html");
+        if (help != nullptr && !clickDialogButtonAtCenter(help, QDialogButtonBox::Close))
+        {
+            observed = false;
+            help->close();
+        }
+        observed = observed && !help->isVisible() && editor->isVisible() && x->value() == 75;
+        observed = clickDialogButtonAtCenter(editor, QDialogButtonBox::Cancel) &&
+                   !editor->isVisible() && editor->result() == QDialog::Rejected && observed;
+        if (editor->isVisible())
+        {
+            editor->reject();
+        }
     }));
     QVERIFY(observed);
     QVERIFY(!loaded.m_dirty);
+    QCOMPARE(loaded.currentEditorProject().toJson(), reopened.toJson()); //20261124-2 add
 }
 
 /******************************************************************************
@@ -4081,8 +4131,9 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
     QString error;
     bool opened = false;
     bool multiOpened = false;
-    bool footerHit = false; //20261124-1 add
+    bool helpClicked = false; //20261124-2 change
     bool helpOpened = false;
+    bool helpClosed = false;
     bool cancelled = false;
 
     QVERIFY(directory.isValid());
@@ -4121,34 +4172,18 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
     QTimer::singleShot(0, &window, [&]() { //20261124-1 add: Send mouse input through the dialog surface, including obscured controls.
         QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
         QLineEdit *name;
-        QDialogButtonBox *buttons;
-        QPushButton *helpButton;
-        QPushButton *cancelButton;
         QDialog *help;
         QTextBrowser *browser;
-        QPoint helpPoint;
-        QPoint cancelPoint;
 
         if (dialog == nullptr) { return; }
         name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
-        buttons = dialog->findChild<QDialogButtonBox *>();
-        if (name == nullptr || buttons == nullptr || dialog->windowHandle() == nullptr)
+        if (name == nullptr)
         {
             dialog->reject();
             return;
         }
-        helpButton = buttons->button(QDialogButtonBox::Help);
-        cancelButton = buttons->button(QDialogButtonBox::Cancel);
-        if (helpButton == nullptr || cancelButton == nullptr)
-        {
-            dialog->reject();
-            return;
-        }
-        helpPoint = helpButton->mapTo(dialog, helpButton->rect().center());
-        cancelPoint = cancelButton->mapTo(dialog, cancelButton->rect().center());
-        footerHit = dialog->childAt(helpPoint) == helpButton && dialog->childAt(cancelPoint) == cancelButton;
         name->setText(changedName);
-        QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, helpPoint);
+        helpClicked = clickDialogButtonAtCenter(dialog, QDialogButtonBox::Help); //20261124-2 change
         help = dialog->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
         browser = help == nullptr ? nullptr : help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
         helpOpened = help != nullptr && help->isVisible() && browser != nullptr &&
@@ -4156,18 +4191,24 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
             name->text() == changedName;
         if (help != nullptr)
         {
-            help->close();
+            helpClosed = clickDialogButtonAtCenter(help, QDialogButtonBox::Close) &&
+                         !help->isVisible() && dialog->isVisible() && name->text() == changedName;
+            if (!helpClosed)
+            {
+                help->close();
+            }
         }
-        QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier, cancelPoint);
-        cancelled = !dialog->isVisible() && dialog->result() == QDialog::Rejected;
+        cancelled = clickDialogButtonAtCenter(dialog, QDialogButtonBox::Cancel) &&
+                    !dialog->isVisible() && dialog->result() == QDialog::Rejected;
         if (!cancelled)
         {
             dialog->reject();
         }
     });
     gear->click();
-    QVERIFY2(footerHit, "The visible Help or Cancel button is covered by another widget.");
+    QVERIFY2(helpClicked, "The visible Help button cannot be reached by mouse.");
     QVERIFY(helpOpened);
+    QVERIFY(helpClosed);
     QVERIFY(cancelled);
     QCOMPARE(window.currentEditorProject().pageName, seed.pageName);
     QVERIFY(!window.m_dirty);
@@ -4175,18 +4216,14 @@ void Stage2WorkflowTests::nativePropertyToolbarEditsCurrentPage() //20261124-0 a
     QTimer::singleShot(0, &window, [&]() {
         QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
         QLineEdit *name;
-        QDialogButtonBox *buttons;
 
         if (dialog == nullptr) { return; }
         name = dialog->findChild<QLineEdit *>(QStringLiteral("newPageNameEdit"));
-        buttons = dialog->findChild<QDialogButtonBox *>();
-        if (name != nullptr && buttons != nullptr && dialog->windowTitle() == QStringLiteral("画面属性"))
+        if (name != nullptr && dialog->windowTitle() == QStringLiteral("画面属性"))
         {
             opened = name->text() == seed.pageName;
             name->setText(changedName);
-            QPushButton *ok = buttons->button(QDialogButtonBox::Ok);
-            QTest::mouseClick(dialog->windowHandle(), Qt::LeftButton, Qt::NoModifier,
-                              ok->mapTo(dialog, ok->rect().center()));
+            opened = clickDialogButtonAtCenter(dialog, QDialogButtonBox::Ok) && opened;
         }
         if (dialog->isVisible()) { dialog->reject(); }
     });
