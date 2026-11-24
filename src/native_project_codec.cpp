@@ -3811,6 +3811,13 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     if (!project.validateSinglePageBackend(error)) { //20261110-5 add: Never flatten multi-page/configuration entities into only the legacy active-page view.
         return false;
     }
+    Q_FOREACH (originalObject, project.objects) //20261124-15 add: Native SM has no recovered appearance flip field.
+    {
+        if (originalObject.hasAppearanceFlip())
+        {
+            return fail(error, QStringLiteral("控件 %1 的翻转无法写入原厂 .sm，请保存为 .ksp。").arg(originalObject.name));
+        }
+    }
     if (!project.activePageExtensions.isEmpty()) { //20261110-5 add: Page extensions have no recovered source carrier; stripping the pages JSON must not silently discard them.
         return fail(error, QStringLiteral("当前画面扩展元数据尚无已恢复的原生源映射，已取消保存以避免丢失。"));
     }

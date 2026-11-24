@@ -182,6 +182,8 @@ void HmiControlItem::paint(QPainter *painter,
 
     Q_UNUSED(widget);
     item_rect = rect();
+    painter->save(); //20261124-15 add: Reflect artwork independently of the selection frame.
+    painter->setWorldTransform(m_record.appearanceTransform(item_rect), true);
     painter->setRenderHint(QPainter::Antialiasing, true);
     outline_pen = QPen(QColor(70, 90, 120), 1.0);
     painter->setPen(outline_pen);
@@ -272,6 +274,7 @@ void HmiControlItem::paint(QPainter *painter,
         paintStaticText(painter, item_rect, staticTextContent(m_record, data(10).toString()), m_record.staticText);
     }
 
+    painter->restore(); //20261124-15 add
     if ((option->state & QStyle::State_Selected) && !graphicUsesVertices(m_type)) //20261113-2 change: Directed lines use endpoint adornments only.
     {
         selection_pen = QPen(QColor(36, 111, 206), 1.0, Qt::DashLine);

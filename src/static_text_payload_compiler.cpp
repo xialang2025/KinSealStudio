@@ -40,6 +40,7 @@ bool buildStaticTextSprites(const HmiObject &object, const QStringList &language
         scene = QImage(800, 480, QImage::Format_RGB16); scene.fill(Qt::black);
         painter.begin(&scene);
         painter.fillRect(QRect(1, 1, 799, 479), QColor(197, 223, 255));
+        painter.setWorldTransform(object.appearanceTransform(object.geometry), true); //20261124-15 add
         paintStaticText(&painter, object.geometry, staticTextContent(object, language), object.staticText);
         painter.end();
         image = scene.copy(object.geometry);

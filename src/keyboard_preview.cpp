@@ -65,6 +65,8 @@ protected:
         for (const HmiObject *object : std::as_const(m_ordered))
         {
             area = areaFor(*object);
+            painter.save(); //20261124-15 add
+            painter.setWorldTransform(object->appearanceTransform(area), true);
             if (object->type == QStringLiteral("text"))
             {
                 paintStaticText(&painter, area, staticTextContent(*object, m_project.activeLanguage), object->staticText);
@@ -80,6 +82,7 @@ protected:
             {
                 paintGraphic(&painter, object->type, area, object->graphic);
             }
+            painter.restore(); //20261124-15 add
         }
     }
 

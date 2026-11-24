@@ -257,12 +257,27 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
     if (!project.nativeSourceSnapshot.isEmpty() && !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot,&diagnostic))
     { return compilationIssue(project,empty,QStringLiteral("nativeSourceSnapshot"),QStringLiteral("retained"),diagnostic,error,issue); }
     prepared.objects = project.objects;
+    for (HmiObject &entry : prepared.objects) //20261124-15 add: Compile the same directed path through the existing integer raster gates.
+    {
+        if (entry.hasAppearanceFlip() && graphicUsesVertices(entry.type))
+        {
+            const QTransform transform = entry.appearanceTransform(QRectF(0, 0, 1, 1));
+            for (QPointF &vertex : entry.graphic.points) { vertex = transform.map(vertex); }
+            entry.flipHorizontal = false;
+            entry.flipVertical = false;
+        }
+    }
     std::stable_sort(prepared.objects.begin(),prepared.objects.end(),[](const HmiObject &a,const HmiObject &b) { return a.layer < b.layer; });
     Q_FOREACH (object,prepared.objects)
     {
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
+        if (object.hasAppearanceFlip()) //20261124-15 add
+        {
+            return compilationIssue(project, object, QStringLiteral("appearance.flip"), true,
+                QStringLiteral("此形状的设备翻转尚未支持，设备工程未生成。"), error, issue);
+        }
         if (object.type==QStringLiteral("sector")) //20261114-3 add: Only the native default-angle square path may reach independent background composition.
         {
             if (!prepareDeviceSector(project,object,prepared.objects,error,issue)) { return false; }

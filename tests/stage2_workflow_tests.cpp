@@ -6,6 +6,8 @@
 #include "stage3_resources.h" //20261123-2 add
 #include "text_payload_compiler.h"
 #include "independent_downloader.h"
+#include "lzokay.hpp" //20261124-15 add
+#include <QtEndian>
 #include "macro_schedule.h" //20261123-20 add
 #include "macro_workspace.h"
 #include "native_project_codec.h" //20261123-23 add
@@ -74,6 +76,8 @@ private slots:
     void canvasKeysUseWholeProjectHistory();
     void canvasControlDragDuplicatesSelection(); //20261124-11 add
     void canvasControlDragCancelsInterruptedInput(); //20261124-12 add
+    void toolbarFlipsArtworkAndPersists(); //20261124-15 add
+    void flippedLineFollowsVisibleHandles();
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
@@ -668,6 +672,188 @@ void Stage2WorkflowTests::canvasControlDragCancelsInterruptedInput() //20261124-
     QCOMPARE(window.currentEditorProject().objects.first().toJson(), project.objects.first().toJson());
     QCOMPARE(window.m_projectHistory.size(), history);
     QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::toolbarFlipsArtworkAndPersists
+ * Description     : Verify real toolbar buttons, reflected RGB565 artwork and saved document state.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::toolbarFlipsArtworkAndPersists() //20261124-15 add
+{
+    MainWindow window;
+    MainWindow reopened;
+    HmiProject project = workflowProject();
+    HmiProject unsupported;
+    HmiObject button = project.objects.first();
+    HmiObject sector;
+    QByteArray png;
+    QByteArray raw;
+    QByteArray native;
+    QBuffer buffer(&png);
+    QImage artwork(16, 16, QImage::Format_RGB32);
+    QImage device;
+    QTemporaryDir directory;
+    QAction *horizontal;
+    QAction *vertical;
+    QToolButton *hButton = nullptr;
+    QToolButton *vButton = nullptr;
+    QToolBar *bar;
+    ScreenCanvas *canvas;
+    QVector<QByteArray> payloads;
+    std::size_t decodedSize = 0;
+    u32 compressedSize;
+    QString path;
+    QString error;
+    int checkpoint;
+    int x;
+    int y;
+    const auto sample = [&](ScreenCanvas *view) {
+        return view->viewport()->grab().toImage().pixelColor(view->mapFromScene(button.geometry.topLeft() + QPoint(12, 12)));
+    };
+
+    for (y = 0; y < artwork.height(); ++y)
+    {
+        for (x = 0; x < artwork.width(); ++x)
+        {
+            artwork.setPixelColor(x, y, y < 8 ? (x < 8 ? Qt::red : Qt::green) : (x < 8 ? Qt::blue : Qt::yellow));
+        }
+    }
+    QVERIFY(buffer.open(QIODevice::WriteOnly));
+    QVERIFY(artwork.save(&buffer, "PNG"));
+    button.type = QStringLiteral("switch");
+    button.text.clear();
+    button.address = QStringLiteral("LB7");
+    button.geometry = QRect(105, 88, 80, 64);
+    button.hasBitButtonProperties = true;
+    button.bitButton.indicator = false;
+    button.bitButton.dualMonitor = false;
+    button.bitButton.states[0].picture = QStringLiteral("quadrants.png");
+    button.bitButton.states[0].picturePng = png;
+    button.bitButton.states[0].effect3d = false;
+    button.bitButton.states[0].imageMode = 0;
+    project.objects = {button};
+    project.pictures.insert(button.bitButton.states[0].picture, png);
+    project.targetModel = QStringLiteral("AMT070W124-L800X480R");
+    window.setProject(project, QString());
+    window.resize(1353, 708);
+    window.show();
+    canvas = window.m_canvas;
+    horizontal = window.m_commands.value(QStringLiteral("action_h"));
+    vertical = window.m_commands.value(QStringLiteral("action_v"));
+    QVERIFY(horizontal != nullptr && vertical != nullptr);
+    Q_FOREACH (bar, window.findChildren<QToolBar *>())
+    {
+        if (bar->widgetForAction(horizontal) != nullptr) { hButton = qobject_cast<QToolButton *>(bar->widgetForAction(horizontal)); }
+        if (bar->widgetForAction(vertical) != nullptr) { vButton = qobject_cast<QToolButton *>(bar->widgetForAction(vertical)); }
+    }
+    QVERIFY(hButton != nullptr && vButton != nullptr && hButton->isVisible() && vButton->isVisible());
+    QVERIFY(!hButton->isEnabled() && !vButton->isEnabled());
+    QVERIFY(horizontal->icon().pixmap(24, QIcon::Disabled).toImage() != horizontal->icon().pixmap(24, QIcon::Normal).toImage());
+    QVERIFY(vertical->icon().pixmap(24, QIcon::Disabled).toImage() != vertical->icon().pixmap(24, QIcon::Normal).toImage());
+    checkpoint = window.m_projectHistoryIndex;
+    QCOMPARE(sample(canvas), QColor(Qt::red));
+
+    QTest::mouseClick(canvas->viewport(), Qt::LeftButton, Qt::NoModifier, canvas->mapFromScene(button.geometry.center()));
+    QVERIFY(hButton->isEnabled() && vButton->isEnabled());
+    QTest::mouseClick(hButton, Qt::LeftButton);
+    QVERIFY(window.m_project.objects.first().flipHorizontal);
+    QCOMPARE(sample(canvas), QColor(Qt::green));
+    QTest::mouseClick(vButton, Qt::LeftButton);
+    QVERIFY(window.m_project.objects.first().flipVertical);
+    QCOMPARE(sample(canvas), QColor(Qt::yellow));
+    QCOMPARE(window.m_projectHistoryIndex, checkpoint + 2);
+    QCOMPARE(window.m_project.objects.first().geometry, button.geometry);
+
+    window.dispatchEditCommand(QStringLiteral("undo"));
+    QCOMPARE(sample(canvas), QColor(Qt::green));
+    window.dispatchEditCommand(QStringLiteral("redo"));
+    QCOMPARE(sample(canvas), QColor(Qt::yellow));
+    canvas->selectObjects({});
+    QVERIFY(!hButton->isEnabled() && !vButton->isEnabled());
+    QVERIFY(directory.isValid());
+    path = directory.filePath(QStringLiteral("mirrored.ksp"));
+    QVERIFY2(window.currentEditorProject().save(path, &error), qPrintable(error));
+    QVERIFY2(reopened.openProjectPath(path, &error), qPrintable(error));
+    reopened.resize(1353, 708);
+    reopened.show();
+    QCOMPARE(sample(reopened.m_canvas), QColor(Qt::yellow));
+
+    // The released device sprite mirrors the artwork while keeping the same control data.
+    QVERIFY2(buildProjectPayload(reopened.currentEditorProject(), &payloads, &error), qPrintable(error));
+    QCOMPARE(payloads.size(), 12);
+    QVERIFY(payloads.at(5).size() >= 2412);
+    compressedSize = qFromLittleEndian<u32>(payloads.at(5).constData() + 2408);
+    QVERIFY(compressedSize > 0 && compressedSize <= u32(payloads.at(11).size()));
+    raw.resize(button.geometry.width() * button.geometry.height() * 2);
+    QCOMPARE(lzokay::decompress(reinterpret_cast<const unsigned char *>(payloads.at(11).constData()), compressedSize,
+        reinterpret_cast<unsigned char *>(raw.data()), std::size_t(raw.size()), decodedSize), lzokay::EResult::Success);
+    QCOMPARE(decodedSize, std::size_t(raw.size()));
+    device = QImage(reinterpret_cast<const uchar *>(raw.constData()), 80, 64, 160, QImage::Format_RGB16);
+    QCOMPARE(device.pixelColor(12, 12), QColor(Qt::yellow));
+    QCOMPARE(device.pixelColor(65, 50), QColor(Qt::red));
+    QVERIFY(!exportNativeProjectSource(reopened.currentEditorProject(), &native, &error));
+    QVERIFY(error.contains(QStringLiteral(".ksp")));
+
+    unsupported = workflowProject();
+    unsupported.targetModel = project.targetModel;
+    sector.id = QStringLiteral("sector");
+    sector.name = sector.id;
+    sector.type = sector.id;
+    sector.geometry = QRect(100, 100, 130, 130);
+    sector.flipVertical = true;
+    unsupported.objects = {sector};
+    QVERIFY(!buildProjectPayload(unsupported, &payloads, &error));
+    QVERIFY(error.contains(QStringLiteral("appearance.flip")));
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::flippedLineFollowsVisibleHandles
+ * Description     : Hit and resize a reflected ordered endpoint through the real canvas viewport.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::flippedLineFollowsVisibleHandles() //20261124-15 add
+{
+    ScreenCanvas canvas;
+    HmiProject project = workflowProject();
+    HmiObject line = project.objects.first();
+    QPoint start;
+    QPoint drop;
+    QVector<QPointF> handles;
+    QWidget *viewport;
+
+    line.type = QStringLiteral("line");
+    line.geometry = QRect(90, 75, 80, 60);
+    line.text.clear();
+    line.address.clear();
+    project.objects = {line};
+    canvas.setProject(project);
+    canvas.resize(550, 360);
+    canvas.show();
+    viewport = canvas.viewport();
+    canvas.selectObject(line.id);
+    canvas.executeEdit(QStringLiteral("mirrorHorizontal"));
+    QVERIFY(canvas.objects().first().flipHorizontal);
+    QCOMPARE(canvas.objects().first().geometry, line.geometry);
+    QVERIFY(dynamic_cast<HmiControlItem *>(canvas.itemAt(canvas.mapFromScene(QPoint(150, 90)))) != nullptr);
+    QVERIFY(dynamic_cast<HmiControlItem *>(canvas.itemAt(canvas.mapFromScene(QPoint(110, 90)))) == nullptr);
+
+    start = canvas.mapFromScene(QPoint(170, 75));
+    drop = canvas.mapFromScene(QPoint(183, 66));
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::NoModifier, start);
+    QMouseEvent move(QEvent::MouseMove, drop, viewport->mapToGlobal(drop),
+                     Qt::NoButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(viewport, &move);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, drop);
+    line = canvas.objects().first();
+    QVERIFY(line.flipHorizontal);
+    handles = graphicHandles(line.type, line.geometry, line.graphic);
+    QCOMPARE(line.appearanceTransform(line.geometry).map(handles[0]).toPoint(), QPoint(183, 66));
+    QCOMPARE(line.appearanceTransform(line.geometry).map(handles[1]).toPoint(), QPoint(90, 135));
 }
 
 /******************************************************************************

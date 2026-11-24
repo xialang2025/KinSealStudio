@@ -300,6 +300,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
     int offset;
     int position;
     QList<HmiObject> before; //20261110-8 add: Mutating commands share the same no-op transaction guard.
+    QStringList flipIds; //20261124-15 add
     QString referenceId;
     QRect referenceGeometry;
     bool horizontal;
@@ -386,6 +387,23 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
         publishSelection(); publishDocumentChange(before); return;
     }
     if (selected.isEmpty()) { return; }
+    if (command == QStringLiteral("mirrorHorizontal") || command == QStringLiteral("mirrorVertical")) //20261124-15 add
+    {
+        flipIds = selectedObjectIds();
+        horizontal = command == QStringLiteral("mirrorHorizontal");
+        Q_FOREACH (item, all)
+        {
+            object = item->toHmiObject();
+            if (!flipIds.contains(object.id)) { continue; }
+            if (horizontal) { object.flipHorizontal = !object.flipHorizontal; }
+            else { object.flipVertical = !object.flipVertical; }
+            item->setObject(object);
+            item->update();
+        }
+        publishSelection();
+        publishDocumentChange(before);
+        return;
+    }
     if (command == QStringLiteral("alignHorizontalSpacing") || command == QStringLiteral("alignVerticalSpacing")) //20261110-8 add
     {
         Q_FOREACH (item, all) { if (item->isSelected()) { ordered.append(item); } }
@@ -618,7 +636,14 @@ void ScreenCanvas::drawForeground(QPainter *painter, const QRectF &rect) //20261
     if (graphicUsesVertices(item->toHmiObject().type)) //20261113-2 add: Lines expose their two roles, never eight empty box handles.
     {
         painter->save(); painter->setPen(QPen(QColor(36, 111, 206), 0)); painter->setBrush(Qt::white);
-        Q_FOREACH (handle, graphicHandles(item->toHmiObject().type, bounds, item->toHmiObject().graphic)) { painter->drawRect(QRectF(handle.x() - 2.0 * 100 / m_zoomPercent, handle.y() - 2.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent)); }
+        const HmiObject flipped = item->toHmiObject(); //20261124-15 change: Show handles at the painted vertices.
+        mapping = flipped.appearanceTransform(bounds);
+        Q_FOREACH (handle, graphicHandles(flipped.type, bounds, flipped.graphic))
+        {
+            handle = mapping.map(handle);
+            painter->drawRect(QRectF(handle.x() - 2.0 * 100 / m_zoomPercent, handle.y() - 2.0 * 100 / m_zoomPercent,
+                                     4.0 * 100 / m_zoomPercent, 4.0 * 100 / m_zoomPercent));
+        }
         painter->restore(); return;
     }
     // Remove the world transform only for editor adornments; device rasterizers never see these pixels.

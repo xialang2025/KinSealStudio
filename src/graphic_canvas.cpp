@@ -65,8 +65,8 @@ static bool assignGraphicVertices(HmiObject *object, const QVector<QPointF> &ver
  ******************************************************************************/
 QRectF HmiControlItem::boundingRect() const //20261113-2 add
 {
-    if (m_type == QStringLiteral("sector")) { return graphicHitPath(m_type,rect(),m_record.graphic).boundingRect().united(rect()).adjusted(-1,-1,1,1); } //20261113-7 add: Native sector selection retains the whole circle box, including empty lower corners.
-    if (isSupportedGraphic(m_type)) { return graphicHitPath(m_type, rect(), m_record.graphic).boundingRect().adjusted(-1, -1, 1, 1); }
+    if (m_type == QStringLiteral("sector")) { return shape().boundingRect().united(rect()).adjusted(-1,-1,1,1); } //20261113-7 add: Native sector selection retains the whole circle box, including empty lower corners.
+    if (isSupportedGraphic(m_type)) { return shape().boundingRect().adjusted(-1, -1, 1, 1); } //20261124-15 change
     return QGraphicsRectItem::boundingRect();
 }
 
@@ -79,7 +79,10 @@ QRectF HmiControlItem::boundingRect() const //20261113-2 add
  ******************************************************************************/
 QPainterPath HmiControlItem::shape() const //20261113-2 add
 {
-    if (isSupportedGraphic(m_type)) { return graphicHitPath(m_type, rect(), m_record.graphic); }
+    if (isSupportedGraphic(m_type)) //20261124-15 change
+    {
+        return m_record.appearanceTransform(rect()).map(graphicHitPath(m_type, rect(), m_record.graphic));
+    }
     return QGraphicsRectItem::shape();
 }
 
@@ -192,6 +195,7 @@ bool ScreenCanvas::graphicRelease(QMouseEvent *event) //20261113-2 add
 bool ScreenCanvas::beginGraphicResize(const HmiObject &object, const QPointF &point) //20261113-2 add
 {
     QVector<QPointF> handles = graphicHandles(object.type, object.geometry, object.graphic);
+    const QTransform transform = object.appearanceTransform(object.geometry); //20261124-15 add
     int index;
     int chosen = -1;
     double nearest = 6;
@@ -199,7 +203,7 @@ bool ScreenCanvas::beginGraphicResize(const HmiObject &object, const QPointF &po
 
     for (index = 0; index < handles.size(); ++index)
     {
-        distance = QLineF(viewportTransform().map(point), viewportTransform().map(handles[index])).length();
+        distance = QLineF(viewportTransform().map(point), viewportTransform().map(transform.map(handles[index]))).length();
         if (distance <= nearest) { chosen = index; nearest = distance; }
     }
     if (chosen < 0) { return false; }
@@ -222,15 +226,21 @@ bool ScreenCanvas::updateGraphicResize(const QPointF &point) //20261113-2 add
     QGraphicsItem *graphics;
     HmiControlItem *item;
     QVector<QPointF> handles;
+    QTransform transform; //20261124-15 add
 
     if (m_resizeHandle >= 0 || m_resizeId.isEmpty()) { return false; }
     Q_FOREACH (original, m_interactionOriginal)
     {
         if (original.id != m_resizeId || !isSupportedGraphic(original.type)) { continue; }
         handles = graphicHandles(original.type, original.geometry, original.graphic);
+        transform = original.appearanceTransform(original.geometry);
+        for (QPointF &handle : handles) { handle = transform.map(handle); } //20261124-15 add
         handles[-m_resizeHandle - 1] = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
         object = original;
         if (!assignGraphicVertices(&object,handles)) { return true; } //20261113-2 change: Moving an intermediate handle must retain all other vertices.
+        // Convert the displayed edit back into the saved, unreflected point coordinates.
+        transform = object.appearanceTransform(QRectF(0, 0, 1, 1)); //20261124-15 add
+        for (QPointF &vertex : object.graphic.points) { vertex = transform.map(vertex); }
         Q_FOREACH (graphics, m_scene->selectedItems())
         {
             item = dynamic_cast<HmiControlItem *>(graphics);

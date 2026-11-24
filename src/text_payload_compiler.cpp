@@ -62,6 +62,7 @@ bool renderSingleTextFrame(const HmiProject &project, const QString &fontFamily,
     painter.setRenderHint(QPainter::TextAntialiasing, false);
     // 20261108-12 change: Qt 4 and Qt 6 round centered single and multiple lines differently.
     rasterOffset = project.objects.first().text.count(QLatin1Char('\n')) % 2 == 0 ? -1 : 0; //20261108-12 change: Match odd/even line-centering parity.
+    painter.setWorldTransform(project.objects.first().appearanceTransform(project.objects.first().geometry), true); //20261124-15 add
     if (project.objects.first().hasStaticTextProperties) //20261108-14 add: Reuse exactly the editor appearance for new property-aware objects.
     {
         paintStaticText(&painter, project.objects.first().geometry,

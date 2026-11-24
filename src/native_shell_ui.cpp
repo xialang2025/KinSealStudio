@@ -196,6 +196,12 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 connect(action, &QAction::triggered, this, &MainWindow::createNormalPage);
                 placed.insert(action); // This command belongs to the standard toolbar.
             }
+            else if (id == QStringLiteral("action_h") || id == QStringLiteral("action_v")) //20261124-15 add
+            {
+                const QString edit = id == QStringLiteral("action_h") ? QStringLiteral("mirrorHorizontal") : QStringLiteral("mirrorVertical");
+                action->setProperty("editCommand", edit);
+                connect(action, &QAction::triggered, this, [this, edit]() { dispatchEditCommand(edit); });
+            }
             else if (id == QStringLiteral("action_line") || id == QStringLiteral("action_rect") || id == QStringLiteral("action_ellipse") || id == QStringLiteral("action_RoundedRect") || id == QStringLiteral("action_foldline") || id == QStringLiteral("action_polygon") || id == QStringLiteral("action_freeline") || id == QStringLiteral("action_ArcItem")) //20261113-2 change: Native static shapes enter drawing immediately.
             {
                 connect(action, &QAction::triggered, this, [this, id]() { HmiObject object; object.type = id == QStringLiteral("action_line") ? QStringLiteral("line") : id == QStringLiteral("action_rect") ? QStringLiteral("rect") : id == QStringLiteral("action_ellipse") ? QStringLiteral("ellipse") : id == QStringLiteral("action_RoundedRect") ? QStringLiteral("roundrect") : id == QStringLiteral("action_foldline") ? QStringLiteral("polyline") : id == QStringLiteral("action_polygon") ? QStringLiteral("polygon") : id == QStringLiteral("action_freeline") ? QStringLiteral("freeline") : QStringLiteral("sector"); if (object.type == QStringLiteral("polygon")) { object.graphic.foreground = Qt::white; object.graphic.background = Qt::black; } //20261113-4 change: Native polygons default to white foreground and black solid background.
@@ -356,7 +362,8 @@ void MainWindow::initializeNativeShell() //20261111-1 add
         action->setText(label);
         action->setIcon(nativeShellIcon(entry.value(QStringLiteral("icon")).toString()));
         action->setToolTip(label);
-        if (id != QStringLiteral("action_save") && id != QStringLiteral("action_undo") && id != QStringLiteral("action_redo"))
+        if (id != QStringLiteral("action_save") && id != QStringLiteral("action_undo") && id != QStringLiteral("action_redo") &&
+            id != QStringLiteral("action_h") && id != QStringLiteral("action_v")) //20261124-15 change: Qt generates gray icons for disabled flip commands.
         {
             original = action->icon();
             original.addPixmap(original.pixmap(24, 24, QIcon::Normal), QIcon::Disabled);

@@ -72,26 +72,32 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
     Q_FOREACH (object, ordered)
     {
         if (!runtime.isVisible(*object)) { continue; }
+        painter.save(); //20261124-15 add
+        painter.setWorldTransform(object->appearanceTransform(object->geometry), true);
         if (object->type == QStringLiteral("text"))
         {
             paintStaticText(&painter, QRectF(object->geometry), staticTextContent(*object, runtime.language()), object->staticText);
-            continue;
         }
-        if (runtime.online() && object->hasNumberDisplayProperties) //20261124-13 add
+        else if (runtime.online() && object->hasNumberDisplayProperties) //20261124-13 add
         {
             NumberDisplayProperties appearance = object->numberDisplay;
             appearance.decimalDigits = 0; // The runtime has already placed the decimal point.
             paintNumberDisplay(&painter, QRectF(object->geometry), appearance, runtime.numberDisplayValue(*object));
-            continue;
         }
-        state = runtime.visualState(*object);
-        if (state < 0) { continue; }
-        appearance = object->hasLampProperties ? object->lamp.state(object->bitButton, state)
-                                               : &object->bitButton.states[qBound(0, state, 1)];
-        if (appearance != nullptr)
+        else
         {
-            paintBitButton(&painter, QRectF(object->geometry), *appearance, runtime.language(), runtime.isPressed(object->id));
+            state = runtime.visualState(*object);
+            if (state >= 0)
+            {
+                appearance = object->hasLampProperties ? object->lamp.state(object->bitButton, state)
+                                                       : &object->bitButton.states[qBound(0, state, 1)];
+                if (appearance != nullptr)
+                {
+                    paintBitButton(&painter, QRectF(object->geometry), *appearance, runtime.language(), runtime.isPressed(object->id));
+                }
+            }
         }
+        painter.restore(); //20261124-15 add
     }
     painter.end();
     return frame;

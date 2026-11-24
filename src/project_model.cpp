@@ -228,6 +228,20 @@ bool hasStage1Data(const HmiProject &project)
 } // namespace
 
 /******************************************************************************
+ * Function Name   : HmiObject::appearanceTransform
+ * Description     : Reflect the artwork about the requested bounds in its current coordinate system.
+ * Input Parameters: bounds
+ * Return Value    : An identity or self-inverse reflection.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+QTransform HmiObject::appearanceTransform(const QRectF &bounds) const //20261124-15 add
+{
+    return QTransform(flipHorizontal ? -1 : 1, 0, 0, flipVertical ? -1 : 1,
+                      flipHorizontal ? bounds.left() + bounds.right() : 0,
+                      flipVertical ? bounds.top() + bounds.bottom() : 0);
+}
+
+/******************************************************************************
  * Function Name   : HmiObject::toJson
  * Description     : Serialize one editable HMI object into the prototype schema.
  * Input Parameters: None
@@ -249,6 +263,8 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     json.insert(QStringLiteral("height"), geometry.height());
     json.insert(QStringLiteral("layer"), layer); //20261108-14 add
     json.insert(QStringLiteral("group"), group);
+    if (flipHorizontal) { json.insert(QStringLiteral("flipHorizontal"), true); } //20261124-15 add
+    if (flipVertical) { json.insert(QStringLiteral("flipVertical"), true); }
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); } //20261110-5 add
     if (type == QStringLiteral("text") && hasStaticTextProperties)
     {
@@ -329,6 +345,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     }
 
     if (!knownKeys(json, {QStringLiteral("id"), QStringLiteral("type"), QStringLiteral("name"),
+        QStringLiteral("flipHorizontal"), QStringLiteral("flipVertical"), //20261124-15 add
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
@@ -336,7 +353,11 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
         key = item.key();
-        if (key == QStringLiteral("x") || key == QStringLiteral("y") || key == QStringLiteral("width") || key == QStringLiteral("height"))
+        if (key == QStringLiteral("flipHorizontal") || key == QStringLiteral("flipVertical")) //20261124-15 add
+        {
+            if (!item.value().isBool()) { return modelError(error, QStringLiteral("object.%1：翻转字段必须为布尔值。").arg(key)); }
+        }
+        else if (key == QStringLiteral("x") || key == QStringLiteral("y") || key == QStringLiteral("width") || key == QStringLiteral("height"))
         {
             if (!exactInteger(item.value())) { return modelError(error, QStringLiteral("object.%1：几何必须为整数。").arg(key)); }
         }
@@ -504,6 +525,8 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     object->address = json.value(QStringLiteral("address")).toString();
     object->layer = json.value(QStringLiteral("layer")).toDouble(1); //20261108-14 add
     object->group = json.value(QStringLiteral("group")).toString();
+    object->flipHorizontal = json.value(QStringLiteral("flipHorizontal")).toBool(); //20261124-15 add
+    object->flipVertical = json.value(QStringLiteral("flipVertical")).toBool();
     object->hasStaticTextProperties = json.contains(QStringLiteral("staticText"));
     object->hasBitButtonProperties = json.contains(QStringLiteral("bitButton")); //20261108-15 add
     if (!object->hasBitButtonProperties) { object->bitButton = BitButtonProperties(); }

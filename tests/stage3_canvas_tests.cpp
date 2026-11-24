@@ -13,6 +13,7 @@ class Stage3CanvasTests : public QObject
 {
     Q_OBJECT
 private slots:
+    void mirrorsPreserveGeometryAndRecordUndo(); //20261124-15 change
     void placementGeometry_data();
     void placementGeometry();
     void placementCancellationAndZeroArea();
@@ -596,6 +597,33 @@ void Stage3CanvasTests::arrangementNoOpAndAvailability() //20261110-8 add
     canvas.executeEdit(QStringLiteral("alignWidth")); canvas.executeEdit(QStringLiteral("alignHeight")); canvas.executeEdit(QStringLiteral("alignSize"));
     canvas.executeEdit(QStringLiteral("alignHorizontalSpacing")); canvas.executeEdit(QStringLiteral("alignVerticalSpacing"));
     QCOMPARE(changes.count(), 0); QVERIFY(!canvas.canExecuteEdit(QStringLiteral("undo")));
+}
+
+/******************************************************************************
+ * Function Name   : Stage3CanvasTests::mirrorsPreserveGeometryAndRecordUndo
+ * Description     : Verify both editable flips and their independent local history entries.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.11
+ ******************************************************************************/
+void Stage3CanvasTests::mirrorsPreserveGeometryAndRecordUndo() //20261124-15 change
+{
+    ScreenCanvas canvas;
+    HmiProject project;
+    QJsonArray before;
+    QSignalSpy changes(&canvas, &ScreenCanvas::documentChanged);
+
+    project.objects = {canvasObject(QStringLiteral("A"), QRect(31, 47, 81, 39))};
+    canvas.setProject(project); canvas.selectObject(QStringLiteral("A")); before = objectRecords(canvas);
+    canvas.executeEdit(QStringLiteral("mirrorHorizontal"));
+    canvas.executeEdit(QStringLiteral("mirrorVertical"));
+    QVERIFY(canvas.objects().first().flipHorizontal && canvas.objects().first().flipVertical);
+    QCOMPARE(canvas.objects().first().geometry, project.objects.first().geometry);
+    QCOMPARE(changes.count(), 2);
+    canvas.executeEdit(QStringLiteral("undo"));
+    QVERIFY(canvas.objects().first().flipHorizontal && !canvas.objects().first().flipVertical);
+    canvas.executeEdit(QStringLiteral("undo"));
+    QCOMPARE(objectRecords(canvas), before);
 }
 
 QTEST_MAIN(Stage3CanvasTests)

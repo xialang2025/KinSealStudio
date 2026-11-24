@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QList>
 #include <QRect>
+#include <QTransform> //20261124-15 add
 #include <QString>
 #include "static_text_properties.h" //20261108-14 add
 #include "bit_button_properties.h" //20261108-15 add
@@ -50,6 +51,10 @@ struct HmiObject
     QString text;
     QString address;
     QRect geometry;
+    bool flipHorizontal = false; //20261124-15 add: Store artwork orientation independently of the hit rectangle.
+    bool flipVertical = false;
+    bool hasAppearanceFlip() const { return flipHorizontal || flipVertical; }
+    QTransform appearanceTransform(const QRectF &bounds) const;
     bool hasStaticTextProperties = false; //20261108-14 add: Legacy projects retain their validated raster path.
     StaticTextProperties staticText;
     bool hasBitButtonProperties = false; //20261108-15 add

@@ -664,6 +664,11 @@ bool buildSingleTextPayload(const HmiProject &project,
     }
     Q_FOREACH (candidate, project.objects)
     {
+        if (candidate.hasAppearanceFlip()) //20261124-15 add: The legacy source archive does not preserve the orientation.
+        {
+            if (error != nullptr) { *error = QStringLiteral("包含翻转的控件请使用工程编译入口。"); }
+            return false;
+        }
         if (candidate.type == QStringLiteral("switch"))
         {
             if (error != nullptr)
@@ -987,6 +992,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     }
     // The legacy single-text path can generate an AMT-native snapshot. AMZ uses the ordinary Lite snapshot.
     if (!isAmz070Target(project.targetModel) && project.objects.size() == 1 && project.objects.first().type == QStringLiteral("text") && !hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.connections.isEmpty() && project.languages.size() == 1 && //20261122-3 change
+        !project.objects.first().hasAppearanceFlip() && //20261124-15 add: Flipped text needs the editable Lite archive.
         (!project.objects.first().hasStaticTextProperties || !project.objects.first().staticText.visibilityEnabled)) //20261109-0 change: Keep the proven single-text raster for non-dynamic text.
     {
         return buildSingleTextPayload(project, payloads, error);
@@ -1064,7 +1070,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
             }
             else
             {
+                painter.save(); //20261124-15 add: Apply the same artwork reflection as the canvas.
+                painter.setWorldTransform(object.appearanceTransform(object.geometry), true);
                 paintStaticText(&painter, object.geometry, staticTextContent(object, backgroundLanguage), object.staticText);
+                painter.restore();
             }
         }
         else if (object.type == QStringLiteral("switch"))

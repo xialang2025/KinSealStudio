@@ -99,6 +99,11 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
                 return false;
             }
         }
+        if (object.hasAppearanceFlip() && sourceState->effect3d) //20261124-15 add: The firmware applies this effect separately from the artwork.
+        {
+            if (error != nullptr) { *error = QStringLiteral("控件 %1 开启了设备 3D 外框，设备翻转尚未支持此组合。").arg(object.name); }
+            return false;
+        }
         variantCount = sourceState->flash && !(object.hasLampProperties && object.lamp.monitorMode == 2) &&
                        !(object.hasFunctionButtonProperties && stateIndex == 1) ? 2 : 1; //20261110-0 change: Functions emit normal/flash OFF followed by the hidden pressed ON frame.
         for (variant = 0; variant < variantCount; ++variant) //20261109-0 change: A flashing state is immediately followed by its text-free image.
@@ -120,11 +125,17 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
                 image = underlay.convertToFormat(QImage::Format_RGB16).copy(); //20261109-0 add: Preserve static pixels beneath translucent button content.
             }
             painter.begin(&image);
+            painter.save(); //20261124-15 add: Reflect only this state, preserving the underlying page.
+            painter.setWorldTransform(object.appearanceTransform(image.rect()), true);
             paintBitButton(&painter, image.rect(), renderedState, language);
+            painter.restore();
             painter.translate(-object.geometry.topLeft()); //20261109-0 add: Static objects above this control must remain above every normal and flash image.
             Q_FOREACH (overlay, overlays)
             {
+                painter.save(); //20261124-15 add
+                painter.setWorldTransform(overlay.appearanceTransform(overlay.geometry), true);
                 paintStaticText(&painter, overlay.geometry, staticTextContent(overlay, language), overlay.staticText);
+                painter.restore();
             }
             painter.end();
             pixels.clear();
