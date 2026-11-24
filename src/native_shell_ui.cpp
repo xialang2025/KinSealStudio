@@ -3,6 +3,7 @@
 #include "hmi_canvas.h"
 
 #include <QAction>
+#include <QActionGroup> //20261124-7 add
 #include <QApplication>
 #include <QComboBox>
 #include <QDockWidget>
@@ -25,6 +26,7 @@
 #include <QMessageBox>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSettings> //20261124-7 add
 #include <QStatusBar>
 #include <QStyleFactory>
 #include <QSet>
@@ -32,6 +34,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QTreeWidget>
+#include <QTranslator> //20261124-7 add
 #include <QVBoxLayout>
 #include <functional>
 
@@ -91,6 +94,37 @@ static void nativeDockTitle(QDockWidget *dock) //20261111-1 add
 }
 
 /******************************************************************************
+ * Function Name   : applyStandardDialogLanguage
+ * Description     : Apply the editor's locale to Qt-managed dialogs independently of the OS language.
+ * Input Parameters: english
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+static void applyStandardDialogLanguage(bool english) //20261124-7 add
+{
+    const QString name = QStringLiteral("KinSealQtDialogTranslation");
+    QTranslator *translator = qApp->findChild<QTranslator *>(name, Qt::FindDirectChildrenOnly);
+
+    // Qt dialogs honor the application's catalogs, including the Open, Save and Cancel buttons.
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+    if (translator == nullptr)
+    {
+        translator = new QTranslator(qApp);
+        translator->setObjectName(name);
+        if (!translator->load(QStringLiteral(":/native-shell/i18n/qtbase_zh_CN.qm")))
+        {
+            qWarning("The embedded Qt Chinese dialog catalog could not be loaded.");
+            return;
+        }
+    }
+    QCoreApplication::removeTranslator(translator);
+    if (!english)
+    {
+        QCoreApplication::installTranslator(translator);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::initializeNativeShell
  * Description     : Restore the native shell while preserving existing command handlers and unavailable-feature boundaries.
  * Input Parameters: None
@@ -113,7 +147,11 @@ void MainWindow::initializeNativeShell() //20261111-1 add
     QIcon original;
     QJsonObject::const_iterator it;
     std::function<void(QMenu *, const QJsonArray &)> populate;
+    QSettings settings(QStringLiteral("KinSealStudioLite"), QStringLiteral("Editor")); //20261124-7 add
+    const bool english = settings.value(QStringLiteral("uiLanguage")).toString() == QStringLiteral("en");
+    QActionGroup *uiLanguages = new QActionGroup(this);
 
+    applyStandardDialogLanguage(english);
     setObjectName(QStringLiteral("NativeEditorShell"));
     setFont(QFont(QStringLiteral("SimSun"), 9));
     setWindowIcon(nativeShellIcon(QStringLiteral("icons/windowIcon.png")));
@@ -285,6 +323,20 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             else if (id == QStringLiteral("action_online_simulation")) //20261114-6 add
             {
                 connect(action, &QAction::triggered, this, &MainWindow::showOnlineSimulationOptions);
+            }
+            else if (id == QStringLiteral("action_chinese") || id == QStringLiteral("action_english")) //20261124-7 add
+            {
+                const bool useEnglish = id == QStringLiteral("action_english");
+                action->setCheckable(true);
+                uiLanguages->addAction(action);
+                action->setChecked(useEnglish == english);
+                connect(action, &QAction::triggered, this, [useEnglish]() {
+                    QSettings preferences(QStringLiteral("KinSealStudioLite"), QStringLiteral("Editor"));
+
+                    applyStandardDialogLanguage(useEnglish);
+                    preferences.setValue(QStringLiteral("uiLanguage"),
+                        useEnglish ? QStringLiteral("en") : QStringLiteral("zh-CN"));
+                });
             }
             else
             {

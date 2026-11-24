@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QGroupBox> //20261123-4 add
+#include <QInputDialog> //20261124-7 add
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -77,6 +78,7 @@ private slots:
     void invalidOpenPreservesDocument();
     void openingSamePathReloadsAfterSave();
     void saveDiscardCancelClose();
+    void standardDialogsFollowInterfaceLanguage(); //20261124-7 add
     void cancelledSaveAsBlocksClose();
     void failedSaveBlocksClose();
     void actualTabsComboAndTreeNavigateById();
@@ -718,6 +720,106 @@ void Stage2WorkflowTests::saveDiscardCancelClose() //20261110-7 add
     });
     window.closeProject();
     QVERIFY(!window.m_hasProject);
+}
+
+/******************************************************************************
+ * Function Name   : standardDialogsFollowInterfaceLanguage
+ * Description     : Check real close and file prompts, standard controls and the persisted interface setting.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::standardDialogsFollowInterfaceLanguage() //20261124-7 add
+{
+    MainWindow window;
+    HmiProject changed = workflowProject();
+    QAction *chinese = window.m_commands.value(QStringLiteral("action_chinese"));
+    QAction *english = window.m_commands.value(QStringLiteral("action_english"));
+    QSettings settings(QStringLiteral("KinSealStudioLite"), QStringLiteral("Editor"));
+
+    QVERIFY(chinese != nullptr && english != nullptr && chinese->isEnabled() && english->isEnabled());
+    window.setProject(changed, QString());
+    changed.name = QStringLiteral("unsaved-language-test");
+    QVERIFY(window.commitProjectDraft(changed));
+    window.show();
+    auto caption = [](QAbstractButton *button) {
+        return button == nullptr ? QString() : button->text().section(QLatin1Char('('), 0, 0)
+            .remove(QLatin1Char('&')).trimmed();
+    };
+    auto closeLabels = [&]() {
+        QStringList labels;
+        QTimer::singleShot(0, &window, [&]() {
+            QMessageBox *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+            if (box != nullptr)
+            {
+                labels = {caption(box->button(QMessageBox::Save)), caption(box->button(QMessageBox::Discard)),
+                          caption(box->button(QMessageBox::Cancel))};
+                box->button(QMessageBox::Cancel)->click();
+            }
+        });
+        window.close();
+        return labels;
+    };
+    auto openLabels = [&]() {
+        QStringList labels;
+        QTimer::singleShot(0, &window, [&]() {
+            QFileDialog *file = qobject_cast<QFileDialog *>(QApplication::activeModalWidget());
+            if (file != nullptr)
+            {
+                QDialogButtonBox *buttons = file->findChild<QDialogButtonBox *>();
+                if (buttons != nullptr)
+                {
+                    labels = {caption(buttons->button(QDialogButtonBox::Open)),
+                              caption(buttons->button(QDialogButtonBox::Cancel))};
+                }
+                file->reject();
+            }
+        });
+        window.openProject();
+        return labels;
+    };
+
+    QCOMPARE(closeLabels(), (QStringList{QStringLiteral("保存"), QStringLiteral("丢弃"), QStringLiteral("取消")}));
+    QVERIFY(window.m_dirty && window.isVisible());
+    QVERIFY(chinese->isChecked());
+    QCOMPARE(openLabels(), (QStringList{QStringLiteral("打开"), QStringLiteral("取消")}));
+    {
+        QMessageBox overwrite(QMessageBox::Question, QString(), QString(), QMessageBox::Yes | QMessageBox::No);
+        QDialogButtonBox buttons(QDialogButtonBox::Ok | QDialogButtonBox::Close | QDialogButtonBox::Help);
+        QColorDialog color;
+        QInputDialog input;
+        const auto *colorButtons = color.findChild<QDialogButtonBox *>();
+        QCOMPARE(caption(overwrite.button(QMessageBox::Yes)), QStringLiteral("是"));
+        QCOMPARE(caption(overwrite.button(QMessageBox::No)), QStringLiteral("否"));
+        QCOMPARE(caption(buttons.button(QDialogButtonBox::Ok)), QStringLiteral("确定"));
+        QCOMPARE(caption(buttons.button(QDialogButtonBox::Close)), QStringLiteral("关闭"));
+        QCOMPARE(caption(buttons.button(QDialogButtonBox::Help)), QStringLiteral("帮助"));
+        QVERIFY(colorButtons != nullptr);
+        QCOMPARE(caption(colorButtons->button(QDialogButtonBox::Cancel)), QStringLiteral("取消"));
+        QCOMPARE(input.cancelButtonText(), QStringLiteral("取消"));
+    }
+
+    english->trigger();
+    const QStringList englishClose = closeLabels();
+    const QStringList englishOpen = openLabels();
+    QString englishInputCancel;
+    bool englishChecked;
+    {
+        MainWindow reopened;
+        QInputDialog input;
+        englishInputCancel = input.cancelButtonText();
+        englishChecked = reopened.m_commands.value(QStringLiteral("action_english"))->isChecked();
+    }
+    const QString savedEnglish = settings.value(QStringLiteral("uiLanguage")).toString();
+    chinese->trigger();
+    QCOMPARE(englishClose, (QStringList{QStringLiteral("Save"), QStringLiteral("Discard"), QStringLiteral("Cancel")}));
+    QCOMPARE(englishOpen, (QStringList{QStringLiteral("Open"), QStringLiteral("Cancel")}));
+    QCOMPARE(englishInputCancel, QStringLiteral("Cancel"));
+    QVERIFY(englishChecked);
+    QCOMPARE(savedEnglish, QStringLiteral("en"));
+    QCOMPARE(closeLabels(), (QStringList{QStringLiteral("保存"), QStringLiteral("丢弃"), QStringLiteral("取消")}));
+    QVERIFY(window.m_dirty);
+    settings.remove(QStringLiteral("uiLanguage"));
 }
 
 /******************************************************************************

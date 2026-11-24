@@ -1019,6 +1019,7 @@ void MainWindow::updateCommandStates() //20261110-7 add
         command = it.value()->property("editCommand").toString();
         enabled = m_hasProject;
         if (id == QStringLiteral("action_new_pro") || id == QStringLiteral("action_open_pro") ||
+            id == QStringLiteral("action_chinese") || id == QStringLiteral("action_english") || //20261124-7 add
             id == QStringLiteral("action_quit") || id == QStringLiteral("action_H") || id == QStringLiteral("action_KinSeal") ||
             id == QStringLiteral("action_42") || id == QStringLiteral("action_tool") || id == QStringLiteral("action_40")) {
             enabled = true;
