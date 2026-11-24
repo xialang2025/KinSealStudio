@@ -158,6 +158,7 @@ private:
     void refreshPageNavigation();
     void rebuildSystemSettings();
     void dispatchEditCommand(const QString &command);
+    void duplicateCanvasObject(const QString &id, const QPoint &offset); //20261124-11 add
     void updateCommandStates();
     bool downloadInProgress() const; //20261114-5 add
     void startOfflineSimulation(); //20261114-6 add

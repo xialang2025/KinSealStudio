@@ -655,7 +655,7 @@ bool ScreenCanvas::hasPendingPlacement() const //20261110-8 add
  ******************************************************************************/
 bool ScreenCanvas::hasActiveInteraction() const //20261110-8 add
 {
-    return m_hasPending || m_drawing || m_moving || !m_resizeId.isEmpty();
+    return m_hasPending || m_drawing || m_moving || !m_resizeId.isEmpty() || !m_copySourceId.isEmpty(); //20261124-11 change
 }
 
 /******************************************************************************
@@ -675,6 +675,7 @@ void ScreenCanvas::cancelInteraction() //20261110-8 add
     canceled = hasActiveInteraction(); restore = m_moving || !m_resizeId.isEmpty();
     original = m_interactionOriginal; selection = m_interactionSelection;
     m_hasPending = false; m_drawing = false; m_moving = false;
+    m_copySourceId.clear(); //20261124-11 add: The shared draft rectangle is disposed below.
     m_resizeId.clear(); m_resizeHandle = 0; m_pendingObject = HmiObject();
     m_interactionOriginal.clear(); m_interactionSelection.clear();
     delete m_draftRect; m_draftRect = nullptr;

@@ -193,6 +193,7 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     connect(m_canvas, &ScreenCanvas::editObjectRequested, this, &MainWindow::editStaticText); //20261108-14 add
     m_canvas->setExternalEditRouting(true); //20261110-7 add: Keys, context menus and menu actions share whole-project undo.
     connect(m_canvas, &ScreenCanvas::editCommandRequested, this, &MainWindow::dispatchEditCommand);
+    connect(m_canvas, &ScreenCanvas::duplicateObjectRequested, this, &MainWindow::duplicateCanvasObject); //20261124-11 add
     connect(qApp, &QApplication::focusChanged, this, [this]() { updateCommandStates(); });
     connect(m_pageTabs, &QTabWidget::currentChanged, this, [this](int index) {
         if (!m_updatingNavigation && index >= 0) { activatePageId(m_pageTabs->tabBar()->tabData(index).toString()); }

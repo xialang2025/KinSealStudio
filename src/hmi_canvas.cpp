@@ -23,7 +23,9 @@
 #include "number_display_dialog.h" //20261112-0 add
 #include "image_display_dialog.h" //20261112-0 add
 
+#include <QApplication> //20261124-11 add
 #include <QBrush>
+#include <QtMath>
 #include <QGraphicsScene>
 #include <QJsonArray>
 #include <QSignalBlocker>
@@ -726,6 +728,20 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
         m_draftRect = m_scene->addRect(QRectF(m_dragOrigin, QSizeF()), QPen(Qt::blue, 0, Qt::DashLine));
         m_draftRect->setZValue(10000); event->accept(); return;
     }
+    hit = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
+    if (event->button() == Qt::LeftButton && event->modifiers() == Qt::ControlModifier &&
+        m_activeTool == QStringLiteral("select") && hit != nullptr && hit->isSelected() &&
+        selectedObjectIds().size() == 1) //20261124-11 add
+    {
+        // Qt toggles the selection for a Ctrl click. Defer that toggle until release
+        // so a drag leaves the source selected and never enters Qt's move handler.
+        m_copySourceId = hit->toHmiObject().id;
+        m_copyPressPosition = event->position().toPoint();
+        m_copySceneOrigin = point;
+        m_copyBounds = hit->mapRectToScene(hit->rect());
+        event->accept();
+        return;
+    }
     if (event->button() == Qt::LeftButton && m_activeTool == QStringLiteral("select") && beginResize(point))
     {
         event->accept(); return;
@@ -734,7 +750,6 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
     {
         addControl(m_activeTool, point); event->accept(); return;
     }
-    hit = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
     QGraphicsView::mousePressEvent(event);
     selectedObjectRecord = selectedObject(&selected);
     // Preserve the existing group-selection rule until a separate native probe establishes its modifiers.
@@ -778,6 +793,36 @@ static QRectF sectorCreationRect(const QPointF &origin, const QPointF &end, int 
 }
 
 /******************************************************************************
+ * Function Name   : ScreenCanvas::updateCopyPreview
+ * Description     : Preview the page-bounded translation after the drag threshold.
+ * Input Parameters: position
+ * Return Value    : Whole-pixel page offset from the original control.
+ * Date            : 2026.11.24
+ ******************************************************************************/
+QPoint ScreenCanvas::updateCopyPreview(const QPoint &position) //20261124-11 add
+{
+    QPoint delta;
+
+    if (m_draftRect == nullptr)
+    {
+        if ((position - m_copyPressPosition).manhattanLength() < QApplication::startDragDistance())
+        {
+            return QPoint();
+        }
+        m_draftRect = m_scene->addRect(m_copyBounds, QPen(Qt::blue, 0, Qt::DashLine));
+        m_draftRect->setZValue(10000);
+        m_draftRect->setAcceptedMouseButtons(Qt::NoButton);
+        setCursor(Qt::DragCopyCursor);
+    }
+    // Keep partial-pixel source positions intact when clamping the integer translation.
+    delta = (mapToScene(position) - m_copySceneOrigin).toPoint();
+    delta.setX(qBound(qCeil(-m_copyBounds.left()), delta.x(), qFloor(m_pageWidth - m_copyBounds.right())));
+    delta.setY(qBound(qCeil(-m_copyBounds.top()), delta.y(), qFloor(m_pageHeight - m_copyBounds.bottom())));
+    m_draftRect->setRect(m_copyBounds.translated(delta));
+    return delta;
+}
+
+/******************************************************************************
  * Function Name   : ScreenCanvas::mouseMoveEvent
  * Description     : Report current HMI page coordinates for the editor status bar.
  * Input Parameters: event
@@ -791,6 +836,12 @@ void ScreenCanvas::mouseMoveEvent(QMouseEvent *event) //20261110-8 change
 
     point = mapToScene(event->position().toPoint()).toPoint(); emit pageCoordinatesChanged(point);
     if (graphicMove(event, point)) { return; } //20261113-2 add
+    if (!m_copySourceId.isEmpty()) //20261124-11 add
+    {
+        updateCopyPreview(event->position().toPoint());
+        event->accept();
+        return;
+    }
     if (m_drawing && m_draftRect != nullptr)
     {
         point.setX(qBound(0, point.x(), m_pageWidth)); point.setY(qBound(0, point.y(), m_pageHeight));
@@ -815,9 +866,25 @@ void ScreenCanvas::mouseReleaseEvent(QMouseEvent *event) //20261110-8 change
     HmiControlItem *item;
     QRect geometry;
     QList<HmiObject> before;
+    QPoint copyOffset; //20261124-11 add
+    bool copyDragged;
+    QString copySourceId;
 
     if (graphicRelease(event)) { return; } //20261113-2 add
     if (event->button() != Qt::LeftButton) { QGraphicsView::mouseReleaseEvent(event); return; }
+    if (!m_copySourceId.isEmpty()) //20261124-11 add
+    {
+        copyOffset = updateCopyPreview(event->position().toPoint());
+        copyDragged = m_draftRect != nullptr;
+        copySourceId = m_copySourceId;
+
+        // Drop transient state before the host reads the committed model or rebuilds this page.
+        cancelInteraction();
+        event->accept();
+        if (copyDragged) { emit duplicateObjectRequested(copySourceId, copyOffset); }
+        else { selectObjects(QStringList()); }
+        return;
+    }
     if (m_drawing && m_draftRect != nullptr)
     {
         geometry = m_draftRect->rect().toRect();

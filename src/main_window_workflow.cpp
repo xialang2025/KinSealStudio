@@ -880,6 +880,36 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::duplicateCanvasObject
+ * Description     : Copy one canvas control through the validated project editing path.
+ * Input Parameters: id, offset
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void MainWindow::duplicateCanvasObject(const QString &id, const QPoint &offset) //20261124-11 add
+{
+    HmiProject project;
+    Stage3Clipboard selection;
+    HmiProject candidate;
+    QStringList newIds;
+    QString error;
+
+    if (!m_hasProject) { return; }
+    project = currentEditorProject();
+    // Use a private snapshot so the user's Copy and Paste commands keep their clipboard.
+    if (captureStage3Selection(project, QStringList{id}, &selection, &error) &&
+        pasteStage3Selection(project, selection, offset, &candidate, &newIds, &error) &&
+        commitProjectDraft(candidate, &error))
+    {
+        m_canvas->selectObjects(newIds);
+    }
+    else if (!error.isEmpty())
+    {
+        statusBar()->showMessage(error, 5000);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::dispatchEditCommand
  * Description     : Route text-edit commands to their focused editor and canvas commands through project history.
  * Input Parameters: command

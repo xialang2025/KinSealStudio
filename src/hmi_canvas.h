@@ -85,6 +85,7 @@ signals:
     void controlLimitReached();
     void editObjectRequested(); //20261108-14 add
     void editCommandRequested(const QString &command); //20261110-7 add
+    void duplicateObjectRequested(const QString &id, const QPoint &offset); //20261124-11 add
     void interactionCancelled(); //20261110-8 add: Cancel pending resources without creating an edit transaction.
 
 protected:
@@ -135,6 +136,10 @@ private:
     bool m_externalEditRouting = false; //20261110-7 add: Standalone canvases retain their existing local command behavior.
     bool m_moving = false; //20261110-8 add: Whole-selection movement uses one shared delta and one history transaction.
     QPointF m_moveOrigin;
+    QString m_copySourceId; //20261124-11 add: Keep the source selected while the copy preview moves.
+    QPoint m_copyPressPosition;
+    QPointF m_copySceneOrigin;
+    QRectF m_copyBounds;
     QRect m_moveBounds;
     QList<HmiObject> m_interactionOriginal;
     QStringList m_interactionSelection;
@@ -151,6 +156,7 @@ private:
     bool beginResize(const QPointF &point);
     void updateResize(const QPointF &point);
     void updateMove(const QPointF &point);
+    QPoint updateCopyPreview(const QPoint &position); //20261124-11 add
     bool publishDocumentChange(const QList<HmiObject> &before);
 };
 

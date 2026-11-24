@@ -29,6 +29,7 @@
 #include <QListWidget>
 #include <QJsonDocument>
 #include <QMessageBox>
+#include <QMouseEvent> //20261124-11 add
 #include <QPainter> //20261124-5 add
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -70,6 +71,7 @@ private slots:
     void editorCanvasZoomsWithControlWheel(); //20261124-6 add
     void toolbarPreviewsWholePageAndSelectedStates(); //20261124-5 add
     void canvasKeysUseWholeProjectHistory();
+    void canvasControlDragDuplicatesSelection(); //20261124-11 add
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
@@ -474,6 +476,124 @@ void Stage2WorkflowTests::canvasKeysUseWholeProjectHistory() //20261110-7 add
     window.m_canvas->requestEditCommand(QStringLiteral("redo"));
     QCOMPARE(window.m_canvas->objects().size(), 0);
     QVERIFY(window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::canvasControlDragDuplicatesSelection
+ * Description     : Exercise duplication through viewport events and verify atomic project history.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.24
+ ******************************************************************************/
+void Stage2WorkflowTests::canvasControlDragDuplicatesSelection() //20261124-11 add
+{
+    MainWindow window;
+    HmiProject project;
+    HmiObject original;
+    HmiObject copy;
+    HmiObject expected;
+    QTemporaryDir directory;
+    HmiProject reloaded;
+    QString path;
+    QString error;
+    ScreenCanvas *canvas;
+    QWidget *viewport;
+    QPoint start;
+    QPoint drop;
+    QStringList selection;
+    int history;
+
+    project = workflowProject();
+    original = project.objects.first();
+    window.setProject(project, QString());
+    window.resize(1353, 708);
+    window.show();
+    canvas = window.m_canvas;
+    viewport = canvas->viewport();
+    canvas->setZoomPercent(125);
+    start = canvas->mapFromScene(original.geometry.center());
+    drop = start + QPoint(125, 75);
+    QVERIFY(viewport->rect().contains(start));
+    QVERIFY(viewport->rect().contains(drop));
+    QTest::mouseClick(viewport, Qt::LeftButton, Qt::NoModifier, start);
+    QCOMPARE(canvas->selectedObjectIds(), QStringList{original.id});
+    canvas->setFocus();
+    window.dispatchEditCommand(QStringLiteral("copy"));
+    history = window.m_projectHistory.size();
+
+    auto move = [&](const QPoint &position, Qt::KeyboardModifiers modifiers) {
+        QMouseEvent event(QEvent::MouseMove, position, viewport->mapToGlobal(position),
+                          Qt::NoButton, Qt::LeftButton, modifiers);
+        QApplication::sendEvent(viewport, &event);
+    };
+
+    // A Ctrl click keeps the existing selection toggle without creating a history entry.
+    QTest::mouseClick(viewport, Qt::LeftButton, Qt::ControlModifier, start);
+    QVERIFY(canvas->selectedObjectIds().isEmpty());
+    QCOMPARE(window.m_projectHistory.size(), history);
+    QTest::mouseClick(viewport, Qt::LeftButton, Qt::NoModifier, start);
+
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::ControlModifier, start);
+    move(drop, Qt::ControlModifier);
+    QVERIFY(canvas->hasActiveInteraction());
+    QCOMPARE(canvas->objects().size(), 1);
+    QCOMPARE(canvas->objects().first().toJson(), original.toJson());
+    QTest::keyClick(canvas, Qt::Key_Escape);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::ControlModifier, drop);
+    QVERIFY(!canvas->hasActiveInteraction());
+    QCOMPARE(window.m_projectHistory.size(), history);
+    QCOMPARE(canvas->selectedObjectIds(), QStringList{original.id});
+
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::ControlModifier, start);
+    move(drop, Qt::ControlModifier);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::ControlModifier, drop + QPoint(25, 0));
+    QCOMPARE(window.m_project.objects.size(), 2);
+    QCOMPARE(window.m_projectHistory.size(), history + 1);
+    QCOMPARE(window.m_project.objects.first().toJson(), original.toJson());
+    copy = window.m_project.objects.last();
+    QVERIFY(copy.id != original.id);
+    expected = original;
+    expected.id = copy.id;
+    expected.geometry.translate(120, 60);
+    QCOMPARE(copy.toJson(), expected.toJson());
+    selection = canvas->selectedObjectIds();
+    QCOMPARE(selection, QStringList{copy.id});
+    QVERIFY(window.m_dirty);
+    QCOMPARE(window.m_objectClipboard.objectIds, QStringList{original.id});
+
+    window.dispatchEditCommand(QStringLiteral("undo"));
+    QCOMPARE(window.m_project.objects.size(), 1);
+    QCOMPARE(window.m_project.objects.first().toJson(), original.toJson());
+    QVERIFY(!window.m_dirty);
+    window.dispatchEditCommand(QStringLiteral("redo"));
+    QCOMPARE(window.m_project.objects.last().toJson(), copy.toJson());
+
+    // Regular drags still move the selected control and keep the original separate.
+    canvas->selectObject(copy.id);
+    start = canvas->mapFromScene(copy.geometry.center());
+    drop = start + QPoint(50, 25);
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::NoModifier, start);
+    move(drop, Qt::NoModifier);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, drop);
+    QCOMPARE(canvas->objects().size(), 2);
+    QCOMPARE(canvas->objects().first().toJson(), original.toJson());
+    QCOMPARE(canvas->objects().last().geometry, copy.geometry.translated(40, 20));
+
+    // The copy keeps the original grab point until the page edge stops it.
+    start = canvas->mapFromScene(canvas->objects().last().geometry.center());
+    drop = canvas->mapFromScene(QPoint(2, 2));
+    QVERIFY(viewport->rect().contains(start));
+    QVERIFY(viewport->rect().contains(drop));
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::ControlModifier, start);
+    move(drop, Qt::ControlModifier);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::ControlModifier, drop);
+    QCOMPARE(window.m_project.objects.size(), 3);
+    QCOMPARE(window.m_project.objects.last().geometry, QRect(QPoint(), original.geometry.size()));
+    QVERIFY(directory.isValid());
+    path = directory.filePath(QStringLiteral("ctrl-drag.ksp"));
+    QVERIFY2(window.m_project.save(path, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(path, &reloaded, &error), qPrintable(error));
+    QCOMPARE(reloaded.objects.last().toJson(), window.m_project.objects.last().toJson());
 }
 
 /******************************************************************************
