@@ -1251,3 +1251,11 @@ Windows 私有桌面工作流 72 项通过，覆盖按钮置灰、实际点击�
 选择顺序和手柄只存在于画布。仅改变选择不产生撤销记录。对齐产生的坐标和尺寸按原有字段保存、撤销和编译。设备编译继续读取控件几何和属性。随包 AMZ 静态样例通过设备包校验，10 个设备段与上一版逐字节一致。
 
 Windows 私有桌面工作流 73 项通过，覆盖 Ctrl 点选、取消参考对象、左对齐、等宽和 125% 缩放下框选。画布专项 46 项通过，覆盖其余对齐、等间距和组合布局。另有两项原厂 SM 往返用例缺少 `canvas-half-centered-saved-r3.sm` 和 `canvas-nested-locked-saved-r1.sm`，待样本恢复后复跑。
+
+## 43 Windows 构建目录的 Qt 运行依赖
+
+Qt Kit 提供编译和链接所需的头文件、导入库及部署工具。Windows 启动 `KinSealStudioLite.exe` 时，还要能加载同一套 Qt 的运行时 DLL 和平台插件。缺少 `Qt6Core.dll`、`Qt6Gui.dll`、`Qt6Svg.dll` 或 `Qt6SerialPort.dll` 时，应用在入口函数执行前就会失败。平台插件位于 `platforms/qwindows.dll`。如果提示已经找到 `windows` 却初始化失败，可用 `QT_DEBUG_PLUGINS=1` 查看 Qt 实际找到的插件路径及加载错误，核对版本、架构和插件依赖。
+
+在 Windows 本机用带 `windeployqt` 和 `qtpaths` 的 Qt Kit 构建应用。每次重新链接 `KinSealStudioLite` 目标后，CMake 从所链接的 Kit 部署 Qt DLL、Windows 平台插件和编译器运行库，并写入应用目录的 `qt.conf`。若之前把不同版本的 DLL 放进同一个构建目录，重新链接时会按当前 Kit 更新部署文件。运行时请保留 EXE 旁的 DLL 及插件子目录。已有部署文件被移走时，重新构建并链接应用可恢复。
+
+本机 AMZ 构建目录在清除 Qt 和 MinGW 运行路径的后台环境中，部署前返回 `0xC0000135`，部署后 `--release-info` 成功并从应用目录加载 `platforms/qwindows.dll`。同一构建的 AMZ 静态样例编译及验包通过。此步骤只部署 PC 应用依赖，设备数据格式沿用已有规则。

@@ -274,6 +274,26 @@ if(WIN32)
     target_link_libraries(KinSealStudioLite PRIVATE setupapi)
 endif()
 
+#20261125-0 add: Use the linked Qt kit and compiler to deploy a runnable Windows build.
+if(WIN32 AND NOT CMAKE_CROSSCOMPILING AND TARGET Qt6::windeployqt AND TARGET Qt6::qtpaths)
+    get_filename_component(KINSEAL_COMPILER_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/KinSealStudioLite.qt.conf"
+        CONTENT "[Paths]\nPrefix = .\nPlugins = .\n")
+    add_custom_command(TARGET KinSealStudioLite POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E env
+            --modify "PATH=path_list_prepend:${KINSEAL_COMPILER_BIN}"
+            "$<TARGET_FILE:Qt6::windeployqt>"
+            --qtpaths "$<TARGET_FILE:Qt6::qtpaths>"
+            --force --compiler-runtime --no-translations --no-system-dxc-compiler
+            "$<TARGET_FILE:KinSealStudioLite>"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/KinSealStudioLite.qt.conf"
+            "$<TARGET_FILE_DIR:KinSealStudioLite>/qt.conf"
+        COMMENT "Deploying Qt libraries and Windows plugins for KinSealStudioLite"
+        VERBATIM
+    )
+endif()
+
 #20261108-14 add: Run Qt event tests offscreen; do not ship the Qt Test runtime in the editor package.
 find_package(Qt6 REQUIRED COMPONENTS Test)
 get_target_property(KINSEAL_TEST_SOURCES KinSealStudioLite SOURCES)
