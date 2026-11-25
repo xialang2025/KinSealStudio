@@ -3,10 +3,23 @@
 
 #include <QCryptographicHash>
 #include <QJsonArray>
+#include <algorithm> //20261125-9 add
 #include <limits>
 
 namespace
 {
+/******************************************************************************
+ * Function Name   : completeDeviceIo
+ * Description     : Check all transport callbacks before acquiring a native handle.
+ * Input Parameters: io
+ * Return Value    : True when the acquisition, transfer and cleanup functions exist.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool completeDeviceIo(const DeviceTransferIo &io) //20261125-9 add
+{
+    return io.open && io.claim && io.write && io.read && io.release && io.close;
+}
+
 /******************************************************************************
  * Function Name   : appendEvent
  * Description     : Append a bounded operation record before notifying a synchronous observer.
@@ -123,7 +136,7 @@ bool writeBytes(DeviceTransferResult *result, const DeviceTransferIo &io,
 
 /******************************************************************************
  * Function Name   : readExpectedReply
- * Description     : Accept only an exact reply length and its observed first byte without retries or implicit concatenation.
+ * Description     : Validate exact reply length and, when specified, the expected first byte.
  * Input Parameters: result, io, options, phase, command, segment, expectedLength, expectedByte, captured
  * Return Value    : True for the exact observed reply shape.
  * Date            : 2026.11.14
@@ -146,7 +159,8 @@ bool readExpectedReply(DeviceTransferResult *result, const DeviceTransferIo &io,
     bounded = qMax(0, qMin(returned, int(buffer.size())));
     buffer.truncate(bounded);
     lengthMatches = returned == expectedLength;
-    byteMatches = lengthMatches && !buffer.isEmpty() && u8(buffer.at(0)) == u8(expectedByte);
+    byteMatches = lengthMatches && !buffer.isEmpty() &&
+                  (expectedByte < 0 || u8(buffer.at(0)) == u8(expectedByte)); //20261125-9 change: A query may discover the model before a target is selected.
     event.phase = phase;
     event.operation = QStringLiteral("reply-read");
     event.command = command;
@@ -372,6 +386,56 @@ void closeOwnedIo(DeviceTransferResult *result, const DeviceTransferIo &io,
 }
 
 /******************************************************************************
+ * Function Name   : openOwnedIo
+ * Description     : Open and claim an interface, leaving the owned handle to shared cleanup.
+ * Input Parameters: result, io, options
+ * Return Value    : True when both acquisition steps succeeded.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool openOwnedIo(DeviceTransferResult *result, const DeviceTransferIo &io,
+                 const DeviceTransferOptions &options) //20261125-9 add
+{
+    DeviceTransferEvent event;
+    QString error;
+    int claimed;
+
+    if (cancellationBoundary(result, options, QStringLiteral("open"), -1, QString()))
+    {
+        return false;
+    }
+    result->opened = io.open(&error);
+    event.phase = QStringLiteral("open");
+    event.operation = QStringLiteral("open");
+    event.returned = result->opened ? 0 : -1;
+    event.accepted = result->opened;
+    event.message = error;
+    appendEvent(result, options, event);
+    if (!result->opened)
+    {
+        return rememberFailure(result, QStringLiteral("open"), event.phase, -1, QString(), 0, -1,
+                               error.isEmpty() ? QStringLiteral("无法打开USB设备。") : error);
+    }
+    if (cancellationBoundary(result, options, QStringLiteral("claim"), -1, QString()))
+    {
+        return false;
+    }
+    claimed = io.claim(0);
+    result->interfaceClaimed = claimed == 0;
+    event = DeviceTransferEvent();
+    event.phase = QStringLiteral("claim");
+    event.operation = QStringLiteral("claim");
+    event.returned = claimed;
+    event.accepted = result->interfaceClaimed;
+    appendEvent(result, options, event);
+    if (!result->interfaceClaimed)
+    {
+        return rememberFailure(result, QStringLiteral("claim"), event.phase, -1, QString(), 0, claimed,
+                               QStringLiteral("无法占用USB接口0，错误%1。").arg(claimed));
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : classifyOutcome
  * Description     : Distinguish unopened, partial, uncertain commit, committed reset, and cleanup outcomes.
  * Input Parameters: result
@@ -407,19 +471,16 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
                                       const DeviceTransferOptions &options) //20261114-5 add
 {
     DeviceTransferResult result;
-    DeviceTransferEvent event;
     QVector<HmiDownloadStep> steps;
     QString error;
     int modelByte;
-    bool executed;
-    int claimed;
     int index;
 
     result.payloadBlocks = int(payloads.size());
     result.startOptions = options.startOptions;
     result.timeoutMs = options.timeoutMs;
     modelByte = deviceTargetIdentityByte(options.targetModel);
-    if (!io.open || !io.claim || !io.write || !io.read || !io.release || !io.close)
+    if (!completeDeviceIo(io))
     {
         rememberFailure(&result, QStringLiteral("callbacks"), QStringLiteral("preflight"), -1, QString(), 0, 0,
                         QStringLiteral("传输回调不完整，尚未打开设备。"));
@@ -460,41 +521,9 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
             }
         }
     }
-    if (!result.firstError.present && !cancellationBoundary(&result, options, QStringLiteral("open"), -1, QString()))
+    if (!result.firstError.present && openOwnedIo(&result, io, options)) //20261125-9 change
     {
-        result.opened = io.open(&error);
-        event.phase = QStringLiteral("open");
-        event.operation = QStringLiteral("open");
-        event.returned = result.opened ? 0 : -1;
-        event.accepted = result.opened;
-        event.message = error;
-        appendEvent(&result, options, event);
-        if (!result.opened)
-        {
-            rememberFailure(&result, QStringLiteral("open"), event.phase, -1, QString(), 0, -1,
-                            error.isEmpty() ? QStringLiteral("无法打开USB设备。") : error);
-        }
-        else if (!cancellationBoundary(&result, options, QStringLiteral("claim"), -1, QString()))
-        {
-            claimed = io.claim(0);
-            result.interfaceClaimed = claimed == 0;
-            event = DeviceTransferEvent();
-            event.phase = QStringLiteral("claim");
-            event.operation = QStringLiteral("claim");
-            event.returned = claimed;
-            event.accepted = result.interfaceClaimed;
-            appendEvent(&result, options, event);
-            if (!result.interfaceClaimed)
-            {
-                rememberFailure(&result, QStringLiteral("claim"), event.phase, -1, QString(), 0, claimed,
-                                QStringLiteral("无法占用USB接口0，错误%1。").arg(claimed));
-            }
-            else
-            {
-                executed = executePlan(&result, io, options, steps, modelByte);
-                Q_UNUSED(executed);
-            }
-        }
+        executePlan(&result, io, options, steps, modelByte);
     }
     closeOwnedIo(&result, io, options);
     result.success = result.planValidated && result.startAccepted && result.transferAccepted &&
@@ -504,6 +533,111 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
     if (result.success)
     {
         result.message = QStringLiteral("数据段及提交已获确认，重启写入和其后读取已结束；实屏显示/触控仍需独立观察。");
+    }
+    return result;
+}
+
+/******************************************************************************
+ * Function Name   : runDeviceIdentityProbe
+ * Description     : Query identity and parameters using the observed read-only requests.
+ * Input Parameters: io, options
+ * Return Value    : Success only after both replies and interface cleanup.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+DeviceTransferResult runDeviceIdentityProbe(const DeviceTransferIo &io,
+                                           const DeviceTransferOptions &options) //20261125-9 add
+{
+    DeviceTransferResult result;
+    int modelByte;
+
+    result.timeoutMs = options.timeoutMs;
+    if (!completeDeviceIo(io) || options.timeoutMs <= 0)
+    {
+        rememberFailure(&result, QStringLiteral("preflight"), QStringLiteral("identify"), -1, QString(), 0, 0,
+                        QStringLiteral("设备查询接口或超时设置无效，尚未打开设备。"));
+    }
+    else if (openOwnedIo(&result, io, options) &&
+             sendCommand(&result, io, options, QStringLiteral("identify"), 0x31,
+                         QByteArray(1, char(2)), QString(), 24, -1, &result.modelReply))
+    {
+        modelByte = u8(result.modelReply.at(0));
+        if (modelByte != 0x46 && modelByte != 0x4c)
+        {
+            rememberFailure(&result, QStringLiteral("model"), QStringLiteral("identify"), 0x31, QString(), 24, 24,
+                            QStringLiteral("设备型号回执 0x%1 尚无匹配的查询规则。").arg(modelByte, 2, 16, QLatin1Char('0')));
+        }
+        else
+        {
+            sendCommand(&result, io, options, QStringLiteral("parameters"), 0x53,
+                        QByteArray(1, char(0)), QString(), 24, 0x00, &result.parametersReply);
+        }
+    }
+    closeOwnedIo(&result, io, options);
+    result.success = result.parametersReply.size() == 24 &&
+                     result.interfaceReleased && result.closed && !result.firstError.present;
+    result.outcome = result.success ? QStringLiteral("identity_read") : QStringLiteral("identity_read_failed");
+    if (result.success)
+    {
+        result.message = QStringLiteral("已读取设备识别和参数回执。");
+    }
+    return result;
+}
+
+/******************************************************************************
+ * Function Name   : runDeviceVersionProbe
+ * Description     : Reproduce the dedicated version request while bounding all received bytes.
+ * Input Parameters: io, options, version
+ * Return Value    : Structured query result; the output string remains unchanged after failure.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+DeviceTransferResult runDeviceVersionProbe(const DeviceTransferIo &io, const DeviceTransferOptions &options,
+                                          QString *version) //20261125-9 add
+{
+    DeviceTransferResult result;
+    DeviceTransferEvent event;
+    QByteArray response(32, char(0));
+    QByteArray reported;
+    int returned;
+    qsizetype terminator;
+
+    result.timeoutMs = options.timeoutMs;
+    if (!completeDeviceIo(io) || options.timeoutMs <= 0 || version == nullptr)
+    {
+        rememberFailure(&result, QStringLiteral("preflight"), QStringLiteral("version"), -1, QString(), 0, 0,
+                        QStringLiteral("版本查询接口或超时设置无效，尚未打开设备。"));
+    }
+    else if (openOwnedIo(&result, io, options) &&
+             sendCommand(&result, io, options, QStringLiteral("version"), 0x26,
+                         QByteArray(1, char(0)), QString(), 0, 0))
+    {
+        returned = io.read(0x81, response.data(), int(response.size()), options.timeoutMs);
+        event.phase = QStringLiteral("version");
+        event.operation = QStringLiteral("reply-read");
+        event.command = 0x26;
+        event.requested = int(response.size());
+        event.returned = returned;
+        response.truncate(qBound(0, returned, event.requested));
+        event.bytes = response;
+        terminator = response.indexOf(char(0));
+        reported = terminator < 0 ? response : response.left(terminator);
+        event.accepted = returned > 0 && returned <= event.requested && !reported.trimmed().isEmpty() &&
+                         std::all_of(reported.cbegin(), reported.cend(), [](char byte) {
+                             return u8(byte) >= 0x20 && u8(byte) <= 0x7e;
+                         });
+        appendEvent(&result, options, event);
+        if (!event.accepted)
+        {
+            rememberFailure(&result, QStringLiteral("version_reply"), event.phase, 0x26, QString(),
+                            event.requested, returned, QStringLiteral("触摸屏未返回有效的底层版本文本。"));
+        }
+    }
+    closeOwnedIo(&result, io, options);
+    result.success = event.accepted && result.interfaceReleased && result.closed && !result.firstError.present;
+    result.outcome = result.success ? QStringLiteral("version_read") : QStringLiteral("version_read_failed");
+    if (result.success)
+    {
+        *version = QString::fromLatin1(reported);
+        result.message = QStringLiteral("已读取设备底层版本。");
     }
     return result;
 }

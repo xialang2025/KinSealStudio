@@ -133,7 +133,10 @@ void editHmiAddress(QWidget *parent, QLineEdit *field, bool bit, int transferCou
     QString error;
     int maximumAddress; //20261109-6 add
 
-    if (field == nullptr || transferCount < 1 || transferCount > 2) { return; }
+    if (field == nullptr || transferCount < 1 || transferCount > 4097 || (bit && transferCount > 2)) //20261125-8 change
+    {
+        return;
+    }
     maximumAddress = 4097 - transferCount; // The final source word must remain within the verified local bank.
     contextOwner = parent;
     while (contextOwner != nullptr && !contextOwner->property("plcConnections").isValid())

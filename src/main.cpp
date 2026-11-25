@@ -475,6 +475,19 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeDownloadResult(true, QStringLiteral("逐步传输契约已生成；未打开USB，未执行下载。"));
         return 0;
     }
+    if (arguments.size() == 2 && (arguments.at(1) == QStringLiteral("--probe-hmi") ||
+                                  arguments.at(1) == QStringLiteral("--probe-hmi-version"))) //20261125-9 add
+    {
+        const bool version = arguments.at(1) == QStringLiteral("--probe-hmi-version");
+        const bool queried = version ? probeConnectedHmiVersion(&transferResult) : probeConnectedHmi(&transferResult);
+
+        if (version)
+        {
+            transferResult.insert(QStringLiteral("editorVersion"), QCoreApplication::applicationVersion());
+        }
+        writeStructuredTransferResult(transferResult);
+        return queried ? 0 : 30;
+    }
     if (arguments.size() >= 3 &&
         arguments.at(1) == QStringLiteral("--download-project")) //20261109-0 add
     {

@@ -67,23 +67,50 @@ bool QrCodeProperties::validate(QString *error) const //20261112-0 add
 }
 
 /******************************************************************************
+ * Function Name   : QrCodeProperties::monitorAddressSpan
+ * Description     : Compute the original firmware's contiguous word span for the configured byte budget.
+ * Input Parameters: characterLength
+ * Return Value    : Word count for address validation, at least one for the retained base.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+int QrCodeProperties::monitorAddressSpan(int characterLength) //20261125-8 add
+{
+    return qMax(1, characterLength / 2 + characterLength % 2);
+}
+
+/******************************************************************************
  * Function Name   : QrCodeProperties::validateAddresses
- * Description     : Validate the monitor word and enabled visibility reads without guessing string byte spans.
+ * Description     : Preserve the base-address loading contract so older drafts can still be opened and repaired.
  * Input Parameters: connections, error
  * Return Value    : True when each known address carrier is valid.
  * Date            : 2026.11.12
  ******************************************************************************/
 bool QrCodeProperties::validateAddresses(const QVector<PlcConnection> &connections, QString *error) const //20261112-0 add
 {
+    return validateAddresses(connections, error, false); //20261125-8 change
+}
+
+/******************************************************************************
+ * Function Name   : QrCodeProperties::validateAddresses
+ * Description     : Validate the full monitor span on a changed binding and check permission reads independently.
+ * Input Parameters: connections, error, checkMonitorSpan
+ * Return Value    : True when each requested address span fits its configured bank.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool QrCodeProperties::validateAddresses(const QVector<PlcConnection> &connections, QString *error, bool checkMonitorSpan) const //20261125-8 add
+{
     PlcCatalog catalog;
     PlcAddressContext context;
     PlcAddress address;
     if (!catalog.load(QStringLiteral(":/plc/plc-catalog.json"), error)) { return false; }
-    context.connections = connections; context.role = PlcAddressRole::Word; context.transferCount = 1;
+    context.connections = connections;
+    context.role = PlcAddressRole::Word;
+    context.transferCount = checkMonitorSpan ? u32(monitorAddressSpan(characterLength)) : 1U;
     if (!parseQualifiedPlcAddressText(monitorAddress, context, catalog, &address, error)) { return false; }
     if (visibility.visibilityEnabled && visibility.bitEnabled)
     {
         context.role = PlcAddressRole::Bit;
+        context.transferCount = 1U;
         if (!parseQualifiedPlcAddressText(visibility.bitAddress, context, catalog, &address, error)) { return false; }
     }
     if (visibility.visibilityEnabled && visibility.wordEnabled)

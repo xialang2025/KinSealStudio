@@ -39,6 +39,9 @@ private slots:
     void onlineToolRequiresExplicitPort(); //20261124-13 change
     void onlinePollsWritesAndRecovers();
     void onlineWaitsForFreshValuesAfterWrite(); //20261124-14 add
+    void onlineAcceptsNativeTimeoutRange_data(); //20261125-7 add
+    void onlineAcceptsNativeTimeoutRange();
+    void onlineDiscreteInputAndSingleWordReachSlave();
     void onlineRejectsUnsafeOrOutOfRangeMapping();
     void invalidNumericInputCanRecover(); //20261114-6 add
     void directOwnerDeletionWithHeldViewport();
@@ -432,6 +435,10 @@ struct OnlineSlave //20261124-13 add: Shared observations are atomic because the
     std::atomic_int closes{0};
     std::atomic_int coilWrites{0};
     std::atomic_int wordWrites{0};
+    std::atomic_int singleWordWrites{0}; //20261125-7 add
+    std::atomic_int timeoutMs{0};
+    std::atomic_bool discreteInput{true};
+    std::atomic_bool rejectNextSingleWord{false};
     std::atomic_bool settingsMatch{false};
     std::atomic_bool framesMatch{true};
     std::atomic_bool holdCoilAck{true};
@@ -458,6 +465,7 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
         SimulationModbusIo io;
 
         io.open = [slave, settings](QString *) {
+            slave->timeoutMs = settings.timeoutMs; //20261125-7 add
             slave->settingsMatch = settings.portName == QStringLiteral("TEST-RTU") && settings.baudRate == 19200 &&
                                    settings.parity == 2 && settings.timeoutMs == 1000;
             ++slave->opens;
@@ -486,6 +494,12 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
             {
                 data.append(char(1)); data.append(char(slave->coil));
             }
+            else if (frame == QByteArray::fromHex("07020012000119a9")) //20261125-7 add: FC02, station 7, input 18.
+            {
+                data = QByteArray::fromHex(slave->discreteInput ? "0702010160c0" : "07020100a100");
+                reply->bytes = data;
+                return int(frame.size());
+            }
             else if (function == 3 && payload.mid(2) == QByteArray::fromHex("00180002"))
             {
                 data.append(char(4)); data.append(char(slave->low >> 8)); data.append(char(slave->low));
@@ -509,6 +523,17 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
                 reply->timeout = slave->failNextCoilAck.exchange(false);
                 data = payload;
                 ++slave->coilWrites;
+            }
+            else if (frame == QByteArray::fromHex("0706001910205473")) //20261125-7 add: FC06, holding register 25, 0x1020.
+            {
+                ++slave->singleWordWrites;
+                if (slave->rejectNextSingleWord.exchange(false))
+                {
+                    reply->bytes = QByteArray::fromHex("07860223a0");
+                    return int(frame.size());
+                }
+                slave->high = 0x1020;
+                data = payload;
             }
             else if (function == 16 && payload.mid(2) == QByteArray::fromHex("001800020400050002"))
             {
@@ -749,6 +774,137 @@ void SimulationUiTests::onlineWaitsForFreshValuesAfterWrite() //20261124-14 add
     QVERIFY(!window.runtime().touchAllowed(project.objects[0]));
     QCOMPARE(slave->coilWrites.load(), 0);
     QVERIFY(slave->framesMatch.load());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineAcceptsNativeTimeoutRange_data
+ * Description     : Cover the original project limit separately from the manual PC transaction budget.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationUiTests::onlineAcceptsNativeTimeoutRange_data() //20261125-7 add
+{
+    QTest::addColumn<int>("timeout");
+    QTest::addColumn<bool>("accepted");
+    QTest::newRow("below-native-minimum") << 49 << false;
+    QTest::newRow("native-minimum") << 50 << true;
+    QTest::newRow("above-manual-single-budget") << 60001 << true;
+    QTest::newRow("above-manual-batch-budget") << 120001 << true;
+    QTest::newRow("native-maximum") << 300000 << true;
+    QTest::newRow("above-native-maximum") << 300001 << false;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineAcceptsNativeTimeoutRange
+ * Description     : Apply the persisted timeout to the opened session and cancel a pending long-timeout write.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationUiTests::onlineAcceptsNativeTimeoutRange() //20261125-7 add
+{
+    QFETCH(int, timeout);
+    QFETCH(bool, accepted);
+    const auto slave = std::make_shared<OnlineSlave>();
+    HmiProject project = onlineTestProject();
+    SimulationWindow window;
+    QComboBox *port;
+    QPushButton *connect;
+    QLabel *status;
+    SimulationViewport *view;
+    QString error;
+    bool initialized;
+
+    project.connections[0].timeoutMs = timeout;
+    initialized = window.initializeOnline(project, &error, onlineSlave(slave));
+    QVERIFY2(initialized == accepted, qPrintable(error));
+    QCOMPARE(slave->opens.load(), 0);
+    if (!accepted)
+    {
+        QVERIFY(!error.isEmpty());
+        return;
+    }
+    window.show();
+    port = window.findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"));
+    connect = window.findChild<QPushButton *>(QStringLiteral("onlineSimulationConnect"));
+    status = window.findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    view = window.findChild<SimulationViewport *>();
+    QVERIFY(port != nullptr && connect != nullptr && status != nullptr && view != nullptr);
+    port->setEditText(QStringLiteral("TEST-RTU"));
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("65857"));
+    QCOMPARE(slave->opens.load(), 1);
+    QCOMPARE(slave->timeoutMs.load(), timeout);
+
+    if (timeout == 300000)
+    {
+        // The injected slave applies the coil operation but holds its acknowledgement.
+        QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects[0].geometry.center());
+        QTRY_COMPARE(slave->coilWrites.load(), 1);
+    }
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QCOMPARE(slave->closes.load(), 1);
+    QCOMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("—"));
+    if (timeout == 300000)
+    {
+        QVERIFY(status->text().contains(QStringLiteral("上一次写入未确认")));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineDiscreteInputAndSingleWordReachSlave
+ * Description     : Check exact FC02/FC06 traffic, readback, exception and reconnection through the simulation UI.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationUiTests::onlineDiscreteInputAndSingleWordReachSlave() //20261125-7 add
+{
+    const auto slave = std::make_shared<OnlineSlave>();
+    HmiProject project = onlineTestProject();
+    SimulationWindow window;
+    QComboBox *port;
+    QPushButton *connect;
+    QLabel *status;
+    SimulationViewport *view;
+    QString error;
+
+    project.objects[2].bitButton.monitorBitAddress = QStringLiteral("@test-rtu:1x18");
+    project.objects.last().address = QStringLiteral("@test-rtu:4x25");
+    project.objects.last().wordButton.resetDefaultsForDataType(0);
+    project.objects.last().wordButton.constantValue = QStringLiteral("4128");
+    QVERIFY2(window.initializeOnline(project, &error, onlineSlave(slave)), qPrintable(error));
+    window.show();
+    port = window.findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"));
+    connect = window.findChild<QPushButton *>(QStringLiteral("onlineSimulationConnect"));
+    status = window.findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    view = window.findChild<SimulationViewport *>();
+    QVERIFY(port != nullptr && connect != nullptr && status != nullptr && view != nullptr);
+    port->setEditText(QStringLiteral("TEST-RTU"));
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_COMPARE(window.runtime().visualState(project.objects.at(2)), 1);
+    slave->discreteInput = false;
+    QTRY_COMPARE(window.runtime().visualState(project.objects.at(2)), 0);
+    QTRY_VERIFY(window.runtime().touchAllowed(project.objects.last()));
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects.last().geometry.center());
+    QTRY_COMPARE(slave->singleWordWrites.load(), 1);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("270532929"));
+    QTRY_VERIFY(window.runtime().touchAllowed(project.objects.last()));
+
+    slave->rejectNextSingleWord = true;
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, project.objects.last().geometry.center());
+    QTRY_VERIFY(status->text().contains(QStringLiteral("Modbus异常码2")));
+    QCOMPARE(slave->singleWordWrites.load(), 2);
+    QCOMPARE(slave->closes.load(), 1);
+    QCOMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("—"));
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(project.objects.at(3)), QStringLiteral("270532929"));
+    QCOMPARE(slave->opens.load(), 2);
+    QCOMPARE(slave->singleWordWrites.load(), 2);
+    QVERIFY(slave->framesMatch.load());
+    QTest::mouseClick(connect, Qt::LeftButton);
+    QCOMPARE(slave->closes.load(), 2);
 }
 
 /******************************************************************************

@@ -18,6 +18,8 @@ struct QrCodeProperties
     static bool fromJson(const QJsonObject &json, QrCodeProperties *output, QString *error);
     bool validate(QString *error) const;
     bool validateAddresses(const QVector<PlcConnection> &connections, QString *error) const;
+    bool validateAddresses(const QVector<PlcConnection> &connections, QString *error, bool checkMonitorSpan) const; //20261125-8 add
+    static int monitorAddressSpan(int characterLength);
 };
 
 #endif

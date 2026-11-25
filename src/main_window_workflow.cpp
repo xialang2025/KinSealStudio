@@ -1059,6 +1059,8 @@ void MainWindow::updateCommandStates() //20261110-7 add
         } else if (id == QStringLiteral("action_save")) { enabled = m_hasProject && m_dirty; }
         else if (id == QStringLiteral("action_USBdownload")) {
             enabled = m_hasProject && !downloadInProgress(); //20261114-5 change: Cover the owned session from snapshot publication through final cleanup.
+        } else if (id == QStringLiteral("action_version")) { //20261125-6 add: USB version is independent of the project and shares the active device.
+            enabled = !downloadInProgress();
         } else if (id == QStringLiteral("action_offline_simulation") || id == QStringLiteral("action_online_simulation")) { //20261124-13 change
             enabled = m_hasProject && !downloadInProgress();
         } else if (id == QStringLiteral("action_script") || id == QStringLiteral("action_GlobalMacro") ||

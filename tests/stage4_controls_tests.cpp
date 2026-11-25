@@ -149,6 +149,8 @@ private slots:
     void scaleRenderingCountsAndClipping();
     void scaleTypedRoundTripMixedAndCreation();
     void qrDefaultsAndPermissionBranches();
+    void qrAddressPickerUsesCurrentMonitorSpan(); //20261125-8 add
+    void qrMonitorSpanBoundariesAndLegacyBindingEdits(); //20261125-8 add
     void qrDescriptionRasterAndCapacity();
     void qrStrictPersistenceAndBackendGates();
     void qrCopyAndCompactProperties();
@@ -816,6 +818,134 @@ void Stage4ControlTests::qrDefaultsAndPermissionBranches() //20261112-0 add
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-permissions.png")))); }
     permission->setChecked(false); QVERIFY(!tolerance->isEnabled()); QCOMPARE(dialog.object().qrCode.visibility.tolerance, QStringLiteral("2"));
     length->setValue(0); QCOMPARE(dialog.object().qrCode.characterLength, 0); length->setValue(255); QCOMPARE(dialog.object().qrCode.characterLength, 255);
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrAddressPickerUsesCurrentMonitorSpan
+ * Description     : Confirm the last valid local base in both address-picker routes.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage4ControlTests::qrAddressPickerUsesCurrentMonitorSpan() //20261125-8 add
+{
+    HmiProject project;
+    PlcConnection connection;
+    bool connected;
+
+    connection.id = QStringLiteral("qr-plc");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.station = QStringLiteral("1");
+    Q_FOREACH (connected, (QList<bool>{false, true}))
+    {
+        project.connections = connected ? QVector<PlcConnection>{connection} : QVector<PlcConnection>{};
+        QrCodeDialog dialog(qrObject(), project);
+        QSpinBox *length = dialog.findChild<QSpinBox *>(QStringLiteral("QrCharacterLength"));
+        QPushButton *picker = dialog.findChild<QPushButton *>(QStringLiteral("QrAddressPicker"));
+        QString range;
+
+        QVERIFY(length != nullptr);
+        QVERIFY(picker != nullptr);
+        length->setValue(255);
+        QTimer::singleShot(0, &dialog, [&]() {
+            auto *popup = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QDialogButtonBox *buttons;
+            QLineEdit *number;
+            QLabel *label;
+
+            if (popup == nullptr) { return; }
+            number = popup->findChild<QLineEdit *>(connected ? QStringLiteral("PlcValue") : QStringLiteral("AddressNumber"));
+            buttons = popup->findChild<QDialogButtonBox *>();
+            Q_FOREACH (label, popup->findChildren<QLabel *>())
+            {
+                if (label->text().startsWith(QStringLiteral("地址范围"))) { range = label->text(); break; }
+            }
+            if (number == nullptr || buttons == nullptr || !range.endsWith(QStringLiteral("3969")))
+            { popup->reject(); return; }
+            number->setText(QStringLiteral("3969"));
+            if (buttons->button(QDialogButtonBox::Ok)->isEnabled()) { buttons->button(QDialogButtonBox::Ok)->click(); }
+            else { popup->reject(); }
+        });
+        picker->click();
+        QVERIFY2(range.endsWith(QStringLiteral("3969")), qPrintable(range));
+        QCOMPARE(dialog.object().qrCode.monitorAddress, QStringLiteral("LW3969"));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrMonitorSpanBoundariesAndLegacyBindingEdits
+ * Description     : Use the native byte span for edits and increments while retaining older project drafts.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage4ControlTests::qrMonitorSpanBoundariesAndLegacyBindingEdits() //20261125-8 add
+{
+    HmiObject object = qrObject();
+    HmiProject project;
+    HmiProject loaded;
+    HmiProject copied;
+    HmiProject before;
+    Stage3DuplicateOptions options;
+    QString error;
+    MainWindow window;
+    QMessageBox *warning;
+    int length;
+    int words;
+    bool rejected = false;
+
+    object.geometry.moveLeft(20);
+    object.qrCode.visibility.visibilityEnabled = true;
+    object.qrCode.visibility.bitEnabled = true;
+    object.qrCode.visibility.bitAddress = QStringLiteral("LB4096");
+    Q_FOREACH (length, (QList<int>{0, 1, 2, 3, 25, 254, 255}))
+    {
+        object.qrCode.characterLength = length;
+        words = qMax(1, (length + 1) / 2);
+        QCOMPARE(QrCodeProperties::monitorAddressSpan(length), words);
+        object.qrCode.monitorAddress = QStringLiteral("LW%1").arg(4097 - words);
+        QVERIFY2(object.qrCode.validateAddresses({}, &error, true), qPrintable(error));
+        object.qrCode.monitorAddress = QStringLiteral("LW%1").arg(4098 - words);
+        QVERIFY(!object.qrCode.validateAddresses({}, &error, true));
+    }
+
+    // An old file with a legal base and invalid tail can reopen so the user can correct it.
+    object.qrCode.monitorAddress = QStringLiteral("LW4096");
+    object.address = object.qrCode.monitorAddress;
+    project.objects = {object};
+    QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.first().qrCode.monitorAddress, QStringLiteral("LW4096"));
+    window.setProject(loaded, QString());
+    window.m_canvas->selectObject(object.id);
+    window.m_textEdit->setPlainText(QStringLiteral("retain legacy draft"));
+    window.applySelectedProperties();
+    QCOMPARE(window.currentEditorProject().objects.first().qrCode.description, QStringLiteral("retain legacy draft"));
+    window.m_addressEdit->setText(QStringLiteral("LW3970"));
+    QTimer::singleShot(0, &window, [&]() {
+        warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+        if (warning != nullptr)
+        {
+            rejected = warning->windowTitle() == QStringLiteral("二维码属性未提交");
+            warning->accept();
+        }
+    });
+    window.applySelectedProperties();
+    QVERIFY(rejected);
+    QCOMPARE(window.currentEditorProject().objects.first().qrCode.monitorAddress, QStringLiteral("LW4096"));
+    window.m_addressEdit->setText(QStringLiteral("LW3969"));
+    window.applySelectedProperties();
+    QCOMPARE(window.currentEditorProject().objects.first().qrCode.monitorAddress, QStringLiteral("LW3969"));
+
+    project.objects.first().qrCode.monitorAddress = QStringLiteral("LW3968");
+    project.objects.first().address = QStringLiteral("LW3968");
+    options.columns = 2;
+    options.increments = {{Stage3AddressField::MonitorWord, 1, 0}};
+    QVERIFY2(duplicateStage3Selection(project, {object.id}, options, &copied, nullptr, &error), qPrintable(error));
+    QCOMPARE(copied.objects.last().qrCode.monitorAddress, QStringLiteral("LW3969"));
+    before = copied;
+    options.increments = {{Stage3AddressField::MonitorWord, 2, 0}};
+    QVERIFY(!duplicateStage3Selection(project, {object.id}, options, &copied, nullptr, &error));
+    QCOMPARE(copied.toJson(), before.toJson());
 }
 
 /******************************************************************************

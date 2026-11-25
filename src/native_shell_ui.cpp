@@ -2,6 +2,7 @@
 #include "dialog_button_text.h" //20261124-8 add
 #include "graphic_dialog.h" //20261113-8 add
 #include "hmi_canvas.h"
+#include "independent_downloader.h" //20261125-6 add
 
 #include <QAction>
 #include <QActionGroup> //20261124-7 add
@@ -25,6 +26,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPushButton> //20261125-6 add
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSettings> //20261124-7 add
@@ -64,6 +66,53 @@ static QJsonObject nativeShellLayout() //20261111-1 add
 static QIcon nativeShellIcon(const QString &path) //20261111-1 add
 {
     return path.isEmpty() ? QIcon() : QIcon(QStringLiteral(":/native-shell/") + path);
+}
+
+/******************************************************************************
+ * Function Name   : showNativeVersionDialog
+ * Description     : Show the editor version and query the connected HMI on demand.
+ * Input Parameters: parent
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+static void showNativeVersionDialog(QWidget *parent) //20261125-6 add
+{
+    QDialog dialog(parent);
+    QLabel upperCaption(QStringLiteral("上位版本号："), &dialog);
+    QLabel lowerCaption(QStringLiteral("下位版本号："), &dialog);
+    QLabel upperVersion(QCoreApplication::applicationVersion(), &dialog);
+    QLabel lowerVersion(&dialog);
+    QPushButton query(QStringLiteral("查询"), &dialog);
+
+    // Preserve the native two-row layout and leave the device result empty until Query.
+    dialog.setObjectName(QStringLiteral("CurrentVersionDlg"));
+    dialog.setWindowTitle(QStringLiteral("查询底层版本号"));
+    dialog.setFixedSize(479, 122);
+    upperCaption.setObjectName(QStringLiteral("label_1"));
+    upperCaption.setGeometry(20, 20, 101, 30);
+    lowerCaption.setObjectName(QStringLiteral("label_3"));
+    lowerCaption.setGeometry(20, 70, 101, 30);
+    upperVersion.setObjectName(QStringLiteral("VersionLabel_2"));
+    upperVersion.setGeometry(140, 20, 271, 30);
+    lowerVersion.setObjectName(QStringLiteral("VersionLabel"));
+    lowerVersion.setGeometry(140, 70, 231, 30);
+    lowerVersion.setTextFormat(Qt::PlainText);
+    query.setObjectName(QStringLiteral("ok_Btn"));
+    query.setGeometry(380, 70, 75, 30);
+    QObject::connect(&query, &QPushButton::clicked, &dialog, [&lowerVersion]() {
+        QJsonObject details;
+        QString result;
+        bool success;
+
+        // The version probe owns and releases its read-only USB session before returning.
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        success = probeConnectedHmiVersion(&details);
+        QApplication::restoreOverrideCursor();
+        result = details.value(success ? QStringLiteral("firmwareVersion") : QStringLiteral("message")).toString();
+        lowerVersion.setText(lowerVersion.fontMetrics().elidedText(result, Qt::ElideRight, lowerVersion.width()));
+        lowerVersion.setToolTip(result);
+    });
+    dialog.exec();
 }
 
 /******************************************************************************
@@ -355,6 +404,14 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             else if (id == QStringLiteral("action_online_simulation")) //20261114-6 add
             {
                 connect(action, &QAction::triggered, this, &MainWindow::showOnlineSimulationOptions);
+            }
+            else if (id == QStringLiteral("action_version")) //20261125-6 add
+            {
+                connect(action, &QAction::triggered, this, [this]() {
+                    if (!downloadInProgress()) {
+                        showNativeVersionDialog(this);
+                    }
+                });
             }
             else if (id == QStringLiteral("action_36") || id == QStringLiteral("action_37")) //20261125-1 add
             {

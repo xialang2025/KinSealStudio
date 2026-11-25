@@ -1653,37 +1653,20 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
 }
 #endif //20261114-5 del
 
+#ifdef Q_OS_WIN
 /******************************************************************************
- * Function Name   : downloadPreparedPayload
- * Description     : Adapt the system driver to the checked engine without using vendor DLLs.
- * Input Parameters: payloads, error, details, options
- * Return Value    : True after commit, reset, post-reset read, and owned-handle cleanup.
- * Date            : 2026.11.14
+ * Function Name   : systemDeviceIo
+ * Description     : Bind one owned system-driver handle to transport callbacks.
+ * Input Parameters: library, usb, handle, requireSinglePanel
+ * Return Value    : Callbacks valid for the lifetime of their caller's session.
+ * Date            : 2026.11.25
  ******************************************************************************/
-static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString *error,
-                                     QJsonObject *details = nullptr,
-                                     const DeviceTransferOptions &options = DeviceTransferOptions()) //20261114-5 add
+static DeviceTransferIo systemDeviceIo(QLibrary &library, UsbFunctions &usb, void *&handle,
+                                       bool requireSinglePanel) //20261125-9 add
 {
     DeviceTransferIo io;
-    DeviceTransferResult result;
-    QJsonObject summary;
-#ifdef Q_OS_WIN
-    QLibrary library;
-    UsbFunctions usb = {};
-    void *handle = nullptr;
-#endif
 
-    if (!validateDevicePayloadStructure(payloads, error))
-    {
-        summary = deviceTransferResultToJson(result);
-        summary.insert(QStringLiteral("compiled"), false);
-        summary.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("设备数据结构不完整。"));
-        summary.insert(QStringLiteral("outcome"), QStringLiteral("preflight_rejected"));
-        if (details != nullptr) { *details = summary; }
-        return false;
-    }
-#ifdef Q_OS_WIN
-    io.open = [&library, &usb, &handle, &options](QString *openError) { //20261122-3 change
+    io.open = [&library, &usb, &handle, requireSinglePanel](QString *openError) {
         UsbBus *bus;
         UsbDevice *device;
         UsbDevice *target = nullptr;
@@ -1709,18 +1692,18 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
                     // Two AMZ panels can share both the USB descriptor and the model reply.
                     if (target != nullptr) //20261122-3 add
                     {
-                        if (openError != nullptr) { *openError = QStringLiteral("检测到多台USB触摸屏，请只保留要下载的AMZ触摸屏。"); }
+                        if (openError != nullptr) { *openError = QStringLiteral("检测到多台USB触摸屏，请只保留要操作的触摸屏。"); }
                         return false;
                     }
                     target = device;
-                    if (!isAmz070Target(options.targetModel)) { break; } // Keep the historical AMT selection.
+                    if (!requireSinglePanel) { break; } // Keep the historical AMT selection.
                 }
                 device = device->next;
                 ++deviceCount;
             }
             bus = bus->next;
             ++busCount;
-            if (target != nullptr && !isAmz070Target(options.targetModel)) { break; }
+            if (target != nullptr && !requireSinglePanel) { break; }
         }
         if (target == nullptr)
         {
@@ -1744,7 +1727,114 @@ static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString
     };
     io.release = [&usb, &handle](int interfaceNumber) { return usb.release(handle, interfaceNumber); };
     io.close = [&usb, &handle]() { return usb.close(handle); };
-    result = runDeviceTransfer(payloads, io, options);
+    return io;
+}
+#endif
+
+/******************************************************************************
+ * Function Name   : probeSingleHmi
+ * Description     : Use the system driver for one read-only query on a unique panel.
+ * Input Parameters: details, queryVersion
+ * Return Value    : True for verified replies and a clean USB release.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+static bool probeSingleHmi(QJsonObject *details, bool queryVersion) //20261125-9 add
+{
+    DeviceTransferResult result;
+    QJsonObject summary;
+    QString version;
+#ifdef Q_OS_WIN
+    QLibrary library;
+    UsbFunctions usb = {};
+    void *handle = nullptr;
+    DeviceTransferOptions options;
+
+    options.timeoutMs = 2500;
+    if (queryVersion)
+    {
+        result = runDeviceVersionProbe(systemDeviceIo(library, usb, handle, true), options, &version);
+    }
+    else
+    {
+        result = runDeviceIdentityProbe(systemDeviceIo(library, usb, handle, true), options);
+    }
+#else
+    result.outcome = QStringLiteral("unsupported_platform");
+    result.message = QStringLiteral("USB触摸屏查询当前仅支持Windows。");
+#endif
+    summary = deviceTransferResultToJson(result);
+    summary.insert(QStringLiteral("kind"), queryVersion ? QStringLiteral("hmi-version") : QStringLiteral("hmi-identity"));
+    summary.insert(QStringLiteral("projectDataWritten"), false);
+    summary.insert(QStringLiteral("firmwareUpdated"), false);
+    if (!result.modelReply.isEmpty())
+    {
+        summary.insert(QStringLiteral("modelIdentityByte"), int(u8(result.modelReply.at(0))));
+    }
+    if (!version.isEmpty())
+    {
+        summary.insert(QStringLiteral("firmwareVersion"), version);
+    }
+    if (details != nullptr)
+    {
+        *details = summary;
+    }
+    return result.success;
+}
+
+/******************************************************************************
+ * Function Name   : probeConnectedHmi
+ * Description     : Query the identity and parameter records.
+ * Input Parameters: details
+ * Return Value    : True after the diagnostic query completes successfully.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool probeConnectedHmi(QJsonObject *details) //20261125-9 add
+{
+    return probeSingleHmi(details, false);
+}
+
+/******************************************************************************
+ * Function Name   : probeConnectedHmiVersion
+ * Description     : Query the raw lower-layer version text.
+ * Input Parameters: details
+ * Return Value    : True for a valid response and clean handle release.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool probeConnectedHmiVersion(QJsonObject *details) //20261125-9 add
+{
+    return probeSingleHmi(details, true);
+}
+
+/******************************************************************************
+ * Function Name   : downloadPreparedPayload
+ * Description     : Adapt the system driver to the checked engine without using vendor DLLs.
+ * Input Parameters: payloads, error, details, options
+ * Return Value    : True after commit, reset, post-reset read, and owned-handle cleanup.
+ * Date            : 2026.11.14
+ ******************************************************************************/
+static bool downloadPreparedPayload(const QVector<QByteArray> &payloads, QString *error,
+                                     QJsonObject *details = nullptr,
+                                     const DeviceTransferOptions &options = DeviceTransferOptions()) //20261114-5 add
+{
+    DeviceTransferResult result;
+    QJsonObject summary;
+#ifdef Q_OS_WIN
+    QLibrary library;
+    UsbFunctions usb = {};
+    void *handle = nullptr;
+#endif
+
+    if (!validateDevicePayloadStructure(payloads, error))
+    {
+        summary = deviceTransferResultToJson(result);
+        summary.insert(QStringLiteral("compiled"), false);
+        summary.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("设备数据结构不完整。"));
+        summary.insert(QStringLiteral("outcome"), QStringLiteral("preflight_rejected"));
+        if (details != nullptr) { *details = summary; }
+        return false;
+    }
+#ifdef Q_OS_WIN
+    result = runDeviceTransfer(payloads, systemDeviceIo(library, usb, handle, isAmz070Target(options.targetModel)), options);
 #else
     Q_UNUSED(options);
     result.message = QStringLiteral("独立USB下载当前仅支持Windows。");

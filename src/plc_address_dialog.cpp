@@ -735,8 +735,8 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     int index;
     int selected;
 
-    if (qualifiedText == nullptr || transferCount < 1 || transferCount > 2 ||
-        localAddressCount < u32(transferCount) || localAddressCount > 65536) //20261123-15 change
+    if (qualifiedText == nullptr || transferCount < 1 || (bit && transferCount > 2) ||
+        localAddressCount < u32(transferCount) || localAddressCount > 65536) //20261125-8 change
     {
         return false;
     }
@@ -747,7 +747,7 @@ bool editPlcAddress(QWidget *parent, bool bit, const QVector<PlcConnection> &con
     }
     context.connections = connections;
     context.role = bit ? PlcAddressRole::Bit : PlcAddressRole::Word;
-    context.transferCount = u32(transferCount); //20261109-6 add: Validate the complete DWORD span in the live picker as well as the compiler.
+    context.transferCount = u32(transferCount); //20261125-8 change: Use the caller's complete word span in picker validation.
     context.localAddressCount = localAddressCount; //20261123-15 add: Global settings use the wider range shown by the original editor.
     body = qualifiedText->trimmed();
     if (body.isEmpty())

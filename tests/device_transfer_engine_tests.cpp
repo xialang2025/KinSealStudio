@@ -20,6 +20,7 @@ struct FakeTransferIo
     int lastCommand = -1;
     int modelReplyByte = 0x4c; //20261122-3 add: The same fake can present either USB identity.
     int expectedTimeout = 10000;
+    QByteArray versionReply; //20261125-9 add
     bool openSucceeds = true;
     int claimResult = 0;
     int releaseResult = 0;
@@ -138,6 +139,12 @@ struct FakeTransferIo
             response[0] = lastCommand == 0x31 ? char(modelReplyByte) : char(0); //20261122-3 change
             if (maximum != 32) { problem = QStringLiteral("wrong identification capacity"); }
         }
+        else if (lastCommand == 0x26) //20261125-9 add
+        {
+            response = versionReply;
+            returned = int(response.size());
+            if (maximum != 32) { problem = QStringLiteral("wrong version response capacity"); }
+        }
         else if (lastCommand == 0x1a)
         {
             returned = -5;
@@ -192,6 +199,10 @@ private slots:
     void normalPlans();
     void targetHandshake_data(); //20261122-3 add
     void targetHandshake();
+    void identityProbeOwnsOnlyReadOnlyCommands_data(); //20261125-9 add
+    void identityProbeOwnsOnlyReadOnlyCommands();
+    void versionProbeUsesOnlyDedicatedCommand_data(); //20261125-9 add
+    void versionProbeUsesOnlyDedicatedCommand();
     void preflightRejections_data();
     void preflightRejections();
     void openAndClaimFailures_data();
@@ -350,6 +361,115 @@ void DeviceTransferEngineTests::targetHandshake() //20261122-3 add
         QCOMPARE(result.firstError.kind, QStringLiteral("reply_byte"));
         QCOMPARE(result.outcome, QStringLiteral("stopped_before_download_start"));
     }
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::identityProbeOwnsOnlyReadOnlyCommands_data
+ * Description     : Vary identity and parameter replies without exposing any project payload.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void DeviceTransferEngineTests::identityProbeOwnsOnlyReadOnlyCommands_data() //20261125-9 add
+{
+    QTest::addColumn<int>("model");
+    QTest::addColumn<int>("faultCommand");
+    QTest::addColumn<bool>("success");
+    QTest::addColumn<QByteArray>("commands");
+    QTest::newRow("amt") << 0x4c << -1 << true << QByteArray::fromHex("3153");
+    QTest::newRow("amz") << 0x46 << -1 << true << QByteArray::fromHex("3153");
+    QTest::newRow("unknown-model") << 0x7a << -1 << false << QByteArray::fromHex("31");
+    QTest::newRow("short-identity") << 0x46 << 0x31 << false << QByteArray::fromHex("31");
+    QTest::newRow("short-parameters") << 0x46 << 0x53 << false << QByteArray::fromHex("3153");
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::identityProbeOwnsOnlyReadOnlyCommands
+ * Description     : Check exact query order, no download side effects and guaranteed handle release.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void DeviceTransferEngineTests::identityProbeOwnsOnlyReadOnlyCommands() //20261125-9 add
+{
+    FakeTransferIo fake;
+    DeviceTransferOptions options;
+    DeviceTransferResult result;
+
+    QFETCH(int, model);
+    QFETCH(int, faultCommand);
+    QFETCH(bool, success);
+    QFETCH(QByteArray, commands);
+    fake.modelReplyByte = model;
+    fake.failedReadCommand = faultCommand;
+    fake.failedReadResult = 2;
+    options.timeoutMs = 2500;
+    fake.expectedTimeout = 2500;
+    result = runDeviceIdentityProbe(fake.callbacks(), options);
+    QCOMPARE(fake.commands, commands);
+    QCOMPARE(fake.commandFrames.first().at(18), char(2));
+    if (commands.size() == 2)
+    {
+        QCOMPARE(fake.commandFrames.last().at(18), char(0));
+    }
+    QVERIFY(fake.problem.isEmpty());
+    QVERIFY(fake.payloadFrames.isEmpty());
+    QVERIFY(!result.startAccepted && !result.commitWriteAttempted && !result.resetWritten);
+    QCOMPARE(result.success, success);
+    if (success)
+    {
+        QCOMPARE(result.modelReply.size(), 24);
+        QCOMPARE(result.parametersReply.size(), 24);
+    }
+    QCOMPARE(fake.releaseCount, 1);
+    QCOMPARE(fake.closeCount, 1);
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::versionProbeUsesOnlyDedicatedCommand_data
+ * Description     : Exercise the physical response format and bounded malformed replies.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void DeviceTransferEngineTests::versionProbeUsesOnlyDedicatedCommand_data() //20261125-9 add
+{
+    QTest::addColumn<QByteArray>("reply");
+    QTest::addColumn<QString>("version");
+    QTest::newRow("physical-shape") << QByteArray("Version:122-2026.03.04").leftJustified(24, char(0))
+                                    << QStringLiteral("Version:122-2026.03.04");
+    QTest::newRow("full-buffer") << QByteArray(32, 'V') << QString(32, QLatin1Char('V'));
+    QTest::newRow("empty") << QByteArray() << QString();
+    QTest::newRow("control-byte") << QByteArray::fromHex("1600") << QString();
+    QTest::newRow("oversized-reply") << QByteArray(33, 'V') << QString();
+}
+
+/******************************************************************************
+ * Function Name   : DeviceTransferEngineTests::versionProbeUsesOnlyDedicatedCommand
+ * Description     : Assert a single 0x26 command, explicit bounds and cleanup on every reply.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void DeviceTransferEngineTests::versionProbeUsesOnlyDedicatedCommand() //20261125-9 add
+{
+    FakeTransferIo fake;
+    DeviceTransferResult result;
+    QString actual = QStringLiteral("keep previous");
+
+    QFETCH(QByteArray, reply);
+    QFETCH(QString, version);
+    fake.versionReply = reply;
+    result = runDeviceVersionProbe(fake.callbacks(), DeviceTransferOptions(), &actual);
+    QCOMPARE(fake.commands, QByteArray::fromHex("26"));
+    QCOMPARE(fake.commandFrames.first().at(18), char(0));
+    QCOMPARE(result.success, !version.isEmpty());
+    QCOMPARE(actual, version.isEmpty() ? QStringLiteral("keep previous") : version);
+    QVERIFY(fake.problem.isEmpty());
+    QVERIFY(fake.payloadFrames.isEmpty());
+    QVERIFY(!result.startAccepted && !result.commitWriteAttempted && !result.resetWritten);
+    QCOMPARE(fake.releaseCount, 1);
+    QCOMPARE(fake.closeCount, 1);
 }
 
 /******************************************************************************

@@ -96,6 +96,31 @@ SimulationModbusIo qtSerialIo(const PlcSerialSettings &settings, const std::func
     io.close = [state](QString *) { state->port.close(); return !state->port.isOpen(); };
     return io;
 }
+
+/******************************************************************************
+ * Function Name   : validPlcSerialFraming
+ * Description     : Check physical port parameters shared by manual and persistent RTU sessions.
+ * Input Parameters: settings
+ * Return Value    : True for an explicit port and a supported RTU framing.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool validPlcSerialFraming(const PlcSerialSettings &settings) //20261125-7 add
+{
+    QChar ch;
+
+    if (settings.portName.isEmpty() || settings.portName != settings.portName.trimmed() ||
+        settings.portName.size() > 256)
+    {
+        return false;
+    }
+    Q_FOREACH (ch, settings.portName)
+    {
+        if (ch.unicode() < 32 || ch.unicode() == 127) { return false; }
+    }
+    return settings.baudRate >= 50 && settings.baudRate <= 4000000 && settings.dataBits == 8 &&
+        (settings.parity == 0 || settings.parity == 2 || settings.parity == 3) &&
+        (settings.stopBits == 1 || settings.stopBits == 2);
+}
 }
 
 /******************************************************************************
@@ -119,14 +144,29 @@ SimulationModbusIo makePlcSerialIo(const PlcSerialSettings &settings, const std:
  ******************************************************************************/
 bool validatePlcSerialSettings(const PlcSerialSettings &settings, QString *error) //20261114-8 add
 {
-    bool valid = !settings.portName.isEmpty() && settings.portName == settings.portName.trimmed() && settings.portName.size() <= 256;
-
-    for (const QChar ch : settings.portName) { if (ch.unicode() < 32 || ch.unicode() == 127) { valid = false; } }
-    valid = valid && settings.baudRate >= 50 && settings.baudRate <= 4000000 && settings.dataBits == 8 &&
-        (settings.parity == 0 || settings.parity == 2 || settings.parity == 3) &&
-        (settings.stopBits == 1 || settings.stopBits == 2) && settings.timeoutMs >= 1 && settings.timeoutMs <= 60000 &&
+    const bool valid = validPlcSerialFraming(settings) && settings.timeoutMs >= 1 && settings.timeoutMs <= 60000 &&
         settings.totalTimeoutMs >= settings.timeoutMs && settings.totalTimeoutMs <= 120000;
+
     if (!valid && error != nullptr) { *error = QStringLiteral("请选择PC串口；RTU使用8数据位、无/偶/奇校验、1/2停止位及有效超时。"); }
+    return valid;
+}
+
+/******************************************************************************
+ * Function Name   : validatePlcOnlineSerialSettings
+ * Description     : Keep the project transaction timeout independent of the one-off batch deadline.
+ * Input Parameters: settings, error
+ * Return Value    : True when an online project session can use the supplied port and timeout.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool validatePlcOnlineSerialSettings(const PlcSerialSettings &settings, QString *error) //20261125-7 add
+{
+    const bool valid = validPlcSerialFraming(settings) && settings.timeoutMs >= 50 &&
+        settings.timeoutMs <= SimulationModbusOptions::MaximumTimeoutMs;
+
+    if (!valid && error != nullptr)
+    {
+        *error = QStringLiteral("请选择PC串口，使用8数据位、无/偶/奇校验、1/2停止位以及50至300000毫秒的协议超时。");
+    }
     return valid;
 }
 

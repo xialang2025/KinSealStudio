@@ -139,6 +139,7 @@ private slots:
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeStandardToolbarVisibility(); //20261125-1 add
     void nativeStandardToolbarVisibility_data();
+    void nativeVersionDialogWaitsForQuery(); //20261125-6 add
     void nativeAlarmAddCommands_data();
     void nativeAlarmAddCommands();
     void nativeAlarmTreeParentOpensDigitalRegistration(); //20261125-1 add
@@ -5447,6 +5448,52 @@ void Stage2WorkflowTests::nativeStandardToolbarVisibility() //20261125-1 add
     QVERIFY(target->isHidden() && !action->isChecked());
     action->trigger();
     QVERIFY(target->isVisible() && action->isChecked());
+}
+
+/******************************************************************************
+ * Function Name   : nativeVersionDialogWaitsForQuery
+ * Description     : Open the version dialog with no project and close before requesting USB I/O.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeVersionDialogWaitsForQuery() //20261125-6 add
+{
+    MainWindow window;
+    QAction *action;
+    QString previousVersion;
+    bool matched;
+
+    window.closeProject();
+    window.show();
+    action = window.m_commands.value(QStringLiteral("action_version"));
+    QVERIFY(action != nullptr && action->isEnabled());
+    previousVersion = QCoreApplication::applicationVersion();
+    QCoreApplication::setApplicationVersion(QStringLiteral("1.2.3-test"));
+    matched = false;
+    QTimer::singleShot(0, &window, [&matched]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLabel *editor;
+        QLabel *firmware;
+        QPushButton *query;
+
+        if (dialog != nullptr) {
+            editor = dialog->findChild<QLabel *>(QStringLiteral("VersionLabel_2"));
+            firmware = dialog->findChild<QLabel *>(QStringLiteral("VersionLabel"));
+            query = dialog->findChild<QPushButton *>(QStringLiteral("ok_Btn"));
+            matched = dialog->objectName() == QStringLiteral("CurrentVersionDlg") &&
+                      dialog->windowTitle() == QStringLiteral("查询底层版本号") &&
+                      dialog->size() == QSize(479, 122) && editor != nullptr &&
+                      editor->text() == QStringLiteral("1.2.3-test") && firmware != nullptr &&
+                      firmware->text().isEmpty() && query != nullptr && query->isEnabled() &&
+                      query->text() == QStringLiteral("查询");
+            dialog->reject();
+        }
+    });
+    action->trigger();
+    QCoreApplication::setApplicationVersion(previousVersion);
+    QVERIFY(matched);
+    QVERIFY(!window.m_hasProject && !window.m_dirty);
 }
 
 /******************************************************************************

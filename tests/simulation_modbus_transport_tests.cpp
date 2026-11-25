@@ -519,7 +519,7 @@ void SimulationModbusTransportTests::connectionValidation()
     if (caseId == 2) { options.maxPendingRequests = 0; }
     if (caseId == 3) { options.maxPendingRequests = 1025; }
     if (caseId == 4) { options.timeoutMs = 0; }
-    if (caseId == 5) { options.timeoutMs = 60001; }
+    if (caseId == 5) { options.timeoutMs = 300001; } //20261125-7 change
     if (caseId == 6) { io.open = {}; }
     if (caseId == 7) { io.write = {}; }
     if (caseId == 8) { io.read = {}; }

@@ -46,8 +46,9 @@ struct SimulationModbusIo
 
 struct SimulationModbusOptions
 {
+    static constexpr int MaximumTimeoutMs = 300000; //20261125-7 add: The engineering link supports the full project timeout range.
     int maxPendingRequests = 32;             // Bounded queue: 1..1024.
-    int timeoutMs = 1000;                    // One transaction deadline: 1..60000 ms, no retries.
+    int timeoutMs = 1000;                    // One transaction deadline: 1..MaximumTimeoutMs, no retries.
     std::function<bool()> cancellationRequested; //20261114-8 add: Optional owner-supplied poll; no throw or blocking.
 };
 

@@ -326,7 +326,7 @@ bool OnlineSimulationLink::bind(const QString &text, bool bit, int span, bool wr
                           serial.value(QStringLiteral("parity")).toString() == QStringLiteral("EVEN") ? 2 : 0;
         settings.stopBits = serial.value(QStringLiteral("stopBits")).toString().toInt();
         settings.timeoutMs = connection->timeoutMs;
-        if (!validatePlcSerialSettings(settings, error)) { return false; }
+        if (!validatePlcOnlineSerialSettings(settings, error)) { return false; } //20261125-7 change
         m_connectionId = connection->id;
         m_station = station;
         m_frameInterval = qMax(20, connection->frameIntervalMs);
@@ -402,7 +402,7 @@ bool OnlineSimulationLink::connectPort(const QString &port, QString *error) //20
 
     if (!available() || m_active) { return linkError(error, QStringLiteral("当前模拟无可连接的PLC地址或会话已启动。")); }
     configured.portName = port.trimmed();
-    if (!validatePlcSerialSettings(configured, error)) { return false; }
+    if (!validatePlcOnlineSerialSettings(configured, error)) { return false; } //20261125-7 change
     disconnectPort();
     m_cancel = std::make_shared<std::atomic_bool>(false);
     m_thread = new QThread(this);

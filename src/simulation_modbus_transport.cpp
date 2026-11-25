@@ -309,7 +309,8 @@ bool SimulationModbusTransport::connectToStation(int station, const SimulationMo
         return reject(error, QStringLiteral("已连接或正在处理事务，不能替换会话。"));
     }
     if (station < 1 || station > 247 || options.maxPendingRequests < 1 ||
-        options.maxPendingRequests > 1024 || options.timeoutMs < 1 || options.timeoutMs > 60000 ||
+        options.maxPendingRequests > 1024 || options.timeoutMs < 1 ||
+        options.timeoutMs > SimulationModbusOptions::MaximumTimeoutMs || //20261125-7 change
         !io.open || !io.write || !io.read || !io.close)
     {
         return reject(error, QStringLiteral("站号、队列上限、超时或注入I/O回调无效。"));

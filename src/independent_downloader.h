@@ -60,6 +60,24 @@ bool exportProjectPayload(const HmiProject &project, const QString &outputDirect
 bool downloadProject(const HmiProject &project, QString *error); //20261109-0 add
 
 /******************************************************************************
+ * Function Name   : probeConnectedHmi
+ * Description     : Read the identity of exactly one attached supported panel.
+ * Input Parameters: details
+ * Return Value    : True when both replies and interface cleanup succeed.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool probeConnectedHmi(QJsonObject *details); //20261125-9 add
+
+/******************************************************************************
+ * Function Name   : probeConnectedHmiVersion
+ * Description     : Read the raw V5.1 firmware version text from one connected panel.
+ * Input Parameters: details
+ * Return Value    : True when the dedicated query and USB cleanup succeed.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool probeConnectedHmiVersion(QJsonObject *details); //20261125-9 add
+
+/******************************************************************************
  * Function Name   : downloadProjectDetailed
  * Description     : Compile before USB and retain cancellation, commit, reset, and cleanup results.
  * Input Parameters: project, result, error, options

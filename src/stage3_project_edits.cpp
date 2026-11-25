@@ -213,9 +213,10 @@ QList<AddressSlot> activeSlots(HmiObject *object) //20261110-8 add
         { addressSlots.append({object->imageDisplay.condition == 2 ? Stage3AddressField::MonitorBit : Stage3AddressField::MonitorWord, &object->imageDisplay.monitorAddress, object->imageDisplay.condition == 2 ? PlcAddressRole::Bit : PlcAddressRole::Word, 1U}); }
         addConditionSlots(&object->imageDisplay.visibility, false, &addressSlots);
     }
-    if (object->type == QStringLiteral("qrcode")) //20261112-0 add: String span remains unknown; only validate its base carrier.
+    if (object->type == QStringLiteral("qrcode")) //20261125-8 change: Check the native monitor span before duplicating to a new base.
     {
-        addressSlots.append({Stage3AddressField::MonitorWord, &object->qrCode.monitorAddress, PlcAddressRole::Word, 1U});
+        addressSlots.append({Stage3AddressField::MonitorWord, &object->qrCode.monitorAddress, PlcAddressRole::Word,
+                             u32(QrCodeProperties::monitorAddressSpan(object->qrCode.characterLength))});
         addConditionSlots(&object->qrCode.visibility, false, &addressSlots);
     }
     if (object->type == QStringLiteral("message")) //20261112-0 add: Monitor and visibility are reads, never an operating write slot.

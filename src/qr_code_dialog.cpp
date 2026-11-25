@@ -130,7 +130,9 @@ QrCodeDialog::QrCodeDialog(const HmiObject &object, const HmiProject &project, Q
         if (help == nullptr) { help = new LocalHelpController(this); } //20261118-4 add: Viewer lifetime follows this dialog instance.
         help->showCommand(QStringLiteral("help_QrCodeDialog"), this); //20261118-4 add: Command id is declared in help/command-map.json.
     });
-    connect(picker, &QPushButton::clicked, this, [this]() { editHmiAddress(this, m_address, false); });
+    connect(picker, &QPushButton::clicked, this, [this]() { //20261125-8 change: The open draft length defines the selectable base range.
+        editHmiAddress(this, m_address, false, QrCodeProperties::monitorAddressSpan(m_length->value()));
+    });
     connect(m_description, &QLineEdit::textChanged, this, [this]() { refreshPreview(); }); refreshPreview();
 }
 
@@ -175,7 +177,14 @@ void QrCodeDialog::accept() //20261112-0 add
 {
     HmiObject candidate = object();
     QString error;
-    if (!candidate.qrCode.validate(&error) || !candidate.qrCode.validateAddresses(m_project.connections, &error))
-    { QMessageBox::warning(this, QStringLiteral("二维码"), error); return; }
+    bool bindingChanged = candidate.qrCode.monitorAddress != m_original.qrCode.monitorAddress ||
+                          candidate.qrCode.characterLength != m_original.qrCode.characterLength;
+
+    if (!candidate.qrCode.validate(&error) ||
+        !candidate.qrCode.validateAddresses(m_project.connections, &error, bindingChanged)) //20261125-8 change
+    {
+        QMessageBox::warning(this, QStringLiteral("二维码"), error);
+        return;
+    }
     QDialog::accept();
 }

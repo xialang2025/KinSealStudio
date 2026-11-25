@@ -111,6 +111,26 @@ DeviceTransferResult runDeviceTransfer(const QVector<QByteArray> &payloads,
                                       const DeviceTransferOptions &options = DeviceTransferOptions()); //20261114-5 add
 
 /******************************************************************************
+ * Function Name   : runDeviceIdentityProbe
+ * Description     : Read identity and parameter replies using the existing transport callbacks.
+ * Input Parameters: io, options
+ * Return Value    : Structured query and interface cleanup result.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+DeviceTransferResult runDeviceIdentityProbe(const DeviceTransferIo &io,
+                                           const DeviceTransferOptions &options); //20261125-9 add
+
+/******************************************************************************
+ * Function Name   : runDeviceVersionProbe
+ * Description     : Read the bounded version string through the V5.1 version command.
+ * Input Parameters: io, options, version
+ * Return Value    : Structured query result; version changes only on success.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+DeviceTransferResult runDeviceVersionProbe(const DeviceTransferIo &io, const DeviceTransferOptions &options,
+                                          QString *version); //20261125-9 add
+
+/******************************************************************************
  * Function Name   : deviceTransferEventToJson
  * Description     : Serialize one bounded event without exposing full payload contents.
  * Input Parameters: event

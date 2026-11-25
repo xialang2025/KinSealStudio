@@ -32,6 +32,15 @@ SimulationModbusIo makePlcSerialIo(const PlcSerialSettings &settings, const std:
 bool validatePlcSerialSettings(const PlcSerialSettings &settings, QString *error = nullptr); //20261114-8 add
 
 /******************************************************************************
+ * Function Name   : validatePlcOnlineSerialSettings
+ * Description     : Validate a persistent engineering session with the native project timeout range.
+ * Input Parameters: settings, error
+ * Return Value    : True when the port, RTU framing and transaction deadline are valid.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool validatePlcOnlineSerialSettings(const PlcSerialSettings &settings, QString *error = nullptr); //20261125-7 add
+
+/******************************************************************************
  * Function Name   : runPlcSerialBatch
  * Description     : Execute a frozen manual RTU batch on one owned endpoint, then close it without retries.
  * Input Parameters: settings, station, requests, cancellation, factory

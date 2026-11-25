@@ -1252,9 +1252,17 @@ void MainWindow::applySelectedProperties() //20261107-6 add
     }
     if (object.type == QStringLiteral("qrcode")) //20261112-0 add: Keep the compact description and address synchronized with the typed QR record.
     {
-        object.qrCode.description = object.text; object.qrCode.monitorAddress = object.address.trimmed();
-        if (!object.qrCode.validate(&controlError) || !object.qrCode.validateAddresses(m_project.connections, &controlError))
-        { QMessageBox::warning(this, QStringLiteral("二维码属性未提交"), controlError); return; }
+        const QString monitorAddress = object.address.trimmed();
+        const bool bindingChanged = object.qrCode.monitorAddress != monitorAddress;
+
+        object.qrCode.description = object.text;
+        object.qrCode.monitorAddress = monitorAddress;
+        if (!object.qrCode.validate(&controlError) ||
+            !object.qrCode.validateAddresses(m_project.connections, &controlError, bindingChanged)) //20261125-8 change
+        {
+            QMessageBox::warning(this, QStringLiteral("二维码属性未提交"), controlError);
+            return;
+        }
     }
     if (object.type == QStringLiteral("message")) //20261112-0 add: The compact property panel edits the first state in the current language.
     {
