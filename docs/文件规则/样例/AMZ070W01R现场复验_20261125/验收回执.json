@@ -1,0 +1,1012 @@
+{
+  "date": "2026-11-25",
+  "testedDevice": "AMZ070W01R",
+  "usbIdentity": "46",
+  "firmwareVersion": "122-2026.03.04",
+  "exeSha256": "a93f081e5f29be729598736d4a9427acf82921a6cde8c1535c8ee3b07b6707f1",
+  "observationsSource": "现场用户逐页独立确认",
+  "cases": [
+    {
+      "name": "01-static-curve",
+      "marker": "AMZ25-01 STATIC CURVE",
+      "sourceSha256": "5a49c7f354e66caa8fab18d1ca5cdc76f3884a01c533e57f8534c998da481fbe",
+      "contractSha256": "147c5579bd726ce913642fefd1f01def6d039ad0af2586e12bb3c73979435ac8",
+      "transferFinishedAt": "2026-11-25T22:01:12+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2400,
+          "sha256": "2cd13c3e9ebabd147f58dc799b571c92ec3dec378eda7584679d934a0e032025"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+        },
+        "SheetPixel.dat": {
+          "length": 8092,
+          "sha256": "e7c3dfca8f63714d93eedb5799b2374c233fefff6ba982037604b700e67f6da7"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "length": 884,
+          "sha256": "023cd79e49109c5663041bc09254f0756c2f3202177c8fa2371a3e81cbee4aed"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 10,
+        "completedSteps": 12,
+        "plannedSteps": 12,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "标识、4×4 表格、右上折线、右下平滑曲线全可见，无宽度提示。",
+      "archivedSource": "01-static-curve.ksp"
+    },
+    {
+      "name": "02-bit",
+      "marker": "AMZ25-02 BIT",
+      "sourceSha256": "7368e2177f740939281b3de292972b0ee46cb8c16bd9d0eb813d669555371b0c",
+      "contractSha256": "a63699d8e444eaabfd905743e6c96453090a9bc411a4bd6c2d48835395bae4c3",
+      "transferFinishedAt": "2026-11-25T22:02:46+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 4480,
+          "sha256": "77e81baab30f983f3167633e0942c7dba789c74480128c38fddd6c94b5562ed5"
+        },
+        "ControlPixel.dat": {
+          "length": 4480,
+          "sha256": "53bdaafbf04c6b61760ffc32d600c4050e16982322de6346ac2cfaf03a939ad3"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2568,
+          "sha256": "b38aeb3af8b3d1cc83d2864e21848941b15399ee79aeb5f83dbbb1bbde92f472"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "57feb7bb29a7e32726ddba5f2cd16682a05a0810bb7d35ff31389ec7c64604f2"
+        },
+        "SheetPixel.dat": {
+          "length": 4495,
+          "sha256": "437f00eb5cb71f6fe7b955614898f8d5b061483bc5c007580702904786392fb4"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "length": 1269,
+          "sha256": "e5dc037df2d71e5b6b1759d9fc1446d9a6053413838bbec4d8db9d9b3a92bc1e"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 12,
+        "completedSteps": 14,
+        "plannedSteps": 14,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "LB0 两次交替后回原值，LB1 置位/复位为 1→0，LB2 按住/松开为 1→0。标识正常，无宽度提示。"
+    },
+    {
+      "name": "03-word",
+      "marker": "AMZ25-03 WORD",
+      "sourceSha256": "97dc9cc4247a1ec2cc98cfb45566671e5e90519d50494dcda3bff37fdcd877ac",
+      "contractSha256": "e3d2c02ce7b3de592afff46082399d3e560c94e3c3648aa50fdd565cda9cf1e5",
+      "transferFinishedAt": "2026-11-25T22:04:56+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 4480,
+          "sha256": "787faf0f0aa89c8abe67f77e879be4ff5bd3919d13046e8004a12a0a3f9cc6b9"
+        },
+        "ControlPixel.dat": {
+          "length": 8032,
+          "sha256": "f202bc951b437b3665b7a2290a59b2bda4727acadd5bcd70f341c247ee6af3f8"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2640,
+          "sha256": "3bde726c5b38e542ab6e206f6882dad614338e4cb9cbb6a53b37785b493548fe"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "1fd0056bd7c8567e29d246ae9ec313801106183691be71b24ccf7da207f9a45a"
+        },
+        "SheetPixel.dat": {
+          "length": 4630,
+          "sha256": "1fb09e10b2f9a80654fcf6b06e6f6fcc2196334e80241d6c6161efaea062e1eb"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "length": 1441,
+          "sha256": "5f635af87f56cdf8b2b895d6e1bc4f0fd58cb898998663a796ee99f06e3281d0"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 12,
+        "completedSteps": 14,
+        "plannedSteps": 14,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "LW20 独立框 0→1→4，LW30 独立框 0→3。标识正常，无宽度提示。"
+    },
+    {
+      "name": "04-function",
+      "marker": "AMZ25-04 FUNCTION",
+      "sourceSha256": "988fa84ca6274b5d1047d6d566d1db8d3182d8cefceddcf0145325bb3b9782a8",
+      "contractSha256": "298b25efd2d4c681cf5239649356cfb5e5e41639fe4a393e7bf857eef18981a4",
+      "transferFinishedAt": "2026-11-25T22:05:56+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 7040,
+          "sha256": "a1aa1b65d18f95f933fa649cab61547e6b7dbe7308563ef787e097f59e98c5fe"
+        },
+        "ControlPixel.dat": {
+          "length": 11296,
+          "sha256": "420e493981884a73d2b97d4e6f8c66f800b06506fc2a348da35b3bf63b5aa5f7"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2700,
+          "sha256": "b3df2dae6afb2553052e782999df36eb4c41fa2ed166264b8cb2ddf3deda2624"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "0d6ae2c9044e5429eb59d813651c2a9214d2b8f01caab2bb2dad765160db94a9"
+        },
+        "SheetPixel.dat": {
+          "length": 4137,
+          "sha256": "6cb9f072f61b05e024da878709c2631500a138d827450a8381960621ff4e0cd6"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "c7702783e6b99da789c8be17aa921dec576dd497cdf4afc5ed1d8ad079d4aec1"
+        },
+        "upLoad.knr": {
+          "length": 1603,
+          "sha256": "a044c213286de8b44dbd03cffb32b4a72eb339cb5e70c0f9b80c6cb622f6d3bf"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 12,
+        "completedSteps": 14,
+        "plannedSteps": 14,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "英文显示且 LB40=1，复位后切回中文且 LB40=0。LB41 清零隐藏、置位显示，出现的按钮可切回中文，再清零再次隐藏。无宽度提示。"
+    },
+    {
+      "name": "05-u32-press",
+      "marker": "AMZ25-05 U32 PRESS",
+      "sourceSha256": "85dacaa9257aa42dee2cf721c1766ef15af5a6c067851cab4060c9ecf40a9ac5",
+      "contractSha256": "65b2b855edfa3ff44cf582aaa9059fa69e54fc0c60e6916ffcb5210df7913e64",
+      "transferFinishedAt": "2026-11-25T22:09:40+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 5120,
+          "sha256": "d17121edc0e325ac6ebb939b21f64ae0761666c34a67ff9fd404a6bd5d245b78"
+        },
+        "ControlPixel.dat": {
+          "length": 9632,
+          "sha256": "f8c54fa9182b52ebe3cb8518322b6486e06d66103d58fcba1835d3357ebb04f4"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2664,
+          "sha256": "936dfed0c722cf025219e79ba1eb5f69ffb51a32049d5812975c8f2f7c144aa2"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "40b18331848132208c0891a6cea3f0df4080cbe2ce16de0d42791814983483a2"
+        },
+        "SheetPixel.dat": {
+          "length": 4701,
+          "sha256": "3cd487e206fb8992cb15e881c6d4f7ce86f990154a14fcbbdfe4a3aa9b47844f"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "length": 1645,
+          "sha256": "600b362d37562ce7b85a92e9d0bf09cd5418bbd5b234692c0396239d7c26e996"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 12,
+        "completedSteps": 14,
+        "plannedSteps": 14,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "LW30/LW31 依次为 0/0、3/1、4/1。LB42 短按为 0，长按约两秒为 1。无宽度提示。"
+    },
+    {
+      "name": "06-macro",
+      "marker": "AMZ25-06 MACRO",
+      "sourceSha256": "a41e3fffb5bb73185f8feb7c250b0dd07be6da4727d637620857e49ab0f0e19b",
+      "contractSha256": "01526dbde15bf25ab2429d9937131a4a3683527e74269d2c243293205de186d5",
+      "transferFinishedAt": "2026-11-25T22:14:54+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 1920,
+          "sha256": "4ad2e84076351b238e85d7c05b515cbb330efb7d553d8c11a5fa947813b050c9"
+        },
+        "ControlPixel.dat": {
+          "length": 2432,
+          "sha256": "8bebd66f73aac4f42cbee7521584d8ae2855bf1fcfbff17470fc0ac4d423baa1"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "MarcoRun.dat": {
+          "length": 1048,
+          "sha256": "7ae6900a147a5930098c6518f30d169912a138c507c1e6e2ad23d1f62caaf0f2"
+        },
+        "MarcoVar.dat": {
+          "length": 904,
+          "sha256": "cc401ce5099578287fd15c062a92893754851bdb7ca3c1fe742bbff85e2281c2"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2472,
+          "sha256": "1d6085114002c1204af897926541acb944c47299920980edb1717b1a41210812"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "6da6775db76a4048e7ebd0e11c3cf766e71018d4b9928647da04be57bc4ea255"
+        },
+        "SheetPixel.dat": {
+          "length": 4654,
+          "sha256": "88d6c0e6a6277307a0fa1712db4cffc825beee2b10fb3ce9826d62719fdadfad"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+        },
+        "upLoad.knr": {
+          "length": 1286,
+          "sha256": "348374ec31fd116672a65ef365df12475be8916270c69b695d7a4a70a1ba78e2"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 14,
+        "completedSteps": 16,
+        "plannedSteps": 16,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "MarcoVar.dat",
+          "MarcoRun.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "36",
+        "35",
+        "1d",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "RESET LB10、RUN MACRO 后独立观察框读数 0→1。标识正常，无宽度提示。"
+    },
+    {
+      "name": "07-mixed",
+      "marker": "AMZ25-07 MIXED",
+      "sourceSha256": "0f66871a7b2b52df242217325b50eb4ec84e1d2099d4aafe22f8f2554dffc8aa",
+      "contractSha256": "d990c86ddd381753e529c83d4ec24a0f1581e5c54fd28aa409469dca9076d0e5",
+      "transferFinishedAt": "2026-11-25T22:17:31+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 3200,
+          "sha256": "ca18a3fad10a8784f95ecd2dae2754e1026f5782c7b003a3b0c2e1696e1f6cf1"
+        },
+        "ControlPixel.dat": {
+          "length": 39840,
+          "sha256": "aa0e6d1469d281615b4611e84fcdddccf0987436ed280a56908ca5277d6ac2c4"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2652,
+          "sha256": "8966ad19f2ced710bd8ac75ab3acb6be4ed67b35a3df03c8dc4e24dcb7701485"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "ecbf93fb28e4c786bdaff79abf9e34b9fc80fc9f106736c7c3dde0824f4849e3"
+        },
+        "SheetPixel.dat": {
+          "length": 7796,
+          "sha256": "53f49499b6bf3a69a576fee720b25e099bcd17cd9307f835524ec9e0295b3ec2"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "7e6ed2ce804928b66c3b10f40758401be435ac50992873756b05d037edd5bfca"
+        },
+        "upLoad.knr": {
+          "length": 1755,
+          "sha256": "e9cc238f4d1eecd41f0bc5ec497f83ed1e9a7c8c346cda0f609bc2d777ec9eb7"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 12,
+        "completedSteps": 14,
+        "plannedSteps": 14,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "底部标识、顶部四个控件、右侧表格和各图形可见，无宽度提示。"
+    },
+    {
+      "name": "08-schedule",
+      "marker": "AMZ25-08 SCHEDULE",
+      "sourceSha256": "6332977744049c4fc2d0e4d00cf0ae27107868cc645165219bd02f633ac1fabb",
+      "contractSha256": "b8bb59379e8a5309dd28ae136c5c17075d05427a32a9e9d377378f32ad807349",
+      "transferFinishedAt": "2026-11-25T22:19:47+08:00",
+      "bytesAndHashes": {
+        "AddrPara.dat": {
+          "length": 200,
+          "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+        },
+        "AlarmPara.dat": {
+          "length": 47840,
+          "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+        },
+        "Collect.dat": {
+          "length": 1424,
+          "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+        },
+        "ControlPara.dat": {
+          "length": 4480,
+          "sha256": "8ea31a6ba3cd8b9ac920be98553c2b2053911afa805b92c676f083be584546d3"
+        },
+        "ControlPixel.dat": {
+          "length": 4736,
+          "sha256": "aacc33c9f05f1a0134e0ef800c38678f1a8ce956925d4182e76c0eacdb990b25"
+        },
+        "Curve.dat": {
+          "length": 501,
+          "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+        },
+        "MarcoRun.dat": {
+          "length": 1072,
+          "sha256": "777a79cd567d847c259ad95a773e5b239e1ac7c6d34a9a992e48bb0aabb6faa0"
+        },
+        "MarcoVar.dat": {
+          "length": 1808,
+          "sha256": "285d27b52114b97387abdce62bf55e9e613a68e56e5c5727e4c056d76f211d6b"
+        },
+        "Modbus_RTU_com1.bin": {
+          "length": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        },
+        "PicLenPara.dat": {
+          "length": 2568,
+          "sha256": "db885020dad5030e70ca9ac37a2371a7e6604800051e896bcba1c69f4b53f6ab"
+        },
+        "SheetPara.dat": {
+          "length": 72,
+          "sha256": "5b72cccf0e367d296baf9207d948d7a1c61053a17a075c843043e4bc5f7180d2"
+        },
+        "SheetPixel.dat": {
+          "length": 4654,
+          "sha256": "1701ba69d6e6d1c05a8c3b8809e0c61d842855a8f126bbaed53f59cd86164dfc"
+        },
+        "SysPara.dat": {
+          "length": 4998,
+          "sha256": "2db700cf379979c22633d488e25857dadb076baf4ae7658355d5d2e5db095555"
+        },
+        "upLoad.knr": {
+          "length": 1692,
+          "sha256": "43c113755538b0a791469dc313ef1bd648efa9d9bba1fdacf86054c915186fbd"
+        }
+      },
+      "transfer": {
+        "payloadBlocks": 14,
+        "completedSteps": 16,
+        "plannedSteps": 16,
+        "startOptionsHex": "000000",
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "transferAccepted": true,
+        "interfaceReleased": true,
+        "closed": true,
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "ControlPara.dat",
+          "SheetPara.dat",
+          "MarcoVar.dat",
+          "MarcoRun.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "ControlPixel.dat",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ]
+      },
+      "commandBytes": [
+        "31",
+        "53",
+        "34",
+        "35",
+        "0a",
+        "35",
+        "0b",
+        "35",
+        "0c",
+        "35",
+        "36",
+        "35",
+        "1d",
+        "35",
+        "0e",
+        "35",
+        "16",
+        "35",
+        "15",
+        "35",
+        "19",
+        "35",
+        "12",
+        "35",
+        "14",
+        "35",
+        "0d",
+        "35",
+        "1e",
+        "35",
+        "10",
+        "35",
+        "0f",
+        "35",
+        "11",
+        "35",
+        "1b",
+        "1a"
+      ],
+      "fieldObservation": "下载及重启完成，待确认 LB10 启动效果及 LB12 控制的 LB11 全局任务。",
+      "archivedSource": "08-schedule.ksp"
+    }
+  ],
+  "firmwareVersionAfterDownload": "122-2026.03.04",
+  "screenLeftOn": "AMZ25-08 SCHEDULE"
+}
