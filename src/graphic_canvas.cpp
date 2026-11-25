@@ -103,7 +103,7 @@ bool ScreenCanvas::graphicPress(QMouseEvent *event, const QPointF &point) //2026
     int index;
 
     if (!m_hasPending || !graphicUsesVertices(m_pendingObject.type)) { return false; }
-    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) //20261113-2 add: Left clicks add vertices; only the observed right-click gesture commits the path.
+    if (graphicUsesMultipleClicks(m_pendingObject.type)) //20261113-2 add: Left clicks add vertices; only the observed right-click gesture commits the path.
     {
         if (event->button() == Qt::RightButton)
         {
@@ -117,9 +117,19 @@ bool ScreenCanvas::graphicPress(QMouseEvent *event, const QPointF &point) //2026
         if (event->button() != Qt::LeftButton) { return false; }
         vertex = QPointF(qBound(0,qRound(point.x()),m_pageWidth-1),qBound(0,qRound(point.y()),m_pageHeight-1));
         if (m_graphicVertices.size() >= 4096) { cancelInteraction(); event->accept(); return true; }
+        m_curveDragged = false; //20261125-85 add
+        if (m_pendingObject.type == QStringLiteral("linecurve") && !m_graphicVertices.isEmpty() &&
+            m_graphicVertices.last() == vertex)
+        {
+            // A press on the previous anchor cannot add a control to the previous segment.
+            m_drawing = false;
+            event->accept();
+            return true;
+        }
         if (m_graphicVertices.isEmpty() || m_graphicVertices.last() != vertex) { m_graphicVertices.append(vertex); }
         m_drawing = true; m_graphicEnd = vertex; path.moveTo(m_graphicVertices.first());
         for (index = 1; index < m_graphicVertices.size(); ++index) { path.lineTo(m_graphicVertices[index]); }
+        if (m_pendingObject.type == QStringLiteral("linecurve")) { path = curveDrawingPath(m_graphicVertices, m_pendingObject.graphic.curveControls); } //20261125-85 add
         if (m_graphicDraft == nullptr) { m_graphicDraft = m_scene->addPath(path,QPen(Qt::blue,0)); m_graphicDraft->setZValue(10000); }
         else { m_graphicDraft->setPath(path); }
         event->accept(); return true;
@@ -131,6 +141,21 @@ bool ScreenCanvas::graphicPress(QMouseEvent *event, const QPointF &point) //2026
     m_graphicDraft = m_scene->addPath(path, QPen(Qt::blue, 0)); m_graphicDraft->setZValue(10000);
     event->accept();
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : boundedCurveControl
+ * Description     : Reflect the drag point while keeping the editor control box within the canvas.
+ * Input Parameters: anchor, drag point, canvas width and height
+ * Return Value    : In-bounds scene control point.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+static QPointF boundedCurveControl(const QPointF &anchor, const QPointF &drag, int width, int height) //20261125-85 add
+{
+    const QPointF reflected = 2 * anchor - drag;
+
+    return QPointF(qBound(0.0, reflected.x(), double(width - 1)),
+                   qBound(0.0, reflected.y(), double(height - 1)));
 }
 
 /******************************************************************************
@@ -147,7 +172,26 @@ bool ScreenCanvas::graphicMove(QMouseEvent *event, const QPointF &point) //20261
 
     if (!m_drawing || m_graphicDraft == nullptr) { return false; }
     m_graphicEnd = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
-    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) //20261113-2 add: A rubber-band tail is transient and never silently serialized.
+    if (m_pendingObject.type == QStringLiteral("linecurve")) //20261125-85 add
+    {
+        QVector<QPointF> vertices = m_graphicVertices;
+        QVector<int> controls = m_pendingObject.graphic.curveControls;
+        const QPointF anchor = vertices.last();
+        if (event->buttons().testFlag(Qt::LeftButton))
+        {
+            if (vertices.size() > 1 && (anchor - m_graphicEnd).manhattanLength() > 25) { m_curveDragged = true; }
+            if (vertices.size() > 1 && m_curveDragged)
+            {
+                controls.append(vertices.size() - 1);
+                vertices.insert(vertices.size() - 1, boundedCurveControl(anchor, m_graphicEnd, m_pageWidth, m_pageHeight));
+            }
+        }
+        else { vertices.append(m_graphicEnd); }
+        m_graphicDraft->setPath(curveDrawingPath(vertices, controls));
+        event->accept();
+        return true;
+    }
+    if (graphicUsesMultipleClicks(m_pendingObject.type)) //20261113-2 add: A rubber-band tail is transient and never silently serialized.
     {
         path.moveTo(m_graphicVertices.first()); for (index = 1; index < m_graphicVertices.size(); ++index) { path.lineTo(m_graphicVertices[index]); }
         path.lineTo(m_graphicEnd); if (m_pendingObject.type == QStringLiteral("polygon")) { path.closeSubpath(); } //20261113-4 add: The closing preview edge is transient.
@@ -172,7 +216,21 @@ bool ScreenCanvas::graphicRelease(QMouseEvent *event) //20261113-2 add
     QPointF point;
 
     if (event->button() != Qt::LeftButton || !m_drawing || m_graphicDraft == nullptr) { return false; }
-    if ((m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon"))) { event->accept(); return true; } //20261113-2 add: Releasing one click does not create a separate object or undo entry.
+    if (m_pendingObject.type == QStringLiteral("linecurve") && m_graphicVertices.size() > 1) //20261125-85 add
+    {
+        const QPointF end = mapToScene(event->position().toPoint());
+        const QPointF anchor = m_graphicVertices.last();
+        const int control = m_graphicVertices.size() - 1;
+        if (m_curveDragged || (anchor - end).manhattanLength() > 25)
+        {
+            if (m_graphicVertices.size() >= 4096) { cancelInteraction(); event->accept(); return true; }
+            m_pendingObject.graphic.curveControls.append(control);
+            m_graphicVertices.insert(control, boundedCurveControl(anchor, end, m_pageWidth, m_pageHeight));
+            m_graphicDraft->setPath(curveDrawingPath(m_graphicVertices, m_pendingObject.graphic.curveControls));
+        }
+        m_curveDragged = false;
+    }
+    if (graphicUsesMultipleClicks(m_pendingObject.type)) { event->accept(); return true; } //20261113-2 add: Releasing one click does not create a separate object or undo entry.
     point = mapToScene(event->position().toPoint());
     m_graphicEnd = QPointF(qBound(0, qRound(point.x()), m_pageWidth - 1), qBound(0, qRound(point.y()), m_pageHeight - 1));
     object = m_pendingObject;

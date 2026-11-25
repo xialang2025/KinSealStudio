@@ -38,6 +38,8 @@ struct NativeSourceAddress
     QString auxiliary;
 };
 
+bool normalizeNativeControlSizes(QByteArray *snapshot, QString *error); //20261125-83 add
+
 //20261110-5 add: A span identifies verified stream boundaries, not writable semantic support.
 struct NativeSourceFieldSpan
 {

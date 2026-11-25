@@ -5,6 +5,7 @@
 #include <QImage> //20261123-2 add
 #include <QJsonObject>
 #include <QList>
+#include <QPointF> //20261125-83 add
 #include <QRect>
 #include <QTransform> //20261124-15 add
 #include <QString>
@@ -95,6 +96,7 @@ struct HmiObject
     MultiStateButtonProperties multiStateButton; //20261112-0 add: Multi-state input does not use the lamp native subtype.
     double layer = 1;
     QString group;
+    QPointF subpixelOffset; //20261125-83 add: Preserve the scene origin between integer device pixels.
     QJsonObject extensions; //20261110-5 add: Versioned, explicitly inactive editor metadata only.
 
     QJsonObject toJson() const;

@@ -268,8 +268,9 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         }
     }
     std::stable_sort(prepared.objects.begin(),prepared.objects.end(),[](const HmiObject &a,const HmiObject &b) { return a.layer < b.layer; });
-    Q_FOREACH (object,prepared.objects)
+    for (qsizetype index = 0; index < prepared.objects.size(); ++index)
     {
+        object = prepared.objects.at(index);
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
@@ -277,6 +278,27 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         {
             return compilationIssue(project, object, QStringLiteral("appearance.flip"), true,
                 QStringLiteral("此形状的设备翻转尚未支持，设备工程未生成。"), error, issue);
+        }
+        if (object.type == QStringLiteral("linecurve")) //20261125-85 add
+        {
+            if (!object.graphic.validate(object.type, &diagnostic))
+            { return compilationIssue(project, object, QStringLiteral("graphic"), object.type, diagnostic, error, issue); }
+            // A firmware sprite can cover baked screen pixels. Refuse a curve layered above an intersecting sprite.
+            if (object.graphic.lineStyle != 0 && object.graphic.alpha != 0)
+            {
+                const QPainterPath stroke = graphicHitPath(object.type, QRectF(object.geometry), object.graphic);
+                for (qsizetype previousIndex = 0; previousIndex < index; ++previousIndex)
+                {
+                    const HmiObject &underlying = prepared.objects.at(previousIndex);
+                    if (underlying.type == QStringLiteral("switch") && stroke.intersects(QRectF(underlying.geometry)))
+                    {
+                        return compilationIssue(project, object, QStringLiteral("geometry.overlap"), underlying.id,
+                            QStringLiteral("曲线覆盖动态控件的设备层叠尚未核定。请调整图层或位置。"), error, issue);
+                    }
+                }
+            }
+            ++prepared.staticCurveCount;
+            continue;
         }
         if (object.type==QStringLiteral("sector")) //20261114-3 add: Only the native default-angle square path may reach independent background composition.
         {

@@ -783,6 +783,26 @@ void SourceDocument::page(const QString &pagePrefix) //20261110-5 change
         name = indexed(pagePrefix == QStringLiteral("page") ? QStringLiteral("object") : pagePrefix + QStringLiteral(".object"), i) + QStringLiteral(".");
         read('b', name + QStringLiteral("movable"));
         type = read('i', name + QStringLiteral("type")).toInt();
+        if (type == 0x1002a) { //20261125-85 add: Decode a top-level curve before the shared Z coordinate.
+            objectPrefixes.append(name);
+        int count = this->count(name + QStringLiteral("curve.elements"), 16384);
+        for (int index = 0; index < count && error.isEmpty(); ++index)
+        {
+            fields(QByteArray("idd"), indexed(name + QStringLiteral("curve.element"), index));
+        }
+        if (count > 0) { fields(QByteArray("ii"), name + QStringLiteral("curve.pathTail")); }
+        fields(QByteArray("iicddbqiiii"), name + QStringLiteral("curve.style"));
+        list(name + QStringLiteral("curve.labels"));
+        fields(QByteArray("bi"), name + QStringLiteral("curve.touch"));
+        address(name + QStringLiteral("curve.touchAddress"));
+        fields(QByteArray("iibi"), name + QStringLiteral("curve.gate"));
+        address(name + QStringLiteral("curve.gateAddress"));
+        fields(QByteArray("bi"), name + QStringLiteral("curve.visibility"));
+        address(name + QStringLiteral("curve.visibilityAddress"));
+        fields(QByteArray("iii"), name + QStringLiteral("curve.end"));
+            read('d', name + QStringLiteral("z"));
+            continue;
+        }
         if (type != 10 && type != 28) {
             reject(name, QStringLiteral("尚未恢复的原生控件类型 %1").arg(type));
             return;
@@ -1046,6 +1066,98 @@ bool modelSourceAddress(const SourceDocument &document, const QString &name, QSt
 }
 
 /******************************************************************************
+ * Function Name   : sourceLineCurve
+ * Description     : Decode independent native line/cubic subpaths and preserve editor handle roles.
+ * Input Parameters: document, object prefix, index, output object, error
+ * Return Value    : True for a path producible by the native drawing tool.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+static bool sourceLineCurve(const SourceDocument &document, const QString &prefix, int index,
+                            HmiObject *output, QString *error) //20261125-85 add
+{
+    HmiObject object;
+    const QString style = prefix + QStringLiteral("curve.style.");
+    const int count = document.value(prefix + QStringLiteral("curve.elements.count")).toInt();
+    const QPointF offset(document.value(style + QStringLiteral("3")).toDouble(), document.value(style + QStringLiteral("4")).toDouble());
+    QVector<QPointF> vertices;
+    QVector<QPointF> elements;
+    QVector<int> tags;
+    int element;
+    QString field;
+    QRect bounds;
+    double left, top, right, bottom;
+    QColor color = document.value(style + QStringLiteral("2")).value<QColor>();
+
+    object.id = QStringLiteral("native-linecurve-%1").arg(index);
+    object.type = QStringLiteral("linecurve");
+    object.name = document.value(style + QStringLiteral("6")).toString();
+    if (object.name.isEmpty()) { object.name = graphicName(object.type) + QString::number(index + 1); }
+    object.graphic.alpha = document.value(style + QStringLiteral("0")).toInt();
+    object.graphic.lineWidth = qMax(1, document.value(style + QStringLiteral("1")).toInt());
+    object.graphic.lineStyle = document.value(style + QStringLiteral("7")).toInt();
+    object.graphic.endArrow = document.value(style + QStringLiteral("8")).toInt();
+    object.graphic.endCap = document.value(style + QStringLiteral("9")).toInt();
+    if (color.alpha() != object.graphic.alpha || !document.value(style + QStringLiteral("5")).toBool() ||
+        document.value(prefix + QStringLiteral("curve.touch.0")).toBool() || document.value(prefix + QStringLiteral("curve.gate.2")).toBool() ||
+        document.value(prefix + QStringLiteral("curve.visibility.0")).toBool())
+    {
+        return fail(error, QStringLiteral("曲线含未支持的显示条件或颜色数据。"));
+    }
+    color.setAlpha(255);
+    object.graphic.lineColor = color;
+    for (element = 0; element < count; ++element)
+    {
+        field = SourceDocument::indexed(prefix + QStringLiteral("curve.element"), element) + QStringLiteral(".");
+        tags.append(document.value(field + QStringLiteral("0")).toInt());
+        elements.append(QPointF(document.value(field + QStringLiteral("1")).toDouble(), document.value(field + QStringLiteral("2")).toDouble()) + offset);
+    }
+    if (object.graphic.endArrow != 0)
+    {
+        // Qt serializes the arrow as a final independent decoration after the editable path.
+        element = tags.lastIndexOf(0);
+        if (element <= 0) { return fail(error, QStringLiteral("曲线末端形状缺少独立路径。")); }
+        tags.resize(element);
+        elements.resize(element);
+    }
+    for (element = 0; element < tags.size();)
+    {
+        if (tags[element] != 0 || element + 1 >= tags.size() || (!vertices.isEmpty() && vertices.last() != elements[element]))
+        { return fail(error, QStringLiteral("曲线含非连续或未识别的路径子段。")); }
+        if (vertices.isEmpty()) { vertices.append(elements[element]); }
+        ++element;
+        if (tags[element] == 1) { vertices.append(elements[element++]); }
+        else if (tags[element] == 2 && element + 2 < tags.size() && tags[element + 1] == 3 && tags[element + 2] == 3 &&
+                 elements[element] == vertices.last())
+        {
+            object.graphic.curveControls.append(vertices.size());
+            vertices.append(elements[element + 1]);
+            vertices.append(elements[element + 2]);
+            element += 3;
+        }
+        else { return fail(error, QStringLiteral("曲线控制点序列不符合原厂绘图工具。")); }
+    }
+    if (vertices.size() < 2 || vertices.size() > 4096) { return fail(error, QStringLiteral("曲线顶点数量无效。")); }
+    left = right = vertices.first().x(); top = bottom = vertices.first().y();
+    for (const QPointF &point : vertices)
+    {
+        if (!std::isfinite(point.x()) || !std::isfinite(point.y()) || std::abs(point.x()) > 32768 || std::abs(point.y()) > 32768)
+        { return fail(error, QStringLiteral("曲线超出可编辑坐标范围。")); }
+        left = qMin(left, point.x()); right = qMax(right, point.x());
+        top = qMin(top, point.y()); bottom = qMax(bottom, point.y());
+    }
+    bounds = QRect(int(std::floor(left)), int(std::floor(top)), qMax(1, int(std::ceil(right) - std::floor(left))),
+                   qMax(1, int(std::ceil(bottom) - std::floor(top))));
+    object.geometry = bounds;
+    object.graphic.points.clear();
+    for (const QPointF &point : vertices)
+    { object.graphic.points.append(QPointF((point.x() - bounds.x()) / bounds.width(), (point.y() - bounds.y()) / bounds.height())); }
+    if (!object.graphic.validate(object.type, error)) { return false; }
+    object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
+    *output = object;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : sourceStaticText
  * Description     : Restore static-text languages only when their shared appearance is fully representable.
  * Input Parameters: document, prefix, index, languages, object, warnings, external, error
@@ -1085,7 +1197,8 @@ bool sourceStaticText(const SourceDocument &document, const QString &prefix, int
     if (std::abs(x) > 32768 || std::abs(y) > 32768 || width < 1 || width > 4096 || height < 1 || height > 4096) {
         return fail(error, QStringLiteral("原生静态文本几何数据无法表示。"));
     }
-    result.geometry = QRect(qRound(x), qRound(y), qRound(width), qRound(height));
+    result.geometry = QRect(int(x), int(y), qRound(width), qRound(height)); //20261125-83 change: Retain the native double scene position.
+    result.subpixelOffset = QPointF(x - result.geometry.x(), y - result.geometry.y());
     result.layer = document.value(prefix + QStringLiteral("z")).toDouble();
     result.hasStaticTextProperties = true;
     result.text = document.value(row + QStringLiteral(".10")).toString();
@@ -1344,6 +1457,8 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     int languageCount;
     int field;
     qsizetype summarizedWarnings; //20261110-5 add: Generated diagnostics must fit the bounded KSP warning carrier.
+    double sceneX; //20261125-83 add: Rectangle origin and translation jointly define the scene position.
+    double sceneY;
     bool external;
     bool wordButton; //20261109-6 add
     bool lamp; //20261109-8 add
@@ -1408,6 +1523,12 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     external = false;
     for (i = 0; i < document.objectPrefixes.size(); ++i) {
         prefix = document.objectPrefixes.at(i);
+        if (document.value(prefix + QStringLiteral("type")).toInt() == 0x1002a) //20261125-85 add
+        {
+            if (!sourceLineCurve(document, prefix, i, &object, error)) { return false; }
+            result.objects.append(object);
+            continue;
+        }
         if (document.value(prefix + QStringLiteral("type")).toInt() == 28) {
             if (!sourceStaticText(document, prefix, i, result.languages, &object, &result.nativeSourceWarnings, &external, error)) {
                 return false;
@@ -1440,12 +1561,12 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
             document.value(prefix + QStringLiteral("text.head.3")).toDouble() > 4096) {
             return fail(error, QStringLiteral("原生位按钮几何数据无法表示为当前编辑模型。"));
         }
-        object.geometry = QRect(qRound(document.value(prefix + QStringLiteral("rectangle.0")).toDouble() +
-                                       document.value(prefix + QStringLiteral("rectangle.9")).toDouble()),
-                                qRound(document.value(prefix + QStringLiteral("rectangle.1")).toDouble() +
-                                       document.value(prefix + QStringLiteral("rectangle.10")).toDouble()),
+        sceneX = document.value(prefix + QStringLiteral("rectangle.0")).toDouble() + document.value(prefix + QStringLiteral("rectangle.9")).toDouble();
+        sceneY = document.value(prefix + QStringLiteral("rectangle.1")).toDouble() + document.value(prefix + QStringLiteral("rectangle.10")).toDouble();
+        object.geometry = QRect(int(sceneX), int(sceneY),
                                 qRound(document.value(prefix + QStringLiteral("text.head.2")).toDouble()),
                                 qRound(document.value(prefix + QStringLiteral("text.head.3")).toDouble()));
+        object.subpixelOffset = QPointF(sceneX - object.geometry.x(), sceneY - object.geometry.y());
         object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
         object.hasBitButtonProperties = true;
         if (!wordButton && !lamp && !functionButton) { //20261110-0 change
@@ -2344,7 +2465,7 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
     afterObject.remove(QStringLiteral("text"));
     patchScalar(&beforeObject, &afterObject, QStringLiteral("name"), prefix + QStringLiteral("group.metadata-name"), updates);
     patchScalar(&beforeObject, &afterObject, QStringLiteral("layer"), prefix + QStringLiteral("z"), updates);
-    if (current.geometry != original.geometry) {
+    if (current.geometry != original.geometry || current.subpixelOffset != original.subpixelOffset) { //20261125-83 change
         if (current.geometry.width() < 1 || current.geometry.height() < 1 ||
             current.geometry.width() > 4096 || current.geometry.height() > 4096) {
             return false;
@@ -2353,17 +2474,19 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
         updates->set(prefix + QStringLiteral("rectangle.1"), 0.0);
         updates->set(prefix + QStringLiteral("rectangle.2"), current.geometry.width());
         updates->set(prefix + QStringLiteral("rectangle.3"), current.geometry.height());
-        updates->set(prefix + QStringLiteral("rectangle.9"), current.geometry.x());
-        updates->set(prefix + QStringLiteral("rectangle.10"), current.geometry.y());
+        updates->set(prefix + QStringLiteral("rectangle.9"), current.geometry.x() + current.subpixelOffset.x());
+        updates->set(prefix + QStringLiteral("rectangle.10"), current.geometry.y() + current.subpixelOffset.y());
         updates->set(prefix + QStringLiteral("text.head.0"), 0.0);
         updates->set(prefix + QStringLiteral("text.head.1"), 0.0);
         updates->set(prefix + QStringLiteral("text.head.2"), current.geometry.width());
         updates->set(prefix + QStringLiteral("text.head.3"), current.geometry.height());
-        updates->set(prefix + QStringLiteral("text.tail.10"), current.geometry.x());
-        updates->set(prefix + QStringLiteral("text.tail.11"), current.geometry.y());
+        updates->set(prefix + QStringLiteral("text.tail.10"), current.geometry.x() + current.subpixelOffset.x());
+        updates->set(prefix + QStringLiteral("text.tail.11"), current.geometry.y() + current.subpixelOffset.y());
     }
     beforeObject.remove(QStringLiteral("x")); afterObject.remove(QStringLiteral("x"));
     beforeObject.remove(QStringLiteral("y")); afterObject.remove(QStringLiteral("y"));
+    beforeObject.remove(QStringLiteral("subpixelX")); afterObject.remove(QStringLiteral("subpixelX"));
+    beforeObject.remove(QStringLiteral("subpixelY")); afterObject.remove(QStringLiteral("subpixelY"));
     beforeObject.remove(QStringLiteral("width")); afterObject.remove(QStringLiteral("width"));
     beforeObject.remove(QStringLiteral("height")); afterObject.remove(QStringLiteral("height"));
     return beforeObject == afterObject;
@@ -2518,36 +2641,36 @@ bool patchButton(const HmiObject &original, const HmiObject &current, const QStr
     }
     patchScalar(&beforeObject, &afterObject, QStringLiteral("name"), prefix + QStringLiteral("group.metadata-name"), updates);
     patchScalar(&beforeObject, &afterObject, QStringLiteral("layer"), prefix + QStringLiteral("z"), updates);
-    if (current.geometry != original.geometry) {
+    if (current.geometry != original.geometry || current.subpixelOffset != original.subpixelOffset) { //20261125-83 change
         if (current.geometry.width() < 1 || current.geometry.height() < 1 ||
             current.geometry.width() > 4096 || current.geometry.height() > 4096) {
             return false;
         }
-        updates->set(prefix + QStringLiteral("rectangle.9"), current.geometry.x());
-        updates->set(prefix + QStringLiteral("rectangle.10"), current.geometry.y());
+        updates->set(prefix + QStringLiteral("rectangle.9"), current.geometry.x() + current.subpixelOffset.x());
+        updates->set(prefix + QStringLiteral("rectangle.10"), current.geometry.y() + current.subpixelOffset.y());
         updates->set(prefix + QStringLiteral("rectangle.0"), 0.0);
         updates->set(prefix + QStringLiteral("rectangle.1"), 0.0);
         updates->set(prefix + QStringLiteral("rectangle.2"), current.geometry.width());
         updates->set(prefix + QStringLiteral("rectangle.3"), current.geometry.height());
         if (updates->document.value(prefix + QStringLiteral("pixmap.type")).toInt() == 13) { //20261109-8 change
-            updates->set(prefix + QStringLiteral("pixmap.2"), current.geometry.x());
-            updates->set(prefix + QStringLiteral("pixmap.3"), current.geometry.y());
+            updates->set(prefix + QStringLiteral("pixmap.2"), current.geometry.x() + current.subpixelOffset.x());
+            updates->set(prefix + QStringLiteral("pixmap.3"), current.geometry.y() + current.subpixelOffset.y());
             updates->set(prefix + QStringLiteral("pixmap.4"), current.geometry.width());
             updates->set(prefix + QStringLiteral("pixmap.5"), current.geometry.height());
-            updates->set(prefix + QStringLiteral("pixmap.6"), current.geometry.x());
-            updates->set(prefix + QStringLiteral("pixmap.7"), current.geometry.y());
+            updates->set(prefix + QStringLiteral("pixmap.6"), current.geometry.x() + current.subpixelOffset.x());
+            updates->set(prefix + QStringLiteral("pixmap.7"), current.geometry.y() + current.subpixelOffset.y());
         } else {
             updates->set(prefix + QStringLiteral("picture-rectangle.2"), current.geometry.width());
             updates->set(prefix + QStringLiteral("picture-rectangle.3"), current.geometry.height());
-            updates->set(prefix + QStringLiteral("picture-rectangle.9"), current.geometry.x());
-            updates->set(prefix + QStringLiteral("picture-rectangle.10"), current.geometry.y());
+            updates->set(prefix + QStringLiteral("picture-rectangle.9"), current.geometry.x() + current.subpixelOffset.x());
+            updates->set(prefix + QStringLiteral("picture-rectangle.10"), current.geometry.y() + current.subpixelOffset.y());
         }
         updates->set(prefix + QStringLiteral("text.head.2"), current.geometry.width());
         updates->set(prefix + QStringLiteral("text.head.3"), current.geometry.height());
         updates->set(prefix + QStringLiteral("text.head.0"), 0.0);
         updates->set(prefix + QStringLiteral("text.head.1"), 0.0);
-        updates->set(prefix + QStringLiteral("text.tail.10"), current.geometry.x());
-        updates->set(prefix + QStringLiteral("text.tail.11"), current.geometry.y());
+        updates->set(prefix + QStringLiteral("text.tail.10"), current.geometry.x() + current.subpixelOffset.x());
+        updates->set(prefix + QStringLiteral("text.tail.11"), current.geometry.y() + current.subpixelOffset.y());
         if (updates->document.values.contains(prefix + QStringLiteral("group.bounds.0"))) {
             updates->set(prefix + QStringLiteral("group.bounds.0"), current.geometry.x());
             updates->set(prefix + QStringLiteral("group.bounds.1"), current.geometry.y());
@@ -2557,6 +2680,8 @@ bool patchButton(const HmiObject &original, const HmiObject &current, const QStr
     }
     beforeObject.remove(QStringLiteral("x")); afterObject.remove(QStringLiteral("x"));
     beforeObject.remove(QStringLiteral("y")); afterObject.remove(QStringLiteral("y"));
+    beforeObject.remove(QStringLiteral("subpixelX")); afterObject.remove(QStringLiteral("subpixelX"));
+    beforeObject.remove(QStringLiteral("subpixelY")); afterObject.remove(QStringLiteral("subpixelY"));
     beforeObject.remove(QStringLiteral("width")); afterObject.remove(QStringLiteral("width"));
     beforeObject.remove(QStringLiteral("height")); afterObject.remove(QStringLiteral("height"));
     if (current.text != original.text && current.text != properties.states[0].text.languageTexts.value(languages.first())) {
@@ -2690,11 +2815,11 @@ bool patchControlPreview(const HmiObject &original, const HmiObject &current, co
         }
         return true;
     }
-    x = current.geometry.x();
-    y = current.geometry.y();
+    x = current.geometry.x() + current.subpixelOffset.x(); //20261125-83 change: Retain fractional placement when the image kind changes.
+    y = current.geometry.y() + current.subpixelOffset.y();
     width = current.geometry.width();
     height = current.geometry.height();
-    if (current.geometry == original.geometry) {
+    if (current.geometry == original.geometry && current.subpixelOffset == original.subpixelOffset) {
         x = updates->document.value(prefix + QStringLiteral("rectangle.0")).toDouble() + updates->document.value(prefix + QStringLiteral("rectangle.9")).toDouble();
         y = updates->document.value(prefix + QStringLiteral("rectangle.1")).toDouble() + updates->document.value(prefix + QStringLiteral("rectangle.10")).toDouble();
         width = updates->document.value(prefix + QStringLiteral("text.head.2")).toDouble();
@@ -3372,6 +3497,51 @@ bool inspectNativeProjectSourceFields(const QByteArray &data, QList<NativeSource
 }
 
 /******************************************************************************
+ * Function Name   : normalizeNativeControlSizes
+ * Description     : Normalize fractional source sizes which the integer editor would otherwise re-export unchanged.
+ * Input Parameters: snapshot, error
+ * Return Value    : True after all verified size carriers have been updated atomically.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool normalizeNativeControlSizes(QByteArray *snapshot, QString *error) //20261125-83 add
+{
+    SourceDocument document(*snapshot);
+    SourceUpdates updates(document);
+    QByteArray bytes;
+
+    if (snapshot->isEmpty()) { return true; }
+    if (!document.parse()) { return fail(error, document.error); }
+    for (const QString &prefix : document.objectPrefixes)
+    {
+        // The native text and switch composites repeat the logical dimensions in child records.
+        for (int axis = 0; axis < 2; ++axis)
+        {
+            const QString key = QString::number(2 + axis);
+            const QString textSize = prefix + QStringLiteral("text.head.") + key;
+            if (!document.values.contains(textSize)) { continue; }
+            const double extent = document.value(textSize).toDouble();
+            if (!std::isfinite(extent) || extent < 1 || extent > 4096) { continue; }
+            const int pixels = int(extent + 0.5);
+            if (extent == pixels) { continue; }
+            for (const QString &field : {textSize, prefix + QStringLiteral("rectangle.") + key,
+                prefix + QStringLiteral("picture-rectangle.") + key, prefix + QStringLiteral("pixmap.") + QString::number(4 + axis)})
+            {
+                if (document.values.contains(field) && document.value(field).toDouble() == extent)
+                {
+                    updates.set(field, pixels);
+                }
+            }
+        }
+    }
+    if (!updates.error.isEmpty()) { return fail(error, updates.error); }
+    if (updates.replacements.isEmpty()) { return true; }
+    bytes = updates.render();
+    if (bytes.isEmpty()) { return fail(error, updates.error); }
+    *snapshot = bytes;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : nativeProjectUsesSupportedDeviceDefaults
  * Description     : Restrict device compilation to independently verified native configuration bytes.
  * Input Parameters: data, error
@@ -3758,6 +3928,80 @@ bool importNativeProjectSource(const QByteArray &data, HmiProject *project,
 }
 
 /******************************************************************************
+ * Function Name   : writeSourceLineCurve
+ * Description     : Serialize the editable path and stroke ahead of the original shared metadata.
+ * Input Parameters: object, optional original object and its document prefix, output bytes, error
+ * Return Value    : True after writing one complete native child record including its type.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *original,
+                                 const SourceDocument &document, const QString &prefix,
+                                 QByteArray *bytes, QString *error) //20261125-85 add
+{
+    QByteArray body;
+    QDataStream stream(&body, QIODevice::WriteOnly);
+    QPainterPath path = graphicPath(object.type, QRectF(object.geometry).translated(object.subpixelOffset), object.graphic);
+    QColor stroke = object.graphic.lineColor;
+    const bool retained = original != nullptr;
+    const bool samePath = retained && object.graphic.points == original->graphic.points &&
+                          object.graphic.curveControls == original->graphic.curveControls &&
+                          object.geometry == original->geometry && object.subpixelOffset == original->subpixelOffset &&
+                          object.graphic.endArrow == original->graphic.endArrow;
+    const QString style = prefix + QStringLiteral("curve.style.");
+    QString name = object.name;
+    int width = object.graphic.lineWidth;
+    qsizetype start, end;
+    QPointF position;
+    QByteArray address;
+    NativeSourceAddress lb;
+
+    if (!object.graphic.validate(object.type, error)) { return false; }
+    if (object.graphic.endArrow && !samePath)
+    {
+        return fail(error, QStringLiteral("带末端箭头的曲线路径尚未核对原厂缓存，当前可保存为 .ksp。"));
+    }
+    stream.setVersion(QDataStream::Qt_4_8);
+    stream << 0x1002a;
+    if (samePath)
+    {
+        start = document.values.value(prefix + QStringLiteral("curve.elements.count")).start;
+        end = document.values.value(style + QStringLiteral("0")).start;
+        stream.writeRawData(document.bytes.constData() + start, end - start);
+        position = QPointF(document.value(style + QStringLiteral("3")).toDouble(), document.value(style + QStringLiteral("4")).toDouble());
+    }
+    else { stream << path; }
+    if (retained && original->name == name) { name = document.value(style + QStringLiteral("6")).toString(); }
+    if (retained && width == original->graphic.lineWidth) { width = document.value(style + QStringLiteral("1")).toInt(); }
+    if (!retained && width == 1) { width = 0; } //20261125-85 add: V5.1 serializes its first width as a cosmetic pen.
+    stroke.setAlpha(object.graphic.alpha);
+    stream << object.graphic.alpha << width << stroke << position << true << name
+           << object.graphic.lineStyle << object.graphic.endArrow << object.graphic.endCap;
+    if (retained)
+    {
+        start = document.values.value(style + QStringLiteral("10")).start;
+        end = document.values.value(prefix + QStringLiteral("z")).start;
+        stream.writeRawData(document.bytes.constData() + start, end - start);
+    }
+    else
+    {
+        // Native static curves initialize three dormant conditions to LB0. Write defined defaults for inactive fields.
+        lb.text = QStringLiteral("LB0"); lb.numericText = QStringLiteral("0"); lb.registerText = QStringLiteral("LB");
+        lb.rawLength = 1; lb.auxiliary = QStringLiteral("");
+        if (!writeNativeSourceAddress(lb, &address, error)) { return false; }
+        stream << 0 << 0 << false << 0;
+        stream.writeRawData(address.constData(), address.size());
+        stream << 0 << 0 << false << -1;
+        stream.writeRawData(address.constData(), address.size());
+        stream << false << 0;
+        stream.writeRawData(address.constData(), address.size());
+        stream << 0 << 0 << 0;
+    }
+    if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("曲线记录写入失败。")); }
+    *bytes = body;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : exportNativeProjectSource
  * Description     : Preserve native metadata while replacing only supported parsed fields.
  * Input Parameters: project, data, error
@@ -3894,6 +4138,12 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     }
     before.remove(QStringLiteral("macros")); after.remove(QStringLiteral("macros"));
     before.remove(QStringLiteral("pictures")); after.remove(QStringLiteral("pictures"));
+    //20261125-85 add: Schema 12 emits an empty animation library for new graphics; the V122 seed omits it.
+    for (QJsonObject *root : {&before, &after})
+    {
+        const QString key = QStringLiteral("animations");
+        if (root->value(key).isObject() && root->value(key).toObject().isEmpty()) { root->remove(key); }
+    }
     if (before != after) {
         return fail(error, QStringLiteral("原生源保存尚不支持本次系统、通信、语言、图片库或宏配置编辑；已取消保存以保留原始元数据。"));
     }
@@ -3968,6 +4218,27 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         originalIndices.insert(original.objects.at(i).id, i);
     }
     for (i = 0; i < project.objects.size(); ++i) {
+        if (project.objects.at(i).type == QStringLiteral("linecurve")) //20261125-85 add
+        {
+            const HmiObject &curve = project.objects.at(i);
+            if (!curve.group.isEmpty() || curve.id.isEmpty() || ids.contains(curve.id)) { return fail(error, QStringLiteral("曲线对象标识为空或重复。")); }
+            ids.insert(curve.id);
+            originalIndex = newProject ? -1 : originalIndices.value(curve.id, -1);
+            if (originalIndex >= 0 && original.objects.at(originalIndex).type != curve.type)
+            { return fail(error, QStringLiteral("原生源已有控件不能改换为曲线。")); }
+            prefix = originalIndex >= 0 ? document.objectPrefixes.at(originalIndex) : QString();
+            if (!writeSourceLineCurve(curve, originalIndex >= 0 ? &original.objects.at(originalIndex) : nullptr,
+                                      document, prefix, &objectBytes, error)) { return false; }
+            QByteArray record;
+            QDataStream stream(&record, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
+            stream.writeRawData(objectBytes.constData(), objectBytes.size());
+            stream << curve.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("写入曲线对象失败。")); }
+            objectBlock.append(record);
+            continue;
+        }
         if (project.objects.at(i).hasBitButtonProperties && project.objects.at(i).bitButton.macroEnabled &&
             !project.macros.contains(project.objects.at(i).bitButton.macroName)) {
             return fail(error, QStringLiteral("控件绑定的宏不在当前工程注册表中：%1。").arg(project.objects.at(i).bitButton.macroName));

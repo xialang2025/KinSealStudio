@@ -3,6 +3,7 @@
 #include "graphic_dialog.h" //20261113-8 add
 #include "hmi_canvas.h"
 #include "independent_downloader.h" //20261125-6 add
+#include "v31_extract_dialog.h" //20261125-81 add
 
 #include <QAction>
 #include <QActionGroup> //20261124-7 add
@@ -241,7 +242,11 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             action = new QAction(label, this);
             action->setObjectName(id);
             m_commands.insert(id, action);
-            if (id == QStringLiteral("action_new_screen")) //20261124-9 add
+            if (id == QStringLiteral("actionCompress")) //20261125-81 add
+            {
+                connect(action, &QAction::triggered, this, [this]() { showV31ExtractDialog(this); });
+            }
+            else if (id == QStringLiteral("action_new_screen")) //20261124-9 add
             {
                 connect(action, &QAction::triggered, this, &MainWindow::createNormalPage);
                 placed.insert(action); // This command belongs to the standard toolbar.
@@ -251,6 +256,15 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 const QString edit = id == QStringLiteral("action_h") ? QStringLiteral("mirrorHorizontal") : QStringLiteral("mirrorVertical");
                 action->setProperty("editCommand", edit);
                 connect(action, &QAction::triggered, this, [this, edit]() { dispatchEditCommand(edit); });
+            }
+            else if (id == QStringLiteral("action_Size")) //20261125-83 add
+            {
+                connect(action, &QAction::triggered, this, &MainWindow::optimizeControlGeometry);
+            }
+            else if (id == QStringLiteral("action_41")) //20261125-84 add
+            {
+                createInformationDock(action);
+                nativeDockTitle(m_informationDock);
             }
             else if (id == QStringLiteral("action_reverse_selection")) //20261125-1 add
             {
@@ -262,6 +276,16 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 connect(action, &QAction::triggered, this, [this]() {
                     m_canvas->setActiveTool(m_canvas->dragMode() == QGraphicsView::RubberBandDrag ?
                         QStringLiteral("pan") : QStringLiteral("select"));
+                });
+            }
+            else if (id == QStringLiteral("action_blight_circle")) //20261125-85 add
+            {
+                connect(action, &QAction::triggered, this, [this]() {
+                    HmiObject object;
+                    object.type = QStringLiteral("linecurve");
+                    object.text.clear();
+                    object.address.clear();
+                    m_canvas->beginControlPlacement(object);
                 });
             }
             else if (id == QStringLiteral("action_line") || id == QStringLiteral("action_rect") || id == QStringLiteral("action_ellipse") || id == QStringLiteral("action_RoundedRect") || id == QStringLiteral("action_foldline") || id == QStringLiteral("action_polygon") || id == QStringLiteral("action_freeline") || id == QStringLiteral("action_ArcItem")) //20261113-2 change: Native static shapes enter drawing immediately.
@@ -284,6 +308,12 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             }
             else if (id == QStringLiteral("action_script")) //20261114-7 add: The native editor and usage list are distinct commands.
             { connect(action, &QAction::triggered, this, &MainWindow::manageMacros); }
+            else if (id == QStringLiteral("action_Auxi")) //20261125-82 add
+            {
+                connect(action, &QAction::triggered, this, [this]() {
+                    if (editAuxiliarySettings(this, m_currentPath, &m_auxiliarySettings)) { applyAuxiliaryTimer(); }
+                });
+            }
             else if (id == QStringLiteral("action_GlobalMacro") || id == QStringLiteral("action_InitMacro")) //20261123-20 add
             {
                 connect(action, &QAction::triggered, this, [this, id]() {

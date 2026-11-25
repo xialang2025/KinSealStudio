@@ -135,6 +135,17 @@ MainWindow::MainWindow(QWidget *parent) //20261107-6 add
     QDockWidget *tool_dock;
     QTimer *device_timer;
 
+    //20261125-82 add: Save only a named document with committed edits when no editor interaction owns the input.
+    m_auxiliarySettings = AuxiliarySettings::load();
+    m_auxiliaryTimer = new QTimer(this);
+    m_auxiliaryTimer->setObjectName(QStringLiteral("AuxiliaryAutoSaveTimer"));
+    connect(m_auxiliaryTimer, &QTimer::timeout, this, [this]() {
+        if (m_hasProject && m_dirty && !m_currentPath.isEmpty() && !downloadInProgress() &&
+            !QApplication::activeModalWidget() && !m_canvas->hasActiveInteraction()) {
+            writeProject(m_currentPath);
+        }
+    });
+    applyAuxiliaryTimer();
     m_localHelp = new LocalHelpController(this); //20261114-10 add: Read local user guidance independently of development reports.
     m_localHelp->installContextHelp();
     setWindowTitle(QStringLiteral("KinSealStudio")); //20261111-1 change
@@ -1059,6 +1070,21 @@ void MainWindow::saveProject() //20261107-6 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::applyAuxiliaryTimer
+ * Description     : Restart the native minute-based timer after loading or accepting global preferences.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void MainWindow::applyAuxiliaryTimer() //20261125-82 add
+{
+    m_auxiliaryTimer->stop();
+    if (m_auxiliarySettings.autoSave) {
+        m_auxiliaryTimer->start(m_auxiliarySettings.minutes * 60000);
+    }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::saveProjectAs
  * Description     : Choose a new destination for the independent .ksp prototype project.
  * Input Parameters: None
@@ -1128,6 +1154,7 @@ void MainWindow::exportNativeTest() //20261108-7 add
         }
     }
     statusBar()->showMessage(QStringLiteral("已导出原厂工程：%1").arg(path), 8000); //20261109-0 change
+    backUpSavedProject(path); //20261125-82 add: An explicit native project export also has a committed source file.
 }
 
 /******************************************************************************
@@ -1494,8 +1521,10 @@ void MainWindow::downloadToDevice() //20261114-5 add
     }
     m_canvas->cancelInteraction();
     snapshot = currentEditorProject();
+    beginInformation(QStringLiteral("正在编译工程：%1").arg(snapshot.name)); //20261125-84 add
     if (!snapshot.validateSinglePageBackend(&error))
     {
+        appendInformation(error, OutputKind::Error);
         QMessageBox::warning(this, QStringLiteral("工程暂不支持下载"), error);
         return;
     }
@@ -1537,10 +1566,17 @@ void MainWindow::downloadToDevice() //20261114-5 add
         }
     });
     connect(m_downloadSession, &DeviceDownloadSession::finished, progress,
-            [this, progress](bool success, const QJsonObject &result) {
+            [this, progress, document = m_documentSequence](bool success, const QJsonObject &result) {
         QString detail;
 
+        const QJsonObject issue = result.value(QStringLiteral("compileIssue")).toObject();
         detail = result.value(QStringLiteral("message")).toString();
+        if (document == m_documentSequence)
+        {
+            OutputKind kind = OutputKind::Information;
+            if (!success) { kind = result.value(QStringLiteral("cancelled")).toBool() ? OutputKind::Warning : OutputKind::Error; }
+            appendInformation(detail, kind, issue.value(QStringLiteral("pageId")).toString(), issue.value(QStringLiteral("objectId")).toString());
+        }
         progress->close();
         progress->deleteLater();
         updateCommandStates();
@@ -1565,6 +1601,7 @@ void MainWindow::downloadToDevice() //20261114-5 add
     if (!m_downloadSession->start(bytes))
     {
         progress->deleteLater();
+        appendInformation(m_downloadSession->lastError(), OutputKind::Error);
         QMessageBox::critical(this, QStringLiteral("下载失败"), m_downloadSession->lastError());
         return;
     }
@@ -1718,7 +1755,7 @@ void MainWindow::setProject(const HmiProject &project, const QString &path) //20
                                 .arg(m_project.pageHeight));
     rebuildProjectTree();
     fillProperties(HmiObject(), false);
-    if (!m_restoringProject) { resetProjectHistory(); } //20261110-7 add
+    if (!m_restoringProject) { ++m_documentSequence; clearInformation(); resetProjectHistory(); } //20261110-7 add
     setDirty(false);
 }
 
@@ -1798,7 +1835,23 @@ bool MainWindow::writeProject(const QString &path) //20261107-6 add
     updateRecentProjects(path);
     setDirty(false);
     statusBar()->showMessage(QStringLiteral("已保存原型工程：%1").arg(path), 5000);
+    backUpSavedProject(path); //20261125-82 add: Both save routes back up the committed file.
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : MainWindow::backUpSavedProject
+ * Description     : Report secondary copy errors without invalidating the successful primary save.
+ * Input Parameters: path, the just-written .ksp or explicitly exported .sm document.
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void MainWindow::backUpSavedProject(const QString &path) //20261125-82 add
+{
+    const QString error = m_auxiliarySettings.backUpSavedFile(path);
+    if (!error.isEmpty()) {
+        statusBar()->showMessage(QStringLiteral("工程已保存，备份失败：%1").arg(error));
+    }
 }
 
 /******************************************************************************

@@ -47,7 +47,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     nativeObjectsAllowed = true;
     Q_FOREACH (object, project.objects)
     {
-        if (object.type != QStringLiteral("text") && object.type != QStringLiteral("switch"))
+        if (object.type != QStringLiteral("text") && object.type != QStringLiteral("switch") && object.type != QStringLiteral("linecurve"))
         {
             nativeObjectsAllowed = false;
         }

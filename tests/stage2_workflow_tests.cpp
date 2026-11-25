@@ -39,6 +39,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
+#include <QScopeGuard> //20261125-82 add
 #include <QSpinBox>
 #include <QTabBar>
 #include <QTabWidget>
@@ -71,6 +72,7 @@ private:
 private slots:
     void initTestCase();
     void sharedCommandsAndAvailability();
+    void auxiliarySaveBackupsThroughMenu(); //20261125-82 add
     void editorCanvasHasScrollableWorkspace(); //20261124-4 add
     void editorCanvasZoomsWithControlWheel(); //20261124-6 add
     void toolbarPreviewsWholePageAndSelectedStates(); //20261124-5 add
@@ -139,6 +141,9 @@ private slots:
     void nativeShellResourcesAndNavigation(); //20261111-1 add
     void nativeStandardToolbarVisibility(); //20261125-1 add
     void nativeStandardToolbarVisibility_data();
+    void v31MenuAvailableWithoutProject(); //20261125-81 add
+    void optimizeAllPagesAndSourceDimensions(); //20261125-83 add
+    void informationDockFromSearchAndCompile(); //20261125-84 add
     void nativeVersionDialogWaitsForQuery(); //20261125-6 add
     void nativeAlarmAddCommands_data();
     void nativeAlarmAddCommands();
@@ -5886,6 +5891,377 @@ void Stage2WorkflowTests::nativeShellPendingCommandsAreReadOnly() //20261111-1 a
     window.m_commands.value(QStringLiteral("action_upload"))->trigger(); //20261114-6 change: Online simulation now has a specific capability explanation; upload remains pending.
     QVERIFY(explained); QCOMPARE(window.currentEditorProject().toJson(), before);
     QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : auxiliarySaveBackupsThroughMenu
+ * Description     : Exercise accepted and rejected settings, minute timer, real project saves and bounded backup rotation.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::auxiliarySaveBackupsThroughMenu() //20261125-82 add
+{
+    const AuxiliarySettings previous = AuxiliarySettings::load();
+    const auto restore = qScopeGuard([&]() { previous.store(); });
+    QTemporaryDir directory;
+    const QString projectPath = directory.filePath(QStringLiteral("工程.v3.ksp"));
+    const QString dest = directory.filePath(QStringLiteral("copies"));
+    const QString unrelated = dest + QStringLiteral("/工程.v3-bak-note.ksp");
+    HmiProject project = workflowProject();
+    HmiProject reloaded;
+    QString error;
+    QFile other(unrelated);
+    QAction *aux;
+    QTimer *timer;
+    int checks = 0;
+
+    QVERIFY(AuxiliarySettings{}.store());
+    MainWindow window;
+    aux = window.findChild<QAction *>(QStringLiteral("action_Auxi"));
+    timer = window.findChild<QTimer *>(QStringLiteral("AuxiliaryAutoSaveTimer"));
+    QVERIFY(aux && timer);
+    QVERIFY(!timer->isActive());
+    QVERIFY(directory.isValid() && QDir().mkpath(dest));
+    project.targetModel = QStringLiteral("AMT070W124-L800X480R");
+    QVERIFY(project.save(projectPath, &error));
+    QVERIFY(window.openProjectPath(projectPath, &error));
+    QVERIFY(other.open(QIODevice::WriteOnly));
+    QCOMPARE(other.write("keep"), 4);
+    other.close();
+
+    // Cancel a draft and verify that reopening the same menu reads the original values.
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dlg = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (!dlg) { return; }
+        if (dlg->objectName() == QStringLiteral("ProjectSetDlg")) {
+            dlg->findChild<QSpinBox *>(QStringLiteral("spinBox_autoSave"))->setValue(40);
+            ++checks;
+        }
+        dlg->reject();
+    });
+    aux->trigger();
+    QCOMPARE(checks, 1);
+    QCOMPARE(AuxiliarySettings::load().minutes, 3);
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dlg = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (!dlg) { return; }
+        QSpinBox *minutes = dlg->findChild<QSpinBox *>(QStringLiteral("spinBox_autoSave"));
+        QSpinBox *copies = dlg->findChild<QSpinBox *>(QStringLiteral("spinBox_backupNums"));
+        if (!minutes || !copies) { dlg->reject(); return; }
+        if (minutes->minimum() == 3 && minutes->maximum() == 60 && copies->minimum() == 3 && copies->maximum() == 20) { ++checks; }
+        dlg->findChild<QCheckBox *>(QStringLiteral("checkBox_autoSave"))->click();
+        dlg->findChild<QGroupBox *>(QStringLiteral("groupBox_autoBakupPro"))->setChecked(true);
+        dlg->findChild<QRadioButton *>(QStringLiteral("rBtn_timeBackup"))->click();
+        dlg->findChild<QRadioButton *>(QStringLiteral("rBtn_customPath"))->click();
+        dlg->findChild<QLineEdit *>(QStringLiteral("lineEdit_bakupPath"))->setText(dest);
+        minutes->setValue(4); copies->setValue(3);
+        QTimer::singleShot(0, dlg, [&]() {
+            auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+            if (box && box->button(QMessageBox::No)) { ++checks; box->button(QMessageBox::No)->click(); }
+        });
+        dlg->findChild<QDialogButtonBox *>()->button(QDialogButtonBox::Ok)->click();
+    });
+    aux->trigger();
+    QCOMPARE(checks, 3);
+    QVERIFY(timer->isActive());
+    QCOMPARE(timer->interval(), 240000);
+    QCOMPARE(AuxiliarySettings::load().directory, dest);
+    QVERIFY(AuxiliarySettings::load().timedMode);
+
+    // Drive both the public Save action and a real Qt timeout, then reopen each generated project.
+    for (int i = 1; i <= 5; ++i) {
+        project.name = QStringLiteral("backup-%1").arg(i);
+        QVERIFY(window.commitProjectDraft(project, &error));
+        if (i % 2 == 0) {
+            timer->start(10);
+            QTRY_VERIFY_WITH_TIMEOUT(!window.m_dirty, 2000);
+            window.applyAuxiliaryTimer();
+        }
+        else { window.findChild<QAction *>(QStringLiteral("action_save"))->trigger(); }
+        QVERIFY(!window.m_dirty);
+        QVERIFY(HmiProject::load(projectPath, &reloaded, &error));
+        QCOMPARE(reloaded.name, project.name);
+    }
+    const QStringList names = QDir(dest).entryList({QStringLiteral("*-bak[1-3].ksp")}, QDir::Files);
+    QCOMPARE(names.size(), 3);
+    QSet<QString> kept;
+    for (const QString &name : names) {
+        QVERIFY(HmiProject::load(QDir(dest).filePath(name), &reloaded, &error));
+        kept.insert(reloaded.name);
+    }
+    QVERIFY(kept.contains(QStringLiteral("backup-5")));
+    QVERIFY(other.open(QIODevice::ReadOnly));
+    QCOMPARE(other.readAll(), QByteArray("keep"));
+
+    // Explicit native-source exports keep the .sm extension and back up the exact exported bytes.
+    const QString nativePath = directory.filePath(QStringLiteral("native.v2.sm"));
+    QFile native(nativePath);
+    QFile nativeCopy(QDir(dest).filePath(QStringLiteral("native.v2-bak1.sm")));
+    QTimer exportDeadline;
+    exportDeadline.setSingleShot(true);
+    connect(&exportDeadline, &QTimer::timeout, &window, []() {
+        if (auto *unexpected = qobject_cast<QDialog *>(QApplication::activeModalWidget())) { unexpected->reject(); }
+    });
+    QTimer::singleShot(0, &window, [&]() {
+        auto *choose = qobject_cast<QFileDialog *>(QApplication::activeModalWidget());
+        if (choose) {
+            choose->selectFile(nativePath);
+            QMetaObject::invokeMethod(choose, "accept", Qt::QueuedConnection);
+        }
+    });
+    exportDeadline.start(2000);
+    window.exportNativeTest();
+    exportDeadline.stop();
+    QVERIFY(native.open(QIODevice::ReadOnly));
+    QVERIFY(nativeCopy.open(QIODevice::ReadOnly));
+    QCOMPARE(nativeCopy.readAll(), native.readAll());
+    native.close(); nativeCopy.close();
+
+    // A vanished backup folder cannot roll back a successful primary save or remove existing copies.
+    const QString moved = directory.filePath(QStringLiteral("away"));
+    other.close();
+    QVERIFY(QDir().rename(dest, moved));
+    project.name = QStringLiteral("primary-survived");
+    QVERIFY(window.commitProjectDraft(project, &error));
+    window.findChild<QAction *>(QStringLiteral("action_save"))->trigger();
+    QVERIFY(!window.m_dirty);
+    QVERIFY(window.statusBar()->currentMessage().contains(QStringLiteral("备份失败")));
+    QVERIFY(HmiProject::load(projectPath, &reloaded, &error));
+    QCOMPARE(reloaded.name, project.name);
+    QCOMPARE(QDir(moved).entryList({QStringLiteral("*-bak[1-3].ksp")}, QDir::Files).size(), 3);
+
+    // An unnamed project must stay dirty without prompting for a filename on a timer callback.
+    window.setProject(workflowProject(), QString());
+    QVERIFY(window.commitProjectDraft(project, &error));
+    timer->start(10);
+    QTest::qWait(35);
+    QVERIFY(window.m_dirty);
+    QVERIFY(window.m_currentPath.isEmpty());
+    QVERIFY(!QApplication::activeModalWidget());
+    MainWindow reopened;
+    QCOMPARE(reopened.findChild<QTimer *>(QStringLiteral("AuxiliaryAutoSaveTimer"))->interval(), 240000);
+}
+
+/******************************************************************************
+ * Function Name   : optimizeAllPagesAndSourceDimensions
+ * Description     : Exercise native coordinate rounding through the menu, including hidden pages and retained SM sizes.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::optimizeAllPagesAndSourceDimensions() //20261125-83 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiPage page;
+    HmiObject second = project.objects.first();
+    QTemporaryDir dir;
+    HmiProject loaded;
+    QString error;
+    QByteArray bytes;
+    QByteArray optimized;
+    QList<NativeSourceFieldSpan> spans;
+    int fields = 0;
+    QJsonObject before;
+
+    project.objects.first().subpixelOffset = QPointF(0.49, 0.5);
+    second.id = QStringLiteral("hidden");
+    second.subpixelOffset = QPointF(0.75, 0.1);
+    second.group = QStringLiteral("child-group");
+    page.id = QStringLiteral("page-2"); page.name = QStringLiteral("第二页");
+    page.objects.append(second);
+    QVERIFY2(project.addPage(page, &error), qPrintable(error));
+    QVERIFY(project.selectPage(QStringLiteral("page-1"), &error));
+    window.setProject(project, {});
+    before = window.currentEditorProject().toJson();
+    window.m_commands.value(QStringLiteral("action_Size"))->trigger();
+    QCOMPARE(window.m_project.objects.first().geometry, QRect(244,113,150,50));
+    QCOMPARE(window.m_project.inactivePages.first().objects.first().geometry, QRect(245,112,150,50));
+    QVERIFY(window.m_project.objects.first().subpixelOffset.isNull());
+    QCOMPARE(window.m_project.inactivePages.first().objects.first().group,second.group);
+    QCOMPARE(window.m_projectHistoryIndex, 1);
+    window.m_commands.value(QStringLiteral("action_Size"))->trigger();
+    QCOMPARE(window.m_projectHistoryIndex, 1);
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger();
+    QCOMPARE(window.currentEditorProject().toJson(),before);
+    window.m_commands.value(QStringLiteral("action_redo"))->trigger();
+    QVERIFY(window.writeProject(dir.filePath(QStringLiteral("optimized.ksp"))));
+    QVERIFY(HmiProject::load(window.m_currentPath, &loaded, &error));
+    QCOMPARE(loaded.objects.first().geometry, QRect(244,113,150,50));
+
+    QFile source(QFINDTESTDATA("fixtures/native-source/static/level3.sm"));
+    QVERIFY(source.open(QIODevice::ReadOnly));
+    bytes = source.readAll();
+    QVERIFY2(inspectNativeProjectSourceFields(bytes, &spans, &error), qPrintable(error));
+    for (const NativeSourceFieldSpan &span : spans)
+    {
+        if (span.path.endsWith(QStringLiteral("rectangle.2")) || span.path.endsWith(QStringLiteral("text.head.2")))
+        {
+            QDataStream stream(&optimized, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << double(35.5);
+            QCOMPARE(span.end - span.start, qsizetype(8));
+            bytes.replace(span.start, 8, optimized);
+            ++fields;
+        }
+    }
+    QVERIFY(fields >= 2);
+    QVERIFY2(importNativeProjectSource(bytes, &project, &error), qPrintable(error));
+    window.setProject(project, {});
+    window.m_commands.value(QStringLiteral("action_Size"))->trigger();
+    QVERIFY(window.m_dirty);
+    QVERIFY2(exportNativeProjectSource(window.currentEditorProject(), &optimized, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(optimized, &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.first().geometry.width(),36);
+    QVERIFY2(inspectNativeProjectSourceFields(optimized, &spans, &error), qPrintable(error));
+    for (const NativeSourceFieldSpan &span : spans)
+    {
+        if (span.path.endsWith(QStringLiteral("text.head.2")))
+        {
+            QDataStream stream(optimized.mid(span.start, span.end - span.start));
+            double extent = 0;
+            stream >> extent;
+            QCOMPARE(extent, 36.0);
+        }
+    }
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger();
+    QCOMPARE(window.currentEditorProject().nativeSourceSnapshot, bytes);
+}
+
+/******************************************************************************
+ * Function Name   : informationDockFromSearchAndCompile
+ * Description     : Publish real search and diagnostic results, follow a source line, and exercise the dock controls.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::informationDockFromSearchAndCompile() //20261125-84 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    QAction *view = window.m_commands.value(QStringLiteral("action_41"));
+    QTableWidget *table = window.m_information;
+    HmiPage page;
+    QString error;
+
+    HmiObject button = project.objects.first();
+    button.type = QStringLiteral("switch");
+    button.id = QStringLiteral("source-button");
+    button.name = QStringLiteral("Source button");
+    button.address = QStringLiteral("LB37");
+    button.hasBitButtonProperties = true;
+    button.bitButton.macroEnabled = true;
+    button.bitButton.macroName = QStringLiteral("macro");
+    project.macros.insert(QStringLiteral("macro"), QStringLiteral("first\nneedle\nlast"));
+    project.macroIds.insert(QStringLiteral("macro"), QStringLiteral("macro-id"));
+    page.id = QStringLiteral("page-2");
+    page.name = QStringLiteral("Second page");
+    page.objects = {button};
+    QVERIFY2(project.addPage(page, &error), qPrintable(error));
+    window.setProject(project, {});
+    window.show();
+    QVERIFY(view->isCheckable() && !view->isChecked());
+    QCOMPARE(table->columnCount(), 0);
+    view->trigger();
+    QVERIFY(window.m_informationDock->isVisible());
+    window.m_informationDock->close();
+    QVERIFY(!view->isChecked());
+    auto searchMacro = [&](const QString &name) {
+        QTimer::singleShot(0, [name]() {
+            auto *dialog = QApplication::activeModalWidget();
+            dialog->findChild<QLineEdit *>(QStringLiteral("Stage2GlobalFilter"))->setText(name);
+            dialog->findChild<QPushButton *>(QStringLiteral("PublishMacroSearch"))->click();
+        });
+        window.m_commands.value(QStringLiteral("action_macro_find"))->trigger();
+    };
+    searchMacro(QStringLiteral("macro"));
+    QVERIFY(view->isChecked());
+    QCOMPARE(table->columnCount(), 1);
+    QCOMPARE(table->rowCount(), 3);
+    QVERIFY(table->item(1,0)->text().contains(button.name));
+    table->cellDoubleClicked(1,0);
+    QVERIFY(window.m_canvas->selectedObjectIds().isEmpty());
+    QCOMPARE(window.m_project.activePageId, QStringLiteral("page-1"));
+    searchMacro(QStringLiteral("needle"));
+    QCOMPARE(table->rowCount(), 2);
+    const QString previous = table->item(1,0)->text();
+    QTimer::singleShot(0, []() { qobject_cast<QDialog *>(QApplication::activeModalWidget())->reject(); });
+    window.m_commands.value(QStringLiteral("action_macro_find"))->trigger();
+    QCOMPARE(table->item(1,0)->text(), previous);
+    QTimer::singleShot(0, []() {
+        auto *dialog = QApplication::activeModalWidget();
+        dialog->findChild<QLineEdit *>(QStringLiteral("Stage2AddressFind"))->setText(QStringLiteral("LB37"));
+        dialog->findChild<QPushButton *>(QStringLiteral("Stage2AddressFindOnly"))->click();
+    });
+    window.m_commands.value(QStringLiteral("action_address_find"))->trigger();
+    QVERIFY(table->rowCount() >= 3);
+    QVERIFY(table->item(1,0)->text().contains(QStringLiteral("LB37")));
+    table->cellDoubleClicked(1,0);
+    QCOMPARE(window.m_project.activePageId, page.id);
+    QCOMPARE(window.m_canvas->selectedObjectIds(), QStringList{button.id});
+    QVERIFY(!window.m_dirty);
+    // A real out-of-scope topology supplies a red row before the USB worker starts.
+    window.setProject(project, {});
+    QCOMPARE(table->rowCount(), 0);
+    QTimer::singleShot(0, []() { auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (box) { box->accept(); } });
+    window.m_commands.value(QStringLiteral("action_USBdownload"))->trigger();
+    QCOMPARE(table->rowCount(),2);
+    QVERIFY(!table->item(1,0)->text().isEmpty());
+    QCOMPARE(table->item(1,0)->foreground().color(), QColor(Qt::red));
+    QVERIFY(window.m_downloadSession == nullptr);
+    HmiProject rejected = workflowProject();
+    HmiObject &polygon = rejected.objects.first();
+    QJsonObject issue;
+    QVector<QByteArray> payloads;
+    rejected.targetModel = QStringLiteral("AMZ070W01R");
+    polygon.type = QStringLiteral("polygon");
+    polygon.address.clear();
+    polygon.text.clear();
+    polygon.graphic.lineWidth = 2;
+    polygon.graphic.points = {QPointF(0, 0), QPointF(1, 0), QPointF(0, 1)};
+    QVERIFY(!buildProjectPayload(rejected, &payloads, &error, &issue));
+    QCOMPARE(issue.value(QStringLiteral("objectId")).toString(), polygon.id);
+    QCOMPARE(issue.value(QStringLiteral("pageId")).toString(), rejected.activePageId);
+    QCOMPARE(issue.value(QStringLiteral("property")).toString(), QStringLiteral("graphic.lineWidth"));
+
+
+    QTimer::singleShot(0, []() {
+        auto *menu = qobject_cast<QMenu *>(QApplication::activePopupWidget());
+        if (menu && !menu->actions().isEmpty()) { menu->actions().first()->trigger(); menu->close(); }
+    });
+    table->customContextMenuRequested(QPoint(1,1));
+    QCOMPARE(table->rowCount(),0);
+    QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : v31MenuAvailableWithoutProject
+ * Description     : Open and cancel the native File action after closing the active editor document.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::v31MenuAvailableWithoutProject() //20261125-81 add
+{
+    MainWindow window;
+    QAction *action = window.m_commands.value(QStringLiteral("actionCompress"));
+    bool opened = false;
+
+    window.closeProject();
+    QVERIFY(!window.m_hasProject);
+    QVERIFY(action && action->isEnabled());
+    QTimer::singleShot(0, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (dialog) {
+            opened = dialog->findChild<QLineEdit *>(QStringLiteral("EditFilePath_2")) &&
+                dialog->findChild<QPushButton *>(QStringLiteral("StartUncompress"));
+            dialog->reject();
+        }
+    });
+    action->trigger();
+    QVERIFY(opened);
+    QVERIFY(!window.m_hasProject);
 }
 
 QTEST_MAIN(Stage2WorkflowTests)

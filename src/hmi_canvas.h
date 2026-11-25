@@ -124,6 +124,7 @@ private:
     int m_resizeHandle = 0;
     QGraphicsPathItem *m_graphicDraft = nullptr; //20261113-2 add
     QPointF m_graphicEnd;
+    bool m_curveDragged = false; //20261125-85 add: Latch a qualifying move until release even if the pointer returns to the anchor.
     QVector<QPointF> m_graphicVertices; //20261113-2 add: Uncommitted ordered click vertices, cleared on cancel and page replacement.
     bool graphicPress(QMouseEvent *event, const QPointF &point);
     bool graphicMove(QMouseEvent *event, const QPointF &point);

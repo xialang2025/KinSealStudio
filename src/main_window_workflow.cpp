@@ -1,6 +1,8 @@
 #include "main_window.h"
 #include "dialog_button_text.h" //20261124-8 add
 #include "hmi_canvas.h"
+#include "graphic_geometry_optimization.h" //20261125-83 add
+#include "native_project_codec.h" //20261125-83 add
 #include "local_help.h" //20261122-4 add
 #include "stage2_file_protection.h" //20261123-17 add
 #include "stage2_io_settings.h" //20261123-15 add
@@ -276,6 +278,8 @@ void MainWindow::closeProject() //20261110-7 add
     m_restoringProject = true;
     setProject(HmiProject(), QString());
     m_restoringProject = false;
+    ++m_documentSequence;
+    clearInformation(); //20261125-84 add: Discard links owned by the closed document.
     m_hasProject = false;
     m_projectHistory.clear();
     m_projectHistoryIndex = -1;
@@ -1028,6 +1032,44 @@ void MainWindow::dispatchEditCommand(const QString &command) //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : MainWindow::optimizeControlGeometry
+ * Description     : Quantize logical scene bounds on all pages as a reversible project edit.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void MainWindow::optimizeControlGeometry() //20261125-83 add
+{
+    HmiProject draft;
+    QString error;
+    QStringList selected;
+    auto normalize = [](QList<HmiObject> &objects) {
+        // Group members already carry scene-space coordinates. Editor hit areas and selection handles
+        // extend past the object, but are never part of the stored control rectangle.
+        for (HmiObject &object : objects)
+        {
+            if (optimizeGraphicVertices(&object)) { continue; }
+            const QPointF origin = QPointF(object.geometry.topLeft()) + object.subpixelOffset;
+            object.geometry.moveTopLeft(QPoint(u16(int(origin.x() + 0.5)), u16(int(origin.y() + 0.5))));
+            object.subpixelOffset = {};
+        }
+    };
+
+    if (!m_hasProject) { return; }
+    m_canvas->cancelInteraction();
+    selected = m_canvas->selectedObjectIds();
+    draft = currentEditorProject();
+    normalize(draft.objects);
+    for (HmiPage &page : draft.inactivePages) { normalize(page.objects); }
+    if (!normalizeNativeControlSizes(&draft.nativeSourceSnapshot, &error) || !commitProjectDraft(draft, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("优化控件尺寸坐标"), error);
+        return;
+    }
+    if (!selected.isEmpty()) { m_canvas->selectObjects(selected); }
+}
+
+/******************************************************************************
  * Function Name   : MainWindow::updateCommandStates
  * Description     : Maintain a single enabled truth table for menus, toolbars, focused inputs and document lifetime.
  * Input Parameters: None
@@ -1053,6 +1095,7 @@ void MainWindow::updateCommandStates() //20261110-7 add
         if (id == QStringLiteral("action_new_pro") || id == QStringLiteral("action_open_pro") ||
             id == QStringLiteral("action_chinese") || id == QStringLiteral("action_english") || //20261124-7 add
             id == QStringLiteral("action_quit") || id == QStringLiteral("action_H") || id == QStringLiteral("action_KinSeal") ||
+            id == QStringLiteral("actionCompress") || id == QStringLiteral("action_Auxi") || id == QStringLiteral("action_41") || //20261125-84 add: Available before opening a project in V5.1.
             id == QStringLiteral("action_42") || id == QStringLiteral("action_tool") || id == QStringLiteral("action_40") ||
             id == QStringLiteral("action_36") || id == QStringLiteral("action_37")) { //20261125-1 change: View toggles remain available without an open project.
             enabled = true;
@@ -1121,6 +1164,19 @@ void MainWindow::showGlobalTool(int kind) //20261110-7 add
     dialog.setSelectedObjectIds(ids);
     if (dialog.exec() == QDialog::Accepted) {
         location = dialog.selectedLocation();
+        if (kind == int(Stage2GlobalTools::Kind::Macros) && location.pageId.isEmpty() && location.macroName.isEmpty()) //20261125-84 add
+        {
+            const auto uses = dialog.macroUsageRows();
+            const QString query = dialog.queryText().isEmpty() ? QStringLiteral("任意") : dialog.queryText();
+            beginInformation(QStringLiteral("正在查找宏指令：%1…").arg(query));
+            for (const Stage2GlobalTools::Row &row : uses) {
+                const QString owner = row.location.objectId.isEmpty() ? row.label :
+                    QStringLiteral("%1  %2").arg(row.pageName, row.objectName);
+                appendInformation(QStringLiteral("%1  %2").arg(owner, row.value), OutputKind::Information);
+            }
+            appendInformation(uses.isEmpty() ? QStringLiteral("没有找到对应的脚本 !") :
+                QStringLiteral("%1 个结果被找到。").arg(uses.size()), OutputKind::Information);
+        }
         if (!location.pageId.isEmpty()) { activatePageId(location.pageId, location.objectId); }
         else if (!location.macroName.isEmpty()) {
             showMacroSource(location.macroName, location.line);
@@ -1180,9 +1236,26 @@ void MainWindow::replaceProjectAddresses() //20261110-7 add
     selected = m_canvas->selectedObjectIds();
     Q_FOREACH (id, selected) { ids.insert(id); }
     dialog.setSelectedObjectIds(ids);
-    if (dialog.exec() == QDialog::Accepted && dialog.candidateProject(&candidate) &&
-        !commitProjectDraft(candidate, &error)) {
-        QMessageBox::warning(this, QStringLiteral("地址替换未提交"), error);
+    if (dialog.exec() != QDialog::Accepted) { return; }
+    if (dialog.candidateProject(&candidate)) { //20261125-84 add: Publish replacements only after the project commits.
+        if (!commitProjectDraft(candidate, &error)) { QMessageBox::warning(this, QStringLiteral("地址替换未提交"), error); return; }
+        const auto changes = dialog.candidate().changes;
+        beginInformation(QStringLiteral("正在查找 '%1'...").arg(dialog.queryText()));
+        for (const auto &change : changes) {
+            appendInformation(QStringLiteral("位置：%1  %2  %3  替换：%4 -> %5").arg(
+                change.pageName, change.objectName, change.fieldPath, change.before, change.after),
+                OutputKind::Information, change.location.pageId, change.location.objectId);
+        }
+        appendInformation(QStringLiteral("%1 个结果被替换").arg(changes.size()), OutputKind::Information);
+    } else {
+        const auto &rows = dialog.foundAddresses();
+        beginInformation(QStringLiteral("正在查找 '%1'...").arg(dialog.queryText()));
+        for (const auto &row : rows) {
+            appendInformation(QStringLiteral("位置：%1  %2  %3  %4").arg(row.pageName, row.objectName, row.label, row.value),
+                OutputKind::Information, row.location.objectId.isEmpty() ? QString() : row.location.pageId, row.location.objectId);
+        }
+        appendInformation(rows.isEmpty() ? QStringLiteral("没有找到地址 '%1'。").arg(dialog.queryText()) :
+            QStringLiteral("%1 个结果被找到").arg(rows.size()), OutputKind::Information);
     }
 }
 

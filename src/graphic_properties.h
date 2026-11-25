@@ -31,12 +31,15 @@ struct GraphicProperties
     int radiusX = 10; // Common closed-shape storage; only the rounded-rectangle family will serialize radii.
     int radiusY = 10;
     QVector<QPointF> points = {QPointF(0, 0), QPointF(1, 1)};
+    QVector<int> curveControls; //20261125-85 add: Each index identifies the incoming handle immediately before its anchor.
     QJsonObject toJson(const QString &type = QStringLiteral("line")) const;
     static bool fromJson(const QJsonObject &json, GraphicProperties *output, QString *error, const QString &type = QStringLiteral("line"));
     bool validate(const QString &type, QString *error = nullptr) const;
 };
 
 bool isSupportedGraphic(const QString &type);
+bool graphicUsesMultipleClicks(const QString &type); //20261125-85 add
+QPainterPath curveDrawingPath(const QVector<QPointF> &vertices, const QVector<int> &controls);
 bool graphicUsesVertices(const QString &type);
 bool graphicStrokeOnly(const QString &type); //20261113-4 add
 QString graphicName(const QString &type);

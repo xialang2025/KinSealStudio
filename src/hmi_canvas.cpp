@@ -62,6 +62,7 @@ HmiObject HmiControlItem::toHmiObject() const //20261107-6 add
 {
     HmiObject object;
     QRect geometry;
+    QPointF origin;
 
     object = m_record; //20261108-14 change
     object.layer = zValue();
@@ -71,8 +72,10 @@ HmiObject HmiControlItem::toHmiObject() const //20261107-6 add
     object.text = m_text;
     object.address = m_address;
     geometry = rect().toRect();
-    geometry.moveTopLeft(pos().toPoint());
+    origin = scenePos(); //20261125-83 change: Retain the fractional scene origin for optimization and undo.
+    geometry.moveTopLeft(QPoint(int(origin.x()), int(origin.y())));
     object.geometry = geometry;
+    object.subpixelOffset = origin - QPointF(geometry.topLeft());
     return object;
 }
 
@@ -93,7 +96,8 @@ void HmiControlItem::setObject(const HmiObject &object) //20261107-6 add
     m_text = object.text;
     m_address = object.address;
     setRect(QRectF(0.0, 0.0, object.geometry.width(), object.geometry.height()));
-    setPos(object.geometry.topLeft());
+    setPos(parentItem() == nullptr ? QPointF(object.geometry.topLeft()) + object.subpixelOffset :
+           parentItem()->mapFromScene(QPointF(object.geometry.topLeft()) + object.subpixelOffset)); //20261125-83 change
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);

@@ -221,7 +221,7 @@ bool hasStage1Data(const HmiProject &project)
         project.pageOrder != QStringList{QStringLiteral("page-1")} || project.startupPageId != QStringLiteral("page-1") ||
         !project.startupLanguage.isEmpty() || !project.configurationNodes.isEmpty() || !project.references.isEmpty() ||
         !project.macroIds.isEmpty() || !project.extensions.isEmpty()) { return true; }
-    Q_FOREACH (object, project.objects) { if (!object.extensions.isEmpty()) { return true; } }
+    Q_FOREACH (object, project.objects) { if (!object.extensions.isEmpty() || !object.subpixelOffset.isNull()) { return true; } }
     return false;
 }
 
@@ -265,6 +265,11 @@ QJsonObject HmiObject::toJson() const //20261107-6 add
     json.insert(QStringLiteral("group"), group);
     if (flipHorizontal) { json.insert(QStringLiteral("flipHorizontal"), true); } //20261124-15 add
     if (flipVertical) { json.insert(QStringLiteral("flipVertical"), true); }
+    if (!subpixelOffset.isNull()) //20261125-83 add: Device geometry remains integral while the editor preserves the exact scene origin.
+    {
+        json.insert(QStringLiteral("subpixelX"), subpixelOffset.x());
+        json.insert(QStringLiteral("subpixelY"), subpixelOffset.y());
+    }
     if (!extensions.isEmpty()) { json.insert(QStringLiteral("extensions"), extensions); } //20261110-5 add
     if (type == QStringLiteral("text") && hasStaticTextProperties)
     {
@@ -346,6 +351,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
 
     if (!knownKeys(json, {QStringLiteral("id"), QStringLiteral("type"), QStringLiteral("name"),
         QStringLiteral("flipHorizontal"), QStringLiteral("flipVertical"), //20261124-15 add
+        QStringLiteral("subpixelX"), QStringLiteral("subpixelY"), //20261125-83 add
         QStringLiteral("text"), QStringLiteral("address"), QStringLiteral("x"), QStringLiteral("y"),
         QStringLiteral("width"), QStringLiteral("height"), QStringLiteral("layer"), QStringLiteral("group"),
         QStringLiteral("staticText"), QStringLiteral("bitButton"), QStringLiteral("wordButton"),
@@ -360,6 +366,13 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
         else if (key == QStringLiteral("x") || key == QStringLiteral("y") || key == QStringLiteral("width") || key == QStringLiteral("height"))
         {
             if (!exactInteger(item.value())) { return modelError(error, QStringLiteral("object.%1：几何必须为整数。").arg(key)); }
+        }
+        else if (key == QStringLiteral("subpixelX") || key == QStringLiteral("subpixelY")) //20261125-83 add
+        {
+            if (!item.value().isDouble() || !std::isfinite(item.value().toDouble()) || std::abs(item.value().toDouble()) >= 1.0)
+            {
+                return modelError(error, QStringLiteral("object.%1：亚像素偏移必须有限且绝对值小于1。").arg(key));
+            }
         }
         else if (key == QStringLiteral("layer"))
         {
@@ -525,6 +538,7 @@ bool HmiObject::fromJson(const QJsonObject &json, HmiObject *output, QString *er
     object->address = json.value(QStringLiteral("address")).toString();
     object->layer = json.value(QStringLiteral("layer")).toDouble(1); //20261108-14 add
     object->group = json.value(QStringLiteral("group")).toString();
+    object->subpixelOffset = QPointF(json.value(QStringLiteral("subpixelX")).toDouble(), json.value(QStringLiteral("subpixelY")).toDouble()); //20261125-83 add
     object->flipHorizontal = json.value(QStringLiteral("flipHorizontal")).toBool(); //20261124-15 add
     object->flipVertical = json.value(QStringLiteral("flipVertical")).toBool();
     object->hasStaticTextProperties = json.contains(QStringLiteral("staticText"));
@@ -805,6 +819,8 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     QJsonValue savedBitmap; //20261123-2 add
     QJsonValue savedSystemPicture; //20261123-3 add
     int minimumSize; //20261123-13 add
+    qreal originX;
+    qreal originY;
     QString key;
     QSet<QString> ids;
 
@@ -918,9 +934,11 @@ bool HmiPage::fromJson(const QJsonObject &json, HmiPage *page, QString *error) /
     Q_FOREACH (item, items)
     {
         if (!item.isObject() || !HmiObject::fromJson(item.toObject(), &object, error)) { return false; }
-        if (ids.contains(object.id) || object.geometry.x() < 0 || object.geometry.y() < 0 ||
-            qint64(object.geometry.x()) + object.geometry.width() > candidate.width ||
-            qint64(object.geometry.y()) + object.geometry.height() > candidate.height)
+        originX = object.geometry.x() + object.subpixelOffset.x(); //20261125-83 change: Both legacy and multi-page files pass through this bounds check.
+        originY = object.geometry.y() + object.subpixelOffset.y();
+        if (ids.contains(object.id) || originX < 0 || originY < 0 ||
+            originX + object.geometry.width() > candidate.width ||
+            originY + object.geometry.height() > candidate.height)
         {
             return modelError(error, QStringLiteral("页面%1：控件%2标识重复或位置越界。").arg(candidate.id, object.id));
         }
@@ -1230,6 +1248,10 @@ QJsonObject HmiProject::toJson() const //20261110-5 change
     if (!connections.isEmpty()) { schema = qMax(schema, 4); }
     if (!nativeSourceSnapshot.isEmpty() || !nativeSourceWarnings.isEmpty()) { schema = qMax(schema, 5); }
     if (stage1) { schema = 9; }
+    Q_FOREACH (page, allPages()) //20261125-83 add: Fractional geometry uses the reserved editor-flags schema.
+    {
+        Q_FOREACH (object, page.objects) { if (!object.subpixelOffset.isNull()) { schema = 10; } }
+    }
     //20261112-0 add: Schema10 is reserved for stage-3 editor flags; message data starts at schema11.
     Q_FOREACH (page, allPages())
     {

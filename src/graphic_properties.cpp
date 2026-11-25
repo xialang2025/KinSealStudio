@@ -29,7 +29,7 @@ static bool graphicError(QString *error, const QString &message) //20261113-2 ad
  ******************************************************************************/
 bool isSupportedGraphic(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline") || type == QStringLiteral("sector") || type == QStringLiteral("table"); //20261113-8 change
+    return type == QStringLiteral("line") || type == QStringLiteral("rect") || type == QStringLiteral("ellipse") || type == QStringLiteral("roundrect") || type == QStringLiteral("linecurve") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline") || type == QStringLiteral("sector") || type == QStringLiteral("table"); //20261113-8 change
 }
 
 /******************************************************************************
@@ -41,7 +41,7 @@ bool isSupportedGraphic(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicUsesVertices(const QString &type) //20261113-2 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline"); //20261113-2 change: Each polyline vertex keeps its ordered role.
+    return type == QStringLiteral("line") || type == QStringLiteral("linecurve") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon") || type == QStringLiteral("freeline"); //20261113-2 change: Each polyline vertex keeps its ordered role.
 }
 
 /******************************************************************************
@@ -53,7 +53,7 @@ bool graphicUsesVertices(const QString &type) //20261113-2 add
  ******************************************************************************/
 bool graphicStrokeOnly(const QString &type) //20261113-4 add
 {
-    return type == QStringLiteral("line") || type == QStringLiteral("polyline") || type == QStringLiteral("freeline"); //20261113-5 change: The observed native default has two path elements, not a proven sampled freehand path.
+    return type == QStringLiteral("line") || type == QStringLiteral("linecurve") || type == QStringLiteral("polyline") || type == QStringLiteral("freeline"); //20261113-5 change: The observed native default has two path elements, not a proven sampled freehand path.
 }
 
 /******************************************************************************
@@ -65,6 +65,7 @@ bool graphicStrokeOnly(const QString &type) //20261113-4 add
  ******************************************************************************/
 QString graphicName(const QString &type) //20261113-2 add
 {
+    if (type == QStringLiteral("linecurve")) { return QStringLiteral("曲线/圆弧"); } //20261125-85 add
     if (type == QStringLiteral("line")) { return QStringLiteral("直线"); }
     if (type == QStringLiteral("rect")) { return QStringLiteral("矩形"); }
     if (type == QStringLiteral("ellipse")) { return QStringLiteral("圆/椭圆"); }
@@ -103,6 +104,12 @@ QJsonObject GraphicProperties::toJson(const QString &type) const //20261113-2 ch
     {
         Q_FOREACH (point, points) { vertices.append(QJsonArray{point.x(), point.y()}); }
         json.insert(QStringLiteral("points"), vertices);
+    }
+    if (type == QStringLiteral("linecurve")) //20261125-85 add
+    {
+        QJsonArray handles;
+        for (int index : curveControls) { handles.append(index); }
+        json.insert(QStringLiteral("curveControls"), handles);
     }
     if (graphicStrokeOnly(type)) //20261113-4 change: Topology and fill are independent for polygons.
     {
@@ -169,6 +176,12 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
             candidate.points.append(QPointF(coordinates[0].toDouble(), coordinates[1].toDouble()));
         }
     }
+    if (type == QStringLiteral("linecurve")) //20261125-85 add
+    {
+        const QJsonArray controls = json.value(QStringLiteral("curveControls")).toArray();
+        if (controls.size() > candidate.points.size() / 2) { return graphicError(error, QStringLiteral("曲线控制柄数量超出顶点数。")); }
+        for (const QJsonValue &control : controls) { candidate.curveControls.append(control.toInt(-1)); }
+    }
     if (graphicStrokeOnly(type)) //20261113-4 change: Parse fill on closed vertex objects instead of arrows.
     { candidate.endArrow = json.value(QStringLiteral("endArrow")).toInt(); candidate.endCap = json.value(QStringLiteral("endCap")).toInt(); }
     else { candidate.fillStyle = json.value(QStringLiteral("fillStyle")).toInt(); candidate.foreground = QColor(json.value(QStringLiteral("foreground")).toString()); candidate.background = QColor(json.value(QStringLiteral("background")).toString()); }
@@ -211,6 +224,16 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
     if (type == QStringLiteral("polygon") && (points.size() < 3 || points.size() > 4096 || points.first() == points.last())) { return graphicError(error, QStringLiteral("多边形需要3到4096个顶点，末点不重复首点。")); } //20261113-4 add: This is an explicit local resource/closure policy.
     if (type == QStringLiteral("freeline") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("自由直线当前首尾切片只支持两个不同端点；采样路径尚未恢复。")); } //20261113-5 add: Reject unverified multi-point freeline input rather than silently reducing it.
     if (type == QStringLiteral("line") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
+    if (type == QStringLiteral("linecurve")) //20261125-85 add: A cubic carries one explicit incoming handle and the previous anchor as its first control.
+    {
+        int last = -1;
+        if (points.size() < 2 || points.size() > 4096) { return graphicError(error, QStringLiteral("曲线需要2到4096个点。")); }
+        for (int control : curveControls)
+        {
+            if (control < last + 2 || control >= points.size() - 1) { return graphicError(error, QStringLiteral("曲线控制柄位置无效。")); }
+            last = control;
+        }
+    }
     if (type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
     Q_FOREACH (point, points)
     {
@@ -251,6 +274,7 @@ QPainterPath graphicPath(const QString &type, const QRectF &rect, const GraphicP
     QPainterPath path;
     int index;
 
+    if (type == QStringLiteral("linecurve")) { return curveDrawingPath(vertices, properties.curveControls); } //20261125-85 add
     if (type == QStringLiteral("sector")) //20261113-7 add: Native default prefix describes a center plus the 45-to-135 degree circular arc.
     {
         path.moveTo(rect.center()); path.arcTo(rect,45,90); return path; // Native cached prefix has eight elements; the fill closes implicitly and no unobserved ninth stroke element is added.
@@ -405,8 +429,58 @@ void paintGraphic(QPainter *painter, const QString &type, const QRectF &rect, co
     if (painter == nullptr || !properties.validate(type)) { return; }
     if (type == QStringLiteral("table")) { paintTableGraphic(painter,rect,properties); return; } //20261113-8 add
     color.setAlpha(properties.alpha); pen = QPen(color, properties.lineWidth, styles[properties.lineStyle], properties.endCap == 1 ? Qt::RoundCap : Qt::SquareCap);
-    painter->save(); painter->setRenderHint(QPainter::Antialiasing, (type == QStringLiteral("ellipse") || type == QStringLiteral("sector"))); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
-    painter->drawPath(graphicPath(type, rect, properties));
+    painter->save(); painter->setRenderHint(QPainter::Antialiasing, (type == QStringLiteral("ellipse") || type == QStringLiteral("sector") || type == QStringLiteral("linecurve"))); painter->setPen(pen); painter->setBrush(graphicStrokeOnly(type) ? QBrush(Qt::NoBrush) : graphicBrush(rect, properties)); //20261113-2 change: Native ellipse edges contain intermediate antialias colors.
+    const QPainterPath path = graphicPath(type, rect, properties);
+    if (type == QStringLiteral("linecurve") && properties.lineStyle == 1 && properties.lineWidth == 1 && properties.endCap == 0)
+    {
+        //20261125-85 add: Fill the stroke outline to match the native one-pixel covered-pixel mask.
+        // The Qt 6 thin-pen raster path selects different pixels around descending segments.
+        QPainterPathStroker stroke;
+        stroke.setWidth(properties.lineWidth);
+        stroke.setCapStyle(pen.capStyle());
+        stroke.setJoinStyle(pen.joinStyle());
+        painter->fillPath(stroke.createStroke(path), color);
+    }
+    else { painter->drawPath(path); }
     if (properties.lineStyle != 0) { painter->setPen(Qt::NoPen); painter->setBrush(color); painter->drawPath(graphicArrow(type, rect, properties)); }
     painter->restore();
+}
+
+/******************************************************************************
+ * Function Name   : graphicUsesMultipleClicks
+ * Description     : Identify paths that finish on a right click after accepting anchors.
+ * Input Parameters: type
+ * Return Value    : True if mouse release leaves the tool active.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool graphicUsesMultipleClicks(const QString &type) //20261125-85 add
+{
+    return type == QStringLiteral("linecurve") || type == QStringLiteral("polyline") || type == QStringLiteral("polygon");
+}
+
+/******************************************************************************
+ * Function Name   : curveDrawingPath
+ * Description     : Reproduce the separate line or cubic subpath added by each native release.
+ * Input Parameters: vertices in drawing coordinates, sorted incoming control indices
+ * Return Value    : Editable curve path including independent subpaths.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+QPainterPath curveDrawingPath(const QVector<QPointF> &vertices, const QVector<int> &controls) //20261125-85 add
+{
+    QPainterPath path;
+    int nextControl = 0;
+    int index;
+
+    for (index = 1; index < vertices.size(); ++index)
+    {
+        path.moveTo(vertices.at(index - 1));
+        if (nextControl < controls.size() && index == controls.at(nextControl) && index + 1 < vertices.size())
+        {
+            path.cubicTo(vertices.at(index - 1), vertices.at(index), vertices.at(index + 1));
+            ++index;
+            ++nextControl;
+        }
+        else { path.lineTo(vertices.at(index)); }
+    }
+    return path;
 }

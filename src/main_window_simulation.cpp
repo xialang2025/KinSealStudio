@@ -37,6 +37,8 @@ void MainWindow::startOfflineSimulation() //20261114-6 add
     if (!simulation->initialize(snapshot, &error))
     {
         delete simulation;
+        beginInformation(QStringLiteral("模拟工程：%1").arg(snapshot.name)); //20261125-84 add
+        appendInformation(error, OutputKind::Error);
         QMessageBox::warning(this, QStringLiteral("工程暂不支持离线模拟"), error);
         return;
     }
@@ -72,6 +74,8 @@ void MainWindow::showOnlineSimulationOptions() //20261124-13 change
     if (!simulation->initializeOnline(snapshot, &error))
     {
         delete simulation;
+        beginInformation(QStringLiteral("模拟工程：%1").arg(snapshot.name)); //20261125-84 add
+        appendInformation(error, OutputKind::Error);
         QMessageBox::warning(this, QStringLiteral("工程暂不支持在线模拟"), error);
         return;
     }

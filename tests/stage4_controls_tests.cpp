@@ -42,6 +42,9 @@
 #include "native_project_codec.h"
 #include "project_capabilities.h"
 #include "independent_downloader.h"
+#include "device_package.h" //20261125-85 add
+#include "lzokay.hpp"
+#include <QtEndian>
 #include "stage3_project_edits.h"
 #include <QAction>
 #include <QComboBox>
@@ -77,6 +80,8 @@ class Stage4ControlTests : public QObject
 private:
     QTemporaryDir m_settings;
 private slots:
+    void curveMenuGesturePersistenceAndNativeSource(); //20261125-85 add
+    void curveNativeReferenceAndDeviceCompile();
     void lineStrictModelPersistenceAndBackendRefusal();
     void lineDirectedPlacementAndAxisAlignedGeometry();
     void lineEndpointRoleAndCancellation();
@@ -6126,6 +6131,173 @@ void Stage4ControlTests::tableEightResizeHandlesAndDraftCancel() //20261113-8 ad
     object.type = QStringLiteral("table"); object.id = QStringLiteral("table-resize"); object.name = QStringLiteral("表格"); object.geometry = QRect(100,100,200,100); object.graphic.background = QColor(QStringLiteral("#e0e0e0")); object.graphic.rows = 3; object.graphic.columns = 2; object.graphic.showVertical = false; project.objects.append(object); canvas.resize(900,550); canvas.show(); QVERIFY(QTest::qWaitForWindowExposed(&canvas));
     for (index=0;index<9;++index) { if (index==4) { continue; } canvas.setProject(project); canvas.selectObject(object.id); changed.clear(); handle = QPointF(100+(index%3)*100,100+(index/3)*50); QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(handle)); QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(handle+QPointF(8,8))); QTest::mouseRelease(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(handle+QPointF(8,8))); QCOMPARE(changed.size(),1); QCOMPARE(canvas.objects().first().graphic.toJson(object.type),object.graphic.toJson(object.type)); }
     canvas.beginControlPlacement(object); QTest::mousePress(canvas.viewport(),Qt::LeftButton,Qt::NoModifier,canvas.mapFromScene(QPointF(400,300))); QTest::mouseMove(canvas.viewport(),canvas.mapFromScene(QPointF(500,400))); canvas.cancelInteraction(); QCOMPARE(canvas.objects().size(),1); QVERIFY(!canvas.hasActiveInteraction());
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::curveMenuGesturePersistenceAndNativeSource
+ * Description     : Exercise the real menu, reflected drag handle, path tagging, source round trip and undo.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage4ControlTests::curveMenuGesturePersistenceAndNativeSource() //20261125-85 add
+{
+    MainWindow window;
+    HmiProject project, loaded;
+    HmiObject curve;
+    QPainterPath path;
+    QByteArray bytes;
+    QString error;
+    const QPointF start(100,150), end(200,100), release(240,140);
+
+    project.targetModel = QStringLiteral("AMT070W124-L800X480R");
+    window.setProject(project, QString());
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+    window.m_commands.value(QStringLiteral("action_blight_circle"))->trigger();
+    QVERIFY(window.m_canvas->hasPendingPlacement());
+    QTest::mouseClick(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(start));
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(end));
+    QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(release));
+    QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(release));
+    QTest::mouseClick(window.m_canvas->viewport(), Qt::RightButton, Qt::NoModifier, window.m_canvas->mapFromScene(end));
+    project = window.currentEditorProject();
+    QCOMPARE(project.objects.size(), 1);
+    curve = project.objects.first();
+    QCOMPARE(curve.type, QStringLiteral("linecurve"));
+    QCOMPARE(curve.graphic.curveControls, QVector<int>{1});
+    path = graphicPath(curve.type, curve.geometry, curve.graphic);
+    QCOMPARE(path.elementCount(), 4);
+    QCOMPARE(path.elementAt(1).type, QPainterPath::CurveToElement);
+    QCOMPARE(QPointF(path.elementAt(1)), start);
+    QCOMPARE(QPointF(path.elementAt(2)), 2 * end - release);
+    QCOMPARE(QPointF(path.elementAt(3)), end);
+    QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.first().graphic.toJson(curve.type), curve.graphic.toJson(curve.type));
+    QVERIFY2(exportNativeProjectSource(project, &bytes, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(bytes, &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.first().graphic.toJson(curve.type), curve.graphic.toJson(curve.type));
+    QCOMPARE(loaded.objects.first().geometry, curve.geometry);
+    window.restoreProjectHistory(-1);
+    QVERIFY(window.currentEditorProject().objects.isEmpty());
+    window.m_commands.value(QStringLiteral("action_blight_circle"))->trigger();
+    const QPointF edge(2, 60), outsideReflection(40, 100);
+    QTest::mouseClick(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(start));
+    QTest::mousePress(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(edge));
+    QTest::mouseMove(window.m_canvas->viewport(), window.m_canvas->mapFromScene(outsideReflection));
+    QTest::mouseRelease(window.m_canvas->viewport(), Qt::LeftButton, Qt::NoModifier, window.m_canvas->mapFromScene(outsideReflection));
+    QTest::mouseClick(window.m_canvas->viewport(), Qt::RightButton, Qt::NoModifier, window.m_canvas->mapFromScene(edge));
+    project = window.currentEditorProject();
+    QCOMPARE(project.objects.size(), 1);
+    curve = project.objects.first();
+    path = graphicPath(curve.type, curve.geometry, curve.graphic);
+    QCOMPARE(QPointF(path.elementAt(2)), QPointF(0, 20));
+    QVERIFY2(project.validateModel(&error), qPrintable(error));
+
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::curveNativeReferenceAndDeviceCompile
+ * Description     : Open original V5.1 examples, preserve their source streams and build a static download package.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage4ControlTests::curveNativeReferenceAndDeviceCompile() //20261125-85 add
+{
+    const QDir fixtures(QFINDTESTDATA("fixtures/native-source/linecurve"));
+    const QStringList files = {QStringLiteral("curve-threeclick-default.sm"), QStringLiteral("curve-custom-style.sm"),
+                               QStringLiteral("curve-threephase-default.sm")};
+    HmiProject project, loaded;
+    HmiObject curve;
+    QByteArray source, bytes;
+    QString error;
+    QVector<QByteArray> payloads, cubicPayloads;
+    HmiProject compileProject;
+    QByteArray frame(800 * 480 * 2, Qt::Uninitialized);
+    std::size_t pixels = 0;
+    const auto pixel = [&](int x, int y) { return qFromLittleEndian<u16>(frame.constData() + (y * 800 + x) * 2); };
+
+
+    for (const QString &name : files)
+    {
+        QFile file(fixtures.filePath(name));
+        QVERIFY(file.open(QIODevice::ReadOnly));
+        source = file.readAll();
+        QVERIFY2(importNativeProjectSource(source, &project, &error), qPrintable(error));
+        QCOMPARE(project.objects.size(), 1);
+        curve = project.objects.first();
+        QCOMPARE(curve.type, QStringLiteral("linecurve"));
+        QVERIFY(curve.graphic.curveControls.isEmpty());
+        QVERIFY2(exportNativeProjectSource(project, &bytes, &error), qPrintable(error));
+        QCOMPARE(bytes, source);
+        QVERIFY2(importNativeProjectSource(bytes, &loaded, &error), qPrintable(error));
+        QCOMPARE(loaded.objects.first().graphic.toJson(curve.type), curve.graphic.toJson(curve.type));
+        if (name == files.first())
+        {
+            QCOMPARE(graphicPath(curve.type, curve.geometry, curve.graphic).elementCount(), 4);
+            // The original source retains its specific system configuration. For device compilation,
+            // move just the verified graphic to a fresh AMZ project with known system defaults.
+            compileProject.targetModel = QStringLiteral("AMZ070W01R");
+            compileProject.objects = {curve};
+            QVERIFY2(buildProjectPayload(compileProject, &payloads, &error), qPrintable(error));
+            QCOMPARE(payloads.size(), 10);
+            QVERIFY2(validateDevicePayloadStructure(payloads, &error), qPrintable(error));
+            const QByteArray &sheet = payloads.at(8);
+            QVERIFY(lzokay::decompress(reinterpret_cast<const unsigned char *>(sheet.constData()), std::size_t(sheet.size()),
+                reinterpret_cast<unsigned char *>(frame.data()), std::size_t(frame.size()), pixels) == lzokay::EResult::Success);
+            QCOMPARE(pixels, std::size_t(frame.size()));
+            QCOMPARE(pixel(0, 0), u16(0));
+            const u16 background = pixel(400, 300);
+            QVERIFY(pixel(149, 100) != background || pixel(150, 100) != background);
+            QVERIFY(pixel(249, 100) != background || pixel(250, 100) != background);
+            QCOMPARE(pixel(200, 120), background);
+            const QImage native(fixtures.filePath(QStringLiteral("sheet-curve-threeclick-default-r2.png")));
+            QCOMPARE(native.size(), QSize(800, 480));
+            const auto rgb565 = [](QRgb color) { return u16((qRed(color) >> 3) << 11 |
+                (qGreen(color) >> 2) << 5 | (qBlue(color) >> 3)); };
+            const u16 nativeBackground = rgb565(native.pixel(400, 300));
+            int differentCoverage = 0;
+            int maxChannelSteps = 0;
+            for (int y = 1; y < 480; ++y)
+            {
+                for (int x = 1; x < 800; ++x)
+                {
+                    const u16 actual = pixel(x, y);
+                    const u16 expected = rgb565(native.pixel(x, y));
+                    differentCoverage += (actual != background) != (expected != nativeBackground);
+                    const int red = qAbs((actual >> 11) - (expected >> 11));
+                    const int green = qAbs(((actual >> 5) & 63) - ((expected >> 5) & 63));
+                    const int blue = qAbs((actual & 31) - (expected & 31));
+                    maxChannelSteps = qMax(maxChannelSteps, qMax(red, qMax(green, blue)));
+                }
+            }
+            QCOMPARE(differentCoverage, 0);
+            QVERIFY(maxChannelSteps <= 4);
+        }
+    }
+    curve = compileProject.objects.first();
+    curve.graphic.points = {QPointF(0, 1), QPointF(0.25, 0), QPointF(1, 0.5)};
+    compileProject.objects = {curve};
+    QVERIFY2(buildProjectPayload(compileProject, &payloads, &error), qPrintable(error));
+    compileProject.objects.first().graphic.curveControls = {1};
+    QVERIFY2(buildProjectPayload(compileProject, &cubicPayloads, &error), qPrintable(error));
+    QVERIFY2(validateDevicePayloadStructure(cubicPayloads, &error), qPrintable(error));
+    QVERIFY(payloads.at(8) != cubicPayloads.at(8));
+
+    HmiObject button;
+    QJsonObject issue;
+    button.id = QStringLiteral("overlapping-button");
+    button.name = QStringLiteral("Button");
+    button.type = QStringLiteral("switch");
+    button.geometry = curve.geometry;
+    button.address = QStringLiteral("LB0");
+    button.hasBitButtonProperties = true;
+    compileProject.objects.prepend(button);
+    QVERIFY(!buildProjectPayload(compileProject, &payloads, &error, &issue));
+    QCOMPARE(issue.value(QStringLiteral("property")).toString(), QStringLiteral("geometry.overlap"));
+    QCOMPARE(issue.value(QStringLiteral("objectId")).toString(), curve.id);
+
 }
 
 QTEST_MAIN(Stage4ControlTests)

@@ -1,5 +1,7 @@
 #include "stage2_global_tools.h"
 #include "dialog_button_text.h" //20261124-8 add
+#include "macro_schedule.h" //20261125-84 add
+#include "macro_workspace.h" //20261125-84 add
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -505,13 +507,26 @@ QList<Row> enumerate(const HmiProject &project, Kind kind, const Scope &scope) /
             }
             else if (kind == Kind::Texts) { objectRows = objectTexts(project, page, object); }
             else if (kind == Kind::Addresses) { objectRows = objectAddresses(page, object); }
-            else if (kind == Kind::Macros && object.hasBitButtonProperties && !object.bitButton.macroName.isEmpty())
+            else if (kind == Kind::Macros) //20261125-84 change: Publish active uses independently from macro definitions.
             {
-                row = objectRow(page, object, QStringLiteral("bitButton.macroName"), QStringLiteral("控件宏引用"), object.bitButton.macroName);
-                row.location.macroName = object.bitButton.macroName;
-                row.location.macroId = project.macroIds.value(row.location.macroName);
-                row.active = object.bitButton.macroEnabled; objectRows.append(row);
-                if (row.active || scope.includeDormant) { scopedMacroNames.insert(row.location.macroName); }
+                auto reference = [&](const QString &field, const QString &name, bool active) {
+                    if (name.isEmpty()) { return; }
+                    Row referenceRow = objectRow(page, object, field, QStringLiteral("控件宏引用"), name);
+                    referenceRow.location.macroName = name;
+                    referenceRow.location.macroId = project.macroIds.value(name);
+                    // Disabled native carriers may retain a name in an imported draft; they are not invocations.
+                    referenceRow.active = active && MacroWorkspace::macroBindable(object);
+                    objectRows.append(referenceRow);
+                    if (referenceRow.active || scope.includeDormant) { scopedMacroNames.insert(name); }
+                };
+                if (object.hasBitButtonProperties) { reference(QStringLiteral("bitButton.macroName"), object.bitButton.macroName, object.bitButton.macroEnabled); }
+                if (object.hasNumberDisplayProperties) { reference(QStringLiteral("numberDisplay.macroName"), object.numberDisplay.macroName, object.numberDisplay.macroEnabled); }
+                if (object.type == QStringLiteral("ascii")) { reference(QStringLiteral("asciiDisplay.common.macroName"), object.asciiDisplay.common.macroName, object.asciiDisplay.common.macroEnabled); }
+                if (object.type == QStringLiteral("screen")) { reference(QStringLiteral("screenButton.common.macroName"), object.screenButton.common.macroName, object.screenButton.common.macroEnabled); }
+                if (object.type == QStringLiteral("multistate")) { reference(QStringLiteral("multiStateButton.common.macroName"), object.multiStateButton.common.macroName, object.multiStateButton.common.macroEnabled); }
+                if (object.type == QStringLiteral("multifunction")) { reference(QStringLiteral("multiFunctionButton.common.macroName"), object.multiFunctionButton.common.macroName, object.multiFunctionButton.common.macroEnabled); }
+                if (object.type == QStringLiteral("dropdown")) { reference(QStringLiteral("dropdown.macroName"), object.dropdown.macroName, object.dropdown.macroEnabled); }
+                if (object.type == QStringLiteral("slider")) { reference(QStringLiteral("slider.macroName"), object.slider.macroName, object.slider.macroEnabled); }
             }
             Q_FOREACH (row, objectRows)
             {
@@ -521,6 +536,20 @@ QList<Row> enumerate(const HmiProject &project, Kind kind, const Scope &scope) /
     }
     if (kind == Kind::Macros)
     {
+        if (scope.range == Scope::Range::AllPages) { //20261125-84 add: Preserve the ordinal of every scheduled invocation.
+            for (bool initialization : { false, true }) {
+                const auto schedule = macroScheduleRows(project, initialization);
+                for (int i = 0; i < schedule.size(); ++i) {
+                    row = Row();
+                    row.location.macroId = schedule.at(i).macroId;
+                    row.location.macroName = project.macroIds.key(row.location.macroId);
+                    row.label = initialization ? QStringLiteral("第%1个初始化宏").arg(i + 1) : QStringLiteral("第%1个全局宏").arg(i + 1);
+                    row.fieldPath = initialization ? QStringLiteral("initMacro") : QStringLiteral("globalMacro");
+                    row.value = row.location.macroName;
+                    if (!row.value.isEmpty()) { rows.append(row); }
+                }
+            }
+        }
         for (macro = project.macros.constBegin(); macro != project.macros.constEnd(); ++macro)
         {
             if (scope.range != Scope::Range::AllPages && !scopedMacroNames.contains(macro.key())) { continue; }
@@ -629,6 +658,7 @@ bool previewAddressReplacement(const HmiProject &project, const QString &findAdd
         if (changedFields.contains(key)) { continue; } // Same-address monitoring aliases the operation field.
         changedFields.insert(key); change = AddressChange(); change.location = row.location;
         change.fieldPath = row.fieldPath; change.before = row.value; change.after = plcQualifiedAddressText(newAddress);
+        change.pageName = row.pageName; change.objectName = row.objectName; //20261125-84 add
         draft.changes.append(change);
     }
     if (draft.changes.isEmpty())
@@ -729,6 +759,12 @@ GlobalToolsDialog::GlobalToolsDialog(const HmiProject &project, Kind kind, QWidg
     locateButton = buttons->addButton(QStringLiteral("定位"), QDialogButtonBox::ActionRole);
     locateButton->setObjectName(QStringLiteral("Stage2GlobalLocate")); layout->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    if (kind == Kind::Macros) //20261125-84 add: Publish even an empty search to the native information pane.
+    {
+        QPushButton *submit = buttons->addButton(QStringLiteral("查找"), QDialogButtonBox::AcceptRole);
+        submit->setObjectName(QStringLiteral("PublishMacroSearch"));
+        connect(submit, &QPushButton::clicked, this, &QDialog::accept);
+    }
     connect(locateButton, &QPushButton::clicked, this, [this]() { locate(); });
     connect(m_filter, &QLineEdit::textChanged, this, [this]() { refresh(); });
     connect(m_scope, &QComboBox::currentIndexChanged, this, [this]() { refresh(); });
@@ -795,6 +831,39 @@ Location GlobalToolsDialog::selectedLocation() const //20261110-7 add
 }
 
 /******************************************************************************
+ * Function Name   : GlobalToolsDialog::queryText
+ * Description     : Return the macro name submitted to the output window.
+ * Input Parameters: None
+ * Return Value    : Trimmed query text.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+QString GlobalToolsDialog::queryText() const //20261125-84 add
+{
+    return m_filter->text().trimmed();
+}
+
+/******************************************************************************
+ * Function Name   : GlobalToolsDialog::macroUsageRows
+ * Description     : Find actual macro invocations independently from the source browsing results.
+ * Input Parameters: None
+ * Return Value    : Active invocation rows in the selected range.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+QList<Row> GlobalToolsDialog::macroUsageRows() const //20261125-84 add
+{
+    const QString query = queryText();
+    const auto rows = enumerate(m_project, Kind::Macros, dialogScope(m_project, m_scope, m_selectedObjectIds, false));
+    QList<Row> matches;
+    for (const Row &row : rows) {
+        if (row.fieldPath != QStringLiteral("macros.source") &&
+            (query.isEmpty() || query == QStringLiteral("任意") || row.location.macroName == query)) {
+            matches.append(row);
+        }
+    }
+    return matches;
+}
+
+/******************************************************************************
  * Function Name   : GlobalToolsDialog::setSelectedObjectIds
  * Description     : Supply the caller's current selection for the selected-control range.
  * Input Parameters: ids
@@ -819,6 +888,7 @@ AddressReplaceDialog::AddressReplaceDialog(const HmiProject &project, QWidget *p
     QVBoxLayout *layout;
     QFormLayout *form;
     QPushButton *previewButton;
+    QPushButton *findButton; //20261125-84 add
     QDialogButtonBox *buttons;
 
     setObjectName(QStringLiteral("Stage2AddressReplaceDialog")); setWindowTitle(QStringLiteral("地址查找替换")); resize(940, 520);
@@ -836,6 +906,9 @@ AddressReplaceDialog::AddressReplaceDialog(const HmiProject &project, QWidget *p
     m_status = new QLabel(QStringLiteral("仅替换完整地址；宏源码和未核实字段不会被修改。"), this);
     m_status->setObjectName(QStringLiteral("Stage2AddressStatus")); m_status->setWordWrap(true); layout->addWidget(m_status);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this); layout->addWidget(buttons);
+    findButton = buttons->addButton(QStringLiteral("查找"), QDialogButtonBox::ActionRole);
+    findButton->setObjectName(QStringLiteral("Stage2AddressFindOnly"));
+    connect(findButton, &QPushButton::clicked, this, &AddressReplaceDialog::findOnly);
     m_confirm = buttons->button(QDialogButtonBox::Ok); m_confirm->setObjectName(QStringLiteral("Stage2AddressConfirm")); m_confirm->setText(QStringLiteral("确定")); m_confirm->setEnabled(false);
     buttons->button(QDialogButtonBox::Cancel)->setObjectName(QStringLiteral("Stage2AddressCancel")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
     connect(previewButton, &QPushButton::clicked, this, [this]() { preview(); });
@@ -858,6 +931,44 @@ void AddressReplaceDialog::invalidatePreview() //20261110-7 add
 {
     m_hasPreview = false; m_hasAcceptedProject = false; m_candidate = AddressCandidate();
     m_confirm->setEnabled(false); m_table->setRowCount(0); m_status->setText(QStringLiteral("条件已改变，请重新预览。"));
+}
+
+/******************************************************************************
+ * Function Name   : AddressReplaceDialog::queryText
+ * Description     : Provide the exact address expression used for the accepted search.
+ * Input Parameters: None
+ * Return Value    : Trimmed query.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+QString AddressReplaceDialog::queryText() const //20261125-84 add
+{
+    return m_find->text().trimmed();
+}
+
+/******************************************************************************
+ * Function Name   : AddressReplaceDialog::findOnly
+ * Description     : Search the same typed address index as replacement without constructing an edit.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void AddressReplaceDialog::findOnly() //20261125-84 add
+{
+    const QString query = queryText();
+    PlcCatalog catalog;
+    QString error;
+    if (query.isEmpty()) { m_status->setText(QStringLiteral("请输入要查找的地址。")); return; }
+    if (!m_project.connections.isEmpty() && !catalog.load(QStringLiteral(":/plc/plc-catalog.json"), &error)) {
+        m_status->setText(error); return;
+    }
+    const auto rows = enumerate(m_project, Kind::Addresses,
+        dialogScope(m_project, m_scope, m_selectedObjectIds, m_dormant->isChecked()));
+    m_found.clear();
+    for (const Row &row : rows) {
+        if (sameAddress(m_project, catalog, row, query)) { m_found.append(row); }
+    }
+    m_hasAcceptedProject = false;
+    QDialog::accept();
 }
 
 /******************************************************************************

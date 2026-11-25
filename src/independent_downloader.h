@@ -53,7 +53,7 @@ bool buildSingleTextPayload(const HmiProject &project,
  * Date            : 2026.11.09
  ******************************************************************************/
 bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
-                         QString *error); //20261109-0 add
+                         QString *error, QJsonObject *issue = nullptr); //20261109-0 add
 
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
                           QString *error); //20261109-0 add

@@ -58,6 +58,8 @@ struct AddressChange
     QString fieldPath;
     QString before;
     QString after;
+    QString pageName; //20261125-84 add
+    QString objectName;
 };
 
 struct AddressCandidate
@@ -82,6 +84,8 @@ class GlobalToolsDialog : public QDialog
 public:
     GlobalToolsDialog(const HmiProject &project, Kind kind, QWidget *parent = nullptr);
     Location selectedLocation() const;
+    QList<Row> macroUsageRows() const; //20261125-84 add
+    QString queryText() const;
     void setSelectedObjectIds(const QSet<QString> &ids);
 
 private:
@@ -105,6 +109,8 @@ public:
     explicit AddressReplaceDialog(const HmiProject &project, QWidget *parent = nullptr);
     bool candidateProject(HmiProject *output) const;
     AddressCandidate candidate() const;
+    const QList<Row> &foundAddresses() const { return m_found; } //20261125-84 add
+    QString queryText() const;
     void setSelectedObjectIds(const QSet<QString> &ids);
     void accept() override;
 
@@ -112,6 +118,7 @@ private:
     HmiProject m_project;
     HmiProject m_acceptedProject;
     AddressCandidate m_candidate;
+    QList<Row> m_found;
     bool m_hasPreview = false;
     bool m_hasAcceptedProject = false;
     QSet<QString> m_selectedObjectIds;
@@ -124,6 +131,7 @@ private:
     QPushButton *m_confirm;
     void invalidatePreview();
     void preview();
+    void findOnly(); //20261125-84 add
 };
 }
 

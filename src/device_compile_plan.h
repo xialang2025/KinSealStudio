@@ -10,6 +10,7 @@ struct DeviceCompilePlan
     QList<HmiObject> objects;
     QJsonObject sourceSnapshot;
     int staticPolylineCount = 0;
+    int staticCurveCount = 0; //20261125-85 add: Curves occupy only the static page background.
     int staticTableCount = 0; //20261113-12 add: Static tables allocate background pixels, never dynamic control records.
     int staticRectCount = 0; //20261113-13 add: Closed rectangle rasters have no device control union.
     int staticLineCount = 0; //20261113-14 add: Canonical integer straight lines allocate background pixels only.

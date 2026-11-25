@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include "project_model.h"
+#include "auxiliary_settings.h" //20261125-82 add
 #include "stage3_project_edits.h" //20261110-8 add: Keep complete object/resource clipboard values across document navigation.
 
 #include <QMainWindow>
@@ -12,12 +13,15 @@
 class QLabel;
 class QCloseEvent;
 class QLineEdit;
+class QTableWidget;
+class QDockWidget;
 class QPlainTextEdit; //20261108-12 add
 class QPushButton;
 class QProcess;
 class QSpinBox;
 class QTabWidget;
 class QTemporaryDir;
+class QTimer; //20261125-82 add
 class QTreeWidget;
 class QTreeWidgetItem;
 class ScreenCanvas;
@@ -92,6 +96,8 @@ private slots:
 private:
     HmiProject m_project;
     QString m_currentPath;
+    AuxiliarySettings m_auxiliarySettings; //20261125-82 add
+    QTimer *m_auxiliaryTimer = nullptr;
     bool m_dirty;
     QProcess *m_downloadProcess; //20261108-8 add
     QTemporaryDir *m_downloadTemp; //20261108-8 add
@@ -147,6 +153,8 @@ private:
                                     const QMap<QString, QByteArray> &pictures, const QMap<QString, QByteArray> *animations = nullptr); //20261112-0 change
     void setProject(const HmiProject &project, const QString &path);
     void setDirty(bool dirty);
+    void applyAuxiliaryTimer(); //20261125-82 add
+    void backUpSavedProject(const QString &path);
     bool confirmDiscardChanges();
     bool writeProject(const QString &path);
     HmiProject currentEditorProject() const; //20261110-7 add
@@ -159,6 +167,16 @@ private:
     void rebuildSystemSettings();
     void dispatchEditCommand(const QString &command);
     void duplicateCanvasObject(const QString &id, const QPoint &offset); //20261124-11 add
+    void optimizeControlGeometry(); //20261125-83 add
+    enum class OutputKind { Information, Warning, Error }; //20261125-84 add
+    void createInformationDock(QAction *action);
+    void clearInformation();
+    void beginInformation(const QString &text);
+    void appendInformation(const QString &text, OutputKind kind, const QString &page = {},
+                           const QString &object = {});
+    quint64 m_documentSequence = 0; //20261125-84 add: Reject late output from a closed or replaced project.
+    QTableWidget *m_information = nullptr;
+    QDockWidget *m_informationDock = nullptr;
     void updateCommandStates();
     bool downloadInProgress() const; //20261114-5 add
     void startOfflineSimulation(); //20261114-6 add

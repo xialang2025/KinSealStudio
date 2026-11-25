@@ -26,6 +26,9 @@ qt_add_executable(KinSealStudioLite WIN32
     src/macro_compiler_cli.cpp src/macro_compiler_cli.h
     src/macro_workspace.cpp src/macro_workspace.h
     macro_library.qrc #20261114-7 add: Verbatim library examples are separate from executable SDK inputs.
+    src/auxiliary_settings.cpp src/auxiliary_settings.h #20261125-82 add
+    src/v31_extract_dialog.cpp src/v31_extract_dialog.h #20261125-81 add
+    src/main_window_information.cpp #20261125-84 add
     src/native_shell_ui.cpp #20261111-1 add: Reproduce the original desktop shell using retained native icons and layout.
     native_shell.qrc
     src/stage3_project_edits.h #20261110-8 add
@@ -160,6 +163,7 @@ qt_add_executable(KinSealStudioLite WIN32
     src/recipe_display_dialog.cpp
     src/graphic_properties.h #20261113-2 add
     src/graphic_properties.cpp
+    src/graphic_geometry_optimization.cpp
     src/graphic_dialog.h
     src/graphic_dialog.cpp
     src/graphic_table_dialog.cpp
@@ -296,6 +300,26 @@ endif()
 
 #20261108-14 add: Run Qt event tests offscreen; do not ship the Qt Test runtime in the editor package.
 find_package(Qt6 REQUIRED COMPONENTS Test)
+#20261125-81 add: Decode qCompress framing with bounded zlib output, using the static MinGW archive.
+if(MINGW)
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-file-name=libz.a
+        OUTPUT_VARIABLE KINSEAL_ZLIB OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+    if(NOT EXISTS "${KINSEAL_ZLIB}")
+        message(FATAL_ERROR "Could not locate the MinGW static zlib archive")
+    endif()
+else()
+    find_package(ZLIB REQUIRED)
+    set(KINSEAL_ZLIB ZLIB::ZLIB)
+endif()
+qt_add_executable(KinSealV31ExtractTests src/v31_extract_dialog.cpp tests/v31_extract_tests.cpp)
+target_include_directories(KinSealV31ExtractTests PRIVATE src)
+target_link_libraries(KinSealV31ExtractTests PRIVATE Qt6::Widgets Qt6::Test ${KINSEAL_ZLIB})
+qt_add_executable(KinSealGraphicGeometryOptimizationTests tests/graphic_geometry_optimization_tests.cpp) #20261125-83 add
+target_include_directories(KinSealGraphicGeometryOptimizationTests PRIVATE src)
+target_link_libraries(KinSealGraphicGeometryOptimizationTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test)
+if(WIN32)
+    target_link_libraries(KinSealGraphicGeometryOptimizationTests PRIVATE setupapi bcrypt)
+endif()
 get_target_property(KINSEAL_TEST_SOURCES KinSealStudioLite SOURCES)
 list(REMOVE_ITEM KINSEAL_TEST_SOURCES src/main.cpp)
 #20261114-6 add: Compile the unchanged editor/model support once for the three new simulation regression programs.
@@ -572,7 +596,15 @@ get_property(KINSEAL_HELP_TARGETS DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
 foreach(KINSEAL_HELP_TARGET IN LISTS KINSEAL_HELP_TARGETS)
     get_target_property(KINSEAL_HELP_SOURCES ${KINSEAL_HELP_TARGET} SOURCES)
     if("src/main_window.cpp" IN_LIST KINSEAL_HELP_SOURCES)
+        target_link_libraries(${KINSEAL_HELP_TARGET} PUBLIC ${KINSEAL_ZLIB}) #20261125-81 add
         target_sources(${KINSEAL_HELP_TARGET} PRIVATE src/local_help.cpp src/local_help.h)
+    endif()
+    #20261125-84 add: Keep local help available in direct builds and the production workflow tests.
+    if(KINSEAL_HELP_TARGET STREQUAL "KinSealStudioLite" OR KINSEAL_HELP_TARGET STREQUAL "KinSealSimulationWorkflowTests")
+        add_custom_command(TARGET ${KINSEAL_HELP_TARGET} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_directory
+                "${CMAKE_CURRENT_SOURCE_DIR}/help" "$<TARGET_FILE_DIR:${KINSEAL_HELP_TARGET}>/help"
+            VERBATIM)
     endif()
     if(WIN32 AND "src/stage2_file_protection.cpp" IN_LIST KINSEAL_HELP_SOURCES)
         target_link_libraries(${KINSEAL_HELP_TARGET} PRIVATE bcrypt) #20261123-17 add

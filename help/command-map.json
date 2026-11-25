@@ -110,6 +110,26 @@
     "config-recipe": {
       "file": "controls.html#config-recipe",
       "title": "配方定义"
+    },
+    "v31-extract": {
+      "file": "files.html#v31-extract",
+      "title": "解压 V31 标准组态"
+    },
+    "save-backup": {
+      "file": "files.html#save-backup",
+      "title": "自动保存和自动备份"
+    },
+    "optimize-geometry": {
+      "file": "controls.html#optimize-geometry",
+      "title": "优化控件尺寸坐标"
+    },
+    "information-output": {
+      "file": "compile.html#information-output",
+      "title": "信息输出窗口"
+    },
+    "draw-curve": {
+      "file": "controls.html#draw-curve",
+      "title": "绘制曲线或圆弧"
     }
   },
   "commands": {
@@ -121,9 +141,9 @@
     },
     "actionCompress": {
       "label": "解压V31标准组态",
-      "topic": "limits",
-      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
-      "coverage": "routing-only"
+      "topic": "v31-extract",
+      "capability": "选择旧组态 .knr 文件和输出 .sm 路径，提取工程及配套图库。",
+      "coverage": "chapter-summary"
     },
     "action_36": {
       "label": "标准工具栏",
@@ -145,9 +165,9 @@
     },
     "action_41": {
       "label": "信息输出窗口",
-      "topic": "limits",
-      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
-      "coverage": "routing-only"
+      "topic": "information-output",
+      "capability": "查看工程消息、清除输出并定位关联控件。",
+      "coverage": "chapter-summary"
     },
     "action_42": {
       "label": "工程管理器",
@@ -163,9 +183,9 @@
     },
     "action_Auxi": {
       "label": "辅助功能",
-      "topic": "limits",
-      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
-      "coverage": "routing-only"
+      "topic": "save-backup",
+      "capability": "设置自动保存间隔、备份位置和保留份数。",
+      "coverage": "chapter-summary"
     },
     "action_DatagroupDisplay": {
       "label": "历史趋势图",
@@ -217,9 +237,9 @@
     },
     "action_Size": {
       "label": "优化控件尺寸坐标",
-      "topic": "limits",
-      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
-      "coverage": "routing-only"
+      "topic": "optimize-geometry",
+      "capability": "按工程画面批量取整，支持撤销和重做。",
+      "coverage": "chapter-summary"
     },
     "action_Slider": {
       "label": "滑动开关",
@@ -277,9 +297,9 @@
     },
     "action_blight_circle": {
       "label": "曲线/圆弧(&A)",
-      "topic": "limits",
-      "capability": "保留原生入口；本帮助未逐项确认该命令实现范围，以界面守卫和限制提示为准。",
-      "coverage": "routing-only"
+      "topic": "draw-curve",
+      "capability": "通过单击和拖动绘制相连的直线段及三次贝塞尔曲线。",
+      "coverage": "chapter-summary"
     },
     "action_bringforward": {
       "label": "移到上一层",

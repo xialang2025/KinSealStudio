@@ -922,14 +922,14 @@ static bool writeProjectMacroSchedules(const HmiProject &project, const DeviceMa
 }
 
 /******************************************************************************
- * Function Name   : buildProjectPayload
+ * Function Name   : buildIntegerProjectPayload
  * Description     : Generate control records, RGB565 sprites and a recoverable Lite project snapshot.
  * Input Parameters: project, payloads, error
  * Return Value    : True when every enabled property compiled without dropping runtime behavior.
  * Date            : 2026.11.09
  ******************************************************************************/
-bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
-                         QString *error) //20261109-0 add
+static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
+                         QString *error, QJsonObject *issue) //20261125-84 change
 {
     DeviceCompilePlan compilePlan; //20261113-11 add: Freeze bounded semantics before the existing five-family compilers run.
     QVector<QByteArray> generated;
@@ -974,7 +974,8 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     bool hasSwitch;
     bool secondStateActive; //20261109-6 add
 
-    if (payloads == nullptr || !prepareDeviceCompilePlan(project,&compilePlan,error)) { return false; } //20261113-11 add
+    if (issue != nullptr) { *issue = {}; } //20261125-84 add: Locations are scoped to one compilation.
+    if (payloads == nullptr || !prepareDeviceCompilePlan(project,&compilePlan,error,issue)) { return false; } //20261113-11 add
     if (!project.validateSinglePageBackend(error)) //20261110-5 add: Block uncompiled pages/configuration before loading payloads or opening USB.
     {
         return false;
@@ -1164,6 +1165,10 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         else if (object.type == QStringLiteral("line") || object.type == QStringLiteral("freeline")) //20261113-15 change: The source-bound two-endpoint families share the proven integer raster, without admitting sampled freehand paths.
         {
             paintDeviceStraightLine(&painter,object);
+        }
+        else if (object.type == QStringLiteral("linecurve")) //20261125-85 add: Native curves feed the page image without a runtime control record.
+        {
+            paintGraphic(&painter, object.type, QRectF(object.geometry), object.graphic);
         }
         else if (object.type == QStringLiteral("polyline")) //20261113-11 add: Only the independently gated static orthogonal slice reaches this branch.
         {
@@ -1862,6 +1867,41 @@ bool downloadSingleTextProject(const HmiProject &project, QString *error) //2026
 }
 
 /******************************************************************************
+ * Function Name   : buildProjectPayload
+ * Description     : Quantize native fractional scene positions for device pixels while retaining the exact editable project snapshot.
+ * Input Parameters: project, payloads, error, issue
+ * Return Value    : True with a complete offline payload; failed preparation preserves output data.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error, QJsonObject *issue) //20261125-83 add
+{
+    HmiProject raster;
+    QVector<QByteArray> generated;
+    int index;
+    bool quantized;
+
+    if (issue != nullptr) { *issue = {}; } //20261125-84 add: Locations belong only to the current compilation.
+    if (payloads == nullptr || !project.validateSinglePageBackend(error)) { return false; }
+    raster = project; quantized = false;
+    for (index = 0; index < raster.objects.size(); ++index)
+    {
+        if (raster.objects.at(index).subpixelOffset.isNull()) { continue; }
+        raster.objects[index].geometry.moveTo(qRound(project.objects.at(index).geometry.x() + project.objects.at(index).subpixelOffset.x()),
+                                              qRound(project.objects.at(index).geometry.y() + project.objects.at(index).subpixelOffset.y()));
+        raster.objects[index].subpixelOffset = QPointF();
+        quantized = true;
+    }
+    if (!buildIntegerProjectPayload(raster, &generated, error, issue)) { return false; }
+    if (quantized)
+    {
+        // The firmware consumes integer pixels; the recoverable editor archive keeps the original half-pixel geometry.
+        generated[7] = qCompress(QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact), 9);
+    }
+    *payloads = generated;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : downloadProject
  * Description     : Compile the complete supported project before opening the target USB device.
  * Input Parameters: project, error
@@ -1885,11 +1925,13 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
 {
     QVector<QByteArray> payloads;
     QJsonObject rejected;
+    QJsonObject issue; //20261125-84 add: Retain the compiler-provided stable object location for the output dock.
     DeviceTransferOptions targetOptions = options; //20261122-3 add
 
-    if (!buildProjectPayload(project, &payloads, error))
+    if (!buildProjectPayload(project, &payloads, error, &issue))
     {
         rejected = deviceTransferResultToJson(DeviceTransferResult());
+        if (!issue.isEmpty()) { rejected.insert(QStringLiteral("compileIssue"), issue); }
         rejected.insert(QStringLiteral("compiled"), false);
         rejected.insert(QStringLiteral("outcome"), QStringLiteral("compile_rejected"));
         rejected.insert(QStringLiteral("message"), error != nullptr ? *error : QStringLiteral("工程编译失败。"));
