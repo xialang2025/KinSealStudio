@@ -675,9 +675,15 @@ void ScreenCanvas::setActiveTool(const QString &type) //20261110-8 change
 {
     cancelInteraction();
     m_activeTool = type;
+    setInteractive(m_activeTool != QStringLiteral("pan")); //20261125-1 add: The hand tool owns the gesture even over editable items.
     if (m_activeTool == QStringLiteral("select"))
     {
         setDragMode(QGraphicsView::RubberBandDrag); setCursor(Qt::ArrowCursor);
+    }
+    else if (m_activeTool == QStringLiteral("pan")) //20261125-1 add
+    {
+        setDragMode(QGraphicsView::ScrollHandDrag);
+        setCursor(Qt::OpenHandCursor);
     }
     else
     {
@@ -740,6 +746,11 @@ void ScreenCanvas::mousePressEvent(QMouseEvent *event) //20261110-8 change
     HmiObject object;
     bool selected;
 
+    if (dragMode() == QGraphicsView::ScrollHandDrag) //20261125-1 add
+    {
+        QGraphicsView::mousePressEvent(event);
+        return;
+    }
     point = mapToScene(event->position().toPoint());
     if (graphicPress(event, point)) { return; } //20261113-2 change: Multi-click graphics consume right-click completion before generic cancellation.
     if (event->button() == Qt::RightButton && hasActiveInteraction())

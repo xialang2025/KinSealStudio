@@ -56,6 +56,7 @@ private slots:
     void typedFieldBoundariesAndMalformedCollections(); //20261110-5 add
     void everyTruncatedPrefixPreservesSemanticOutputs();
     void multiplePagesAreReadOnlyArchives();
+    void numberedOrdinaryPageKeepsItsNativeSourceField(); //20261125-4 add
     void sourceRejectsUnmappedModelEntities();
     void explicitStartupLanguagePreservesDialogSelection(); //20261110-6 change
     void nativeIndependentLanguageSelections_data(); //20261110-6 add
@@ -2407,6 +2408,51 @@ void NativeProjectCodecTests::multiplePagesAreReadOnlyArchives() //20261110-5 ad
         QCOMPARE(output, QByteArray("keep-output"));
         retained.nativeSourceSnapshot.clear();
     }
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::numberedOrdinaryPageKeepsItsNativeSourceField
+ * Description     : Change only the recovered number field and check both directions against the untouched source.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void NativeProjectCodecTests::numberedOrdinaryPageKeepsItsNativeSourceField() //20261125-4 add
+{
+    QFile fixture(QFINDTESTDATA("fixtures/native-source/multipage/A-empty-one-page.sm"));
+    QByteArray source;
+    QByteArray numbered;
+    QByteArray output;
+    NativeSourceFieldSpan number;
+    HmiProject imported;
+    HmiProject reopened;
+    QString error;
+    u16 initial = 99;
+
+    QVERIFY(fixture.open(QIODevice::ReadOnly));
+    source = fixture.readAll();
+    number = sourceFieldSpan(source, QStringLiteral("page.head.19"));
+    QCOMPARE(source.mid(number.start, number.end - number.start), QByteArray::fromHex("00000006003000300030"));
+    numbered = source;
+    numbered[number.end - 1] = '9';
+    QVERIFY2(importNativeProjectSource(numbered, &imported, &error), qPrintable(error));
+    QCOMPARE(imported.activePageNumber.value_or(-1), 9);
+    QCOMPARE(imported.screenAndWindowNumbers().value(imported.activePageId), 9);
+    QVERIFY2(HmiProject::fromJson(imported.toJson(), &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.activePageNumber.value_or(-1), 9);
+    QVERIFY2(exportNativeProjectSource(reopened, &output, &error), qPrintable(error));
+    QCOMPARE(output, numbered);
+    QVERIFY(!nativeProjectUsesSupportedDeviceDefaults(numbered, &error));
+    QVERIFY(error.contains(QStringLiteral("编号 000")));
+    QVERIFY(!reopened.validateSinglePageBackend(&error));
+    reopened.activePageNumber = 0;
+    QVERIFY(!nativeProjectInitialLanguageIndex(reopened, &initial, &error));
+    QCOMPARE(initial, u16(99));
+    QVERIFY2(exportNativeProjectSource(reopened, &output, &error), qPrintable(error));
+    QCOMPARE(output, source);
+    numbered[number.end - 1] = 'X';
+    QVERIFY(!importNativeProjectSource(numbered, &reopened, &error));
+    QCOMPARE(reopened.activePageNumber.value_or(-1), 0);
 }
 
 /******************************************************************************

@@ -1331,6 +1331,8 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     QString languageName;
     QString languageRow;
     QString firstLanguageRow;
+    QString pageNumber;
+    const QRegularExpression pageNumberFormat(QStringLiteral("\\A[0-9]{3}\\z")); //20261125-4 add
     int i;
     int state;
     int stateCount;
@@ -1363,6 +1365,16 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         return fail(error, QStringLiteral("尚未核实原生工程的实际目标型号：%1。").arg(result.targetModel));
     }
     result.pageName = document.value(QStringLiteral("page.head.18")).toString();
+    pageNumber = document.value(QStringLiteral("page.head.19")).toString();
+    if (!pageNumberFormat.match(pageNumber).hasMatch())
+    {
+        return fail(error, QStringLiteral("原厂普通画面编号须为三位十进制数字。"));
+    }
+    if (pageNumber != QStringLiteral("000"))
+    {
+        // Legacy KSP represents page zero by omitting the optional number.
+        result.activePageNumber = pageNumber.toInt();
+    }
     if (document.value(QStringLiteral("config.head.4")).toString() != result.pageName ||
         document.value(QStringLiteral("config.head.11")).toString() != result.pageName ||
         document.value(QStringLiteral("trailer.settings.11")).toString() != result.pageName) { //20261110-5 add: Distinct startup/window references cannot be flattened into a one-page model.
@@ -1681,7 +1693,7 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         result.nativeSourceWarnings.append(QStringLiteral("另有 %1 条休眠字段诊断未逐条展示；全部原始值仍完整保留在 nativeSourceSnapshot，可通过 typed 字段检查定位。此汇总不表示未知活动语义已支持。")
                                               .arg(summarizedWarnings));
     }
-    if (!importSourceMacroSchedules(document, &result, error) || !result.validateSinglePageBackend(error)) { //20261123-23 change
+    if (!importSourceMacroSchedules(document, &result, error) || !result.validateSinglePageBackend(error, false)) { //20261125-4 change
         return false;
     }
     *project = result;
@@ -3396,6 +3408,10 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only page traversal does not widen the one-page device configuration contract.
         return fail(error, QStringLiteral("多页原生源仅支持结构检查或整源归档，不能按单页设备默认配置编译。"));
     }
+    if (document.value(QStringLiteral("page.head.19")).toString() != QStringLiteral("000")) //20261125-4 add
+    {
+        return fail(error, QStringLiteral("当前设备后端仅支持普通画面编号 000。"));
+    }
     systemStart = document.values.value(QStringLiteral("system.identity.0")).start;
     configStart = document.values.value(QStringLiteral("config.head.0")).start;
     configEnd = document.values.value(QStringLiteral("project.pages.count")).start;
@@ -3618,6 +3634,10 @@ bool nativeProjectInitialLanguageIndex(const HmiProject &project, u16 *index,
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: A multi-page snapshot cannot supply startup settings for a flattened single-page model.
         return fail(error, QStringLiteral("原生快照含多个页面，不能为单页活动模型派生启动语言。"));
     }
+    if (document.value(QStringLiteral("page.head.19")).toString() != QStringLiteral("000")) //20261125-4 add
+    {
+        return fail(error, QStringLiteral("当前设备后端仅支持普通画面编号 000。"));
+    }
     if (deviceTargetIdentityByte(document.value(QStringLiteral("system.identity.1")).toString()) !=
         deviceTargetIdentityByte(project.targetModel)) //20261122-3 add
     {
@@ -3808,7 +3828,7 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     {
         return fail(error, QStringLiteral("AMZ070W01R 目前使用 .ksp 保存和设备编译；原厂 .sm 导出尚未验证。"));
     }
-    if (!project.validateSinglePageBackend(error)) { //20261110-5 add: Never flatten multi-page/configuration entities into only the legacy active-page view.
+    if (!project.validateSinglePageBackend(error, false)) { //20261125-4 change: Export a numbered page without flattening any topology.
         return false;
     }
     Q_FOREACH (originalObject, project.objects) //20261124-15 add: Native SM has no recovered appearance flip field.
@@ -3885,6 +3905,10 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         updates.set(QStringLiteral("config.head.4"), project.pageName);
         updates.set(QStringLiteral("config.head.11"), project.pageName);
         updates.set(QStringLiteral("trailer.settings.11"), project.pageName);
+    }
+    if (project.activePageNumber.value_or(0) != original.activePageNumber.value_or(0)) //20261125-4 add
+    {
+        updates.set(QStringLiteral("page.head.19"), QStringLiteral("%1").arg(project.activePageNumber.value_or(0), 3, 10, QLatin1Char('0')));
     }
     if (project.pageWidth != original.pageWidth || project.pageHeight != original.pageHeight) {
         return fail(error, QStringLiteral("原生型号分辨率绑定尚未验证可写，不能改变页面尺寸。"));
@@ -4114,6 +4138,10 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     }
     if (!sourceProject(verifiedDocument, &verifiedProject, error)) {
         return false;
+    }
+    if (verifiedProject.activePageNumber.value_or(0) != project.activePageNumber.value_or(0)) //20261125-4 add
+    {
+        return fail(error, QStringLiteral("原厂画面编号写回后与当前工程不一致，已取消保存。"));
     }
     if (!project.startupLanguage.isEmpty() && verifiedProject.activeLanguage != project.startupLanguage) {
         return fail(error, QStringLiteral("原生源启动语言写回后与当前工程请求不一致，已取消保存。"));

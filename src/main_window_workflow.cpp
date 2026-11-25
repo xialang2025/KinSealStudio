@@ -859,6 +859,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
         collectionItem = new QTreeWidgetItem(item, {collection.name}); collectionItem->setData(0, Qt::UserRole, QStringLiteral("dataCollection")); collectionItem->setData(0, Qt::UserRole + 1, collection.id);
     }
     parent = new QTreeWidgetItem(settings, {QStringLiteral("报警登录")});
+    parent->setData(0, Qt::UserRole, QStringLiteral("alarmRegistrations")); //20261125-1 add: Route the native parent add command.
     Q_FOREACH (label, (QStringList{QStringLiteral("数位地址报警"), QStringLiteral("条件报警")}))
     {
         item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, label == QStringLiteral("数位地址报警") ? QStringLiteral("alarm-bit") : QStringLiteral("alarm-condition")); //20261113-2 change
@@ -1052,7 +1053,8 @@ void MainWindow::updateCommandStates() //20261110-7 add
         if (id == QStringLiteral("action_new_pro") || id == QStringLiteral("action_open_pro") ||
             id == QStringLiteral("action_chinese") || id == QStringLiteral("action_english") || //20261124-7 add
             id == QStringLiteral("action_quit") || id == QStringLiteral("action_H") || id == QStringLiteral("action_KinSeal") ||
-            id == QStringLiteral("action_42") || id == QStringLiteral("action_tool") || id == QStringLiteral("action_40")) {
+            id == QStringLiteral("action_42") || id == QStringLiteral("action_tool") || id == QStringLiteral("action_40") ||
+            id == QStringLiteral("action_36") || id == QStringLiteral("action_37")) { //20261125-1 change: View toggles remain available without an open project.
             enabled = true;
         } else if (id == QStringLiteral("action_save")) { enabled = m_hasProject && m_dirty; }
         else if (id == QStringLiteral("action_USBdownload")) {

@@ -45,12 +45,20 @@ QStringList TimeDisplayProperties::fontSizes() //20261112-0 add
  * Return Value    : Date, week and time tokens in native sample order.
  * Date            : 2026.11.12
  ******************************************************************************/
-QString TimeDisplayProperties::sample() const //20261112-0 add
+QString TimeDisplayProperties::sample() const //20261125-3 change
 {
     QStringList parts;
     if (showDate) { parts.append(dateFormats().value(dateFormat)); }
     if (showWeek) { parts.append(QStringLiteral("(Mon)")); }
-    if (showTime) { parts.append(timeFormats().value(timeFormat)); }
+    if (showTime)
+    {
+        if (parts.isEmpty())
+        {
+            // The native time-only sample keeps the separator before the clock token.
+            parts.append(QString());
+        }
+        parts.append(timeFormats().value(timeFormat));
+    }
     return parts.join(QLatin1Char(' '));
 }
 

@@ -78,7 +78,7 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
         {
             paintStaticText(&painter, QRectF(object->geometry), staticTextContent(*object, runtime.language()), object->staticText);
         }
-        else if (runtime.online() && object->hasNumberDisplayProperties) //20261124-13 add
+        else if (object->hasNumberDisplayProperties) //20261125-2 change: Draw live values from the session's local or external monitor.
         {
             NumberDisplayProperties appearance = object->numberDisplay;
             appearance.decimalDigits = 0; // The runtime has already placed the decimal point.

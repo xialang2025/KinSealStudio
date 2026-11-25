@@ -284,7 +284,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING AND TARGET Qt6::windeployqt AND TARGET Qt6
             --modify "PATH=path_list_prepend:${KINSEAL_COMPILER_BIN}"
             "$<TARGET_FILE:Qt6::windeployqt>"
             --qtpaths "$<TARGET_FILE:Qt6::qtpaths>"
-            --force --compiler-runtime --no-translations --no-system-dxc-compiler
+            --compiler-runtime --no-translations --no-system-dxc-compiler #20261125-5 change: Avoid replacing DLLs shared with parallel test links.
             "$<TARGET_FILE:KinSealStudioLite>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             "${CMAKE_CURRENT_BINARY_DIR}/KinSealStudioLite.qt.conf"
@@ -311,6 +311,7 @@ qt_add_executable(KinSealSimulationUiTests tests/simulation_ui_tests.cpp)
 target_include_directories(KinSealSimulationUiTests PRIVATE src)
 target_link_libraries(KinSealSimulationUiTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 qt_add_executable(KinSealSimulationWorkflowTests tests/stage2_workflow_tests.cpp)
+target_sources(KinSealSimulationWorkflowTests PRIVATE ${KINSEAL_GALLERY_RESOURCES}) #20261125-5 add: The workflow executable needs the gallery object as well as the shared editor objects.
 target_include_directories(KinSealSimulationWorkflowTests PRIVATE src third_party/lzokay)
 target_link_libraries(KinSealSimulationWorkflowTests PRIVATE KinSealSimulationTestSupport Qt6::Widgets Qt6::Svg Qt6::Test setupapi)
 qt_add_executable(KinSealSimulationModbusTests

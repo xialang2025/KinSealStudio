@@ -871,6 +871,13 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
             menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
             return;
         }
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("alarmRegistrations")) //20261125-1 add
+        {
+            // The original parent action opens the digital alarm editor directly.
+            menu.addAction(QStringLiteral("新增报警登录"), this, [this]() { configureAlarmRegistration(0); });
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
         if (item != nullptr && (item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") || item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-condition"))) //20261113-2 add
         {
             int family = item->data(0, Qt::UserRole).toString() == QStringLiteral("alarm-bit") ? 0 : 1;

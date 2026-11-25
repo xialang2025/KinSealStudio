@@ -39,7 +39,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
     HmiObject object;
 
     modelAllowed = project.validateModel(&modelError);
-    backendAllowed = modelAllowed && project.validateSinglePageBackend(&backendError);
+    backendAllowed = modelAllowed && project.validateSinglePageBackend(&backendError, false); //20261125-4 change: The source supports a numbered ordinary page.
     targetAllowed = deviceTargetIdentityByte(project.targetModel) >= 0 && //20261122-3 change
                     project.pageWidth == 800 && project.pageHeight == 480;
     defaultsAllowed = project.nativeSourceSnapshot.isEmpty() ||

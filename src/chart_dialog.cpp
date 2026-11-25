@@ -282,11 +282,18 @@ QWidget *ChartDialog::basicPage(int shape) //20261112-1 add
     else
     {
         m_donutMinimum = number(rangeGrid, 0, QStringLiteral("最小值:"), QStringLiteral("ChartDonutMinimum"), &m_draft.donut.minimum, *dataType); m_donutMaximum = number(rangeGrid, 1, QStringLiteral("最大值:"), QStringLiteral("ChartDonutMaximum"), &m_draft.donut.maximum, *dataType);
-        attributes = new QGroupBox(QStringLiteral("属性"), page); grid = new QGridLayout(attributes); arcGroup = new QButtonGroup(attributes); ringRadio = new QRadioButton(QStringLiteral("圆圆环"), attributes); arc = new QRadioButton(QStringLiteral("圆圆弧"), attributes); ringRadio->setObjectName(QStringLiteral("ChartRing")); arc->setObjectName(QStringLiteral("ChartArc")); arcGroup->addButton(ringRadio); arcGroup->addButton(arc); ringRadio->setChecked(!m_draft.donut.arc); arc->setChecked(m_draft.donut.arc); grid->addWidget(ringRadio, 0, 0); grid->addWidget(arc, 0, 1); m_donutAttributes = new QStackedWidget(attributes); ring = new QWidget(attributes); arcPage = new QWidget(attributes); ringGrid = new QGridLayout(ring); arcGrid = new QGridLayout(arcPage);
+        attributes = new QGroupBox(QStringLiteral("属性"), page); grid = new QGridLayout(attributes); arcGroup = new QButtonGroup(attributes); ringRadio = new QRadioButton(QStringLiteral("画圆环"), attributes); arc = new QRadioButton(QStringLiteral("画圆弧"), attributes); ringRadio->setObjectName(QStringLiteral("ChartRing")); arc->setObjectName(QStringLiteral("ChartArc")); arcGroup->addButton(ringRadio); arcGroup->addButton(arc); ringRadio->setChecked(!m_draft.donut.arc); arc->setChecked(m_draft.donut.arc); grid->addWidget(ringRadio, 0, 0); grid->addWidget(arc, 0, 1); m_donutAttributes = new QStackedWidget(attributes); ring = new QWidget(attributes); arcPage = new QWidget(attributes); ringGrid = new QGridLayout(ring); arcGrid = new QGridLayout(arcPage); //20261125-3 change
         for (index = 1; index <= 32; ++index) { widths.append(QString::number(index)); }
         choice(ringGrid, 0, QStringLiteral("线型:"), QStringLiteral("ChartLineType"), ChartProperties::lineTypes(), &m_draft.donut.lineType); choice(ringGrid, 1, QStringLiteral("线宽:"), QStringLiteral("ChartLineWidth"), widths, &m_draft.donut.lineWidth, 1); textField(ringGrid, 2, QStringLiteral("圆环半径:"), QStringLiteral("ChartRadius"), &m_draft.donut.radius); textField(arcGrid, 0, QStringLiteral("圆弧起始角:"), QStringLiteral("ChartStartAngle"), &m_draft.donut.startAngle); textField(arcGrid, 1, QStringLiteral("圆弧跨度:"), QStringLiteral("ChartSpanAngle"), &m_draft.donut.spanAngle);
-        m_donutAttributes->addWidget(ring); m_donutAttributes->addWidget(arcPage); m_donutAttributes->setCurrentIndex(m_draft.donut.arc ? 1 : 0); grid->addWidget(m_donutAttributes, 1, 0, 1, 2); connect(arc, &QRadioButton::toggled, this, [this](bool checked) { m_draft.donut.arc = checked; m_donutAttributes->setCurrentIndex(checked ? 1 : 0); refresh(); }); layout->addWidget(attributes, 1, 0, 2, 1);
+        m_donutAttributes->addWidget(ring); m_donutAttributes->addWidget(arcPage); m_donutAttributes->setCurrentIndex(m_draft.donut.arc ? 1 : 0); grid->addWidget(m_donutAttributes, 1, 0, 1, 2); layout->addWidget(attributes, 1, 0, 2, 1);
         source = new QGroupBox(QStringLiteral("透明度"), page); grid = new QGridLayout(source); integer(grid, 0, QStringLiteral("透明度:"), QStringLiteral("ChartOpacity"), &m_draft.donut.opacity, 0, 255); layout->addWidget(source, 1, 1);
+        source->setVisible(!m_draft.donut.arc); //20261125-3 add: Opacity belongs to the ring outline, so retain its draft without exposing it in arc mode.
+        connect(arc, &QRadioButton::toggled, this, [this, source](bool checked) {
+            m_draft.donut.arc = checked;
+            m_donutAttributes->setCurrentIndex(checked ? 1 : 0);
+            source->setVisible(!checked);
+            refresh();
+        });
         fill = new QGroupBox(QStringLiteral("填充"), page); grid = new QGridLayout(fill); color(grid, 0, QStringLiteral("线颜色:"), QStringLiteral("ChartDonutColor"), &m_draft.donut.lineColor); choice(grid, 1, QStringLiteral("线宽:"), QStringLiteral("ChartFillWidth"), widths, &m_draft.donut.fillWidth, 1); layout->addWidget(fill, 2, 1);
     }
     return page;
@@ -375,16 +382,23 @@ HmiObject ChartDialog::object() const //20261112-1 add
 
 /******************************************************************************
  * Function Name   : ChartDialog::refresh
- * Description     : Render the same static preview as the canvas without emitting document mutations.
+ * Description     : Render the static editor sample without a filled arc before any runtime reading.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.12
  ******************************************************************************/
-void ChartDialog::refresh() //20261112-1 add
+void ChartDialog::refresh() //20261125-3 change
 {
     QImage image(130, 120, QImage::Format_ARGB32);
     QPainter painter;
-    image.fill(QColor(QStringLiteral("#f0f0f0"))); painter.begin(&image); paintChart(&painter, QRectF(15, 10, 100, 100), m_draft); painter.end(); m_preview->setPixmap(QPixmap::fromImage(image));
+    image.fill(QColor(QStringLiteral("#f0f0f0")));
+    if (m_draft.shape != 2 || !m_draft.donut.arc)
+    {
+        painter.begin(&image);
+        paintChart(&painter, QRectF(15, 10, 100, 100), m_draft);
+        painter.end();
+    }
+    m_preview->setPixmap(QPixmap::fromImage(image));
 }
 
 /******************************************************************************

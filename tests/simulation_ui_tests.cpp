@@ -29,6 +29,7 @@ private:
 private slots:
     void initTestCase();
     void sharedFrameFollowsAddress();
+    void offlineNumberDisplayFollowsWordButton();
     void heldMomentaryMoveAndCaptureLoss();
     void stoppedSessionKeepsSource();
     void snapshotDoesNotDirtyEditor();
@@ -136,6 +137,59 @@ void SimulationUiTests::sharedFrameFollowsAddress() //20261114-6 add
     QCOMPARE(before.size(), QSize(800, 480));
     QVERIFY(before.copy(QRect(200, 20, 101, 60)) != after.copy(QRect(200, 20, 101, 60)));
     QCOMPARE(window.runtime().visualState(window.runtime().project().objects.at(2)), 1);
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::offlineNumberDisplayFollowsWordButton
+ * Description     : Observe a passive monitor repaint after a real local word button writes its source address.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationUiTests::offlineNumberDisplayFollowsWordButton() //20261125-2 add
+{
+    HmiProject project = simulationTestProject();
+    HmiObject button = project.objects.first();
+    HmiObject monitor;
+    SimulationWindow window;
+    SimulationViewport *view;
+    QImage before;
+    QImage after;
+    QString error;
+
+    button.address = QStringLiteral("LW30");
+    button.hasWordButtonProperties = true;
+    button.bitButton.indicator = false;
+    button.bitButton.dualMonitor = false;
+    button.wordButton.resetDefaultsForDataType(0);
+    button.wordButton.constantValue = QStringLiteral("650");
+
+    monitor.id = QStringLiteral("number");
+    monitor.name = monitor.id;
+    monitor.type = QStringLiteral("number");
+    monitor.geometry = QRect(320, 20, 150, 60);
+    monitor.address = button.address;
+    monitor.hasNumberDisplayProperties = true;
+    monitor.numberDisplay.allowInput = false;
+    monitor.numberDisplay.monitorAddress = monitor.address;
+    monitor.numberDisplay.backgroundColor = QStringLiteral("#eedd88");
+    monitor.numberDisplay.decimalDigits = 1;
+    project.objects = {button, monitor};
+
+    QVERIFY2(window.initialize(project, &error), qPrintable(error));
+    window.show();
+    QApplication::processEvents();
+    view = window.findChild<SimulationViewport *>();
+    QVERIFY(view != nullptr);
+    before = simulationFrame(window.runtime());
+    QCOMPARE(before.pixelColor(monitor.geometry.topLeft()), QColor(monitor.numberDisplay.backgroundColor));
+    QVERIFY(!window.runtime().touchAllowed(monitor));
+    QCOMPARE(window.runtime().numberDisplayValue(monitor), QStringLiteral("0.0"));
+
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, button.geometry.center());
+    after = simulationFrame(window.runtime());
+    QCOMPARE(window.runtime().numberDisplayValue(monitor), QStringLiteral("65.0"));
+    QVERIFY(after.copy(monitor.geometry) != before.copy(monitor.geometry));
 }
 
 /******************************************************************************

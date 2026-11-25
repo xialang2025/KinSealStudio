@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath> //20261125-1 add
 #include <QUuid>
 #include <algorithm>
 
@@ -158,6 +159,11 @@ void ScreenCanvas::mouseDoubleClickEvent(QMouseEvent *event) //20261108-14 add
 {
     HmiControlItem *item;
 
+    if (dragMode() == QGraphicsView::ScrollHandDrag) //20261125-1 add
+    {
+        QGraphicsView::mouseDoubleClickEvent(event);
+        return;
+    }
     if (m_hasPending && (m_pendingObject.type == QStringLiteral("polyline") || m_pendingObject.type == QStringLiteral("polygon")) && graphicPress(event,mapToScene(event->position().toPoint()))) { return; } //20261113-2 add: Do not open an existing object's properties while a multi-click draft owns the gesture.
     item = dynamic_cast<HmiControlItem *>(itemAt(event->position().toPoint()));
     if (event->button() == Qt::LeftButton && item != nullptr)
@@ -307,6 +313,7 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
     qreal totalSize;
     qreal gap;
     qreal coordinate;
+    QPainterPath pageSelection; //20261125-1 add
 
     cancelInteraction(); before = objects();
     selected = m_scene->selectedItems();
@@ -320,6 +327,16 @@ void ScreenCanvas::executeEdit(const QString &command) //20261108-14 add
         return;
     }
     if (command == QStringLiteral("grid")) { m_grid = !m_grid; viewport()->update(); return; }
+    if (command == QStringLiteral("reverseSelection")) //20261125-1 add
+    {
+        // The native command excludes the old selection from a page-wide shape hit test.
+        Q_FOREACH (graphicsItem, selected) { graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable, false); }
+        pageSelection.addRect(m_scene->sceneRect());
+        m_scene->setSelectionArea(pageSelection);
+        Q_FOREACH (graphicsItem, selected) { graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable, true); }
+        publishSelection();
+        return;
+    }
     if (command.startsWith(QStringLiteral("simulate"))) //20261124-5 change
     {
         position = command.mid(8).toInt(&ok);
@@ -896,7 +913,10 @@ bool ScreenCanvas::canExecuteEdit(const QString &command) const //20261110-7 add
     if (command == QStringLiteral("undo")) { return m_historyIndex > 0; }
     if (command == QStringLiteral("redo")) { return m_historyIndex + 1 < m_history.size(); }
     if (command == QStringLiteral("paste")) { return !m_clipboard.isEmpty() && objects().size() < 100; }
-    if (command == QStringLiteral("selectAll")) { return !objects().isEmpty(); }
+    if (command == QStringLiteral("selectAll") || command == QStringLiteral("reverseSelection")) //20261125-1 change
+    {
+        return !objects().isEmpty();
+    }
     if (command == QStringLiteral("grid")) { return true; }
     if (command == QStringLiteral("alignHorizontalSpacing") || command == QStringLiteral("alignVerticalSpacing")) { return selected > 2; } //20261110-8 add
     if (command.startsWith(QStringLiteral("align")) || command == QStringLiteral("group")) { return selected > 1; }

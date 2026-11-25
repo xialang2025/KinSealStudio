@@ -12,6 +12,8 @@ class SimulationRuntimeTests : public QObject
 private slots:
     void immutableSessionAndTransactionalStart();
     void localRolesAndSpanIsolation();
+    void readOnlyNumberDisplaysLocalValues_data();
+    void readOnlyNumberDisplaysLocalValues();
     void typedMemory_data();
     void typedMemory();
     void rawWordOrderAndInvalidInterpretations();
@@ -27,6 +29,9 @@ private slots:
     void inputLostAccessAndPasswordLog();
     void permissionComparisons_data();
     void permissionComparisons();
+    void combinedGateTruthTable();
+    void floatPermissionToleranceIncludesEndpoints();
+    void remoteGateLosesPendingAccess();
     void bitLevelAndWordBitMonitoring();
     void multiLampUnknownState();
     void languageLogoutAndMacroSkip();
@@ -165,6 +170,75 @@ void SimulationRuntimeTests::localRolesAndSpanIsolation() //20261114-6 add
     QCOMPARE(value, QStringLiteral("unchanged"));
     QVERIFY(runtime.readWord(QStringLiteral("LW4096"), 0, &value, &error));
     QCOMPARE(value, QStringLiteral("65535"));
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntimeTests::readOnlyNumberDisplaysLocalValues_data
+ * Description     : Cover each supported numeric display type using the shared typed memory.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationRuntimeTests::readOnlyNumberDisplaysLocalValues_data() //20261125-2 add
+{
+    QTest::addColumn<int>("displayType");
+    QTest::addColumn<int>("wordType");
+    QTest::addColumn<int>("decimals");
+    QTest::addColumn<QString>("written");
+    QTest::addColumn<QString>("displayed");
+    QTest::newRow("i16") << 0 << 2 << 2 << QStringLiteral("-1234") << QStringLiteral("-12.34");
+    QTest::newRow("u16") << 1 << 0 << 0 << QStringLiteral("33059") << QStringLiteral("33059");
+    QTest::newRow("bcd16") << 2 << 4 << 0 << QStringLiteral("8123") << QStringLiteral("8123");
+    QTest::newRow("i32") << 5 << 3 << 0 << QStringLiteral("-2147483648") << QStringLiteral("-2147483648");
+    QTest::newRow("u32") << 6 << 1 << 0 << QStringLiteral("2926204531") << QStringLiteral("2926204531");
+    QTest::newRow("bcd32") << 7 << 5 << 0 << QStringLiteral("45678123") << QStringLiteral("45678123");
+    QTest::newRow("f32") << 8 << 6 << 2 << QStringLiteral("1.5") << QStringLiteral("1.50");
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntimeTests::readOnlyNumberDisplaysLocalValues
+ * Description     : Read a live local word and keep the monitor passive and separate from editor state.
+ * Input Parameters: QtTest data rows
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationRuntimeTests::readOnlyNumberDisplaysLocalValues() //20261125-2 add
+{
+    QFETCH(int, displayType);
+    QFETCH(int, wordType);
+    QFETCH(int, decimals);
+    QFETCH(QString, written);
+    QFETCH(QString, displayed);
+    const QString address = QStringLiteral("LW30");
+    HmiProject project;
+    HmiObject monitor;
+    SimulationRuntime runtime;
+    QString error;
+
+    monitor.id = QStringLiteral("number");
+    monitor.name = monitor.id;
+    monitor.type = QStringLiteral("number");
+    monitor.geometry = QRect(20, 20, 180, 60);
+    monitor.address = address;
+    monitor.hasNumberDisplayProperties = true;
+    monitor.numberDisplay.allowInput = false;
+    monitor.numberDisplay.changeDataType(displayType);
+    monitor.numberDisplay.decimalDigits = decimals;
+    monitor.numberDisplay.monitorAddress = address;
+    project.objects = {monitor};
+
+    QVERIFY2(runtime.start(project, &error), qPrintable(error));
+    QVERIFY(!runtime.online());
+    QVERIFY(runtime.isVisible(monitor));
+    QVERIFY(!runtime.touchAllowed(monitor));
+    QVERIFY(!runtime.press(monitor.id, &error));
+    QVERIFY(runtime.pendingInputObjectId().isEmpty());
+    QVERIFY2(runtime.writeWord(address, wordType, written, &error), qPrintable(error));
+    QCOMPARE(runtime.numberDisplayValue(monitor), displayed);
+
+    project.objects[0].numberDisplay.allowInput = true;
+    QVERIFY(!runtime.start(project, &error));
+    QCOMPARE(runtime.numberDisplayValue(monitor), displayed);
 }
 
 /******************************************************************************
@@ -642,6 +716,185 @@ void SimulationRuntimeTests::permissionComparisons() //20261114-6 add
 }
 
 /******************************************************************************
+ * Function Name   : SimulationRuntimeTests::combinedGateTruthTable
+ * Description     : Exercise all enabled-mask and operand combinations independently for visibility and touch.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationRuntimeTests::combinedGateTruthTable() //20261125-2 add
+{
+    const QString bitAddress = QStringLiteral("LB2");
+    const QString wordAddress = QStringLiteral("LW10");
+    HmiObject visible = bitObject(QStringLiteral("visible"));
+    HmiObject touchable = bitObject(QStringLiteral("touchable"), 2, QStringLiteral("LB1"));
+    HmiProject project;
+    SimulationRuntime runtime;
+    StaticTextProperties gate;
+    QString error;
+    int enabled;
+    int satisfied;
+    bool passes;
+
+    gate.visibilityEnabled = true;
+    gate.bitAddress = bitAddress;
+    gate.bitState = true;
+    gate.wordAddress = wordAddress;
+    gate.comparison = 2;
+    gate.compareValue = QStringLiteral("10");
+    gate.tolerance = QStringLiteral("1");
+    gate.minimumLevel = 3;
+    for (enabled = 0; enabled < 8; ++enabled)
+    {
+        gate.bitEnabled = (enabled & 4) != 0;
+        gate.wordEnabled = (enabled & 2) != 0;
+        gate.levelEnabled = (enabled & 1) != 0;
+        visible.bitButton.visibility = gate;
+        touchable.bitButton.touch = gate;
+        project.objects = {visible, touchable};
+        QVERIFY2(runtime.start(project, &error), qPrintable(error));
+        for (satisfied = 0; satisfied < 8; ++satisfied)
+        {
+            QVERIFY(runtime.writeBit(bitAddress, (satisfied & 4) != 0, &error));
+            QVERIFY(runtime.writeWord(wordAddress, 0, satisfied & 2 ? QStringLiteral("11") : QStringLiteral("12"), &error));
+            QVERIFY(runtime.setUserLevel(satisfied & 1 ? 3 : 2, &error));
+            passes = (enabled & ~satisfied) == 0;
+            QCOMPARE(runtime.isVisible(visible), passes);
+            QVERIFY(runtime.isVisible(touchable));
+            QCOMPARE(runtime.touchAllowed(touchable), passes);
+        }
+    }
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntimeTests::floatPermissionToleranceIncludesEndpoints
+ * Description     : Check the observed closed interval, inversion, clamped negative tolerance and invalid local raw values.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationRuntimeTests::floatPermissionToleranceIncludesEndpoints() //20261125-2 add
+{
+    const QString address = QStringLiteral("LW10");
+    HmiObject equal = bitObject(QStringLiteral("equal"));
+    HmiObject unequal = bitObject(QStringLiteral("unequal"), 0, QStringLiteral("LB1"));
+    StaticTextProperties gate;
+    HmiProject project;
+    SimulationRuntime runtime;
+    QString error;
+
+    gate.visibilityEnabled = true;
+    gate.wordEnabled = true;
+    gate.wordAddress = address;
+    gate.dataType = 4; // The permission model uses float index 4.
+    gate.comparison = 2;
+    gate.compareValue = QStringLiteral("10");
+    gate.tolerance = QStringLiteral("0.25");
+    equal.bitButton.visibility = gate;
+    gate.comparison = 3;
+    unequal.bitButton.visibility = gate;
+    project.objects = {equal, unequal};
+    QVERIFY2(runtime.start(project, &error), qPrintable(error));
+
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("9.75"), &error));
+    QVERIFY(runtime.isVisible(equal));
+    QVERIFY(!runtime.isVisible(unequal));
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("10.25"), &error));
+    QVERIFY(runtime.isVisible(equal));
+    QVERIFY(!runtime.isVisible(unequal));
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("9.749999"), &error));
+    QVERIFY(!runtime.isVisible(equal));
+    QVERIFY(runtime.isVisible(unequal));
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("10.250001"), &error));
+    QVERIFY(!runtime.isVisible(equal));
+    QVERIFY(runtime.isVisible(unequal));
+
+    // The Lite memory decoder does not publish a NaN as either an equal or unequal confirmed value.
+    QVERIFY(runtime.writeWord(address, 1, QStringLiteral("2143289344"), &error));
+    QVERIFY(!runtime.isVisible(equal));
+    QVERIFY(!runtime.isVisible(unequal));
+
+    project.objects[0].bitButton.visibility.tolerance = QStringLiteral("-0.25");
+    QVERIFY2(runtime.start(project, &error), qPrintable(error));
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("9.875"), &error));
+    QVERIFY(!runtime.isVisible(equal));
+    QVERIFY(runtime.writeWord(address, 6, QStringLiteral("10"), &error));
+    QVERIFY(runtime.isVisible(equal));
+}
+
+/******************************************************************************
+ * Function Name   : SimulationRuntimeTests::remoteGateLosesPendingAccess
+ * Description     : Register both remote dependencies and cancel a held local operation when either read becomes unconfirmed.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void SimulationRuntimeTests::remoteGateLosesPendingAccess() //20261125-2 add
+{
+    const QString coilAddress = QStringLiteral("@test-rtu:0x17");
+    const QString wordAddress = QStringLiteral("@test-rtu:4x24");
+    HmiObject button = bitObject(QStringLiteral("remote-gated-hold"), 2);
+    HmiProject project;
+    PlcConnection connection;
+    SimulationExternalAccess access;
+    SimulationRuntime runtime;
+    QStringList bound;
+    QString error;
+    bool coilReady = false;
+    bool wordReady = false;
+    bool malformedCoil = false;
+    bool held;
+
+    connection.id = QStringLiteral("test-rtu");
+    connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+    connection.channel = PlcChannel::Com1;
+    connection.station = QStringLiteral("7");
+    project.connections = {connection};
+    button.bitButton.touch.visibilityEnabled = true;
+    button.bitButton.touch.bitEnabled = true;
+    button.bitButton.touch.bitAddress = coilAddress;
+    button.bitButton.touch.bitState = true;
+    button.bitButton.touch.wordEnabled = true;
+    button.bitButton.touch.wordAddress = wordAddress;
+    button.bitButton.touch.comparison = 2;
+    button.bitButton.touch.compareValue = QStringLiteral("23");
+    button.bitButton.touch.levelEnabled = true;
+    button.bitButton.touch.minimumLevel = 3;
+    project.objects = {button};
+    access.check = [&](const QString &address, bool bit, int span, bool write, QString *) {
+        if (span != 1 || write || address != (bit ? coilAddress : wordAddress)) { return false; }
+        bound.append(address);
+        return true;
+    };
+    access.read = [&](const QString &address, bool bit, int span, QVector<u16> *values, QString *) {
+        if (span != 1 || address != (bit ? coilAddress : wordAddress) || !(bit ? coilReady : wordReady)) { return false; }
+        *values = bit && malformedCoil ? QVector<u16>{} : QVector<u16>{u16(bit ? 1 : 23)};
+        return true;
+    };
+
+    QVERIFY2(runtime.start(project, &error, access), qPrintable(error));
+    QCOMPARE(bound, (QStringList{coilAddress, wordAddress}));
+    QVERIFY(runtime.setUserLevel(3, &error));
+    QVERIFY(!runtime.touchAllowed(button));
+    wordReady = true;
+    QVERIFY(!runtime.touchAllowed(button));
+    coilReady = true;
+    malformedCoil = true;
+    QVERIFY(!runtime.touchAllowed(button));
+    malformedCoil = false;
+    QVERIFY(runtime.touchAllowed(button));
+    QVERIFY(runtime.press(button.id, &error));
+    QVERIFY(runtime.readBit(button.address, &held, &error));
+    QVERIFY(held);
+    wordReady = false;
+    runtime.refreshExternalValues();
+    QVERIFY(runtime.readBit(button.address, &held, &error));
+    QVERIFY(!held);
+    QVERIFY(!runtime.isPressed(button.id));
+    QVERIFY(!runtime.touchAllowed(button));
+}
+
+/******************************************************************************
  * Function Name   : SimulationRuntimeTests::bitLevelAndWordBitMonitoring
  * Description     : Separate monitored word bits from the operation bit and release a hidden momentary control.
  * Input Parameters: None
@@ -806,12 +1059,13 @@ void SimulationRuntimeTests::capabilityRefusals() //20261114-6 add
         invalid.objects[0].bitButton.visibility.visibilityEnabled = true;
         invalid.objects[0].bitButton.visibility.bitEnabled = true;
         invalid.objects[0].bitButton.visibility.levelEnabled = true;
+        invalid.objects[0].bitButton.visibility.bitAddress = QStringLiteral("LW0"); //20261125-2 change: Bad operand, not the combination, is rejected.
     }
     else if (scenario == 6)
     {
         invalid.objects[0].bitButton.touch.visibilityEnabled = true;
         invalid.objects[0].bitButton.touch.wordEnabled = true;
-        invalid.objects[0].bitButton.touch.tolerance = QStringLiteral("1");
+        invalid.objects[0].bitButton.touch.tolerance = QStringLiteral("NaN"); //20261125-2 change: Only non-finite tolerance is invalid.
     }
     else if (scenario == 7)
     {
@@ -846,7 +1100,12 @@ void SimulationRuntimeTests::capabilityRefusals() //20261114-6 add
         invalid.objects = {wordObject(QStringLiteral("scaled-input"), 1)};
         invalid.objects[0].wordButton.decimalDigits = 1;
     }
-    else if (scenario == 14) { invalid.objects[0].bitButton.touch.visibilityEnabled = true; }
+    else if (scenario == 14)
+    {
+        invalid.objects[0].bitButton.touch.visibilityEnabled = true;
+        invalid.objects[0].bitButton.touch.levelEnabled = true;
+        invalid.objects[0].bitButton.touch.minimumLevel = 9; //20261125-2 change: A zero-mask gate is valid, while invalid levels still fail.
+    }
     else { invalid.objects[0].bitButton.states[0].text.visibilityEnabled = true; }
     report = SimulationRuntime::capabilities(invalid);
     QVERIFY(!report.value(QStringLiteral("supported")).toBool());

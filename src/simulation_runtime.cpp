@@ -291,28 +291,20 @@ int numberMonitorType(int dataType) //20261124-13 add
 
 /******************************************************************************
  * Function Name   : checkCondition
- * Description     : Admit one known condition while refusing unverified condition composition or tolerance semantics.
- * Input Parameters: properties, error
- * Return Value    : True for a bounded local-only gate.
+ * Description     : Validate every enabled operand of an independent visibility or touch gate.
+ * Input Parameters: properties, external, error
+ * Return Value    : True when every active read can be mapped.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool checkCondition(const StaticTextProperties &properties, const SimulationExternalAccess &external, QString *error) //20261114-6 add
+bool checkCondition(const StaticTextProperties &properties, const SimulationExternalAccess &external, QString *error) //20261125-2 change
 {
-    int active;
     double number;
-    double tolerance;
-    bool numeric;
 
     if (!properties.validate(error)) { return false; }
     if (!properties.visibilityEnabled) { return true; }
-    active = int(properties.bitEnabled) + int(properties.levelEnabled) + int(properties.wordEnabled);
-    if (active == 0) { return fail(error, QStringLiteral("权限已启用但没有活动条件，其原厂语义未核定。")); }
-    if (active > 1) { return fail(error, QStringLiteral("多条件AND/OR尚未核定，离线模拟拒绝该权限组合。")); }
     if (properties.bitEnabled && !checkSimulationAddress(properties.bitAddress, true, 1, false, external, error)) { return false; }
     if (properties.wordEnabled)
     {
-        tolerance = properties.tolerance.toDouble(&numeric);
-        if (!numeric || tolerance != 0) { return fail(error, QStringLiteral("非零容差语义未核定，离线模拟拒绝该条件。")); }
         if (!checkSimulationAddress(properties.wordAddress, false, wordSpan(conditionType(properties.dataType)), false, external, error) ||
             !parseNumber(properties.compareValue, conditionType(properties.dataType), &number, error)) { return false; }
     }
@@ -358,7 +350,7 @@ bool checkNotice(const HmiObject &object, QString *error) //20261114-6 add
  * Function Name   : checkObject
  * Description     : Reject unsupported control behavior before any runtime session can replace its predecessor.
  * Input Parameters: object, project, error
- * Return Value    : True for one of the five bounded control families.
+ * Return Value    : True when the available simulation services can run the control.
  * Date            : 2026.11.14
  ******************************************************************************/
 bool checkObject(const HmiObject &object, const HmiProject &project, const SimulationExternalAccess &external, QString *error) //20261114-6 add
@@ -370,13 +362,14 @@ bool checkObject(const HmiObject &object, const HmiProject &project, const Simul
 
     if (object.type == QStringLiteral("text"))
     { return !object.hasStaticTextProperties || checkCondition(object.staticText, external, error); }
-    if (external.check && object.type == QStringLiteral("number") && object.hasNumberDisplayProperties)
+    //20261125-2 change: A passive monitor uses the typed local store when no external access is present.
+    if (object.type == QStringLiteral("number") && object.hasNumberDisplayProperties)
     {
         const NumberDisplayProperties &number = object.numberDisplay;
         monitorType = numberMonitorType(number.dataType);
         if (monitorType < 0 || number.allowInput || number.offsetEnabled || number.scaling ||
             number.displayRange || number.customDisplay)
-        { return fail(error, QStringLiteral("在线数值显示仅支持基础监视，请关闭输入、偏移、比例、范围和自定义显示。")); }
+        { return fail(error, QStringLiteral("模拟数值显示仅支持基础监视，请关闭输入、偏移、比例、范围和自定义显示。")); }
         return number.validate(error) && checkCondition(number.visibility, external, error) &&
             checkSimulationAddress(number.monitorAddress, false, wordSpan(monitorType), false, external, error);
     }
@@ -650,6 +643,8 @@ bool SimulationRuntime::readBit(const QString &address, bool *value, QString *er
     if (m_external.read && simulationExternalAddress(address))
     {
         if (!m_external.read(address, true, 1, &words, error)) { return false; }
+        if (words.size() != 1) //20261125-2 add: Never unlock a gate without one confirmed bit response.
+        { return fail(error, QStringLiteral("外部模拟位读取的返回长度无效。")); }
         *value = words.first() != 0;
         return true;
     }
@@ -759,32 +754,35 @@ const HmiObject *SimulationRuntime::findObject(const QString &id) const //202611
 
 /******************************************************************************
  * Function Name   : SimulationRuntime::condition
- * Description     : Evaluate one validated bit, level or typed-word predicate using the model enum order.
+ * Description     : Require all enabled predicates and fail closed when a confirmed operand is unavailable.
  * Input Parameters: properties
  * Return Value    : Predicate value, false for unreadable memory.
  * Date            : 2026.11.14
  ******************************************************************************/
-bool SimulationRuntime::condition(const StaticTextProperties &properties) const //20261114-6 add
+bool SimulationRuntime::condition(const StaticTextProperties &properties) const //20261125-2 change
 {
     bool bit;
     int type;
     double value;
     double expected;
+    double tolerance;
 
     if (!properties.visibilityEnabled) { return true; }
-    if (properties.bitEnabled)
-    { return readBit(properties.bitAddress, &bit, nullptr) && bit == properties.bitState; }
-    if (properties.levelEnabled) { return m_userLevel >= properties.minimumLevel; }
+    if (properties.bitEnabled && (!readBit(properties.bitAddress, &bit, nullptr) || bit != properties.bitState)) { return false; }
+    if (properties.levelEnabled && m_userLevel < properties.minimumLevel) { return false; }
+    // An enabled gate with an empty predicate mask also passes on both native targets.
     if (!properties.wordEnabled) { return true; }
     type = conditionType(properties.dataType);
     if (!readNumeric(properties.wordAddress, type, &value, nullptr) ||
         !parseNumber(properties.compareValue, type, &expected, nullptr)) { return false; }
+    // The native equality tests include both endpoints and treat negative tolerance as zero.
+    tolerance = qMax(0.0, properties.tolerance.toDouble());
     switch (properties.comparison)
     {
     case 0: return value < expected;
     case 1: return value > expected;
-    case 2: return value == expected;
-    case 3: return value != expected;
+    case 2: return value >= expected - tolerance && value <= expected + tolerance;
+    case 3: return value < expected - tolerance || value > expected + tolerance;
     case 4: return value <= expected;
     case 5: return value >= expected;
     default: return false;
@@ -811,7 +809,7 @@ bool SimulationRuntime::isVisible(const HmiObject &object) const //20261114-6 ad
 
 /******************************************************************************
  * Function Name   : SimulationRuntime::touchAllowed
- * Description     : Exclude display-only controls and combine visibility with one validated touch gate.
+ * Description     : Exclude display-only controls and combine visibility with the independent touch gate.
  * Input Parameters: object
  * Return Value    : True for an owned interactive button currently allowed by access state.
  * Date            : 2026.11.14

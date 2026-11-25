@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QFocusEvent> //20261124-12 add
 #include <QGroupBox> //20261123-4 add
+#include <QGraphicsScene> //20261125-1 add
 #include <QInputDialog> //20261124-7 add
 #include <QLabel>
 #include <QLineEdit>
@@ -79,6 +80,8 @@ private slots:
     void toolbarFlipsArtworkAndPersists(); //20261124-15 add
     void flippedLineFollowsVisibleHandles();
     void multiSelectionMarksLastObjectAndAlignsToIt(); //20261124-16 add
+    void reverseSelectionComplementsSelectableControls(); //20261125-1 add
+    void panViewDragsWithoutEditingAndArrowRestoresSelection(); //20261125-1 add
     void textClipboardDoesNotModifyCanvas();
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
@@ -134,6 +137,11 @@ private slots:
     void nativeProjectMacroSchedulesRoundTrip(); //20261123-23 add
     void emptyWindowKeepsZeroWidthAcrossSave(); //20261123-13 add
     void nativeShellResourcesAndNavigation(); //20261111-1 add
+    void nativeStandardToolbarVisibility(); //20261125-1 add
+    void nativeStandardToolbarVisibility_data();
+    void nativeAlarmAddCommands_data();
+    void nativeAlarmAddCommands();
+    void nativeAlarmTreeParentOpensDigitalRegistration(); //20261125-1 add
     void nativeShellQuickPropertiesPreserveEditing();
     void nativeShellPendingCommandsAreReadOnly();
     void nativePropertyToolbarEditsSelectedControl(); //20261124-0 add
@@ -173,6 +181,7 @@ void Stage2WorkflowTests::initTestCase() //20261110-7 add
     QVERIFY(m_settings.isValid());
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, m_settings.path());
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, m_settings.path()); //20261125-5 add: Keep machine preferences out of the workflow fixture.
 }
 
 /******************************************************************************
@@ -964,6 +973,121 @@ void Stage2WorkflowTests::multiSelectionMarksLastObjectAndAlignsToIt() //2026112
 }
 
 /******************************************************************************
+ * Function Name   : reverseSelectionComplementsSelectableControls
+ * Description     : Exercise native reverse selection from single, empty and full selections.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::reverseSelectionComplementsSelectableControls() //20261125-1 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiObject locked = project.objects.first();
+    HmiObject other = project.objects.first();
+    QAction *action;
+    QGraphicsItem *graphics;
+    HmiControlItem *control;
+    HmiControlItem *lockedItem = nullptr;
+    int history;
+
+    locked.id = QStringLiteral("locked-item");
+    locked.geometry.moveTopLeft(QPoint(20, 20));
+    other.id = QStringLiteral("other-item");
+    other.geometry.moveTopLeft(QPoint(60, 260));
+    project.objects.append(locked);
+    project.objects.append(other);
+    window.setProject(project, QString());
+    window.show();
+    history = window.m_projectHistoryIndex;
+    action = window.m_commands.value(QStringLiteral("action_reverse_selection"));
+    QVERIFY(action && action->isEnabled() && !action->property("nativeShellPending").toBool());
+    Q_FOREACH (graphics, window.m_canvas->scene()->items())
+    {
+        control = dynamic_cast<HmiControlItem *>(graphics);
+        if (control != nullptr && control->toHmiObject().id == locked.id) { lockedItem = control; }
+    }
+    QVERIFY(lockedItem);
+    lockedItem->setFlag(QGraphicsItem::ItemIsMovable, false); // A native locked item is still selectable.
+
+    window.m_canvas->selectObject(project.objects.first().id);
+    action->trigger();
+    QVERIFY(lockedItem->isSelected());
+    QVERIFY(window.m_canvas->selectedObjectIds().contains(other.id));
+    QCOMPARE(window.m_canvas->selectedObjectIds().size(), 2);
+    action->trigger();
+    QCOMPARE(window.m_canvas->selectedObjectIds(), QStringList{project.objects.first().id});
+    window.m_canvas->selectObjects(QStringList());
+    action->trigger();
+    QCOMPARE(window.m_canvas->selectedObjectIds().size(), 3);
+    action->trigger();
+    QVERIFY(window.m_canvas->selectedObjectIds().isEmpty());
+    QVERIFY(lockedItem->flags().testFlag(QGraphicsItem::ItemIsSelectable));
+    QVERIFY(!lockedItem->flags().testFlag(QGraphicsItem::ItemIsMovable));
+    QCOMPARE(window.m_projectHistoryIndex, history);
+    QVERIFY(!window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : panViewDragsWithoutEditingAndArrowRestoresSelection
+ * Description     : Exercise the hand tool over a selected control and restore normal canvas input.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::panViewDragsWithoutEditingAndArrowRestoresSelection() //20261125-1 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    ScreenCanvas *canvas = window.m_canvas;
+    QWidget *viewport = canvas->viewport();
+    QScrollBar *horizontal = canvas->horizontalScrollBar();
+    QScrollBar *vertical = canvas->verticalScrollBar();
+    QAction *pan = window.m_commands.value(QStringLiteral("action_panview"));
+    QAction *arrow = window.m_commands.value(QStringLiteral("action_arrow"));
+    QPoint start;
+    QPoint end;
+    QRect geometry;
+    int history;
+
+    project.objects.first().geometry.moveTopLeft(QPoint(85, 65));
+    geometry = project.objects.first().geometry;
+    window.setProject(project, QString());
+    window.resize(1010, 540);
+    window.show();
+    canvas->setZoomPercent(150);
+    QCoreApplication::processEvents();
+    horizontal->setValue(0);
+    vertical->setValue(0);
+    QVERIFY(horizontal->maximum() > 0 && vertical->maximum() > 0);
+    QVERIFY(pan && pan->isEnabled() && arrow && arrow->isEnabled());
+    canvas->selectObject(project.objects.first().id);
+    history = window.m_projectHistoryIndex;
+
+    pan->trigger();
+    QCOMPARE(canvas->dragMode(), QGraphicsView::ScrollHandDrag);
+    start = canvas->mapFromScene(geometry.center());
+    end = start - QPoint(40, 30);
+    QVERIFY(viewport->rect().contains(start) && viewport->rect().contains(end));
+    QTest::mousePress(viewport, Qt::LeftButton, Qt::NoModifier, start);
+    QMouseEvent drag(QEvent::MouseMove, end, viewport->mapToGlobal(end), Qt::NoButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(viewport, &drag);
+    QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, end);
+    QVERIFY(horizontal->value() > 0 && vertical->value() > 0);
+    QCOMPARE(canvas->objects().first().geometry, geometry);
+    QCOMPARE(canvas->selectedObjectIds(), QStringList{project.objects.first().id});
+    QCOMPARE(window.m_projectHistoryIndex, history);
+    QVERIFY(!window.m_dirty);
+
+    pan->trigger();
+    QCOMPARE(canvas->dragMode(), QGraphicsView::RubberBandDrag);
+    pan->trigger();
+    arrow->trigger();
+    QCOMPARE(canvas->dragMode(), QGraphicsView::RubberBandDrag);
+    QVERIFY(canvas->isInteractive());
+}
+
+/******************************************************************************
  * Function Name   : textClipboardDoesNotModifyCanvas
  * Description     : Keep focused text edit operations separate from selected canvas controls.
  * Input Parameters: None
@@ -1227,6 +1351,7 @@ void Stage2WorkflowTests::standardDialogsFollowInterfaceLanguage() //20261124-7 
     QSettings settings(QStringLiteral("KinSealStudioLite"), QStringLiteral("Editor"));
 
     QVERIFY(chinese != nullptr && english != nullptr && chinese->isEnabled() && english->isEnabled());
+    chinese->trigger(); //20261125-5 add: Start the locale round trip through the same menu used to switch back.
     window.setProject(changed, QString());
     changed.name = QStringLiteral("unsaved-language-test");
     QVERIFY(window.commitProjectDraft(changed));
@@ -5261,6 +5386,200 @@ void Stage2WorkflowTests::nativeShellResourcesAndNavigation() //20261111-1 add
     QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeControlCount"))->text(), QString());
     QCOMPARE(window.findChild<QLineEdit *>(QStringLiteral("NativeResolution"))->text(), QString());
     QCOMPARE(field->text(), QString());
+}
+
+/******************************************************************************
+ * Function Name   : nativeStandardToolbarVisibility_data
+ * Description     : Match the native View commands with their exact toolbar targets.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeStandardToolbarVisibility_data() //20261125-1 add
+{
+    QTest::addColumn<QString>("actionName");
+    QTest::addColumn<QString>("targetName");
+    QTest::addColumn<QString>("otherName");
+    QTest::newRow("standard") << QStringLiteral("action_36") << QStringLiteral("standardToolBar")
+        << QStringLiteral("mapToolBar");
+    QTest::newRow("extended") << QStringLiteral("action_37") << QStringLiteral("mapToolBar")
+        << QStringLiteral("standardToolBar");
+}
+
+/******************************************************************************
+ * Function Name   : nativeStandardToolbarVisibility
+ * Description     : Verify the View menu and toolbar context menu share real visibility.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeStandardToolbarVisibility() //20261125-1 add
+{
+    QFETCH(QString, actionName);
+    QFETCH(QString, targetName);
+    QFETCH(QString, otherName);
+    MainWindow window;
+    QAction *action;
+    QToolBar *target;
+    QToolBar *other;
+    int history;
+
+    window.setProject(workflowProject(), QString());
+    window.show();
+    action = window.m_commands.value(actionName);
+    target = window.findChild<QToolBar *>(targetName);
+    other = window.findChild<QToolBar *>(otherName);
+    history = window.m_projectHistoryIndex;
+    QVERIFY(action && target && other);
+    QVERIFY(action->isEnabled() && action->isCheckable() && action->isChecked());
+    QVERIFY(target->isVisible() && other->isVisible());
+    action->trigger();
+    QVERIFY(target->isHidden() && !action->isChecked());
+    QVERIFY(other->isVisible());
+    target->toggleViewAction()->trigger();
+    QVERIFY(target->isVisible() && action->isChecked());
+    QCOMPARE(window.m_projectHistoryIndex, history);
+    QVERIFY(!window.m_dirty);
+
+    window.closeProject();
+    QVERIFY(!window.m_hasProject && action->isEnabled());
+    action->trigger();
+    QVERIFY(target->isHidden() && !action->isChecked());
+    action->trigger();
+    QVERIFY(target->isVisible() && action->isChecked());
+}
+
+/******************************************************************************
+ * Function Name   : nativeAlarmAddCommands_data
+ * Description     : Distinguish the native Add menu's two alarm families.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeAlarmAddCommands_data() //20261125-1 add
+{
+    QTest::addColumn<QString>("actionName");
+    QTest::addColumn<QString>("title");
+    QTest::addColumn<QString>("address");
+    QTest::addColumn<int>("family");
+    QTest::addColumn<int>("rows");
+    QTest::newRow("bit") << QStringLiteral("action_waring") << QStringLiteral("数位地址报警")
+        << QStringLiteral("LB0") << 0 << 2;
+    QTest::newRow("condition") << QStringLiteral("action_conalarm") << QStringLiteral("条件报警")
+        << QStringLiteral("LW0") << 1 << 8;
+}
+
+/******************************************************************************
+ * Function Name   : nativeAlarmAddCommands
+ * Description     : Exercise cancellation, validated commit and undo from each Add menu action.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeAlarmAddCommands() //20261125-1 add
+{
+    QFETCH(QString, actionName);
+    QFETCH(QString, title);
+    QFETCH(QString, address);
+    QFETCH(int, family);
+    QFETCH(int, rows);
+    MainWindow window;
+    QAction *action;
+    QJsonObject stored;
+    bool matched;
+    int history;
+    int attempt;
+
+    window.setProject(workflowProject(), QString());
+    window.show();
+    action = window.m_commands.value(actionName);
+    history = window.m_projectHistoryIndex;
+    QVERIFY(action && action->isEnabled() && !action->property("nativeShellPending").toBool());
+    for (attempt = 0; attempt < 2; ++attempt)
+    {
+        matched = false;
+        QTimer::singleShot(0, &window, [&]() {
+            QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+            QComboBox *count;
+            QLineEdit *readAddress;
+            QTableWidget *table;
+
+            if (dialog == nullptr) { return; }
+            count = dialog->findChild<QComboBox *>(QStringLiteral("AlarmRegistrationCount"));
+            readAddress = dialog->findChild<QLineEdit *>(QStringLiteral("AlarmReadAddress"));
+            table = dialog->findChild<QTableWidget *>(QStringLiteral("AlarmRegistrationTable"));
+            if (count && readAddress && table && dialog->objectName() == QStringLiteral("AlarmRegistrationDialog") &&
+                dialog->windowTitle() == title && readAddress->text() == address)
+            {
+                count->setCurrentIndex(2);
+                matched = table->rowCount() == rows;
+            }
+            if (attempt == 1 && matched) { dialog->accept(); }
+            else { dialog->reject(); }
+        });
+        action->trigger();
+        QVERIFY(matched);
+        if (attempt == 0)
+        {
+            QVERIFY(window.m_project.configurationNodes.isEmpty());
+            QCOMPARE(window.m_projectHistoryIndex, history);
+            QVERIFY(!window.m_dirty);
+        }
+    }
+    QCOMPARE(window.m_project.configurationNodes.size(), 1);
+    QCOMPARE(window.m_projectHistoryIndex, history + 1);
+    stored = window.m_project.configurationNodes.first().properties;
+    QCOMPARE(stored.value(QStringLiteral("family")).toInt(), family);
+    QCOMPARE(stored.value(QStringLiteral("readAddress")).toString(), address);
+    QCOMPARE(stored.value(QStringLiteral("count")).toInt(), 2);
+    window.m_commands.value(QStringLiteral("action_undo"))->trigger();
+    QVERIFY(window.m_project.configurationNodes.isEmpty() && !window.m_dirty);
+}
+
+/******************************************************************************
+ * Function Name   : nativeAlarmTreeParentOpensDigitalRegistration
+ * Description     : Check the original parent context action, Help routing and cancelling a draft.
+ * Input Parameters: None.
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeAlarmTreeParentOpensDigitalRegistration() //20261125-1 add
+{
+    MainWindow window;
+    QTreeWidget *tree;
+    QList<QTreeWidgetItem *> parents;
+    bool digital = false;
+    bool helpOpened = false;
+    int history;
+
+    window.setProject(workflowProject(), QString());
+    window.show();
+    history = window.m_projectHistoryIndex;
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree);
+    parents = tree->findItems(QStringLiteral("报警登录"), Qt::MatchExactly | Qt::MatchRecursive);
+    QCOMPARE(parents.size(), 1);
+    QVERIFY(triggerSettingsTreeAction(tree, parents.first(), QStringLiteral("新增报警登录"), [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QDialogButtonBox *buttons;
+        QDialog *help;
+        QTextBrowser *browser;
+
+        if (dialog == nullptr) { return; }
+        buttons = dialog->findChild<QDialogButtonBox *>(QStringLiteral("AlarmRegistrationButtons"));
+        digital = dialog->windowTitle() == QStringLiteral("数位地址报警") && buttons != nullptr;
+        if (!digital) { dialog->reject(); return; }
+        buttons->button(QDialogButtonBox::Help)->click();
+        help = dialog->findChild<QDialog *>(QStringLiteral("LocalHelpDialog"));
+        browser = help == nullptr ? nullptr : help->findChild<QTextBrowser *>(QStringLiteral("LocalHelpBrowser"));
+        helpOpened = help != nullptr && help->isVisible() && browser != nullptr &&
+            browser->document()->baseUrl().fragment() == QStringLiteral("config-alarm");
+        if (help != nullptr) { help->close(); }
+        buttons->button(QDialogButtonBox::Cancel)->click();
+    }));
+    QVERIFY(digital && helpOpened);
+    QCOMPARE(window.m_projectHistoryIndex, history);
+    QVERIFY(window.m_project.configurationNodes.isEmpty() && !window.m_dirty);
 }
 
 /******************************************************************************

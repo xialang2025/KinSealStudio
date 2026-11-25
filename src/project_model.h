@@ -208,7 +208,7 @@ struct HmiProject
     bool replaceDataCollection(const HmiConfigurationNode &node, QString *error = nullptr); //20261113-2 add
     bool setLanguages(const QStringList &newLanguages, QString *error = nullptr);
     bool validateModel(QString *error = nullptr) const;
-    bool validateSinglePageBackend(QString *error = nullptr) const;
+    bool validateSinglePageBackend(QString *error = nullptr, bool requirePageZero = true) const; //20261125-4 change
     bool validatePlcConfiguration(QString *error) const; //20261109-0 add
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &json, HmiProject *project, QString *error);

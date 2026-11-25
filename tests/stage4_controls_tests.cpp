@@ -296,6 +296,7 @@ private slots:
     void trendStaticRasterAndClipping();
     void trendShellPlacementEditAndUndo();
     void chartDefaultsAndIndependentFormDrafts(); //20261112-1 add
+    void chartArcPropertiesAndPreviewFollowNativeMode(); //20261125-3 add
     void chartTypeRangesAndNativeLinks();
     void chartAccessSpansAndAddressCopies();
     void chartStrictPersistenceAndBackendGates();
@@ -1882,6 +1883,7 @@ void Stage4ControlTests::timeFormatsImmediateGuardAndDraftRetention() //20261112
     dialog.show(); QVERIFY(QTest::qWaitForWindowExposed(&dialog)); week->setChecked(true); clock->setChecked(true);
     for (d = 0; d < 9; ++d) { for (t = 0; t < 4; ++t) { dateFormat->setCurrentIndex(d); timeFormat->setCurrentIndex(t); QCOMPARE(sample->text(), TimeDisplayProperties::dateFormats().at(d) + QStringLiteral(" (Mon) ") + TimeDisplayProperties::timeFormats().at(t)); } }
     date->setChecked(false); QVERIFY(dateFormat->isEnabled()); QCOMPARE(sample->text(), QStringLiteral("(Mon) HH-MM-SS")); week->setChecked(false); last = sample->text();
+    QCOMPARE(last, QStringLiteral(" HH-MM-SS")); //20261125-3 add: Native retained time-only sample has a leading separator.
     QTimer::singleShot(0, &dialog, [&immediate]() { QMessageBox *message = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()); if (message != nullptr) { immediate = message->text() == QStringLiteral("不能隐藏所有时间和星期"); message->accept(); } }); clock->setChecked(false); QVERIFY(immediate); QCOMPARE(sample->text(), last); QVERIFY(!dialog.object().timeDisplay.validate(&error)); QVERIFY(timeFormat->isEnabled()); QVERIFY(dialog.isVisible());
     clock->setChecked(true); QCOMPARE(dialog.object().timeDisplay.dateFormat, 8); QCOMPARE(dialog.object().timeDisplay.timeFormat, 3); QVERIFY2(dialog.object().timeDisplay.validate(&error), qPrintable(error));
 }
@@ -3306,6 +3308,57 @@ void Stage4ControlTests::chartDefaultsAndIndependentFormDrafts() //20261112-1 ad
     dialog.findChild<QLineEdit *>(QStringLiteral("ChartBarMinimum"))->setText(QStringLiteral("7")); dialog.findChild<QLineEdit *>(QStringLiteral("ChartSourceMaximum"))->setText(QStringLiteral("88")); dialog.findChild<QComboBox *>(QStringLiteral("ChartRangeType"))->setCurrentIndex(1); QVERIFY(!dialog.findChild<QLineEdit *>(QStringLiteral("ChartSourceMaximum"))->isEnabled()); dialog.findChild<QLineEdit *>(QStringLiteral("ChartMinimumAddress"))->setText(QStringLiteral("LW20"));
     dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape1"))->click(); dialog.findChild<QLineEdit *>(QStringLiteral("ChartMeterAddress"))->setText(QStringLiteral("LW10")); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); QVERIFY(!tabs->isTabVisible(1)); dialog.findChild<QRadioButton *>(QStringLiteral("ChartArc"))->click(); dialog.findChild<QLineEdit *>(QStringLiteral("ChartSpanAngle"))->setText(QStringLiteral("270")); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape0"))->click(); QVERIFY(tabs->isTabVisible(1)); QCOMPARE(dialog.object().chart.bar.minimum, QStringLiteral("7")); QCOMPARE(dialog.object().chart.bar.sourceMaximum, QStringLiteral("88")); QCOMPARE(dialog.object().chart.bar.minimumAddress, QStringLiteral("LW20")); QCOMPARE(dialog.object().chart.meter.address, QStringLiteral("LW10")); QCOMPARE(dialog.object().chart.donut.spanAngle, QStringLiteral("270"));
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-bar-basic.png")))); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape1"))->click(); tabs->setCurrentIndex(1); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-meter-appearance.png")))); tabs->setCurrentIndex(0); dialog.findChild<QRadioButton *>(QStringLiteral("ChartShape2"))->click(); QVERIFY(dialog.grab().save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("chart-donut-basic.png")))); }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::chartArcPropertiesAndPreviewFollowNativeMode
+ * Description     : Verify the native arc form, blank editor preview and preserved ring draft.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.25
+ ******************************************************************************/
+void Stage4ControlTests::chartArcPropertiesAndPreviewFollowNativeMode() //20261125-3 add
+{
+    HmiObject object = chartObject();
+    QImage ringPreview;
+    QImage arcPreview;
+    QImage blank;
+    QLabel *preview;
+    QSpinBox *opacity;
+    QLineEdit *radius;
+    QLineEdit *span;
+    QRadioButton *ring;
+    QRadioButton *arc;
+
+    object.chart.shape = 2;
+    ChartDialog dialog(object, HmiProject());
+    preview = dialog.findChild<QLabel *>(QStringLiteral("ChartPreview"));
+    opacity = dialog.findChild<QSpinBox *>(QStringLiteral("ChartOpacity"));
+    radius = dialog.findChild<QLineEdit *>(QStringLiteral("ChartRadius"));
+    span = dialog.findChild<QLineEdit *>(QStringLiteral("ChartSpanAngle"));
+    ring = dialog.findChild<QRadioButton *>(QStringLiteral("ChartRing"));
+    arc = dialog.findChild<QRadioButton *>(QStringLiteral("ChartArc"));
+    QVERIFY(preview != nullptr && opacity != nullptr && radius != nullptr && span != nullptr && ring != nullptr && arc != nullptr);
+    QVERIFY(opacity->isVisibleTo(&dialog) && radius->isVisibleTo(&dialog));
+    opacity->setValue(192);
+    ringPreview = preview->pixmap().toImage();
+    QVERIFY(!ringPreview.isNull());
+
+    arc->click();
+    QVERIFY(!opacity->isVisibleTo(&dialog) && !radius->isVisibleTo(&dialog));
+    QVERIFY(span->isVisibleTo(&dialog));
+    QCOMPARE(span->text(), QStringLiteral("360"));
+    arcPreview = preview->pixmap().toImage();
+    blank = QImage(arcPreview.size(), arcPreview.format());
+    blank.fill(ringPreview.pixelColor(0, 0));
+    QCOMPARE(arcPreview, blank);
+    QVERIFY(ringPreview != blank);
+
+    span->setText(QStringLiteral("270"));
+    ring->click();
+    QCOMPARE(opacity->value(), 192);
+    QCOMPARE(dialog.object().chart.donut.spanAngle, QStringLiteral("270"));
+    QCOMPARE(preview->pixmap().toImage(), ringPreview);
 }
 
 /******************************************************************************

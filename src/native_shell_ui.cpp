@@ -141,6 +141,7 @@ void MainWindow::initializeNativeShell() //20261111-1 add
     QJsonArray menus;
     QJsonValue value;
     QAction *action;
+    QAction *arrow; //20261125-1 add
     QMenu *menu;
     QMenu *extra;
     QString id;
@@ -202,6 +203,18 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 action->setProperty("editCommand", edit);
                 connect(action, &QAction::triggered, this, [this, edit]() { dispatchEditCommand(edit); });
             }
+            else if (id == QStringLiteral("action_reverse_selection")) //20261125-1 add
+            {
+                action->setProperty("editCommand", QStringLiteral("reverseSelection"));
+                connect(action, &QAction::triggered, this, [this]() { dispatchEditCommand(QStringLiteral("reverseSelection")); });
+            }
+            else if (id == QStringLiteral("action_panview")) //20261125-1 add
+            {
+                connect(action, &QAction::triggered, this, [this]() {
+                    m_canvas->setActiveTool(m_canvas->dragMode() == QGraphicsView::RubberBandDrag ?
+                        QStringLiteral("pan") : QStringLiteral("select"));
+                });
+            }
             else if (id == QStringLiteral("action_line") || id == QStringLiteral("action_rect") || id == QStringLiteral("action_ellipse") || id == QStringLiteral("action_RoundedRect") || id == QStringLiteral("action_foldline") || id == QStringLiteral("action_polygon") || id == QStringLiteral("action_freeline") || id == QStringLiteral("action_ArcItem")) //20261113-2 change: Native static shapes enter drawing immediately.
             {
                 connect(action, &QAction::triggered, this, [this, id]() { HmiObject object; object.type = id == QStringLiteral("action_line") ? QStringLiteral("line") : id == QStringLiteral("action_rect") ? QStringLiteral("rect") : id == QStringLiteral("action_ellipse") ? QStringLiteral("ellipse") : id == QStringLiteral("action_RoundedRect") ? QStringLiteral("roundrect") : id == QStringLiteral("action_foldline") ? QStringLiteral("polyline") : id == QStringLiteral("action_polygon") ? QStringLiteral("polygon") : id == QStringLiteral("action_freeline") ? QStringLiteral("freeline") : QStringLiteral("sector"); if (object.type == QStringLiteral("polygon")) { object.graphic.foreground = Qt::white; object.graphic.background = Qt::black; } //20261113-4 change: Native polygons default to white foreground and black solid background.
@@ -258,6 +271,12 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             { connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("chart")); }); }
             else if (id == QStringLiteral("action_rep")) { connect(action, &QAction::triggered, this, [this]() { configureRecipe(); }); } //20261113-2 add
             else if (id == QStringLiteral("action_datasamp")) { connect(action, &QAction::triggered, this, [this]() { configureDataCollection(); }); } //20261112-1 add
+            else if (id == QStringLiteral("action_waring") || id == QStringLiteral("action_conalarm")) //20261125-1 add
+            {
+                // Both native Add commands open the same drafts as the corresponding tree entries.
+                const int family = id == QStringLiteral("action_waring") ? 0 : 1;
+                connect(action, &QAction::triggered, this, [this, family]() { configureAlarmRegistration(family); });
+            }
             else if (id == QStringLiteral("action_trendchart")) //20261112-1 add: Verified native menu and btn_trend share this action.
             { connect(action, &QAction::triggered, this, [this]() { createStage4Control(QStringLiteral("trend")); }); }
             else if (id == QStringLiteral("action_DatagroupDisplay")) //20261112-1 add: Verified native menu and btn_DatagroupDisplay share this action.
@@ -337,6 +356,11 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             {
                 connect(action, &QAction::triggered, this, &MainWindow::showOnlineSimulationOptions);
             }
+            else if (id == QStringLiteral("action_36") || id == QStringLiteral("action_37")) //20261125-1 add
+            {
+                action->setCheckable(true);
+                action->setChecked(entry.value(QStringLiteral("checked")).toBool());
+            }
             else if (id == QStringLiteral("action_chinese") || id == QStringLiteral("action_english")) //20261124-7 add
             {
                 const bool useEnglish = id == QStringLiteral("action_english");
@@ -372,8 +396,13 @@ void MainWindow::initializeNativeShell() //20261111-1 add
     }
     menus = layout.value(QStringLiteral("menus")).toArray();
     if (menus.isEmpty()) { return; }
+    // The native arrow slot restores selection even when the hand tool is active.
+    arrow = new QAction(QStringLiteral("选择工具"), this); //20261125-1 add
+    arrow->setObjectName(QStringLiteral("action_arrow"));
+    m_commands.insert(arrow->objectName(), arrow);
+    connect(arrow, &QAction::triggered, this, [this]() { m_canvas->setActiveTool(QStringLiteral("select")); });
     // Reuse every implemented QAction; rebuilding the presentation must not duplicate transactions or shortcuts.
-    populate = [this, &populate, &placed](QMenu *parent, const QJsonArray &items) {
+    populate = [this, &populate, &placed, arrow](QMenu *parent, const QJsonArray &items) { //20261125-1 change
         QJsonObject child;
         QAction *command;
         QMenu *sub;
@@ -393,7 +422,16 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 continue;
             }
             command = m_commands.value(child.value(QStringLiteral("id")).toString());
-            if (command != nullptr) { parent->addAction(command); placed.insert(command); }
+            if (command != nullptr)
+            {
+                parent->addAction(command);
+                placed.insert(command);
+                if (command->objectName() == QStringLiteral("action_panview"))
+                {
+                    parent->addAction(arrow);
+                    placed.insert(arrow);
+                }
+            }
         }
     };
     menuBar()->clear();
@@ -487,6 +525,18 @@ void MainWindow::createToolbars() //20261111-1 add
         toolbar->setMovable(true);
         toolbar->setFloatable(false);
         toolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        if (toolbar->objectName() == QStringLiteral("standardToolBar") ||
+            toolbar->objectName() == QStringLiteral("mapToolBar")) //20261125-1 add
+        {
+            action = m_commands.value(toolbar->objectName() == QStringLiteral("standardToolBar") ?
+                QStringLiteral("action_36") : QStringLiteral("action_37"));
+            if (action != nullptr)
+            {
+                // Keep the native menu and Qt's toolbar context menu synchronized.
+                connect(action, &QAction::triggered, toolbar, &QToolBar::setVisible);
+                connect(toolbar->toggleViewAction(), &QAction::toggled, action, &QAction::setChecked);
+            }
+        }
         host = toolbar;
         if (row.value(QStringLiteral("id")).toString() == QStringLiteral("toolBar_Combox"))
         {

@@ -2106,12 +2106,12 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
 
 /******************************************************************************
  * Function Name   : HmiProject::validateSinglePageBackend
- * Description     : Refuse editor structures that single-page source and device backends cannot encode.
- * Input Parameters: error
+ * Description     : Validate single-page topology and the device backend's page-zero requirement.
+ * Input Parameters: error, requirePageZero
  * Return Value    : True only for the established topology; subtype checks remain backend-owned.
  * Date            : 2026.11.10
  ******************************************************************************/
-bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 add
+bool HmiProject::validateSinglePageBackend(QString *error, bool requirePageZero) const //20261125-4 change
 {
     QSet<QString> scheduleOwners; //20261123-22 add: Other configuration types and reference owners still lack device mappings.
 
@@ -2138,9 +2138,9 @@ bool HmiProject::validateSinglePageBackend(QString *error) const //20261110-5 ad
     {
         return modelError(error, QStringLiteral("当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。"));
     }
-    if (activePageNumber.value_or(0) != 0) //20261122-10 add: The verified single-page source and device formats use page zero.
+    if (requirePageZero && activePageNumber.value_or(0) != 0) //20261125-4 change: Nonzero page numbers have a source field but no verified device mapping.
     {
-        return modelError(error, QStringLiteral("当前源/设备后端仅支持普通画面编号 000。"));
+        return modelError(error, QStringLiteral("当前设备后端仅支持普通画面编号 000。"));
     }
     if (!activePageBackground.isDefault()) //20261123-1 change: Keep all custom fills in KSP until native formats are mapped.
     {
