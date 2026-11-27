@@ -5,14 +5,12 @@
 #include "bit_button_renderer.h" //20261108-15 add
 
 #include "hmi_canvas.h"
-#include "native_test_project.h" //20261108-7 add
 #include "native_project_codec.h" //20261109-0 add
 #include "device_macro_compiler.h" //20261109-0 add
 #include "stage2_project_dialogs.h" //20261110-7 add
 #include "keyboard_preview.h" //20261123-26 add
 #include "device_download_session.h" //20261114-5 add
 #include <QSettings>
-#include <QSaveFile>
 #include "static_text_dialog.h" //20261108-14 add
 #include <QInputDialog>
 #include <QJsonArray> //20261109-0 add
@@ -1021,7 +1019,7 @@ void MainWindow::openProject() //20261110-7 change
         return;
     }
     if (QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0) {
-        statusBar()->showMessage(QStringLiteral("已导入原厂源工程；保存请选择独立.ksp文件。"), 10000);
+        statusBar()->showMessage(QStringLiteral("已打开原厂源工程：%1").arg(QDir::toNativeSeparators(path)), 10000);
     }
     if (!m_project.nativeSourceWarnings.isEmpty()) {
         QMessageBox::information(this, QStringLiteral("原厂源保全提示"), m_project.nativeSourceWarnings.join(QLatin1Char('\n')));
@@ -1093,26 +1091,27 @@ void MainWindow::applyAuxiliaryTimer() //20261125-82 add
 
 /******************************************************************************
  * Function Name   : MainWindow::saveProjectAs
- * Description     : Choose a new destination for the independent .ksp prototype project.
+ * Description     : Choose the format for the new working document and preserve explicit extensions.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.07
  ******************************************************************************/
 void MainWindow::saveProjectAs() //20261107-6 add
 {
+    const QString nativeFilter = QStringLiteral("KinSealStudio 原厂工程 (*.sm)");
+    const QString liteFilter = QStringLiteral("KinSealStudio Lite 工程 (*.ksp)");
+    QString selected;
     QString path;
 
-    if (!m_hasProject) { return; } //20261110-7 add
-    path = QFileDialog::getSaveFileName(this, QStringLiteral("另存为工程"),
-        m_currentPath.isEmpty() ? m_project.name + QStringLiteral(".ksp") : m_currentPath,
-        QStringLiteral("KinSealStudio Lite 工程 (*.ksp)"));
-    if (path.isEmpty())
+    if (!m_hasProject) { return; }
+    selected = m_currentPath.endsWith(QStringLiteral(".ksp"), Qt::CaseInsensitive) ? liteFilter : nativeFilter;
+    path = QFileDialog::getSaveFileName(this, QStringLiteral("另存为工程"), //20261127-7 change
+        m_currentPath.isEmpty() ? m_project.name : m_currentPath,
+        nativeFilter + QStringLiteral(";;") + liteFilter, &selected);
+    if (path.isEmpty()) { return; }
+    if (QFileInfo(path).suffix().isEmpty())
     {
-        return;
-    }
-    if (QFileInfo(path).suffix().isEmpty()) //20261110-7 change: Never reinterpret an explicit native-source destination as a project save.
-    {
-        path.append(QStringLiteral(".ksp"));
+        path.append(selected == liteFilter ? QStringLiteral(".ksp") : QStringLiteral(".sm"));
     }
     writeProject(path);
 }
@@ -1128,37 +1127,18 @@ void MainWindow::exportNativeTest() //20261108-7 add
 {
     QString path;
     QString error;
-    QByteArray bytes; //20261109-0 add
-    QSaveFile file;
-    bool nativeSource;
-    HmiObject object;
 
-    path = QFileDialog::getSaveFileName(this, QStringLiteral("导出原厂工程"), //20261109-0 change
-                                        QStringLiteral("CodexProbeTest.sm"),
-                                        QStringLiteral("KinSealStudio 原生工程 (*.sm)"));
-    if (path.isEmpty())
+    if (!m_hasProject) { return; }
+    path = QFileDialog::getSaveFileName(this, QStringLiteral("导出原厂工程"),
+        m_project.name + QStringLiteral(".sm"), QStringLiteral("KinSealStudio 原厂工程 (*.sm)"));
+    if (path.isEmpty()) { return; }
+    if (!path.endsWith(QStringLiteral(".sm"), Qt::CaseInsensitive)) { path.append(QStringLiteral(".sm")); }
+    m_canvas->cancelInteraction();
+    // Export a separate copy without changing the working document, path or dirty checkpoint.
+    if (!currentEditorProject().save(path, &error)) //20261127-7 change
     {
+        QMessageBox::warning(this, QStringLiteral("导出失败"), error);
         return;
-    }
-    if (!path.endsWith(QStringLiteral(".sm"), Qt::CaseInsensitive))
-    {
-        path.append(QStringLiteral(".sm"));
-    }
-    m_canvas->cancelInteraction(); //20261110-8 add: Export committed page geometry only.
-    m_project.objects = m_canvas->objects(); //20261109-0 add: Export the current edited geometry and properties.
-    nativeSource = !m_project.nativeSourceSnapshot.isEmpty();
-    Q_FOREACH (object, m_project.objects) { nativeSource = nativeSource || object.hasBitButtonProperties; }
-    if (nativeSource || !exportNativeTestProject(m_project, path, &error)) //20261109-0 change: General text exports can fall back to the typed codec.
-    {
-        if (!exportNativeProjectSource(m_project, &bytes, &error))
-        {
-            QMessageBox::warning(this, QStringLiteral("导出失败"), error); return;
-        }
-        file.setFileName(path);
-        if (!file.open(QIODevice::WriteOnly) || file.write(bytes) != bytes.size() || !file.commit())
-        {
-            QMessageBox::warning(this, QStringLiteral("导出失败"), file.errorString()); return;
-        }
     }
     statusBar()->showMessage(QStringLiteral("已导出原厂工程：%1").arg(path), 8000); //20261109-0 change
     backUpSavedProject(path); //20261125-82 add: An explicit native project export also has a committed source file.
@@ -1827,8 +1807,9 @@ bool MainWindow::writeProject(const QString &path) //20261107-6 add
 
     if (!m_hasProject) { return false; } //20261110-7 add
     m_canvas->cancelInteraction(); //20261110-8 add: Saving resolves the interaction before capturing geometry and the clean checkpoint.
-    if (QFileInfo(path).suffix().compare(QStringLiteral("ksp"), Qt::CaseInsensitive) != 0) {
-        QMessageBox::critical(this, QStringLiteral("保存失败"), QStringLiteral("工程保存目标必须为.ksp，原厂源请使用导出命令。"));
+    if (!path.endsWith(QStringLiteral(".ksp"), Qt::CaseInsensitive) &&
+        !path.endsWith(QStringLiteral(".sm"), Qt::CaseInsensitive)) { //20261127-7 change
+        QMessageBox::critical(this, QStringLiteral("保存失败"), QStringLiteral("请选择 .sm 或 .ksp 工程文件。"));
         return false;
     }
     candidate = currentEditorProject();
@@ -1841,7 +1822,7 @@ bool MainWindow::writeProject(const QString &path) //20261107-6 add
     m_project = candidate; //20261110-7 add: Publish the synchronized records only after the atomic file replacement succeeds.
     updateRecentProjects(path);
     setDirty(false);
-    statusBar()->showMessage(QStringLiteral("已保存原型工程：%1").arg(path), 5000);
+    statusBar()->showMessage(QStringLiteral("已保存工程：%1").arg(path), 5000);
     backUpSavedProject(path); //20261125-82 add: Both save routes back up the committed file.
     return true;
 }

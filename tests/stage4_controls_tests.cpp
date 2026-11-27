@@ -89,17 +89,17 @@ private slots:
     void lineRendererHitAndOpacity();
     void lineNativeMenuAndDoubleClickStyleTransaction();
     void rectNativeFieldsAndTypedDrafts();
-    void rectStrictPersistenceMixedCopyAndNativeRefusal();
+    void rectStrictPersistenceMixedCopyAndNativeSource();
     void rectFourQuadrantsEightHandleResizeAndCancellation();
     void rectDefaultNativePixelsAndIndependentFillPatterns();
     void rectNativeMenuDoubleClickDraftAndUndo();
     void ellipseNativeFieldsAndTypedDrafts();
-    void ellipseStrictPersistenceMixedCopyAndNativeRefusal();
+    void ellipseStrictPersistenceMixedCopyAndNativeSource();
     void ellipseFourQuadrantsEightHandleResizeAndCancellation();
     void ellipseCurvedRasterFillAndNativeComparisonInput();
     void ellipseNativeMenuDoubleClickDraftAndUndo();
     void roundrectNativeFieldsAndTypedDrafts();
-    void roundrectStrictPersistenceMixedCopyAndNativeRefusal();
+    void roundrectStrictPersistenceMixedCopyAndNativeSource();
     void roundrectFourQuadrantsEightHandleResizeAndCancellation();
     void roundrectDefaultRasterAndIndependentFillPatterns();
     void roundrectNativeMenuDoubleClickDraftAndUndo();
@@ -127,7 +127,7 @@ private slots:
     void sectorNativeFieldsAndNoInventedAngles();
     void sectorLargerDimensionCreationCancelAndBounds();
     void sectorEightBoxHandlesResizeAndCancel();
-    void sectorMixedPersistenceCopyAndNativeRefusal();
+    void sectorMixedPersistenceCopyAndNativeSource();
     void sectorNativeDefaultCurvedPathAndRaster();
     void sectorNativeMenuAppearanceDraftAndUndo();
     void tableNativeFieldsCountsAndEnabledDrafts();
@@ -5168,13 +5168,13 @@ void Stage4ControlTests::rectNativeFieldsAndTypedDrafts() //20261113-2 add
 }
 
 /******************************************************************************
- * Function Name   : Stage4ControlTests::rectStrictPersistenceMixedCopyAndNativeRefusal
+ * Function Name   : Stage4ControlTests::rectStrictPersistenceMixedCopyAndNativeSource
  * Description     : Round-trip filled graphics independently of directed lines and known controls, while retaining source and device refusal.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-void Stage4ControlTests::rectStrictPersistenceMixedCopyAndNativeRefusal() //20261113-2 add
+void Stage4ControlTests::rectStrictPersistenceMixedCopyAndNativeSource() //20261113-2 add
 {
     HmiProject project;
     HmiProject loaded;
@@ -5187,7 +5187,7 @@ void Stage4ControlTests::rectStrictPersistenceMixedCopyAndNativeRefusal() //2026
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     object.type = QStringLiteral("rect"); object.id = QStringLiteral("rect-model"); object.name = QStringLiteral("矩形"); object.geometry = QRect(100,100,200,100); object.graphic.fillStyle = 12; object.graphic.foreground = Qt::red; object.graphic.background = Qt::blue; object.graphic.alpha = 128; object.graphic.lineWidth = 3; project.objects.append(object);
     QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.first().graphic.background,QColor(Qt::blue)); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY2(pasteStage3Selection(target,clipboard,QPoint(20,20),&result,nullptr,&error),qPrintable(error)); QCOMPARE(result.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportNativeProjectSource(project,&source,&error),qPrintable(error)); QVERIFY2(importNativeProjectSource(source,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("rect-only.ksp")),&error)); }
     object.type = QStringLiteral("line"); object.id = QStringLiteral("mixed-line"); object.name = QStringLiteral("直线"); object.graphic = GraphicProperties(); project.objects.append(object); project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.size(),7);
 }
@@ -5283,13 +5283,13 @@ void Stage4ControlTests::ellipseNativeFieldsAndTypedDrafts() //20261113-2 add
 }
 
 /******************************************************************************
- * Function Name   : Stage4ControlTests::ellipseStrictPersistenceMixedCopyAndNativeRefusal
+ * Function Name   : Stage4ControlTests::ellipseStrictPersistenceMixedCopyAndNativeSource
  * Description     : Round-trip filled graphics independently of directed lines and known controls, while retaining source and device refusal.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-void Stage4ControlTests::ellipseStrictPersistenceMixedCopyAndNativeRefusal() //20261113-2 add
+void Stage4ControlTests::ellipseStrictPersistenceMixedCopyAndNativeSource() //20261113-2 add
 {
     HmiProject project;
     HmiProject loaded;
@@ -5302,7 +5302,7 @@ void Stage4ControlTests::ellipseStrictPersistenceMixedCopyAndNativeRefusal() //2
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     object.type = QStringLiteral("ellipse"); object.id = QStringLiteral("ellipse-model"); object.name = QStringLiteral("圆/椭圆"); object.geometry = QRect(100,100,200,100); object.graphic.fillStyle = 12; object.graphic.foreground = Qt::red; object.graphic.background = Qt::blue; object.graphic.alpha = 128; object.graphic.lineWidth = 3; project.objects.append(object);
     QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.first().graphic.background,QColor(Qt::blue)); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY2(pasteStage3Selection(target,clipboard,QPoint(20,20),&result,nullptr,&error),qPrintable(error)); QCOMPARE(result.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportNativeProjectSource(project,&source,&error),qPrintable(error)); QVERIFY2(importNativeProjectSource(source,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("ellipse-only.ksp")),&error)); }
     object.type = QStringLiteral("line"); object.id = QStringLiteral("mixed-line"); object.name = QStringLiteral("直线"); object.graphic = GraphicProperties(); project.objects.append(object); object.type = QStringLiteral("rect"); object.id = QStringLiteral("mixed-rect"); object.name = QStringLiteral("矩形"); object.graphic = GraphicProperties(); project.objects.append(object); project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.size(),8);
 }
@@ -5399,13 +5399,13 @@ void Stage4ControlTests::roundrectNativeFieldsAndTypedDrafts() //20261113-2 add
 }
 
 /******************************************************************************
- * Function Name   : Stage4ControlTests::roundrectStrictPersistenceMixedCopyAndNativeRefusal
+ * Function Name   : Stage4ControlTests::roundrectStrictPersistenceMixedCopyAndNativeSource
  * Description     : Round-trip filled graphics independently of directed lines and known controls, while retaining source and device refusal.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-void Stage4ControlTests::roundrectStrictPersistenceMixedCopyAndNativeRefusal() //20261113-2 add
+void Stage4ControlTests::roundrectStrictPersistenceMixedCopyAndNativeSource() //20261113-2 add
 {
     HmiProject project;
     HmiProject loaded;
@@ -5418,7 +5418,7 @@ void Stage4ControlTests::roundrectStrictPersistenceMixedCopyAndNativeRefusal() /
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     object.type = QStringLiteral("roundrect"); object.id = QStringLiteral("roundrect-model"); object.name = QStringLiteral("圆角矩形"); object.geometry = QRect(100,100,200,100); object.graphic.radiusX = 0; object.graphic.radiusY = 99; object.graphic.fillStyle = 12; object.graphic.foreground = Qt::red; object.graphic.background = Qt::blue; object.graphic.alpha = 128; object.graphic.lineWidth = 3; project.objects.append(object);
     QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.first().graphic.background,QColor(Qt::blue)); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY2(pasteStage3Selection(target,clipboard,QPoint(20,20),&result,nullptr,&error),qPrintable(error)); QCOMPARE(result.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
+    QVERIFY2(exportNativeProjectSource(project,&source,&error),qPrintable(error)); QVERIFY2(importNativeProjectSource(source,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("roundrect-only.ksp")),&error)); }
     object.type = QStringLiteral("line"); object.id = QStringLiteral("mixed-line"); object.name = QStringLiteral("直线"); object.graphic = GraphicProperties(); project.objects.append(object); object.type = QStringLiteral("rect"); object.id = QStringLiteral("mixed-rect"); project.objects.append(object); object.type = QStringLiteral("ellipse"); object.id = QStringLiteral("mixed-ellipse"); project.objects.append(object); project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QCOMPARE(loaded.objects.size(),9);
 }
@@ -5763,7 +5763,7 @@ void Stage4ControlTests::polygonMixedPersistenceCopyAndNativeRefusal() //2026111
     QByteArray native = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     object.type = QStringLiteral("polygon"); object.id = QStringLiteral("polygon-model"); object.name = QStringLiteral("多边形"); object.geometry = QRect(100,100,200,120); object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; object.graphic.foreground = Qt::white; object.graphic.background = Qt::black; object.graphic.alpha = 128; object.graphic.lineWidth = 3; project.objects.append(object);
-    QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY2(pasteStage3Selection(target,clipboard,QPoint(20,20),&pasted,nullptr,&error),qPrintable(error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("polygon-only.ksp")),&error)); }
+    QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY2(pasteStage3Selection(target,clipboard,QPoint(20,20),&pasted,nullptr,&error),qPrintable(error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY2(exportNativeProjectSource(project,&native,&error),qPrintable(error)); QVERIFY2(importNativeProjectSource(native,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!buildProjectPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("polygon-only.ksp")),&error)); }
     Q_FOREACH (type,types) { object.type = type; object.id = QStringLiteral("mixed-")+type; object.graphic = GraphicProperties(); project.objects.append(object); } project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.size(),11); QCOMPARE(loaded.toJson(),project.toJson());
 }
 
@@ -5973,13 +5973,13 @@ void Stage4ControlTests::sectorEightBoxHandlesResizeAndCancel() //20261113-7 add
 }
 
 /******************************************************************************
- * Function Name   : Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal
+ * Function Name   : Stage4ControlTests::sectorMixedPersistenceCopyAndNativeSource
  * Description     : Persist mixed families, admit the verified default background and retain complete source and unproved-shape refusal.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
  ******************************************************************************/
-void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal() //20261114-3 change
+void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeSource() //20261114-3 change
 {
     HmiProject project;
     HmiProject loaded;
@@ -5992,7 +5992,7 @@ void Stage4ControlTests::sectorMixedPersistenceCopyAndNativeRefusal() //20261114
     QStringList types = {QStringLiteral("line"),QStringLiteral("rect"),QStringLiteral("ellipse"),QStringLiteral("roundrect"),QStringLiteral("polyline"),QStringLiteral("polygon"),QStringLiteral("freeline")};
     QByteArray native = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
-    object.type = QStringLiteral("sector"); object.id = QStringLiteral("sector-model"); object.name = QStringLiteral("扇形"); object.geometry = QRect(100,100,200,200); object.graphic.lineStyle = 0; project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep")); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10); unsupported=project; unsupported.objects[0].geometry.setHeight(199); payloads={QByteArrayLiteral("keep")}; QVERIFY(!buildProjectPayload(unsupported,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("sector-only.ksp")),&error)); }
+    object.type = QStringLiteral("sector"); object.id = QStringLiteral("sector-model"); object.name = QStringLiteral("扇形"); object.geometry = QRect(100,100,200,200); object.graphic.lineStyle = 0; project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY2(exportNativeProjectSource(project,&native,&error),qPrintable(error)); QVERIFY2(importNativeProjectSource(native,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10); unsupported=project; unsupported.objects[0].geometry.setHeight(199); payloads={QByteArrayLiteral("keep")}; QVERIFY(!buildProjectPayload(unsupported,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")}); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("sector-only.ksp")),&error)); }
     Q_FOREACH (type,types) { object.type = type; object.id = QStringLiteral("mixed-")+type; object.graphic = GraphicProperties(); if (type==QStringLiteral("polygon")) { object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; } project.objects.append(object); } project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.size(),13); QCOMPARE(loaded.toJson(),project.toJson());
 }
 
@@ -6126,7 +6126,7 @@ void Stage4ControlTests::tableNativeThreeRowsTwoColumnsAndOneCell() //20261113-8
 
 /******************************************************************************
  * Function Name   : Stage4ControlTests::tableKspMixedCopyAndNativeRefusal
- * Description     : Persist fourteen mixed families while preserving the pure-image table flags, colors and source/device refusal.
+ * Description     : Persist fourteen mixed families and independently verify the table clipboard, native source and device paths.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.13
@@ -6143,7 +6143,8 @@ void Stage4ControlTests::tableKspMixedCopyAndNativeRefusal() //20261113-8 add
     QStringList types = {QStringLiteral("line"),QStringLiteral("rect"),QStringLiteral("ellipse"),QStringLiteral("roundrect"),QStringLiteral("polyline"),QStringLiteral("polygon"),QStringLiteral("freeline"),QStringLiteral("sector")};
     QByteArray native = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
-    object.type = QStringLiteral("table"); object.id = QStringLiteral("table-model"); object.name = QStringLiteral("表格"); object.geometry = QRect(100,100,200,100); object.graphic.background = QColor(QStringLiteral("#e0e0e0")); project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY(!exportNativeProjectSource(project,&native,&error)); QCOMPARE(native,QByteArrayLiteral("keep"));
+    object.type = QStringLiteral("table"); object.id = QStringLiteral("table-model"); object.name = QStringLiteral("表格"); object.geometry = QRect(100,100,200,100); object.graphic.background = QColor(QStringLiteral("#e0e0e0")); project.objects.append(object); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.toJson(),project.toJson()); QVERIFY(captureStage3Selection(project,{object.id},&clipboard,&error)); QVERIFY(pasteStage3Selection(HmiProject(),clipboard,QPoint(20,20),&pasted,nullptr,&error)); QCOMPARE(pasted.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type)); QVERIFY2(exportNativeProjectSource(project,&native,&error),qPrintable(error)); //20261127-9 change
+    QVERIFY2(importNativeProjectSource(native,&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.first().graphic.toJson(object.type),object.graphic.toJson(object.type));
     QVERIFY2(buildProjectPayload(project,&payloads,&error),qPrintable(error)); QCOMPARE(payloads.size(),10); //20261113-12 change: The bounded device raster now passes independently of native SM export.
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("table-only.ksp")),&error)); }
     Q_FOREACH (type,types) { object.type = type; object.id = QStringLiteral("mixed-")+type; object.graphic = GraphicProperties(); if (type==QStringLiteral("polygon")) { object.graphic.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; } project.objects.append(object); } project.objects.append(existingFiveObjects()); QVERIFY2(HmiProject::fromJson(project.toJson(),&loaded,&error),qPrintable(error)); QCOMPARE(loaded.objects.size(),14); QCOMPARE(loaded.toJson(),project.toJson());

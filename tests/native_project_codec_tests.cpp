@@ -18,7 +18,17 @@ class NativeProjectCodecTests : public QObject
 {
     Q_OBJECT
 private slots:
+    void closedGraphicsMatchVendorSources_data(); //20261127-6 add
+    void closedGraphicsMatchVendorSources();
+    void profiledGraphicsMatchVendorSources_data(); //20261127-6 add
+    void profiledGraphicsMatchVendorSources();
+    void strokedGraphicsMatchVendorSources_data(); //20261127-6 add
+    void strokedGraphicsMatchVendorSources();
     void nativeCorpusKeepsExactBytes();
+    void freshAmzSourceMatchesNativeModelFields(); //20261127-5 add
+    void nativeSourceExportPreservesFileProtection(); //20261127-5 add
+    void bitAndWordSharedLanguageKeepNativeRows(); //20261127-5 add
+    void legacySwitchPreviewUsesEditableStateRows(); //20261127-5 add
     void malformedHeadersAreTransactional();
     void changedArchivesAreRejected();
     void opaqueBodyIsNeverReportedAsValidated();
@@ -55,7 +65,8 @@ private slots:
     void nativeFunctionActualSamplesRoundTrip();
     void typedFieldBoundariesAndMalformedCollections(); //20261110-5 add
     void everyTruncatedPrefixPreservesSemanticOutputs();
-    void multiplePagesAreReadOnlyArchives();
+    void ordinaryPagesKeepNativeSourceAndEdits();
+    void imageTableNativeCacheAndEdits(); //20261127-9 add
     void numberedOrdinaryPageKeepsItsNativeSourceField(); //20261125-4 add
     void sourceRejectsUnmappedModelEntities();
     void explicitStartupLanguagePreservesDialogSelection(); //20261110-6 change
@@ -66,6 +77,7 @@ private slots:
     void largeNativeDiagnosticsKeepCompleteSnapshot();
     void nativeUnrepresentableActiveMetadataIsRejected();
     void productMacroCachePreservationAndInvalidation();
+    void nativeMacroAddressRowsSurvivePageEdits(); //20261127-10 add
 };
 
 /******************************************************************************
@@ -142,6 +154,253 @@ static QByteArray nativeOracle() //20261109-0 add
         return QByteArray();
     }
     return file.readAll();
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::freshAmzSourceMatchesNativeModelFields
+ * Description     : Compare independent V122 field values, preserve opaque metadata and reject snapshot retargeting.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::freshAmzSourceMatchesNativeModelFields() //20261127-5 add
+{
+    HmiProject project;
+    HmiProject reopened;
+    QString error;
+    QByteArray first;
+    QByteArray second;
+    QByteArray encoded;
+    NativeSourceFieldSpan span;
+    const QString amz = QStringLiteral("AMZ070W01");
+    const QString amt = QStringLiteral("AMT070W124-L800X480R");
+    const QMap<QString, QString> expected = {
+        {QStringLiteral("header.2"), amt},
+        {QStringLiteral("system.flags.42"), amt},
+        {QStringLiteral("system.identity.1"), amz},
+        {QStringLiteral("system.identity.6"), QStringLiteral("768000 Colors 7 TFT LCD")},
+        {QStringLiteral("system.identity.7"), QStringLiteral("32M")},
+        {QStringLiteral("trailer.settings.2"), amz}
+    };
+    QFile buttons(QStringLiteral(":/native/bit-button-default.sm"));
+    QFile texts(QStringLiteral(":/samples/native_text.sm"));
+    HmiProject controls;
+
+    project.targetModel = QStringLiteral("AMZ070W01R");
+    QVERIFY2(exportNativeProjectSource(project, &first, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(first, &reopened, &error), qPrintable(error));
+    QVERIFY(reopened.objects.isEmpty());
+    QCOMPARE(reopened.targetModel, amz);
+    QVERIFY2(nativeProjectUsesSupportedDeviceDefaults(first, &error), qPrintable(error));
+    for (auto field = expected.cbegin(); field != expected.cend(); ++field)
+    {
+        encoded.clear();
+        QDataStream writer(&encoded, QIODevice::WriteOnly);
+        writer.setVersion(QDataStream::Qt_4_8);
+        writer << field.value();
+        span = sourceFieldSpan(first, field.key());
+        QCOMPARE(first.mid(span.start, span.end - span.start), encoded);
+    }
+    span = sourceFieldSpan(first, QStringLiteral("trailer.settings.0"));
+    QCOMPARE(span.end - span.start, 4);
+    QVERIFY(buttons.open(QIODevice::ReadOnly));
+    QVERIFY2(importNativeProjectSource(buttons.readAll(), &controls, &error), qPrintable(error));
+    project.objects = controls.objects;
+    QVERIFY(texts.open(QIODevice::ReadOnly));
+    QVERIFY2(importNativeProjectSource(texts.readAll(), &controls, &error), qPrintable(error));
+    controls.objects.first().id = QStringLiteral("amz-text");
+    project.objects.append(controls.objects.first());
+    project.targetModel = amz;
+    QVERIFY2(exportNativeProjectSource(project, &first, &error), qPrintable(error));
+    // The tail contains native editor state that is independent of the supported object edits.
+    span = sourceFieldSpan(first, QStringLiteral("trailer.settings.18"));
+    first.replace(span.start, span.end - span.start, sourceWordBytes(0x12345678));
+    QVERIFY2(importNativeProjectSource(first, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 2);
+    QCOMPARE(reopened.objects.last().text, project.objects.last().text);
+    reopened.targetModel = QStringLiteral("AMZ070W01R");
+    QVERIFY2(exportNativeProjectSource(reopened, &second, &error), qPrintable(error));
+    QCOMPARE(second, first);
+    reopened.objects.first().geometry.translate(12, 8);
+    QVERIFY2(exportNativeProjectSource(reopened, &second, &error), qPrintable(error));
+    span = sourceFieldSpan(second, QStringLiteral("trailer.settings.18"));
+    QCOMPARE(second.mid(span.start, span.end - span.start), sourceWordBytes(0x12345678));
+    QVERIFY2(importNativeProjectSource(second, &project, &error), qPrintable(error));
+    QCOMPARE(project.objects.first().geometry, reopened.objects.first().geometry);
+    reopened.targetModel = amt;
+    first = second;
+    QVERIFY(!exportNativeProjectSource(reopened, &second, &error));
+    QCOMPARE(second, first);
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::nativeSourceExportPreservesFileProtection
+ * Description     : Export protected originals only with the matching session password and never drop KSP protection.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::nativeSourceExportPreservesFileProtection() //20261127-5 add
+{
+    HmiProject project;
+    QByteArray original = nativeOracle();
+    QByteArray result("unchanged");
+    QByteArray field;
+    NativeSourceFieldSpan flag = sourceFieldSpan(original, QStringLiteral("config.270.0"));
+    NativeSourceFieldSpan password = sourceFieldSpan(original, QStringLiteral("config.270.1"));
+    QString credential = QStringLiteral("SM-test-27");
+    QString error;
+    QDataStream writer(&field, QIODevice::WriteOnly);
+
+    project.filePassword = credential;
+    QVERIFY(!exportNativeProjectSource(project, &result, &error));
+    QCOMPARE(result, QByteArray("unchanged"));
+    QVERIFY2(importNativeProjectSource(original, &project, &error), qPrintable(error));
+    project.filePassword = credential;
+    QVERIFY(!exportNativeProjectSource(project, &result, &error));
+    QCOMPARE(result, QByteArray("unchanged"));
+    QCOMPARE(flag.end, password.start);
+    writer.setVersion(QDataStream::Qt_4_8);
+    writer << true << credential;
+    original.replace(flag.start, password.end - flag.start, field);
+    QVERIFY2(importNativeProjectSource(original, &project, &error), qPrintable(error));
+    QVERIFY(!exportNativeProjectSource(project, &result, &error));
+    project.filePassword = QStringLiteral("incorrect");
+    QVERIFY(!exportNativeProjectSource(project, &result, &error));
+    QCOMPARE(result, QByteArray("unchanged"));
+    project.filePassword = credential;
+    QVERIFY2(exportNativeProjectSource(project, &result, &error), qPrintable(error));
+    QCOMPARE(result, original);
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::bitAndWordSharedLanguageKeepNativeRows
+ * Description     : Verify the one SwitchItem language checkbox, separate OFF/ON captions, and editable secondary-language rows.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::bitAndWordSharedLanguageKeepNativeRows() //20261127-5 add
+{
+    HmiProject project;
+    HmiProject reopened;
+    QByteArray output;
+    QByteArray saved;
+    NativeSourceFieldSpan flag;
+    QString error;
+    QString english = QStringLiteral("English");
+    int state;
+    for (const QString &subtype : {QStringLiteral("bit"), QStringLiteral("word")})
+    {
+        QFile seed(QStringLiteral(":/native/%1-button-default.sm").arg(subtype));
+        QVERIFY(seed.open(QIODevice::ReadOnly));
+        QVERIFY2(importNativeProjectSource(seed.readAll(), &project, &error), qPrintable(error));
+        project.languages.append(english);
+        HmiObject &object = project.objects.first();
+        if (object.hasWordButtonProperties) { object.wordButton.pressedEffect = true; }
+        else { object.bitButton.indicator = true; }
+        for (state = 0; state < 2; ++state)
+        {
+            BitButtonState &appearance = object.bitButton.states[state];
+            appearance.sameLanguage = true;
+            appearance.sharedText = QStringLiteral("状态%1").arg(state);
+            appearance.text.languageTexts.insert(project.languages.first(), appearance.sharedText);
+            appearance.text.languageTexts.insert(english, QStringLiteral("draft-%1").arg(state));
+        }
+        QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error));
+        flag = sourceFieldSpan(output, QStringLiteral("object[0].switch.tail.4"));
+        QCOMPARE(output.mid(flag.start, flag.end - flag.start), QByteArray(1, char(1)));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        for (state = 0; state < 2; ++state)
+        {
+            const BitButtonState &appearance = reopened.objects.first().bitButton.states[state];
+            QVERIFY(appearance.sameLanguage);
+            QCOMPARE(appearance.sharedText, QStringLiteral("状态%1").arg(state));
+            QCOMPARE(appearance.text.languageTexts.value(english), QStringLiteral("draft-%1").arg(state));
+        }
+        saved = output;
+        QVERIFY2(exportNativeProjectSource(reopened, &output, &error), qPrintable(error));
+        QCOMPARE(output, saved);
+        object.bitButton.states[1].sameLanguage = false;
+        QVERIFY(!exportNativeProjectSource(project, &output, &error));
+        QVERIFY(error.contains(QStringLiteral("两个状态")));
+        object.bitButton.states[1].sameLanguage = true;
+        object.bitButton.states[0].sharedText = QStringLiteral("独立草稿");
+        QVERIFY(!exportNativeProjectSource(project, &output, &error));
+        QVERIFY(error.contains(QStringLiteral("第一语言草稿")));
+        QCOMPARE(output, saved);
+    }
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::legacySwitchPreviewUsesEditableStateRows
+ * Description     : Build native previews from old KSP captions, keeping shape colors, exact language text and a deliberately empty no-image reference.
+ * Input Parameters: None
+ * Return Value    : None.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::legacySwitchPreviewUsesEditableStateRows() //20261127-5 add
+{
+    HmiProject project;
+    HmiProject reopened;
+    QString error;
+    QByteArray output;
+    QByteArray saved;
+    QByteArray preview;
+    NativeSourceFieldSpan span;
+    QString expected = QStringLiteral("LW20 = 0");
+    QString english = QStringLiteral("English");
+    int state;
+
+    for (const QString &subtype : {QStringLiteral("bit"), QStringLiteral("word"), QStringLiteral("lamp")})
+    {
+        QFile seed(subtype == QStringLiteral("lamp") ? QStringLiteral(":/native/lamp-default.sm") :
+                   QStringLiteral(":/native/%1-button-default.sm").arg(subtype));
+        QVERIFY(seed.open(QIODevice::ReadOnly));
+        QVERIFY2(importNativeProjectSource(seed.readAll(), &project, &error), qPrintable(error));
+        project.nativeSourceSnapshot.clear();
+        project.nativeSourceWarnings.clear();
+        project.languages.append(english);
+        HmiObject &object = project.objects.first();
+        object.text = QStringLiteral("模板旧标题");
+        if (object.hasWordButtonProperties) { object.wordButton.pressedEffect = true; }
+        for (state = 0; state < 2; ++state)
+        {
+            BitButtonState &appearance = object.bitButton.states[state];
+            appearance.useImage = false;
+            appearance.picture.clear();
+            appearance.background = state == 0 ? QColor(Qt::white) : QColor(128, 255, 128);
+            appearance.text.style = 1;
+            appearance.text.languageTexts.insert(project.languages.first(), state == 0 ? expected : QStringLiteral("LW20 = 1"));
+            appearance.text.languageTexts.insert(english, QStringLiteral("EN %1").arg(state));
+        }
+        QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QCOMPARE(object.text, QStringLiteral("模板旧标题"));
+        QCOMPARE(reopened.objects.first().text, expected);
+        for (state = 0; state < 2; ++state)
+        {
+            const BitButtonState &appearance = reopened.objects.first().bitButton.states[state];
+            QVERIFY(!appearance.useImage);
+            QVERIFY(appearance.picture.isEmpty());
+            QCOMPARE(appearance.background, object.bitButton.states[state].background);
+            QCOMPARE(appearance.text.languageTexts, object.bitButton.states[state].text.languageTexts);
+        }
+        preview.clear();
+        QDataStream stream(&preview, QIODevice::WriteOnly);
+        stream.setVersion(QDataStream::Qt_4_8);
+        stream << expected;
+        span = sourceFieldSpan(output, QStringLiteral("object[0].text.head.4"));
+        QCOMPARE(output.mid(span.start, span.end - span.start), preview);
+        saved = output;
+        QVERIFY2(exportNativeProjectSource(reopened, &output, &error), qPrintable(error));
+        QCOMPARE(output, saved);
+        reopened.objects.first().text = QStringLiteral("手工更改已导入的通用文字");
+        QVERIFY(!exportNativeProjectSource(reopened, &output, &error));
+        object.bitButton.states[0].text.style = 3;
+        QVERIFY(!exportNativeProjectSource(project, &output, &error));
+        QCOMPARE(output, saved);
+    }
 }
 
 /******************************************************************************
@@ -1389,6 +1648,9 @@ void NativeProjectCodecTests::nativeLampCorpusKeepsExactBytes() //20261109-8 add
     QCOMPARE(project.objects[0].bitButton.states[1].sharedText, QStringLiteral("ON"));
     QCOMPARE(project.objects[0].bitButton.states[1].background, QColor(QStringLiteral("#f0f0f0")));
     QVERIFY2(nativeProjectUsesSupportedDeviceDefaults(lampSourceOracle(), &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(lampSourceOracle(QStringLiteral("lamp-dual-flash0-r1.sm")), &project, &error), qPrintable(error));
+    QCOMPARE(project.objects[0].bitButton.monitorType, 0); //20261127-5 add: This original bit-address lamp retains a dormant word-bit index of 15.
+    QCOMPARE(project.objects[0].bitButton.bitIndex, 15);
     QVERIFY2(importNativeProjectSource(lampSourceOracle(QStringLiteral("lamp-wordbit7-r1.sm")), &project, &error), qPrintable(error));
     QCOMPARE(project.objects[0].bitButton.monitorType, 1);
     QCOMPARE(project.objects[0].bitButton.bitIndex, 7);
@@ -2357,13 +2619,13 @@ void NativeProjectCodecTests::everyTruncatedPrefixPreservesSemanticOutputs() //2
 }
 
 /******************************************************************************
- * Function Name   : NativeProjectCodecTests::multiplePagesAreReadOnlyArchives
- * Description     : Recognize complete newly captured native page lists while refusing semantic flattening.
+ * Function Name   : NativeProjectCodecTests::ordinaryPagesKeepNativeSourceAndEdits
+ * Description     : Exercise real V122 page lists, independent page edits and device topology rejection.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.10
  ******************************************************************************/
-void NativeProjectCodecTests::multiplePagesAreReadOnlyArchives() //20261110-5 add
+void NativeProjectCodecTests::ordinaryPagesKeepNativeSourceAndEdits() //20261127-8 change
 {
     QString directory = QFINDTESTDATA("fixtures/native-source/multipage");
     QStringList names = {QStringLiteral("B-two-empty-pages.sm"), QStringLiteral("C-third-page-number9.sm"), QStringLiteral("D-third-page-name.sm")};
@@ -2377,11 +2639,26 @@ void NativeProjectCodecTests::multiplePagesAreReadOnlyArchives() //20261110-5 ad
     NativeProjectEnvelope archive;
     NativeSourceFieldSpan page;
     HmiProject retained;
-    QJsonObject before;
+    HmiProject reopened;
+    HmiProject seed;
+    HmiProject fresh;
+    HmiProject appended;
+    HmiPage extra;
+    QByteArray newPages;
+    QByteArray nativePages;
+    QStringList opaqueSlots;
+    qsizetype newStart;
+    qsizetype nativeStart;
+    const QString title = QStringLiteral("第二画面");
+    QByteArray encodedTitle;
+    QByteArray expected;
+    QDataStream stream(&encodedTitle, QIODevice::WriteOnly);
 
+    stream.setVersion(QDataStream::Qt_4_8);
+    stream << title;
     QVERIFY(!directory.isEmpty());
-    retained.name = QStringLiteral("KeepMultiPageFailure");
-    before = retained.toJson();
+    QVERIFY2(importNativeProjectSource(nativeOracle(), &seed, &error), qPrintable(error));
+    QVERIFY(!seed.objects.isEmpty());
     Q_FOREACH (name, names) {
         file.setFileName(QDir(directory).filePath(name));
         QVERIFY(file.open(QIODevice::ReadOnly));
@@ -2392,21 +2669,84 @@ void NativeProjectCodecTests::multiplePagesAreReadOnlyArchives() //20261110-5 ad
         page = sourceFieldSpan(source, QStringLiteral("page[1].head.18"));
         QVERIFY(page.end > page.start);
         QVERIFY(validateNativeProjectSourceStructure(source, &error));
-        QVERIFY(!importNativeProjectSource(source, &retained, &error));
-        QVERIFY(error.contains(QStringLiteral("多个页面")));
-        QCOMPARE(retained.toJson(), before);
+        QVERIFY2(importNativeProjectSource(source, &retained, &error), qPrintable(error));
+        QCOMPARE(retained.pageCount(), name.startsWith(QLatin1Char('B')) ? 2 : 3);
+        if (name.startsWith(QLatin1Char('C'))) { QCOMPARE(retained.allPages().last().number.value_or(-1), 9); }
+        if (name.startsWith(QLatin1Char('D'))) { QCOMPARE(retained.allPages().last().name, QStringLiteral("Stage1_Third")); }
+        QVERIFY2(retained.selectPage(retained.pageOrder.at(1), &error), qPrintable(error));
+        QCOMPARE(retained.activePageNumber.value_or(-1), 1);
+        QVERIFY2(exportNativeProjectSource(retained, &output, &error), qPrintable(error));
+        QCOMPARE(output, source);
+        fresh = retained;
+        fresh.nativeSourceSnapshot.clear();
+        fresh.nativeSourceWarnings.clear();
+        QVERIFY2(exportNativeProjectSource(fresh, &output, &error), qPrintable(error));
+        newStart = sourceFieldSpan(output, QStringLiteral("page[1].head.0")).start;
+        nativeStart = sourceFieldSpan(source, QStringLiteral("page[1].head.0")).start;
+        newPages = output.mid(newStart, sourceFieldSpan(output, QStringLiteral("history.1e4.count")).start - newStart);
+        nativePages = source.mid(nativeStart, sourceFieldSpan(source, QStringLiteral("history.1e4.count")).start - nativeStart);
+        // Independent original processes emitted noncanonical third-page slots. New pages use B's documented zero defaults.
+        opaqueSlots.clear();
+        if (name.startsWith(QLatin1Char('C'))) { opaqueSlots = {QStringLiteral("head.13")}; }
+        if (name.startsWith(QLatin1Char('D')))
+        {
+            opaqueSlots = {QStringLiteral("head.10"), QStringLiteral("head.20"), QStringLiteral("tail.3"), QStringLiteral("tail.4")};
+        }
+        for (const QString &field : opaqueSlots)
+        {
+            const NativeSourceFieldSpan oldSlot = sourceFieldSpan(source, QStringLiteral("page[2].") + field);
+            const NativeSourceFieldSpan newSlot = sourceFieldSpan(output, QStringLiteral("page[2].") + field);
+            const QByteArray zero(newSlot.end - newSlot.start, char(0));
+            QCOMPARE(output.mid(newSlot.start, zero.size()), zero);
+            QCOMPARE(oldSlot.end - oldSlot.start, zero.size());
+            nativePages.replace(oldSlot.start - nativeStart, zero.size(), zero);
+        }
+        QCOMPARE(newPages, nativePages);
+        appended = retained;
+        extra.id = QStringLiteral("added-page");
+        extra.name = QStringLiteral("追加画面");
+        extra.number = 27;
+        QVERIFY2(appended.addPage(extra, &error), qPrintable(error));
+        QVERIFY2(appended.selectPage(extra.id, &error), qPrintable(error));
+        QVERIFY2(exportNativeProjectSource(appended, &output, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QCOMPARE(reopened.pageCount(), retained.pageCount() + 1);
+        QCOMPARE(reopened.allPages().last().name, extra.name);
+        QCOMPARE(reopened.allPages().last().number.value_or(-1), 27);
         QVERIFY(!nativeProjectUsesSupportedDeviceDefaults(source, &error)); //20261110-5 add: Configuration fingerprints cannot bypass page topology.
         QVERIFY(inspectNativeProjectEnvelope(source, &archive, &error));
         QVERIFY(restoreNativeProjectArchive(archive, &output, &error));
         QCOMPARE(output, source);
-        retained.nativeSourceSnapshot = source;
         initial = 99;
         QVERIFY(!nativeProjectInitialLanguageIndex(retained, &initial, &error));
         QCOMPARE(initial, 99);
+        QVERIFY2(retained.renamePage(retained.activePageId, title, &error), qPrintable(error));
+        QVERIFY2(exportNativeProjectSource(retained, &output, &error), qPrintable(error));
+        expected = source;
+        expected.replace(page.start, page.end - page.start, encodedTitle);
+        QCOMPARE(output, expected);
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QCOMPARE(reopened.allPages().at(1).name, title);
+
+        retained.objects = {seed.objects.first()};
+        QVERIFY2(exportNativeProjectSource(retained, &output, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QVERIFY(reopened.objects.isEmpty());
+        QVERIFY2(reopened.selectPage(reopened.pageOrder.at(1), &error), qPrintable(error));
+        QCOMPARE(reopened.objects.size(), 1);
+        reopened.objects.first().geometry.translate(7, 13);
+        QVERIFY2(exportNativeProjectSource(reopened, &output, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(output, &retained, &error), qPrintable(error));
+        QCOMPARE(retained.allPages().at(1).objects.first().geometry, reopened.objects.first().geometry);
+        retained.activePageBackground.color = QStringLiteral("#123455");
         output = QByteArray("keep-output");
         QVERIFY(!exportNativeProjectSource(retained, &output, &error));
         QCOMPARE(output, QByteArray("keep-output"));
-        retained.nativeSourceSnapshot.clear();
+        page = sourceFieldSpan(source, QStringLiteral("page[1].head.17"));
+        expected = source;
+        expected[page.start] = 1;
+        QVERIFY(!importNativeProjectSource(expected, &retained, &error));
+        QVERIFY(error.contains(QStringLiteral("窗口")));
     }
 }
 
@@ -2476,6 +2816,7 @@ void NativeProjectCodecTests::sourceRejectsUnmappedModelEntities() //20261110-5 
     project = original;
     page.id = QStringLiteral("second-page");
     page.name = QStringLiteral("Second page");
+    page.kind = QStringLiteral("window"); //20261127-8 change: Ordinary page append is mapped; window topology remains unsupported.
     QVERIFY2(project.addPage(page, &error), qPrintable(error));
     before = project.toJson();
     QVERIFY(!exportNativeProjectSource(project, &output, &error));
@@ -2795,6 +3136,10 @@ void NativeProjectCodecTests::nativeUnrepresentableActiveMetadataIsRejected() //
         file.setFileName(QDir(directory).filePath(name));
         QVERIFY(file.open(QIODevice::ReadOnly));
         bytes = file.readAll();
+        // The real file is an editable macro draft; an unknown entry selector still cannot be interpreted.
+        const NativeSourceFieldSpan selector = sourceFieldSpan(bytes, QStringLiteral("object[0].switch.22c.0"));
+        QVERIFY(selector.end == selector.start + 1);
+        bytes[selector.start] = 0; //20261127-7 change
         file.close();
         QVERIFY2(validateNativeProjectSourceStructure(bytes, &error), qPrintable(error));
         QVERIFY(!importNativeProjectSource(bytes, &retained, &error));
@@ -2809,6 +3154,58 @@ void NativeProjectCodecTests::nativeUnrepresentableActiveMetadataIsRejected() //
         QCOMPARE(output, QByteArray("keep-metadata-output"));
         retained.nativeSourceSnapshot.clear();
     }
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::nativeMacroAddressRowsSurvivePageEdits
+ * Description     : Keep a structured macro address row across file and page edits, including a zero-selector local binding.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::nativeMacroAddressRowsSurvivePageEdits() //20261127-10 add
+{
+    QFile file(QFINDTESTDATA("fixtures/native-source/bit-analysis/macro-bound-product-seed.sm"));
+    QByteArray source;
+    QByteArray rows;
+    QByteArray output;
+    QByteArray previous;
+    QDataStream stream(&rows, QIODevice::WriteOnly);
+    NativeSourceFieldSpan span;
+    HmiProject project;
+    HmiProject restored;
+    QString error;
+
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    source = file.readAll();
+    for (const QString &flag : {QStringLiteral("0"), QStringLiteral("4")}) {
+        span = sourceFieldSpan(source, QStringLiteral("object[0].switch.22c.") + flag);
+        QCOMPARE(span.end - span.start, 1);
+        source[span.start] = 0;
+    }
+    stream.setVersion(QDataStream::Qt_4_8);
+    stream << u32(1) << QStringLiteral("Local") << u8(0) << u8(0) << u8(0) << QStringLiteral("100") << QStringLiteral("LW")
+           << u8(0) << u32(1) << QString() << u32(0) << u32(2) << QStringLiteral("auditRow") << u32(1);
+    QCOMPARE(stream.status(), QDataStream::Ok);
+    span = sourceFieldSpan(source, QStringLiteral("history.1e4[0].c.count"));
+    QCOMPARE(span.end - span.start, 4);
+    source.replace(span.start, 4, rows);
+    QVERIFY2(importNativeProjectSource(source, &project, &error), qPrintable(error));
+    QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error));
+    QCOMPARE(output, source);
+    QVERIFY(!nativeProjectUsesSupportedDeviceDefaults(source, &error));
+    QVERIFY(error.contains(QStringLiteral("宏地址表")));
+    project.objects[0].geometry.translate(7, 9);
+    QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(output, &restored, &error), qPrintable(error));
+    QCOMPARE(restored.objects[0].geometry, project.objects[0].geometry);
+    span = sourceFieldSpan(output, QStringLiteral("history.1e4[0].c.count"));
+    QCOMPARE(output.mid(span.start, rows.size()), rows);
+    previous = output;
+    project.macros[QStringLiteral("SetLB1")] += QStringLiteral(" ");
+    QVERIFY(!exportNativeProjectSource(project, &output, &error));
+    QVERIFY(error.contains(QStringLiteral("宏地址表")));
+    QCOMPARE(output, previous);
 }
 
 /******************************************************************************
@@ -2853,6 +3250,246 @@ void NativeProjectCodecTests::productMacroCachePreservationAndInvalidation() //2
     QCOMPARE(code.end - code.start, 4);
     QCOMPARE(static_cast<u8>(output.at(compiled.start)), static_cast<u8>(0));
     QVERIFY(restored.nativeSourceWarnings.join(QString()).contains(QStringLiteral("未编译源码")));
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::closedGraphicsMatchVendorSources_data
+ * Description     : Pin the two UI-authored source files before any edit or re-encoding.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::closedGraphicsMatchVendorSources_data() //20261127-6 add
+{
+    QTest::addColumn<QString>("kind");
+    QTest::addColumn<QByteArray>("sha");
+    QTest::newRow("rectangle") << QStringLiteral("rect") << QByteArray("5ddcdcffe9825f129645565b517aba043f370306d13d49583d85a5c2f5c06e61");
+    QTest::newRow("ellipse") << QStringLiteral("ellipse") << QByteArray("4e28bddada110760a971117435f77bc662d0361193044725b4e465d629d1b41e");
+    QTest::newRow("polygon") << QStringLiteral("polygon") << QByteArray("81c32982c3c9a23ffdecb73059ac798e132aac60ab4c341625eca905e6971fae");
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::closedGraphicsMatchVendorSources
+ * Description     : Verify vendor bytes, retained exports, edited geometry/styles and a newly authored graphic.
+ * Input Parameters: QtTest data row
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::closedGraphicsMatchVendorSources() //20261127-6 add
+{
+    QFETCH(QString, kind);
+    QFETCH(QByteArray, sha);
+    QFile file(QStringLiteral(":/native/graphics/%1.sm").arg(kind));
+    QByteArray source, encoded;
+    HmiProject imported, reopened, fresh;
+    HmiObject edited;
+    QString error;
+    QVERIFY(file.open(QIODevice::ReadOnly)); source = file.readAll();
+    QCOMPARE(QCryptographicHash::hash(source, QCryptographicHash::Sha256).toHex(), sha);
+    QVERIFY2(importNativeProjectSource(source, &imported, &error), qPrintable(error));
+    QVERIFY(!imported.objects.isEmpty()); edited = imported.objects.first();
+    QCOMPARE(edited.type, kind); QCOMPARE(edited.geometry, QRect(100, 100, 200, kind == QStringLiteral("polygon") ? 120 : 100));
+    QCOMPARE(edited.graphic.lineWidth, 1); QCOMPARE(edited.graphic.background, QColor(kind == QStringLiteral("polygon") ? Qt::black : Qt::white));
+    QVERIFY2(exportNativeProjectSource(imported, &encoded, &error), qPrintable(error)); QCOMPARE(encoded, source);
+    edited.name = QStringLiteral("彩色图形");
+    edited.geometry = QRect(63, 81, 185, 109); edited.subpixelOffset = QPointF(0.5, 0.25);
+    edited.graphic.lineColor = Qt::green; edited.graphic.foreground = Qt::blue; edited.graphic.background = Qt::yellow;
+    edited.graphic.lineWidth = 4; edited.graphic.lineStyle = 3; edited.graphic.fillStyle = 11; edited.graphic.alpha = 97;
+    if (kind == QStringLiteral("polygon")) { edited.graphic.points = {{0,0}, {1,0}, {1,1}, {0.5,0.75}, {0,1}}; }
+    imported.objects[0] = edited; fresh.objects.append(edited);
+    for (const HmiProject *project : {&imported, &fresh})
+    {
+        QVERIFY2(exportNativeProjectSource(*project, &encoded, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(encoded, &reopened, &error), qPrintable(error));
+        QCOMPARE(reopened.objects.first().geometry, edited.geometry);
+        QCOMPARE(reopened.objects.first().subpixelOffset, edited.subpixelOffset);
+        QCOMPARE(reopened.objects.first().name, edited.name);
+        QCOMPARE(reopened.objects.first().graphic.toJson(kind), edited.graphic.toJson(kind));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::profiledGraphicsMatchVendorSources_data
+ * Description     : Pin real default and styled circular sectors and rounded rectangles from the V5.1 editor.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::profiledGraphicsMatchVendorSources_data() //20261127-6 add
+{
+    QTest::addColumn<QString>("kind"); QTest::addColumn<bool>("custom"); QTest::addColumn<QByteArray>("sha");
+    QTest::newRow("roundrect-default") << QStringLiteral("roundrect") << false << QByteArray("8846ae61ad43d67c82c8242d25da49a8970290f3acaef42ec91e9aebee71fc0e");
+    QTest::newRow("roundrect-custom") << QStringLiteral("roundrect") << true << QByteArray("2b03cf74bf23144b74394df26fd8deb1c798bb61e081cdf9c881a491ab9ff1e1");
+    QTest::newRow("sector-default") << QStringLiteral("sector") << false << QByteArray("b2dc8286626c78b72c93bafb7d4556551a5aa4ccf5518c1a5571191320f7e274");
+    QTest::newRow("sector-custom") << QStringLiteral("sector") << true << QByteArray("6098c001a3f1aa3d3b2e3da6133ebc8277bded55a20127fa5bc055a566f9b21b");
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::profiledGraphicsMatchVendorSources
+ * Description     : Check native path retention, parameter edits, regenerated variable-length caches and unsupported contours.
+ * Input Parameters: QtTest data row
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::profiledGraphicsMatchVendorSources() //20261127-6 add
+{
+    QFETCH(QString, kind); QFETCH(bool, custom); QFETCH(QByteArray, sha);
+    const bool rounded = kind == QStringLiteral("roundrect");
+    QFile file(custom ? QDir(QFINDTESTDATA("fixtures/native-source/profiles")).filePath(kind + QStringLiteral("-custom-style.sm")) :
+                        QStringLiteral(":/native/graphics/%1.sm").arg(kind));
+    HmiProject project, fresh, reopened;
+    HmiObject edited;
+    QByteArray source, output, changed, typeBytes;
+    qsizetype body;
+    QString error;
+    QVERIFY(file.open(QIODevice::ReadOnly)); source = file.readAll();
+    QCOMPARE(QCryptographicHash::hash(source, QCryptographicHash::Sha256).toHex(), sha);
+    QVERIFY2(importNativeProjectSource(source, &project, &error), qPrintable(error)); QCOMPARE(project.objects.size(), 1);
+    edited = project.objects.first(); QCOMPARE(edited.type, kind); QCOMPARE(edited.graphic.alpha, custom ? 128 : 255);
+    QCOMPARE(edited.graphic.lineWidth, custom ? 3 : 1); QCOMPARE(edited.graphic.fillStyle, custom ? 12 : 1);
+    QCOMPARE(edited.geometry, rounded ? QRect(100,100,custom ? 197 : 200,custom ? 97 : 100) : QRect(100,100,200,200));
+    if (rounded) { QCOMPARE(edited.graphic.radiusX, custom ? 99 : 10); QCOMPARE(edited.graphic.radiusY, custom ? 30 : 10); }
+    QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error)); QCOMPARE(output, source);
+    typeBytes = QByteArray::fromHex(rounded ? "0001002b" : "0001002c"); body = source.indexOf(typeBytes, 2700);
+    QVERIFY(body >= 2700); changed = source; changed[body + 11] = 1; // Replace the first MoveTo with LineTo while preserving byte boundaries.
+    QVERIFY(!importNativeProjectSource(changed, &reopened, &error));
+    edited.geometry.moveTo(73,84); edited.subpixelOffset = QPointF(.5,.25); project.objects[0] = edited;
+    QVERIFY2(exportNativeProjectSource(project, &output, &error), qPrintable(error));
+    QCOMPARE(output.mid(body, 40), source.mid(body, 40));
+    QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, edited.geometry); QCOMPARE(reopened.objects.first().subpixelOffset, edited.subpixelOffset);
+    edited.geometry.setSize(rounded ? QSize(216,121) : QSize(169,169)); edited.name = QStringLiteral("彩色曲边图形");
+    edited.graphic.lineColor = Qt::green; edited.graphic.foreground = Qt::blue; edited.graphic.background = Qt::yellow;
+    edited.graphic.lineWidth = 4; edited.graphic.fillStyle = 11; edited.graphic.lineStyle = 3; edited.graphic.alpha = 97;
+    if (rounded) { edited.graphic.radiusX = 44; edited.graphic.radiusY = 18; }
+    project.objects[0] = edited; fresh.objects.append(edited);
+    for (const HmiProject *candidate : {&project, &fresh})
+    {
+        QVERIFY2(exportNativeProjectSource(*candidate, &output, &error), qPrintable(error));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QCOMPARE(reopened.objects.first().geometry, edited.geometry); QCOMPARE(reopened.objects.first().subpixelOffset, edited.subpixelOffset);
+        QCOMPARE(reopened.objects.first().name, edited.name); QCOMPARE(reopened.objects.first().graphic.toJson(kind), edited.graphic.toJson(kind));
+    }
+    if (!rounded)
+    {
+        fresh.objects[0].geometry.setHeight(168); output = QByteArray("keep");
+        QVERIFY(!exportNativeProjectSource(fresh, &output, &error)); QCOMPARE(output, QByteArray("keep"));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::strokedGraphicsMatchVendorSources_data
+ * Description     : Pin V5.1 source files with independent non-default line, polyline and free-line arrow caches.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::strokedGraphicsMatchVendorSources_data() //20261127-6 add
+{
+    QTest::addColumn<QString>("kind"); QTest::addColumn<QByteArray>("sha");
+    QTest::addColumn<int>("vertices"); QTest::addColumn<int>("arrow");
+    QTest::newRow("line") << QStringLiteral("line") << QByteArray("b45fc3d93e9052aa28555956092f94b58f3e84c1c4f9c5e24b4be41d2c05d8bf") << 2 << 5;
+    QTest::newRow("polyline") << QStringLiteral("polyline") << QByteArray("a93a54b825fb83929b5a0c59e66a1708ac54da9cdaf33c8720a4f745c121ef0b") << 3 << 1;
+    QTest::newRow("freeline") << QStringLiteral("freeline") << QByteArray("07523fd2ab31d41ed06c3b057e8db88228bea9b23bc536e3ad428bc73bbfff2f") << 2 << 4;
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::strokedGraphicsMatchVendorSources
+ * Description     : Separate editable segments from cached arrows and retain actual object bytes through translation and fresh creation.
+ * Input Parameters: QtTest data row
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::strokedGraphicsMatchVendorSources() //20261127-6 add
+{
+    QFETCH(QString, kind); QFETCH(QByteArray, sha); QFETCH(int, vertices); QFETCH(int, arrow);
+    QFile file(QDir(QFINDTESTDATA("fixtures/native-source/strokes")).filePath(kind + QStringLiteral("-custom-style.sm")));
+    HmiProject project, reopened, fresh;
+    HmiObject edited;
+    QByteArray source, encoded;
+    QString error;
+    QVERIFY(file.open(QIODevice::ReadOnly)); source = file.readAll();
+    QCOMPARE(QCryptographicHash::hash(source, QCryptographicHash::Sha256).toHex(), sha);
+    QVERIFY2(importNativeProjectSource(source, &project, &error), qPrintable(error));
+    QVERIFY(!project.objects.isEmpty()); edited = project.objects.first();
+    QCOMPARE(edited.type, kind); QCOMPARE(edited.graphic.points.size(), vertices); QCOMPARE(edited.graphic.endArrow, arrow);
+    QVERIFY2(exportNativeProjectSource(project, &encoded, &error), qPrintable(error)); QCOMPARE(encoded, source);
+    edited.geometry.translate(-14, 33); project.objects[0] = edited;
+    QVERIFY2(exportNativeProjectSource(project, &encoded, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(encoded, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, edited.geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(kind), edited.graphic.toJson(kind));
+    edited.graphic.endArrow = 0; edited.geometry.setWidth(188); fresh.objects.append(edited);
+    QVERIFY2(exportNativeProjectSource(fresh, &encoded, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(encoded, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, edited.geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(kind), edited.graphic.toJson(kind));
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::imageTableNativeCacheAndEdits
+ * Description     : Compare regenerated painter caches and private attributes against independently saved V5.1 table inputs.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::imageTableNativeCacheAndEdits() //20261127-9 add
+{
+    const QList<QByteArray> nativeHashes = {
+        "a9aee84f341cce4253b6dbaf00de0db75c918ceddc66023d7bf4135dd40da8b6","b95231347f228cc5b964fdefe91d9c39558d1b1f9ea986b33ad6215e9241e6b1",
+        "b0fb9d75896880553e275592cc71002d2598626dd70e68341ca0d90cfecf10eb","fc10f25904b6cf83c21fc6179e185f8fd2b601efdcbc3892046d92b7935b1e31",
+        "107b25efe485f64b4f3f0b2cce80982b008062611fad22ada019564f1a6c851e","9ec10a77a0ff66e05435513d6ffc76348d4bd917c9fef04f483cff1fb87c7200",
+        "c1dee107a563ecfd818577e0c940b050075021d5f62ac09f97cb48a5d2e4f113","02d774a4d7ec3cdbc9d3d6e2bfe85631c4fbf5948a70755a54d7b1c8a803a317",
+        "84f797fbe915d3044eae528ca74564ae4a943d2d2d40195947dbde485fff19d8","023b014108a4d0d36f3948d70f82cfd454927367736702f906673c7b6dff0289"
+    };
+    QFile sample(QStringLiteral(":/native/table-default.sm"));
+    HmiProject base, changed, reopened;
+    QByteArray original, output, selected;
+    NativeSourceFieldSpan a, b;
+    QString error;
+    int i;
+
+    QVERIFY(sample.open(QIODevice::ReadOnly)); original = sample.readAll();
+    QCOMPARE(QCryptographicHash::hash(original, QCryptographicHash::Sha256).toHex(), QByteArray("f2e1f7e14a72773c0a337df74b36bf23033ebccdea6644a7d210669d2cd9d729"));
+    QVERIFY2(importNativeProjectSource(original, &base, &error), qPrintable(error));
+    QCOMPARE(base.objects.first().type, QStringLiteral("table")); QCOMPARE(base.objects.first().geometry, QRect(100,100,200,100));
+    QVERIFY2(exportNativeProjectSource(base, &output, &error), qPrintable(error)); QCOMPARE(output, original);
+    for (i = 0; i < nativeHashes.size(); ++i)
+    {
+        changed = base;
+        GraphicProperties &g = changed.objects.first().graphic;
+        g.showHorizontal = i > 7 || (i & 1); g.showVertical = i > 7 || (i & 2); g.showOutline = i > 7 || (i & 4);
+        if (i == 8) { g.lineStyle = 0; }
+        if (i == 9) { g.rows = 3; g.columns = 2; g.alpha = 128; }
+        QVERIFY2(exportNativeProjectSource(changed, &output, &error), qPrintable(error));
+        a = sourceFieldSpan(output, QStringLiteral("object[0].children.count")); b = sourceFieldSpan(output, QStringLiteral("object[0].group.metadata-type"));
+        selected = output.mid(a.start, b.start - a.start);
+        a = sourceFieldSpan(output, QStringLiteral("object[0].table.0")); b = sourceFieldSpan(output, QStringLiteral("object[0].table.9"));
+        selected.append(output.mid(a.start, b.end - a.start));
+        QCOMPARE(QCryptographicHash::hash(selected, QCryptographicHash::Sha256).toHex(), nativeHashes.at(i));
+        QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+        QCOMPARE(reopened.objects.first().graphic.toJson(QStringLiteral("table")), g.toJson(QStringLiteral("table")));
+    }
+    changed.nativeSourceSnapshot.clear(); changed.nativeSourceWarnings.clear();
+    changed.objects.first().name = QStringLiteral("矩阵"); changed.objects.first().geometry = QRect(33, 29, 211, 147);
+    changed.objects.first().graphic.lineColor = Qt::red; changed.objects.first().graphic.frameColor = Qt::blue;
+    changed.objects.first().graphic.background = Qt::green;
+    QVERIFY2(exportNativeProjectSource(changed, &output, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(output, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().name, changed.objects.first().name);
+    QCOMPARE(reopened.objects.first().geometry, changed.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(QStringLiteral("table")), changed.objects.first().graphic.toJson(QStringLiteral("table")));
+    a = sourceFieldSpan(output, QStringLiteral("object[0].table.6"));
+    QCOMPARE(output.mid(a.start, a.end - a.start), QByteArray::fromHex("01ffff00000000ffff0000")); // Opaque blue frame.
+    a = sourceFieldSpan(output, QStringLiteral("object[0].grid[1].style.2"));
+    QCOMPARE(output.mid(a.start, a.end - a.start), QByteArray::fromHex("01ffffffff000000000000")); // Opaque red internal line.
+    original = output;
+    a = sourceFieldSpan(output, QStringLiteral("object[0].grid[1].point[0].2"));
+    output.replace(a.start, a.end - a.start, QByteArray(8, char(0)));
+    QVERIFY(!importNativeProjectSource(output, &reopened, &error));
+    output = original;
+    a = sourceFieldSpan(output, QStringLiteral("object[0].table.columnControlled")); output[a.start] = 1;
+    QVERIFY(!importNativeProjectSource(output, &reopened, &error));
 }
 
 QTEST_GUILESS_MAIN(NativeProjectCodecTests)

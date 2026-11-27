@@ -651,6 +651,8 @@ void StaticTextTests::bitStateDraftsAndCopies() //20261108-15 add
     language->setCurrentText(QStringLiteral("中文")); text->setPlainText(QStringLiteral("开启"));
     state->setValue(0); QCOMPARE(text->toPlainText(), QStringLiteral("关闭\n中文"));
     dialog->findChild<QCheckBox *>(QStringLiteral("BitSameLanguage"))->setChecked(true);
+    QVERIFY(!language->isEnabled()); //20261127-5 add: The vendor exterior dialog disables language selection and toggles both artwork states.
+    QVERIFY(dialog->object().bitButton.states[1].sameLanguage);
     text->setPlainText(QStringLiteral("共享")); language->setCurrentText(QStringLiteral("English")); QCOMPARE(text->toPlainText(), QStringLiteral("共享"));
     dialog->findChild<QCheckBox *>(QStringLiteral("BitSameLanguage"))->setChecked(false);
     QCOMPARE(text->toPlainText(), QStringLiteral("STOP"));

@@ -103,6 +103,8 @@ private slots:
     void visitingUnsortedLayersIsNavigationOnly();
     void crossPageReplacementUndoAndSavedCheckpoint();
     void invalidDraftAndNativeOverwriteAreAtomic();
+    void nativeUnassignedMacroRemainsEditable(); //20261127-7 add
+    void nativeFileSaveEditsAndKeepsWorkingPath(); //20261127-7 add
     void reopenAfterCloseRestoresEditor();
     void recentFilesAreBoundedAndIsolated();
     void openedProjectShowsProtocolsUnderTheirOwnPorts(); //20261122-6 add
@@ -1668,6 +1670,91 @@ void Stage2WorkflowTests::crossPageReplacementUndoAndSavedCheckpoint() //2026111
     QCOMPARE(loaded.allPages().at(1).objects.first().address, QStringLiteral("LW2"));
     QVERIFY(!buildProjectPayload(loaded, &payloads, &error));
     QVERIFY(payloads.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : nativeUnassignedMacroRemainsEditable
+ * Description     : Preserve a vendor-saved unassigned macro checkbox, while preventing an unbound device action.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeUnassignedMacroRemainsEditable() //20261127-7 add
+{
+    const QString original = QFINDTESTDATA("fixtures/native-source/rejected/active-macro-name-cleared-native.sm");
+    QTemporaryDir dir;
+    HmiProject project;
+    HmiProject reopened;
+    QFile input(original);
+    QFile copy(dir.filePath(QStringLiteral("保留.sm")));
+    QByteArray raw;
+    QVector<QByteArray> payloads;
+    QString error;
+
+    QVERIFY(input.open(QIODevice::ReadOnly));
+    raw = input.readAll();
+    QVERIFY2(HmiProject::load(original, &project, &error), qPrintable(error));
+    QVERIFY(project.objects.first().bitButton.macroEnabled);
+    QVERIFY(project.objects.first().bitButton.macroName.isEmpty());
+    QVERIFY2(project.save(copy.fileName(), &error), qPrintable(error));
+    QVERIFY(copy.open(QIODevice::ReadOnly));
+    QCOMPARE(copy.readAll(), raw);
+    copy.close();
+    QVERIFY(!buildProjectPayload(project, &payloads, &error));
+    project.objects.first().bitButton.macroEnabled = false;
+    QVERIFY2(project.save(copy.fileName(), &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(copy.fileName(), &reopened, &error), qPrintable(error));
+    QVERIFY(!reopened.objects.first().bitButton.macroEnabled);
+}
+
+/******************************************************************************
+ * Function Name   : nativeFileSaveEditsAndKeepsWorkingPath
+ * Description     : Exercise File Open, ordinary Save, Save As and subsequent loading of a vendor document.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeFileSaveEditsAndKeepsWorkingPath() //20261127-7 add
+{
+    QTemporaryDir directory;
+    const QString original = QFINDTESTDATA("fixtures/native-source/static/level3.sm");
+    const QString path = directory.filePath(QStringLiteral("原厂工程.SM"));
+    const QString copy = directory.filePath(QStringLiteral("另存原厂.sm"));
+    const QString lite = directory.filePath(QStringLiteral("工程.ksp"));
+    MainWindow window;
+    HmiProject draft;
+    HmiProject reopened;
+    QFile file(path);
+    QByteArray initial;
+    QString error;
+
+    QVERIFY(QFile::copy(original, path));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    QCOMPARE(window.m_currentPath, path);
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    initial = file.readAll();
+    file.close();
+    window.saveProject();
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    QCOMPARE(file.readAll(), initial);
+    file.close();
+    draft = window.currentEditorProject();
+    QVERIFY(!draft.objects.isEmpty());
+    draft.objects.first().geometry.translate(2, 3);
+    QVERIFY2(window.commitProjectDraft(draft, &error), qPrintable(error));
+    QVERIFY(window.m_dirty);
+    window.saveProject();
+    QVERIFY(!window.m_dirty);
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, draft.objects.first().geometry);
+    QVERIFY(window.writeProject(copy));
+    QCOMPARE(window.m_currentPath, copy);
+    QVERIFY2(HmiProject::load(copy, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, draft.objects.first().geometry);
+    QVERIFY(window.writeProject(lite));
+    QCOMPARE(window.m_currentPath, lite);
+    QVERIFY2(HmiProject::load(lite, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.first().geometry, draft.objects.first().geometry);
 }
 
 /******************************************************************************
@@ -6218,6 +6305,9 @@ void Stage2WorkflowTests::auxiliarySaveBackupsThroughMenu() //20261125-82 add
     QCOMPARE(other.readAll(), QByteArray("keep"));
 
     // Explicit native-source exports keep the .sm extension and back up the exact exported bytes.
+    // Native static text has no slot for a switch operation address. Export a representable legacy text.
+    project.objects.first().address.clear(); //20261127-7 change
+    QVERIFY(window.commitProjectDraft(project, &error));
     const QString nativePath = directory.filePath(QStringLiteral("native.v2.sm"));
     QFile native(nativePath);
     QFile nativeCopy(QDir(dest).filePath(QStringLiteral("native.v2-bak1.sm")));

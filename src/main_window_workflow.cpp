@@ -217,7 +217,6 @@ bool MainWindow::commitProjectDraft(const HmiProject &project, QString *error) /
 bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110-7 add
 {
     HmiProject candidate;
-    bool native;
     QString password; //20261123-17 add
 
     auto loadCandidate = [&]() {
@@ -259,8 +258,7 @@ bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110
     if (!confirmDiscardChanges()) { return false; }
     //20261110-7 add: Saving unsaved work may replace this exact path; never adopt the stale pre-prompt candidate.
     if (!loadCandidate()) { return false; }
-    native = QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0;
-    setProject(candidate, native ? QString() : path);
+    setProject(candidate, path); //20261127-7 change: Save future edits back to the opened format.
     updateRecentProjects(path);
     return true;
 }

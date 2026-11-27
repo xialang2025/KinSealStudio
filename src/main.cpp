@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include <QMessageBox> //20261127-7 add
 #include "hmi_canvas.h"
 #include "native_test_project.h" //20261108-7 add
 #include "native_project_codec.h" //20261109-0 add
@@ -684,5 +685,14 @@ int main(int argc, char *argv[]) //20261107-6 add
     }
     window = std::make_unique<MainWindow>();
     window->showMaximized(); //20261111-1 change: Start the editor in the native full-workspace presentation.
+    if (arguments.size() == 2 &&
+        (arguments.at(1).endsWith(QStringLiteral(".sm"), Qt::CaseInsensitive) ||
+         arguments.at(1).endsWith(QStringLiteral(".ksp"), Qt::CaseInsensitive))) //20261127-7 add
+    {
+        // Explorer's Open With passes a positional path; use the same authenticated transaction as File > Open.
+        if (!window->openProjectPath(QFileInfo(arguments.at(1)).absoluteFilePath(), &validation_error) &&
+            !validation_error.isEmpty())
+        { QMessageBox::critical(window.get(), QStringLiteral("打开失败"), validation_error); }
+    }
     return application.exec();
 }

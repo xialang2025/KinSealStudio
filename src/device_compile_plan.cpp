@@ -270,6 +270,11 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         object = prepared.objects.at(index);
         if (object.geometry.isEmpty() || object.geometry.x() < 0 || object.geometry.y() < 0 || object.geometry.right() >= 800 || object.geometry.bottom() >= 480)
         { return compilationIssue(project,object,QStringLiteral("geometry"),QJsonArray{object.geometry.x(),object.geometry.y(),object.geometry.width(),object.geometry.height()},QStringLiteral("控件必须完整位于800×480画面内。"),error,issue); }
+        if (object.hasBitButtonProperties && object.bitButton.macroEnabled && object.bitButton.macroName.isEmpty()) //20261127-7 add
+        {
+            return compilationIssue(project,object,QStringLiteral("bitButton.macroName"),QString(),
+                QStringLiteral("按钮已启用宏，但尚未选择宏。请指定宏或取消执行宏后再编译。"),error,issue);
+        }
         if (object.type == QStringLiteral("text") || object.type == QStringLiteral("switch")) { continue; }
         if (object.hasAppearanceFlip()) //20261124-15 add
         {

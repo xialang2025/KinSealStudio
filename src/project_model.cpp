@@ -1569,9 +1569,9 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
 
 /******************************************************************************
  * Function Name   : HmiProject::save
- * Description     : Write an independent prototype project without claiming vendor compatibility.
+ * Description     : Encode the selected document format before atomically replacing its destination.
  * Input Parameters: path, error
- * Return Value    : True when the JSON project was completely written to disk.
+ * Return Value    : True when the requested native stream or Lite document was committed.
  * Date            : 2026.11.07
  ******************************************************************************/
 bool HmiProject::save(const QString &path, QString *error) const //20261107-6 add
@@ -1590,32 +1590,40 @@ bool HmiProject::save(const QString &path, QString *error) const //20261107-6 ad
         if (error != nullptr) { *error = QStringLiteral("原厂工程元数据快照超过16 MiB。"); }
         return false;
     }
-    if (filePassword.isEmpty() && !nativeSourceSnapshot.isEmpty()) //20261123-17 add
+    if (QFileInfo(path).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) == 0) //20261127-7 add
     {
-        HmiProject sanitized = *this;
-
-        if (!discardNativeFilePassword(&sanitized.nativeSourceSnapshot, error))
-        {
-            return false;
-        }
-        document = QJsonDocument(sanitized.toJson());
+        // A native file must be fully serializable before the existing destination can be replaced.
+        if (!exportNativeProjectSource(*this, &bytes, error)) { return false; }
     }
     else
     {
-        document = QJsonDocument(toJson()); //20261123-17 change: Seal the project before opening the replacement file.
-    }
-    bytes = document.toJson(QJsonDocument::Indented);
-    if (!filePassword.isEmpty())
-    {
-        if (QFileInfo(path).suffix().compare(QStringLiteral("ksp"), Qt::CaseInsensitive) != 0)
+        if (filePassword.isEmpty() && !nativeSourceSnapshot.isEmpty()) //20261123-17 add
         {
-            return modelError(error, QStringLiteral("受密码保护的工程仅可保存为 .ksp。"));
+            HmiProject sanitized = *this;
+
+            if (!discardNativeFilePassword(&sanitized.nativeSourceSnapshot, error))
+            {
+                return false;
+            }
+            document = QJsonDocument(sanitized.toJson());
         }
-        if (!protectStage2ProjectFile(bytes, filePassword, &envelope, error))
+        else
         {
-            return false;
+            document = QJsonDocument(toJson()); //20261123-17 change: Seal the project before opening the replacement file.
         }
-        bytes = std::move(envelope);
+        bytes = document.toJson(QJsonDocument::Indented);
+        if (!filePassword.isEmpty())
+        {
+            if (QFileInfo(path).suffix().compare(QStringLiteral("ksp"), Qt::CaseInsensitive) != 0)
+            {
+                return modelError(error, QStringLiteral("受密码保护的工程仅可保存为 .ksp。"));
+            }
+            if (!protectStage2ProjectFile(bytes, filePassword, &envelope, error))
+            {
+                return false;
+            }
+            bytes = std::move(envelope);
+        }
     }
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
@@ -1888,7 +1896,8 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
             }
             if (object.type == QStringLiteral("slider") && object.slider.macroEnabled && !macros.contains(object.slider.macroName)) { return modelError(error, QStringLiteral("滑动开关引用的宏不存在。")); } //20261112-0 add
             if (object.type == QStringLiteral("dropdown") && object.dropdown.macroEnabled && !macros.contains(object.dropdown.macroName)) { return modelError(error, QStringLiteral("下拉框引用的宏不存在。")); } //20261112-0 add
-            if (object.hasBitButtonProperties && object.bitButton.macroEnabled && !macros.contains(object.bitButton.macroName))
+            if (object.hasBitButtonProperties && object.bitButton.macroEnabled && !macros.contains(object.bitButton.macroName) &&
+                (!object.bitButton.macroName.isEmpty() || nativeSourceSnapshot.isEmpty())) //20261127-7 change: Retain the unassigned macro checkbox only in native-derived documents.
             {
                 return modelError(error, QStringLiteral("控件%1引用了不存在的宏%2。").arg(object.id, object.bitButton.macroName));
             }
@@ -2696,13 +2705,8 @@ bool HmiProject::load(const QString &path, HmiProject *project, QString *error,
         {
             return false;
         }
-        if (protectedFile || !importNativeTestProject(path, &imported, error))
-        {
-            if (!importNativeProjectSource(bytes, &imported, error))
-            {
-                return false;
-            }
-        }
+        // Import even the historical TEST project with its native metadata and editable text styling.
+        if (!importNativeProjectSource(bytes, &imported, error)) { return false; } //20261127-7 change
         if (!imported.validateModel(error))
         {
             return false;

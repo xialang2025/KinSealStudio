@@ -2,6 +2,9 @@
     <qresource prefix="/native">
         <!-- 20261109-0 add: Parsed metadata seed for typed bit-button source generation. -->
         <file alias="bit-button-default.sm">resources/native-bit-button-default.sm</file>
+        <!-- 20261127-8 add: The second ordinary page has different reference slots and flags from the startup page. -->
+        <file alias="ordinary-pages.sm">tests/fixtures/native-source/multipage/B-two-empty-pages.sm</file>
+        <file alias="table-default.sm">resources/native-table-default.sm</file>
         <!-- 20261109-6 add: A true UI-created word source supplies its typed subtype metadata. -->
         <file alias="word-button-default.sm">resources/native-word-button-default.sm</file>
         <!-- 20261109-8 add: Real subtype4 source metadata, retained independently of operation buttons. -->
@@ -11,6 +14,13 @@
     </qresource>
     <qresource prefix="/samples">
         <file alias="native_text.sm">samples/native-device-test/CodexProbeText4.sm</file>
+    </qresource>
+    <qresource prefix="/native/graphics">
+        <file alias="rect.sm">resources/native-rectangle-default.sm</file>
+        <file alias="ellipse.sm">resources/native-ellipse-default.sm</file>
+        <file alias="polygon.sm">resources/native-polygon-default.sm</file>
+        <file alias="roundrect.sm">resources/native-roundrect-default.sm</file>
+        <file alias="sector.sm">resources/native-sector-default.sm</file>
     </qresource>
     <qresource prefix="/download">
         <!-- 20261108-10 add: Immutable TEST-only device payload. -->

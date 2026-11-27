@@ -815,7 +815,7 @@ QWidget *BitButtonDialog::createAppearance() //20261108-15 add
         BitButtonState *state; //20261109-8 add
         int index;
         if (m_loading) { return; }
-        if (m_working.hasLampProperties || m_working.hasFunctionButtonProperties) //20261110-0 change: Function pressed artwork shares the global language flag while retaining its own caption.
+        if (m_working.type == QStringLiteral("switch")) //20261127-5 change: Native type 10 has one language flag for all active bit, word, lamp and function states.
         {
             for (index = 0; index < (m_working.hasLampProperties ? m_working.lamp.extraStates.size() + 2 : 2); ++index)
             {
@@ -1061,6 +1061,10 @@ void BitButtonDialog::refresh() //20261108-15 add
     BitButtonState state;
     if (m_loading) { return; }
     storeState(); state = appearance(m_state);
+    if (m_working.type == QStringLiteral("switch")) //20261127-5 add: ExteriorWidget disables its language selector while the shared caption is shown.
+    {
+        m_languageCombo->setDisabled(state.sameLanguage);
+    }
     m_textColor->setStyleSheet(QStringLiteral("background:%1;border:1px solid #777;").arg(state.text.textColor.name()));
     m_background->setStyleSheet(QStringLiteral("background:%1;border:1px solid #777;").arg(state.background.name()));
     if (m_working.hasWordButtonProperties) //20261109-6 add: Preserve the saved color while displaying the observed disabled gray swatch.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-22 Asia/Shanghai",
+  "updatedAt": "2026-11-27 Asia/Shanghai",
   "sourceCommit": "6dcd08332ede7c532842eba2b38522a50854a523",
   "purpose": "未完成事项统一维护；文档整理不升级任何实现或硬件验收状态",
   "counts": {
@@ -21,6 +21,7 @@
     "extensions": 22
   },
   "interpretationRules": [
+    "2026 年 11 月 27 日最终发布版的工程文件证据见[SM 双向兼容复核](../docs/SM双向兼容功能复核_20261127.md)。401 份语料有 273 份能编辑后重开，本机 20 份不同实际工程有 6 份完整往返。8 个现场 KSP 经 SM 重开的 82 项 DAT 与直接编译一致。10 份官方案例尚未完整导入。",
     "2026 年 11 月 27 日的[逐项复核报告](../docs/V5.1逐项深修与软件模拟复核_20261127.md)和[未完成与现场待测清单](../docs/V5.1深修未完成与现场待测_20261127.md)单列本轮新增证据。AMZ 第八页已下载，初始化宏断电重启及全局宏条件切换仍待现场读数。",
     "截至 11 月 22 日记录为五类既有控制记录和九类受限静态背景。本轮十类基准图形均已通过独立编译和验包。阶段4处理41族编辑切片不等于全控件闭环，阶段5整体仍未完成。",
     "已过范围继续有效：静态文本/位按钮/字按钮/指示灯/功能按钮不重复实施；完整像素、源格式、运行/现场缺口按专项Q登记。",
@@ -10498,7 +10499,13 @@
               "endLine": 5,
               "quote": "# 静态文本手册实现与验收\n\n本文保留2026年11月8日静态文本阶段的验收历史。0.4已接入多语言及显现文本的type28设备编译，当前支持范围见[位按钮设备编译台账](位按钮设备编译实现.md)；文中旧版拒绝条件与包目录不代表当前版本。\n\n日期：2026 年 11 月 8 日。实现标记：`//20261108-14 add/change`。"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "historical_bounded_rendering",
@@ -10700,7 +10707,13 @@
               "endLine": 5,
               "quote": "# 位按钮手册实现与验收\n\n日期：2026年11月9日。当前版本：0.4.3透明图库版。设备验收基线为0.4；图库补全标记：`//20261109-1 add/change`，原生目录标记：`//20261109-3 add/change`，图库透明绘制修正：`//20261109-4 add/change`。\n\n依据[位按钮功能与交互复刻手册](../design_plan/位按钮功能与交互复刻手册.md)。本轮已从0.3编辑实现推进到独立设备编译、真实SDK宏编译、PLC地址编码、多语言及原厂源工程读写。**尚未完成全部实机验收**，四操作测试屏当前仍等待现场确认。"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "historical_bounded_rendering",
@@ -10891,7 +10904,13 @@
               "endLine": 5,
               "quote": "# 字按钮手册实现与验收\n\n本轮依据[字按钮功能与交互复刻手册](../design_plan/字按钮功能与交互复刻手册.md)，为目标屏 AMT070W124-L800X480R 扩展字按钮。修改标记为 `//20261109-6`。本文件随最终验证结果更新；界面、源工程、设备编译、USB传输和现场触控分别记录。\n\n## 编辑与保存"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "historical_bounded_rendering",
@@ -11081,7 +11100,13 @@
               "endLine": 5,
               "quote": "# 指示灯实现与验收（0.6.0）\n\n修改标记：`//20261109-8 add / change`。目标型号：`AMT070W124-L800X480R`，单画面800×480。完整构建及本轮USB结果在文末记录。\n\n## 实现范围"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "historical_bounded_rendering",
@@ -11267,7 +11292,13 @@
               "endLine": 5,
               "quote": "# 功能按钮手册实现与验收\n\n日期：2026年11月10日。版本：0.7.0 功能按钮版。目标：AMT070W124-L800X480R，800×480。修改标记：`//20261110-0 add/change`。\n\n源码交付目录：`dist/KinSealStudioLite-FunctionButton/KinSealStudioLite.exe`；便携包内程序位于根目录。本轮单独发布到功能按钮目录，之前的字按钮和指示灯便携版保留。"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "historical_bounded_rendering",
@@ -11458,7 +11489,13 @@
               "endLine": 5,
               "quote": "# 消息显示手册实现与验收\n\n日期：2026-11-12；阶段4第6/41项，C06。交付范围是W1～W4编辑器、`.ksp`持久化及混合事务切片；未声明整控件D/U/P/R/C/T/E全部通过。\n\n## 原生身份与补证"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -11623,7 +11660,13 @@
               "endLine": 5,
               "quote": "# 刻度手册实现与验收\n\n日期：2026-11-12。阶段4第7/41项，C07；W1～W4与KSP/混合事务切片，完整源/设备兼容独立待验。\n\n## 原生补证及完整可见字段"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -11788,7 +11831,13 @@
               "endLine": 5,
               "quote": "# 二维码手册实现与验收\n\n日期：2026-11-12。阶段4第8/41项，C08／S04-02。当前交付W1～W4与KSP持久化/事务切片，完整SM、设备编码和现场未通过。\n\n## 原生依据与更正"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -11953,7 +12002,13 @@
               "endLine": 5,
               "quote": "# 图片显示手册实现与验收\n\n日期：2026-11-12。阶段4第9/41项，C09／S04-03；交付编辑、KSP与资源事务切片，完整SM/设备格式和现场保持未决。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12118,7 +12173,13 @@
               "endLine": 5,
               "quote": "# GIF显示手册实现与验收\n\n日期：2026-11-12。阶段4第10/41项，C10／S04-03。交付编辑器、真实PC试播、KSP及动画资源事务切片；完整SM、设备编码和实屏执行仍未完成。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "工程包含尚未恢复原厂源/设备格式的GIF动画资源。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12284,7 +12345,13 @@
               "endLine": 5,
               "quote": "# 数值显示手册实现与验收\n\n日期：2026-11-12。阶段4第11/41项，C11／S04-04；本次交付数值编辑、KSP与事务切片，完整原厂SM／设备编码／实屏运行仍未恢复。\n\n## 原生依据与纠偏"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12451,7 +12518,13 @@
               "endLine": 5,
               "quote": "# ASCII显示手册实现与验收\n\n日期：2026-11-12。阶段4第12/41项，C12／S04-04。本次为编辑、KSP与事务切片；完整SM／设备编码／现场执行仍未恢复。\n\n## 依据与字段"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12617,7 +12690,13 @@
               "endLine": 5,
               "quote": "# 时间显示手册实现与验收\n\n日期：2026-11-12。阶段4第13/41项，C13／S04-04。本次交付独立时间编辑、KSP和事务切片；SM／设备／现场执行保持未决。\n\n## 原生依据与纠偏"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12783,7 +12862,13 @@
               "endLine": 5,
               "quote": "# 画面按钮手册实现与验收\n\n日期：2026-11-12。阶段4第14/41项，C14／S04-05。交付编辑、KSP和事务切片；完整原生源／设备／运行仍未通过。\n\n## 依据与纠偏"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -12949,7 +13034,13 @@
               "endLine": 5,
               "quote": "# 多态按钮手册实现与验收\n\n日期：2026-11-12。阶段4第15/41项，C15／S04-05。交付编辑／KSP／事务切片；源、设备和屏端运行保持未决。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13115,7 +13206,13 @@
               "endLine": 5,
               "quote": "# 多功能按钮手册实现与验收\n\n日期：2026-11-12。阶段4第16/41项，C16／S04-06。交付有明确边界的编辑、KSP和事务切片；源、设备和屏端运行保持未决。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13281,7 +13378,13 @@
               "endLine": 5,
               "quote": "# 下拉框手册实现与验收\n\n日期：2026-11-12。阶段4第17/41项，C17／S04-06。交付有明确边界的编辑、KSP和事务切片；原厂源、设备编码及运行保持未决。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13447,7 +13550,13 @@
               "endLine": 5,
               "quote": "# 流动块手册实现与验收\n\n日期：2026-11-12。阶段4第18/41项，C18／S04-07。交付独立编辑、静态预览、KSP和事务切片；源、设备编码及真实动画保持未决。\n\n## 原生依据与纠偏"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13613,7 +13722,13 @@
               "endLine": 5,
               "quote": "# 滑动开关手册实现与验收\n\n日期：2026-11-12。阶段4第19/41项，C19／S04-07。交付独立编辑、静态画布、KSP与事务切片；完整SM、设备编码和运行写值保持未决。\n\n## 原生依据与失败保留"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13779,7 +13894,13 @@
               "endLine": 5,
               "quote": "# 滚轮手册实现与验收\n\n日期：2026-11-12。阶段4第20/41项，C20／S04-07。交付独立编辑、静态画布、KSP及事务切片，并完成原厂保留源的实物下载基线；Lite独立SM/设备编码仍阻塞。\n\n## 原生依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -13945,7 +14066,13 @@
               "endLine": 5,
               "quote": "# 移动轨迹手册实现与验收\n\n日期：2026-11-12。阶段4第21/41项，C21／S04-07。交付独立模型、两页编辑、静态图形、KSP及文档事务切片；原厂基线实物下载成功，Lite独立源/设备编码仍阻塞。\n\n## 原厂补证和旧手册修订"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14111,7 +14238,13 @@
               "endLine": 5,
               "quote": "# 图表：手册实现与验收\n\n2026-11-12，阶段4第22/41项。交付有边界的编辑与KSP切片；17类新增编辑切片的完整独立源/设备编码仍阻塞。\n\n## 已实现及实测纠正"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14277,7 +14410,13 @@
               "endLine": 5,
               "quote": "# 趋势图：手册实现与验收\n\n2026-11-12，阶段4第23/41项。新增18类编辑/KSP切片的独立源/设备格式仍阻塞，当前不是整阶段完成。\n\n## 已实现及原厂补证"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "原生源生成仅支持唯一编号且带完整属性的已验证位按钮、字按钮、指示灯、功能按钮和静态文本控件。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14443,7 +14582,13 @@
               "endLine": 5,
               "quote": "# 历史趋势图与数据采集：手册实现与验收\n\n2026-11-12，阶段4第24/41项。累计19类新增编辑/KSP切片；整控件设备运行与全阶段仍未完成。\n\n## 实现与证据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14609,7 +14754,13 @@
               "endLine": 5,
               "quote": "# X-Y曲线：手册实现与验收\n\n2026-11-13，阶段4第25/41项，累计20类新增编辑/KSP切片。源/设备及现场未决仍保留，不代表全控件或阶段4已完成。\n\n## 实现与原厂补证"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14775,7 +14926,13 @@
               "endLine": 5,
               "quote": "# 数据群组：手册实现与验收\n\n2026-11-13，阶段4第26/41项，累计21类新增编辑/KSP切片。完整源/设备及现场仍有未决，不代表整控件或阶段4完成。\n\n## 已实现与原厂订正"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -14941,7 +15098,13 @@
               "endLine": 5,
               "quote": "# 动态报警条：手册实现与验收\n\n2026-11-13，阶段4第27/41项，累计22类新增编辑/KSP切片。完整源/设备和现场语义仍有未决。\n\n## 交付范围与本轮补证"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15107,7 +15270,13 @@
               "endLine": 5,
               "quote": "# 报警显示：手册实现与验收\n\n2026-11-13，阶段4第28/41项，累计23类新增编辑/KSP切片；完整源/设备和现场仍阻塞。\n\n## 本轮交付与原厂订正"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15273,7 +15442,13 @@
               "endLine": 5,
               "quote": "# 历史报警显示：手册实现与验收\n\n2026-11-13，阶段4第29/41项，累计24类新增编辑/KSP切片。独立源/设备和现场仍有阻塞。\n\n## 本轮实现与原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15439,7 +15614,13 @@
               "endLine": 5,
               "quote": "# 历史数据显示器：手册实现与验收\n\n2026-11-13，阶段4第30/41项，累计25类新增编辑/KSP切片。完整独立源/设备与现场运行仍有阻塞。\n\n## 本轮实现与原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15605,7 +15786,13 @@
               "endLine": 5,
               "quote": "# 配方显示器：手册实现与验收\n\n2026-11-13，阶段4第31/41项，累计26类新增编辑/KSP切片。后续为G01～G10；完整SM/设备与现场运行尚未恢复。\n\n## 本轮实现与原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "当前源/设备后端仅支持单个800×480普通启动画面；多页、配置节点及显式引用尚未恢复，拒绝截取当前页下载。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15772,7 +15959,13 @@
               "endLine": 5,
               "quote": "# 直线：阶段4实现与验收\n\n本轮第32/41项，编号G01。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "带末端箭头的曲线路径尚未核对原厂缓存，当前可保存为 .ksp。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -15948,7 +16141,13 @@
               "endLine": 5,
               "quote": "# 自由直线：阶段4实现与验收\n\n本轮第38/41项，编号G02。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "带末端箭头的曲线路径尚未核对原厂缓存，当前可保存为 .ksp。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -16125,7 +16324,13 @@
               "endLine": 69,
               "quote": "| 曲线/圆弧 | [A03](A03_基础图形与表格规范.md) | 未计 | [阻塞记录](../docs/曲线圆弧调查与阻塞记录.md) | 调查补证 | 曲率阻塞 | 未实施；SM阻塞 | 曲率阻塞 | 阻塞 | 原厂基线下载通过；独立编码阻塞 | 原厂默认诊断页显示确认；完整E未验 | 恢复真实曲率 |"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "blocked_true_curvature",
@@ -16285,7 +16490,13 @@
               "endLine": 5,
               "quote": "# 折线：阶段4实现与验收\n\n本轮第36/41项，编号G04。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": false,
+            "firstDiagnostic": "带末端箭头的曲线路径尚未核对原厂缓存，当前可保存为 .ksp。",
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -16461,7 +16672,13 @@
               "endLine": 5,
               "quote": "# 圆角矩形：阶段4实现与验收\n\n本轮第35/41项，编号G05。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -16638,7 +16855,13 @@
               "endLine": 5,
               "quote": "# 圆/椭圆：阶段4实现与验收\n\n本轮第34/41项，编号G06。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -16815,7 +17038,13 @@
               "endLine": 5,
               "quote": "# 扇形：阶段4实现与验收\n\n本轮第40/41项，编号G07。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -16991,7 +17220,13 @@
               "endLine": 5,
               "quote": "# 矩形：阶段4实现与验收\n\n本轮第33/41项，编号G08。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -17167,7 +17402,13 @@
               "endLine": 5,
               "quote": "# 多边形：阶段4实现与验收\n\n本轮第37/41项，编号G09。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -17344,7 +17585,13 @@
               "endLine": 5,
               "quote": "# 表格：阶段4实现与验收\n\n本轮第41/41项，编号G10。这是编辑/KSP切片；完整源、独立设备编码和现场显示不在已通过范围。\n\n## 原厂依据"
             }
-          ]
+          ],
+          "amzRepresentative20261127": {
+            "source": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+            "nativeExportAndLiteReopen": true,
+            "firstDiagnostic": null,
+            "vendorInstalledOpenThisRun": false
+          }
         },
         "R": {
           "status": "pc_slice_only",
@@ -17700,7 +17947,8 @@
           "branch": "worktree"
         }
       ],
-      "countAsConfirmedUnimplemented": false
+      "countAsConfirmedUnimplemented": false,
+      "ordinaryPageEvidence20261127": "3 份普通多画面源工程逐字节往返，第二页独立修改、追加页及新建普通页已有测试。窗口、键盘、未映射页索引及多页设备段仍需后续核实。证据见 docs/SM双向兼容功能复核_20261127.md"
     },
     {
       "id": "EARLY-S01-UNSUPPORTED-TYPE-BOUNDARY",
@@ -22396,7 +22644,8 @@
           "path": "design_plan/A05_源格式与设备编译契约.md",
           "line": 173
         }
-      ]
+      ],
+      "ordinaryPageEvidence20261127": "3 份普通多画面源工程逐字节往返，第二页独立修改、追加页及新建普通页已有测试。窗口、键盘、未映射页索引及多页设备段仍需后续核实。证据见 docs/SM双向兼容功能复核_20261127.md"
     },
     {
       "id": "Q-S01-002",
@@ -179106,5 +179355,23 @@
     "openStage0Tasks": 4,
     "nativeEditorEntered": false,
     "userConfirmedTarget": "AMT070W124-L800X480R"
+  },
+  "sourceCompatibilityReview20261127": {
+    "report": "docs/SM双向兼容功能复核_20261127.md",
+    "receipt": "docs/文件规则/样例/SM双向兼容复验_20261127.json",
+    "finalExeSha256": "df6f78964f882c245cb78a7c4590d3cf2d00b87d665e650a30b8c6c91bb1b655",
+    "corpusDistinct": 401,
+    "byteIdenticalAndEditable": 273,
+    "realFiles": 22,
+    "realDistinct": 20,
+    "realExact": 6,
+    "officialExamplesTested": 10,
+    "registeredOriginalThisRun": false,
+    "retainedMacroAddressProjectsEdited": 2,
+    "fieldPageSourceRoundTrips": 8,
+    "fieldDatByteEqual": 82,
+    "manualWorkDeferred": "第8页初始化/全局宏及HMI外部PLC留待现场。",
+    "remainingFileCases": "14 份不同真实工程的首个诊断及后续条件见 docs/V5.1深修未完成与现场待测_20261127.md。",
+    "officialExamplesOpened": 0
   }
 }

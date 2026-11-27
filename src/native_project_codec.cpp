@@ -1,6 +1,7 @@
 #include "native_project_codec.h"
 #include "device_target.h" //20261122-3 add
 #include "project_model.h"
+#include "bit_button_renderer.h" //20261127-5 add: Native preview and the property inspector use the same typed caption.
 #include "macro_schedule.h" //20261123-23 add
 
 #include <QCryptographicHash>
@@ -453,6 +454,7 @@ public:
     bool parse(); //20261109-0 add
     void system();
     void configuration();
+    void flatGraphic(const QString &prefix, int type); //20261127-6 add
     void page(const QString &pagePrefix); //20261110-5 change: Distinct read-only pages must not overwrite one another's structural spans.
     void control(const QString &prefix, int kind);
     void history();
@@ -460,6 +462,10 @@ public:
 private:
     qsizetype m_position = 0;
 };
+
+static void readTableFields(SourceDocument &document, const QString &prefix); //20261127-9 add
+static bool sourceTable(const SourceDocument &document, const QString &prefix, int index,
+                        HmiObject *output, QString *error); //20261127-9 add
 
 /******************************************************************************
  * Function Name   : SourceDocument::system
@@ -757,6 +763,123 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
 }
 
 /******************************************************************************
+ * Function Name   : nativeStrokeTypes
+ * Description     : Map the four Qt path-based drawing tools to the type code emitted by their V5.1 writers.
+ * Input Parameters: None
+ * Return Value    : The bidirectional editor-name to wire-type mapping.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static const QMap<QString, int> &nativeStrokeTypes() //20261127-6 add
+{
+    static const QMap<QString, int> types = {{QStringLiteral("line"), 0x10025}, {QStringLiteral("polyline"), 0x10027},
+                                              {QStringLiteral("freeline"), 0x10028}, {QStringLiteral("linecurve"), 0x1002a}};
+    return types;
+}
+
+/******************************************************************************
+ * Function Name   : nativeClosedGraphicTypes
+ * Description     : Share the editable V5.1 closed-shape wire codes between flat reader and writer.
+ * Input Parameters: None
+ * Return Value    : Editor graphic name to native root type
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static const QMap<QString, int> &nativeClosedGraphicTypes() //20261127-6 add
+{
+    static const QMap<QString, int> types = {{QStringLiteral("rect"), 0x10023}, {QStringLiteral("ellipse"), 0x10024},
+        {QStringLiteral("polygon"), 0x10026}, {QStringLiteral("roundrect"), 0x1002b}, {QStringLiteral("sector"), 0x1002c}};
+    return types;
+}
+
+/******************************************************************************
+ * Function Name   : SourceDocument::flatGraphic
+ * Description     : Read a supported root graphics record up to the page-owned layer value.
+ * Input Parameters: prefix, native type
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void SourceDocument::flatGraphic(const QString &prefix, int type) //20261127-6 add
+{
+    int count;
+    int index;
+    objectPrefixes.append(prefix);
+    if (!nativeStrokeTypes().key(type).isEmpty()) //20261127-6 change: All four native writers use the same path and stroke envelope.
+    {
+        count = this->count(prefix + QStringLiteral("curve.elements"), 16384);
+        for (index = 0; index < count && error.isEmpty(); ++index)
+        {
+            fields(QByteArray("idd"), indexed(prefix + QStringLiteral("curve.element"), index));
+        }
+        if (count > 0) { fields(QByteArray("ii"), prefix + QStringLiteral("curve.pathTail")); }
+        fields(QByteArray("iicddbqiiii"), prefix + QStringLiteral("curve.style"));
+        list(prefix + QStringLiteral("curve.labels"));
+        fields(QByteArray("bi"), prefix + QStringLiteral("curve.touch"));
+        address(prefix + QStringLiteral("curve.touchAddress"));
+        fields(QByteArray("iibi"), prefix + QStringLiteral("curve.gate"));
+        address(prefix + QStringLiteral("curve.gateAddress"));
+        fields(QByteArray("bi"), prefix + QStringLiteral("curve.visibility"));
+        address(prefix + QStringLiteral("curve.visibilityAddress"));
+        fields(QByteArray("iii"), prefix + QStringLiteral("curve.end"));
+        return;
+    }
+    if (!nativeClosedGraphicTypes().key(type).isEmpty()) //20261127-6 add
+    {
+        if (type == 0x10023)
+        {
+            fields("dddd", prefix + QStringLiteral("box.corners")); fields("ci", prefix + QStringLiteral("box.pen"));
+            fields("cc", prefix + QStringLiteral("box.brush")); read('i', prefix + QStringLiteral("box.fill"));
+            fields("dd", prefix + QStringLiteral("box.position")); read('i', prefix + QStringLiteral("box.line"));
+            read('b', prefix + QStringLiteral("box.visible")); read('q', prefix + QStringLiteral("box.name"));
+            fields("ii", prefix + QStringLiteral("box.metadata")); list(prefix + QStringLiteral("box.labels"));
+        }
+        else if (type == 0x10024)
+        {
+            fields("ci", prefix + QStringLiteral("box.pen")); fields("dddd", prefix + QStringLiteral("box.corners"));
+            read('q', prefix + QStringLiteral("box.name")); read('i', prefix + QStringLiteral("box.metadata"));
+            read('i', prefix + QStringLiteral("box.fill")); read('i', prefix + QStringLiteral("box.line")); read('d', prefix + QStringLiteral("box.rotation"));
+            fields("cc", prefix + QStringLiteral("box.brush")); fields("ii", prefix + QStringLiteral("box.angles")); list(prefix + QStringLiteral("box.labels"));
+            fields("dd", prefix + QStringLiteral("box.position")); read('b', prefix + QStringLiteral("box.visible"));
+            read('i', prefix + QStringLiteral("box.itemId")); list(prefix + QStringLiteral("box.labelsAgain")); read('d', prefix + QStringLiteral("box.fillValue"));
+        }
+        else if (type == 0x1002b || type == 0x1002c)
+        {
+            // The cached Qt drawing path precedes the editable radius or arc parameters.
+            count = this->count(prefix + QStringLiteral("box.cache"), 16384);
+            for (index = 0; index < count && error.isEmpty(); ++index)
+            {
+                fields("idd", indexed(prefix + QStringLiteral("box.element"), index));
+            }
+            if (count) { fields("ii", prefix + QStringLiteral("box.cacheTail")); }
+            fields(type == 0x1002b ? "dddd" : "dddddd", prefix + QStringLiteral("box.profile"));
+            fields("ci", prefix + QStringLiteral("box.pen")); fields("cc", prefix + QStringLiteral("box.brush"));
+            read('i', prefix + QStringLiteral("box.fill")); fields("dd", prefix + QStringLiteral("box.position"));
+            read('i', prefix + QStringLiteral("box.line"));
+            if (type == 0x1002c) { read('i', prefix + QStringLiteral("box.alpha")); }
+            read('q', prefix + QStringLiteral("box.name")); read('b', prefix + QStringLiteral("box.visible"));
+            read('i', prefix + QStringLiteral("box.itemId")); list(prefix + QStringLiteral("box.labels"));
+        }
+        else
+        {
+            read('q', prefix + QStringLiteral("box.name"));
+            count = this->count(prefix + QStringLiteral("box.points"), 4096);
+            for (index = 0; index < count && error.isEmpty(); ++index)
+            {
+                fields("dd", indexed(prefix + QStringLiteral("box.point"), index));
+            }
+            read('i', prefix + QStringLiteral("box.alpha")); read('i', prefix + QStringLiteral("box.line"));
+            read('i', prefix + QStringLiteral("box.pen.1")); read('c', prefix + QStringLiteral("box.pen.0"));
+            fields("cc", prefix + QStringLiteral("box.brush")); read('i', prefix + QStringLiteral("box.fill"));
+            fields("dd", prefix + QStringLiteral("box.position")); read('b', prefix + QStringLiteral("box.visible"));
+            read('i', prefix + QStringLiteral("box.itemId")); list(prefix + QStringLiteral("box.labels"));
+        }
+        fields("bi", prefix + QStringLiteral("box.touch")); address(prefix + QStringLiteral("box.touchAddress"));
+        fields("iibi", prefix + QStringLiteral("box.gate")); address(prefix + QStringLiteral("box.gateAddress"));
+        fields("bi", prefix + QStringLiteral("box.visibility")); address(prefix + QStringLiteral("box.visibilityAddress"));
+        fields("iii", prefix + QStringLiteral("box.end"));
+        return;
+    }
+}
+
+/******************************************************************************
  * Function Name   : SourceDocument::page
  * Description     : Traverse one native page and reject every unimplemented top-level control.
  * Input Parameters: pagePrefix
@@ -783,23 +906,16 @@ void SourceDocument::page(const QString &pagePrefix) //20261110-5 change
         name = indexed(pagePrefix == QStringLiteral("page") ? QStringLiteral("object") : pagePrefix + QStringLiteral(".object"), i) + QStringLiteral(".");
         read('b', name + QStringLiteral("movable"));
         type = read('i', name + QStringLiteral("type")).toInt();
-        if (type == 0x1002a) { //20261125-85 add: Decode a top-level curve before the shared Z coordinate.
-            objectPrefixes.append(name);
-        int count = this->count(name + QStringLiteral("curve.elements"), 16384);
-        for (int index = 0; index < count && error.isEmpty(); ++index)
+        if (type == 36) //20261127-9 add
         {
-            fields(QByteArray("idd"), indexed(name + QStringLiteral("curve.element"), index));
+            objectPrefixes.append(name);
+            readTableFields(*this, name);
+            read('d', name + QStringLiteral("z"));
+            continue;
         }
-        if (count > 0) { fields(QByteArray("ii"), name + QStringLiteral("curve.pathTail")); }
-        fields(QByteArray("iicddbqiiii"), name + QStringLiteral("curve.style"));
-        list(name + QStringLiteral("curve.labels"));
-        fields(QByteArray("bi"), name + QStringLiteral("curve.touch"));
-        address(name + QStringLiteral("curve.touchAddress"));
-        fields(QByteArray("iibi"), name + QStringLiteral("curve.gate"));
-        address(name + QStringLiteral("curve.gateAddress"));
-        fields(QByteArray("bi"), name + QStringLiteral("curve.visibility"));
-        address(name + QStringLiteral("curve.visibilityAddress"));
-        fields(QByteArray("iii"), name + QStringLiteral("curve.end"));
+        if (!nativeStrokeTypes().key(type).isEmpty() || !nativeClosedGraphicTypes().key(type).isEmpty()) //20261127-6 change
+        {
+            flatGraphic(name, type);
             read('d', name + QStringLiteral("z"));
             continue;
         }
@@ -1088,8 +1204,8 @@ static bool sourceLineCurve(const SourceDocument &document, const QString &prefi
     double left, top, right, bottom;
     QColor color = document.value(style + QStringLiteral("2")).value<QColor>();
 
-    object.id = QStringLiteral("native-linecurve-%1").arg(index);
-    object.type = QStringLiteral("linecurve");
+    object.type = nativeStrokeTypes().key(document.value(prefix + QStringLiteral("type")).toInt()); //20261127-6 change
+    object.id = QStringLiteral("native-%1-%2").arg(object.type).arg(index);
     object.name = document.value(style + QStringLiteral("6")).toString();
     if (object.name.isEmpty()) { object.name = graphicName(object.type) + QString::number(index + 1); }
     object.graphic.alpha = document.value(style + QStringLiteral("0")).toInt();
@@ -1119,7 +1235,14 @@ static bool sourceLineCurve(const SourceDocument &document, const QString &prefi
         tags.resize(element);
         elements.resize(element);
     }
-    for (element = 0; element < tags.size();)
+    if (object.type != QStringLiteral("linecurve")) //20261127-6 add: Native polylines have a single MoveTo followed by consecutive LineTo vertices.
+    {
+        if (tags.isEmpty() || tags.first() != 0 ||
+            !std::all_of(tags.cbegin() + 1, tags.cend(), [](int tag) { return tag == 1; }))
+        { return fail(error, QStringLiteral("线图元含多个子路径、空路径或未知顶点。")); }
+        vertices = elements;
+    }
+    for (element = 0; object.type == QStringLiteral("linecurve") && element < tags.size();)
     {
         if (tags[element] != 0 || element + 1 >= tags.size() || (!vertices.isEmpty() && vertices.last() != elements[element]))
         { return fail(error, QStringLiteral("曲线含非连续或未识别的路径子段。")); }
@@ -1151,6 +1274,160 @@ static bool sourceLineCurve(const SourceDocument &document, const QString &prefi
     object.graphic.points.clear();
     for (const QPointF &point : vertices)
     { object.graphic.points.append(QPointF((point.x() - bounds.x()) / bounds.width(), (point.y() - bounds.y()) / bounds.height())); }
+    if (!object.graphic.validate(object.type, error)) { return false; }
+    object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
+    *output = object;
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : sourceProfileGeometry
+ * Description     : Check the stored Qt path against the editable rounded rectangle or fixed-angle circular sector.
+ * Input Parameters: document, box field prefix, destination object, error
+ * Return Value    : True when the editor can reproduce the native path.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool sourceProfileGeometry(const SourceDocument &document, const QString &box, HmiObject *object, QString *error) //20261127-6 add
+{
+    const bool rounded = object->type == QStringLiteral("roundrect");
+    const auto parameter = [&](int i) { return document.value(box + QStringLiteral("profile.") + QString::number(i)).toDouble(); };
+    const QRectF rect = rounded ? QRectF(0, 0, parameter(0), parameter(1)) : QRectF(parameter(0), parameter(1), parameter(2), parameter(3));
+    const QPointF origin = rect.topLeft() + QPointF(document.value(box + QStringLiteral("position.0")).toDouble(),
+                                                   document.value(box + QStringLiteral("position.1")).toDouble());
+    const int count = document.value(box + QStringLiteral("cache.count")).toInt();
+    QPainterPath expected;
+    QString field;
+    double x, y;
+    int i;
+
+    if (!std::isfinite(origin.x()) || !std::isfinite(origin.y()) || std::abs(origin.x()) > 32768 || std::abs(origin.y()) > 32768 ||
+        !std::isfinite(rect.width()) || !std::isfinite(rect.height()) || rect.width() < 0.99999999 || rect.height() < 0.99999999 ||
+        rect.width() > 32768 || rect.height() > 32768 ||
+        std::abs(rect.width() - std::round(rect.width())) > 1e-8 || std::abs(rect.height() - std::round(rect.height())) > 1e-8)
+    {
+        return fail(error, QStringLiteral("圆角矩形或扇形的原厂尺寸无法映射到整像素编辑范围。"));
+    }
+    if (rounded)
+    {
+        if (!(parameter(2) >= 0 && parameter(2) <= 99 && parameter(3) >= 0 && parameter(3) <= 99) ||
+            std::trunc(parameter(2)) != parameter(2) || std::trunc(parameter(3)) != parameter(3))
+        { return fail(error, QStringLiteral("原厂圆角半径超出可编辑范围。")); }
+        object->graphic.radiusX = int(parameter(2)); object->graphic.radiusY = int(parameter(3));
+    }
+    else if (rect.width() != rect.height() || parameter(4) != 45 || parameter(5) != 90)
+    {
+        return fail(error, QStringLiteral("当前可编辑的原厂扇形为圆形包围框、起始角 45 度、跨度 90 度。"));
+    }
+    expected = graphicPath(object->type, rect, object->graphic);
+    if (count != expected.elementCount() || document.value(box + QStringLiteral("cacheTail.0")).toInt() != 0 ||
+        document.value(box + QStringLiteral("cacheTail.1")).toInt() != 0)
+    { return fail(error, QStringLiteral("原厂缓存路径的拓扑与图形属性不一致。")); }
+    for (i = 0; i < count; ++i)
+    {
+        const QPainterPath::Element element = expected.elementAt(i);
+        field = SourceDocument::indexed(box + QStringLiteral("element"), i);
+        x = document.value(field + QStringLiteral(".1")).toDouble(); y = document.value(field + QStringLiteral(".2")).toDouble();
+        // Qt4 and Qt6 differ by a few double ULPs in cubic subdivision on the measured files.
+        if (document.value(field + QStringLiteral(".0")).toInt() != int(element.type) || !std::isfinite(x) || !std::isfinite(y) ||
+            std::abs(element.x - x) > 1e-8 || std::abs(element.y - y) > 1e-8)
+        { return fail(error, QStringLiteral("原厂缓存路径和可编辑图形的顶点或曲线不一致。")); }
+    }
+    object->geometry = QRect(int(std::floor(origin.x())), int(std::floor(origin.y())), qRound(rect.width()), qRound(rect.height()));
+    object->subpixelOffset = origin - object->geometry.topLeft();
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : sourceBoxGraphic
+ * Description     : Decode the editable extent and matched brush/pen opacity of a V5.1 closed primitive.
+ * Input Parameters: document, prefix, index, output, error
+ * Return Value    : True for an editable rectangle, full ellipse or closed polygon.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool sourceBoxGraphic(const SourceDocument &document, const QString &prefix, int index,
+                             HmiObject *output, QString *error) //20261127-6 add
+{
+    HmiObject object;
+    const QString box = prefix + QStringLiteral("box.");
+    const int wireType = document.value(prefix + QStringLiteral("type")).toInt();
+    const bool ellipse = wireType == 0x10024;
+    const bool polygon = wireType == 0x10026;
+    const bool profile = wireType == 0x1002b || wireType == 0x1002c;
+    const double x1 = document.value(box + QStringLiteral("corners.0")).toDouble();
+    const double y1 = document.value(box + QStringLiteral("corners.1")).toDouble();
+    const double width = document.value(box + QStringLiteral("corners.2")).toDouble() - x1;
+    const double height = document.value(box + QStringLiteral("corners.3")).toDouble() - y1;
+    const double x = x1 + document.value(box + QStringLiteral("position.0")).toDouble();
+    const double y = y1 + document.value(box + QStringLiteral("position.1")).toDouble();
+    QColor pen = document.value(box + QStringLiteral("pen.0")).value<QColor>();
+    QColor back = document.value(box + QStringLiteral("brush.0")).value<QColor>();
+    QColor front = document.value(box + QStringLiteral("brush.1")).value<QColor>();
+
+    QPointF point, offset(document.value(box + QStringLiteral("position.0")).toDouble(), document.value(box + QStringLiteral("position.1")).toDouble());
+    QVector<QPointF> points;
+    double left, top, right, bottom;
+    QString field;
+    int count = document.value(box + QStringLiteral("points.count")).toInt();
+    int i;
+
+    if (!polygon && !profile && (!std::isfinite(x) || !std::isfinite(y) || std::abs(x) > 32768 || std::abs(y) > 32768 ||
+        !std::isfinite(width) || !std::isfinite(height) || width < 1 || height < 1 || width > 32768 || height > 32768 ||
+        std::trunc(width) != width || std::trunc(height) != height))
+    {
+        return fail(error, QStringLiteral("矩形或椭圆的原厂边长、坐标超出可编辑范围。"));
+    }
+    if (!document.value(box + QStringLiteral("visible")).toBool() || document.value(box + QStringLiteral("touch.0")).toBool() ||
+        document.value(box + QStringLiteral("gate.2")).toBool() || document.value(box + QStringLiteral("visibility.0")).toBool() ||
+        (ellipse && (document.value(box + QStringLiteral("rotation")).toDouble() != 0 || document.value(box + QStringLiteral("angles.0")).toInt() != 360 ||
+                     document.value(box + QStringLiteral("angles.1")).toInt() != 0)) ||
+        !pen.isValid() || !back.isValid() || !front.isValid() ||
+        pen.alpha() != back.alpha() || pen.alpha() != front.alpha() ||
+        ((polygon || wireType == 0x1002c) && pen.alpha() != document.value(box + QStringLiteral("alpha")).toInt()))
+    {
+        return fail(error, QStringLiteral("原厂图形含独立透明度、旋转、局部弧段或显示条件，无法无损映射到编辑属性。"));
+    }
+    object.type = polygon ? QStringLiteral("polygon") : ellipse ? QStringLiteral("ellipse") : QStringLiteral("rect");
+    if (profile) { object.type = wireType == 0x1002b ? QStringLiteral("roundrect") : QStringLiteral("sector"); }
+    object.id = QStringLiteral("native-%1-%2").arg(object.type).arg(index);
+    object.name = document.value(box + QStringLiteral("name")).toString();
+    if (object.name.isEmpty()) { object.name = graphicName(object.type) + QString::number(index + 1); }
+    if (profile)
+    {
+        if (!sourceProfileGeometry(document, box, &object, error)) { return false; }
+    }
+    else if (polygon)
+    {
+        if (count < 3) { return fail(error, QStringLiteral("多边形的原厂记录少于三个顶点。")); }
+        for (i = 0; i < count; ++i)
+        {
+            field = SourceDocument::indexed(box + QStringLiteral("point"), i);
+            point = QPointF(document.value(field + QStringLiteral(".0")).toDouble(), document.value(field + QStringLiteral(".1")).toDouble()) + offset;
+            if (!std::isfinite(point.x()) || !std::isfinite(point.y()) || std::abs(point.x()) > 32768 || std::abs(point.y()) > 32768)
+            { return fail(error, QStringLiteral("多边形顶点超出可编辑坐标范围。")); }
+            points.append(point);
+        }
+        left = right = points.first().x(); top = bottom = points.first().y();
+        for (const QPointF &vertex : points)
+        {
+            left = qMin(left, vertex.x()); right = qMax(right, vertex.x());
+            top = qMin(top, vertex.y()); bottom = qMax(bottom, vertex.y());
+        }
+        object.geometry = QRect(int(std::floor(left)), int(std::floor(top)), qMax(1, int(std::ceil(right - left))), qMax(1, int(std::ceil(bottom - top))));
+        object.subpixelOffset = QPointF(left - object.geometry.x(), top - object.geometry.y());
+        object.graphic.points.clear();
+        for (const QPointF &vertex : points)
+        { object.graphic.points.append(QPointF((vertex.x()-left)/object.geometry.width(), (vertex.y()-top)/object.geometry.height())); }
+    }
+    else
+    {
+        object.geometry = QRect(int(std::floor(x)), int(std::floor(y)), int(width), int(height));
+        object.subpixelOffset = QPointF(x - object.geometry.x(), y - object.geometry.y());
+    }
+    object.graphic.lineWidth = document.value(box + QStringLiteral("pen.1")).toInt();
+    if (object.graphic.lineWidth == 0) { object.graphic.lineWidth = 1; } // Qt4 uses a cosmetic pen for default width.
+    object.graphic.alpha = pen.alpha(); pen.setAlpha(255); back.setAlpha(255); front.setAlpha(255);
+    object.graphic.lineColor = pen; object.graphic.background = back; object.graphic.foreground = front;
+    object.graphic.fillStyle = document.value(box + QStringLiteral("fill")).toInt(); object.graphic.lineStyle = document.value(box + QStringLiteral("line")).toInt();
     if (!object.graphic.validate(object.type, error)) { return false; }
     object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
     *output = object;
@@ -1258,6 +1535,7 @@ bool sourceLampMonitoring(const SourceDocument &document, const QString &prefix,
     int count;
     int i;
     int words;
+    int storedBitIndex; //20261127-5 add
 
     mode = document.value(prefix + QStringLiteral("switch.248.5")).toInt();
     if (mode < 1 || mode > 2 || stateCount < 1 || stateCount > 32 ||
@@ -1282,8 +1560,10 @@ bool sourceLampMonitoring(const SourceDocument &document, const QString &prefix,
         }
         shared->monitorType = type;
         shared->monitorSame = document.value(prefix + QStringLiteral("switch.248.2")).toInt() != 0;
-        if (type == 1) {
-            shared->bitIndex = document.value(prefix + QStringLiteral("switch.248.1")).toInt();
+        storedBitIndex = document.value(prefix + QStringLiteral("switch.248.1")).toInt();
+        if (type == 1 || (storedBitIndex >= 0 && storedBitIndex <= 15)) { //20261127-5 change
+            // The original bit-monitor lamp can keep a valid dormant word selector; its device record copies this value at +0x188.
+            shared->bitIndex = storedBitIndex;
         }
         if (!modelSourceAddress(document, prefix + QStringLiteral("switch.254"),
                                   type == 0 ? &shared->monitorBitAddress : &shared->monitorWordAddress, external, error)) {
@@ -1425,6 +1705,45 @@ bool importSourceMacroSchedules(const SourceDocument &document, HmiProject *proj
 }
 
 /******************************************************************************
+ * Function Name   : retainedLocalMacroBinding
+ * Description     : Recognize the second local MACRO_MAIN selector pair observed in V122 projects.
+ * Input Parameters: document, prefix for a parsed switch object
+ * Return Value    : True for an enabled named local entry with both selectors cleared.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool retainedLocalMacroBinding(const SourceDocument &document, const QString &prefix) //20261127-10 add
+{
+    return document.value(prefix + QStringLiteral("switch.22c.1")).toInt() == 1 &&
+           document.value(prefix + QStringLiteral("switch.22c.0")).toInt() == 0 &&
+           document.value(prefix + QStringLiteral("switch.22c.4")).toInt() == 0 &&
+           !document.value(prefix + QStringLiteral("switch.22c.2")).toString().isEmpty() &&
+           document.value(prefix + QStringLiteral("switch.22c.3")).toString() == QStringLiteral("MACRO_MAIN") &&
+           document.value(prefix + QStringLiteral("switch.22c.5")).toString().isEmpty();
+}
+
+/******************************************************************************
+ * Function Name   : hasRetainedMacroAddresses
+ * Description     : Detect per-macro address rows that stay in the authenticated native snapshot.
+ * Input Parameters: document already parsed through the history section
+ * Return Value    : True when the embedded macro address table needs verbatim preservation.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool hasRetainedMacroAddresses(const SourceDocument &document) //20261127-10 add
+{
+    const int count = document.value(QStringLiteral("history.1e4.count")).toInt();
+    QString prefix;
+    int i;
+
+    for (i = 0; i < count; ++i) {
+        prefix = SourceDocument::indexed(QStringLiteral("history.1e4"), i);
+        if (document.value(prefix + QStringLiteral(".c.count")).toInt() > 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/******************************************************************************
  * Function Name   : sourceProject
  * Description     : Convert verified native controls and retain the complete original source snapshot.
  * Input Parameters: document, project, error
@@ -1523,7 +1842,19 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     external = false;
     for (i = 0; i < document.objectPrefixes.size(); ++i) {
         prefix = document.objectPrefixes.at(i);
-        if (document.value(prefix + QStringLiteral("type")).toInt() == 0x1002a) //20261125-85 add
+        if (document.value(prefix + QStringLiteral("type")).toInt() == 36) //20261127-9 add
+        {
+            if (!sourceTable(document, prefix, i, &object, error)) { return false; }
+            result.objects.append(object);
+            continue;
+        }
+        if (document.values.contains(prefix + QStringLiteral("box.pen.0"))) //20261127-6 add
+        {
+            if (!sourceBoxGraphic(document, prefix, i, &object, error)) { return false; }
+            result.objects.append(object);
+            continue;
+        }
+        if (document.values.contains(prefix + QStringLiteral("curve.elements.count"))) //20261127-6 change
         {
             if (!sourceLineCurve(document, prefix, i, &object, error)) { return false; }
             result.objects.append(object);
@@ -1574,8 +1905,8 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         }
         properties.macroEnabled = document.value(prefix + QStringLiteral("switch.22c.1")).toInt() != 0;
         properties.macroName = document.value(prefix + QStringLiteral("switch.22c.2")).toString();
-        if (properties.macroEnabled &&
-            (properties.macroName.isEmpty() || document.value(prefix + QStringLiteral("switch.22c.0")).toInt() != 1 ||
+        if (properties.macroEnabled && !retainedLocalMacroBinding(document, prefix) && //20261127-10 change
+            (document.value(prefix + QStringLiteral("switch.22c.0")).toInt() != 1 || //20261127-7 change: V5.1 can save this checkbox before a macro is selected.
              document.value(prefix + QStringLiteral("switch.22c.4")).toInt() != 1 ||
              (!document.value(prefix + QStringLiteral("switch.22c.3")).toString().isEmpty() &&
               document.value(prefix + QStringLiteral("switch.22c.3")).toString() != QStringLiteral("MACRO_MAIN")) ||
@@ -1740,12 +2071,10 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
                 document.value(picture + QStringLiteral(".0")).toInt() != 3) { //20261109-8 add
                 return fail(error, QStringLiteral("原生按钮状态含尚未核实的图片类型；不能无损导入。")); //20261110-0 change
             }
-            if (!lamp && !functionButton && document.value(picture + QStringLiteral(".0")).toInt() == 3) { //20261110-0 change
-                return fail(error, QStringLiteral("原生位/字按钮含尚未核实的无图片状态；仅可保留原始归档，不能按图片状态导入。")); //20261110-0 change
-            }
+            // V122 kind three carries the disabled control image; its retained system name may be empty.
             appearance->useImage = (lamp || functionButton) ? document.value(picture + QStringLiteral(".0")).toInt() == 1 :
-                                         document.value(picture + QStringLiteral(".0")).toInt() != 0;
-            appearance->sameLanguage = (lamp || functionButton) && document.value(prefix + QStringLiteral("switch.tail.4")).toInt() != 0; //20261110-0 change
+                document.value(picture + QStringLiteral(".0")).toInt() != 0 && document.value(picture + QStringLiteral(".0")).toInt() != 3; //20261127-5 change
+            appearance->sameLanguage = document.value(prefix + QStringLiteral("switch.tail.4")).toInt() != 0; //20261127-5 change: ExteriorWidget loads the same SwitchItem flag for every supported subtype.
             appearance->flash = document.value(picture + QStringLiteral(".2")).toInt() != 0;
             appearance->opacity = document.value(picture + QStringLiteral(".3")).toInt();
             appearance->background = document.value(picture + QStringLiteral(".4")).value<QColor>();
@@ -1771,6 +2100,9 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         document.value(QStringLiteral("system.194.count")).toInt() != 0 || document.value(QStringLiteral("config.284.count")).toInt() != 0) {
         return fail(error, QStringLiteral("原生工程包含尚未恢复到编辑模型的宏变量、启动宏或系统宏；仅可保留原始归档，不能作为普通宏工程导入。"));
     }
+    if (hasRetainedMacroAddresses(document)) { //20261127-10 add
+        result.nativeSourceWarnings.append(QStringLiteral("已保留原厂宏地址表。可以编辑画面并保存 SM；修改宏定义或独立设备编译需要先支持这些地址记录。"));
+    }
     for (i = 0; i < macroCount; ++i) {
         prefix = SourceDocument::indexed(QStringLiteral("history.1e4"), i);
         macro = document.value(prefix + QStringLiteral(".head.1")).toString();
@@ -1779,7 +2111,6 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
             return fail(error, QStringLiteral("原生宏名称为空或重复，不能无损映射。"));
         }
         if (document.value(prefix + QStringLiteral(".8.count")).toInt() != 0 ||
-            document.value(prefix + QStringLiteral(".c.count")).toInt() != 0 ||
             document.value(prefix + QStringLiteral(".head.2")).toInt() != 1 ||
             (document.value(prefix + QStringLiteral(".head.0")).toInt() == 0 ?
                 !document.value(prefix + QStringLiteral(".code")).toByteArray().isEmpty() :
@@ -1795,7 +2126,7 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     }
     for (i = 0; i < result.objects.size(); ++i) {
         if (result.objects.at(i).hasBitButtonProperties && result.objects.at(i).bitButton.macroEnabled &&
-            !result.macros.contains(result.objects.at(i).bitButton.macroName)) {
+            !result.objects.at(i).bitButton.macroName.isEmpty() && !result.macros.contains(result.objects.at(i).bitButton.macroName)) { //20261127-7 change
             return fail(error, QStringLiteral("原生按钮绑定的宏在工程宏注册表中不存在：%1。").arg(result.objects.at(i).bitButton.macroName));
         }
     }
@@ -1958,6 +2289,8 @@ public:
     }
 };
 
+#include "native_table_source.cpp.inc" //20261127-9 add
+
 /******************************************************************************
  * Function Name   : patchScalar
  * Description     : Consume one supported model property and update its native field only after an edit.
@@ -2113,13 +2446,13 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     int i;
     bool textChanged;
     bool lamp; //20261109-8 add
-    bool singleStateFunction; //20261110-0 add
+    bool operationButton; //20261127-5 add
     bool sharedLanguage;
     bool previewState;
 
     lamp = updates->document.value(prefix + QStringLiteral("switch.mode")).toInt() == 4;
-    singleStateFunction = updates->document.value(prefix + QStringLiteral("switch.mode")).toInt() == 3;
-    sharedLanguage = (lamp || singleStateFunction) && after.value(QStringLiteral("sameLanguage")).toBool(); //20261110-0 change
+    operationButton = updates->document.value(prefix + QStringLiteral("switch.mode")).toInt() <= 1;
+    sharedLanguage = after.value(QStringLiteral("sameLanguage")).toBool(); //20261127-5 change
     previewState = lamp ? updates->document.value(prefix + QStringLiteral("switch.274.1")).toInt() == state : state == 0;
     row = SourceDocument::indexed(SourceDocument::indexed(prefix + QStringLiteral("switch.290"), state), 0);
     picture = SourceDocument::indexed(prefix + QStringLiteral("switch.294"), state);
@@ -2127,6 +2460,13 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     afterText = after.value(QStringLiteral("text")).toObject();
     beforeLanguages = beforeText.value(QStringLiteral("texts")).toObject();
     afterLanguages = afterText.value(QStringLiteral("texts")).toObject();
+    if (operationButton && sharedLanguage && afterLanguages.contains(languages.first()) &&
+        afterLanguages.value(languages.first()).toString() != after.value(QStringLiteral("sharedText")).toString()) //20261127-5 add
+    {
+        // The first native row is the shared caption. It has no second field for a different saved first-language draft.
+        updates->error = QStringLiteral("位或字按钮的共用文字与第一语言草稿不同，原厂 .sm 无法同时保存两份文字。请保留 .ksp。");
+        return false;
+    }
     keys = afterLanguages.keys();
     for (i = 0; i < keys.size(); ++i) {
         if (!languages.contains(keys.at(i))) {
@@ -2137,7 +2477,7 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
         sourceLanguages.append(updates->document.value(SourceDocument::indexed(QStringLiteral("system.164"), i)).toString());
     }
     textChanged = beforeLanguages != afterLanguages || before.value(QStringLiteral("sharedText")) != after.value(QStringLiteral("sharedText")) ||
-                  sourceLanguages != languages || ((lamp || singleStateFunction) && before.value(QStringLiteral("sameLanguage")) != after.value(QStringLiteral("sameLanguage"))); //20261110-0 change
+                  sourceLanguages != languages || before.value(QStringLiteral("sameLanguage")) != after.value(QStringLiteral("sameLanguage")); //20261127-5 change
     if (textChanged || beforeText.value(QStringLiteral("fontFamily")) != afterText.value(QStringLiteral("fontFamily")) ||
         beforeText.value(QStringLiteral("fontSize")) != afterText.value(QStringLiteral("fontSize")) ||
         beforeText.value(QStringLiteral("textColor")) != afterText.value(QStringLiteral("textColor"))) {
@@ -2150,6 +2490,11 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
             sourceIndex = sourceLanguages.indexOf(languageName);
             row = SourceDocument::indexed(list, sourceIndex >= 0 ? sourceIndex : 0);
             text = sharedLanguage ? after.value(QStringLiteral("sharedText")).toString() : afterLanguages.value(languageName).toString(); //20261109-8 change
+            if (operationButton && sharedLanguage && language > 0 && afterLanguages.contains(languageName)) //20261127-5 add
+            {
+                // Secondary native rows retain their own drafts even while the control displays the shared first row.
+                text = afterLanguages.value(languageName).toString();
+            }
             if (language == 0 && beforeLanguages == afterLanguages && before.value(QStringLiteral("sharedText")) != after.value(QStringLiteral("sharedText"))) {
                 text = after.value(QStringLiteral("sharedText")).toString();
             }
@@ -2186,15 +2531,8 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     afterText.remove(QStringLiteral("texts"));
     before.remove(QStringLiteral("sharedText"));
     after.remove(QStringLiteral("sharedText"));
-    if (lamp || singleStateFunction) { //20261110-0 change: These controls use the verified global shared-language flag and the image/no-image selector.
-        before.remove(QStringLiteral("sameLanguage"));
-        after.remove(QStringLiteral("sameLanguage"));
-        if (before.value(QStringLiteral("useImage")) != after.value(QStringLiteral("useImage"))) {
-            updates->set(picture + QStringLiteral(".0"), after.value(QStringLiteral("useImage")).toBool() ? 1 : 3);
-        }
-        before.remove(QStringLiteral("useImage"));
-        after.remove(QStringLiteral("useImage"));
-    }
+    before.remove(QStringLiteral("sameLanguage"));
+    after.remove(QStringLiteral("sameLanguage"));
     if (beforeText.value(QStringLiteral("fontSize")) != afterText.value(QStringLiteral("fontSize")) &&
         std::floor(afterText.value(QStringLiteral("fontSize")).toDouble()) != afterText.value(QStringLiteral("fontSize")).toDouble()) {
         return false;
@@ -2214,6 +2552,14 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     }
     beforeText.remove(QStringLiteral("textColor"));
     afterText.remove(QStringLiteral("textColor"));
+    if (!after.value(QStringLiteral("useImage")).toBool() && !after.value(QStringLiteral("transparent")).toBool() &&
+        afterText.value(QStringLiteral("style")).toInt() == 1 &&
+        (afterText.value(QStringLiteral("backgroundColor")) == after.value(QStringLiteral("background")) ||
+         afterText.value(QStringLiteral("backgroundColor")) == beforeText.value(QStringLiteral("backgroundColor")))) //20261127-5 add
+    {
+        // Older fixtures carried the generic solid-caption style with either its default white or the shape color. The painter clears it before drawing the caption.
+        afterText.insert(QStringLiteral("style"), 0);
+    }
     if (beforeText != afterText) {
         return false;
     }
@@ -2226,19 +2572,23 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     }
     before.remove(QStringLiteral("background"));
     after.remove(QStringLiteral("background"));
-    if (before.value(QStringLiteral("picture")) != after.value(QStringLiteral("picture"))) {
+    if (before.value(QStringLiteral("picture")) != after.value(QStringLiteral("picture")) ||
+        before.value(QStringLiteral("useImage")) != after.value(QStringLiteral("useImage"))) {
         path = after.value(QStringLiteral("picture")).toString();
-        if (!path.startsWith(QStringLiteral(":/btn/images/"))) {
+        if (!(path.isEmpty() && !after.value(QStringLiteral("useImage")).toBool()) &&
+                   !path.startsWith(QStringLiteral(":/btn/images/"))) { //20261127-5 change: Kind three does not look up a KVG; an empty dormant name is a valid Qt string.
             if (path.contains(QLatin1Char('/')) || path.contains(QLatin1Char('\\')) || !path.endsWith(QStringLiteral(".kvg"))) {
                 return false;
             }
             path.prepend(QStringLiteral(":/btn/images/"));
         }
+        updates->set(picture + QStringLiteral(".0"), after.value(QStringLiteral("useImage")).toBool() ? 1 : 3);
         updates->set(picture + QStringLiteral(".1"), path);
         if (previewState && updates->document.values.contains(prefix + QStringLiteral("pixmap.0"))) { //20261109-8 change
             updates->set(prefix + QStringLiteral("pixmap.0"), path);
         }
     }
+    before.remove(QStringLiteral("useImage")); after.remove(QStringLiteral("useImage"));
     before.remove(QStringLiteral("picture"));
     after.remove(QStringLiteral("picture"));
     before.remove(QStringLiteral("effect3d"));
@@ -2618,6 +2968,19 @@ bool patchButton(const HmiObject &original, const HmiObject &current, const QStr
         updates->set(prefix + QStringLiteral("switch.tail.7"), transparent);
     }
     stateCount = updates->document.value(prefix + QStringLiteral("switch.290.count")).toInt();
+    if (updates->document.value(prefix + QStringLiteral("switch.mode")).toInt() <= 1) //20261127-5 add
+    {
+        // V122 writes SwitchItem +0x22f once for all states. Historical KSPs may request two incompatible per-state flags.
+        if (stateCount == 2 && properties.states[0].sameLanguage != properties.states[1].sameLanguage)
+        {
+            updates->error = QStringLiteral("位或字按钮的两个状态使用了不同的同文开关，原厂 .sm 只保存一个，请统一设置或保存为 .ksp。");
+            return false;
+        }
+        if (properties.states[0].sameLanguage != oldProperties.states[0].sameLanguage)
+        {
+            updates->set(prefix + QStringLiteral("switch.tail.4"), properties.states[0].sameLanguage);
+        }
+    }
     if (updates->document.value(prefix + QStringLiteral("switch.mode")).toInt() == 4) { //20261109-8 add: Additional lamp states are patched by their independent property record.
         stateCount = qMin(stateCount, 2);
     }
@@ -2684,7 +3047,7 @@ bool patchButton(const HmiObject &original, const HmiObject &current, const QStr
     beforeObject.remove(QStringLiteral("subpixelY")); afterObject.remove(QStringLiteral("subpixelY"));
     beforeObject.remove(QStringLiteral("width")); afterObject.remove(QStringLiteral("width"));
     beforeObject.remove(QStringLiteral("height")); afterObject.remove(QStringLiteral("height"));
-    if (current.text != original.text && current.text != properties.states[0].text.languageTexts.value(languages.first())) {
+    if (current.text != original.text && current.text != bitButtonContent(properties.states[0], languages.first())) { //20261127-5 change
         return false;
     }
     beforeObject.remove(QStringLiteral("text"));
@@ -3206,6 +3569,10 @@ bool patchSourceMacros(const SourceDocument &document, const HmiProject &origina
     if (current.macros == original.macros) {
         return true;
     }
+    if (hasRetainedMacroAddresses(document)) { //20261127-10 add
+        // The retained rows can refer to other definitions. Preserve the entire macro registry together.
+        return fail(error, QStringLiteral("原厂宏地址表仍由源快照保留，无法在保全引用的同时改写宏定义。"));
+    }
     if (current.macros.size() > 100 || document.value(QStringLiteral("history.1981f8.count")).toInt() != 0 ||
         document.value(QStringLiteral("system.194.count")).toInt() != 0 || document.value(QStringLiteral("config.284.count")).toInt() != 0) {
         return fail(error, QStringLiteral("原生宏源编辑仅支持最多100项普通宏；启动宏、全局变量或其它宏类型元数据尚未核实。"));
@@ -3575,6 +3942,14 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     if (!document.parse()) {
         return fail(error, document.error);
     }
+    if (hasRetainedMacroAddresses(document)) { //20261127-10 add
+        return fail(error, QStringLiteral("工程包含原厂宏地址表，独立设备编译器尚不能生成对应变量记录。"));
+    }
+    for (const QString &prefix : document.objectPrefixes) {
+        if (retainedLocalMacroBinding(document, prefix)) {
+            return fail(error, QStringLiteral("原厂按钮使用另一组本地宏选择标志，独立设备绑定尚待核对。"));
+        }
+    }
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only page traversal does not widen the one-page device configuration contract.
         return fail(error, QStringLiteral("多页原生源仅支持结构检查或整源归档，不能按单页设备默认配置编译。"));
     }
@@ -3602,6 +3977,13 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     if (isAmz070Target(document.value(QStringLiteral("system.identity.1")).toString())) //20261122-3 add
     {
         updates.set(QStringLiteral("system.identity.1"), QStringLiteral("AMT070W124-L800X480R"));
+        // Both descriptive strings are read from the AMZ panel catalog; all communication and configuration bytes stay in the hash.
+        if (document.value(QStringLiteral("system.identity.6")).toString() == QStringLiteral("768000 Colors 7 TFT LCD") &&
+            document.value(QStringLiteral("system.identity.7")).toString() == QStringLiteral("32M")) //20261127-5 add
+        {
+            updates.set(QStringLiteral("system.identity.6"), QStringLiteral("1667M Colors 7 TFT LCD"));
+            updates.set(QStringLiteral("system.identity.7"), QStringLiteral("8M"));
+        }
     }
     updates.set(QStringLiteral("system.identity.15"), 1);
     updates.set(QStringLiteral("system.identity.16"), 0);
@@ -3906,6 +4288,8 @@ bool writeNativeSourceAddress(const NativeSourceAddress &address, QByteArray *da
     return true;
 }
 
+#include "native_multipage_source.cpp.inc" //20261127-8 add
+
 /******************************************************************************
  * Function Name   : importNativeProjectSource
  * Description     : Import recovered single-page switch-family and static-text source records transactionally.
@@ -3923,6 +4307,10 @@ bool importNativeProjectSource(const QByteArray &data, HmiProject *project,
     }
     if (!document.parse()) {
         return fail(error, document.error);
+    }
+    if (document.value(QStringLiteral("project.pages.count")).toInt() > 1) //20261127-8 add
+    {
+        return importOrdinaryPages(document, project, error);
     }
     return sourceProject(document, project, error);
 }
@@ -3945,8 +4333,8 @@ static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *origi
     const bool retained = original != nullptr;
     const bool samePath = retained && object.graphic.points == original->graphic.points &&
                           object.graphic.curveControls == original->graphic.curveControls &&
-                          object.geometry == original->geometry && object.subpixelOffset == original->subpixelOffset &&
-                          object.graphic.endArrow == original->graphic.endArrow;
+                          object.geometry.size() == original->geometry.size() && object.graphic.endArrow == original->graphic.endArrow &&
+                          (object.graphic.endArrow == 0 || object.graphic.lineWidth == original->graphic.lineWidth); //20261127-6 change
     const QString style = prefix + QStringLiteral("curve.style.");
     QString name = object.name;
     int width = object.graphic.lineWidth;
@@ -3961,18 +4349,21 @@ static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *origi
         return fail(error, QStringLiteral("带末端箭头的曲线路径尚未核对原厂缓存，当前可保存为 .ksp。"));
     }
     stream.setVersion(QDataStream::Qt_4_8);
-    stream << 0x1002a;
+    stream << nativeStrokeTypes().value(object.type); //20261127-6 change
     if (samePath)
     {
         start = document.values.value(prefix + QStringLiteral("curve.elements.count")).start;
         end = document.values.value(style + QStringLiteral("0")).start;
         stream.writeRawData(document.bytes.constData() + start, end - start);
         position = QPointF(document.value(style + QStringLiteral("3")).toDouble(), document.value(style + QStringLiteral("4")).toDouble());
+        position += QPointF(object.geometry.topLeft() - original->geometry.topLeft()) +
+                    object.subpixelOffset - original->subpixelOffset; //20261127-6 add: A translation retains the exact vendor arrow geometry.
     }
     else { stream << path; }
     if (retained && original->name == name) { name = document.value(style + QStringLiteral("6")).toString(); }
     if (retained && width == original->graphic.lineWidth) { width = document.value(style + QStringLiteral("1")).toInt(); }
-    if (!retained && width == 1) { width = 0; } //20261125-85 add: V5.1 serializes its first width as a cosmetic pen.
+    if (!retained && width == 1 && (object.type == QStringLiteral("line") || object.type == QStringLiteral("linecurve")))
+    { width = 0; } //20261127-6 change: V5.1's plain/curve defaults are cosmetic, while polyline/free-line write width one.
     stroke.setAlpha(object.graphic.alpha);
     stream << object.graphic.alpha << width << stroke << position << true << name
            << object.graphic.lineStyle << object.graphic.endArrow << object.graphic.endCap;
@@ -3998,6 +4389,145 @@ static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *origi
     }
     if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("曲线记录写入失败。")); }
     *bytes = body;
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : writeProfileGeometry
+ * Description     : Retain the native path on translations and style changes; regenerate it when its defining parameters change.
+ * Input Parameters: object, original or null, source, box prefix, pending updates, error
+ * Return Value    : True for a writable rounded rectangle or circular default-angle sector.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool writeProfileGeometry(const HmiObject &object, const HmiObject *original, const SourceDocument &source,
+                                 const QString &box, SourceUpdates *updates, QString *error) //20261127-6 add
+{
+    const bool rounded = object.type == QStringLiteral("roundrect");
+    const int dimension = rounded ? 0 : 2;
+    const auto profileKey = [&](int i) { return box + QStringLiteral("profile.") + QString::number(i); };
+    const QRectF rect(rounded ? 0 : source.value(profileKey(0)).toDouble(), rounded ? 0 : source.value(profileKey(1)).toDouble(),
+                      object.geometry.width(), object.geometry.height());
+    const QPointF position = object.geometry.topLeft() + object.subpixelOffset - rect.topLeft();
+    const auto change = [&](const QString &key, const QVariant &value) { if (source.value(key) != value) { updates->set(key, value); } };
+    const bool resized = original ? original->geometry.size() != object.geometry.size() :
+                         rect.width() != source.value(profileKey(dimension)).toDouble() || rect.height() != source.value(profileKey(dimension + 1)).toDouble();
+    const bool radiiChanged = rounded && (source.value(profileKey(2)).toDouble() != object.graphic.radiusX ||
+                                          source.value(profileKey(3)).toDouble() != object.graphic.radiusY);
+    QByteArray path;
+    QDataStream stream(&path, QIODevice::WriteOnly);
+    qsizetype start, end;
+
+    if (!rounded && rect.width() != rect.height()) { return fail(error, QStringLiteral("当前原厂扇形 SM 写入要求正方形包围框。")); }
+    if (!original || original->geometry.topLeft() != object.geometry.topLeft() || original->subpixelOffset != object.subpixelOffset)
+    {
+        change(box + QStringLiteral("position.0"), position.x()); change(box + QStringLiteral("position.1"), position.y());
+    }
+    if (resized || radiiChanged)
+    {
+        stream.setVersion(QDataStream::Qt_4_8); stream << graphicPath(object.type, rect, object.graphic);
+        if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("写入原厂图形缓存路径失败。")); }
+        start = source.values.value(box + QStringLiteral("cache.count")).start; end = source.values.value(profileKey(0)).start;
+        updates->replacements.insert(start, qMakePair(end, path));
+        change(profileKey(dimension), rect.width()); change(profileKey(dimension + 1), rect.height());
+        if (rounded) { change(profileKey(2), double(object.graphic.radiusX)); change(profileKey(3), double(object.graphic.radiusY)); }
+    }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : writeSourceBoxGraphic
+ * Description     : Patch editable closed primitives while retaining labels and dormant vendor metadata.
+ * Input Parameters: object, original object or null, source document, source prefix, bytes, error
+ * Return Value    : True when a full nested or root control body has been encoded.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static bool writeSourceBoxGraphic(const HmiObject &object, const HmiObject *original, const SourceDocument &document,
+                                  QString prefix, QByteArray *bytes, QString *error) //20261127-6 add
+{
+    SourceDocument seed(QByteArray{});
+    const SourceDocument *source = &document;
+    QFile sample(QStringLiteral(":/native/graphics/%1.sm").arg(object.type));
+    const GraphicProperties &graphic = object.graphic;
+    const bool polygon = object.type == QStringLiteral("polygon");
+    const bool profile = object.type == QStringLiteral("roundrect") || object.type == QStringLiteral("sector");
+    const double x = object.geometry.x() + object.subpixelOffset.x();
+    const double y = object.geometry.y() + object.subpixelOffset.y();
+    QString box;
+    double localX, localY;
+    QByteArray pointBytes;
+    QDataStream pointStream(&pointBytes, QIODevice::WriteOnly);
+    qsizetype pointStart, pointEnd;
+    QColor pen = graphic.lineColor, front = graphic.foreground, back = graphic.background;
+
+    if (!graphic.validate(object.type, error)) { return false; }
+    if (!object.geometry.isValid() || !std::isfinite(x) || !std::isfinite(y) || std::abs(x) > 32768 || std::abs(y) > 32768 ||
+        object.geometry.width() > 32768 || object.geometry.height() > 32768)
+    {
+        return fail(error, QStringLiteral("闭合图形的坐标及尺寸超出可编辑范围。"));
+    }
+    if (!original)
+    {
+        if (!sample.open(QIODevice::ReadOnly)) { return fail(error, QStringLiteral("无法读取原厂图形记录种子。")); }
+        seed.bytes = sample.readAll();
+        if (!seed.parse() || seed.objectPrefixes.isEmpty()) { return fail(error, QStringLiteral("原厂图形记录边界无效。")); }
+        source = &seed; prefix = seed.objectPrefixes.first();
+    }
+    box = prefix + QStringLiteral("box.");
+    SourceUpdates updates(*source);
+    // Compare decoded values first. The original 11-byte QColor or dormant bit pattern may differ even for equal editor values.
+    const auto setChanged = [&](const QString &key, const QVariant &value) {
+        if (source->value(box + key) != value) { updates.set(box + key, value); }
+    };
+    if (profile)
+    {
+        if (!writeProfileGeometry(object, original, *source, box, &updates, error)) { return false; }
+    }
+    else if (!original || object.geometry != original->geometry || object.subpixelOffset != original->subpixelOffset ||
+             (polygon && original->graphic.points != graphic.points))
+    {
+        localX = x - source->value(box + QStringLiteral("position.0")).toDouble();
+        localY = y - source->value(box + QStringLiteral("position.1")).toDouble();
+        if (polygon && original && original->geometry.size() == object.geometry.size() &&
+            original->graphic.points == graphic.points)
+        {
+            // Translate the scene offset so fractional vertex coordinates keep their original wire representation.
+            setChanged(QStringLiteral("position.0"), source->value(box + QStringLiteral("position.0")).toDouble() +
+                       (x - original->geometry.x() - original->subpixelOffset.x()));
+            setChanged(QStringLiteral("position.1"), source->value(box + QStringLiteral("position.1")).toDouble() +
+                       (y - original->geometry.y() - original->subpixelOffset.y()));
+        }
+        else if (polygon)
+        {
+            pointStream.setVersion(QDataStream::Qt_4_8);
+            pointStream << int(graphic.points.size());
+            for (const QPointF &point : graphic.points)
+            {
+                pointStream << QPointF(localX + point.x() * object.geometry.width(), localY + point.y() * object.geometry.height());
+            }
+            if (pointStream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("多边形顶点表写入失败。")); }
+            pointStart = source->values.value(box + QStringLiteral("points.count")).start;
+            pointEnd = source->values.value(box + QStringLiteral("alpha")).start;
+            updates.replacements.insert(pointStart, qMakePair(pointEnd, pointBytes));
+        }
+        else
+        {
+            setChanged(QStringLiteral("corners.0"), localX); setChanged(QStringLiteral("corners.1"), localY);
+            setChanged(QStringLiteral("corners.2"), localX + object.geometry.width());
+            setChanged(QStringLiteral("corners.3"), localY + object.geometry.height());
+        }
+    }
+    if (!original || original->name != object.name) { setChanged(QStringLiteral("name"), object.name); }
+    if (!original || original->graphic.lineWidth != graphic.lineWidth)
+    {
+        setChanged(QStringLiteral("pen.1"), graphic.lineWidth == 1 && !polygon ? 0 : graphic.lineWidth);
+    }
+    if (polygon || object.type == QStringLiteral("sector")) { setChanged(QStringLiteral("alpha"), graphic.alpha); }
+    pen.setAlpha(graphic.alpha); front.setAlpha(graphic.alpha); back.setAlpha(graphic.alpha);
+    setChanged(QStringLiteral("pen.0"), pen); setChanged(QStringLiteral("brush.0"), back);
+    setChanged(QStringLiteral("brush.1"), front); setChanged(QStringLiteral("line"), graphic.lineStyle);
+    setChanged(QStringLiteral("fill"), graphic.fillStyle);
+    *bytes = updates.render(source->values.value(prefix + QStringLiteral("type")).start, source->values.value(prefix + QStringLiteral("z")).start);
+    if (!updates.error.isEmpty()) { return fail(error, updates.error); }
     return true;
 }
 
@@ -4028,6 +4558,7 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     HmiProject functionSeedProject; //20261110-0 add
     HmiProject resizedProject;
     HmiObject originalObject;
+    HmiObject sourceObject; //20261127-5 add
     QJsonObject before;
     QJsonObject after;
     QByteArray result;
@@ -4068,9 +4599,15 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     if (data == nullptr) {
         return fail(error, QStringLiteral("原生工程编码输出为空。"));
     }
-    if (isAmz070Target(project.targetModel)) //20261122-3 add: AMT-derived source seeds are not validated for AMZ export.
+    if (project.pageCount() > 1) //20261127-8 add
     {
-        return fail(error, QStringLiteral("AMZ070W01R 目前使用 .ksp 保存和设备编译；原厂 .sm 导出尚未验证。"));
+        if (project.nativeSourceSnapshot.isEmpty()) { return extendOrdinaryPageSource(project, 1, data, error); }
+        if (!document.parse()) { return fail(error, document.error); }
+        if (project.pageCount() > document.value(QStringLiteral("project.pages.count")).toInt())
+        {
+            return extendOrdinaryPageSource(project, document.value(QStringLiteral("project.pages.count")).toInt(), data, error);
+        }
+        if (document.value(QStringLiteral("project.pages.count")).toInt() > 1) { return exportOrdinaryPages(project, document, data, error); }
     }
     if (!project.validateSinglePageBackend(error, false)) { //20261125-4 change: Export a numbered page without flattening any topology.
         return false;
@@ -4096,8 +4633,30 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     if (!document.parse()) {
         return fail(error, document.error);
     }
+    if (document.value(QStringLiteral("config.270.0")).toInt() != 0) //20261127-5 add
+    {
+        // A protected SM can only be re-emitted with the same authenticated session password and original protection fields.
+        if (!authenticateNativeProjectFile(document.bytes, project.filePassword, nullptr, nullptr, error)) { return false; }
+    }
+    else if (!project.filePassword.isEmpty())
+    {
+        return fail(error, QStringLiteral("当前文件密码无法保留到这份原厂 .sm；请保存为受保护的 .ksp。"));
+    }
     if (!sourceProject(document, &original, error)) {
         return false;
+    }
+    if (!newProject && deviceTargetIdentityByte(original.targetModel) != deviceTargetIdentityByte(project.targetModel)) //20261127-5 add
+    {
+        return fail(error, QStringLiteral("原厂快照与当前工程的屏型号不符，无法保留原机型配置。"));
+    }
+    if (newProject && isAmz070Target(project.targetModel)) //20261127-5 add
+    {
+        // V122 retains its template ID in header.2 and system.flags.42. The two model selectors and panel description come from the AMZ SM and model.dat.
+        updates.set(QStringLiteral("system.identity.1"), QStringLiteral("AMZ070W01"));
+        updates.set(QStringLiteral("system.identity.6"), QStringLiteral("768000 Colors 7 TFT LCD"));
+        updates.set(QStringLiteral("system.identity.7"), QStringLiteral("32M"));
+        updates.set(QStringLiteral("trailer.settings.2"), QStringLiteral("AMZ070W01"));
+        updates.set(QStringLiteral("trailer.settings.0"), QStringLiteral(""));
     }
     if (project.objects.size() > 1024) {
         return fail(error, QStringLiteral("原生单页控件数量超过已验证的 1024 输入保护范围。"));
@@ -4113,6 +4672,8 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     }
     before = original.toJson();
     after = project.toJson();
+    // The profile is checked against the retained source above. Both KSP spellings select the same native AMZ model.
+    before.remove(QStringLiteral("targetModel")); after.remove(QStringLiteral("targetModel")); //20261127-5 add
     before.remove(QStringLiteral("projectName")); after.remove(QStringLiteral("projectName"));
     before.remove(QStringLiteral("resolution")); after.remove(QStringLiteral("resolution"));
     before.remove(QStringLiteral("pages")); after.remove(QStringLiteral("pages"));
@@ -4218,32 +4779,58 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         originalIndices.insert(original.objects.at(i).id, i);
     }
     for (i = 0; i < project.objects.size(); ++i) {
-        if (project.objects.at(i).type == QStringLiteral("linecurve")) //20261125-85 add
+        if (project.objects.at(i).type == QStringLiteral("table")) //20261127-9 add
         {
-            const HmiObject &curve = project.objects.at(i);
-            if (!curve.group.isEmpty() || curve.id.isEmpty() || ids.contains(curve.id)) { return fail(error, QStringLiteral("曲线对象标识为空或重复。")); }
-            ids.insert(curve.id);
-            originalIndex = newProject ? -1 : originalIndices.value(curve.id, -1);
-            if (originalIndex >= 0 && original.objects.at(originalIndex).type != curve.type)
-            { return fail(error, QStringLiteral("原生源已有控件不能改换为曲线。")); }
-            prefix = originalIndex >= 0 ? document.objectPrefixes.at(originalIndex) : QString();
-            if (!writeSourceLineCurve(curve, originalIndex >= 0 ? &original.objects.at(originalIndex) : nullptr,
-                                      document, prefix, &objectBytes, error)) { return false; }
+            const HmiObject &table = project.objects.at(i);
+            if (table.id.isEmpty() || ids.contains(table.id)) { return fail(error, QStringLiteral("表格对象编号为空或重复。")); }
+            ids.insert(table.id);
+            originalIndex = newProject ? -1 : originalIndices.value(table.id, -1);
+            if (originalIndex >= 0 && original.objects.at(originalIndex).type != table.type)
+            { return fail(error, QStringLiteral("原厂源已有控件不能改换为表格。")); }
+            prefix = originalIndex < 0 ? QString() : document.objectPrefixes.at(originalIndex);
+            if (!writeNativeTable(table, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
+                                  document, prefix, &objectBytes, error)) { return false; }
             QByteArray record;
             QDataStream stream(&record, QIODevice::WriteOnly);
             stream.setVersion(QDataStream::Qt_4_8);
             stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
             stream.writeRawData(objectBytes.constData(), objectBytes.size());
-            stream << curve.layer;
-            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("写入曲线对象失败。")); }
+            stream << table.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("写入表格对象失败。")); }
+            objectBlock.append(record);
+            continue;
+        }
+        if (nativeStrokeTypes().contains(project.objects.at(i).type) || nativeClosedGraphicTypes().contains(project.objects.at(i).type)) //20261127-6 change
+        {
+            const HmiObject &shape = project.objects.at(i);
+            if (!shape.group.isEmpty() || shape.id.isEmpty() || ids.contains(shape.id)) { return fail(error, QStringLiteral("图形对象标识为空或重复。")); }
+            ids.insert(shape.id);
+            originalIndex = newProject ? -1 : originalIndices.value(shape.id, -1);
+            if (originalIndex >= 0 && original.objects.at(originalIndex).type != shape.type)
+            { return fail(error, QStringLiteral("原生源已有控件不能更换图形类型。")); }
+            prefix = originalIndex >= 0 ? document.objectPrefixes.at(originalIndex) : QString();
+            const HmiObject *retained = originalIndex >= 0 ? &original.objects.at(originalIndex) : nullptr;
+            if (nativeStrokeTypes().contains(shape.type))
+            {
+                if (!writeSourceLineCurve(shape, retained, document, prefix, &objectBytes, error)) { return false; }
+            }
+            else if (!writeSourceBoxGraphic(shape, retained, document, prefix, &objectBytes, error)) { return false; }
+            QByteArray record;
+            QDataStream stream(&record, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
+            stream.writeRawData(objectBytes.constData(), objectBytes.size());
+            stream << shape.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("写入图形对象失败。")); }
             objectBlock.append(record);
             continue;
         }
         if (project.objects.at(i).hasBitButtonProperties && project.objects.at(i).bitButton.macroEnabled &&
-            !project.macros.contains(project.objects.at(i).bitButton.macroName)) {
+            !project.macros.contains(project.objects.at(i).bitButton.macroName) &&
+            (!project.objects.at(i).bitButton.macroName.isEmpty() || project.nativeSourceSnapshot.isEmpty())) { //20261127-7 change
             return fail(error, QStringLiteral("控件绑定的宏不在当前工程注册表中：%1。").arg(project.objects.at(i).bitButton.macroName));
         }
-        isText = project.objects.at(i).type == QStringLiteral("text") && project.objects.at(i).hasStaticTextProperties;
+        isText = project.objects.at(i).type == QStringLiteral("text"); //20261127-7 change
         isWord = project.objects.at(i).hasWordButtonProperties; //20261109-6 add
         isLamp = project.objects.at(i).hasLampProperties; //20261109-8 add
         isFunction = project.objects.at(i).hasFunctionButtonProperties; //20261110-0 add
@@ -4376,13 +4963,35 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
             }
         }
         objectUpdates = std::make_unique<SourceUpdates>(*objectDocument);
-        if (!(isText ? patchStaticText(originalObject, project.objects.at(i), prefix, project.languages, objectUpdates.get()) :
-              isFunction ? patchFunctionButton(originalObject, project.objects.at(i), prefix, project.languages, objectUpdates.get()) : //20261110-0 add
-              isLamp ? patchLamp(originalObject, project.objects.at(i), prefix, project.languages, objectUpdates.get()) : //20261109-8 add
-              isWord ? patchWordButton(originalObject, project.objects.at(i), prefix, project.languages, objectUpdates.get()) :
-                       patchButton(originalObject, project.objects.at(i), prefix, project.languages, objectUpdates.get()))) { //20261109-6 change
+        sourceObject = project.objects.at(i);
+        if (isText && !sourceObject.hasStaticTextProperties) //20261127-7 add
+        {
+            // Schema 1 stores one language-independent text string at the object root.
+            // A draft operation address has no native static-text field and must remain in KSP.
+            if (!sourceObject.address.isEmpty())
+            { return fail(error, QStringLiteral("静态文本 %1 的草稿地址 %2 无法存入原厂 SM，请另存为 KSP。").arg(sourceObject.name, sourceObject.address)); }
+            sourceObject.hasStaticTextProperties = true;
+            sourceObject.staticText.fontSize = 16;
+            for (const QString &lang : project.languages)
+            { sourceObject.staticText.languageTexts.insert(lang, sourceObject.text); }
+        }
+        if (originalIndex < 0 && !isText) //20261127-5 add
+        {
+            // A new native preview is built from the state table. Legacy KSPs can still carry an old sidebar label in the generic text cache.
+            sourceObject.text = bitButtonContent(sourceObject.bitButton.states[0], project.languages.first());
+        }
+        if (!(isText ? patchStaticText(originalObject, sourceObject, prefix, project.languages, objectUpdates.get()) :
+              isFunction ? patchFunctionButton(originalObject, sourceObject, prefix, project.languages, objectUpdates.get()) :
+              isLamp ? patchLamp(originalObject, sourceObject, prefix, project.languages, objectUpdates.get()) :
+              isWord ? patchWordButton(originalObject, sourceObject, prefix, project.languages, objectUpdates.get()) :
+                       patchButton(originalObject, sourceObject, prefix, project.languages, objectUpdates.get()))) { //20261127-5 change
+            if (!objectUpdates->error.isEmpty()) { return fail(error, objectUpdates->error); } //20261127-5 add
             return fail(error, QStringLiteral("控件 %1 含尚未验证可无损保存的原生属性编辑；已取消保存。")
                                    .arg(project.objects.at(i).name));
+        }
+        if (!isText && !isLamp && !isFunction &&
+            !patchControlPreview(originalObject, sourceObject, prefix, objectUpdates.get())) { //20261127-5 add: A no-image state uses a filled rectangle in the native graphical child.
+            return fail(error, QStringLiteral("控件 %1 的原厂显示状态缓存无法写回。").arg(sourceObject.name));
         }
         objectStart = objectDocument->values.value(prefix + QStringLiteral("movable")).start;
         objectEnd = objectDocument->values.value(prefix + QStringLiteral("z")).end;
@@ -4409,6 +5018,10 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     }
     if (!sourceProject(verifiedDocument, &verifiedProject, error)) {
         return false;
+    }
+    if (deviceTargetIdentityByte(verifiedProject.targetModel) != deviceTargetIdentityByte(project.targetModel)) //20261127-5 add
+    {
+        return fail(error, QStringLiteral("原厂源输出型号与当前工程不符，已取消保存。"));
     }
     if (verifiedProject.activePageNumber.value_or(0) != project.activePageNumber.value_or(0)) //20261125-4 add
     {

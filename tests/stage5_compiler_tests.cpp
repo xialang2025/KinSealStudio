@@ -486,12 +486,22 @@ void Stage5CompilerTests::sourceAndDeviceGatesRemainIndependent() //20261113-11 
 {
     HmiProject project = polylineProject();
     QJsonObject capabilities = describeProjectCapabilities(project);
+    HmiProject reopened; //20261127-6 add
     QByteArray source = QByteArrayLiteral("keep");
     QString error;
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
-    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
+    project.objects[0].graphic.alpha = 97;
+    capabilities = describeProjectCapabilities(project);
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
 }
 
 /******************************************************************************
@@ -672,7 +682,7 @@ void Stage5CompilerTests::tableUnprovedFieldsPreserveOutput() //20261113-12 add
 
 /******************************************************************************
  * Function Name   : Stage5CompilerTests::tablePackageAndSourceGates
- * Description     : Publish and revalidate a real static-table package while preserving native-source and legacy-text gates.
+ * Description     : Verify native table export and device packaging while preserving the legacy text-only gate.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.13
@@ -689,8 +699,10 @@ void Stage5CompilerTests::tablePackageAndSourceGates() //20261113-12 add
     QString target = temporary.filePath(QStringLiteral("table"));
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
-    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QVERIFY2(exportNativeProjectSource(project,&source,&error),qPrintable(error)); //20261127-9 change
+    HmiProject reopened; QVERIFY2(importNativeProjectSource(source,&reopened,&error),qPrintable(error));
+    QCOMPARE(reopened.objects.first().graphic.toJson(QStringLiteral("table")), project.objects.first().graphic.toJson(QStringLiteral("table")));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -804,12 +816,18 @@ void Stage5CompilerTests::rectangleSourceAndPackageGates() //20261113-13 add
     HmiProject project = rectangleProject();
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("rectangle"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     QJsonObject manifest;
     QString error;
 
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1193,6 +1211,7 @@ void Stage5CompilerTests::lineSourceAndPackageGates() //20261113-14 add
     HmiProject project = lineProject();
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("line"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     QJsonObject manifest;
@@ -1200,8 +1219,13 @@ void Stage5CompilerTests::lineSourceAndPackageGates() //20261113-14 add
     QString error;
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
-    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1339,6 +1363,7 @@ void Stage5CompilerTests::freelineSourceAndPackageGates() //20261113-15 add
     HmiProject project = freelineProject();
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("freeline"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     QJsonObject manifest;
@@ -1346,8 +1371,13 @@ void Stage5CompilerTests::freelineSourceAndPackageGates() //20261113-15 add
     QString error;
 
     QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
-    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("blocked"));
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(),QStringLiteral("candidate"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1476,13 +1506,19 @@ void Stage5CompilerTests::roundrectSourceAndPackageGates() //20261113-16 add
     HmiProject project = rectangleProject();
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("roundrect"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source = QByteArrayLiteral("keep");
     QVector<QByteArray> payloads = {QByteArrayLiteral("keep")};
     QJsonObject manifest;
     QString error;
 
     project.objects[0].type = QStringLiteral("roundrect");
-    QVERIFY(!exportNativeProjectSource(project,&source,&error)); QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error)); QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error)); QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10); QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1639,12 +1675,18 @@ void Stage5CompilerTests::polygonSourceAndPackageGates() //20261114-1 add
     HmiProject project=polygonProject();
     QTemporaryDir temporary;
     QString target=temporary.filePath(QStringLiteral("polygon"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source=QByteArrayLiteral("keep");
     QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
     QJsonObject manifest;
     QString error;
 
-    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1787,12 +1829,18 @@ void Stage5CompilerTests::ellipseSourceAndPackageGates() //20261114-2 add
     HmiProject project=ellipseProject();
     QTemporaryDir temporary;
     QString target=temporary.filePath(QStringLiteral("ellipse"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source=QByteArrayLiteral("keep");
     QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
     QJsonObject manifest;
     QString error;
 
-    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
@@ -1966,12 +2014,18 @@ void Stage5CompilerTests::sectorSourceAndPackageGates() //20261114-3 add
     HmiProject project=sectorProject();
     QTemporaryDir temporary;
     QString target=temporary.filePath(QStringLiteral("sector"));
+    HmiProject reopened; //20261127-6 add
     QByteArray source=QByteArrayLiteral("keep");
     QVector<QByteArray> payloads={QByteArrayLiteral("keep")};
     QJsonObject manifest;
     QString error;
 
-    QVERIFY(!exportNativeProjectSource(project,&source,&error));QCOMPARE(source,QByteArrayLiteral("keep"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.objects.size(), 1);
+    QCOMPARE(reopened.objects.first().type, project.objects.first().type);
+    QCOMPARE(reopened.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(reopened.objects.first().graphic.toJson(reopened.objects.first().type), project.objects.first().graphic.toJson(project.objects.first().type));
     QVERIFY(!buildSingleTextPayload(project,&payloads,&error));QCOMPARE(payloads,QVector<QByteArray>{QByteArrayLiteral("keep")});
     QVERIFY2(exportProjectPayload(project,target,&error),qPrintable(error));QVERIFY2(verifyDevicePackage(target,&manifest,&error),qPrintable(error));
     QCOMPARE(manifest.value(QStringLiteral("files")).toObject().size(),10);QCOMPARE(manifest.value(QStringLiteral("deviceAcknowledged")).toBool(true),false);
