@@ -4,6 +4,7 @@
 #include <QComboBox>
 
 #include <QAction>
+#include <QBuffer> //20261127-3 add
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDialogButtonBox>
@@ -42,10 +43,13 @@ private slots:
     void onlineAcceptsNativeTimeoutRange_data(); //20261125-7 add
     void onlineAcceptsNativeTimeoutRange();
     void onlineDiscreteInputAndSingleWordReachSlave();
+    void onlineHoldingRegisterBitWrites_data(); //20261127-0 add
+    void onlineHoldingRegisterBitWrites();
     void onlineRejectsUnsafeOrOutOfRangeMapping();
     void invalidNumericInputCanRecover(); //20261114-6 add
     void directOwnerDeletionWithHeldViewport();
     void ownerDeletionInsideInputDialog();
+    void passiveDisplaysUseRegisterValuesAndPassTouch();
 };
 
 /******************************************************************************
@@ -439,6 +443,11 @@ struct OnlineSlave //20261124-13 add: Shared observations are atomic because the
     std::atomic_int timeoutMs{0};
     std::atomic_bool discreteInput{true};
     std::atomic_bool rejectNextSingleWord{false};
+    std::atomic_int packedValue{0x3491}; //20261127-0 add: A PLC word independently changed after the initial screen scan.
+    std::atomic_int packedWrites{0};
+    std::atomic_bool rejectPackedRead{false};
+    std::atomic_bool holdPackedRead{false};
+    std::atomic_bool packedReadWaiting{false};
     std::atomic_bool settingsMatch{false};
     std::atomic_bool framesMatch{true};
     std::atomic_bool holdCoilAck{true};
@@ -460,7 +469,7 @@ struct OnlineSlave //20261124-13 add: Shared observations are atomic because the
 static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave) //20261124-13 add
 {
     return [slave](const PlcSerialSettings &settings, const std::function<bool()> &cancelled) {
-        struct Reply { QByteArray bytes; bool wait = false; bool holdRegisterRead = false; bool timeout = false; bool sent = false; };
+        struct Reply { QByteArray bytes; bool wait = false; bool holdRegisterRead = false; bool packedRead = false; bool timeout = false; bool sent = false; };
         const auto reply = std::make_shared<Reply>();
         SimulationModbusIo io;
 
@@ -499,6 +508,26 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
                 data = QByteArray::fromHex(slave->discreteInput ? "0702010160c0" : "07020100a100");
                 reply->bytes = data;
                 return int(frame.size());
+            }
+            else if (frame == QByteArray::fromHex("070300f60001645e")) //20261127-0 add
+            {
+                const int word = slave->packedValue.load();
+                reply->packedRead = true;
+                if (slave->rejectPackedRead.exchange(false))
+                {
+                    reply->bytes = QByteArray::fromHex("07830220f0");
+                    return int(frame.size());
+                }
+                data.append(char(2)); data.append(char(word >> 8)); data.append(char(word));
+            }
+            else if (frame == QByteArray::fromHex("070600f6a15a9035") ||
+                     frame == QByteArray::fromHex("070600f6215af1f5") ||
+                     frame == QByteArray::fromHex("070600f6215b3035"))
+            {
+                // Exact, independently calculated FC06 frames check offset, neighboring bits and CRC.
+                slave->packedValue = (u8(frame[4]) << 8) | u8(frame[5]);
+                ++slave->packedWrites;
+                data = payload;
             }
             else if (function == 3 && payload.mid(2) == QByteArray::fromHex("00180002"))
             {
@@ -555,10 +584,12 @@ static PlcSerialIoFactory onlineSlave(const std::shared_ptr<OnlineSlave> &slave)
             SimulationModbusReadChunk chunk;
             QElapsedTimer wait;
             const auto held = [&]() {
-                return (reply->wait && slave->holdCoilAck) || (reply->holdRegisterRead && slave->holdRegisterReads);
+                return (reply->wait && slave->holdCoilAck) || (reply->holdRegisterRead && slave->holdRegisterReads) ||
+                    (reply->packedRead && slave->holdPackedRead); //20261127-0 change
             };
 
             if (reply->timeout) { chunk.timedOut = true; return chunk; }
+            if (reply->packedRead && slave->holdPackedRead) { slave->packedReadWaiting = true; }
             wait.start();
             while (held() && !cancelled() && wait.elapsed() < timeoutMs)
             {
@@ -908,6 +939,98 @@ void SimulationUiTests::onlineDiscreteInputAndSingleWordReachSlave() //20261125-
 }
 
 /******************************************************************************
+ * Function Name   : SimulationUiTests::onlineHoldingRegisterBitWrites_data
+ * Description     : Vary the clicked operation, bit position and independently supplied PLC value.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void SimulationUiTests::onlineHoldingRegisterBitWrites_data() //20261127-0 add
+{
+    QTest::addColumn<int>("operation");
+    QTest::addColumn<int>("bitPosition");
+    QTest::addColumn<int>("remote");
+    QTest::addColumn<int>("expected");
+    QTest::addColumn<int>("readFailure");
+    QTest::newRow("set-bit-15") << 0 << 15 << 0x215a << 0xa15a << 0;
+    QTest::newRow("reset-bit-15") << 1 << 15 << 0xa15a << 0x215a << 0;
+    QTest::newRow("toggle-bit-0") << 3 << 0 << 0x215a << 0x215b << 0;
+    QTest::newRow("pre-read-exception-stops-write") << 0 << 15 << 0x215a << 0x215a << 1;
+    QTest::newRow("disconnect-before-fc06") << 0 << 15 << 0x215a << 0x215a << 2;
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::onlineHoldingRegisterBitWrites
+ * Description     : Drive a real simulation button against an RTU slave whose word changes after the screen scan.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void SimulationUiTests::onlineHoldingRegisterBitWrites() //20261127-0 add
+{
+    QFETCH(int, operation);
+    QFETCH(int, bitPosition);
+    QFETCH(int, remote);
+    QFETCH(int, expected);
+    QFETCH(int, readFailure);
+    const auto slave = std::make_shared<OnlineSlave>();
+    HmiProject project = onlineTestProject();
+    HmiObject button = project.objects.first();
+    HmiObject number = project.objects.at(3);
+    SimulationWindow window;
+    SimulationViewport *view;
+    QLabel *status;
+    QPushButton *connectButton;
+    QString error;
+
+    project.connections[0].frameIntervalMs = 200;
+    button.address = QStringLiteral("@test-rtu:4x_bit246.%1").arg(bitPosition, 2, 10, QChar(u'0'));
+    button.bitButton.operation = operation;
+    number.address = QStringLiteral("@test-rtu:4x246");
+    number.numberDisplay.changeDataType(1);
+    number.numberDisplay.monitorAddress = number.address;
+    project.objects = {button, number};
+    QVERIFY2(window.initializeOnline(project, &error, onlineSlave(slave)), qPrintable(error));
+    window.show();
+    view = window.findChild<SimulationViewport *>();
+    status = window.findChild<QLabel *>(QStringLiteral("simulationStatus"));
+    connectButton = window.findChild<QPushButton *>(QStringLiteral("onlineSimulationConnect"));
+    QVERIFY(status != nullptr && view != nullptr && connectButton != nullptr);
+    window.findChild<QComboBox *>(QStringLiteral("onlineSimulationPort"))->setEditText(QStringLiteral("TEST-RTU"));
+    QTest::mouseClick(connectButton, Qt::LeftButton);
+    QTRY_COMPARE(window.runtime().numberDisplayValue(number), QString::number(0x3491));
+
+    // The cache still holds 0x3491 when the operator clicks; only a fresh FC03 can preserve the other bits.
+    slave->packedValue = remote;
+    slave->rejectPackedRead = readFailure == 1;
+    slave->holdPackedRead = readFailure == 2;
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, button.geometry.center());
+    if (readFailure == 2)
+    {
+        QTRY_VERIFY(slave->packedReadWaiting.load());
+        QTest::mouseClick(connectButton, Qt::LeftButton);
+        QCOMPARE(slave->closes.load(), 1);
+        QCOMPARE(slave->packedWrites.load(), 0);
+        QVERIFY(status->text().contains(QStringLiteral("PLC 未连接")));
+        QVERIFY(!status->text().contains(QStringLiteral("上一次写入未确认")));
+    }
+    else if (readFailure == 1)
+    {
+        QTRY_VERIFY(status->text().contains(QStringLiteral("Modbus异常码2")));
+        QCOMPARE(slave->packedWrites.load(), 0);
+        QCOMPARE(window.runtime().numberDisplayValue(number), QStringLiteral("—"));
+    }
+    else
+    {
+        QTRY_COMPARE(slave->packedWrites.load(), 1);
+        QTRY_COMPARE(window.runtime().numberDisplayValue(number), QString::number(expected));
+    }
+    QCOMPARE(slave->packedValue.load(), expected);
+    QCOMPARE(slave->coilWrites.load(), 0);
+    QVERIFY(slave->framesMatch.load());
+}
+
+/******************************************************************************
  * Function Name   : SimulationUiTests::onlineRejectsUnsafeOrOutOfRangeMapping
  * Description     : Refuse read-only targets and offsets that a 16-bit Modbus PDU cannot carry.
  * Input Parameters: None
@@ -922,6 +1045,9 @@ void SimulationUiTests::onlineRejectsUnsafeOrOutOfRangeMapping() //20261124-13 a
     QString error;
 
     project.objects[0].address = QStringLiteral("@test-rtu:1x17");
+    QVERIFY(!window.initializeOnline(project, &error, onlineSlave(slave)));
+    QVERIFY(error.contains(QStringLiteral("在线写入仅支持")));
+    project.objects[0].address = QStringLiteral("@test-rtu:3x_bit17.15"); //20261127-0 add
     QVERIFY(!window.initializeOnline(project, &error, onlineSlave(slave)));
     QVERIFY(error.contains(QStringLiteral("在线写入仅支持")));
     project.objects[0].address = QStringLiteral("@test-rtu:0x17");
@@ -1065,6 +1191,73 @@ void SimulationUiTests::ownerDeletionInsideInputDialog() //20261114-6 add
     QVERIFY(deleted);
     QVERIFY(window.isNull());
     QVERIFY(view.isNull());
+}
+
+/******************************************************************************
+ * Function Name   : SimulationUiTests::passiveDisplaysUseRegisterValuesAndPassTouch
+ * Description     : Observe rendered image colors, native message indices and a button behind a passive display.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void SimulationUiTests::passiveDisplaysUseRegisterValuesAndPassTouch() //20261127-3 add
+{
+    HmiProject project = simulationTestProject();
+    HmiObject picture;
+    HmiObject message;
+    SimulationWindow window;
+    SimulationViewport *view;
+    QString error;
+    QColor colors[] = {Qt::red, Qt::green, Qt::blue};
+    QImage tile(4, 4, QImage::Format_RGB32);
+    QImage first;
+    int index;
+    bool bit;
+
+    picture.id = picture.name = QStringLiteral("status-picture");
+    picture.type = QStringLiteral("image");
+    picture.geometry = project.objects.first().geometry;
+    picture.layer = 10;
+    picture.hasImageDisplayProperties = true;
+    picture.imageDisplay.displayType = 1;
+    picture.imageDisplay.conditionEnabled = true;
+    picture.imageDisplay.condition = 1;
+    picture.address = picture.imageDisplay.monitorAddress = QStringLiteral("LW20");
+    picture.imageDisplay.setStateCount(3);
+    for (index = 0; index < 3; ++index)
+    {
+        ImageDisplayState &row = picture.imageDisplay.states[index];
+        QBuffer buffer(&row.picturePng);
+        row.picture = QStringLiteral("color-%1").arg(index);
+        tile.fill(colors[index]);
+        QVERIFY(buffer.open(QIODevice::WriteOnly));
+        QVERIFY(tile.save(&buffer, "PNG"));
+        project.pictures.insert(row.picture, row.picturePng);
+    }
+    message.id = message.name = QStringLiteral("status-message");
+    message.type = QStringLiteral("message");
+    message.geometry = QRect(320, 25, 150, 48);
+    message.address = message.messageDisplay.monitorAddress = QStringLiteral("LW20");
+    message.messageDisplay.dataType = 1;
+    message.messageDisplay.stateCount = 3;
+    message.messageDisplay.ensureStates(3);
+    project.objects.append(picture);
+    project.objects.append(message);
+    QVERIFY2(window.initialize(project, &error), qPrintable(error));
+    view = window.findChild<SimulationViewport *>(QStringLiteral("simulationViewport"));
+    QVERIFY(view != nullptr);
+    first = simulationFrame(window.runtime());
+    QCOMPARE(first.pixelColor(picture.geometry.center()), colors[0]);
+    QTest::mouseClick(view, Qt::LeftButton, Qt::NoModifier, picture.geometry.center());
+    QVERIFY(window.runtime().readBit(QStringLiteral("LB0"), &bit));
+    QVERIFY(bit);
+    QVERIFY(window.runtime().writeWord(QStringLiteral("LW20"), 1, QStringLiteral("65535")));
+    QCOMPARE(simulationFrame(window.runtime()).pixelColor(picture.geometry.center()), colors[2]);
+    QCOMPARE(window.runtime().visualState(message), 0);
+    QVERIFY(window.runtime().writeWord(QStringLiteral("LW20"), 1, QStringLiteral("65537")));
+    QCOMPARE(simulationFrame(window.runtime()).pixelColor(picture.geometry.center()), colors[1]);
+    QCOMPARE(window.runtime().visualState(message), 1);
+    QVERIFY(first.copy(message.geometry) != simulationFrame(window.runtime()).copy(message.geometry));
 }
 
 QTEST_MAIN(SimulationUiTests)

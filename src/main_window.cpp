@@ -698,6 +698,13 @@ QWidget *MainWindow::createSystemSettingsTree() //20261110-7 change
         QTreeWidgetItem *item = m_systemSettingsTree->itemAt(position);
         QString id;
         QMenu menu(this);
+        if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("macroGroup")) //20261127-1 add
+        {
+            menu.addAction(QStringLiteral("添加宏指令"), this, [this]() { manageMacros(true); });
+            menu.addAction(m_commands.value(QStringLiteral("action_script")));
+            menu.exec(m_systemSettingsTree->viewport()->mapToGlobal(position));
+            return;
+        }
         if (item != nullptr && item->data(0, Qt::UserRole).toString() == QStringLiteral("normalPages")) //20261122-9 add
         {
             menu.addAction(QStringLiteral("新建画面"), this, &MainWindow::createNormalPage);

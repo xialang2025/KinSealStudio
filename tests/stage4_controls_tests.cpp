@@ -157,6 +157,7 @@ private slots:
     void qrAddressPickerUsesCurrentMonitorSpan(); //20261125-8 add
     void qrMonitorSpanBoundariesAndLegacyBindingEdits(); //20261125-8 add
     void qrDescriptionRasterAndCapacity();
+    void qrEditorMatchesNativeArtwork(); //20261127-2 add
     void qrStrictPersistenceAndBackendGates();
     void qrCopyAndCompactProperties();
     void qrCreationEditCancellationAndHistory();
@@ -993,6 +994,58 @@ void Stage4ControlTests::qrDescriptionRasterAndCapacity() //20261112-0 add
         QVERIFY(chinese.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-scan-chinese.png"))));
         QVERIFY(empty.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-scan-empty.png"))));
     }
+}
+
+/******************************************************************************
+ * Function Name   : Stage4ControlTests::qrEditorMatchesNativeArtwork
+ * Description     : Compare editor geometry and all 200 by 100 control pixels with the original QR sprite.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage4ControlTests::qrEditorMatchesNativeArtwork() //20261127-2 add
+{
+    QFile file(QFINDTESTDATA("fixtures/native-source/qrcode/default-controlpixel.dat"));
+    QImage canvas(200, 100, QImage::Format_RGB32);
+    QrCodeProperties properties;
+    QrCodeDialog dialog(qrObject(), HmiProject());
+    QLabel *preview = dialog.findChild<QLabel *>(QStringLiteral("QrPreview"));
+    QByteArray compressed;
+    QByteArray native(40000, Qt::Uninitialized);
+    QPainter painter;
+    std::size_t decoded = 0;
+    int different = 0;
+    int x;
+    int y;
+
+    QVERIFY(preview != nullptr);
+    QCOMPARE(preview->size(), QSize(100, 100));
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    compressed = file.readAll();
+    QCOMPARE(lzokay::decompress(reinterpret_cast<const unsigned char *>(compressed.constData()), std::size_t(compressed.size()),
+                                reinterpret_cast<unsigned char *>(native.data()), std::size_t(native.size()), decoded), lzokay::EResult::Success);
+    QCOMPARE(decoded, std::size_t(native.size()));
+    painter.begin(&canvas);
+    paintQrCode(&painter, canvas.rect(), properties);
+    painter.end();
+    for (y = 0; y < canvas.height(); ++y)
+    {
+        for (x = 0; x < canvas.width(); ++x)
+        {
+            const QRgb color = canvas.pixel(x, y);
+            const u16 pixel = u16((qRed(color) >> 3) << 11 | (qGreen(color) >> 2) << 5 | (qBlue(color) >> 3));
+            const u16 expected = qFromLittleEndian<u16>(native.constData() + 2 * (y * canvas.width() + x));
+            if (pixel != expected)
+            {
+                // The two Qt versions differ by one RGB565 level at two interpolation boundaries.
+                QVERIFY(qAbs((pixel >> 11) - (expected >> 11)) <= 1);
+                QVERIFY(qAbs(((pixel >> 5) & 63) - ((expected >> 5) & 63)) <= 1);
+                QVERIFY(qAbs((pixel & 31) - (expected & 31)) <= 1);
+                ++different;
+            }
+        }
+    }
+    QVERIFY(different <= 2);
 }
 
 /******************************************************************************

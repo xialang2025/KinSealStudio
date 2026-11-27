@@ -20,6 +20,9 @@ class Stage5CompilerTests : public QObject
 {
     Q_OBJECT
 private slots:
+    void emptyPageMatchesNativeFrame(); //20261127-2 add
+    void typedSingleTextRetainsEditableSource(); //20261127-2 add
+    void legacySingleTextRetainsProjectMetadata(); //20261127-2 add
     void polylineFullNativeRgb565Equality_data();
     void polylineFullNativeRgb565Equality();
     void unprovedFieldsPreservePlanAndPayload_data();
@@ -239,6 +242,25 @@ static QByteArray testFileBytes(const QString &path) //20261113-11 add
 }
 
 /******************************************************************************
+ * Function Name   : stage5CorpusDirectory
+ * Description     : Resolve the archived repo-relative case under the source corpus in out-of-tree test builds.
+ * Input Parameters: archivedDirectory
+ * Return Value    : Absolute fixture directory or empty for a path outside the stage-five corpus.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static QString stage5CorpusDirectory(const QString &archivedDirectory) //20261127-2 add
+{
+    const QString prefix = QStringLiteral("docs/stage5-evidence/native/");
+    const QString root = QFINDTESTDATA("../docs/stage5-evidence/native");
+
+    if (root.isEmpty() || !archivedDirectory.startsWith(prefix))
+    {
+        return {};
+    }
+    return QDir(root).filePath(archivedDirectory.sliced(prefix.size()));
+}
+
+/******************************************************************************
  * Function Name   : testWriteBytes
  * Description     : Use the actual Qt file transaction in failure-seam test writers.
  * Input Parameters: path, bytes, error
@@ -265,6 +287,101 @@ static QByteArray decodeTestFrame(const QByteArray &bytes) //20261113-11 add
     std::size_t actual = 0;
     if (lzokay::decompress(reinterpret_cast<const unsigned char *>(bytes.constData()),std::size_t(bytes.size()),reinterpret_cast<unsigned char *>(frame.data()),std::size_t(frame.size()),actual) != lzokay::EResult::Success || actual != 768000) { return QByteArray(); }
     return frame;
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::emptyPageMatchesNativeFrame
+ * Description     : Compare empty-page output with the decoded original editor empty-baseline-r1 RGB565 frame.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage5CompilerTests::emptyPageMatchesNativeFrame() //20261127-2 add
+{
+    HmiProject project;
+    QVector<QByteArray> payloads;
+    QString error;
+    const QStringList targets = {project.targetModel, QStringLiteral("AMZ070W01R")};
+    const QByteArray nativeFrameSha("208891b9a73f55179fa2311da841880df13ca04aaa9f3f7545c786468400a04f");
+
+    for (const QString &target : targets)
+    {
+        project.targetModel = target;
+        QCOMPARE(describeProjectCapabilities(project).value(QStringLiteral("deviceCompile")).toObject()
+                     .value(QStringLiteral("status")).toString(), QStringLiteral("candidate"));
+        QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+        QCOMPARE(payloads.size(), 10);
+        QVERIFY2(validateDevicePayloadStructure(payloads, &error), qPrintable(error));
+        QCOMPARE(payloads.at(1).at(2), char(0));
+        QCOMPARE(payloads.at(4), QByteArray(200, char(0)));
+        QCOMPARE(payloads.at(5).size(), 2400);
+        QCOMPARE(QCryptographicHash::hash(decodeTestFrame(payloads.at(8)), QCryptographicHash::Sha256).toHex(), nativeFrameSha);
+        QCOMPARE(qUncompress(payloads.at(7)), QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact));
+    }
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::typedSingleTextRetainsEditableSource
+ * Description     : Reopen the native source embedded in an actual one-text package and compare its editor properties.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage5CompilerTests::typedSingleTextRetainsEditableSource() //20261127-2 add
+{
+    HmiProject project;
+    HmiProject restored;
+    QVector<QByteArray> payloads;
+    QByteArray exported;
+    QString error;
+
+    QVERIFY2(HmiProject::load(QDir(QFINDTESTDATA("../samples/static-text")).filePath(QStringLiteral("外观与样式验证.ksp")),
+                              &project, &error), qPrintable(error));
+    project.pageName = QStringLiteral("Q-STYLE-PAGE");
+    QVERIFY2(exportNativeProjectSource(project, &exported, &error), qPrintable(error));
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(qUncompress(payloads.at(7)), exported);
+    QVERIFY2(importNativeProjectSource(exported, &restored, &error), qPrintable(error));
+    QCOMPARE(restored.name, project.name);
+    QCOMPARE(restored.pageName, project.pageName);
+    QCOMPARE(restored.objects.size(), 1);
+    QCOMPARE(restored.objects.first().staticText.toJson(), project.objects.first().staticText.toJson());
+
+    project.targetModel = QStringLiteral("AMZ070W01R");
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(qUncompress(payloads.at(7)), QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::legacySingleTextRetainsProjectMetadata
+ * Description     : Check schema-1 text packages against both renamed projects and the immutable diagnostic fixture.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage5CompilerTests::legacySingleTextRetainsProjectMetadata() //20261127-2 add
+{
+    HmiProject project;
+    HmiProject restored;
+    QVector<QByteArray> payloads;
+    QVector<QByteArray> diagnostic;
+    QString error;
+
+    QVERIFY2(HmiProject::load(QFINDTESTDATA("../samples/native-device-test/CodexProbeTest.ksp"), &project, &error), qPrintable(error));
+    QVERIFY2(buildSingleTextPayload(project, &diagnostic, &error), qPrintable(error));
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(payloads, diagnostic);
+    project.name = QStringLiteral("Schema1-Project");
+    project.pageName = QStringLiteral("Schema1-Page");
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(qUncompress(payloads.at(7)), &restored, &error), qPrintable(error));
+    QCOMPARE(restored.name, project.name);
+    QCOMPARE(restored.pageName, project.pageName);
+    QCOMPARE(payloads.at(8), diagnostic.at(8));
+    project.objects.first().address = QStringLiteral("LW0");
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(qUncompress(payloads.at(7)), QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact));
+    QCOMPARE(payloads.at(8), diagnostic.at(8));
 }
 
 /******************************************************************************
@@ -998,8 +1115,7 @@ void Stage5CompilerTests::lineCanonicalFrames() //20261113-14 add
     HmiProject project = lineProject();
     DeviceCompilePlan plan;
     QVector<QByteArray> payloads;
-    QString root = QFINDTESTDATA("..");
-    QString folder = QDir(root).filePath(fixture);
+    QString folder = stage5CorpusDirectory(fixture); //20261127-2 change
     QString error;
     QByteArray native = testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
     QByteArray source = testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
@@ -1139,8 +1255,7 @@ void Stage5CompilerTests::freelineCanonicalFrames() //20261113-15 add
     HmiProject project = freelineProject();
     DeviceCompilePlan plan;
     QVector<QByteArray> payloads;
-    QString root = QFINDTESTDATA("..");
-    QString folder = QDir(root).filePath(fixture);
+    QString folder = stage5CorpusDirectory(fixture); //20261127-2 change
     QString error;
     QByteArray native = testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
     QByteArray source = testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
@@ -1578,8 +1693,7 @@ void Stage5CompilerTests::ellipseCanonicalFrames() //20261114-2 add
     DeviceCompilePlan plan;
     QJsonValue value;
     QJsonArray rect;
-    QString root=QFINDTESTDATA("..");
-    QString folder=QDir(root).filePath(sample.value(QStringLiteral("folder")).toString());
+    QString folder=stage5CorpusDirectory(sample.value(QStringLiteral("folder")).toString()); //20261127-2 change
     QByteArray source=testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
     QByteArray native=testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
     QVector<QByteArray> payloads;
@@ -1755,8 +1869,7 @@ void Stage5CompilerTests::sectorCanonicalFrames() //20261114-3 add
     DeviceCompilePlan plan;
     QJsonValue value;
     QJsonArray rect;
-    QString root=QFINDTESTDATA("..");
-    QString folder=QDir(root).filePath(sample.value(QStringLiteral("folder")).toString());
+    QString folder=stage5CorpusDirectory(sample.value(QStringLiteral("folder")).toString()); //20261127-2 change
     QByteArray source=testFileBytes(QDir(folder).filePath(QStringLiteral("input-native.sm")));
     QByteArray native=testFileBytes(QDir(folder).filePath(QStringLiteral("SheetPixel.dat")));
     QVector<QByteArray> payloads;

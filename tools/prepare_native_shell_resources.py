@@ -29,6 +29,9 @@ def main():
                                        icon=icon(entry) or previous.get("icon", ""),
                                        nativeId=original, checkable=bool(entry.get("checkable")),
                                        checked=bool(entry.get("checked")))
+            shortcut = previous.get("shortcut") or entry.get("shortcut")
+            if shortcut:  #20261127-1 add: A toolbar snapshot may omit the binding recorded by the menu.
+                actions[identifier]["shortcut"] = shortcut
         return identifier
 
     def menu(entry):

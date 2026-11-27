@@ -244,14 +244,16 @@ QJsonArray MacroWorkspace::bindingCapabilities() //20261114-7 add
 
 /******************************************************************************
  * Function Name   : MacroWorkspace::defaultSource
- * Description     : Supply a deliberately empty ordinary-source draft, without inventing address or scheduling APIs.
+ * Description     : Initialize the source editor with the original V5.1 ordinary macro template.
  * Input Parameters: None
- * Return Value    : Lite template using the existing ordinary Macro_Entry source convention.
+ * Return Value    : Template with editor-normalized line endings and the SDK headers visible in V5.1.
  * Date            : 2026.11.14
  ******************************************************************************/
-QString MacroWorkspace::defaultSource() //20261114-7 add
+QString MacroWorkspace::defaultSource() //20261127-1 change
 {
-    return QStringLiteral("#include \"macro.h\"\n\nvoid Macro_Entry(void)\n{\n    /* Add ordinary macro source here. */\n}\n");
+    return QStringLiteral("/*********************Please don't delete******************************/\n"
+        "#include \"macro.h\"\n#include \"include\\macrolib.h\"\n#include \"include\\glib.h\"\n\n"
+        "void Macro_Entry( )\n{\n// TO DO\n}\n");
 }
 
 /******************************************************************************

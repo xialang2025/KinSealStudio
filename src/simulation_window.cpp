@@ -3,6 +3,9 @@
 #include "control_rendering.h" //20261123-2 add
 #include "static_text_renderer.h"
 #include "number_display_dialog.h" //20261124-13 add
+#include "image_display_dialog.h" //20261127-3 add
+#include "message_display_dialog.h"
+#include "scale_dialog.h"
 #include "online_simulation_link.h"
 
 #include <QCloseEvent>
@@ -74,7 +77,25 @@ QImage simulationFrame(const SimulationRuntime &runtime) //20261114-6 add
         if (!runtime.isVisible(*object)) { continue; }
         painter.save(); //20261124-15 add
         painter.setWorldTransform(object->appearanceTransform(object->geometry), true);
-        if (object->type == QStringLiteral("text"))
+        if (isSupportedGraphic(object->type)) //20261127-3 add
+        {
+            paintGraphic(&painter, object->type, object->geometry, object->graphic);
+        }
+        else if (object->type == QStringLiteral("scale"))
+        {
+            paintScale(&painter, object->geometry, object->scale);
+        }
+        else if (object->hasImageDisplayProperties || object->type == QStringLiteral("message"))
+        {
+            state = runtime.visualState(*object);
+            if (state >= 0)
+            {
+                if (object->hasImageDisplayProperties)
+                { paintImageDisplay(&painter, object->geometry, object->imageDisplay, state); }
+                else { paintMessageDisplay(&painter, object->geometry, object->messageDisplay, runtime.language(), state); }
+            }
+        }
+        else if (object->type == QStringLiteral("text"))
         {
             paintStaticText(&painter, QRectF(object->geometry), staticTextContent(*object, runtime.language()), object->staticText);
         }
@@ -159,6 +180,8 @@ const HmiObject *SimulationViewport::hitObject(const QPoint &point) const //2026
     ordered = orderedSimulationObjects(*m_runtime);
     for (index = int(ordered.size()) - 1; index >= 0; --index)
     {
+        // Painted graphics and passive displays have no touch target of their own.
+        if (ordered.at(index)->type != QStringLiteral("switch") || ordered.at(index)->hasLampProperties) { continue; } //20261127-3 add
         if (m_runtime->isVisible(*ordered.at(index)) && ordered.at(index)->geometry.contains(point)) { return ordered.at(index); }
     }
     return nullptr;

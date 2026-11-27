@@ -93,12 +93,14 @@ void MainWindow::showOnlineSimulationOptions() //20261124-13 change
  ******************************************************************************/
 void MainWindow::showPlcSerialDiagnostics() //20261124-13 add
 {
+    QPointer<PlcOnlineDialog> dialog;
+
     if (!m_simulationWindow.isNull() && m_simulationWindow->runtime().online())
     {
         statusBar()->showMessage(QStringLiteral("关闭在线模拟后可运行串口诊断。"), 5000);
         return;
     }
-    QPointer<PlcOnlineDialog> dialog = new PlcOnlineDialog({}, this);
+    dialog = new PlcOnlineDialog({}, this, m_hasProject ? m_project.targetModel : QString()); //20261127-0 change
 
     dialog->exec();
     if (!dialog.isNull()) { delete dialog.data(); }

@@ -1,4 +1,5 @@
 #include "qr_code_dialog.h"
+#include "kvg_library.h" //20261127-2 add
 #include "dialog_button_text.h" //20261124-8 add
 #include "hmi_property_widgets.h"
 #include "../third_party/qrcodegen/qrcodegen.hpp"
@@ -55,7 +56,7 @@ QImage qrDescriptionPreview(const QString &description, QString *error) //202611
 
 /******************************************************************************
  * Function Name   : paintQrCode
- * Description     : Share crisp square-module rendering between the offline description preview and page canvas.
+ * Description     : Render the original editor's gallery artwork at the bounds used by the preview or canvas.
  * Input Parameters: painter, rect, properties
  * Return Value    : None.
  * Date            : 2026.11.12
@@ -67,6 +68,13 @@ void paintQrCode(QPainter *painter, const QRectF &rect, const QrCodeProperties &
     qreal side;
     QString error;
     painter->save(); painter->setClipRect(rect, Qt::IntersectClip); painter->fillRect(rect, Qt::white);
+    //20261127-2 add: Both the original editor and the compiled QR picture stretch this bundled image to the control.
+    if (properties.description.isEmpty() &&
+        paintKvgPicture(painter, rect, QStringLiteral(":/system-gallery/default/KinSeal_QuickMark.kvg"), 0))
+    {
+        painter->restore();
+        return;
+    }
     image = qrDescriptionPreview(properties.description, &error);
     if (image.isNull())
     { painter->setPen(Qt::black); painter->drawText(rect, Qt::AlignCenter | Qt::TextWordWrap, error); painter->restore(); return; }
@@ -118,8 +126,8 @@ QrCodeDialog::QrCodeDialog(const HmiObject &object, const HmiProject &project, Q
     generalLayout->addWidget(addressGroup); generalLayout->addStretch(); tabs->addTab(general, QStringLiteral("外观设置"));
     security = new QWidget(tabs); securityLayout = new QVBoxLayout(security); m_visibility = new HmiPermissionEditor(QStringLiteral("显现"), QStringLiteral("QrVisibility"), object.qrCode.visibility, false, security);
     securityLayout->addWidget(m_visibility); securityLayout->addStretch(); tabs->addTab(security, QStringLiteral("权限设置"));
-    previewGroup = new QGroupBox(QStringLiteral("预览"), this); previewLayout = new QVBoxLayout(previewGroup); m_preview = new QLabel(previewGroup); m_preview->setObjectName(QStringLiteral("QrPreview")); m_preview->setFixedSize(150, 150);
-    m_preview->setToolTip(QStringLiteral("描述的离线预览使用UTF-8；空描述显示原厂默认网址。设备编码、字节互换及监视长度的实际效果待验证。"));
+    previewGroup = new QGroupBox(QStringLiteral("预览"), this); previewLayout = new QVBoxLayout(previewGroup); m_preview = new QLabel(previewGroup); m_preview->setObjectName(QStringLiteral("QrPreview")); m_preview->setFixedSize(100, 100); //20261127-2 change
+    m_preview->setToolTip(QStringLiteral("空描述显示原厂示例，输入描述可预览其 UTF-8 二维码。")); //20261127-2 change
     previewLayout->addWidget(m_preview); content->addWidget(tabs, 1); content->addWidget(previewGroup, 0, Qt::AlignTop); root->addLayout(content, 1);
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help, this); buttons->setObjectName(QStringLiteral("QrButtons"));
     buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确认"), "OK")); buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel")); buttons->button(QDialogButtonBox::Help)->setText(dialogButtonText(QStringLiteral("帮助"), "Help")); root->addWidget(buttons);

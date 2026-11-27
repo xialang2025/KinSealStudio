@@ -10,6 +10,7 @@
 #include <QtEndian>
 #include "macro_schedule.h" //20261123-20 add
 #include "macro_workspace.h"
+#include "macro_manager_dialog.h" //20261127-1 add
 #include "native_project_codec.h" //20261123-23 add
 #include "number_display_dialog.h" //20261123-25 add
 #include <QAction>
@@ -72,6 +73,8 @@ private:
 private slots:
     void initTestCase();
     void sharedCommandsAndAvailability();
+    void fixedShellEntriesMatchNativeInventory(); //20261127-1 add
+    void nativeArrangementAndToolboxShortcuts(); //20261127-1 add
     void auxiliarySaveBackupsThroughMenu(); //20261125-82 add
     void editorCanvasHasScrollableWorkspace(); //20261124-4 add
     void editorCanvasZoomsWithControlWheel(); //20261124-6 add
@@ -88,6 +91,7 @@ private slots:
     void numericDraftCommandsStayLocal();
     void focusedWindowDestructionIsSafe();
     void macroSearchLocationOpensSource();
+    void macroTreeAddsAndOpensSources(); //20261127-1 add
     void cancelledWizardPreservesDirtyDocument();
     void invalidOpenPreservesDocument();
     void openingSamePathReloadsAfterSave();
@@ -1981,6 +1985,225 @@ static bool triggerSettingsTreeAction(QTreeWidget *tree, QTreeWidgetItem *item, 
     menuSelection.start(0);
     tree->customContextMenuRequested(tree->visualItemRect(item).center());
     return triggered;
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::fixedShellEntriesMatchNativeInventory
+ * Description     : Compare named native menu leaves with live actions, toolbar-only commands and their pending flags.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::fixedShellEntriesMatchNativeInventory() //20261127-1 add
+{
+    MainWindow window;
+    QFile capture(QFINDTESTDATA("../docs/main-window-evidence/native-shell.json"));
+    QMap<QString, QString> aliases = {{QStringLiteral("action_split"), QStringLiteral("action_ungroup")},
+        {QStringLiteral("action_sengtoback"), QStringLiteral("action_sendtoback")},
+        {QStringLiteral("action_bringback"), QStringLiteral("action_sendbackward")},
+        {QStringLiteral("action_ProLib"), QStringLiteral("action_project_pictures")}};
+    QSet<QString> pending;
+    QSet<QString> expected = {QStringLiteral("action_upload"), QStringLiteral("action_upgrade"), QStringLiteral("action_usbdriver")};
+    HmiProject sample = workflowProject();
+    HmiObject decoded;
+    QJsonObject lockRecord = sample.objects.first().toJson();
+    QString error;
+    int fixedMenus = 0;
+    std::function<void(const QJsonArray &, const QList<QAction *> &)> verify;
+
+    QVERIFY(capture.open(QIODevice::ReadOnly));
+    verify = [&](const QJsonArray &rows, const QList<QAction *> &siblings) {
+        QMenu *submenu;
+        QString id;
+        QString label;
+        QJsonObject row;
+        QAction *command;
+
+        for (const QJsonValue &entry : rows)
+        {
+            row = entry.toObject();
+            id = row.value(QStringLiteral("id")).toString();
+            label = row.value(QStringLiteral("text")).toString();
+            if (row.value(QStringLiteral("separator")).toInt() || id.startsWith(QStringLiteral("menu-0-10-"))) { continue; }
+            if (row.contains(QStringLiteral("children")))
+            {
+                submenu = nullptr;
+                for (QAction *item : siblings)
+                {
+                    if (item->menu() && item->text() == label) { submenu = item->menu(); break; }
+                }
+                QVERIFY2(submenu, qPrintable(label));
+                verify(row.value(QStringLiteral("children")).toArray(), submenu->actions());
+                continue;
+            }
+            command = window.m_commands.value(aliases.value(id, id));
+            QVERIFY2(command && siblings.contains(command), qPrintable(id));
+            QCOMPARE(command->text(), label);
+            if (command->property("nativeShellPending").toBool()) { pending.insert(id); }
+            ++fixedMenus;
+        }
+    };
+    verify(QJsonDocument::fromJson(capture.readAll()).object().value(QStringLiteral("menus")).toArray(),
+           window.menuBar()->actions());
+    QCOMPARE(fixedMenus, 119);
+    QVERIFY(window.findChild<QToolBar *>(QStringLiteral("standardToolBar"))->actions().contains(
+        window.m_commands.value(QStringLiteral("action_new_screen"))));
+    QVERIFY(window.findChild<QToolBar *>(QStringLiteral("toolBar_Tool"))->actions().contains(
+        window.m_commands.value(QStringLiteral("action_upgrade2"))));
+    QVERIFY(window.m_commands.value(QStringLiteral("action_upgrade2"))->property("nativeShellPending").toBool());
+    // Older source snapshots reject the persisted lock flag. User workspaces with lock support must expose both working actions.
+    lockRecord.insert(QStringLiteral("locked"), true);
+    if (HmiObject::fromJson(lockRecord, &decoded, &error) && decoded.toJson().value(QStringLiteral("locked")).toBool())
+    {
+        QVERIFY(!pending.contains(QStringLiteral("action_lock")) && !pending.contains(QStringLiteral("action_delock")));
+        window.setProject(sample, QString());
+        window.m_canvas->selectObjects({sample.objects.first().id});
+        window.m_commands.value(QStringLiteral("action_lock"))->trigger();
+        QVERIFY(window.currentEditorProject().objects.first().toJson().value(QStringLiteral("locked")).toBool());
+        window.m_commands.value(QStringLiteral("action_delock"))->trigger();
+        QVERIFY(!window.currentEditorProject().objects.first().toJson().value(QStringLiteral("locked")).toBool());
+    }
+    else
+    {
+        expected.insert(QStringLiteral("action_lock"));
+        expected.insert(QStringLiteral("action_delock"));
+    }
+    QCOMPARE(pending, expected);
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::nativeArrangementAndToolboxShortcuts
+ * Description     : Verify keyboard alignment uses the last selected reference, and Ctrl+B toggles the real toolbox dock.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeArrangementAndToolboxShortcuts() //20261127-1 add
+{
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiObject first = project.objects.first();
+    HmiObject anchor = first;
+    QDockWidget *dock;
+    QAction *action;
+    QMap<QString, QString> expected = {
+        {QStringLiteral("action_top"), QStringLiteral("Ctrl+Up")}, {QStringLiteral("action_under"), QStringLiteral("Ctrl+Down")},
+        {QStringLiteral("action_left"), QStringLiteral("Ctrl+Left")}, {QStringLiteral("action_right"), QStringLiteral("Ctrl+Right")},
+        {QStringLiteral("action_widthsame"), QStringLiteral("Ctrl+W")}, {QStringLiteral("action_heightsame"), QStringLiteral("Ctrl+H")},
+        {QStringLiteral("action_widthheightsame"), QStringLiteral("Ctrl+R")}, {QStringLiteral("action_tool"), QStringLiteral("Ctrl+B")}
+    };
+
+    anchor.id = QStringLiteral("anchor");
+    anchor.geometry = QRect(270, 115, 150, 62);
+    anchor.layer = 1;
+    project.objects = {first, anchor};
+    window.setProject(project, QString());
+    window.show();
+    window.m_canvas->setFocus();
+    QApplication::processEvents();
+    window.m_canvas->selectObjects({first.id, anchor.id});
+    for (auto it = expected.cbegin(); it != expected.cend(); ++it)
+    {
+        action = window.m_commands.value(it.key());
+        QVERIFY(action);
+        QCOMPARE(action->shortcut().toString(QKeySequence::PortableText), it.value());
+    }
+    QTest::keyClick(window.m_canvas, Qt::Key_Left, Qt::ControlModifier);
+    QCOMPARE(window.m_canvas->objects().first().geometry.x(), anchor.geometry.x());
+    QTest::keyClick(window.m_canvas, Qt::Key_R, Qt::ControlModifier);
+    QCOMPARE(window.m_canvas->objects().first().geometry.size(), anchor.geometry.size());
+    dock = window.findChild<QDockWidget *>(QStringLiteral("ToolPropertyDock"));
+    QVERIFY(dock);
+    QVERIFY(dock->isVisible());
+    QTest::keyClick(window.m_canvas, Qt::Key_B, Qt::ControlModifier);
+    QVERIFY(!dock->isVisible());
+    QTest::keyClick(window.m_canvas, Qt::Key_B, Qt::ControlModifier);
+    QVERIFY(dock->isVisible());
+}
+
+/******************************************************************************
+ * Function Name   : Stage2WorkflowTests::macroTreeAddsAndOpensSources
+ * Description     : Exercise both native tree actions, rejected names, cancellation and project persistence.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::macroTreeAddsAndOpensSources() //20261127-1 add
+{
+    QTemporaryDir directory;
+    MainWindow window;
+    HmiProject project = workflowProject();
+    HmiProject reopened;
+    QString error;
+    QString path = directory.filePath(QStringLiteral("macro-tree.ksp"));
+    QString existing = QStringLiteral("Existing");
+    QString added = QStringLiteral("NewMacro");
+    QString addAction = QStringLiteral("添加宏指令");
+    QString openAction = QStringLiteral("打开宏指令编辑器");
+    QStringList actions;
+    QTreeWidget *tree;
+    QTreeWidgetItem *parent;
+    bool draftWasSelected = false;
+
+    QVERIFY2(MacroWorkspace::create(&project, existing, MacroWorkspace::defaultSource(), &error), qPrintable(error));
+    QVERIFY2(project.save(path, &error), qPrintable(error));
+    QVERIFY2(window.openProjectPath(path, &error), qPrintable(error));
+    window.show();
+    tree = window.findChild<QTreeWidget *>(QStringLiteral("SystemSettingsTree"));
+    QVERIFY(tree);
+    parent = tree->findItems(QStringLiteral("宏指令"), Qt::MatchExactly | Qt::MatchRecursive).value(0);
+    QVERIFY(parent);
+    QVERIFY(triggerSettingsTreeAction(tree, parent, addAction, []() {
+        QDialog *prompt = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (prompt != nullptr) { prompt->reject(); }
+    }, &actions));
+    QCOMPARE(actions, (QStringList{addAction, openAction}));
+    QVERIFY(!window.m_dirty);
+    QVERIFY(triggerSettingsTreeAction(tree, parent, addAction, [&]() {
+        QDialog *prompt = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QLineEdit *name = prompt ? prompt->findChild<QLineEdit *>() : nullptr;
+        QDialogButtonBox *buttons = prompt ? prompt->findChild<QDialogButtonBox *>() : nullptr;
+
+        if (!name || !buttons || !name->text().isEmpty() || prompt->windowTitle() != QStringLiteral("添加宏"))
+        {
+            if (prompt) { prompt->reject(); }
+            return;
+        }
+        name->setText(existing);
+        buttons->button(QDialogButtonBox::Ok)->click();
+        if (!prompt->isVisible()) { return; }
+        name->setText(added);
+        QTimer::singleShot(0, &window, [&]() {
+            MacroManagerDialog *editor = qobject_cast<MacroManagerDialog *>(QApplication::activeModalWidget());
+            QListWidget *list = editor ? editor->findChild<QListWidget *>(QStringLiteral("MacroList")) : nullptr;
+
+            if (editor)
+            {
+                draftWasSelected = list && list->currentItem() && list->currentItem()->text() == added &&
+                    editor->draftProject().macros.value(added) == MacroWorkspace::defaultSource();
+                editor->accept();
+            }
+        });
+        buttons->button(QDialogButtonBox::Ok)->click();
+    }));
+    QVERIFY(draftWasSelected);
+    QVERIFY(window.m_dirty);
+    QVERIFY2(window.currentEditorProject().save(path, &error), qPrintable(error));
+    QVERIFY2(HmiProject::load(path, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.macros.value(added), MacroWorkspace::defaultSource());
+    QVERIFY(!reopened.macroIds.value(added).isEmpty());
+    parent = tree->findItems(QStringLiteral("宏指令"), Qt::MatchExactly | Qt::MatchRecursive).value(0);
+    QVERIFY(parent);
+    draftWasSelected = false;
+    QVERIFY(triggerSettingsTreeAction(tree, parent, openAction, [&]() {
+        MacroManagerDialog *editor = qobject_cast<MacroManagerDialog *>(QApplication::activeModalWidget());
+        if (editor)
+        {
+            draftWasSelected = editor->draftProject().macros.size() == reopened.macros.size();
+            editor->reject();
+        }
+    }));
+    QVERIFY(draftWasSelected);
 }
 
 /******************************************************************************

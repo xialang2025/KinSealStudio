@@ -517,10 +517,28 @@ void LocalHelpTests::packagedCatalog() //20261114-10 add
 {
     QString root = qEnvironmentVariable("KINSEAL_HELP_SOURCE_ROOT");
     QJsonObject report = helpCatalogReport(root);
+    LocalHelpStore store(root);
+    const QStringList requiredTopics = QStringLiteral(
+        "start project screen-properties hmi-status plc-control clock-settings panel-protection language-settings "
+        "controls files compile global-macro init-macro usb hmi-version simulation online-simulation limits "
+        "static-text display-gif display-number display-ascii display-time display-image config-alarm "
+        "config-collection config-recipe v31-extract save-backup optimize-geometry information-output draw-curve"
+    ).split(QLatin1Char(' ')); //20261127-4 add: Keep established chapter identities when new sections are published.
+    const QJsonArray checked = report.value(QStringLiteral("topicsChecked")).toArray();
 
     QVERIFY2(report.value(QStringLiteral("valid")).toBool(), QJsonDocument(report).toJson().constData());
-    QCOMPARE(report.value(QStringLiteral("topicsChecked")).toArray().size(), 17); //20261119-8 change: Eight chapters and nine validated section destinations.
-    QVERIFY(report.value(QStringLiteral("commandCount")).toInt() >= 100);
+    for (const QString &topic : requiredTopics)
+    {
+        QVERIFY2(checked.contains(topic), qPrintable(QStringLiteral("Packaged topic was not readable: %1").arg(topic)));
+    }
+    QVERIFY(report.value(QStringLiteral("commandCount")).toInt() >= 155);
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_version")), QStringLiteral("hmi-version"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_online_simulation")), QStringLiteral("online-simulation"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("actionCompress")), QStringLiteral("v31-extract"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_Auxi")), QStringLiteral("save-backup"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_Size")), QStringLiteral("optimize-geometry"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_41")), QStringLiteral("information-output"));
+    QCOMPARE(store.topicForCommand(QStringLiteral("action_blight_circle")), QStringLiteral("draw-curve"));
 }
 
 /******************************************************************************

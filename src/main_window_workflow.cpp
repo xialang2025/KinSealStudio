@@ -869,6 +869,7 @@ void MainWindow::rebuildSystemSettings() //20261110-7 add
         item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, label == QStringLiteral("数位地址报警") ? QStringLiteral("alarm-bit") : QStringLiteral("alarm-condition")); //20261113-2 change
     }
     parent = new QTreeWidgetItem(settings, {QStringLiteral("宏指令")});
+    parent->setData(0, Qt::UserRole, QStringLiteral("macroGroup")); //20261127-1 add: Route the native parent menu independently of its scheduler children.
     Q_FOREACH (label, (QStringList{QStringLiteral("全局宏"), QStringLiteral("初始化宏"), QStringLiteral("宏指令编辑器")}))
     {
         item = new QTreeWidgetItem(parent, {label}); item->setData(0, Qt::UserRole, QStringLiteral("macros"));

@@ -16,7 +16,8 @@ class PlcOnlineDialog : public QDialog //20261114-8 add
 {
     Q_OBJECT
 public:
-    explicit PlcOnlineDialog(const PlcSerialIoFactory &factory = {}, QWidget *parent = nullptr);
+    explicit PlcOnlineDialog(const PlcSerialIoFactory &factory = {}, QWidget *parent = nullptr,
+                             const QString &model = QStringLiteral("AMT070W124-L800X480R")); //20261127-0 change
     ~PlcOnlineDialog() override;
     bool running() const;
     QJsonObject lastReport() const;

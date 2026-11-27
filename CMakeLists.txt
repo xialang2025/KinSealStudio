@@ -599,13 +599,6 @@ foreach(KINSEAL_HELP_TARGET IN LISTS KINSEAL_HELP_TARGETS)
         target_link_libraries(${KINSEAL_HELP_TARGET} PUBLIC ${KINSEAL_ZLIB}) #20261125-81 add
         target_sources(${KINSEAL_HELP_TARGET} PRIVATE src/local_help.cpp src/local_help.h)
     endif()
-    #20261125-84 add: Keep local help available in direct builds and the production workflow tests.
-    if(KINSEAL_HELP_TARGET STREQUAL "KinSealStudioLite" OR KINSEAL_HELP_TARGET STREQUAL "KinSealSimulationWorkflowTests")
-        add_custom_command(TARGET ${KINSEAL_HELP_TARGET} POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy_directory
-                "${CMAKE_CURRENT_SOURCE_DIR}/help" "$<TARGET_FILE_DIR:${KINSEAL_HELP_TARGET}>/help"
-            VERBATIM)
-    endif()
     if(WIN32 AND "src/stage2_file_protection.cpp" IN_LIST KINSEAL_HELP_SOURCES)
         target_link_libraries(${KINSEAL_HELP_TARGET} PRIVATE bcrypt) #20261123-17 add
     endif()
@@ -615,3 +608,13 @@ qt_add_executable(KinSealLocalHelpTests tests/local_help_tests.cpp src/local_hel
 target_include_directories(KinSealLocalHelpTests PRIVATE src)
 target_link_libraries(KinSealLocalHelpTests PRIVATE Qt6::Widgets Qt6::Test)
 target_compile_definitions(KinSealLocalHelpTests PRIVATE QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII)
+
+#20261127-4 change: Sync the flat manual beside the runtime even on a help-only edit or a tests-only build.
+file(GLOB KINSEAL_HELP_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/help/*")
+add_custom_target(KinSealPackagedHelp
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:KinSealStudioLite>/help"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${KINSEAL_HELP_FILES} "$<TARGET_FILE_DIR:KinSealStudioLite>/help"
+    VERBATIM)
+foreach(KINSEAL_HELP_TARGET IN ITEMS KinSealStudioLite KinSealSimulationWorkflowTests KinSealLocalHelpTests)
+    add_dependencies(${KINSEAL_HELP_TARGET} KinSealPackagedHelp)
+endforeach()

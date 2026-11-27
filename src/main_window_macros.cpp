@@ -8,11 +8,11 @@
 /******************************************************************************
  * Function Name   : MainWindow::manageMacros
  * Description     : Commit an accepted ordinary-macro workspace as one complete editor-history transaction.
- * Input Parameters: None
+ * Input Parameters: addSource, to request a macro name before opening the editor.
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void MainWindow::manageMacros() //20261114-7 add
+void MainWindow::manageMacros(bool addSource) //20261127-1 change
 {
     QPointer<MainWindow> lifetime(this);
     QPointer<MacroManagerDialog> dialog;
@@ -23,6 +23,11 @@ void MainWindow::manageMacros() //20261114-7 add
     if (!m_hasProject || downloadInProgress()) { return; }
     m_canvas->cancelInteraction();
     dialog = new MacroManagerDialog(currentEditorProject(), this);
+    if (addSource && !dialog->promptNew(this)) //20261127-1 add
+    {
+        delete dialog.data();
+        return;
+    }
     result = dialog->exec();
     if (lifetime.isNull() || dialog.isNull()) { return; }
     if (result == QDialog::Accepted)

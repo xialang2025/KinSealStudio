@@ -54,7 +54,11 @@
 class StaticTextTests : public QObject
 {
     Q_OBJECT
+private:
+    QTemporaryDir m_temporaryCaptures;
+    QDir m_captureDir; //20261127-4 add: The fixture owns screenshots unless the caller requests a retained copy.
 private slots:
+    void initTestCase();
     void propertyRoundTrip();
     void dialogDependenciesAndDrafts();
     void translationsAndCancel();
@@ -97,6 +101,22 @@ private slots:
     void functionAddressScanIsolation();
     void functionDeviceImagesAndFailures();
 };
+
+/******************************************************************************
+ * Function Name   : StaticTextTests::initTestCase
+ * Description     : Prepare an isolated writable destination for GUI screenshots and pixel comparisons.
+ * Input Parameters: Optional KINSEAL_STAGE4_CAPTURE_DIR environment variable
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void StaticTextTests::initTestCase() //20261127-4 add
+{
+    const QString directory = qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR", m_temporaryCaptures.path());
+
+    QVERIFY(!directory.isEmpty());
+    m_captureDir.setPath(directory);
+    QVERIFY2(m_captureDir.mkpath(QStringLiteral(".")), qPrintable(directory));
+}
 
 /******************************************************************************
  * Function Name   : textObject
@@ -237,7 +257,7 @@ void StaticTextTests::dialogDependenciesAndDrafts() //20261108-14 add
     QLineEdit *tolerance;
 
     dialog.show(); QApplication::processEvents();
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("static-text-default.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("static-text-default.png"))));
     QCOMPARE(dialog.findChild<QTabWidget *>(QStringLiteral("StaticTextTabs"))->tabText(0), QStringLiteral("外观设置"));
     QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("StaticTextStyle"))->count(), 13);
     adaptive = dialog.findChild<QCheckBox *>(QStringLiteral("StaticTextAdaptive"));
@@ -263,7 +283,7 @@ void StaticTextTests::dialogDependenciesAndDrafts() //20261108-14 add
     QCOMPARE(dialog.object().text, QStringLiteral("测试\nAB12"));
     QVERIFY(!original.staticText.bitEnabled);
     dialog.findChild<QTabWidget *>(QStringLiteral("StaticTextTabs"))->setCurrentIndex(1);
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("static-text-permissions.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("static-text-permissions.png"))));
 }
 
 /******************************************************************************
@@ -472,7 +492,7 @@ void StaticTextTests::nativeFontAndFillEvidence() //20261108-14 add
     QString error;
     QImage image(100, 100, QImage::Format_RGB32);
     QPainter painter;
-    QDir directory(QCoreApplication::applicationDirPath());
+    QDir directory(m_captureDir); //20261127-4 change
     int index;
 
     if (QGuiApplication::platformName() != QStringLiteral("windows"))
@@ -646,7 +666,7 @@ void StaticTextTests::bitStateDraftsAndCopies() //20261108-15 add
     QVERIFY(!dialog->object().bitButton.states[0].useImage); QVERIFY(dialog->object().bitButton.states[1].useImage);
     result = dialog->object();
     QCOMPARE(result.bitButton.states[1].text.languageTexts.value(QStringLiteral("English")), QStringLiteral("START"));
-    dialog->grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-appearance.png")));
+    QVERIFY(dialog->grab().save(m_captureDir.filePath(QStringLiteral("bit-button-appearance.png"))));
     dialog->reject(); delete dialog;
 }
 
@@ -707,7 +727,7 @@ void StaticTextTests::bitMonitorAndPermissions() //20261108-15 add
     dialog.findChild<QCheckBox *>(QStringLiteral("BitPressEnabled"))->setChecked(true);
     QVERIFY(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->isVisible());
     QCOMPARE(dialog.findChild<QSpinBox *>(QStringLiteral("BitPressTime"))->value(), 255);
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-permissions.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("bit-button-permissions.png"))));
 }
 
 /******************************************************************************
@@ -731,14 +751,14 @@ void StaticTextTests::bitMacroAndGalleryTransactions() //20261109-3 change
     dialog.show(); QApplication::processEvents();
     QCOMPARE(dialog.findChild<QTabWidget *>()->count(), 4);
     QCOMPARE(dialog.findChild<QComboBox *>(QStringLiteral("BitOperation"))->currentText(), QStringLiteral("交替"));
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-general.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("bit-button-general.png"))));
     tabs = dialog.findChild<QTabWidget *>();
     tabs->setCurrentIndex(1); QApplication::processEvents();
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-indicator.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("bit-button-indicator.png"))));
     tabs->setCurrentIndex(2); QApplication::processEvents();
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-appearance-default.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("bit-button-appearance-default.png"))));
     tabs->setCurrentIndex(3); QApplication::processEvents();
-    dialog.grab().save(QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("bit-button-permissions-default.png")));
+    QVERIFY(dialog.grab().save(m_captureDir.filePath(QStringLiteral("bit-button-permissions-default.png"))));
     tabs->setCurrentIndex(0);
     dialog.findChild<QGroupBox *>(QStringLiteral("BitMacro"))->setChecked(true);
     QTimer::singleShot(0, &dialog, [&dialog]() {
@@ -1037,7 +1057,7 @@ void StaticTextTests::nativeGalleryNavigationAndSearch() //20261109-3 change
         treePreview.setFont(tree->font()); treePreview.setHeaderHidden(true);
         treePreview.addTopLevelItem(root->clone()); treePreview.addTopLevelItem(group->clone());
         treePreview.expandAll(); treePreview.resize(270, 1800);
-        QVERIFY(treePreview.grab().save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/system-gallery-native-directories.png"))));
+        QVERIFY(treePreview.grab().save(m_captureDir.filePath(QStringLiteral("system-gallery-native-directories.png"))));
         QCOMPARE(tree->currentItem(), root);
         QTRY_COMPARE(list->count(), 120);
         QVERIFY(count->text().contains(QStringLiteral("3518")));
@@ -1057,7 +1077,7 @@ void StaticTextTests::nativeGalleryNavigationAndSearch() //20261109-3 change
         QVERIFY(!previous->isEnabled());
         QTRY_COMPARE(list->count(), 120);
         QCOMPARE(list->item(0)->data(Qt::UserRole + 1).toString(), firstPicture);
-        QVERIFY(gallery->grab().save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/system-gallery-native-tree.png"))));
+        QVERIFY(gallery->grab().save(m_captureDir.filePath(QStringLiteral("system-gallery-native-tree.png"))));
         tree->setCurrentItem(group);
         QTRY_COMPARE(list->count(), 120);
         QVERIFY(count->text().contains(QStringLiteral("2129")));
@@ -1075,7 +1095,7 @@ void StaticTextTests::nativeGalleryNavigationAndSearch() //20261109-3 change
         tree->setCurrentItem(root->child(0)); QTRY_COMPARE(list->count(), 120); QVERIFY(search->text().isEmpty());
         tree->setCurrentItem(root); QTRY_COMPARE(list->count(), 120);
         search->setText(QStringLiteral("启动背景")); QTRY_COMPARE(list->count(), 12);
-        QVERIFY(gallery->grab().save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/system-gallery-backgrounds.png"))));
+        QVERIFY(gallery->grab().save(m_captureDir.filePath(QStringLiteral("system-gallery-backgrounds.png"))));
         search->setText(QStringLiteral("HMIStudiostart_800X480")); QTRY_COMPARE(list->count(), 1);
         QVERIFY(!list->item(0)->icon().isNull()); list->setCurrentRow(0);
         finish.dismiss();
@@ -1178,14 +1198,14 @@ void StaticTextTests::galleryArtworkTransparency() //20261109-4 add
     QVERIFY(!artwork.isNull()); QCOMPARE(artwork.pixelColor(0, 0).alpha(), 0);
     image = QImage(228, 228, QImage::Format_ARGB32_Premultiplied); image.fill(pageColor);
     painter.begin(&image); paintBitButton(&painter, QRect(50, 50, 128, 128), object.bitButton.states[0], QStringLiteral("中文")); painter.end();
-    QVERIFY(image.save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/gallery-alpha-actual.png"))));
+    QVERIFY(image.save(m_captureDir.filePath(QStringLiteral("gallery-alpha-actual.png"))));
     QCOMPARE(image.pixelColor(50, 50), pageColor);
     QVERIFY(image.pixelColor(114, 114) != pageColor);
     canvasObject = object; canvasObject.geometry.moveTopLeft(QPoint(50, 50)); project.objects = {canvasObject};
     canvas.setProject(project);
     painter.begin(&image); canvas.scene()->render(&painter, image.rect(), image.rect()); painter.end();
     QCOMPARE(image.pixelColor(50, 50), QColor(197, 222, 255)); //20261111-1 change: The native shell restores the original default page fill.
-    QVERIFY(image.save(QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("../artifacts/gallery-alpha-canvas.png"))));
+    QVERIFY(image.save(m_captureDir.filePath(QStringLiteral("gallery-alpha-canvas.png"))));
     underlay = QImage(128, 128, QImage::Format_RGB16); underlay.fill(pageColor);
     QVERIFY2(buildBitButtonSprites(object, QStringLiteral("中文"), {0}, &sprites, &error, underlay), qPrintable(error));
     compressed = qFromLittleEndian<u32>(sprites.lengthRecords.constData() + 8);

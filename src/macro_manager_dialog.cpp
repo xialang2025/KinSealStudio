@@ -1,6 +1,8 @@
 #include "macro_manager_dialog.h"
 #include "macro_workspace.h"
+#include "dialog_button_text.h" //20261127-1 add
 #include <QCloseEvent>
+#include <QCheckBox> //20261127-1 add
 #include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QDir>
@@ -16,14 +18,17 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QMenu>
+#include <QMessageBox> //20261127-1 add
 #include <QTreeWidget>
 #include <QPlainTextEdit>
 #include <QPointer>
 #include <QPushButton>
+#include <QRegularExpression> //20261127-1 add
 #include <QSaveFile>
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QTextCursor>
+#include <QTextDocument> //20261127-1 add
 #include <QThread>
 #include <QTabWidget>
 #include <QVBoxLayout>
@@ -61,7 +66,7 @@ static QJsonArray macroLibraryExamples() //20261114-7 add
  * Date            : 2026.11.14
  ******************************************************************************/
 MacroManagerDialog::MacroManagerDialog(const HmiProject &project, QWidget *parent) //20261114-7 add
-    : QDialog(parent), m_draft(project)
+    : QDialog(parent), m_draft(project), m_originalMacros(project.macros), m_originalIds(project.macroIds) //20261127-1 change
 {
     QVBoxLayout *layout;
     QHBoxLayout *toolbar;
@@ -494,7 +499,12 @@ void MacroManagerDialog::startCompilation(const QString &sdk, const DeviceMacroC
         setCompiling(false);
         m_output->setPlainText(job->ok ? QStringLiteral("编译成功；尚未下载或运行。\n") + job->package.diagnostics.join(QLatin1Char('\n')) : job->error);
         showError(QString());
-        if (m_closeWhenFinished) { QDialog::reject(); }
+        if (m_closeAfterCompile == CloseAfterCompile::Discard) { QDialog::reject(); }
+        else if (m_closeAfterCompile == CloseAfterCompile::AskToSave) //20261127-1 add
+        {
+            m_closeAfterCompile = CloseAfterCompile::None;
+            close();
+        }
     });
     connect(m_thread, &QThread::finished, m_thread, &QObject::deleteLater);
     setCompiling(true);
@@ -538,40 +548,118 @@ void MacroManagerDialog::accept() //20261114-7 add
  ******************************************************************************/
 void MacroManagerDialog::reject() //20261114-7 add
 {
-    if (compiling()) { m_closeWhenFinished = true; cancelCompilation(); showError(QStringLiteral("正在停止编译，请稍候...")); return; }
+    if (compiling()) { m_closeAfterCompile = CloseAfterCompile::Discard; cancelCompilation(); showError(QStringLiteral("正在停止编译，请稍候...")); return; } //20261127-1 change
     QDialog::reject();
 }
 
 /******************************************************************************
  * Function Name   : MacroManagerDialog::closeEvent
- * Description     : Keep a closing dialog alive until its cancellation boundary is complete.
+ * Description     : Protect all edited sources on title-bar close or Alt+F4 and keep rejected saves editable.
  * Input Parameters: event
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void MacroManagerDialog::closeEvent(QCloseEvent *event) //20261114-7 add
+void MacroManagerDialog::closeEvent(QCloseEvent *event) //20261127-1 change
 {
-    if (compiling()) { event->ignore(); reject(); return; }
+    QPointer<MacroManagerDialog> lifetime(this);
+    QPointer<QMessageBox> prompt;
+    QStringList names = m_originalMacros.keys();
+    QStringList changed;
+    QString currentText = m_source->toPlainText();
+    QString error;
+    int choice;
+
+    event->ignore();
+    if (compiling())
+    {
+        m_closeAfterCompile = CloseAfterCompile::AskToSave;
+        cancelCompilation();
+        showError(QStringLiteral("正在停止编译，请稍候..."));
+        return;
+    }
+    names.append(m_draft.macros.keys());
+    names.removeDuplicates();
+    for (const QString &name : names)
+    {
+        // Ignore IDs allocated solely to normalize legacy projects. Count actual rename, removal or replacement.
+        if (!m_originalMacros.contains(name) || !m_draft.macros.contains(name) ||
+            (name == m_currentName ? currentText : m_draft.macros.value(name)) != m_originalMacros.value(name) ||
+            (m_originalIds.contains(name) && m_originalIds.value(name) != m_draft.macroIds.value(name)))
+        {
+            changed.append(name);
+        }
+    }
+    if (!changed.isEmpty())
+    {
+        prompt = new QMessageBox(QMessageBox::Information, QStringLiteral("未保存"),
+            changed.size() == 1 ? QStringLiteral("是否保存代码到宏：%1").arg(changed.first()) :
+                QStringLiteral("是否保存以下宏指令的更改？\n%1").arg(changed.join(QStringLiteral("、"))),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, this);
+        prompt->setTextFormat(Qt::PlainText);
+        prompt->button(QMessageBox::Save)->setText(dialogButtonText(QStringLiteral("保存"), "Save"));
+        prompt->button(QMessageBox::Discard)->setText(dialogButtonText(QStringLiteral("不保存"), "Don't Save"));
+        prompt->button(QMessageBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+        prompt->setDefaultButton(QMessageBox::Save);
+        prompt->setEscapeButton(QMessageBox::Cancel);
+        choice = prompt->exec();
+        delete prompt.data();
+        if (lifetime.isNull() || (choice != QMessageBox::Save && choice != QMessageBox::Discard)) { return; }
+        if (choice == QMessageBox::Save)
+        {
+            if (!applySource(&error)) { showError(error); return; }
+            event->accept();
+            QDialog::accept();
+            return;
+        }
+    }
     event->accept();
+    QDialog::reject();
 }
 
 /******************************************************************************
  * Function Name   : MacroManagerDialog::promptNew
  * Description     : Collect a nonconflicting ordinary macro name before adding the default source.
- * Input Parameters: None
- * Return Value    : None
- * Date            : 2026.11.14
+ * Input Parameters: promptParent, the tree window when starting a new editor.
+ * Return Value    : True when the name and source are present in the detached workspace.
+ * Date            : 2026.11.27
  ******************************************************************************/
-void MacroManagerDialog::promptNew() //20261114-7 add
+bool MacroManagerDialog::promptNew(QWidget *promptParent) //20261127-1 change
 {
-    QString name;
-    QString error;
-    bool ok;
     QPointer<MacroManagerDialog> lifetime(this);
+    QPointer<QDialog> input = new QDialog(promptParent != nullptr ? promptParent : this);
+    QLabel *caption = new QLabel(QStringLiteral("请输入宏指令名称:"), input);
+    QLineEdit *name = new QLineEdit(input);
+    QLabel *validation = new QLabel(input);
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, input);
+    int result;
 
-    name = QInputDialog::getText(this, QStringLiteral("新建宏"), QStringLiteral("宏名称"), QLineEdit::Normal, MacroWorkspace::nextCopyName(m_draft, QStringLiteral("Macro")), &ok);
-    if (lifetime.isNull()) { return; }
-    if (ok && !createSource(name, MacroWorkspace::defaultSource(), &error)) { showError(error); }
+    input->setObjectName(QStringLiteral("MacroNameDialog"));
+    input->setWindowTitle(QStringLiteral("添加宏"));
+    input->setFixedSize(379, 72);
+    caption->setGeometry(10, 10, 108, 20);
+    name->setGeometry(120, 10, 168, 20);
+    name->setFocus();
+    buttons->setGeometry(207, 36, 161, 26);
+    buttons->button(QDialogButtonBox::Ok)->setText(dialogButtonText(QStringLiteral("确定"), "OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(dialogButtonText(QStringLiteral("取消"), "Cancel"));
+    validation->setGeometry(10, 33, 198, 37);
+    validation->setWordWrap(true);
+    connect(buttons, &QDialogButtonBox::rejected, input, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::accepted, this, [this, input, name, validation]() {
+        QString error;
+
+        if (createSource(name->text(), MacroWorkspace::defaultSource(), &error))
+        {
+            input->accept();
+            return;
+        }
+        validation->setText(error);
+        name->setFocus();
+        name->selectAll();
+    });
+    result = input->exec();
+    delete input.data();
+    return !lifetime.isNull() && result == QDialog::Accepted;
 }
 
 /******************************************************************************
@@ -673,19 +761,108 @@ void MacroManagerDialog::promptExport() //20261114-7 add
 
 /******************************************************************************
  * Function Name   : MacroManagerDialog::findSource
- * Description     : Find text from the current cursor, wrapping once without changing source or macro identity.
+ * Description     : Find or replace a match in the selected macro with the native case, word, direction and regex options.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
  ******************************************************************************/
-void MacroManagerDialog::findSource() //20261114-7 add
+void MacroManagerDialog::findSource() //20261127-1 change
 {
-    QString needle;
-    bool ok;
-    QPointer<MacroManagerDialog> lifetime(this);
+    QPointer<QDialog> dialog = new QDialog(this);
+    QLabel *findLabel = new QLabel(QStringLiteral("查找内容:"), dialog);
+    QLabel *replaceLabel = new QLabel(QStringLiteral("替换为:"), dialog);
+    QLineEdit *needle = new QLineEdit(dialog);
+    QLineEdit *replacement = new QLineEdit(dialog);
+    QPushButton *find = new QPushButton(QStringLiteral("查找(&F)"), dialog);
+    QPushButton *replace = new QPushButton(QStringLiteral("替换(&R)"), dialog);
+    QPushButton *close = new QPushButton(QStringLiteral("关闭(&C)"), dialog);
+    QCheckBox *matchCase = new QCheckBox(QStringLiteral("匹配大小写(&M)"), dialog);
+    QCheckBox *whole = new QCheckBox(QStringLiteral("整字匹配(&O)"), dialog);
+    QCheckBox *back = new QCheckBox(QStringLiteral("向前查找(&S)"), dialog);
+    QCheckBox *regex = new QCheckBox(QStringLiteral("正则表达式(&E)"), dialog);
+    int previousEmpty = -1;
 
-    needle = QInputDialog::getText(this, QStringLiteral("查找宏源码"), QStringLiteral("查找内容"), QLineEdit::Normal, QString(), &ok);
-    if (lifetime.isNull()) { return; }
-    if (!ok || needle.isEmpty()) { return; }
-    if (!m_source->find(needle)) { m_source->moveCursor(QTextCursor::Start); if (!m_source->find(needle)) { showError(QStringLiteral("未找到该内容。")); } }
+    dialog->setObjectName(QStringLiteral("MacroFindDialog"));
+    dialog->setWindowTitle(QStringLiteral("查找(&F)"));
+    dialog->setFixedSize(600, 105);
+    findLabel->setGeometry(9, 10, 59, 20);
+    replaceLabel->setGeometry(9, 37, 49, 20);
+    needle->setGeometry(69, 10, 441, 20);
+    replacement->setGeometry(57, 37, 453, 20);
+    find->setGeometry(517, 10, 73, 22);
+    replace->setGeometry(517, 38, 73, 22);
+    close->setGeometry(517, 66, 73, 22);
+    matchCase->setGeometry(10, 61, 135, 20);
+    back->setGeometry(264, 61, 135, 20);
+    whole->setGeometry(10, 83, 135, 20);
+    regex->setGeometry(264, 83, 135, 20);
+    needle->setFocus();
+    find->setDefault(true);
+    find->setEnabled(false);
+    connect(needle, &QLineEdit::textChanged, dialog, [&](const QString &text) {
+        previousEmpty = -1;
+        find->setEnabled(!text.isEmpty());
+    });
+    connect(close, &QPushButton::clicked, dialog, &QDialog::accept);
+    // Both commands use the same document matcher, so Replace cannot change a stale selection.
+    const auto search = [&](bool replaceMatch) {
+        QTextDocument::FindFlags flags;
+        QRegularExpression pattern;
+        QTextCursor current = m_source->textCursor();
+        QTextCursor found;
+        int from;
+
+        if (needle->text().isEmpty() || m_currentName.isEmpty() || compiling()) { return; }
+        pattern.setPattern(regex->isChecked() ? needle->text() : QRegularExpression::escape(needle->text()));
+        if (!pattern.isValid())
+        {
+            showError(pattern.errorString());
+            return;
+        }
+        if (matchCase->isChecked()) { flags |= QTextDocument::FindCaseSensitively; }
+        if (whole->isChecked()) { flags |= QTextDocument::FindWholeWords; }
+        if (replaceMatch && current.hasSelection())
+        {
+            found = m_source->document()->find(pattern, current.selectionStart(), flags);
+            if (found.selectionStart() != current.selectionStart() || found.selectionEnd() != current.selectionEnd())
+            {
+                found = QTextCursor();
+            }
+        }
+        if (found.isNull())
+        {
+            from = back->isChecked() ? current.selectionStart() : current.selectionEnd();
+            if (back->isChecked()) { flags |= QTextDocument::FindBackward; }
+            if (from == previousEmpty) { from += back->isChecked() ? -1 : 1; }
+            if (from >= 0 && from < m_source->document()->characterCount())
+            {
+                found = m_source->document()->find(pattern, from, flags);
+            }
+            if (found.isNull())
+            {
+                // Preserve the editor's wrap-around behavior at either end of a script.
+                from = back->isChecked() ? m_source->document()->characterCount() - 1 : 0;
+                found = m_source->document()->find(pattern, from, flags);
+            }
+        }
+        if (found.isNull())
+        {
+            showError(QStringLiteral("未找到该内容。"));
+            return;
+        }
+        previousEmpty = found.hasSelection() ? -1 : found.position();
+        if (replaceMatch)
+        {
+            from = found.selectionStart();
+            found.insertText(replacement->text());
+            if (back->isChecked()) { found.setPosition(from); }
+        }
+        m_source->setTextCursor(found);
+        m_source->ensureCursorVisible();
+        showError(QString());
+    };
+    connect(find, &QPushButton::clicked, dialog, [&]() { search(false); });
+    connect(replace, &QPushButton::clicked, dialog, [&]() { search(true); });
+    dialog->exec();
+    delete dialog.data();
 }

@@ -552,6 +552,7 @@ void Stage9OnlineUiTests::capabilitiesRemainConservative() //20261114-8 add
     int index;
     QString id;
     bool mapped;
+    QStringList eligibleProfiles;
 
     QVERIFY(report.value(QStringLiteral("ok")).toBool()); QCOMPARE(profiles.size(), 139);
     QCOMPARE(table->rowCount(), 139); QCOMPARE(table->columnCount(), 6);
@@ -583,8 +584,20 @@ void Stage9OnlineUiTests::capabilitiesRemainConservative() //20261114-8 add
     QVERIFY(!raw.value(QStringLiteral("automaticProjectMapping")).toBool());
     QVERIFY(!raw.value(QStringLiteral("physicalEndpointVerified")).toBool());
     QCOMPARE(raw.value(QStringLiteral("automaticRetries")).toInt(), 0);
-    for (const QJsonValue &value : plcProtocolCapabilities(QStringLiteral("AMZ070W01")).value(QStringLiteral("profiles")).toArray())
-    { QVERIFY(!value.toObject().value(QStringLiteral("deviceCompileEligible")).toBool()); }
+    // Both AMZ identifiers compile the same single COM1 profile. Keep other model families closed.
+    for (const QString &target : {QStringLiteral("AMZ070W01"), QStringLiteral("AMZ070W01R"), QStringLiteral("AMZ070W06")}) //20261127-0 change
+    {
+        eligibleProfiles.clear();
+        for (const QJsonValue &value : plcProtocolCapabilities(target).value(QStringLiteral("profiles")).toArray())
+        {
+            profile = value.toObject();
+            if (profile.value(QStringLiteral("deviceCompileEligible")).toBool())
+            { eligibleProfiles.append(profile.value(QStringLiteral("profileId")).toString()); }
+            QVERIFY(!profile.value(QStringLiteral("hmiPlcVerified")).toBool());
+        }
+        QCOMPARE(eligibleProfiles, target == QStringLiteral("AMZ070W06")
+            ? QStringList{} : QStringList{QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini")});
+    }
     QCOMPARE(state->factoryCalls.load(), 0); dialog.findChild<QTabWidget *>()->setCurrentIndex(1);
     table->selectRow(eligibleRow); table->scrollToItem(table->item(eligibleRow, 0));
     captureWidget(dialog, QStringLiteral("online-capabilities.png"));

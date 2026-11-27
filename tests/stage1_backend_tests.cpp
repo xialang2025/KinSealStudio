@@ -410,8 +410,8 @@ void Stage1BackendTests::capabilitiesExplainKnownBlockedRoutes() //20261110-5 ad
     QCOMPARE(device.value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
     QVERIFY(!device.value(QStringLiteral("reason")).toString().isEmpty());
     project = HmiProject(); device = describeProjectCapabilities(project).value(QStringLiteral("deviceCompile")).toObject();
-    QCOMPARE(device.value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
-    QVERIFY(!device.value(QStringLiteral("reason")).toString().isEmpty());
+    QCOMPARE(device.value(QStringLiteral("status")).toString(), QStringLiteral("candidate")); //20261127-2 change: A blank ordinary page emits the native background-only payload.
+    QVERIFY(device.value(QStringLiteral("reason")).toString().isEmpty());
 }
 
 QTEST_MAIN(Stage1BackendTests)

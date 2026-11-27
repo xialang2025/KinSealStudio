@@ -843,6 +843,7 @@ void SimulationRuntimeTests::remoteGateLosesPendingAccess() //20261125-2 add
     bool coilReady = false;
     bool wordReady = false;
     bool malformedCoil = false;
+    bool malformedWord = false; //20261127-3 add
     bool held;
 
     connection.id = QStringLiteral("test-rtu");
@@ -868,7 +869,7 @@ void SimulationRuntimeTests::remoteGateLosesPendingAccess() //20261125-2 add
     };
     access.read = [&](const QString &address, bool bit, int span, QVector<u16> *values, QString *) {
         if (span != 1 || address != (bit ? coilAddress : wordAddress) || !(bit ? coilReady : wordReady)) { return false; }
-        *values = bit && malformedCoil ? QVector<u16>{} : QVector<u16>{u16(bit ? 1 : 23)};
+        *values = (bit ? malformedCoil : malformedWord) ? QVector<u16>{} : QVector<u16>{u16(bit ? 1 : 23)};
         return true;
     };
 
@@ -882,6 +883,9 @@ void SimulationRuntimeTests::remoteGateLosesPendingAccess() //20261125-2 add
     malformedCoil = true;
     QVERIFY(!runtime.touchAllowed(button));
     malformedCoil = false;
+    malformedWord = true;
+    QVERIFY(!runtime.touchAllowed(button));
+    malformedWord = false;
     QVERIFY(runtime.touchAllowed(button));
     QVERIFY(runtime.press(button.id, &error));
     QVERIFY(runtime.readBit(button.address, &held, &error));

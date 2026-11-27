@@ -70,12 +70,7 @@ QJsonObject describeProjectCapabilities(const HmiProject &project) //20261110-5 
         deviceAllowed = false;
         deviceError = defaultsError;
     }
-    if (deviceAllowed && (project.objects.isEmpty() || project.objects.size() > 100 ||
-                          project.languages.isEmpty() || project.languages.size() > 8))
-    {
-        deviceAllowed = false;
-        deviceError = QStringLiteral("设备后端需要1至100个控件、1至8种语言。");
-    }
+    //20261127-2 change: The compiler's plan owns object and language limits, including pages with zero objects.
     if (deviceAllowed && !addressCompiler.prepare(project, &scan, &deviceError))
     {
         deviceAllowed = false; // Pure offline preparation also identifies known unsupported connection routes.

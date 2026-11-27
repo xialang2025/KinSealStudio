@@ -307,7 +307,7 @@ void MainWindow::initializeNativeShell() //20261111-1 add
                 });
             }
             else if (id == QStringLiteral("action_script")) //20261114-7 add: The native editor and usage list are distinct commands.
-            { connect(action, &QAction::triggered, this, &MainWindow::manageMacros); }
+            { connect(action, &QAction::triggered, this, [this]() { manageMacros(); }); } //20261127-1 change
             else if (id == QStringLiteral("action_Auxi")) //20261125-82 add
             {
                 connect(action, &QAction::triggered, this, [this]() {
@@ -471,6 +471,17 @@ void MainWindow::initializeNativeShell() //20261111-1 add
             }
         }
         action->setText(label);
+        if (entry.contains(QStringLiteral("shortcut")) &&
+            id != QStringLiteral("action_lock") && id != QStringLiteral("action_delock")) //20261127-1 add
+        {
+            // The original assigns Ctrl+L twice. Only independently identifiable key routes are installed here.
+            action->setShortcut(QKeySequence::fromString(entry.value(QStringLiteral("shortcut")).toString(), QKeySequence::PortableText));
+            if (action->property("editCommand").isValid())
+            {
+                action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+                if (!m_canvas->actions().contains(action)) { m_canvas->addAction(action); }
+            }
+        }
         action->setIcon(nativeShellIcon(entry.value(QStringLiteral("icon")).toString()));
         action->setToolTip(label);
         if (id != QStringLiteral("action_save") && id != QStringLiteral("action_undo") && id != QStringLiteral("action_redo") &&

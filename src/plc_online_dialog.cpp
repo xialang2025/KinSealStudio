@@ -28,11 +28,11 @@ struct PlcOnlineJob //20261114-8 add: Worker results and cancellation outlive a 
 /******************************************************************************
  * Function Name   : PlcOnlineDialog::PlcOnlineDialog
  * Description     : Build an explicit PC-port RTU tool and a separate observed protocol capability table.
- * Input Parameters: factory, parent
+ * Input Parameters: factory, parent, model
  * Return Value    : None.
  * Date            : 2026.11.14
  ******************************************************************************/
-PlcOnlineDialog::PlcOnlineDialog(const PlcSerialIoFactory &factory, QWidget *parent) //20261114-8 add
+PlcOnlineDialog::PlcOnlineDialog(const PlcSerialIoFactory &factory, QWidget *parent, const QString &model) //20261127-0 change
     : QDialog(parent), m_factory(factory)
 {
     QVBoxLayout *layout;
@@ -43,7 +43,7 @@ PlcOnlineDialog::PlcOnlineDialog(const PlcSerialIoFactory &factory, QWidget *par
     QLabel *scope;
     QDialogButtonBox *buttons;
     QTableWidget *table;
-    QJsonArray profiles = plcProtocolCapabilities().value(QStringLiteral("profiles")).toArray();
+    QJsonArray profiles = plcProtocolCapabilities(model).value(QStringLiteral("profiles")).toArray();
     QJsonObject profile;
     QStringList cells;
     int index;

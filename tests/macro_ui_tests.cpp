@@ -3,13 +3,19 @@
 #include "macro_workspace.h"
 #include <QAction>
 #include <QApplication>
+#include <QCheckBox> //20261127-1 add
+#include <QCryptographicHash> //20261127-1 add
 #include <QDir>
+#include <QEventLoop> //20261127-1 add
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QInputDialog>
 #include <QListWidget>
+#include <QLineEdit> //20261127-1 add
+#include <QMessageBox> //20261127-1 add
 #include <QPlainTextEdit>
+#include <QPushButton> //20261127-1 add
 #include <QSettings>
 #include <QTemporaryDir>
 #include <QThread>
@@ -17,6 +23,9 @@
 #include <QTabWidget>
 #include <QTimer>
 #include <QtTest>
+#ifdef Q_OS_WIN
+#include <qt_windows.h> //20261127-1 add: Exercise the system close command shared by Alt+F4 and the title-bar X.
+#endif
 
 class MacroUiTests : public QObject //20261114-7 add
 {
@@ -37,6 +46,9 @@ private slots:
     void nativeLibraryExamples();
     void insertionSelectionUndoAndBudget();
     void deletionDuringNestedNameInput();
+    void findAndReplaceFromToolbar(); //20261127-1 add
+    void closingModifiedMacro_data(); //20261127-1 add
+    void closingModifiedMacro();
 };
 
 /******************************************************************************
@@ -409,8 +421,71 @@ void MacroUiTests::insertionSelectionUndoAndBudget() //20261114-7 add
 }
 
 /******************************************************************************
+ * Function Name   : MacroUiTests::findAndReplaceFromToolbar
+ * Description     : Verify matching options, direction, wrapping, replacement and undo in an actual editor draft.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void MacroUiTests::findAndReplaceFromToolbar() //20261127-1 add
+{
+    MacroManagerDialog editor(macroUiProject());
+    QPlainTextEdit *source = editor.findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"));
+    QString initial = QStringLiteral("a A aa A2 a");
+    bool correct = false;
+
+    // Original V5.1 template at file offset 0xACBB30, normalized to Qt editor newlines.
+    QCOMPARE(QCryptographicHash::hash(MacroWorkspace::defaultSource().toUtf8(), QCryptographicHash::Sha256).toHex(),
+             QByteArray("d3b94376d6ce4d9c1e6e5686e67191a8495751d6edf55fd1b4a07ef964d34571"));
+    source->setPlainText(initial);
+    source->moveCursor(QTextCursor::Start);
+    QTimer::singleShot(0, &editor, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        QList<QLineEdit *> fields;
+        QList<QCheckBox *> options;
+        QList<QPushButton *> actions;
+        bool matched;
+
+        if (!dialog) { return; }
+        fields = dialog->findChildren<QLineEdit *>();
+        options = dialog->findChildren<QCheckBox *>();
+        actions = dialog->findChildren<QPushButton *>();
+        if (fields.size() != 2 || options.size() != 4 || actions.size() != 3)
+        {
+            dialog->reject();
+            return;
+        }
+        matched = !actions[0]->isEnabled() && actions[1]->isEnabled();
+        fields[0]->setText(QStringLiteral("a"));
+        options[0]->setChecked(true);                   // Match case
+        options[1]->setChecked(true);                   // Whole words
+        actions[0]->click();
+        matched = matched && source->textCursor().selectionStart() == 0;
+        actions[0]->click();
+        matched = matched && source->textCursor().selectionStart() == 10;
+        options[2]->setChecked(true);                   // Backwards
+        actions[0]->click();
+        matched = matched && source->textCursor().selectionStart() == 0;
+        actions[0]->click();
+        matched = matched && source->textCursor().selectionStart() == 10;
+        options[3]->setChecked(true);                   // Regular expression
+        fields[0]->setText(QStringLiteral("A[0-9]"));
+        actions[0]->click();
+        matched = matched && source->textCursor().selectedText() == QStringLiteral("A2");
+        fields[1]->setText(QStringLiteral("found"));
+        actions[1]->click();
+        correct = matched && source->toPlainText() == QStringLiteral("a A aa found a");
+        actions[2]->click();
+    });
+    editor.findChild<QPushButton *>(QStringLiteral("MacroFind"))->click();
+    QVERIFY(correct);
+    source->undo();
+    QCOMPARE(source->toPlainText(), initial);
+}
+
+/******************************************************************************
  * Function Name   : MacroUiTests::deletionDuringNestedNameInput
- * Description     : Accept a nested name input and immediately destroy its owner without returning into stale state.
+ * Description     : Destroy the owner of a nested macro name prompt without returning into stale state.
  * Input Parameters: None
  * Return Value    : None
  * Date            : 2026.11.14
@@ -421,12 +496,115 @@ void MacroUiTests::deletionDuringNestedNameInput() //20261114-7 add
     bool deleted = false;
 
     QTimer::singleShot(0, [&dialog, &deleted]() {
-        QInputDialog *input = qobject_cast<QInputDialog *>(QApplication::activeModalWidget());
+        QDialog *input = qobject_cast<QDialog *>(QApplication::activeModalWidget()); //20261127-1 change
 
-        if (input != nullptr) { input->setTextValue(QStringLiteral("ValidName")); input->accept(); delete dialog.data(); deleted = true; }
+        if (input != nullptr && input->objectName() == QStringLiteral("MacroNameDialog"))
+        {
+            delete dialog.data();
+            deleted = true;
+        }
     });
     dialog->promptNew();
     QVERIFY(deleted); QVERIFY(dialog.isNull());
+}
+
+/******************************************************************************
+ * Function Name   : MacroUiTests::closingModifiedMacro_data
+ * Description     : Cover save, discard and return to editing for one source and for multiple dirty sources.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void MacroUiTests::closingModifiedMacro_data() //20261127-1 add
+{
+    QTest::addColumn<int>("choice");
+    QTest::addColumn<bool>("multiple");
+    QTest::newRow("save-single") << int(QMessageBox::Save) << false;
+    QTest::newRow("discard-single") << int(QMessageBox::Discard) << false;
+    QTest::newRow("cancel-single") << int(QMessageBox::Cancel) << false;
+    QTest::newRow("save-multiple") << int(QMessageBox::Save) << true;
+    QTest::newRow("discard-multiple") << int(QMessageBox::Discard) << true;
+    QTest::newRow("cancel-multiple") << int(QMessageBox::Cancel) << true;
+}
+
+/******************************************************************************
+ * Function Name   : MacroUiTests::closingModifiedMacro
+ * Description     : Close the actual editor, verify named choices, undo history and survival of drafts on cancel.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void MacroUiTests::closingModifiedMacro() //20261127-1 add
+{
+    QFETCH(int, choice);
+    QFETCH(bool, multiple);
+    MainWindow window;
+    HmiProject original = macroUiProject();
+    bool promptMatched = false;
+    bool recovered = false;
+    int history;
+
+    window.setProject(original, QString());
+    original = window.currentEditorProject();
+    history = window.m_projectHistoryIndex;
+    QTimer::singleShot(0, &window, [&]() {
+        MacroManagerDialog *editor = qobject_cast<MacroManagerDialog *>(QApplication::activeModalWidget());
+        QPlainTextEdit *source = editor->findChild<QPlainTextEdit *>(QStringLiteral("MacroSource"));
+        QTimer selection;
+        QEventLoop delivered;
+        QString error;
+
+        source->setPlainText(QStringLiteral("edited Alpha"));
+        if (multiple)
+        {
+            editor->selectMacro(QStringLiteral("Zulu"), &error);
+            source->setPlainText(QStringLiteral("edited Zulu"));
+        }
+        connect(&selection, &QTimer::timeout, editor, [&]() {
+            QMessageBox *prompt = qobject_cast<QMessageBox *>(QApplication::activeModalWidget());
+            if (!prompt) { return; }
+            selection.stop();
+            promptMatched = prompt->windowTitle() == QStringLiteral("未保存") &&
+                prompt->text().contains(QStringLiteral("Alpha")) && (!multiple || prompt->text().contains(QStringLiteral("Zulu"))) &&
+                prompt->button(QMessageBox::Save) && prompt->button(QMessageBox::Discard) && prompt->button(QMessageBox::Cancel);
+            prompt->button(QMessageBox::StandardButton(choice))->click();
+            delivered.quit();
+        });
+        selection.start(10);
+#ifdef Q_OS_WIN
+        if (QApplication::platformName() == QStringLiteral("windows"))
+        {
+            // Windows forwards SC_CLOSE to Qt asynchronously. Keep the draft alive until the prompt has been answered.
+            PostMessageW(reinterpret_cast<HWND>(editor->winId()), WM_SYSCOMMAND, SC_CLOSE, 0);
+            QTimer::singleShot(5000, &delivered, &QEventLoop::quit);
+            delivered.exec();
+        }
+        else
+#endif
+        {
+            editor->close();
+        }
+        if (editor->isVisible())
+        {
+            recovered = source->toPlainText() == (multiple ? QStringLiteral("edited Zulu") : QStringLiteral("edited Alpha")) &&
+                (!multiple || editor->draftProject().macros.value(QStringLiteral("Alpha")) == QStringLiteral("edited Alpha"));
+            editor->reject(); // End the test after proving Cancel returned control to the intact editor.
+        }
+    });
+    window.m_commands.value(QStringLiteral("action_script"))->trigger();
+    QVERIFY(promptMatched);
+    QCOMPARE(recovered, choice == QMessageBox::Cancel);
+    if (choice == QMessageBox::Save)
+    {
+        QCOMPARE(window.currentEditorProject().macros.value(QStringLiteral("Alpha")), QStringLiteral("edited Alpha"));
+        if (multiple) { QCOMPARE(window.currentEditorProject().macros.value(QStringLiteral("Zulu")), QStringLiteral("edited Zulu")); }
+        QCOMPARE(window.m_projectHistoryIndex, history + 1);
+    }
+    else
+    {
+        QCOMPARE(window.currentEditorProject().toJson(), original.toJson());
+        QCOMPARE(window.m_projectHistoryIndex, history);
+    }
 }
 
 QTEST_MAIN(MacroUiTests)

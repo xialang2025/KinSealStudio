@@ -362,6 +362,28 @@ bool checkObject(const HmiObject &object, const HmiProject &project, const Simul
 
     if (object.type == QStringLiteral("text"))
     { return !object.hasStaticTextProperties || checkCondition(object.staticText, external, error); }
+    if (isSupportedGraphic(object.type) || object.type == QStringLiteral("scale")) //20261127-3 add
+    {
+        // Geometry, scale colors and tick counts have already passed project validation.
+        return true;
+    }
+    if (object.hasImageDisplayProperties)
+    {
+        const ImageDisplayProperties &image = object.imageDisplay;
+        if ((image.displayType == 0 && image.conditionEnabled) ||
+            (image.displayType == 1 && image.condition == 0))
+        { return fail(error, QStringLiteral("模拟尚未核实图片的定时切换和静态闪烁。")); }
+        return checkCondition(image.visibility, external, error) &&
+            (image.displayType == 0 || checkSimulationAddress(image.monitorAddress, image.condition == 2, 1, false, external, error));
+    }
+    if (object.type == QStringLiteral("message"))
+    {
+        const MessageDisplayProperties &message = object.messageDisplay;
+        if (message.movement != 0)
+        { return fail(error, QStringLiteral("模拟尚未核实消息滚动的刷新间隔，请选择不移动。")); }
+        return checkCondition(message.appearance, external, error) &&
+            checkSimulationAddress(message.monitorAddress, false, wordSpan(message.dataType), false, external, error);
+    }
     //20261125-2 change: A passive monitor uses the typed local store when no external access is present.
     if (object.type == QStringLiteral("number") && object.hasNumberDisplayProperties)
     {
@@ -643,7 +665,7 @@ bool SimulationRuntime::readBit(const QString &address, bool *value, QString *er
     if (m_external.read && simulationExternalAddress(address))
     {
         if (!m_external.read(address, true, 1, &words, error)) { return false; }
-        if (words.size() != 1) //20261125-2 add: Never unlock a gate without one confirmed bit response.
+        if (words.size() != 1 || words.first() > 1) //20261127-3 change: Only one binary result can unlock a bit gate.
         { return fail(error, QStringLiteral("外部模拟位读取的返回长度无效。")); }
         *value = words.first() != 0;
         return true;
@@ -708,8 +730,10 @@ bool SimulationRuntime::readNumeric(const QString &address, int type, double *va
 
     if (m_external.read && simulationExternalAddress(address))
     {
-        return m_external.read(address, false, wordSpan(type), &words, error) &&
-            readNumber(words, 0, type, value, error);
+        if (!m_external.read(address, false, wordSpan(type), &words, error)) { return false; }
+        if (words.size() != wordSpan(type)) //20261127-3 add: Never decode a partial or oversized PLC value.
+        { return fail(error, QStringLiteral("外部模拟字读取的返回长度无效。")); }
+        return readNumber(words, 0, type, value, error);
     }
     return localIndex(address, false, wordSpan(type), &index, error) &&
         readNumber(m_words, index, type, value, error);
@@ -802,6 +826,9 @@ bool SimulationRuntime::isVisible(const HmiObject &object) const //20261114-6 ad
 
     owned = findObject(object.id);
     if (!m_running || owned == nullptr) { return false; }
+    if (isSupportedGraphic(owned->type) || owned->type == QStringLiteral("scale")) { return true; } //20261127-3 add
+    if (owned->hasImageDisplayProperties) { return condition(owned->imageDisplay.visibility); }
+    if (owned->type == QStringLiteral("message")) { return condition(owned->messageDisplay.appearance); }
     if (owned->hasNumberDisplayProperties) { return condition(owned->numberDisplay.visibility); } //20261124-13 add
     return owned->type == QStringLiteral("text") ? (!owned->hasStaticTextProperties || condition(owned->staticText))
                                                   : condition(owned->bitButton.visibility);
@@ -817,15 +844,17 @@ bool SimulationRuntime::isVisible(const HmiObject &object) const //20261114-6 ad
 bool SimulationRuntime::touchAllowed(const HmiObject &object) const //20261114-6 add
 {
     const HmiObject *owned;
-    QVector<u16> values;
-    bool bit;
+    bool bitValue;
+    QVector<u16> words;
+    int span;
 
     owned = findObject(object.id);
     if (owned == nullptr || owned->type != QStringLiteral("switch") || owned->hasLampProperties ||
         !isVisible(*owned) || !condition(owned->bitButton.touch)) { return false; }
     if (!m_external.read || owned->hasFunctionButtonProperties || !simulationExternalAddress(owned->address)) { return true; }
-    bit = !owned->hasWordButtonProperties;
-    return m_external.read(owned->address, bit, bit ? 1 : owned->wordButton.transferWordCount(), &values, nullptr);
+    if (!owned->hasWordButtonProperties) { return readBit(owned->address, &bitValue, nullptr); } //20261127-3 change
+    span = owned->wordButton.transferWordCount();
+    return m_external.read(owned->address, false, span, &words, nullptr) && words.size() == span;
 }
 
 /******************************************************************************
@@ -1101,6 +1130,23 @@ int SimulationRuntime::visualState(const HmiObject &object) const //20261114-6 a
 
     owned = findObject(object.id);
     if (!m_running || owned == nullptr) { return -1; }
+    if (owned->hasImageDisplayProperties) //20261127-3 add
+    {
+        const ImageDisplayProperties &image = owned->imageDisplay;
+        if (image.displayType == 0) { return 0; }
+        if (image.condition == 2) { return readBit(image.monitorAddress, &bit, nullptr) ? int(bit) : -1; }
+        if (!readNumeric(image.monitorAddress, 0, &value, nullptr)) { return -1; }
+        return qMin(int(value), image.stateCount - 1);
+    }
+    if (owned->type == QStringLiteral("message"))
+    {
+        const MessageDisplayProperties &message = owned->messageDisplay;
+        u16 low;
+        if (!readNumeric(message.monitorAddress, message.dataType, &value, nullptr)) { return -1; }
+        // Both observed firmwares narrow the unsigned monitor to a signed low halfword before indexing.
+        low = u16(u32(value) & 0xffffu);
+        return low >= 0x8000u ? 0 : qMin(int(low), message.stateCount - 1);
+    }
     if (owned->type == QStringLiteral("text")) { return 0; }
     shared = &owned->bitButton;
     if (owned->hasWordButtonProperties) { return owned->wordButton.pressedEffect && isPressed(owned->id) ? 1 : 0; }

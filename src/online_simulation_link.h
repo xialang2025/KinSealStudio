@@ -56,6 +56,7 @@ private:
     QThread *m_thread = nullptr;
     OnlineSimulationWorker *m_worker = nullptr;
     std::shared_ptr<std::atomic_bool> m_cancel;
+    std::atomic_bool m_unconfirmedWrite{false}; //20261127-0 add: Worker receipt survives cancellation until the port thread joins.
     QString m_status;
     int m_station = 0;
     int m_frameInterval = 20;

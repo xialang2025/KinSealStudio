@@ -123,6 +123,30 @@ worker只持shared job和参数副本，不捕获widget。普通关闭先置取�
 
 结果显示完成/错误、发送和接收hex、完整值列表、写应答或未确认写、串口释放状态。2000位读值放在同一文本块，避免把缩进JSON超过2000块后截去头部。`lastReport()`仍保存完整结构化回执。受控factory的scope为 `controlled-rtu-session`，真实PC端口分支为 `pc-serial-response`；两者都不自动声称HMI执行或原厂DLL等价。
 
+## 2026-11-27 在线模拟复核
+
+对照 V5.1 安装原件的两棵 Link 目录，139 份协议 XML 的名称、原始字段及字段值、地址族角色和文件哈希全部匹配，80 个原厂型号描述匹配。协议表共引用 444 个不同路径，安装目录实际存在 301 项，另 143 项原件缺失。AMT070W124 和 AMZ070W01 分别核对时，默认 COM1 驱动均指向同一文件。 [核对工具](../tools/verify_native_plc_evidence.py) · [文件审计](../tools/audit_stage9_protocols.py)
+
+139 份配置共有 1,724 个地址族条目，Lite 已实现 1,689 个地址族的解析。余下 35 个集中在 serial_amz 的五份配置，逐族仍缺原厂数值和类型字节比对。
+
+| 原厂配置 | 尚未核实的地址族 |
+| --- | --- |
+| Graphic_KS（12） | GA、GB、GC、GE、GF、G、GH、GI、GJ、GK、GL、GM |
+| Hollysys（6） | IX、QX、MX、IW、QW、MW |
+| Megmeet_MC100（2） | LM、V |
+| Midea_Master（3） | LB、LW、RWI |
+| Yuanda_K（12） | DA、DB、DC、DE、DF、DG、DH、DI、DA_Bit、DG_Bit、DE_Bit、DC_Bit |
+
+位按钮的操作地址可设为 `@连接ID:4x_bit246.15`。置位、复位和切换均先向配置的站号发 FC03，从零起始地址 246 读取一个保持寄存器。收到站号、功能、长度和 CRC 都有效的应答后，按位号 0～15 修改该字，再以 FC06 写回地址 246。写入确认后，优先读回所有包含这个寄存器的监视范围。3x_bit 对应 FC04 输入寄存器，保持只读。两个 RTU 事务之间存在其他写入者改变同一字的时间窗口。
+
+原厂静态记录中，V5.1 的 Modbus_RTU.dll（SHA-256 `169e6dcc0cdf5b57d002bb09d947952c157e6cf2adf52eda9f33dbe7f74906f5`）将 4x_bit 编为 0x4B。函数 0x10013af0 按打包地址除以 16 取字地址，构造 FC03 和待填的 FC06。0x10014e00 使用打包地址模 16 得到位号，在收到的字上置位或清位，回填 FC06 的值及 CRC。原始取证文档可从项目 Git 提交 `3be25a4c` 的 `docs/stage9-evidence/native-abi/native-abi.md` 第 5.3 节读取。本次核实范围为在线模拟的单站 Modbus RTU。 [工程地址与设备族编码](../src/device_scan_table.cpp) · [应用读改写与读回](../src/online_simulation_link.cpp)
+
+本机模拟从站的回归用例使用站号 7、偏移 246。先让画面读到 0x3491，再单独修改从站的整个字。三个按钮分别以新的从站值执行 `0x215A → 0xA15A`（置第 15 位）、`0xA15A → 0x215A`（清第 15 位）、`0x215A → 0x215B`（切换第 0 位）。用例另覆盖 FC03 异常和在前读期间断开连接，两种情况都要求 FC06 发送次数为零。实际写帧已发出且应答未确认的断开路径继续提示核对 PLC。 [受控从站及界面回归](../tests/simulation_ui_tests.cpp)
+
+本轮先使用旧在线模拟实现链接新增测试，五个 `onlineHoldingRegisterBitWrites` 用例均在初始化时因拒绝 4x_bit 写入而失败。链接修复后，以离屏 Qt 平台运行这五项、写后刷新、掉线重连及只读地址拒绝，Qt Test 合计 10 项通过（含初始化与收尾）。手工串口会话套件 101 项、RTU 核心套件 340 项均通过。型号能力表定向测试 3 项通过（含初始化与收尾）。
+
+协议能力表现按工程型号判定默认 Modbus COM1 驱动。复核方法为复制现有 COM1 位按钮样例，仅将 `targetModel` 改为 `AMZ070W01R`，运行 `--compile-project` 和 `--verify-compiled-package`。所得 AddrPara.dat 为 212 字节，含 0x4D 线圈、COM1、节点 1、起始 0、长度 1 的扫描段。Modbus_RTU_com1.bin 为 12,496 字节，SHA-256 为 `fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c`，与原厂 AMZ 包和 Link/serial_amz/MODBUS 下同名文件一致。工程键 `AMZ070W01` 和实物型号 `AMZ070W01R` 在能力表中均显示「受限 COM1/站 1」。现场 HMI 与外接 PLC 联动仍待独立核验。 [样例](../samples/bit-button/Modbus-COM1.ksp) · [AMZ 原厂包对照](文件规则/AMZ070W01R工程编译与USB下载.md)
+
 ## 8. 原厂DLL的实际静态边界
 
 完整字段和原样证据见 [native-abi.md](stage9-evidence/native-abi/native-abi.md)、[native-abi.json](stage9-evidence/native-abi/native-abi.json)。本批新增12函数、4项xref与CRC精确指令，历史3函数不重跑。以下仅为D：

@@ -1,4 +1,5 @@
 #include "plc_protocol_capabilities.h"
+#include "device_target.h" //20261127-0 add
 #include "plc_address.h"
 #include "plc_native_catalog.h"
 #include <QCryptographicHash>
@@ -68,7 +69,8 @@ QJsonObject plcProtocolCapabilities(const QString &model) //20261114-8 add
                 {QStringLiteral("rawRange"), family.rawRange}, {QStringLiteral("rawRadix"), family.rawRadix}};
             families.append(familyRow);
         }
-        eligible = model == QStringLiteral("AMT070W124-L800X480R") &&
+        // Both supported models package this identical COM1 binary for the default profile.
+        eligible = deviceTargetIdentityByte(model) >= 0 && //20261127-0 change
             profile.id == QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini") && defaultCodec &&
             source.value(QStringLiteral("sourceMatches")).toBool() && source.value(QStringLiteral("com1")).toObject().value(QStringLiteral("present")).toBool();
         row = QJsonObject{{QStringLiteral("profileId"), profile.id}, {QStringLiteral("name"), profile.name},
@@ -96,7 +98,8 @@ QJsonObject plcProtocolCapabilities(const QString &model) //20261114-8 add
         {QStringLiteral("scope"), QStringLiteral("single-station-modbus-rtu")},
         {QStringLiteral("scanFamilies"), QJsonArray{QStringLiteral("0x"), QStringLiteral("1x"), QStringLiteral("3x"),
             QStringLiteral("4x"), QStringLiteral("3x_dw"), QStringLiteral("4x_dw"), QStringLiteral("3x_bit"), QStringLiteral("4x_bit")}},
-        {QStringLiteral("writeFamilies"), QJsonArray{QStringLiteral("0x"), QStringLiteral("4x"), QStringLiteral("4x_dw")}},
+        {QStringLiteral("writeFamilies"), QJsonArray{QStringLiteral("0x"), QStringLiteral("4x"), QStringLiteral("4x_dw"),
+            QStringLiteral("4x_bit")}}, //20261127-0 change: Packed-bit output performs FC03 then FC06 on its parent register.
         {QStringLiteral("physicalEndpointVerified"), false}}); //20261124-13 add
     result.insert(QStringLiteral("pcRawRtu"), QJsonObject{{QStringLiteral("functions"), QJsonArray{1, 2, 3, 4, 5, 6, 15, 16}},
         {QStringLiteral("explicitZeroBasedPduAddress"), true}, {QStringLiteral("serialBackendImplemented"), true},

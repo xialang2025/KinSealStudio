@@ -26,6 +26,7 @@ public:
     bool selectMacro(const QString &name, QString *error = nullptr);
     bool applySource(QString *error = nullptr);
     bool createSource(const QString &name, const QString &source, QString *error = nullptr);
+    bool promptNew(QWidget *promptParent = nullptr); //20261127-1 add
     bool renameSource(const QString &name, const QString &newName, QString *error = nullptr);
     bool removeSource(const QString &name, QString *error = nullptr);
     bool importSourceFile(const QString &path, const QString &name, bool replaceExisting, QString *error = nullptr);
@@ -42,6 +43,8 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 private:
     HmiProject m_draft;
+    QMap<QString, QString> m_originalMacros; //20261127-1 add: Keep the opening source text for close-time change detection.
+    QMap<QString, QString> m_originalIds;
     QString m_currentName;
     QListWidget *m_list;
     QPlainTextEdit *m_source;
@@ -55,11 +58,11 @@ private:
     QThread *m_thread = nullptr;
     QJsonObject m_report;
     bool m_rebuilding = false;
-    bool m_closeWhenFinished = false;
+    enum class CloseAfterCompile { None, Discard, AskToSave }; //20261127-1 change
+    CloseAfterCompile m_closeAfterCompile = CloseAfterCompile::None;
     void rebuild(const QString &selected);
     void showError(const QString &error);
     void setCompiling(bool running);
-    void promptNew();
     void promptCopy();
     void promptRename();
     void promptDelete();

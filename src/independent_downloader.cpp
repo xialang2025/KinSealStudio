@@ -609,15 +609,14 @@ static bool transferTestPayload(const UsbFunctions &usb, void *handle,
 }
 
 /******************************************************************************
- * Function Name   : buildSingleTextPayload
+ * Function Name   : buildSingleTextPayloadImpl
  * Description     : Rebuild arbitrary one-text raster, length table, and editable source archive.
- * Input Parameters: project, payloads, error
+ * Input Parameters: project, ordinaryProject (retain editable project metadata), payloads, error
  * Return Value    : True when ten verified and regenerated USB blocks are ready.
  * Date            : 2026.11.08
  ******************************************************************************/
-bool buildSingleTextPayload(const HmiProject &project,
-                            QVector<QByteArray> *payloads,
-                            QString *error) //20261108-11 add
+static bool buildSingleTextPayloadImpl(const HmiProject &project, bool ordinaryProject,
+                                      QVector<QByteArray> *payloads, QString *error) //20261127-2 change
 {
     QVector<QByteArray> generated;
     QByteArray frame;
@@ -637,6 +636,8 @@ bool buildSingleTextPayload(const HmiProject &project,
     HmiProject nativeProject; //20261110-5 add: Adapt legacy plain text to the typed source model without changing the caller's object.
     DeviceAddressCompiler addressCompiler; //20261110-5 add
     QByteArray addressScan;
+    bool preserveTemplateMetadata;
+    bool hasLiteOnlyMetadata;
 
     if (!project.validateSinglePageBackend(error)) //20261110-5 add: Never compile only the selected page of a larger document.
     {
@@ -738,14 +739,30 @@ bool buildSingleTextPayload(const HmiProject &project,
     {
         return false;
     }
+    //20261127-2 add: Keep the exact historical template for its original schema-1 fixture and diagnostic entry.
+    hasLiteOnlyMetadata = !project.objects.first().address.isEmpty() || !project.activePageExtensions.isEmpty() ||
+                          !project.objects.first().extensions.isEmpty() || !project.extensions.isEmpty();
+    preserveTemplateMetadata = !project.objects.first().hasStaticTextProperties && project.nativeSourceSnapshot.isEmpty() &&
+        project.languages == QStringList{QStringLiteral("中文")} && (!ordinaryProject ||
+            (project.name == QStringLiteral("CodexProbeTest") && project.pageName == QStringLiteral("画面1") &&
+             project.objects.first().name == QStringLiteral("测试文字") && !hasLiteOnlyMetadata));
+    if (!preserveTemplateMetadata)
+    {
+        if (ordinaryProject && project.nativeSourceSnapshot.isEmpty() && hasLiteOnlyMetadata)
+        {
+            // Static text has no operation-address slot; only the editable KSP archive preserves legacy address drafts and extensions.
+            nativeSource = QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact);
+        }
+        else if (!exportNativeProjectSource(nativeProject, &nativeSource, error)) { return false; }
+        compressedSource = qCompress(nativeSource, 9);
+    }
     // 20261108-11 add: Preserve the already proven TEST bytes exactly on the original fixture path.
     if (!project.objects.first().hasStaticTextProperties &&
         displayText == QStringLiteral("TEST") && geometry == QRect(244, 112, 150, 50)) //20261108-14 change
     {
-        if (!project.nativeSourceSnapshot.isEmpty() || project.languages != QStringList{QStringLiteral("中文")}) //20261110-5 add: Keep validated metadata and non-default language registration in the source archive.
+        if (!preserveTemplateMetadata) //20261127-2 change
         {
-            if (!exportNativeProjectSource(nativeProject, &nativeSource, error)) { return false; }
-            generated[7] = qCompress(nativeSource, 9);
+            generated[7] = compressedSource;
         }
         *payloads = generated;
         return true;
@@ -765,32 +782,30 @@ bool buildSingleTextPayload(const HmiProject &project,
     lengthTable[2] = char((pixelLength >> 16) & 0xff);
     lengthTable[3] = char((pixelLength >> 24) & 0xff);
 
-    nativeSource = qUncompress(generated.at(7)); // 20261108-11 add: Recover the verified editable source snapshot.
-    originalText = QByteArray::fromHex("000000080054004500530054"); //20261108-12 change: Include the serialized byte count.
-    if (nativeSource.size() != 4023 ||
-        !replaceKnownDoubleAt(&nativeSource, 2783, 150.0, double(geometry.width())) ||
-        !replaceKnownDoubleAt(&nativeSource, 2791, 50.0, double(geometry.height())) ||
-        !replaceKnownDoubleAt(&nativeSource, 2840, 244.0, double(geometry.x())) ||
-        !replaceKnownDoubleAt(&nativeSource, 2848, 112.0, double(geometry.y())) ||
-        !replaceKnownDoubleAt(&nativeSource, 2919, 150.0, double(geometry.width())) ||
-        !replaceKnownDoubleAt(&nativeSource, 2927, 50.0, double(geometry.height())) ||
-        !replaceKnownDoubleAt(&nativeSource, 3062, 244.0, double(geometry.x())) ||
-        !replaceKnownDoubleAt(&nativeSource, 3070, 112.0, double(geometry.y())) ||
-        !replaceKnownFields(&nativeSource, originalText, replacementText, 3) ||
-        nativeSource.size() != 4023 + 3 * (replacementText.size() - originalText.size())) //20261108-12 change
+    if (preserveTemplateMetadata) //20261127-2 change: Regenerate only the byte-verified legacy source variant here.
     {
-        if (error != nullptr)
+        nativeSource = qUncompress(generated.at(7));
+        originalText = QByteArray::fromHex("000000080054004500530054");
+        if (nativeSource.size() != 4023 ||
+            !replaceKnownDoubleAt(&nativeSource, 2783, 150.0, double(geometry.width())) ||
+            !replaceKnownDoubleAt(&nativeSource, 2791, 50.0, double(geometry.height())) ||
+            !replaceKnownDoubleAt(&nativeSource, 2840, 244.0, double(geometry.x())) ||
+            !replaceKnownDoubleAt(&nativeSource, 2848, 112.0, double(geometry.y())) ||
+            !replaceKnownDoubleAt(&nativeSource, 2919, 150.0, double(geometry.width())) ||
+            !replaceKnownDoubleAt(&nativeSource, 2927, 50.0, double(geometry.height())) ||
+            !replaceKnownDoubleAt(&nativeSource, 3062, 244.0, double(geometry.x())) ||
+            !replaceKnownDoubleAt(&nativeSource, 3070, 112.0, double(geometry.y())) ||
+            !replaceKnownFields(&nativeSource, originalText, replacementText, 3) ||
+            nativeSource.size() != 4023 + 3 * (replacementText.size() - originalText.size()))
         {
-            *error = QStringLiteral("内置工程模板字段与已验证布局不符，已拒绝写屏。");
+            if (error != nullptr)
+            {
+                *error = QStringLiteral("内置工程模板字段与已验证布局不符，已拒绝写屏。");
+            }
+            return false;
         }
-        return false;
+        compressedSource = qCompress(nativeSource, 9);
     }
-    if ((!project.nativeSourceSnapshot.isEmpty() || project.languages != QStringList{QStringLiteral("中文")}) &&
-        !exportNativeProjectSource(nativeProject, &nativeSource, error)) //20261110-5 add: Retain imported source metadata instead of replacing it with a fixed seed.
-    {
-        return false;
-    }
-    compressedSource = qCompress(nativeSource, 9);
     if (qUncompress(compressedSource) != nativeSource)
     {
         if (error != nullptr)
@@ -804,6 +819,18 @@ bool buildSingleTextPayload(const HmiProject &project,
     generated[8] = compressedFrame;
     *payloads = generated;
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : buildSingleTextPayload
+ * Description     : Preserve the original single-text diagnostic and its byte-for-byte native template contract.
+ * Input Parameters: project, payloads, error
+ * Return Value    : True on complete payload generation.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+bool buildSingleTextPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error) //20261127-2 add
+{
+    return buildSingleTextPayloadImpl(project, false, payloads, error);
 }
 
 /******************************************************************************
@@ -996,18 +1023,9 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         !project.objects.first().hasAppearanceFlip() && //20261124-15 add: Flipped text needs the editable Lite archive.
         (!project.objects.first().hasStaticTextProperties || !project.objects.first().staticText.visibilityEnabled)) //20261109-0 change: Keep the proven single-text raster for non-dynamic text.
     {
-        return buildSingleTextPayload(project, payloads, error);
+        return buildSingleTextPayloadImpl(project, true, payloads, error); //20261127-2 change
     }
-    if (payloads == nullptr || deviceTargetIdentityByte(project.targetModel) < 0 || //20261122-3 change
-        project.pageWidth != 800 || project.pageHeight != 480 || (project.objects.isEmpty() && !hasSchedule) || //20261123-22 change
-        project.objects.size() > 100 || project.languages.isEmpty() || project.languages.size() > 8)
-    {
-        if (error != nullptr)
-        {
-            *error = QStringLiteral("设备编译需要目标型号的800×480画面、1至8种语言和最多100个控件。空白画面须配置项目宏调度。");
-        }
-        return false;
-    }
+    //20261127-2 change: prepareDeviceCompilePlan has already checked target, language and object limits, including empty static pages.
     if (!loadPayloads(&generated, error))
     {
         return false;

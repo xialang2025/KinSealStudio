@@ -94,15 +94,16 @@ public:
     /******************************************************************************
      * Function Name   : queueWrite
      * Description     : Give one user command priority over the following scan transaction.
-     * Input Parameters: request, toggle
+     * Input Parameters: request, toggle, registerBit
      * Return Value    : None
      * Date            : 2026.11.24
      ******************************************************************************/
-    void queueWrite(const SimulationModbusRequest &request, bool toggle)
+    void queueWrite(const SimulationModbusRequest &request, bool toggle, int registerBit) //20261127-0 change
     {
         if (m_cancel->load() || !m_transport.isConnected()) { return; }
         m_write = request;
         m_toggle = toggle;
+        m_registerBit = registerBit;
     }
 
 private:
@@ -137,16 +138,24 @@ private:
         SimulationModbusRequest scan;
         SimulationModbusResult result;
         bool writing;
-        bool readForToggle;
+        bool readForWrite;
+        u16 current;
+        u16 mask;
         QString error;
 
         if (m_cancel->load()) { return; }
         writing = m_readback.isEmpty() && m_write.has_value(); //20261124-14 change
-        readForToggle = writing && m_toggle;
+        readForWrite = writing && (m_toggle || m_registerBit >= 0); //20261127-0 change
         if (writing)
         {
             request = *m_write;
-            if (readForToggle) { request.operation = SimulationModbusOperation::ReadCoils; }
+            if (readForWrite)
+            {
+                // Native packed holding bits use a fresh FC03 value for the following FC06.
+                request.operation = m_registerBit >= 0 ? SimulationModbusOperation::ReadHoldingRegisters
+                                                       : SimulationModbusOperation::ReadCoils;
+                request.value = 0;
+            }
         }
         else if (!m_readback.isEmpty())
         {
@@ -159,6 +168,10 @@ private:
         }
         if (!m_transport.enqueue(request, &error)) { stop(error); return; }
         result = m_transport.processNext();
+        if (writing && !readForWrite) //20261127-0 add: A pending command or its preliminary read cannot have changed the PLC.
+        {
+            m_link->m_unconfirmedWrite.store(result.remoteStateUnconfirmed);
+        }
         if (!result.ok)
         {
             if (result.remoteStateUnconfirmed)
@@ -166,9 +179,18 @@ private:
             stop(result.error);
             return;
         }
-        if (readForToggle)
+        if (readForWrite) //20261127-0 change
         {
-            m_write->value = result.values.first() == 0;
+            current = result.values.first();
+            if (m_registerBit >= 0)
+            {
+                mask = u16(1U << m_registerBit);
+                if (m_toggle) { m_write->value = current ^ mask; }
+                else if (m_write->value) { m_write->value = current | mask; }
+                else { m_write->value = current & u16(~mask); }
+                m_registerBit = -1;
+            }
+            else { m_write->value = current == 0; }
             m_toggle = false;
         }
         else
@@ -201,6 +223,7 @@ private:
     const int m_station;
     const int m_interval;
     bool m_toggle = false;
+    int m_registerBit = -1; //20261127-0 add: Set until the packed-bit pre-read completes.
 };
 
 /******************************************************************************
@@ -296,7 +319,7 @@ bool OnlineSimulationLink::bind(const QString &text, bool bit, int span, bool wr
     {
         binding.scan.operation = family.startsWith(QChar(u'4')) ? SimulationModbusOperation::ReadHoldingRegisters
                                                                 : SimulationModbusOperation::ReadInputRegisters;
-        binding.writable = !bit && binding.scan.operation == SimulationModbusOperation::ReadHoldingRegisters;
+        binding.writable = binding.scan.operation == SimulationModbusOperation::ReadHoldingRegisters; //20261127-0 change
         if (parts.size() == 2) { binding.registerBit = parts.last().toInt(); }
     }
     else { return linkError(error, QStringLiteral("在线模拟未支持地址族 %1。").arg(family)); }
@@ -368,6 +391,8 @@ bool OnlineSimulationLink::queueWrite(const QString &text, bool bit, const QVect
     const auto binding = m_bindings.constFind(bindingKey(text, bit, int(values.size())));
     u16 value;
 
+    if (bit && (values.size() != 1 || values.first() > 1)) //20261127-0 add
+    { return linkError(error, QStringLiteral("PLC 位写入需要一个 0 或 1。")); }
     if (binding == m_bindings.cend() || !binding->writable || !m_active ||
         !m_values.contains(binding->scan.id) || m_writePending)
     { return linkError(error, QStringLiteral("PLC 尚未确认该地址，或上一次写入仍待确认。")); }
@@ -375,7 +400,8 @@ bool OnlineSimulationLink::queueWrite(const QString &text, bool bit, const QVect
     request.address = binding->scan.address;
     request.count = binding->scan.count;
     request.value = values.first();
-    request.operation = bit ? SimulationModbusOperation::WriteSingleCoil : SimulationModbusOperation::WriteSingleRegister;
+    request.operation = binding->scan.operation == SimulationModbusOperation::ReadCoils
+        ? SimulationModbusOperation::WriteSingleCoil : SimulationModbusOperation::WriteSingleRegister; //20261127-0 change
     if (values.size() > 1)
     {
         request.operation = SimulationModbusOperation::WriteMultipleRegisters;
@@ -384,7 +410,9 @@ bool OnlineSimulationLink::queueWrite(const QString &text, bool bit, const QVect
     }
     m_writePending = true;
     m_status = QStringLiteral("写入待 PLC 确认…");
-    QMetaObject::invokeMethod(worker, [worker, request, toggle]() { worker->queueWrite(request, toggle); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(worker, [worker, request, toggle, registerBit = binding->registerBit]() {
+        worker->queueWrite(request, toggle, registerBit);
+    }, Qt::QueuedConnection); //20261127-0 change
     emit updated();
     return true;
 }
@@ -426,8 +454,6 @@ bool OnlineSimulationLink::connectPort(const QString &port, QString *error) //20
  ******************************************************************************/
 void OnlineSimulationLink::disconnectPort() //20261124-13 add
 {
-    const bool unconfirmed = m_writePending;
-
     if (m_thread != nullptr)
     {
         m_cancel->store(true);
@@ -441,7 +467,8 @@ void OnlineSimulationLink::disconnectPort() //20261124-13 add
     m_active = false;
     m_writePending = false;
     m_status = available() ? QStringLiteral("PLC 未连接。") : QStringLiteral("当前画面没有 PLC 地址。");
-    if (unconfirmed) { m_status += QStringLiteral(" 上一次写入未确认，请核对 PLC 状态。"); }
+    // Inspect the transport's delivery result after the worker has left its current transaction.
+    if (m_unconfirmedWrite.exchange(false)) { m_status += QStringLiteral(" 上一次写入未确认，请核对 PLC 状态。"); } //20261127-0 change
     emit updated();
 }
 
