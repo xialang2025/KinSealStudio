@@ -27,18 +27,42 @@ def check_archive(exe, path, project, tag):
     expected = source if old != bytes.fromhex("ffffffff") else source[:current["start"]] + name + source[current["end"]:]
     media = path / "media"
     usb = path / "usb"
-    run(exe, path, "--compile-native-media-parts", project, media, "--without-com1-driver")
+    standalone = path / "separate.knr"
+    run(exe, path, "--build-native-media-snapshot", source_path, standalone)
+    original_bytes = struct.pack(">I", len(expected)) + zlib.compress(expected, 9)
+    if standalone.read_bytes() != original_bytes or source_path.read_bytes() != source:
+        raise ValueError(tag + " standalone archive or source is incorrect")
+    evidence = dict(case=tag, initialSelectionWasNull=old == bytes.fromhex("ffffffff"),
+                    page=name[4:].decode("utf-16-be"), sourceSHA256=hashlib.sha256(source).hexdigest(),
+                    mediaKnrSHA256=hashlib.sha256(original_bytes).hexdigest(), standaloneCompressedBytesExact=True)
+    try:
+        run(exe, path, "--compile-native-media-parts", project, media, "--without-com1-driver")
+    except ValueError as error:
+        if tag == "new" or "系统、通信、语言或工程配置" not in str(error) or media.exists():
+            raise
+        evidence.update(completeMediaCompilation=False, unsupportedSystemDefaults=True, outputPublished=False)
+        return evidence
     run(exe, path, "--compile-project", project, usb)
-    actual = (media / "upLoad.knr").read_bytes()
-    if actual != struct.pack(">I", len(expected)) + zlib.compress(expected, 9):
-        raise ValueError(tag + " media archive differs from the independently constructed compressed bytes")
-    if zlib.decompress((usb / "upLoad.knr").read_bytes()[4:]) != source:
-        raise ValueError(tag + " ordinary archive lost source data")
-    if project.suffix.lower() == ".sm" and project.read_bytes() != source:
-        raise ValueError(tag + " native source changed")
-    return dict(case=tag, initialSelectionWasNull=old==bytes.fromhex("ffffffff"), page=name[4:].decode("utf-16-be"),
-                sourceSHA256=hashlib.sha256(source).hexdigest(), mediaKnrSHA256=hashlib.sha256(actual).hexdigest(),
-                mediaCompressedBytesExact=True, usbDecodedEqualsSource=True)
+    if (media / "upLoad.knr").read_bytes() != original_bytes or zlib.decompress((usb / "upLoad.knr").read_bytes()[4:]) != source:
+        raise ValueError(tag + " complete compiler disagrees with the standalone or USB source")
+    evidence.update(completeMediaCompilation=True, mediaCompressedBytesExact=True, usbDecodedEqualsSource=True)
+    return evidence
+
+
+def explicit_empty(exe, path, sm):
+    """Check that a non-null zero-length Qt string remains distinct from the null-selection sentinel."""
+    source = sm.read_bytes()
+    fields = {v["path"]: v for v in json.loads(run(exe, path, "--inspect-native-source", sm))["fields"]}
+    span = fields["config.head.12"]
+    changed = source[:span["start"]] + bytes(4) + source[span["end"]:]
+    marker = path / "explicit-empty.sm"
+    out = path / "explicit-empty.knr"
+    marker.write_bytes(changed)
+    run(exe, path, "--build-native-media-snapshot", marker, out)
+    if zlib.decompress(out.read_bytes()[4:]) != changed:
+        raise ValueError("a non-null empty selection was replaced")
+    return dict(case="explicitEmpty", standalonePreservedNonNullEmpty=True)
+
 
 
 def main():
@@ -66,23 +90,16 @@ def main():
                 model.pop("nativeSourceWarnings", None)
                 model["pages"][0]["name"] = "控制α"
                 project.write_text(json.dumps(model, ensure_ascii=False), encoding="utf8")
-            try:
-                row = check_archive(exe, path, project, tag)
-            except ValueError as error:
-                # The full V122 project compiler can reject independent system settings before the media writer is reached.
-                if tag == "new" or "系统、通信、语言或工程配置" not in str(error) or (path / "media").exists():
-                    raise
-                row = dict(case=tag, completeMediaCompilation=False, unsupportedSystemDefaults=True,
-                           outputPublished=False, sourceBytesUnchanged=sm.read_bytes() == git_blob(reference, "input-native.sm"))
-                rows.append(row)
-                continue
+            row = check_archive(exe, path, project, tag)
             if tag in ("new", "preselected"):
-                if (path / "media/upLoad.knr").read_bytes() != git_blob(reference, "upLoad.knr"):
+                if (path / "separate.knr").read_bytes() != git_blob(reference, "upLoad.knr"):
                     raise ValueError(tag + " archived vendor file differs")
                 row["originalVendorArchiveExact"] = True
             if tag == "unicode" and row["page"] != "控制α":
                 raise ValueError("the test did not exercise a renamed page")
             rows.append(row)
+            if tag == "new":
+                rows.append(explicit_empty(exe, path, sm))
     result = dict(releaseSHA256=hashlib.sha256(exe.read_bytes()).hexdigest(), cases=rows)
     args.receipt.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
     print(sum(row.get("mediaCompressedBytesExact", False) for row in rows), "compiled cases of", len(rows))

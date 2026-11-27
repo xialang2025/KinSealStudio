@@ -511,14 +511,37 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
     }
-    if (arguments.value(1) == QStringLiteral("--compile-native-media-parts")) { //20261128-3 add
-        const bool omitDriver = arguments.value(4) == QStringLiteral("--without-com1-driver");
-        if (arguments.size() != 4 && !(arguments.size() == 5 && omitDriver)) {
-            writeDownloadResult(false, QStringLiteral("用法：--compile-native-media-parts 工程 新散件目录 [--without-com1-driver]"));
+    if (arguments.value(1) == QStringLiteral("--compile-native-media-parts") ||
+        arguments.value(1) == QStringLiteral("--build-native-media-snapshot")) { //20261128-8 change
+        const bool snapshotOnly = arguments.at(1) == QStringLiteral("--build-native-media-snapshot");
+        bool omitDriver = false;
+        QString directory;
+        int index;
+        if (arguments.size() < 4) {
+            writeDownloadResult(false, QStringLiteral("请指定输入工程与新散件目录，或指定输入 SM 与输出 KNR。"));
             return 24;
         }
+        for (index = 4; index < arguments.size(); ++index) {
+            if (!snapshotOnly && !omitDriver && arguments.at(index) == QStringLiteral("--without-com1-driver")) {
+                omitDriver = true;
+            } else if (directory.isEmpty() && arguments.at(index) == QStringLiteral("--native-work-directory") &&
+                       index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
+                directory = arguments.at(++index);
+            } else {
+                writeDownloadResult(false, QStringLiteral("介质选项无效。原厂工作目录通过 --native-work-directory 指定。"));
+                return 24;
+            }
+        }
+        if (snapshotOnly) {
+            if (!exportNativeMediaSnapshot(arguments.at(2), arguments.at(3), directory, &validation_error)) {
+                writeDownloadResult(false, validation_error);
+                return 24;
+            }
+            writeDownloadResult(true, QStringLiteral("已生成原厂格式的介质工程快照。"));
+            return 0;
+        }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, &validation_error)) {
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, &validation_error)) {
             writeDownloadResult(false, validation_error);
             return 24;
         }

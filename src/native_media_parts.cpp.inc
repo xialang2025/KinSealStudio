@@ -3,12 +3,12 @@
 /******************************************************************************
  * Function Name   : compileNativeMediaParts
  * Description     : Publish the supported loose V122 media members from a fresh verified USB build.
- * Input Parameters: project, new output directory, omit COM1 media driver, error
+ * Input Parameters: project, new output directory, omit COM1 media driver, original working directory, error
  * Return Value    : True after the staged directory has been published.
  * Date            : 2026.11.28
  ******************************************************************************/
 static bool compileNativeMediaParts(const HmiProject &project, const QString &destination,
-                                    bool omitDriver, QString *error) //20261128-3 add
+                                    bool omitDriver, const QString &nativeWorkDirectory, QString *error) //20261128-3 add
 {
     const QFileInfo target(destination);
     const QDir parent(target.absolutePath());
@@ -48,7 +48,7 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     source = qUncompress(file.readAll());
     file.close();
     if (!nativeProjectUsesSupportedDeviceDefaults(source, error) ||
-        !buildNativeMediaSnapshot(source, &mediaSnapshot, error)) { return false; }
+        !buildNativeMediaSnapshot(source, &mediaSnapshot, error, nativeWorkDirectory)) { return false; }
     if (!project.pictures.isEmpty() || !project.animations.isEmpty()) {
         *error = QStringLiteral("此介质导出尚未核实工程图库资源对表。");
         return false;
@@ -104,6 +104,41 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     if (!QDir().rename(media.absolutePath(), target.absoluteFilePath())) {
         *error = QStringLiteral("介质散件目录发布失败，目标可能已被占用。");
         return false;
+    }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : exportNativeMediaSnapshot
+ * Description     : Write the verified native project archive without compiling device payloads.
+ * Input Parameters: input SM, destination KNR, optional original working directory, error
+ * Return Value    : True after the complete snapshot is committed.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool exportNativeMediaSnapshot(const QString &inputPath, const QString &outputPath,
+                                      const QString &nativeWorkDirectory, QString *error) //20261128-8 add
+{
+    QFile input(inputPath);
+    QSaveFile output(outputPath);
+    QByteArray source;
+    QByteArray archive;
+
+    if (QFileInfo(inputPath).suffix().compare(QStringLiteral("sm"), Qt::CaseInsensitive) != 0 ||
+        QFileInfo(outputPath).suffix().compare(QStringLiteral("knr"), Qt::CaseInsensitive) != 0) {
+        *error = QStringLiteral("输入文件须为 .sm，输出文件须为 .knr。");
+        return false;
+    }
+    if (!input.open(QIODevice::ReadOnly) || input.size() > 64 * 1024 * 1024) {
+        *error = QStringLiteral("原厂工程无法读取或超过 64 MiB。");
+        return false;
+    }
+    source = input.readAll();
+    if (input.error() != QFileDevice::NoError) { *error = input.errorString(); return false; }
+    // A source-only public command must observe the same active protection as the editor.
+    if (!authenticateNativeProjectFile(source, QString(), nullptr, nullptr, error) ||
+        !buildNativeMediaSnapshot(source, &archive, error, nativeWorkDirectory)) { return false; }
+    if (!output.open(QIODevice::WriteOnly) || output.write(archive) != archive.size() || !output.commit()) {
+        *error = output.errorString(); return false;
     }
     return true;
 }

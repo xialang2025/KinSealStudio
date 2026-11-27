@@ -1,8 +1,10 @@
 """Recompile the frozen V5.1 inputs and compare the actual files with independent original Git blobs."""
 # 20261128-2 add
 import argparse
+import gzip
 import hashlib
 import json
+import ntpath
 import os
 from pathlib import Path
 import subprocess
@@ -37,7 +39,26 @@ def on_private_desktop(arguments):
         del desktop
 
 
-def compare(exe, scratch, require_all, media_driver):
+def original_work_directory(entry, read_blob):
+    """Recover the original opened SM's parent from an independent native run log."""
+    raw = read_blob(entry["log"])
+    log = json.loads(gzip.decompress(raw) if raw.startswith(b"\x1f\x8b") else raw)
+    if entry["key"] == ".workingCopyAfter.path":
+        name = log["workingCopyAfter"]["path"]
+    elif entry["key"] == ".snapshots[0].windows[0].title":
+        title = log["snapshots"][0]["windows"][0]["title"]
+        name = title.removeprefix("KinSealStudio--").rsplit("--", 1)[0]
+    else:
+        raise ValueError("unsupported original log field")
+    if ntpath.basename(name).lower() != "nativepages.sm":
+        raise ValueError("wrong original working copy")
+    path = ntpath.dirname(ntpath.normpath(name)).rstrip("\\") + "\\"
+    if hashlib.sha256(path.encode("utf-16-be")).hexdigest() != entry["directorySHA256"]:
+        raise ValueError("original work-directory identity mismatch")
+    return path
+
+
+def compare(exe, scratch, require_all, media_driver, replay_directory):
     """Select one original run per source before compiling and compare the complete shared files."""
     baseline = json.loads(REFERENCE.read_bytes())
     revision = baseline["sourceRevision"]
@@ -47,7 +68,11 @@ def compare(exe, scratch, require_all, media_driver):
         receipt = json.loads(current.read_bytes())
         if receipt["revision"] != revision:
             raise ValueError("wrong source revision in regression receipt")
-        pinned = receipt["compiledOutputs"]["usb" if media_driver is None else "media"]["bySource"]
+        outputs = receipt["compiledOutputs"]
+        mode = "usb" if media_driver is None else "media"
+        if replay_directory and "loggedMedia" in outputs:
+            mode = "loggedMedia"
+        pinned = outputs[mode]["bySource"]
     preferred = {x["sourceSHA256"]: x for x in baseline["preferredSameSourceOriginalBuild"]["preferredSourceRows"]}
     git_tree = subprocess.check_output(["git", "ls-tree", "-rz", revision], cwd=ROOT)
     blobs = {}
@@ -71,6 +96,10 @@ def compare(exe, scratch, require_all, media_driver):
             raise OSError("incomplete Git blob")
         return data
 
+    history = {}
+    if replay_directory:
+        log_index = json.loads(REFERENCE.with_name("介质KNR原厂248源对照_20261128.json").read_bytes())
+        history = {x["source"]: x for x in log_index["historicalWorkingDirectoryExperiment"]["records"]}
     compiler_env = dict(os.environ, TEMP=str(scratch), TMP=str(scratch), TMPDIR=str(scratch))
     rows = []
     try:
@@ -96,6 +125,12 @@ def compare(exe, scratch, require_all, media_driver):
                     row["mediaCom1Driver"] = "omitted" if omit else "included"
                     if omit:
                         command.append("--without-com1-driver")
+                    if key in history:
+                        evidence = history[key]
+                        if evidence["reference"] != folder:
+                            raise ValueError("work-directory log is for a different build")
+                        command.extend(["--native-work-directory", original_work_directory(evidence, blob)])
+                        row["workDirectoryLog"] = evidence["log"]
                 result = subprocess.run(command, cwd=path, env=compiler_env,
                                         capture_output=True, timeout=120, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
                 if result.returncode:
@@ -135,7 +170,7 @@ def compare(exe, scratch, require_all, media_driver):
                   equal=sum(len(r["identical"]) for r in rows), common=sum(len(r["identical"]) + len(r["differences"]) for r in rows),
                   regressed=sum(r["regressed"] for r in rows), allFilesExact=sum(r["allExact"] for r in rows))
     ok = totals["regressed"] == 0 and (not require_all or totals["allFilesExact"] == len(rows))
-    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, totals=totals, rows=rows), ok
+    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, totals=totals, rows=rows), ok
 
 
 def main():
@@ -146,13 +181,17 @@ def main():
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--media-driver", choices=("include", "omit", "reference"),
                         help="Compare offline media parts. 'reference' supplies only the original COM1 driver presence.")
+    parser.add_argument("--replay-work-directory", action="store_true",
+                        help="Use original logs where available with --media-driver reference.")
     parser.add_argument("--require-all", action="store_true")
     parser.add_argument("--child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.replay_work_directory and args.media_driver != "reference":
+        parser.error("--replay-work-directory requires --media-driver reference")
     if sys.platform == "win32" and not args.child:
         return on_private_desktop(sys.argv[1:])
     args.temp_root.mkdir(parents=True, exist_ok=True)
-    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver)
+    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver, args.replay_work_directory)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(report["totals"]))
