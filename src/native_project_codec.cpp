@@ -7,6 +7,8 @@
 #include "macro_schedule.h" //20261123-23 add
 
 #include <QCryptographicHash>
+#include <QBuffer> //20261128-5 add
+#include <QImageReader>
 #include <QDataStream>
 #include <QFileInfo>
 #include <QFile>
@@ -1242,6 +1244,8 @@ StaticTextProperties sourceCondition(const SourceDocument &document, const QStri
     return result;
 }
 
+#include "native_startup_canvas.cpp.inc" //20261128-5 add
+
 /******************************************************************************
  * Function Name   : modelSourceAddress
  * Description     : Restore local addresses or the independently observed default COM1 Modbus binding.
@@ -1268,6 +1272,18 @@ bool modelSourceAddress(const SourceDocument &document, const QString &name, QSt
                            QStringLiteral("6x_bit"), QStringLiteral("10x_bit"), QStringLiteral("3x"), QStringLiteral("4x"),
                            QStringLiteral("3x_dw"), QStringLiteral("4x_dw"), QStringLiteral("6x"), QStringLiteral("10x")};
     number = numberText.toUInt(&ok, 10);
+    if (document.value(name + QStringLiteral(".8")).toString() == QStringLiteral("Mitsubishi_Fx3U")) { //20261128-5 add
+        if (!ok || numberText != QString::number(number) || family != QStringLiteral("D") ||
+            document.value(name + QStringLiteral(".0")).toString() != QStringLiteral("[Mitsubishi_Fx3U]D") + numberText ||
+            document.value(name + QStringLiteral(".1")).toInt() != 1 || document.value(name + QStringLiteral(".2")).toInt() != 7 ||
+            document.value(name + QStringLiteral(".3")).toInt() != 0 || document.value(name + QStringLiteral(".6")).toInt() != 1 ||
+            document.value(name + QStringLiteral(".7")).toInt() != 1 || !hasFactoryFxClockConnection(document)) {
+            return fail(error, QStringLiteral("FX3U D 地址与原厂连接或站号不一致：%1。").arg(name));
+        }
+        *text = QStringLiteral("@com1:D") + numberText;
+        *external = true;
+        return true;
+    }
     if (document.value(name + QStringLiteral(".1")).toInt() != 1 ||
         document.value(name + QStringLiteral(".8")).toString() != QStringLiteral("Modbus_RTU") ||
         !families.contains(family) || !ok || !nativeProjectUsesSupportedDeviceDefaults(document.bytes, error)) {
@@ -1331,6 +1347,20 @@ static bool sourceLineCurve(const SourceDocument &document, const QString &prefi
         if (element <= 0) { return fail(error, QStringLiteral("曲线末端形状缺少独立路径。")); }
         tags.resize(element);
         elements.resize(element);
+    }
+    if (count == 0 && (object.type == QStringLiteral("freeline") || object.type == QStringLiteral("polyline"))) //20261128-4 add
+    {
+        // The unfinished native path has no vertex. Keep the item offset as its editable anchor.
+        if (!std::isfinite(offset.x()) || !std::isfinite(offset.y()) || std::abs(offset.x()) > 32768 || std::abs(offset.y()) > 32768)
+        { return fail(error, QStringLiteral("空绘图路径的坐标超出可编辑范围。")); }
+        object.geometry = QRect(int(std::floor(offset.x())), int(std::floor(offset.y())), 1, 1);
+        object.subpixelOffset = offset - QPointF(object.geometry.topLeft());
+        object.graphic.points.clear();
+        object.graphic.nativeDrawingDraft = true;
+        if (!object.graphic.validate(object.type, error)) { return false; }
+
+        *output = object;
+        return true;
     }
     if (object.type != QStringLiteral("linecurve")) //20261127-6 add: Native polylines have a single MoveTo followed by consecutive LineTo vertices.
     {
@@ -1494,7 +1524,8 @@ static bool sourceBoxGraphic(const SourceDocument &document, const QString &pref
     }
     else if (polygon)
     {
-        if (count < 3) { return fail(error, QStringLiteral("多边形的原厂记录少于三个顶点。")); }
+        if (count < 1) { return fail(error, QStringLiteral("多边形的原厂记录没有顶点。")); }
+        object.graphic.nativeDrawingDraft = count < 3; //20261128-4 change: One point is invisible; two points retain a stroked edge.
         for (i = 0; i < count; ++i)
         {
             field = SourceDocument::indexed(box + QStringLiteral("point"), i);
@@ -1929,8 +1960,9 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     if (document.value(QStringLiteral("header.1")).toInt() == 113) { //20261128-1 add: Retain the native page model until its canvas projection and compilation are verified.
         return fail(error, QStringLiteral("V113 工程可在原厂源工程窗口编辑工程名、层级和移动锁。"));
     }
-    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
-        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
+    const bool startupArtwork = document.values.contains(QStringLiteral("startup.head.18")); //20261128-5 change
+    if (startupArtwork && !hasCanvasStartupArtwork(document)) {
+        return fail(error, QStringLiteral("工程含未映射的独立启动画面，请使用原厂源工程窗口保留并编辑。"));
     }
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only multi-page boundary recognition is not a semantic editing contract.
         return fail(error, QStringLiteral("原生源含多个页面；当前语义互通仅支持一个普通页面，请保留整源归档，不能截取第一页导入。"));
@@ -2271,11 +2303,11 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     }
     macroCount = document.value(QStringLiteral("history.1e4.count")).toInt();
     if (document.value(QStringLiteral("history.1981f8.count")).toInt() != 0 ||
-        document.value(QStringLiteral("system.194.count")).toInt() != 0) {
+        (!startupArtwork && document.value(QStringLiteral("system.194.count")).toInt() != 0)) {
         return fail(error, QStringLiteral("原生工程包含尚未恢复到编辑模型的宏变量、启动宏或系统宏；仅可保留原始归档，不能作为普通宏工程导入。"));
     }
-    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
-        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
+    if (startupArtwork) { //20261128-5 change: Keep boot artwork independent from the editable ordinary page.
+        result.nativeSourceWarnings.append(QStringLiteral("已完整保留独立启动画面和内嵌背景图；画布当前编辑普通画面。"));
     }
     if (hasRetainedMacroAddresses(document)) { //20261127-10 add
         result.nativeSourceWarnings.append(QStringLiteral("已保留原厂宏地址表。可以编辑画面并保存 SM；修改宏定义或独立设备编译需要先支持这些地址记录。"));
@@ -2309,10 +2341,13 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     }
     if (external) {
         connection.id = QStringLiteral("com1");
-        connection.profileId = QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
+        const bool fxClock = hasFactoryFxClockConnection(document);
+        connection.profileId = fxClock ? //20261128-5 change: Match the active COM1 driver used by the native addresses.
+            QStringLiteral("Link/serial_amz/MITSUBISHI/Mitsubishi_Fx3U.ini") : QStringLiteral("Link/serial_amz/MODBUS/Modbus_RTU.ini");
         connection.channel = PlcChannel::Com1;
-        connection.station = QStringLiteral("1");
-        connection.nodeKnown = true;
+        // The factory FX INI and both timing records select station 0. Its source address length does not identify a device node.
+        connection.station = fxClock ? QStringLiteral("0") : QStringLiteral("1");
+        connection.nodeKnown = !fxClock;
         connection.node = 1;
         result.connections.append(connection);
     }
@@ -2411,6 +2446,19 @@ public:
         bool ok;
         int word;
 
+        if (document.value(name + QStringLiteral(".1")).toInt() == 1 &&
+            document.value(name + QStringLiteral(".8")).toString() == QStringLiteral("Mitsubishi_Fx3U")) { //20261128-5 add
+            const QString digits = text.mid(7);
+            number = digits.toUInt(&ok, 10);
+            if (!text.startsWith(QStringLiteral("@com1:D")) || !ok || digits != QString::number(number) ||
+                !hasFactoryFxClockConnection(document) || document.value(name + QStringLiteral(".5")).toString() != QStringLiteral("D")) {
+                error = QStringLiteral("原厂 FX3U D 地址只能在同一 COM1 寄存器族内修改。");
+                return;
+            }
+            set(name + QStringLiteral(".0"), QStringLiteral("[Mitsubishi_Fx3U]D") + digits);
+            set(name + QStringLiteral(".4"), digits);
+            return;
+        }
         match = expression.match(text);
         number = match.captured(2).toUInt(&ok);
         if (!match.hasMatch() || !ok || number > 4096) {
@@ -4264,6 +4312,9 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
             return fail(error, QStringLiteral("原厂按钮使用另一组本地宏选择标志，独立设备绑定尚待核对。"));
         }
     }
+    if (document.values.contains(QStringLiteral("startup.head.0"))) { //20261128-5 add
+        return fail(error, QStringLiteral("独立启动画面的设备编译尚待原厂包对照。"));
+    }
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only page traversal does not widen the one-page device configuration contract.
         return fail(error, QStringLiteral("多页原生源仅支持结构检查或整源归档，不能按单页设备默认配置编译。"));
     }
@@ -4639,8 +4690,8 @@ bool importNativeProjectSource(const QByteArray &data, HmiProject *project,
     if (!document.parse()) {
         return fail(error, document.error);
     }
-    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
-        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
+    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261128-5 change
+        return sourceProject(document, project, error);
     }
     if (document.value(QStringLiteral("project.pages.count")).toInt() > 1) //20261127-8 add
     {
@@ -4693,7 +4744,11 @@ static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *origi
         position += QPointF(object.geometry.topLeft() - original->geometry.topLeft()) +
                     object.subpixelOffset - original->subpixelOffset; //20261127-6 add: A translation retains the exact vendor arrow geometry.
     }
-    else { stream << path; }
+    else
+    {
+        stream << path;
+        if (object.graphic.nativeDrawingDraft) { position = QPointF(object.geometry.topLeft()) + object.subpixelOffset; }
+    } //20261128-4 change: A newly copied empty path has no coordinates of its own to carry the anchor.
     if (retained && original->name == name) { name = document.value(style + QStringLiteral("6")).toString(); }
     if (retained && width == original->graphic.lineWidth) { width = document.value(style + QStringLiteral("1")).toInt(); }
     if (!retained && width == 1 && (object.type == QStringLiteral("line") || object.type == QStringLiteral("linecurve")))
@@ -5377,7 +5432,8 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         objectBlock.append(objectBytes);
     }
     listStart = document.values.value(QStringLiteral("page.objects.count")).end;
-    listEnd = document.values.value(QStringLiteral("history.1e4.count")).start;
+    listEnd = document.values.value(document.values.contains(QStringLiteral("startup.head.0")) ?
+                                    QStringLiteral("startup.head.0") : QStringLiteral("history.1e4.count")).start; //20261128-5 change
     updates.set(QStringLiteral("page.objects.count"), project.objects.size());
     updates.replacements.insert(listStart, qMakePair(listEnd, objectBlock));
     if (!updates.error.isEmpty()) {

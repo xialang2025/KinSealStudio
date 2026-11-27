@@ -91,6 +91,9 @@ static bool prepareDevicePolygon(const HmiProject &project, const HmiObject &obj
     int index;
     int other;
     int count=object.graphic.points.size();
+    const bool draftEdge = object.graphic.nativeDrawingDraft && count == 2; //20261128-4 add
+    const int maxX = draftEdge ? project.pageWidth - 2 : 698;
+    const int maxY = draftEdge ? project.pageHeight - 2 : 398;
 
     if (object.graphic.lineStyle!=0 && object.graphic.lineStyle!=1)
     { return compilationIssue(project,object,QStringLiteral("graphic.lineStyle"),object.graphic.lineStyle,QStringLiteral("多边形只开放已核无线/实线。"),error,issue); }
@@ -104,18 +107,18 @@ static bool prepareDevicePolygon(const HmiProject &project, const HmiObject &obj
     { return compilationIssue(project,object,QStringLiteral("graphic.colors"),QJsonArray{object.graphic.lineColor.name(QColor::HexArgb),object.graphic.foreground.name(QColor::HexArgb),object.graphic.background.name(QColor::HexArgb)},QStringLiteral("多边形本切片只开放已核黑边/白前景/黑背景草稿，包括休眠颜色。"),error,issue); }
     if (object.graphic.endArrow!=0 || object.graphic.endCap!=0)
     { return compilationIssue(project,object,QStringLiteral("graphic.endpoints"),QJsonArray{object.graphic.endArrow,object.graphic.endCap},QStringLiteral("多边形本切片只开放无箭头及端点0。"),error,issue); }
-    if (object.geometry.width()<100 || object.geometry.height()<100)
+    if (!draftEdge && (object.geometry.width()<100 || object.geometry.height()<100))
     { return compilationIssue(project,object,QStringLiteral("geometry.sampledSize"),QJsonArray{object.geometry.width(),object.geometry.height()},QStringLiteral("多边形本切片只开放宽高至少100的已采样范围。"),error,issue); }
-    if (count<3 || count>8)
+    if (!draftEdge && (count<3 || count>8))
     { return compilationIssue(project,object,QStringLiteral("graphic.points"),count,QStringLiteral("多边形本切片只开放3到8个有序顶点。"),error,issue); }
     Q_FOREACH (normalized,object.graphic.points)
     {
         absolute=QPointF(object.geometry.x()+normalized.x()*object.geometry.width(),object.geometry.y()+normalized.y()*object.geometry.height());
         // Check finiteness and screen bounds before rounding so malformed input never reaches integer conversion.
         if (!std::isfinite(normalized.x()) || !std::isfinite(normalized.y()) || normalized.x()<0 || normalized.x()>1 || normalized.y()<0 || normalized.y()>1 ||
-            !std::isfinite(absolute.x()) || !std::isfinite(absolute.y()) || absolute.x()<2 || absolute.x()>698 || absolute.y()<2 || absolute.y()>398 ||
+            !std::isfinite(absolute.x()) || !std::isfinite(absolute.y()) || absolute.x()<2 || absolute.x()>maxX || absolute.y()<2 || absolute.y()>maxY ||
             std::abs(absolute.x()-std::round(absolute.x()))>1e-8 || std::abs(absolute.y()-std::round(absolute.y()))>1e-8)
-        { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("多边形仅开放已采样整数顶点，X范围2到698、Y范围2到398。"),error,issue); }
+        { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("多边形仅开放已采样整数顶点，X范围2到%1、Y范围2到%2。").arg(maxX).arg(maxY),error,issue); }
         vertices.append(QPoint(qRound(absolute.x()),qRound(absolute.y())));
     }
     for (index=0;index<count;++index)
@@ -125,11 +128,11 @@ static bool prepareDevicePolygon(const HmiProject &project, const HmiObject &obj
             if (vertices[index]==vertices[other])
             { return compilationIssue(project,object,QStringLiteral("graphic.points.duplicate"),QJsonArray{index,other},QStringLiteral("多边形取整后不得含任何重复顶点。"),error,issue); }
         }
-        if (polygonOrientation(vertices[index],vertices[(index+1)%count],vertices[(index+2)%count])==0)
+        if (!draftEdge && polygonOrientation(vertices[index],vertices[(index+1)%count],vertices[(index+2)%count])==0)
         { return compilationIssue(project,object,QStringLiteral("graphic.points.collinear"),index,QStringLiteral("多边形连续三个顶点共线的路径尚未核定。"),error,issue); }
         twiceArea+=qint64(vertices[index].x())*vertices[(index+1)%count].y()-qint64(vertices[index].y())*vertices[(index+1)%count].x();
     }
-    if (twiceArea==0)
+    if (!draftEdge && twiceArea==0)
     { return compilationIssue(project,object,QStringLiteral("graphic.points.area"),0,QStringLiteral("多边形面积不能为零。"),error,issue); }
     for (index=0;index<count;++index)
     {
@@ -253,7 +256,19 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
     { return compilationIssue(project,empty,QStringLiteral("project.target"),project.targetModel,QStringLiteral("仅支持800×480、最多100个对象、1..8种语言的已核型号。"),error,issue); }
     if (!project.nativeSourceSnapshot.isEmpty() && !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot,&diagnostic))
     { return compilationIssue(project,empty,QStringLiteral("nativeSourceSnapshot"),QStringLiteral("retained"),diagnostic,error,issue); }
-    prepared.objects = project.objects;
+    // The native compiler keeps draft objects in upLoad.knr but omits their nonexistent pixels and collision patches.
+    for (const HmiObject &entry : project.objects) //20261128-4 change
+    {
+        if (entry.graphic.nativeDrawingDraft)
+        {
+            if (!entry.graphic.validate(entry.type, &diagnostic))
+            { return compilationIssue(project,entry,QStringLiteral("graphic"),entry.type,diagnostic,error,issue); }
+            if (entry.graphic.points.size() < 2) { continue; }
+            if (!entry.subpixelOffset.isNull())
+            { return compilationIssue(project,entry,QStringLiteral("graphic.points"),entry.type,QStringLiteral("未完成多边形的设备线段仅核定整数端点。"),error,issue); }
+        }
+        prepared.objects.append(entry);
+    }
     for (HmiObject &entry : prepared.objects) //20261124-15 add: Compile the same directed path through the existing integer raster gates.
     {
         if (entry.hasAppearanceFlip() && graphicUsesVertices(entry.type))

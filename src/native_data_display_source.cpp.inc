@@ -98,7 +98,7 @@ static bool sourceDataDisplay(const SourceDocument &d, const QString &p, int ind
     int date;
     if (d.value(p + QStringLiteral("children.count")).toInt() != 1 || d.value(text + QStringLiteral("type")).toInt() != 0x10016 ||
         std::abs(x) > 32768 || std::abs(y) > 32768 || w < 1 || h < 1 || w > 4096 || h > 4096 ||
-        qAbs(w - qRound(w)) > 1e-6 || qAbs(h - qRound(h)) > 1e-6 || sizeIndex < 0 || sizeIndex >= sizes.size() ||
+        !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(w) || !std::isfinite(h) || sizeIndex < 0 || sizeIndex >= sizes.size() ||
         !fg.isValid() || !bg.isValid()) {
         return fail(error, QStringLiteral("数据显示器的预览图元、尺寸、字体或颜色尚未核实。"));
     }
@@ -134,9 +134,18 @@ static bool sourceDataDisplay(const SourceDocument &d, const QString &p, int ind
         }
     } else {
         time.fontSize = size; time.textColor = fg.name(); time.backgroundColor = bg.name(); time.opacity = v(17).toInt();
-        time.showDate = v(10).toBool(); time.showWeek = v(11).toBool(); time.showTime = v(12).toBool();
+        time.showDate = v(10).toBool(); time.showTime = v(11).toBool(); time.showWeek = v(12).toBool(); //20261128-5 change
         displayFormat = v(14).toString(); date = TimeDisplayProperties::dateFormats().indexOf(displayFormat);
-        if (time.showDate && !time.showWeek && !time.showTime && date >= 0) { time.dateFormat = date; }
+        if (time.showDate && !time.showWeek && !time.showTime && date >= 0) {
+            time.dateFormat = date;
+        } else if (time.showDate && time.showTime && !time.showWeek) {
+            const QStringList tokens = displayFormat.split(QLatin1Char(' '));
+            time.dateFormat = tokens.size() == 2 ? TimeDisplayProperties::dateFormats().indexOf(tokens.first()) : -1;
+            time.timeFormat = tokens.size() == 2 ? TimeDisplayProperties::timeFormats().indexOf(tokens.last()) : -1;
+        }
+        if (time.sample() != displayFormat || d.value(text + QStringLiteral("text.head.4")).toString() != displayFormat) {
+            return fail(error, QStringLiteral("时间显示格式与原厂预览不一致或含未映射的日期时间组合。"));
+        }
     }
     *out = object;
     return true;
@@ -205,8 +214,10 @@ static bool writeNativeDataDisplay(const HmiObject &o, const HmiObject *original
         u.set(text + QStringLiteral("text.tail.10"), o.geometry.x() + o.subpixelOffset.x() - src->value(text + QStringLiteral("text.head.0")).toDouble());
         u.set(text + QStringLiteral("text.tail.11"), o.geometry.y() + o.subpixelOffset.y() - src->value(text + QStringLiteral("text.head.1")).toDouble());
     }
-    if (o.geometry.size() != original->geometry.size()) {
+    if (o.geometry.width() != original->geometry.width()) { //20261128-5 change: Preserve an untouched fractional dimension when only its other axis is resized.
         u.set(text + QStringLiteral("text.head.2"), double(o.geometry.width()));
+    }
+    if (o.geometry.height() != original->geometry.height()) {
         u.set(text + QStringLiteral("text.head.3"), double(o.geometry.height()));
     }
     if (mode < 2) {
@@ -230,7 +241,8 @@ static bool writeNativeDataDisplay(const HmiObject &o, const HmiObject *original
         if (o.address != newAddress) { return fail(error, QStringLiteral("数据控件的根地址与监视地址不一致。")); }
         if (oldAddress != newAddress) {
             u.address(field(mode == 0 ? 17 : 13), newAddress);
-            u.set(field(2), newAddress);
+            u.set(field(2), newAddress.startsWith(QStringLiteral("@com1:D")) ?
+                            QStringLiteral("[Mitsubishi_Fx3U]") + newAddress.mid(6) : newAddress);
         }
         if (n1->inputAddress != n0->inputAddress) {
             //20261127-13 change: Preserve an explicitly edited input draft, including a dormant linked address.
@@ -245,7 +257,7 @@ static bool writeNativeDataDisplay(const HmiObject &o, const HmiObject *original
                 int i;
                 for (i = 0; i < digits; ++i) { value.append(mode == 0 ? QLatin1Char('8') : QLatin1Char(char('A' + (i % 26)))); }
                 if (mode == 0 && decimals > 0 && decimals < digits) { value.insert(digits - decimals, QLatin1Char('.')); }
-                return value + QLatin1Char('\n') + address;
+                return value + QLatin1Char('\n') + (address.startsWith(QStringLiteral("@com1:D")) ? address.mid(6) : address);
             };
             if ((mode == 0 && n1->decimalDigits >= n1->totalDigits) || (mode == 1 && o.asciiDisplay.characterCount > 26)) {
                 return fail(error, QStringLiteral("字符数或小数位组合的预览超出已核实范围。"));

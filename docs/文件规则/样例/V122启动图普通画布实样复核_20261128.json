@@ -1,0 +1,69 @@
+{
+  "executableSha256": "add887c8ba6a7b96b70315b23e2d47b5ae62cc9c4add6f8383fda2c08817ecb3",
+  "cases": [
+    {
+      "sample": "ASCII显示元件.sm",
+      "sourceSha256": "f1313626a94c28e69d87975b16effc11e1c4959bff72a9bf4848ef9c99580fa3",
+      "sourceBytes": 1163802,
+      "ordinaryControls": 7,
+      "bootPageSha256": "8f9c93fb007a0d4cfb2434e62a7bfe71a80f98aae28711b8240bbabf02dd0db9",
+      "bootArtSha256": "c5f6709e1dd968b8784b642674ab8c31ebdfffb99ffe26d20dacdf4b53fcea6a",
+      "expectedEditedFields": [
+        "object[6].child[0].text.head.2"
+      ],
+      "unchangedByteEqual": true,
+      "editedWholeFileByteEqual": true,
+      "editedPropertiesRestored": true,
+      "secondSaveByteEqual": true,
+      "rejectedConflictingFields": [
+        "startup.head.8"
+      ]
+    },
+    {
+      "sample": "与PLC时间同步.sm",
+      "sourceSha256": "2586d8ef10ebba91dce5e19c53a67f3d7fe60f980ca8b599ba709069c0a61024",
+      "sourceBytes": 1169048,
+      "ordinaryControls": 11,
+      "bootPageSha256": "0e2c41df211e293ef92338ebe0ec9d7cbdf45a1eff07e89b9afe3e46ee917345",
+      "bootArtSha256": "c5f6709e1dd968b8784b642674ab8c31ebdfffb99ffe26d20dacdf4b53fcea6a",
+      "expectedEditedFields": [
+        "object[4].display.17.0",
+        "object[4].display.17.4",
+        "object[4].display.2",
+        "object[4].child[0].text.head.4"
+      ],
+      "unchangedByteEqual": true,
+      "editedWholeFileByteEqual": true,
+      "editedPropertiesRestored": true,
+      "secondSaveByteEqual": true,
+      "rejectedConflictingFields": [
+        "startup.head.8",
+        "object[4].display.17.2",
+        "system.16c[0].50[0].tail.10"
+      ]
+    },
+    {
+      "sample": "写时间到PLC.sm",
+      "sourceSha256": "a110a62d4463bce44cdec0d674d03af15b3885a64ad67cf5be2a9244ac0ab2fc",
+      "sourceBytes": 1169180,
+      "ordinaryControls": 11,
+      "bootPageSha256": "0e2c41df211e293ef92338ebe0ec9d7cbdf45a1eff07e89b9afe3e46ee917345",
+      "bootArtSha256": "c5f6709e1dd968b8784b642674ab8c31ebdfffb99ffe26d20dacdf4b53fcea6a",
+      "expectedEditedFields": [
+        "object[4].display.17.0",
+        "object[4].display.17.4",
+        "object[4].display.2",
+        "object[4].child[0].text.head.4"
+      ],
+      "unchangedByteEqual": true,
+      "editedWholeFileByteEqual": true,
+      "editedPropertiesRestored": true,
+      "secondSaveByteEqual": true,
+      "rejectedConflictingFields": [
+        "startup.head.8",
+        "object[4].display.17.2",
+        "system.16c[0].50[0].tail.10"
+      ]
+    }
+  ]
+}

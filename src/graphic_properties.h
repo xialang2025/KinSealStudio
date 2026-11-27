@@ -27,6 +27,7 @@ struct GraphicProperties
     bool showHorizontal = true;
     bool showVertical = true;
     bool showOutline = true;
+    bool nativeDrawingDraft = false; //20261128-4 add: Retain unfinished native drawing-tool records in editable projects.
     QColor frameColor = Qt::black;
     int radiusX = 10; // Common closed-shape storage; only the rounded-rectangle family will serialize radii.
     int radiusY = 10;

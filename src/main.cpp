@@ -35,6 +35,8 @@
 #include <cstdio> //20261108-10 add
 #include <memory>
 
+#include "native_media_parts.cpp.inc" //20261128-3 add
+
 /******************************************************************************
  * Function Name   : writeDownloadResult
  * Description     : Emit one compact result for the editor's background USB worker.
@@ -508,6 +510,20 @@ int main(int argc, char *argv[]) //20261107-6 add
         }
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
+    }
+    if (arguments.value(1) == QStringLiteral("--compile-native-media-parts")) { //20261128-3 add
+        const bool omitDriver = arguments.value(4) == QStringLiteral("--without-com1-driver");
+        if (arguments.size() != 4 && !(arguments.size() == 5 && omitDriver)) {
+            writeDownloadResult(false, QStringLiteral("用法：--compile-native-media-parts 工程 新散件目录 [--without-com1-driver]"));
+            return 24;
+        }
+        if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, &validation_error)) {
+            writeDownloadResult(false, validation_error);
+            return 24;
+        }
+        writeDownloadResult(true, QStringLiteral("已生成离线介质散件。完整介质包还有独立的 Usbload.bin 等生成条件。"));
+        return 0;
     }
     if (arguments.value(1) == QStringLiteral("--build-native-load-metadata")) { //20261128-0 add
         if (arguments.size() != 4 && arguments.size() != 5) {

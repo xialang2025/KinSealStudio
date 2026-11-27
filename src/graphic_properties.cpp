@@ -100,6 +100,7 @@ QJsonObject GraphicProperties::toJson(const QString &type) const //20261113-2 ch
     }
     json = {{QStringLiteral("lineStyle"), lineStyle}, {QStringLiteral("lineWidth"), lineWidth},
             {QStringLiteral("lineColor"), lineColor.name(QColor::HexArgb)}, {QStringLiteral("alpha"), alpha}};
+    if (nativeDrawingDraft) { json.insert(QStringLiteral("nativeDrawingDraft"), true); } //20261128-4 add
     if (graphicUsesVertices(type))
     {
         Q_FOREACH (point, points) { vertices.append(QJsonArray{point.x(), point.y()}); }
@@ -143,6 +144,11 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
     QJsonValue vertex;
     double number;
 
+    if (json.value(QStringLiteral("nativeDrawingDraft")).toBool())
+    {
+        candidate.nativeDrawingDraft = true;
+        expected.insert(QStringLiteral("nativeDrawingDraft"), true);
+    } //20261128-4 add: Legacy graphic records keep their original required field set.
     if (output == nullptr || json.keys() != expected.keys()) { return graphicError(error, QStringLiteral("图形字段缺失或未知。")); }
     for (item = json.constBegin(); item != json.constEnd(); ++item)
     {
@@ -167,7 +173,7 @@ bool GraphicProperties::fromJson(const QJsonObject &json, GraphicProperties *out
     if (graphicUsesVertices(type))
     {
         vertices = json.value(QStringLiteral("points")).toArray();
-        if (vertices.size() < 2 || vertices.size() > 4096) { return graphicError(error, QStringLiteral("图形点数超出本地资源限制。")); }
+        if ((!candidate.nativeDrawingDraft && vertices.size() < 2) || vertices.size() > 4096) { return graphicError(error, QStringLiteral("图形点数超出本地资源限制。")); }
         candidate.points.clear();
         Q_FOREACH (vertex, vertices)
         {
@@ -207,6 +213,11 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
     QPointF previous;
     bool hasPrevious = false;
 
+    const bool emptyStroke = (type == QStringLiteral("freeline") || type == QStringLiteral("polyline")) && points.isEmpty();
+    const bool shortPolygon = type == QStringLiteral("polygon") && (points.size() == 1 || points.size() == 2);
+
+    if (nativeDrawingDraft && ((!emptyStroke && !shortPolygon) || !curveControls.isEmpty() || endArrow != 0))
+    { return graphicError(error, QStringLiteral("绘图草稿仅允许空折线、空自由直线或一至两个顶点的多边形。")); } //20261128-4 add
     if (type == QStringLiteral("table")) //20261113-8 add: Pens stay opaque; the separate alpha affects background only.
     {
         if (rows < 1 || rows > 30 || columns < 1 || columns > 30 || lineStyle < 0 || lineStyle > 5 || alpha < 0 || alpha > 255 || lineWidth != 1 || endArrow != 0 || endCap != 0 || !lineColor.isValid() || lineColor.alpha() != 255 || !frameColor.isValid() || frameColor.alpha() != 255 || !background.isValid() || background.alpha() != 255)
@@ -221,8 +232,8 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
         if (type == QStringLiteral("roundrect") && (radiusX < 0 || radiusX > 99 || radiusY < 0 || radiusY > 99)) { return graphicError(error, QStringLiteral("圆角X/Y半径必须为0到99。")); } //20261113-2 add
         if (!graphicUsesVertices(type)) { return true; }
     }
-    if (type == QStringLiteral("polygon") && (points.size() < 3 || points.size() > 4096 || points.first() == points.last())) { return graphicError(error, QStringLiteral("多边形需要3到4096个顶点，末点不重复首点。")); } //20261113-4 add: This is an explicit local resource/closure policy.
-    if (type == QStringLiteral("freeline") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("自由直线当前首尾切片只支持两个不同端点；采样路径尚未恢复。")); } //20261113-5 add: Reject unverified multi-point freeline input rather than silently reducing it.
+    if (!nativeDrawingDraft && type == QStringLiteral("polygon") && (points.size() < 3 || points.size() > 4096 || points.first() == points.last())) { return graphicError(error, QStringLiteral("多边形需要3到4096个顶点，末点不重复首点。")); } //20261113-4 add: This is an explicit local resource/closure policy.
+    if (!nativeDrawingDraft && type == QStringLiteral("freeline") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("自由直线当前首尾切片只支持两个不同端点；采样路径尚未恢复。")); } //20261113-5 add: Reject unverified multi-point freeline input rather than silently reducing it.
     if (type == QStringLiteral("line") && (points.size() != 2 || points.first() == points.last())) { return graphicError(error, QStringLiteral("直线需要两个不同端点。")); }
     if (type == QStringLiteral("linecurve")) //20261125-85 add: A cubic carries one explicit incoming handle and the previous anchor as its first control.
     {
@@ -234,7 +245,7 @@ bool GraphicProperties::validate(const QString &type, QString *error) const //20
             last = control;
         }
     }
-    if (type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
+    if (!nativeDrawingDraft && type == QStringLiteral("polyline") && (points.size() < 2 || points.size() > 4096)) { return graphicError(error, QStringLiteral("折线需要2到4096个有序顶点。")); } //20261113-2 add: The resource ceiling is a local editor constraint.
     Q_FOREACH (point, points)
     {
         if (!std::isfinite(point.x()) || !std::isfinite(point.y()) || point.x() < 0 || point.x() > 1 || point.y() < 0 || point.y() > 1) { return graphicError(error, QStringLiteral("图形归一坐标超出有限范围。")); }

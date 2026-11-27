@@ -1915,6 +1915,12 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     for (index = 0; index < raster.objects.size(); ++index)
     {
         if (raster.objects.at(index).subpixelOffset.isNull()) { continue; }
+        if (raster.objects.at(index).graphic.nativeDrawingDraft && raster.objects.at(index).graphic.points.size() == 2) //20261128-4 add
+        {
+            // Preserve the integer-only coverage contract before the general renderer rounds fractional item translations.
+            if (error != nullptr) { *error = QStringLiteral("未完成多边形的设备线段仅核定整数端点。"); }
+            return false;
+        }
         raster.objects[index].geometry.moveTo(qRound(project.objects.at(index).geometry.x() + project.objects.at(index).subpixelOffset.x()),
                                               qRound(project.objects.at(index).geometry.y() + project.objects.at(index).subpixelOffset.y()));
         raster.objects[index].subpixelOffset = QPointF();
