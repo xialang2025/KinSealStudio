@@ -1,0 +1,138 @@
+{
+  "date": "2026-11-28",
+  "format": "V122/load.bin",
+  "gitBaseline": "e3b72657c8be107392cb1a5d090dc9071cbe4a87",
+  "archivedVendorDirectories": 440,
+  "uniqueInputs": 319,
+  "archivedExact": 440,
+  "archiveSizeHistogram": {
+    "233": 412,
+    "253": 28
+  },
+  "archivedSources": {
+    "sm": 431,
+    "knr": 9
+  },
+  "external": {
+    "AMZ101W01_InnoSetup5.5.7": {
+      "source": {
+        "size": 1438059,
+        "sha256": "c2669be583def49d08c4a6f56a76421f4b86a43320faca979e3393567b755665"
+      },
+      "pageSizes": [
+        [
+          1024,
+          600
+        ],
+        [
+          1024,
+          600
+        ],
+        [
+          1024,
+          600
+        ],
+        [
+          1024,
+          600
+        ],
+        [
+          1024,
+          600
+        ],
+        [
+          1024,
+          600
+        ]
+      ],
+      "dynamicCounts": [
+        33,
+        33,
+        49,
+        49,
+        49,
+        33
+      ],
+      "type35Controls": 0,
+      "independentParts": {
+        "upLoad.knr": {
+          "size": 140360,
+          "sha256": "fbe8431d752bbb825e74ec9dda4f15ffe0dea18401cab3722511cebee4b5b14f"
+        },
+        "SheetPara.dat": {
+          "size": 432,
+          "sha256": "0e313b563f029d6b0c7bd88d957dcfe682ffed0b151b9ca83f12bb446dc39950"
+        },
+        "ControlPara.dat": {
+          "size": 157440,
+          "sha256": "ffaf0b4b6ece44c8e3680195106d3e1472c4c56848a2b45ddc8d4ed723dac250"
+        },
+        "Modbus_RTU_com1.bin": {
+          "size": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        }
+      },
+      "comparison": {
+        "outcome": "exact",
+        "bytes": 343,
+        "sha256": "8266b014d50b107ccc54060155ac2937a16df119b6011efe07ad3db922145d3c"
+      },
+      "knsSha256": "e1eb06d4777096bf246b45133b2d875024682ef30597651049995ba1d592938c"
+    },
+    "AMZ070W01_Installed": {
+      "source": {
+        "size": 12770,
+        "sha256": "898343a29a64ad801d2f723eca9f21fd8838b1436fca26b28448f49f904fd73e"
+      },
+      "pageSizes": [
+        [
+          800,
+          480
+        ]
+      ],
+      "dynamicCounts": [
+        4
+      ],
+      "type35Controls": 0,
+      "independentParts": {
+        "upLoad.knr": {
+          "size": 2366,
+          "sha256": "e492fbee67938d6f83e16eb424586209e63f5266997ae14a99c1b878e6fe1ee6"
+        },
+        "SheetPara.dat": {
+          "size": 72,
+          "sha256": "03bdc0b4024f4c338db8497a7f3c3bff12faa47944a91ff41e4c9c337424fa99"
+        },
+        "ControlPara.dat": {
+          "size": 2560,
+          "sha256": "aef814202b2b3f5f0f422131f42716c8a0f8a9221dd233bbae0bb935a21a5f1d"
+        },
+        "Modbus_RTU_com1.bin": {
+          "size": 12496,
+          "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+        }
+      },
+      "comparison": {
+        "outcome": "exact",
+        "bytes": 257,
+        "sha256": "5f6298e6833f6a1fe1c840d813e0ab21d0a34e0d84ad6328ee345071a4ee183b"
+      }
+    }
+  },
+  "sourceContext": {
+    "assetPairs": [],
+    "downloadCharacterLibrary": false,
+    "driverAndMessageCount": "Compiled directory contains only selected independent files (SheetPara.dat, ControlPara.dat and optional Modbus_RTU_com1.bin)."
+  },
+  "controlledChecks": {
+    "fullManifestMatchesIndependentQt48Struct": true,
+    "invalidManifestExistingOutputUntouched": 5,
+    "eachExternal": {
+      "onlyOptionByteChangedWhenCharacterLibraryToggled": true,
+      "rejectMismatchedLastSheetWidth": true,
+      "rejectMismatchedLastSheetControlCount": true
+    }
+  },
+  "oracleReadAfterGeneration": true,
+  "usbTransfers": 0
+}

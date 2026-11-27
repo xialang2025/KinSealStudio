@@ -5,6 +5,7 @@
 #include "lzokay.hpp"
 #include <QCoreApplication>
 #include <QCryptographicHash>
+#include <QDataStream> //20261127-12 add
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -293,6 +294,10 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     QFile file(dir.filePath(QStringLiteral("compiler-manifest.json")));
     QJsonObject candidate;
     QJsonDocument snapshot; //20261122-3 add
+    QList<NativeSourceFieldSpan> nativeFields; //20261127-12 add
+    QByteArray nativeSource;
+    QString nativeTarget;
+    QByteArray inputDigest;
     QJsonObject entries;
     QJsonObject entry;
     QVector<HmiDownloadStep> steps;
@@ -338,6 +343,34 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     if (!validateDevicePayloadStructure(payloads,error)) { return false; }
     if (!packageSnapshotKind(payloads[7],&snapshotKind,error) || candidate.value(QStringLiteral("sourceSnapshot")).toString() != snapshotKind)
     { return packageFailure(error,QStringLiteral("清单源快照身份与实际内容不一致。")); }
+    inputDigest = candidate.value(QStringLiteral("inputProjectSha256")).toString().toLatin1();
+    if (inputDigest.size() != 64 || QByteArray::fromHex(inputDigest).toHex() != inputDigest) //20261127-12 add
+    {
+        return packageFailure(error, QStringLiteral("输入工程 SHA256 必须为完整的小写十六进制摘要。"));
+    }
+    if (snapshotKind == QStringLiteral("native-sm"))
+    {
+        nativeSource = qUncompress(payloads[7]);
+        if (!inspectNativeProjectSourceFields(nativeSource, &nativeFields, error)) {
+            return false;
+        }
+        // V122 keeps the original template model in its envelope after a target change.
+        // The system identity string selects the active hardware for USB and compilation.
+        for (const NativeSourceFieldSpan &field : nativeFields) {
+            if (field.path == QStringLiteral("system.identity.1")) {
+                QDataStream identity(nativeSource.mid(field.start, field.end - field.start));
+                identity >> nativeTarget;
+                if (identity.status() != QDataStream::Ok || !identity.atEnd()) {
+                    return packageFailure(error, QStringLiteral("工程实际目标型号字段不可读。"));
+                }
+                break;
+            }
+        }
+        if (deviceTargetIdentityByte(nativeTarget) !=
+            deviceTargetIdentityByte(candidate.value(QStringLiteral("targetModel")).toString())) {
+            return packageFailure(error, QStringLiteral("原生源快照与清单目标型号不一致。"));
+        }
+    }
     if (snapshotKind == QStringLiteral("lite-project-json")) //20261122-3 change
     {
         snapshot = QJsonDocument::fromJson(qUncompress(payloads[7]));
@@ -428,3 +461,5 @@ bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &
     staging->setAutoRemove(false);
     return true;
 }
+
+#include "native_media_archive.cpp.inc" //20261127-12 add

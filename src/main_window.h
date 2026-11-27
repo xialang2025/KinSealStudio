@@ -44,7 +44,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    bool openProjectPath(const QString &path, QString *error = nullptr); //20261111-1 add: Reuse the validated open transaction for file arguments and owned captures.
+    bool openProjectPath(const QString &path, QString *error = nullptr, bool allowSourceEditor = false); //20261111-1 add: Reuse the validated open transaction for file arguments and owned captures.
     ~MainWindow() override; //20261110-7 add: Detach application-wide signals before derived state is destroyed.
 
 private slots:

@@ -1,4 +1,6 @@
 #include "native_project_codec.h"
+#include <QDir> //20261127-14 add: Resolve historical KVG paths inside the portable gallery.
+#include "control_rendering.h" //20261127-14 add: Decode bounded PNG resources from V122 image records.
 #include "device_target.h" //20261122-3 add
 #include "project_model.h"
 #include "bit_button_renderer.h" //20261127-5 add: Native preview and the property inspector use the same typed caption.
@@ -8,6 +10,7 @@
 #include <QDataStream>
 #include <QFileInfo>
 #include <QFile>
+#include <QSaveFile> //20261127-11 add
 #include <QFont>
 #include <QMap>
 #include <QRegularExpression>
@@ -349,12 +352,12 @@ public:
      * Return Value    : None.
      * Date            : 2026.11.09
      ******************************************************************************/
-    void fields(const QByteArray &kinds, const QString &name) //20261109-0 add
+    void fields(const QByteArray &kinds, const QString &name, int firstIndex = 0) //20261109-0 add
     {
         qsizetype i;
 
         for (i = 0; i < kinds.size() && error.isEmpty(); ++i) {
-            read(kinds.at(i), name + QStringLiteral(".") + QString::number(i));
+            read(kinds.at(i), name + QStringLiteral(".") + QString::number(firstIndex + i));
         }
     }
 
@@ -457,12 +460,22 @@ public:
     void flatGraphic(const QString &prefix, int type); //20261127-6 add
     void page(const QString &pagePrefix); //20261110-5 change: Distinct read-only pages must not overwrite one another's structural spans.
     void control(const QString &prefix, int kind);
+    void commonControl(const QString &prefix); //20261127-11 add
+    void container(const QString &prefix);
     void history();
 
 private:
     qsizetype m_position = 0;
 };
 
+static bool isImageDisplayType(int type); //20261127-14 add
+static void readNativeImageDisplay(SourceDocument &source, const QString &prefix, int type);
+static bool sourceNativeImageDisplay(const SourceDocument &source, const QString &prefix, int index,
+                                     const QMap<QString, QByteArray> &pictures, HmiObject *object,
+                                     QStringList *warnings, bool *external, QString *error);
+static void readNativeDataDisplay(SourceDocument &document, const QString &prefix, int type); //20261127-13 add
+static bool sourceDataDisplay(const SourceDocument &document, const QString &prefix, int index,
+                              HmiObject *object, bool *external, QString *error);
 static void readTableFields(SourceDocument &document, const QString &prefix); //20261127-9 add
 static bool sourceTable(const SourceDocument &document, const QString &prefix, int index,
                         HmiObject *output, QString *error); //20261127-9 add
@@ -483,6 +496,7 @@ void SourceDocument::system() //20261109-0 add
     QString name;
     QString child;
 
+    const bool legacy = value(QStringLiteral("header.1")).toInt() == 113; //20261128-1 add: V113 predates the extra link fields and the system macro registry.
     fields(QByteArray("aqqiqqqqqqqqqiiss"), QStringLiteral("system.identity"));
     list(QStringLiteral("system.164"));
     fields(QByteArray(17, 'b') + QByteArray(8, 'a') + QByteArray("ii") + QByteArray(5, 'a') +
@@ -520,7 +534,7 @@ void SourceDocument::system() //20261109-0 add
             child = indexed(name + QStringLiteral(".50"), j);
             fields(QByteArray("iiiii"), child + QStringLiteral(".head"));
             list(child + QStringLiteral(".40"));
-            fields(QByteArray("qiiq") + QByteArray(5, 'i') + QByteArray("qqqiqibsaa"), child + QStringLiteral(".tail"));
+            fields(QByteArray("qiiq") + QByteArray(5, 'i') + (legacy ? QByteArray("qqqiqib") : QByteArray("qqqiqibsaa")), child + QStringLiteral(".tail"));
         }
     }
     n = count(QStringLiteral("system.180"));
@@ -530,7 +544,8 @@ void SourceDocument::system() //20261109-0 add
         address(name + QStringLiteral(".address"));
         read('i', name + QStringLiteral(".value"));
     }
-    fields(QByteArray("aqsi"), QStringLiteral("system.tail"));
+    fields(legacy ? QByteArray("aqs") : QByteArray("aqsi"), QStringLiteral("system.tail"));
+    if (legacy) { return; }
     macros(QStringLiteral("system.194"));
 }
 
@@ -550,9 +565,10 @@ void SourceDocument::configuration() //20261109-0 add
     QString name;
     QString child;
 
+    const bool legacy = value(QStringLiteral("header.1")).toInt() == 113; //20261128-1 add: V5.1 config writer tests version at 0x91978d and 0x91b461.
     fields(QByteArray("qqqbqiibbbbqqiibbbbqq"), QStringLiteral("config.head"));
     list(QStringLiteral("config.40"));
-    fields(QByteArray("qbaaa"), QStringLiteral("config.flags"));
+    fields(legacy ? QByteArray("q") : QByteArray("qbaaa"), QStringLiteral("config.flags"));
     fields(QByteArray("qqiqq") + QByteArray(11, 'i'), QStringLiteral("config.48"));
     fields(QByteArray("qqiqq") + QByteArray(11, 'i'), QStringLiteral("config.88"));
     n = count(QStringLiteral("config.c8"));
@@ -567,7 +583,7 @@ void SourceDocument::configuration() //20261109-0 add
             list(indexed(name + QStringLiteral(".74"), j));
         }
         list(name + QStringLiteral(".64"));
-        list(name + QStringLiteral(".68"));
+        if (!legacy) { list(name + QStringLiteral(".68")); }
     }
     n = count(QStringLiteral("config.cc"));
     for (i = 0; i < n && error.isEmpty(); ++i) {
@@ -636,7 +652,42 @@ void SourceDocument::configuration() //20261109-0 add
         read('b', indexed(QStringLiteral("config.cc-again"), i));
     }
     read('i', QStringLiteral("config.29c"));
-    macros(QStringLiteral("config.284"));
+    if (legacy) { return; }
+    n = count(QStringLiteral("config.284"), 256); //20261127-14 change: Bound the image table independently of macros.
+    for (i = 0; i < n && error.isEmpty(); ++i) {
+        fields(QByteArray("qqqiix"), indexed(QStringLiteral("config.284"), i));
+    }
+}
+
+#include "native_record_source.cpp.inc" //20261127-11 add
+#include "native_container_source.cpp.inc" //20261127-11 add
+
+/******************************************************************************
+ * Function Name   : SourceDocument::commonControl
+ * Description     : Consume the shared V122 fields following a fully parsed group.
+ * Input Parameters: prefix
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void SourceDocument::commonControl(const QString &prefix) //20261127-11 add
+{
+    fields(QByteArray("bi"), prefix + QStringLiteral("common.touch"));
+    address(prefix + QStringLiteral("common.40"));
+    fields(QByteArray("iibi"), prefix + QStringLiteral("common.58"));
+    address(prefix + QStringLiteral("common.e4"));
+    fields(QByteArray("bi"), prefix + QStringLiteral("common.visibility"));
+    address(prefix + QStringLiteral("common.90"));
+    if (value(QStringLiteral("header.1")).toInt() == 113) { //20261128-1 add: Native ContainerItem ends after its two permission levels through V116.
+        fields("ii", prefix + QStringLiteral("common.a8"));
+        return;
+    }
+    fields(QByteArray("iii"), prefix + QStringLiteral("common.a8"));
+    address(prefix + QStringLiteral("common.60"));
+    fields(QByteArray("aqqi"), prefix + QStringLiteral("common.78"));
+    address(prefix + QStringLiteral("common.b0"));
+    fields(QByteArray("aqqii"), prefix + QStringLiteral("common.c8"));
+    address(prefix + QStringLiteral("common.fc"));
+    fields(QByteArray("qbi"), prefix + QStringLiteral("common.118"));
 }
 
 /******************************************************************************
@@ -655,63 +706,60 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
     int j;
     QString name;
 
-    if (count(prefix + QStringLiteral("children"), 3) != (kind == 10 ? 3 : 2)) {
-        reject(prefix, QStringLiteral("控件子图形数量与已核实类型不符"));
-        return;
-    }
-    type = read('i', prefix + QStringLiteral("rectangle.type")).toInt();
-    if (type != 0x1000f) {
-        reject(prefix, QStringLiteral("未知位按钮矩形子类型"));
-        return;
-    }
-    fields(QByteArray("ddddcicciddibqii"), prefix + QStringLiteral("rectangle"));
-    list(prefix + QStringLiteral("rectangle.labels"));
-    read('i', prefix + QStringLiteral("rectangle.1c"));
-    if (kind == 10) {
-        type = read('i', prefix + QStringLiteral("pixmap.type")).toInt();
-        if (type == 13) {
-            fields(QByteArray("qdddddddbi"), prefix + QStringLiteral("pixmap"));
-            list(prefix + QStringLiteral("pixmap.labels"));
-            read('i', prefix + QStringLiteral("pixmap.1c"));
-        } else if (type == 0x1000f) { //20261109-8 add: The original no-image option replaces the cached pixmap child with a filled rectangle.
-            fields(QByteArray("ddddcicciddibqii"), prefix + QStringLiteral("picture-rectangle"));
-            list(prefix + QStringLiteral("picture-rectangle.labels"));
-            read('i', prefix + QStringLiteral("picture-rectangle.1c"));
-        } else {
-            reject(prefix, QStringLiteral("未知位按钮图片子类型"));
+    SourceReader preview(bytes, m_position);
+    u32 children;
+
+    if (!preview.word(&children)) { reject(prefix, QStringLiteral("预览子图元计数被截断")); return; }
+    if (children != u32(kind == 10 ? 3 : 2)) { //20261127-11 add
+        // Factory projects also contain switches with two children. Preserve the actual preview group.
+        readNativeGroupChildren(*this, prefix, 0);
+    } else {
+        if (count(prefix + QStringLiteral("children"), 3) != (kind == 10 ? 3 : 2)) {
+            reject(prefix, QStringLiteral("控件子图形数量与已核实类型不符"));
             return;
         }
+        type = read('i', prefix + QStringLiteral("rectangle.type")).toInt();
+        if (type != 0x1000f) {
+            reject(prefix, QStringLiteral("未知位按钮矩形子类型"));
+            return;
+        }
+        fields(QByteArray("ddddcicciddibqii"), prefix + QStringLiteral("rectangle"));
+        list(prefix + QStringLiteral("rectangle.labels"));
+        read('i', prefix + QStringLiteral("rectangle.1c"));
+        if (kind == 10) {
+            type = read('i', prefix + QStringLiteral("pixmap.type")).toInt();
+            if (type == 13) {
+                fields(QByteArray("qdddddddbi"), prefix + QStringLiteral("pixmap"));
+                list(prefix + QStringLiteral("pixmap.labels"));
+                if (value(QStringLiteral("header.1")).toInt() > 114) { read('i', prefix + QStringLiteral("pixmap.1c")); }
+            } else if (type == 0x1000f) { //20261109-8 add: The original no-image option replaces the cached pixmap child with a filled rectangle.
+                fields(QByteArray("ddddcicciddibqii"), prefix + QStringLiteral("picture-rectangle"));
+                list(prefix + QStringLiteral("picture-rectangle.labels"));
+                read('i', prefix + QStringLiteral("picture-rectangle.1c"));
+            } else {
+                reject(prefix, QStringLiteral("未知位按钮图片子类型"));
+                return;
+            }
+        }
+        type = read('i', prefix + QStringLiteral("text.type")).toInt();
+        if (type != 0x10016) {
+            reject(prefix, QStringLiteral("未知位按钮文字子类型"));
+            return;
+        }
+        fields(QByteArray("ddddq"), prefix + QStringLiteral("text.head"));
+        read('q', prefix + QStringLiteral("font.family"));
+        fields(QByteArray("di") + QByteArray(5, 'a') + QByteArray("saii"), prefix + QStringLiteral("font.tail"));
+        fields(QByteArray("ccciibciqiddbi"), prefix + QStringLiteral("text.tail"));
+        list(prefix + QStringLiteral("text.labels"));
+        fields(QByteArray("bd"), prefix + QStringLiteral("text.end"));
+        type = read('i', prefix + QStringLiteral("group.metadata-type")).toInt();
+        read('q', prefix + QStringLiteral("group.metadata-name"));
+        if (type == 100 || type == 101) {
+            fields(QByteArray("iiii"), prefix + QStringLiteral("group.bounds"));
+        }
+        read('i', prefix + QStringLiteral("group.1c"));
     }
-    type = read('i', prefix + QStringLiteral("text.type")).toInt();
-    if (type != 0x10016) {
-        reject(prefix, QStringLiteral("未知位按钮文字子类型"));
-        return;
-    }
-    fields(QByteArray("ddddq"), prefix + QStringLiteral("text.head"));
-    read('q', prefix + QStringLiteral("font.family"));
-    fields(QByteArray("di") + QByteArray(5, 'a') + QByteArray("saii"), prefix + QStringLiteral("font.tail"));
-    fields(QByteArray("ccciibciqiddbi"), prefix + QStringLiteral("text.tail"));
-    list(prefix + QStringLiteral("text.labels"));
-    fields(QByteArray("bd"), prefix + QStringLiteral("text.end"));
-    type = read('i', prefix + QStringLiteral("group.metadata-type")).toInt();
-    read('q', prefix + QStringLiteral("group.metadata-name"));
-    if (type == 100 || type == 101) {
-        fields(QByteArray("iiii"), prefix + QStringLiteral("group.bounds"));
-    }
-    read('i', prefix + QStringLiteral("group.1c"));
-    fields(QByteArray("bi"), prefix + QStringLiteral("common.touch"));
-    address(prefix + QStringLiteral("common.40"));
-    fields(QByteArray("iibi"), prefix + QStringLiteral("common.58"));
-    address(prefix + QStringLiteral("common.e4"));
-    fields(QByteArray("bi"), prefix + QStringLiteral("common.visibility"));
-    address(prefix + QStringLiteral("common.90"));
-    fields(QByteArray("iii"), prefix + QStringLiteral("common.a8"));
-    address(prefix + QStringLiteral("common.60"));
-    fields(QByteArray("aqqi"), prefix + QStringLiteral("common.78"));
-    address(prefix + QStringLiteral("common.b0"));
-    fields(QByteArray("aqqii"), prefix + QStringLiteral("common.c8"));
-    address(prefix + QStringLiteral("common.fc"));
-    fields(QByteArray("qbi"), prefix + QStringLiteral("common.118"));
+    commonControl(prefix); //20261127-11 change
     if (kind == 28) {
         fields(QByteArray("bbssiqssqqsqqsbbbissssssi"), prefix + QStringLiteral("static.head"));
         n = count(prefix + QStringLiteral("static.194"), 32);
@@ -722,8 +770,12 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
         return;
     }
     type = read('i', prefix + QStringLiteral("switch.mode")).toInt();
-    if (type != 0 && type != 1 && type != 3 && type != 4) { //20261110-0 change: Function buttons contain their own address-free system-operation union.
-        reject(prefix, QStringLiteral("未知控件子类型；仅支持位按钮 subtype 0、字按钮 subtype 1、功能按钮 subtype 3 和指示灯 subtype 4"));
+    if (value(QStringLiteral("header.1")).toInt() == 113 && type != 0) {
+        reject(prefix, QStringLiteral("未核实的 V113 开关模式 %1").arg(type));
+        return;
+    }
+    if (type < 0 || type > 5) { //20261110-0 change: Function buttons contain their own address-free system-operation union.
+        reject(prefix, QStringLiteral("未知的原厂开关控件子类型"));
         return;
     }
     if (type == 0) {
@@ -736,6 +788,17 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
             address(prefix + QStringLiteral("word.198"));
         }
         fields(QByteArray("ii"), prefix + QStringLiteral("word.18c"));
+    } else if (type == 2) { //20261127-11 add
+        fields("iqibibi", prefix + QStringLiteral("screen"));
+    } else if (type == 5) {
+        fields("ib", prefix + QStringLiteral("multi.head"));
+        address(prefix + QStringLiteral("multi.address0"));
+        address(prefix + QStringLiteral("multi.address1"));
+        read('i', prefix + QStringLiteral("multi.operation"));
+        n = count(prefix + QStringLiteral("multi.values"), 65535);
+        for (i = 0; i < n && error.isEmpty(); ++i) {
+            read('d', indexed(prefix + QStringLiteral("multi.value"), i));
+        }
     } else if (type == 3) { //20261110-0 add: The original writer stores function/type, an opaque QString and two bytes, then an i32 key and QString text.
         fields(QByteArray("iiqbbiq"), prefix + QStringLiteral("function.1c8"));
     }
@@ -747,7 +810,7 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
         read('d', indexed(prefix + QStringLiteral("switch.278"), i));
     }
     fields(QByteArray("iii"), prefix + QStringLiteral("switch.274"));
-    n = count(prefix + QStringLiteral("switch.290"), type == 4 ? 65535 : 2); //20261109-8 change: This is an allocation guard, not a claimed native UI maximum.
+    n = count(prefix + QStringLiteral("switch.290"), (type == 4 || type == 5) ? 65535 : 2); //20261109-8 change: This is an allocation guard, not a claimed native UI maximum.
     for (i = 0; i < n && error.isEmpty(); ++i) {
         name = indexed(prefix + QStringLiteral("switch.290"), i);
         m = count(name, 32);
@@ -755,11 +818,11 @@ void SourceDocument::control(const QString &prefix, int kind) //20261109-0 add
             fields(QByteArray("cqiiq"), indexed(name, j));
         }
     }
-    n = count(prefix + QStringLiteral("switch.294"), type == 4 ? 65535 : 2); //20261109-8 change
+    n = count(prefix + QStringLiteral("switch.294"), (type == 4 || type == 5) ? 65535 : 2); //20261109-8 change
     for (i = 0; i < n && error.isEmpty(); ++i) {
         fields(QByteArray("iqiic"), indexed(prefix + QStringLiteral("switch.294"), i));
     }
-    fields(QByteArray("biibbaabb"), prefix + QStringLiteral("switch.tail"));
+    fields(value(QStringLiteral("header.1")).toInt() == 113 ? QByteArray("biib") : QByteArray("biibbaabb"), prefix + QStringLiteral("switch.tail"));
 }
 
 /******************************************************************************
@@ -893,19 +956,41 @@ void SourceDocument::page(const QString &pagePrefix) //20261110-5 change
     int type;
     QString name;
 
-    fields(QByteArray("ddddcciiqiiaqbbiiaqqb"), pagePrefix + QStringLiteral(".head"));
+    const bool legacy = value(QStringLiteral("header.1")).toInt() == 113; //20261128-1 add: Preserve stable field names across the original page-writer version branches.
+    if (legacy) {
+        fields("ddddcciiq", pagePrefix + QStringLiteral(".head"));
+        fields("bbiiaqqb", pagePrefix + QStringLiteral(".head"), 13);
+    } else {
+        fields(QByteArray("ddddcciiqiiaqbbiiaqqb"), pagePrefix + QStringLiteral(".head"));
+    }
     n = count(pagePrefix + QStringLiteral(".94"));
     for (i = 0; i < n && error.isEmpty(); ++i) {
         name = indexed(pagePrefix + QStringLiteral(".94"), i);
         address(name + QStringLiteral(".address"));
-        fields(QByteArray("biiiiqqs"), name + QStringLiteral(".tail"));
+        fields(QByteArray("biiiqqs"), name + QStringLiteral(".tail")); //20261127-11 change: Native page writer 0xa61b86..0xa61cd4 emits three int32 fields.
     }
-    fields(QByteArray("bbiiibbbbqqqqi"), pagePrefix + QStringLiteral(".tail"));
+    fields(legacy ? QByteArray("bbiii") : QByteArray("bbiiibbbbqqqqi"), pagePrefix + QStringLiteral(".tail"));
     n = count(pagePrefix + QStringLiteral(".objects"), 1024);
     for (i = 0; i < n && error.isEmpty(); ++i) {
         name = indexed(pagePrefix == QStringLiteral("page") ? QStringLiteral("object") : pagePrefix + QStringLiteral(".object"), i) + QStringLiteral(".");
         read('b', name + QStringLiteral("movable"));
         type = read('i', name + QStringLiteral("type")).toInt();
+        if (legacy && type != 10 && type != 12 && type != 28) {
+            reject(name, QStringLiteral("未核实的 V113 顶层元件类型 %1").arg(type));
+            return;
+        }
+        if (isImageDisplayType(type)) { //20261127-14 add
+            objectPrefixes.append(name);
+            readNativeImageDisplay(*this, name, type);
+            read('d', name + QStringLiteral("z"));
+            continue;
+        }
+        if (type == 12 || type == 16 || type == 17) { //20261127-13 add
+            objectPrefixes.append(name);
+            readNativeDataDisplay(*this, name, type);
+            read('d', name + QStringLiteral("z"));
+            continue;
+        }
         if (type == 36) //20261127-9 add
         {
             objectPrefixes.append(name);
@@ -916,6 +1001,12 @@ void SourceDocument::page(const QString &pagePrefix) //20261110-5 change
         if (!nativeStrokeTypes().key(type).isEmpty() || !nativeClosedGraphicTypes().key(type).isEmpty()) //20261127-6 change
         {
             flatGraphic(name, type);
+            read('d', name + QStringLiteral("z"));
+            continue;
+        }
+        if (retainedContainer(type)) { //20261127-11 add
+            objectPrefixes.append(name);
+            readRetainedRecord(*this, name, type);
             read('d', name + QStringLiteral("z"));
             continue;
         }
@@ -992,6 +1083,12 @@ bool SourceDocument::parse() //20261109-0 add
     }
     for (i = 0; i < n && error.isEmpty(); ++i) {
         page(i == 0 ? QStringLiteral("page") : indexed(QStringLiteral("page"), i));
+    }
+    //20261127-11 add: V5.1 writer 0x4b0378 / 0x4b05d1 selects the extra page from the saved flag and nonempty name.
+    if (error.isEmpty() && value(QStringLiteral("header.1")).toInt() > 101 &&
+        value(QStringLiteral("system.tail.0")).toInt() != 0 &&
+        !value(QStringLiteral("system.tail.1")).toString().isEmpty()) {
+        page(QStringLiteral("startup"));
     }
     history();
     read('i', QStringLiteral("trailer.param3"));
@@ -1744,6 +1841,50 @@ static bool hasRetainedMacroAddresses(const SourceDocument &document) //20261127
 }
 
 /******************************************************************************
+ * Function Name   : sourcePictures
+ * Description     : Restore verified inline PNG library records and reject unknown image formats or inconsistent dimensions.
+ * Input Parameters: document, pictures, error
+ * Return Value    : True after complete bounded PNG-pool validation.
+ * Date            : 2026.11.11
+ ******************************************************************************/
+bool sourcePictures(const SourceDocument &document, QMap<QString, QByteArray> *pictures, QString *error) //20261127-14 add
+{
+    QMap<QString, QByteArray> result;
+    QByteArray png;
+    QImage image;
+    QString prefix;
+    QString name;
+    qsizetype bytes;
+    int count;
+    int i;
+
+    count = document.value(QStringLiteral("config.284.count")).toInt();
+    if (count > 256) {
+        return fail(error, QStringLiteral("原生工程图片数量超过 256 项读取保护。"));
+    }
+    bytes = 0;
+    for (i = 0; i < count; ++i) {
+        prefix = SourceDocument::indexed(QStringLiteral("config.284"), i);
+        name = document.value(prefix + QStringLiteral(".0")).toString();
+        png = document.value(prefix + QStringLiteral(".5")).toByteArray();
+        bytes += png.size();
+        if (name.trimmed().isEmpty() || name.size() > 256 || result.contains(name) ||
+            document.value(prefix + QStringLiteral(".2")).toString() != QStringLiteral("PNG") ||
+            bytes > MaximumSourceBytes) {
+            return fail(error, QStringLiteral("原生工程图片名称重复、格式未恢复或资源大小超过读取保护；请保留原源归档。"));
+        }
+        image = decodedControlPng(png);
+        if (image.isNull() || image.width() != document.value(prefix + QStringLiteral(".3")).toInt() ||
+            image.height() != document.value(prefix + QStringLiteral(".4")).toInt()) {
+            return fail(error, QStringLiteral("原生工程 PNG 内容无效或保存的宽高与源图片不符。"));
+        }
+        result.insert(name, png);
+    }
+    *pictures = result;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : sourceProject
  * Description     : Convert verified native controls and retain the complete original source snapshot.
  * Input Parameters: document, project, error
@@ -1785,9 +1926,16 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     BitButtonState *appearance;
     PlcConnection connection;
 
+    if (document.value(QStringLiteral("header.1")).toInt() == 113) { //20261128-1 add: Retain the native page model until its canvas projection and compilation are verified.
+        return fail(error, QStringLiteral("V113 工程可在原厂源工程窗口编辑工程名、层级和移动锁。"));
+    }
+    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
+        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
+    }
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only multi-page boundary recognition is not a semantic editing contract.
         return fail(error, QStringLiteral("原生源含多个页面；当前语义互通仅支持一个普通页面，请保留整源归档，不能截取第一页导入。"));
     }
+    if (!sourcePictures(document, &result.pictures, error)) { return false; } //20261127-14 add
     result.name = QFileInfo(document.value(QStringLiteral("trailer.settings.1")).toString()).completeBaseName();
     if (result.name.isEmpty()) {
         result.name = QStringLiteral("NativeProject");
@@ -1842,6 +1990,32 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     external = false;
     for (i = 0; i < document.objectPrefixes.size(); ++i) {
         prefix = document.objectPrefixes.at(i);
+        if ((document.value(prefix + QStringLiteral("type")).toInt() == 10 ||
+             document.value(prefix + QStringLiteral("type")).toInt() == 28) &&
+            !document.values.contains(prefix + QStringLiteral("rectangle.type"))) {
+            return fail(error, QStringLiteral("原厂控件使用独立的预览子图元组合，请使用原厂源工程窗口保留该外观。"));
+        }
+
+        if (retainedContainer(document.value(prefix + QStringLiteral("type")).toInt()) ||
+            (document.value(prefix + QStringLiteral("type")).toInt() == 10 &&
+             (document.value(prefix + QStringLiteral("switch.mode")).toInt() == 2 ||
+              document.value(prefix + QStringLiteral("switch.mode")).toInt() == 5))) { //20261127-11 add
+            return fail(error, QStringLiteral("原厂类型 %1 的记录已解析，画布属性尚未完整映射。可用源文件编辑器保留该工程。")
+                               .arg(document.value(prefix + QStringLiteral("type")).toInt()));
+        }
+        if (isImageDisplayType(document.value(prefix + QStringLiteral("type")).toInt())) { //20261127-14 add
+            if (!sourceNativeImageDisplay(document, prefix, i, result.pictures, &object,
+                                          &result.nativeSourceWarnings, &external, error)) { return false; }
+            object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
+            result.objects.append(object);
+            continue;
+        }
+        if (document.values.contains(prefix + QStringLiteral("display.mode"))) { //20261127-13 add
+            if (!sourceDataDisplay(document, prefix, i, &object, &external, error)) { return false; }
+            object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
+            result.objects.append(object);
+            continue;
+        }
         if (document.value(prefix + QStringLiteral("type")).toInt() == 36) //20261127-9 add
         {
             if (!sourceTable(document, prefix, i, &object, error)) { return false; }
@@ -2097,8 +2271,11 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     }
     macroCount = document.value(QStringLiteral("history.1e4.count")).toInt();
     if (document.value(QStringLiteral("history.1981f8.count")).toInt() != 0 ||
-        document.value(QStringLiteral("system.194.count")).toInt() != 0 || document.value(QStringLiteral("config.284.count")).toInt() != 0) {
+        document.value(QStringLiteral("system.194.count")).toInt() != 0) {
         return fail(error, QStringLiteral("原生工程包含尚未恢复到编辑模型的宏变量、启动宏或系统宏；仅可保留原始归档，不能作为普通宏工程导入。"));
+    }
+    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
+        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
     }
     if (hasRetainedMacroAddresses(document)) { //20261127-10 add
         result.nativeSourceWarnings.append(QStringLiteral("已保留原厂宏地址表。可以编辑画面并保存 SM；修改宏定义或独立设备编译需要先支持这些地址记录。"));
@@ -2158,6 +2335,7 @@ class SourceUpdates
 {
 public:
     const SourceDocument &document;
+    QMap<QString, QByteArray> picturePool; //20261127-14 add: Native image rows reference this validated pool.
     QMap<qsizetype, QPair<qsizetype, QByteArray>> replacements;
     QString error;
 
@@ -2289,7 +2467,110 @@ public:
     }
 };
 
+#include "native_data_display_source.cpp.inc" //20261127-13 add
+
 #include "native_table_source.cpp.inc" //20261127-9 add
+
+/******************************************************************************
+ * Function Name   : patchSourcePictures
+ * Description     : Rebuild the verified inline PNG library while preserving untouched native descriptions and record bytes.
+ * Input Parameters: document, original, current, updates, error
+ * Return Value    : True when all exported state PNGs have unambiguous native resource IDs.
+ * Date            : 2026.11.11
+ ******************************************************************************/
+bool patchSourcePictures(const SourceDocument &document, const HmiProject &original, const HmiProject &current,
+                         SourceUpdates *updates, QString *error) //20261127-14 add
+{
+    QMap<QString, QByteArray> pictures;
+    QMap<QString, QByteArray>::const_iterator picture;
+    QMap<QString, int> originals;
+    QByteArray block;
+    QByteArray record;
+    QDataStream stream(&record, QIODevice::WriteOnly);
+    QImage image;
+    QString prefix;
+    QString name;
+    SourceUpdates recordUpdates(document);
+    qsizetype start;
+    qsizetype end;
+    qsizetype bytes;
+    int count;
+    int i;
+
+    pictures = current.pictures;
+    for (i = 0; i < current.objects.size(); ++i) {
+        if (current.objects.at(i).hasImageDisplayProperties) { //20261127-14 add
+            for (const ImageDisplayState &entry : current.objects.at(i).imageDisplay.states) {
+                if (entry.picturePng.isEmpty()) { continue; }
+                if (pictures.contains(entry.picture) && pictures.value(entry.picture) != entry.picturePng) {
+                    return fail(error, QStringLiteral("同一原厂图片标识引用两份不同的 PNG。"));
+                }
+                pictures.insert(entry.picture, entry.picturePng);
+            }
+        }
+    }
+    if (pictures.size() > 256) {
+        return fail(error, QStringLiteral("原生 PNG 图库超过 256 项写入保护。"));
+    }
+    bytes = 0;
+    for (picture = pictures.constBegin(); picture != pictures.constEnd(); ++picture) {
+        bytes += picture.value().size();
+        if (picture.key().trimmed().isEmpty() || picture.key().size() > 256 ||
+            picture.key().contains(QLatin1Char('/')) || picture.key().contains(QLatin1Char('\\')) ||
+            bytes > MaximumSourceBytes || !validateButtonImage(picture.value())) {
+            return fail(error, QStringLiteral("原生 PNG 图片名称或内容无效，或工程图片总大小超过保护范围。"));
+        }
+    }
+    updates->picturePool = pictures;
+    if (pictures == original.pictures) {
+        return true;
+    }
+    count = document.value(QStringLiteral("config.284.count")).toInt();
+    for (i = 0; i < count; ++i) {
+        prefix = SourceDocument::indexed(QStringLiteral("config.284"), i);
+        originals.insert(document.value(prefix + QStringLiteral(".0")).toString(), i);
+    }
+    appendWord(&block, static_cast<u32>(pictures.size()));
+    // Existing records keep their source order and descriptions; newly named PNGs follow in key order.
+    for (i = 0; i < count; ++i) {
+        prefix = SourceDocument::indexed(QStringLiteral("config.284"), i);
+        name = document.value(prefix + QStringLiteral(".0")).toString();
+        if (!pictures.contains(name)) {
+            continue;
+        }
+        recordUpdates.replacements.clear();
+        if (pictures.value(name) != original.pictures.value(name)) {
+            image = decodedControlPng(pictures.value(name));
+            recordUpdates.set(prefix + QStringLiteral(".3"), image.width());
+            recordUpdates.set(prefix + QStringLiteral(".4"), image.height());
+            recordUpdates.set(prefix + QStringLiteral(".5"), pictures.value(name));
+        }
+        start = document.values.value(prefix + QStringLiteral(".0")).start;
+        end = document.values.value(prefix + QStringLiteral(".5")).end;
+        block.append(recordUpdates.render(start, end));
+        if (!recordUpdates.error.isEmpty()) {
+            return fail(error, recordUpdates.error);
+        }
+    }
+    stream.setVersion(QDataStream::Qt_4_8);
+    for (picture = pictures.constBegin(); picture != pictures.constEnd(); ++picture) {
+        if (originals.contains(picture.key())) {
+            continue;
+        }
+        record.clear();
+        stream.device()->seek(0);
+        image = decodedControlPng(picture.value());
+        stream << picture.key() << picture.key() << QStringLiteral("PNG") << image.width() << image.height() << picture.value();
+        if (stream.status() != QDataStream::Ok) {
+            return fail(error, QStringLiteral("原生 PNG 图库记录编码失败。"));
+        }
+        block.append(record);
+    }
+    start = document.values.value(QStringLiteral("config.284.count")).start;
+    end = document.values.value(QStringLiteral("project.pages.count")).start;
+    updates->replacements.insert(start, qMakePair(end, block));
+    return true;
+}
 
 /******************************************************************************
  * Function Name   : patchScalar
@@ -2597,6 +2878,8 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     after.remove(QStringLiteral("transparent"));
     return before == after;
 }
+
+#include "native_image_display_source.cpp.inc" //20261127-14 add
 
 /******************************************************************************
  * Function Name   : patchStaticText
@@ -3574,7 +3857,7 @@ bool patchSourceMacros(const SourceDocument &document, const HmiProject &origina
         return fail(error, QStringLiteral("原厂宏地址表仍由源快照保留，无法在保全引用的同时改写宏定义。"));
     }
     if (current.macros.size() > 100 || document.value(QStringLiteral("history.1981f8.count")).toInt() != 0 ||
-        document.value(QStringLiteral("system.194.count")).toInt() != 0 || document.value(QStringLiteral("config.284.count")).toInt() != 0) {
+        document.value(QStringLiteral("system.194.count")).toInt() != 0) {
         return fail(error, QStringLiteral("原生宏源编辑仅支持最多100项普通宏；启动宏、全局变量或其它宏类型元数据尚未核实。"));
     }
     for (macro = current.macros.constBegin(); macro != current.macros.constEnd(); ++macro) {
@@ -3752,14 +4035,18 @@ bool inspectNativeProjectEnvelope(const QByteArray &data, NativeProjectEnvelope 
     if (!reader.word(&result.version)) {
         return fail(error, QStringLiteral("原生工程缺少版本号。"));
     }
-    if (result.version != 122) {
-        return fail(error, QStringLiteral("不支持的原生工程版本 %1；目前仅核实版本 122 的文件头。")
+    if (result.version != 122 && result.version != 113) {
+        return fail(error, QStringLiteral("不支持的原生工程版本 %1；目前核实版本 113 和 122 的文件头。")
                                .arg(result.version));
     }
     if (!reader.string(&result.targetModel)) {
         return fail(error, QStringLiteral("原生工程型号 QString 被截断或长度无效。"));
     }
-    if (deviceTargetIdentityByte(result.targetModel) < 0) { //20261122-3 change
+    if (result.version == 113 && result.targetModel != QStringLiteral("KNS035") && result.targetModel != QStringLiteral("KNS043")) {
+        return fail(error, QStringLiteral("尚未核实该 V113 工程头型号：%1。").arg(result.targetModel));
+    }
+    if (result.version == 122 && deviceTargetIdentityByte(result.targetModel) < 0 && result.targetModel != QStringLiteral("KNS043") &&
+        result.targetModel != QStringLiteral("AMZ043W01")) { //20261127-11 change
         return fail(error, QStringLiteral("尚未核实该型号的原生工程结构：%1。")
                                .arg(result.targetModel));
     }
@@ -3909,6 +4196,33 @@ bool normalizeNativeControlSizes(QByteArray *snapshot, QString *error) //2026112
 }
 
 /******************************************************************************
+ * Function Name   : supportsUnassignedSerialDefaults
+ * Description     : Admit the second native COM1/COM2 default fingerprint only on purely drawn pages.
+ * Input Parameters: document, normalizedConfigHash
+ * Return Value    : True for the observed empty serial profile without any register or macro consumers.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool supportsUnassignedSerialDefaults(const SourceDocument &document,
+                                            const QByteArray &normalizedConfigHash) //20261127-12 add
+{
+    if (normalizedConfigHash != QByteArrayLiteral("d44eb75f7476affc81162f95f805302932771ed3b716b225c0ae3c39fd692ae9") ||
+        document.value(QStringLiteral("system.174.count")).toInt() != 0 ||
+        document.value(QStringLiteral("system.178.count")).toInt() != 0) {
+        return false;
+    }
+    // The two descriptor strings and all other settings are covered by the hash above.
+    // A line, box or static grid has no PLC address that can activate an unassigned port.
+    for (const QString &prefix : document.objectPrefixes) {
+        if (!document.values.contains(prefix + QStringLiteral("box.pen.0")) &&
+            !document.values.contains(prefix + QStringLiteral("curve.elements.count")) &&
+            document.value(prefix + QStringLiteral("type")).toInt() != 36) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : nativeProjectUsesSupportedDeviceDefaults
  * Description     : Restrict device compilation to independently verified native configuration bytes.
  * Input Parameters: data, error
@@ -4040,7 +4354,8 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     systemHash = QCryptographicHash::hash(normalizedSystem, QCryptographicHash::Sha256).toHex();
     configHash = QCryptographicHash::hash(normalizedConfig, QCryptographicHash::Sha256).toHex();
     if (systemHash != QByteArray("61a579ec33b23d2872dc3d31f9900a72b24f6e56b1826bcd40b73dd7fbbc14a6") ||
-        configHash != QByteArray("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba")) {
+        (configHash != QByteArray("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba") &&
+         !supportsUnassignedSerialDefaults(document, configHash))) { //20261127-12 change
         return fail(error, QStringLiteral("该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"));
     }
     clearError(error);
@@ -4048,33 +4363,20 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
 }
 
 /******************************************************************************
- * Function Name   : authenticateNativeProjectFile
- * Description     : Validate the recovered protection flag and compare the original Qt string without returning it.
- * Input Parameters: data, password, protectedFile, passwordRequired, error
- * Return Value    : True after structural and optional password checks pass.
- * Date            : 2026.11.23
+ * Function Name   : authenticatedSource
+ * Description     : Check the active file password on an already validated source stream.
+ * Input Parameters: document, submitted password, optional authentication state, error
+ * Return Value    : True when the active access condition is satisfied.
+ * Date            : 2026.11.27
  ******************************************************************************/
-bool authenticateNativeProjectFile(const QByteArray &data, const QString &password,
-                                    bool *protectedFile, bool *passwordRequired,
-                                    QString *error) //20261123-17 add
+static bool authenticatedSource(const SourceDocument &document, const QString &password,
+                                bool *protectedFile, bool *passwordRequired, QString *error) //20261127-11 add
 {
-    SourceDocument document(data);
     int enabled;
     QString expected;
 
-    if (passwordRequired != nullptr)
-    {
-        *passwordRequired = false;
-    }
-    if (protectedFile != nullptr)
-    {
-        *protectedFile = false;
-    }
-    if (!document.parse())
-    {
-        return fail(error, document.error);
-    }
-
+    if (passwordRequired) { *passwordRequired = false; }
+    if (protectedFile) { *protectedFile = false; }
     enabled = document.value(QStringLiteral("config.270.0")).toInt();
     if (enabled == 0)
     {
@@ -4102,6 +4404,35 @@ bool authenticateNativeProjectFile(const QByteArray &data, const QString &passwo
     }
     clearError(error);
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : authenticateNativeProjectFile
+ * Description     : Validate the recovered protection flag and compare the original Qt string without returning it.
+ * Input Parameters: data, password, protectedFile, passwordRequired, error
+ * Return Value    : True after structural and optional password checks pass.
+ * Date            : 2026.11.23
+ ******************************************************************************/
+bool authenticateNativeProjectFile(const QByteArray &data, const QString &password,
+                                    bool *protectedFile, bool *passwordRequired,
+                                    QString *error) //20261123-17 add
+{
+    SourceDocument document(data);
+
+    if (passwordRequired != nullptr)
+    {
+        *passwordRequired = false;
+    }
+    if (protectedFile != nullptr)
+    {
+        *protectedFile = false;
+    }
+    if (!document.parse())
+    {
+        return fail(error, document.error);
+    }
+
+    return authenticatedSource(document, password, protectedFile, passwordRequired, error);
 }
 
 /******************************************************************************
@@ -4307,6 +4638,9 @@ bool importNativeProjectSource(const QByteArray &data, HmiProject *project,
     }
     if (!document.parse()) {
         return fail(error, document.error);
+    }
+    if (document.values.contains(QStringLiteral("startup.head.18"))) { //20261127-11 add
+        return fail(error, QStringLiteral("工程含独立启动画面，请使用原厂源工程窗口保留并编辑。"));
     }
     if (document.value(QStringLiteral("project.pages.count")).toInt() > 1) //20261127-8 add
     {
@@ -4690,9 +5024,7 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     before.remove(QStringLiteral("macroIds")); after.remove(QStringLiteral("macroIds"));
     before.remove(QStringLiteral("configurationNodes")); after.remove(QStringLiteral("configurationNodes")); //20261123-23 change: Only project macro schedules pass the topology gate.
     before.remove(QStringLiteral("references")); after.remove(QStringLiteral("references"));
-    if (project.pictures != original.pictures) {
-        return fail(error, QStringLiteral("原生源保存尚未验证图库条目的改写，已取消保存。"));
-    }
+    if (!patchSourcePictures(document, original, project, &updates, error)) { return false; } //20261127-14 change
     if (!patchSourceMacros(document, original, project, &updates, error) ||
         !patchSourceMacroSchedules(document, original, project, &updates, error)) { //20261123-23 change
         return false;
@@ -4779,6 +5111,49 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         originalIndices.insert(original.objects.at(i).id, i);
     }
     for (i = 0; i < project.objects.size(); ++i) {
+        if (project.objects.at(i).type == QStringLiteral("image") || project.objects.at(i).type == QStringLiteral("qrcode")) { //20261127-14 add
+            const HmiObject &display = project.objects.at(i);
+            if (!display.group.isEmpty() || display.id.isEmpty() || ids.contains(display.id)) { return fail(error, QStringLiteral("图片或二维码的分组尚未映射，或控件编号为空或重复。")); }
+            ids.insert(display.id);
+            originalIndex = newProject ? -1 : originalIndices.value(display.id, -1);
+            if (originalIndex >= 0 && original.objects.at(originalIndex).type != display.type) {
+                return fail(error, QStringLiteral("已有原厂控件不能改换成图片显示类型。"));
+            }
+            prefix = originalIndex < 0 ? QString() : document.objectPrefixes.at(originalIndex);
+            if (!writeNativeImageDisplay(display, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
+                                         document, prefix, updates.picturePool, &objectBytes, error)) { return false; }
+            QByteArray record;
+            QDataStream stream(&record, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
+            stream.writeRawData(objectBytes.constData(), objectBytes.size());
+            stream << display.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("图片对象层级编码失败。")); }
+            objectBlock.append(record);
+            continue;
+        }
+        if (project.objects.at(i).type == QStringLiteral("number") || project.objects.at(i).type == QStringLiteral("ascii") ||
+            project.objects.at(i).type == QStringLiteral("time")) { //20261127-13 add
+            const HmiObject &display = project.objects.at(i);
+            if (display.id.isEmpty() || ids.contains(display.id)) { return fail(error, QStringLiteral("显示器编号为空或重复。")); }
+            ids.insert(display.id);
+            originalIndex = newProject ? -1 : originalIndices.value(display.id, -1);
+            if (originalIndex >= 0 && original.objects.at(originalIndex).type != display.type) {
+                return fail(error, QStringLiteral("原厂源已有控件不能改换显示器类型。"));
+            }
+            prefix = originalIndex < 0 ? QString() : document.objectPrefixes.at(originalIndex);
+            if (!writeNativeDataDisplay(display, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
+                                        document, prefix, &objectBytes, error)) { return false; }
+            QByteArray record;
+            QDataStream stream(&record, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
+            stream.writeRawData(objectBytes.constData(), objectBytes.size());
+            stream << display.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("显示器写入失败。")); }
+            objectBlock.append(record);
+            continue;
+        }
         if (project.objects.at(i).type == QStringLiteral("table")) //20261127-9 add
         {
             const HmiObject &table = project.objects.at(i);
@@ -5041,3 +5416,6 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
     clearError(error);
     return true;
 }
+
+#include "native_load_metadata.cpp.inc" //20261128-0 add
+#include "native_source_edits.cpp.inc" //20261127-11 add

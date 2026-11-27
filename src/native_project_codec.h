@@ -170,4 +170,37 @@ bool importNativeProjectSource(const QByteArray &data, HmiProject *project,
 bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
                                 QString *error = nullptr); //20261109-0 add
 
+//20261127-11 add: A native-only project retains its original stream and exposes only proven edits.
+struct NativeSourceRoot
+{
+    QString prefix;
+    QString name;
+    int type = 0;
+    bool movable = false;
+    double layer = 0;
+};
+struct NativeSourcePage
+{
+    QString name;
+    QString number;
+    QList<NativeSourceRoot> roots;
+};
+struct NativeSourceIndex
+{
+    QString title;
+    QString model;
+    int version = 0;
+    QList<NativeSourcePage> pages;
+};
+struct NativeSourceEdit
+{
+    QString prefix;
+    bool movable;
+    double layer;
+};
+bool readNativeSourceIndex(const QByteArray &data, const QString &password, NativeSourceIndex *index, QString *error);
+bool editNativeSource(const QByteArray &data, const QString &password, const QString &title,
+                      const QList<NativeSourceEdit> &edits, QByteArray *result, QString *error);
+bool saveNativeSourceFile(const QString &path, const QByteArray &data, QString *error);
+
 #endif

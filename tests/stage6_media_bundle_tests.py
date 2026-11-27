@@ -109,6 +109,31 @@ class MediaBundleTests(unittest.TestCase):
         (self.source / "load.kns").write_bytes(target.getvalue())
 
     # /**************************************************************************
+    # Function Name   : test_pack_rebuilds_native_sample_byte_for_byte
+    # Description     : Rebuild a genuine native archive from independent loose files and DOS times.
+    # Input Parameters: None.
+    # Return Value    : None.
+    # Date            : 2026.11.27
+    # **************************************************************************/
+    def test_pack_rebuilds_native_sample_byte_for_byte(self):  #20261127-12 add
+        reference = Path(__file__).resolve().parents[1] / "samples/native-device-test/compile-test"
+        loose = self.root / "compiler-files"
+        loose.mkdir()
+        expected = (reference / "load.kns").read_bytes()
+        with zipfile.ZipFile(io.BytesIO(expected)) as original:
+            for info in original.infolist():
+                entry = loose / info.filename
+                entry.write_bytes((reference / info.filename).read_bytes())
+                modified = bundle.datetime(*info.date_time).timestamp()
+                os.utime(entry, (modified, modified))
+        destination = self.root / "output.kns"
+        bundle.pack_native_media(loose, destination)
+        self.assertEqual(destination.read_bytes(), expected)
+        with self.assertRaises(bundle.BundleError):
+            bundle.pack_native_media(loose, destination)
+        self.assertEqual(destination.read_bytes(), expected)
+
+    # /**************************************************************************
     # Function Name   : snapshot
     # Description     : Hash all existing source files for preservation assertions.
     # Input Parameters: None.

@@ -1,4 +1,5 @@
 #include "project_model.h"
+#include "native_project_codec.h" //20261127-12 add
 #include "static_text_dialog.h"
 #include "static_text_renderer.h"
 #include "hmi_canvas.h"
@@ -1387,16 +1388,19 @@ void StaticTextTests::bitDeviceFailureAndSourceSnapshot() //20261109-0 add
     QVector<QByteArray> blocks;
     QVector<QByteArray> original;
     QTemporaryDir directory;
-    QJsonDocument source;
+    QByteArray source; //20261127-12 change
     QString error;
     QString output;
 
     project.objects = {buttonObject()};
     QVERIFY2(buildProjectPayload(project, &blocks, &error), qPrintable(error));
     original = blocks;
-    source = QJsonDocument::fromJson(qUncompress(blocks.at(7)));
-    QVERIFY2(HmiProject::fromJson(source.object(), &loaded, &error), qPrintable(error));
-    QCOMPARE(loaded.toJson(), project.toJson());
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QCOMPARE(qUncompress(blocks.at(7)), source);
+    QVERIFY2(importNativeProjectSource(source, &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.size(), 1);
+    QCOMPARE(loaded.objects.first().bitButton.toJson(), project.objects.first().bitButton.toJson());
+    QCOMPARE(loaded.objects.first().geometry, project.objects.first().geometry);
     output = directory.filePath(QStringLiteral("invalid"));
     project.objects[0].bitButton.pressTimeEnabled = true;
     project.objects[0].bitButton.pressTime = 656;

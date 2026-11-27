@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and copy a scoped native media bundle or recover an existing project snapshot.
+"""Pack compiler output into native KNS, validate media bundles, or recover project snapshots.
 
 This tool does not compile a project or synthesize media metadata. The caller
 supplies a native-generated compile directory; structural checks cannot certify
@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import stat
@@ -184,11 +185,24 @@ def extract_project_snapshot(source, destination, container="file"):  #20261119-
     parent = _ordinary_path(output.parent)
     if not stat.S_ISDIR(parent.st_mode) or os.path.lexists(output):
         raise BundleError("Destination must be absent in an existing ordinary directory")
+    _publish_archive_bytes(output, decoded, parent)
+    report["destination"] = str(output)
+    return report
+
+
+# /******************************************************************************
+# Function Name   : _publish_archive_bytes
+# Description     : Publish a complete archive via an exclusive directory-local temporary file.
+# Input Parameters: output, data, parent: destination, file bytes and parent stat.
+# Return Value    : None.
+# Date            : 2026.11.27
+# ******************************************************************************/
+def _publish_archive_bytes(output, data, parent):  #20261127-12 add
     staged = None
     try:
         with tempfile.NamedTemporaryFile(prefix=".kinseal-snapshot-", dir=output.parent, delete=False) as stream:
             staged = Path(stream.name)
-            stream.write(decoded)
+            stream.write(data)
             stream.flush()
             os.fsync(stream.fileno())
         current = _ordinary_path(output.parent)
@@ -201,8 +215,80 @@ def extract_project_snapshot(source, destination, container="file"):  #20261119-
     finally:
         if staged is not None:
             staged.unlink(missing_ok=True)
-    report["destination"] = str(output)
-    return report
+
+
+# /******************************************************************************
+# Function Name   : pack_native_media
+# Description     : Rebuild the vendor ZIP32 headers and raw deflate from loose compile files.
+# Input Parameters: source_compile, destination: source directory and new .kns filename.
+# Return Value    : Member count, byte count and complete SHA-256 of the archive.
+# Date            : 2026.11.27
+# ******************************************************************************/
+def pack_native_media(source_compile, destination):  #20261127-12 add
+    root = _absolute(source_compile)
+    target = _absolute(destination)
+    parent = _ordinary_path(target.parent)
+    if not stat.S_ISDIR(_ordinary_path(root).st_mode) or not stat.S_ISDIR(parent.st_mode):
+        raise BundleError("Source and destination parent must be ordinary directories")
+    if target.suffix.lower() != ".kns" or os.path.lexists(target):
+        raise BundleError("Destination must be a new .kns file")
+
+    optional = {"ControlPara.dat", "ControlPixel.dat", "MarcoRun.dat", "Message.dat",
+                "SimMessage.dat", "Recipe.dat", "LogoPixel.dat", "AMZ070W01.bin",
+                "AMT070W124-L800X480R.bin", "AMZ101W01.bin", "HZ.bin", "HZ_ASmall.bin"}
+    members = []
+    for entry in root.iterdir():
+        if entry.suffix.lower() not in {".dat", ".knr", ".bin"}:
+            continue
+        name = entry.name
+        serial_driver = re.fullmatch(r"[a-z0-9_. -]+_com[0-9]+\.bin", name, re.I | re.ASCII)
+        if not name.isascii() or (name not in ZIP_MEMBERS and name not in optional and not serial_driver):
+            raise BundleError(f"Unrecognized compiler member: {name}")
+        members.append(name)
+    missing = set(ZIP_MEMBERS).difference(members)
+    if missing:
+        raise BundleError("Missing compiler members: " + ", ".join(sorted(missing)))
+
+    archive = io.BytesIO()
+    directory = io.BytesIO()
+    total = 0
+    for name in sorted(members, key=str.lower):
+        path = root / name
+        initial = _ordinary_path(path)
+        if initial.st_size > MAX_TOTAL_BYTES - total:
+            raise BundleError("Compiler files exceed the total size limit")
+        content = _read_file(path)
+        if _identity(initial) != _identity(_ordinary_path(path)):
+            raise BundleError(f"Compiler file changed during packing: {name}")
+        total += len(content)
+        modified = datetime.fromtimestamp(initial.st_mtime)
+        if not 1980 <= modified.year <= 2107:
+            raise BundleError(f"File time outside DOS range: {name}")
+        dos_date = (modified.year - 1980) << 9 | modified.month << 5 | modified.day
+        dos_time = modified.hour << 11 | modified.minute << 5 | modified.second // 2
+        encoder = zlib.compressobj(6, zlib.DEFLATED, -15)
+        compressed = encoder.compress(content) + encoder.flush()
+        crc = zlib.crc32(content)
+        filename = name.encode("ascii")
+        offset = archive.tell()
+        # The native writer sets bit 3 AND fills in the local header lengths and CRC.
+        fields = (20, 8, 8, dos_time, dos_date, crc, len(compressed), len(content), len(filename), 0)
+        archive.write(struct.pack("<I5H3I2H", 0x04034b50, *fields))
+        archive.write(filename)
+        archive.write(compressed)
+        archive.write(struct.pack("<4I", 0x08074b50, crc, len(compressed), len(content)))
+        directory.write(struct.pack("<I6H3I5H2I", 0x02014b50, 0x031e, *fields,
+                                    0, 0, 0, 0x81b60000, offset))
+        directory.write(filename)
+
+    offset = archive.tell()
+    archive.write(directory.getvalue())
+    archive.write(struct.pack("<I4H2IH", 0x06054b50, 0, 0, len(members), len(members),
+                              directory.tell(), offset, 0))
+    encoded = archive.getvalue()
+    _publish_archive_bytes(target, encoded, parent)
+    return {"members": len(members), "bytes": len(encoded), "sha256": _sha256(encoded),
+            "destination": str(target), "hardwareIo": False}
 
 
 # /******************************************************************************
@@ -514,6 +600,9 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     validate = commands.add_parser("validate", help="Inspect existing native compile artifacts")
     validate.add_argument("source_compile")
+    pack = commands.add_parser("pack", help="Build a new native ZIP32 archive from loose compiler files")
+    pack.add_argument("source_compile")
+    pack.add_argument("destination")
     publish = commands.add_parser("publish", help="Copy validated artifacts into a new directory")
     publish.add_argument("source_compile")
     publish.add_argument("destination")
@@ -527,6 +616,8 @@ def main(argv=None):
     try:
         if options.command == "validate":
             result = validate_bundle(options.source_compile)
+        elif options.command == "pack":
+            result = pack_native_media(options.source_compile, options.destination)
         elif options.command == "publish":
             result = publish_bundle(options.source_compile, options.destination)
         elif options.command == "snapshot-inspect":

@@ -203,6 +203,13 @@ def render(data, reconciliation=None):
         details("下一步", item["nextAction"])
         details("验收条件", item["acceptance"])
         line("- 依据：" + sources(item["sources"]))
+    # 20261127-11 add: Expose the latest file-format findings without rewriting the historical stage counts.
+    latest = data.get("formatInterop20261128")
+    if latest:
+        heading(2, "原厂文件互通的最新核验")
+        line(latest["summary"])
+        line()
+        line(f"[本轮报告](../{latest['report']}) · [仍需完成及现场核验的项目](../{latest['remaining']})")
     heading(2, "后续更新与核销规则")
     for rule in data["maintenanceRules"]:
         line("- " + rule)

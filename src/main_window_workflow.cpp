@@ -207,6 +207,19 @@ bool MainWindow::commitProjectDraft(const HmiProject &project, QString *error) /
     return true;
 }
 
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QFormLayout>
+#include <QHeaderView>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QStyledItemDelegate>
+#include <QTreeWidget>
+#include <QVBoxLayout>
+#include <cmath>
+#include "native_source_dialog.cpp.inc" //20261127-11 add
+
 /******************************************************************************
  * Function Name   : MainWindow::openProjectPath
  * Description     : Parse a candidate before asking about unsaved work, then adopt it only after approval.
@@ -214,7 +227,7 @@ bool MainWindow::commitProjectDraft(const HmiProject &project, QString *error) /
  * Return Value    : True after replacing the current document; cancellation or failure leaves it intact.
  * Date            : 2026.11.10
  ******************************************************************************/
-bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110-7 add
+bool MainWindow::openProjectPath(const QString &path, QString *error, bool allowSourceEditor) //20261110-7 add
 {
     HmiProject candidate;
     QString password; //20261123-17 add
@@ -254,7 +267,29 @@ bool MainWindow::openProjectPath(const QString &path, QString *error) //20261110
         }
         return true;
     };
-    if (!loadCandidate()) { return false; }
+    if (!loadCandidate()) { //20261127-11 change
+        // A canceled password prompt must not be followed by an additional open attempt.
+        if (allowSourceEditor && error && !error->isEmpty() &&
+            path.endsWith(QStringLiteral(".sm"), Qt::CaseInsensitive)) {
+            QFile input(path);
+            NativeSourceIndex index;
+            QByteArray bytes;
+            QString catalogError;
+            if (input.open(QIODevice::ReadOnly) && input.size() <= 64 * 1024 * 1024) {
+                bytes = input.readAll();
+                const bool complete = input.error() == QFileDevice::NoError && bytes.size() == input.size();
+                input.close();
+                if (complete && readNativeSourceIndex(bytes, password, &index, &catalogError)) {
+                    NativeSourceDialog dialog(this, path, bytes, password, index, *error);
+                    dialog.exec();
+                    updateRecentProjects(path);
+                    error->clear();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     if (!confirmDiscardChanges()) { return false; }
     //20261110-7 add: Saving unsaved work may replace this exact path; never adopt the stale pre-prompt candidate.
     if (!loadCandidate()) { return false; }
@@ -1289,7 +1324,7 @@ void MainWindow::updateRecentProjects(const QString &path) //20261110-7 add
         action->setObjectName(QStringLiteral("recentProject%1").arg(index));
         connect(action, &QAction::triggered, this, [this, stored]() {
             QString failure;
-            if (!openProjectPath(stored, &failure) && !failure.isEmpty()) {
+            if (!openProjectPath(stored, &failure, true) && !failure.isEmpty()) {
                 QMessageBox::warning(this, QStringLiteral("打开最近工程失败"), failure);
             }
         });

@@ -71,6 +71,7 @@ class Stage2WorkflowTests : public QObject
 private:
     QTemporaryDir m_settings;
 private slots:
+    void nativeSourceEditorSavesRetainedRoot(); //20261127-11 add
     void initTestCase();
     void sharedCommandsAndAvailability();
     void fixedShellEntriesMatchNativeInventory(); //20261127-1 add
@@ -4345,6 +4346,12 @@ void Stage2WorkflowTests::nativeFileProtectionIsCheckedBeforeImport() //20261123
     QVERIFY(requiresPassword);
     QCOMPARE(imported.name, originalName);
     QVERIFY2(HmiProject::load(path, &imported, &error, password, &requiresPassword), qPrintable(error));
+    //20261127-11 add: The native source editor applies the same file password even when saving an exact copy.
+    QByteArray protectedCopy("unchanged");
+    QVERIFY(!editNativeSource(imported.nativeSourceSnapshot, password.toLower(), {}, {}, &protectedCopy, &error));
+    QCOMPARE(protectedCopy, QByteArray("unchanged"));
+    QVERIFY2(editNativeSource(imported.nativeSourceSnapshot, password, {}, {}, &protectedCopy, &error), qPrintable(error));
+    QCOMPARE(protectedCopy, imported.nativeSourceSnapshot);
     QCOMPARE(imported.filePassword, password);
     QVERIFY(imported.nativeSourceSnapshot.contains(nativePassword));
 #ifdef Q_OS_WIN
@@ -6575,6 +6582,46 @@ void Stage2WorkflowTests::v31MenuAvailableWithoutProject() //20261125-81 add
     action->trigger();
     QVERIFY(opened);
     QVERIFY(!window.m_hasProject);
+}
+
+/******************************************************************************
+ * Function Name   : nativeSourceEditorSavesRetainedRoot
+ * Description     : Exercise the normal native-file open dialog, root editing, save and reopen path.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage2WorkflowTests::nativeSourceEditorSavesRetainedRoot() //20261127-11 add
+{
+    QTemporaryDir dir;
+    MainWindow window;
+    QString error;
+    QString fileName = dir.filePath(QStringLiteral("retained.sm"));
+    QFile file(fileName);
+    NativeSourceIndex index;
+    bool clicked = false;
+
+    QVERIFY(QFile::copy(QFINDTESTDATA("fixtures/native-source/retained/alarm-display.sm"), fileName));
+    QTimer::singleShot(0, &window, [&]() {
+        QDialog *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        QTreeWidget *tree = dialog->findChild<QTreeWidget *>(QStringLiteral("nativeSourceRoots"));
+        QLineEdit *name = dialog->findChild<QLineEdit *>(QStringLiteral("nativeProjectName"));
+        QPushButton *save = dialog->findChild<QPushButton *>(QStringLiteral("nativeSourceSave"));
+        if (tree && name && save && tree->topLevelItemCount() && tree->topLevelItem(0)->childCount()) {
+            tree->topLevelItem(0)->child(0)->setText(2, QStringLiteral("15.125"));
+            name->setText(QStringLiteral("工程属性回读"));
+            save->click();
+            clicked = true;
+        }
+        dialog->reject();
+    });
+    QVERIFY2(window.openProjectPath(fileName, &error, true), qPrintable(error));
+    QVERIFY(clicked);
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    QVERIFY2(readNativeSourceIndex(file.readAll(), {}, &index, &error), qPrintable(error));
+    QCOMPARE(index.title, QStringLiteral("工程属性回读"));
+    QCOMPARE(index.pages.first().roots.first().layer, 15.125);
 }
 
 QTEST_MAIN(Stage2WorkflowTests)

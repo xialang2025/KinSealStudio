@@ -1014,7 +1014,7 @@ void MainWindow::openProject() //20261110-7 change
     path = QFileDialog::getOpenFileName(this, QStringLiteral("打开工程"), m_currentPath,
         QStringLiteral("支持的工程 (*.ksp *.sm);;Lite工程 (*.ksp);;原厂源工程 (*.sm)"));
     if (path.isEmpty()) { return; }
-    if (!openProjectPath(path, &error)) {
+    if (!openProjectPath(path, &error, true)) {
         if (!error.isEmpty()) { QMessageBox::critical(this, QStringLiteral("打开失败"), error); }
         return;
     }

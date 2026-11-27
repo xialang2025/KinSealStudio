@@ -333,6 +333,26 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeDownloadResult(true, QStringLiteral("单文本差分编译与输入拒绝测试通过。"));
         return 0;
     }
+    if (arguments.value(1) == QStringLiteral("--resave-native-source")) { //20261127-11 add
+        QByteArray encoded;
+        QFile input(arguments.value(2));
+        if ((arguments.size() != 4 && arguments.size() != 5) || !input.open(QIODevice::ReadOnly) ||
+            input.size() > 64 * 1024 * 1024) {
+            writeDownloadResult(false, QStringLiteral("用法：--resave-native-source 输入.sm 输出.sm [新工程名称]"));
+            return 22;
+        }
+        inspectBytes = input.readAll();
+        if (input.error() != QFileDevice::NoError) { writeDownloadResult(false, input.errorString()); return 22; }
+        input.close();
+        if (!editNativeSource(inspectBytes, QString(), arguments.size() == 5 ? arguments.at(4) : QString(),
+                              {}, &encoded, &validation_error) ||
+            !saveNativeSourceFile(arguments.at(3), encoded, &validation_error)) {
+            writeDownloadResult(false, validation_error);
+            return 22;
+        }
+        writeDownloadResult(true, QStringLiteral("已完成原厂结构验证并保存工程。"));
+        return 0;
+    }
     if (arguments.size() >= 3 && arguments.at(1) == QStringLiteral("--inspect-native-source")) //20261110-5 add
     {
         inspectInput.setFileName(arguments.at(2));
@@ -488,6 +508,26 @@ int main(int argc, char *argv[]) //20261107-6 add
         }
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
+    }
+    if (arguments.value(1) == QStringLiteral("--build-native-load-metadata")) { //20261128-0 add
+        if (arguments.size() != 4 && arguments.size() != 5) {
+            writeDownloadResult(false, QStringLiteral("用法：--build-native-load-metadata 工程.sm 输出目录/load.bin 编译上下文.json，或 完整元数据.json 输出目录/load.bin"));
+            return 24;
+        }
+        const bool built = buildNativeLoadMetadata(arguments.at(2), arguments.at(3), arguments.value(4), &validation_error);
+        writeDownloadResult(built, built ? QStringLiteral("已生成 V122 离线介质元数据 load.bin。") : validation_error);
+        return built ? 0 : 24;
+    }
+    if (arguments.size() >= 2 && arguments.at(1) == QStringLiteral("--pack-native-media")) //20261127-12 add
+    {
+        bool packed;
+        if (arguments.size() != 4) {
+            writeDownloadResult(false, QStringLiteral("用法：--pack-native-media <完整编译散件目录> <新文件.kns>"));
+            return 24;
+        }
+        packed = packNativeMediaArchive(arguments.at(2), arguments.at(3), &validation_error);
+        writeDownloadResult(packed, packed ? QStringLiteral("已由编译散件生成原厂格式 KNS 介质包。") : validation_error);
+        return packed ? 0 : 24;
     }
     if (arguments.size() >= 3 &&
         arguments.at(1) == QStringLiteral("--download-project")) //20261109-0 add
@@ -690,7 +730,7 @@ int main(int argc, char *argv[]) //20261107-6 add
          arguments.at(1).endsWith(QStringLiteral(".ksp"), Qt::CaseInsensitive))) //20261127-7 add
     {
         // Explorer's Open With passes a positional path; use the same authenticated transaction as File > Open.
-        if (!window->openProjectPath(QFileInfo(arguments.at(1)).absoluteFilePath(), &validation_error) &&
+        if (!window->openProjectPath(QFileInfo(arguments.at(1)).absoluteFilePath(), &validation_error, true) &&
             !validation_error.isEmpty())
         { QMessageBox::critical(window.get(), QStringLiteral("打开失败"), validation_error); }
     }

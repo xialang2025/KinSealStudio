@@ -10,4 +10,7 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
 bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &payloads,
                           const QString &directory, QString *error,
                           const DevicePackageWriter &writer = DevicePackageWriter()); //20261113-11 add
+bool buildNativeLoadMetadata(const QString &inputPath, const QString &outputPath, const QString &contextPath, QString *error); //20261128-0 add
+bool packNativeMediaArchive(const QString &sourceDirectory, const QString &destination, QString *error); //20261127-12 add
+
 #endif

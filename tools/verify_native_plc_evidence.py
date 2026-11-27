@@ -209,17 +209,21 @@ def inspect_lite(executable, expected_sha, scratch):
             return json.loads(result.stdout)
 
         models = {}
-        for model in (AMT, "AMZ070W06", "AMZ070W01", "LT779C", "unmapped-model"):
+        for model in (AMT, "AMZ070W06", "AMZ070W01", "AMZ070W01R", "LT779C", "unmapped-model"):
             result = run("--plc-capabilities", model)
             profiles = result["profiles"]
             allowed = [row["profileId"] for row in profiles if row["deviceCompileEligible"]]
             require(result["ok"] and result["hardwareIo"] is False and len(profiles) == 139, f"Incomplete capability table: {model}")
-            require(allowed == ([PROFILE] if model == AMT else []), f"Unexpected admitted profile for {model}")
-            require(not any(any(row[key] for key in ("pcProfileMapped", "nativeDllAbiImplemented", "physicalPlcVerified", "hmiPlcVerified"))
+            require(allowed == ([PROFILE] if model in (AMT, "AMZ070W01", "AMZ070W01R") else []), f"Unexpected admitted profile for {model}")
+            # 20261127-11 change: Both native catalog aliases share the tested PC RTU codec, independently of HMI eligibility.
+            expected_pc = {PROFILE, PROFILE.replace("serial_amz", "serial")}
+            mapped_pc = {row["profileId"] for row in profiles if row["pcProfileMapped"]}
+            require(mapped_pc == expected_pc, f"Unexpected PC RTU profile set for {model}")
+            require(not any(any(row[key] for key in ("nativeDllAbiImplemented", "physicalPlcVerified", "hmiPlcVerified"))
                             for row in profiles), f"Unexpected physical or ABI declaration for {model}")
             catalog_digest = result["catalogSha256"]
             require(catalog_digest in (canon_digest, legacy_digest), f"Lite used an unexplained catalog digest: {model}")
-            models[model] = {"eligibleProfileIds": allowed, "profileCount": len(profiles), "catalogSha256": catalog_digest,
+            models[model] = {"eligibleProfileIds": allowed, "pcMappedProfileIds": sorted(mapped_pc), "profileCount": len(profiles), "catalogSha256": catalog_digest,
                              "catalogByteIdentity": "exact repository bytes" if catalog_digest == canon_digest else "LF to CRLF only"}
         cases = {}
         for key, changed, expected in (

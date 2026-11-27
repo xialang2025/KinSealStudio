@@ -9,6 +9,7 @@
 #include "lzokay.hpp" //20261108-11 add: MIT-licensed LZO1X codec, pinned in third_party/lzokay.
 
 #include <cstring>
+#include "native_lzo_encoder.cpp.inc" //20261127-12 add: Match the native compressed representation before checking it with a separate decoder.
 
 /******************************************************************************
  * Function Name   : renderSingleTextFrame
@@ -100,7 +101,6 @@ bool compressRgb565Pixels(const QByteArray &frame, QByteArray *compressed,
 {
     QByteArray output;
     QByteArray decoded;
-    std::size_t outputLength;
     std::size_t decodedLength;
     lzokay::EResult result;
 
@@ -112,21 +112,7 @@ bool compressRgb565Pixels(const QByteArray &frame, QByteArray *compressed,
         }
         return false;
     }
-    output.resize(qsizetype(lzokay::compress_worst_size(std::size_t(frame.size()))));
-    outputLength = 0;
-    result = lzokay::compress(reinterpret_cast<const unsigned char *>(frame.constData()),
-                              std::size_t(frame.size()),
-                              reinterpret_cast<unsigned char *>(output.data()),
-                              std::size_t(output.size()), outputLength);
-    if (result != lzokay::EResult::Success)
-    {
-        if (error != nullptr)
-        {
-            *error = QStringLiteral("RGB565 画面 LZO 压缩失败。");
-        }
-        return false;
-    }
-    output.resize(qsizetype(outputLength));
+    output = nativeLzoPixels(frame); //20261127-12 change
     decoded.resize(frame.size());
     decodedLength = 0;
     result = lzokay::decompress(reinterpret_cast<const unsigned char *>(output.constData()),

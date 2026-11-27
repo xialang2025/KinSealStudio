@@ -206,7 +206,8 @@ bool NumberDisplayProperties::validate(QString *error, bool numericFieldsActive)
     QStringList sizes = {QStringLiteral("16"), QStringLiteral("24"), QStringLiteral("32"), QStringLiteral("40"), QStringLiteral("48"), QStringLiteral("64"), QStringLiteral("96"), QStringLiteral("192")};
     if (dataType < 0 || dataType > 13 || font < 0 || font > 2 || !sizes.contains(QString::number(fontSize)) || totalDigits < 1 || totalDigits > maximumDigits(dataType) || decimalDigits < 0 || decimalDigits > 99 ||
         alignment < 0 || alignment > 2 || adjustment < 0 || adjustment > 2 || opacity < 0 || opacity > 255 || inputRangeSource < 0 || inputRangeSource > 1 || displayRangeSource < 0 || displayRangeSource > 1 ||
-        noticeWordType < 0 || noticeWordType > 4 || pressTime < 0 || pressTime > 255 || keyboardX < 0 || keyboardX > 800 || keyboardY < 0 || keyboardY > 480 || macroEnabled || (noticeBit && noticeWord) ||
+        noticeWordType < 0 || noticeWordType > 4 || pressTime < 0 || pressTime > 255 || keyboardX < 0 || keyboardX > 800 || keyboardY < 0 || keyboardY > 480 ||
+        (macroEnabled && macroName.trimmed().isEmpty()) || (noticeBit && noticeWord) || //20261127-13 change: Native numeric displays can call a named input macro.
         !QColor(textColor).isValid() || !QColor(backgroundColor).isValid() || !QColor(lowColor).isValid() || !QColor(highColor).isValid()) { return numberError(error, QStringLiteral("数值显示参数超出已核定编辑范围。")); }
     if (numericFieldsActive && allowInput && inputRangeSource == 0 && dataType < 12 && (!numericConstant(inputMinimum, dataType, &minimum) || !numericConstant(inputMaximum, dataType, &maximum) || minimum > maximum))
     { return numberError(error, QStringLiteral("数值输入范围为空、格式或量程无效，或最小值大于最大值。")); }

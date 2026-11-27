@@ -949,6 +949,24 @@ static bool writeProjectMacroSchedules(const HmiProject &project, const DeviceMa
 }
 
 /******************************************************************************
+ * Function Name   : deviceProjectArchive
+ * Description     : Compress an editable V122 source whenever all project settings can be serialized.
+ * Input Parameters: project
+ * Return Value    : Qt-compressed native source, or the complete Lite model for its unsupported extensions.
+ * Date            : 2026.11.27
+ ******************************************************************************/
+static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 add
+{
+    QByteArray source;
+
+    if (!exportNativeProjectSource(project, &source, nullptr)) {
+        // Projects with additional Lite-only data still need a recoverable editing source.
+        source = QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact);
+    }
+    return qCompress(source, 9);
+}
+
+/******************************************************************************
  * Function Name   : buildIntegerProjectPayload
  * Description     : Generate control records, RGB565 sprites and a recoverable Lite project snapshot.
  * Input Parameters: project, payloads, error
@@ -973,7 +991,6 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     QByteArray pictures;
     QByteArray pictureRecords;
     QByteArray record;
-    QByteArray source;
     BitButtonSpriteSet sprites;
     BitButtonSpriteSet languageSprites; //20261109-0 add
     StaticTextSpriteSet textSprites; //20261109-0 add
@@ -1018,7 +1035,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     {
         hasSwitch = hasSwitch || object.type == QStringLiteral("switch");
     }
-    // The legacy single-text path can generate an AMT-native snapshot. AMZ uses the ordinary Lite snapshot.
+    // The legacy branch also preserves the original AMT diagnostic fixture exactly.
     if (!isAmz070Target(project.targetModel) && project.objects.size() == 1 && project.objects.first().type == QStringLiteral("text") && !hasSwitch && project.macros.isEmpty() && project.pictures.isEmpty() && project.connections.isEmpty() && project.languages.size() == 1 && //20261122-3 change
         !project.objects.first().hasAppearanceFlip() && //20261124-15 add: Flipped text needs the editable Lite archive.
         (!project.objects.first().hasStaticTextProperties || !project.objects.first().staticText.visibilityEnabled)) //20261109-0 change: Keep the proven single-text raster for non-dynamic text.
@@ -1258,15 +1275,9 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     generated[5].append(pictureRecords);
     generated[8] = compressedBackground;
     generated[4] = addressScan; //20261109-0 add: Runtime reads must accompany external control addresses.
-    //20261109-0 add: Lite stores its full JSON project here; it does not claim this snapshot is native .sm.
-    source = QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact);
-    generated[7] = qCompress(source, 9);
-    if (qUncompress(generated.at(7)) != source)
-    {
-        if (error != nullptr)
-        {
-            *error = QStringLiteral("工程快照压缩校验失败。");
-        }
+    generated[7] = deviceProjectArchive(project); //20261127-12 change
+    if (generated.at(7).isEmpty()) {
+        if (error != nullptr) { *error = QStringLiteral("工程快照压缩失败。"); }
         return false;
     }
     if (controlCount > 0)
@@ -1913,7 +1924,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     if (quantized)
     {
         // The firmware consumes integer pixels; the recoverable editor archive keeps the original half-pixel geometry.
-        generated[7] = qCompress(QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact), 9);
+        generated[7] = deviceProjectArchive(project); //20261127-12 change
     }
     *payloads = generated;
     return true;

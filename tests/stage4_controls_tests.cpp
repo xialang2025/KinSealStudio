@@ -1080,7 +1080,13 @@ void Stage4ControlTests::qrStrictPersistenceAndBackendGates() //20261112-0 add
     object.qrCode.monitorAddress = QStringLiteral("LB0"); QVERIFY(!object.qrCode.validateAddresses(project.connections, &error)); object.qrCode.monitorAddress = QStringLiteral("LW0");
     object.qrCode.visibility.visibilityEnabled = true; object.qrCode.visibility.wordEnabled = true; object.qrCode.visibility.dataType = 1; object.qrCode.visibility.wordAddress = QStringLiteral("LW4096"); QVERIFY(!object.qrCode.validateAddresses(project.connections, &error));
     QCOMPARE(loaded.objects.size(), 8);
-    QVERIFY(!exportNativeProjectSource(qrOnly, &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged")); QVERIFY(!buildProjectPayload(qrOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
+    QVERIFY2(exportNativeProjectSource(qrOnly, &source, &error), qPrintable(error)); //20261127-14 change
+    QVERIFY2(importNativeProjectSource(source, &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.size(), 1);
+    QCOMPARE(loaded.objects.first().type, qrOnly.objects.first().type);
+    QCOMPARE(loaded.objects.first().geometry, qrOnly.objects.first().geometry);
+    QCOMPARE(loaded.objects.first().qrCode.toJson(), qrOnly.objects.first().qrCode.toJson());
+    QVERIFY(!buildProjectPayload(qrOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-mixed.ksp")), &error), qPrintable(error)); }
 }
 
@@ -1306,7 +1312,13 @@ void Stage4ControlTests::imagePersistenceLegacyAndBackendGates() //20261112-0 ad
     project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.toJson(), project.toJson()); QCOMPARE(loaded.objects.size(), 9);
     json = object.toJson(); properties = json.value(QStringLiteral("imageDisplay")).toObject(); rows = properties.value(QStringLiteral("states")).toArray(); row = rows.first().toObject(); row.insert(QStringLiteral("picturePng"), QStringLiteral("not base64!")); rows[0] = row; properties.insert(QStringLiteral("states"), rows); json.insert(QStringLiteral("imageDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
     legacy = object; legacy.hasImageDisplayProperties = false; QVERIFY2(HmiObject::fromJson(legacy.toJson(), &parsed, &error), qPrintable(error)); QVERIFY(!parsed.hasImageDisplayProperties);
-    imageOnly.objects = {object}; QVERIFY(!exportNativeProjectSource(imageOnly, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(imageOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    imageOnly.objects = {object}; QVERIFY2(exportNativeProjectSource(imageOnly, &source, &error), qPrintable(error)); //20261127-14 change
+    QVERIFY2(importNativeProjectSource(source, &loaded, &error), qPrintable(error));
+    QCOMPARE(loaded.objects.size(), 1);
+    QCOMPARE(loaded.objects.first().type, imageOnly.objects.first().type);
+    QCOMPARE(loaded.objects.first().geometry, imageOnly.objects.first().geometry);
+    QCOMPARE(loaded.objects.first().imageDisplay.toJson(), imageOnly.objects.first().imageDisplay.toJson());
+    QVERIFY(!buildProjectPayload(imageOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-mixed.ksp")), &error), qPrintable(error)); }
 }
 
@@ -1688,6 +1700,8 @@ void Stage4ControlTests::numberPermissionNotificationAndKeyboardLifecycle() //20
 void Stage4ControlTests::numberStrictPersistenceLegacyAndBackendGates() //20261112-0 add
 {
     HmiProject project;
+    HmiProject sourceProject;
+    QByteArray reencoded;
     HmiProject loaded;
     HmiObject object = numberObject();
     HmiObject parsed = qrObject();
@@ -1701,7 +1715,19 @@ void Stage4ControlTests::numberStrictPersistenceLegacyAndBackendGates() //202611
     project.objects = existingFiveObjects(); project.objects.append({messageObject(), scaleObject(), qrObject(), imageObject(), gifObject(), object}); QVERIFY2(HmiProject::fromJson(project.toJson(), &loaded, &error), qPrintable(error)); QCOMPARE(loaded.objects.size(), 11); QCOMPARE(loaded.toJson(), project.toJson());
     json = object.toJson(); properties = json.value(QStringLiteral("numberDisplay")).toObject(); properties.insert(QStringLiteral("dataType"), 8.5); json.insert(QStringLiteral("numberDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); QCOMPARE(parsed.type, QStringLiteral("qrcode"));
     properties = object.numberDisplay.toJson(); properties.remove(QStringLiteral("inputMaximum")); json.insert(QStringLiteral("numberDisplay"), properties); QVERIFY(!HmiObject::fromJson(json, &parsed, &error)); legacy = object; legacy.hasNumberDisplayProperties = false; QVERIFY2(HmiObject::fromJson(legacy.toJson(), &parsed, &error), qPrintable(error)); QVERIFY(!parsed.hasNumberDisplayProperties);
-    project.objects = {numberObject()}; QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("keep")); QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    project.objects = {numberObject()}; //20261127-13 change: Source serialization has independent evidence from device compilation.
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(importNativeProjectSource(source, &sourceProject, &error), qPrintable(error));
+    QCOMPARE(sourceProject.objects.size(), 1);
+    QCOMPARE(sourceProject.objects.first().type, project.objects.first().type);
+    QCOMPARE(sourceProject.objects.first().name, project.objects.first().name);
+    QCOMPARE(sourceProject.objects.first().geometry, project.objects.first().geometry);
+    QCOMPARE(sourceProject.objects.first().address, project.objects.first().address);
+    QCOMPARE(sourceProject.objects.first().numberDisplay.toJson(), project.objects.first().numberDisplay.toJson());
+    QVERIFY2(exportNativeProjectSource(sourceProject, &reencoded, &error), qPrintable(error));
+    QCOMPARE(reencoded, source);
+    QVERIFY(!buildProjectPayload(project, &payloads, &error));
+    QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
     json = project.toJson(); json.insert(QStringLiteral("schemaVersion"), 11); json.remove(QStringLiteral("animations")); QVERIFY(!HmiProject::fromJson(json, &project, &error)); QCOMPARE(project.objects.first().type, QStringLiteral("number"));
     object.numberDisplay.keyboardPageId = QStringLiteral("disabled-missing-keyboard");
     { NumberDisplayDialog dormant(object, HmiProject()); QCOMPARE(dormant.object().numberDisplay.keyboardPageId, object.numberDisplay.keyboardPageId); }

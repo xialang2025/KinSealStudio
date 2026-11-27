@@ -18,6 +18,9 @@ class NativeProjectCodecTests : public QObject
 {
     Q_OBJECT
 private slots:
+    void originalV113RootEdits(); //20261128-1 add
+    void nativeStartupPageFollowsWriterFlags(); //20261127-11 add
+    void retainedNativeEditsTouchOnlyRequestedFields(); //20261127-11 add
     void closedGraphicsMatchVendorSources_data(); //20261127-6 add
     void closedGraphicsMatchVendorSources();
     void profiledGraphicsMatchVendorSources_data(); //20261127-6 add
@@ -740,7 +743,7 @@ void NativeProjectCodecTests::supportedEditsKeepNativeStructure() //20261109-0 a
     QVERIFY(!exportNativeProjectSource(project, &output, &error));
     QCOMPARE(output, kept);
     bad = nativeOracle();
-    bad[2752] = 11; // The oracle's typed top-level control tag is independently mapped to 2749..2753.
+    bad[2752] = char(254); //20261127-11 change: Use an unmapped type now that type 11 has a verified layout. The oracle's typed top-level control tag is independently mapped to 2749..2753.
     QVERIFY(!importNativeProjectSource(bad, &rejected, &error));
     QVERIFY(error.contains(QStringLiteral("控件类型")));
     bad = nativeOracle();
@@ -3490,6 +3493,144 @@ void NativeProjectCodecTests::imageTableNativeCacheAndEdits() //20261127-9 add
     output = original;
     a = sourceFieldSpan(output, QStringLiteral("object[0].table.columnControlled")); output[a.start] = 1;
     QVERIFY(!importNativeProjectSource(output, &reopened, &error));
+}
+
+/******************************************************************************
+ * Function Name   : retainedNativeEditsTouchOnlyRequestedFields
+ * Description     : Verify the full vendor stream, the exact edited bytes, and failure atomicity.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::retainedNativeEditsTouchOnlyRequestedFields() //20261127-11 add
+{
+    QFile file(QFINDTESTDATA("fixtures/native-source/retained/alarm-display.sm"));
+    QByteArray original, expected, result, encoded;
+    NativeSourceIndex index, reopened;
+    NativeSourceFieldSpan z, lock;
+    NativeSourceRoot root;
+    NativeSourceEdit edit;
+    QString error;
+    QString renamed = QStringLiteral("互通验收_A2");
+
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    original = file.readAll();
+    QVERIFY2(readNativeSourceIndex(original, {}, &index, &error), qPrintable(error));
+    QVERIFY(!index.pages.isEmpty() && !index.pages.first().roots.isEmpty());
+    root = index.pages.first().roots.first();
+    z = sourceFieldSpan(original, root.prefix + QStringLiteral("z"));
+    lock = sourceFieldSpan(original, root.prefix + QStringLiteral("movable"));
+    QCOMPARE(z.end - z.start, 8);
+    QCOMPARE(lock.end - lock.start, 1);
+    QVERIFY2(editNativeSource(original, {}, index.title, {}, &result, &error), qPrintable(error));
+    QCOMPARE(result, original);
+    edit = {root.prefix, !root.movable, root.layer + 0.25};
+    QDataStream stream(&encoded, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_4_8);
+    stream << edit.layer;
+    expected = original;
+    expected.replace(z.start, 8, encoded);
+    expected[lock.start] = char(edit.movable);
+    QVERIFY2(editNativeSource(original, {}, index.title, {edit}, &result, &error), qPrintable(error));
+    QCOMPARE(result, expected);
+    QVERIFY2(editNativeSource(expected, {}, renamed, {}, &result, &error), qPrintable(error));
+    QVERIFY2(readNativeSourceIndex(result, {}, &reopened, &error), qPrintable(error));
+    QCOMPARE(reopened.title, renamed);
+    QCOMPARE(reopened.pages.first().roots.first().layer, edit.layer);
+    QVERIFY2(editNativeSource(result, {}, index.title, {}, &encoded, &error), qPrintable(error));
+    QCOMPARE(encoded, expected);
+    result = "keep";
+    QVERIFY(!editNativeSource(original.chopped(1), {}, renamed, {}, &result, &error));
+    QCOMPARE(result, QByteArray("keep"));
+    QVERIFY(!editNativeSource(original, {}, renamed, {edit, edit}, &result, &error));
+    QCOMPARE(result, QByteArray("keep"));
+}
+
+/******************************************************************************
+ * Function Name   : nativeStartupPageFollowsWriterFlags
+ * Description     : Verify a real startup record and a real page-macro row in a controlled single-page stream.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void NativeProjectCodecTests::nativeStartupPageFollowsWriterFlags() //20261127-11 add
+{
+    QFile file(QFINDTESTDATA("fixtures/native-source/retained/startup-with-page-macro.sm"));
+    QByteArray input, saved;
+    NativeSourceIndex index;
+    NativeSourceFieldSpan trigger;
+    QString error;
+
+    QVERIFY(file.open(QIODevice::ReadOnly));
+    input = file.readAll();
+    QVERIFY2(readNativeSourceIndex(input, {}, &index, &error), qPrintable(error));
+    QCOMPARE(index.pages.size(), 2);
+    QCOMPARE(index.pages.last().name, QStringLiteral("启动"));
+    QCOMPARE(index.pages.last().number, QStringLiteral("000"));
+    QVERIFY(sourceFieldSpan(input, QStringLiteral("page.94[0].tail.4")).end > 0);
+    QVERIFY(!nativeProjectUsesSupportedDeviceDefaults(input, &error));
+    QVERIFY2(editNativeSource(input, {}, index.title, {}, &saved, &error), qPrintable(error));
+    QCOMPARE(saved, input);
+    trigger = sourceFieldSpan(input, QStringLiteral("system.tail.0"));
+    QCOMPARE(trigger.end - trigger.start, 1);
+    input[trigger.start] = 0;
+    QVERIFY(!readNativeSourceIndex(input, {}, &index, &error));
+    QVERIFY(!error.isEmpty());
+}
+
+/******************************************************************************
+ * Function Name   : NativeProjectCodecTests::originalV113RootEdits
+ * Description     : Exercise the same root edit API as the native source window against both factory Modbus projects.
+ * Input Parameters: None. KINSEAL_V113_CASES points to the original example directory.
+ * Return Value    : None.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+void NativeProjectCodecTests::originalV113RootEdits() //20261128-1 add
+{
+    const QString folder = qEnvironmentVariable("KINSEAL_V113_CASES");
+    QStringList cases;
+    NativeSourceIndex index, loaded;
+    QList<NativeSourceEdit> edits;
+    QByteArray original, expected, result, encoded;
+    NativeSourceFieldSpan lock, layer;
+    QString error;
+    if (folder.isEmpty()) {
+        QSKIP("Set KINSEAL_V113_CASES to verify the two external factory examples.");
+    }
+    cases = QDir(folder).entryList({QStringLiteral("*.sm")}, QDir::Files, QDir::Name);
+    QCOMPARE(cases.size(), 2);
+    for (const QString &name : std::as_const(cases)) {
+        QFile source(QDir(folder).filePath(name));
+        QVERIFY(source.open(QIODevice::ReadOnly));
+        original = source.readAll();
+        QVERIFY2(readNativeSourceIndex(original, {}, &index, &error), qPrintable(error));
+        QCOMPARE(index.version, 113);
+        QCOMPARE(index.pages.size(), 2);
+        QCOMPARE(index.pages.first().roots.size(), 11);
+        edits.clear();
+        expected = original;
+        for (const NativeSourceRoot &root : std::as_const(index.pages.first().roots)) {
+            NativeSourceEdit edit{root.prefix, !root.movable, root.layer + 0.25};
+            edits.append(edit);
+            layer = sourceFieldSpan(original, root.prefix + QStringLiteral("z"));
+            lock = sourceFieldSpan(original, root.prefix + QStringLiteral("movable"));
+            QCOMPARE(layer.end - layer.start, 8);
+            QCOMPARE(lock.end - lock.start, 1);
+            encoded.clear();
+            QDataStream stream(&encoded, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << edit.layer;
+            expected.replace(layer.start, 8, encoded);
+            expected[lock.start] = char(edit.movable);
+        }
+        QVERIFY2(editNativeSource(original, {}, index.title, edits, &result, &error), qPrintable(error));
+        QCOMPARE(result, expected);
+        QVERIFY2(readNativeSourceIndex(result, {}, &loaded, &error), qPrintable(error));
+        for (int i = 0; i < edits.size(); ++i) {
+            QCOMPARE(loaded.pages.first().roots.at(i).layer, edits.at(i).layer);
+            QCOMPARE(loaded.pages.first().roots.at(i).movable, edits.at(i).movable);
+        }
+    }
 }
 
 QTEST_GUILESS_MAIN(NativeProjectCodecTests)

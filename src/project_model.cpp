@@ -1914,6 +1914,10 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
                 if (!navigationPageKinds.contains(object.screenButton.activeTarget()) || navigationPageKinds.value(object.screenButton.activeTarget()) != (object.screenButton.action == 0 ? QStringLiteral("normal") : QStringLiteral("window"))) { return modelError(error, QStringLiteral("画面按钮目标缺失或页面类型不匹配。")); }
             }
             objectIds.insert(object.id);
+            if ((object.hasNumberDisplayProperties && object.numberDisplay.macroEnabled && !macros.contains(object.numberDisplay.macroName)) ||
+                (object.type == QStringLiteral("ascii") && object.asciiDisplay.common.macroEnabled && !macros.contains(object.asciiDisplay.common.macroName))) { //20261127-13 add
+                return modelError(error, QStringLiteral("数据控件引用的宏不存在。"));
+            }
             if (object.hasNumberDisplayProperties && object.numberDisplay.allowInput && object.numberDisplay.customKeyboard && !keyboardPageIds.contains(object.numberDisplay.keyboardPageId))
             { return modelError(error, QStringLiteral("数值控件的自定义键盘画面缺失或类型错误。")); } //20261112-0 add
             if (object.type == QStringLiteral("ascii") && object.asciiDisplay.common.allowInput && object.asciiDisplay.common.customKeyboard && !keyboardPageIds.contains(object.asciiDisplay.common.keyboardPageId))

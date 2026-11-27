@@ -1,6 +1,7 @@
 #include "device_compile_plan.h"
 #include "device_polygon_raster.h" //20261114-2 add: Freeze the two independent path precision contracts.
 #include "device_package.h"
+#include "text_payload_compiler.h" //20261127-12 add
 #include "independent_downloader.h"
 #include "project_capabilities.h"
 #include "native_project_codec.h"
@@ -20,6 +21,8 @@ class Stage5CompilerTests : public QObject
 {
     Q_OBJECT
 private slots:
+    void staticPageRecognizesOriginalUnassignedSerialDefaults(); //20261127-12 add
+    void originalPixelStreamRecompilesByteForByte(); //20261127-12 add
     void emptyPageMatchesNativeFrame(); //20261127-2 add
     void typedSingleTextRetainsEditableSource(); //20261127-2 add
     void legacySingleTextRetainsProjectMetadata(); //20261127-2 add
@@ -290,6 +293,58 @@ static QByteArray decodeTestFrame(const QByteArray &bytes) //20261113-11 add
 }
 
 /******************************************************************************
+ * Function Name   : Stage5CompilerTests::staticPageRecognizesOriginalUnassignedSerialDefaults
+ * Description     : Accept the complete observed pair of unused COM records and reject a single changed setting.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.28
+ ******************************************************************************/
+void Stage5CompilerTests::staticPageRecognizesOriginalUnassignedSerialDefaults() //20261127-12 add
+{
+    HmiProject project = polylineProject();
+    QByteArray nativeSource;
+    QList<NativeSourceFieldSpan> fields;
+    qsizetype serialOffset = -1;
+    int replaced = 0;
+    QString error;
+
+    QVERIFY2(exportNativeProjectSource(project, &nativeSource, &error), qPrintable(error));
+    QVERIFY2(inspectNativeProjectSourceFields(nativeSource, &fields, &error), qPrintable(error));
+    for (const NativeSourceFieldSpan &field : fields) {
+        if (field.kind == 'i' && (field.path.startsWith(QStringLiteral("config.48.")) ||
+                                  field.path.startsWith(QStringLiteral("config.88.")))) {
+            QCOMPARE(field.end - field.start, qsizetype(4));
+            nativeSource.replace(field.start, 4, QByteArray(4, char(0)));
+            serialOffset = field.start;
+            ++replaced;
+        }
+    }
+    QCOMPARE(replaced, 24);
+    QVERIFY2(nativeProjectUsesSupportedDeviceDefaults(nativeSource, &error), qPrintable(error));
+    nativeSource[serialOffset + 3] = char(1);
+    QVERIFY(!nativeProjectUsesSupportedDeviceDefaults(nativeSource, &error));
+}
+
+/******************************************************************************
+ * Function Name   : Stage5CompilerTests::originalPixelStreamRecompilesByteForByte
+ * Description     : Recover an archived original RGB565 frame and require its exact original LZO1X encoding.
+ * Input Parameters: None
+ * Return Value    : None
+ * Date            : 2026.11.27
+ ******************************************************************************/
+void Stage5CompilerTests::originalPixelStreamRecompilesByteForByte() //20261127-12 add
+{
+    const QByteArray expected = testFileBytes(QFINDTESTDATA("../samples/native-device-test/compile-test/SheetPixel.dat"));
+    const QByteArray frame = decodeTestFrame(expected);
+    QByteArray actual;
+    QString error;
+
+    QCOMPARE(frame.size(), 768000);
+    QVERIFY2(compressRgb565Frame(frame, &actual, &error), qPrintable(error));
+    QCOMPARE(actual, expected);
+}
+
+/******************************************************************************
  * Function Name   : Stage5CompilerTests::emptyPageMatchesNativeFrame
  * Description     : Compare empty-page output with the decoded original editor empty-baseline-r1 RGB565 frame.
  * Input Parameters: None
@@ -302,6 +357,7 @@ void Stage5CompilerTests::emptyPageMatchesNativeFrame() //20261127-2 add
     QVector<QByteArray> payloads;
     QString error;
     const QStringList targets = {project.targetModel, QStringLiteral("AMZ070W01R")};
+    QByteArray editableSource; //20261127-12 add
     const QByteArray nativeFrameSha("208891b9a73f55179fa2311da841880df13ca04aaa9f3f7545c786468400a04f");
 
     for (const QString &target : targets)
@@ -316,7 +372,8 @@ void Stage5CompilerTests::emptyPageMatchesNativeFrame() //20261127-2 add
         QCOMPARE(payloads.at(4), QByteArray(200, char(0)));
         QCOMPARE(payloads.at(5).size(), 2400);
         QCOMPARE(QCryptographicHash::hash(decodeTestFrame(payloads.at(8)), QCryptographicHash::Sha256).toHex(), nativeFrameSha);
-        QCOMPARE(qUncompress(payloads.at(7)), QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact));
+        QVERIFY2(exportNativeProjectSource(project, &editableSource, &error), qPrintable(error));
+        QCOMPARE(qUncompress(payloads.at(7)), editableSource);
     }
 }
 
@@ -349,7 +406,8 @@ void Stage5CompilerTests::typedSingleTextRetainsEditableSource() //20261127-2 ad
 
     project.targetModel = QStringLiteral("AMZ070W01R");
     QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
-    QCOMPARE(qUncompress(payloads.at(7)), QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact));
+    QVERIFY2(exportNativeProjectSource(project, &exported, &error), qPrintable(error));
+    QCOMPARE(qUncompress(payloads.at(7)), exported);
 }
 
 /******************************************************************************
@@ -1060,14 +1118,23 @@ void Stage5CompilerTests::snapshotCorruptionAndFalseIdentityAreRejected() //2026
     QTemporaryDir temporary;
     QString target = temporary.filePath(QStringLiteral("valid"));
     QJsonObject manifest;
+    HmiProject changedTarget = polylineProject(); //20261127-12 add
+    const QString amz = temporary.filePath(QStringLiteral("amz"));
 
+    changedTarget.targetModel = QStringLiteral("AMZ070W01R");
+    QVERIFY2(exportProjectPayload(changedTarget, amz, &error), qPrintable(error));
+    QVERIFY2(verifyDevicePackage(amz, &manifest, &error), qPrintable(error));
+    manifest.insert(QStringLiteral("targetModel"), QStringLiteral("AMT070W124-L800X480R"));
+    QVERIFY(testWriteBytes(amz + QStringLiteral("/compiler-manifest.json"), QJsonDocument(manifest).toJson(), &error));
+    QVERIFY(!verifyDevicePackage(amz, nullptr, &error));
     QVERIFY(buildProjectPayload(polylineProject(),&payloads,&error));
     payloads[7] = qCompress(QByteArrayLiteral("not-a-native-source")); QVERIFY(!validateDevicePayloadStructure(payloads,&error));
     payloads[7] = QByteArrayLiteral("bad-zlib"); QVERIFY(!validateDevicePayloadStructure(payloads,&error));
     QVERIFY(exportProjectPayload(polylineProject(),target,&error)); QVERIFY(verifyDevicePackage(target,&manifest,&error));
-    manifest.insert(QStringLiteral("sourceSnapshot"),QStringLiteral("native-sm"));
+    QCOMPARE(manifest.value(QStringLiteral("sourceSnapshot")).toString(), QStringLiteral("native-sm")); //20261127-12 add
+    manifest.insert(QStringLiteral("sourceSnapshot"),QStringLiteral("lite-project-json"));
     QVERIFY(testWriteBytes(target+QStringLiteral("/compiler-manifest.json"),QJsonDocument(manifest).toJson(),&error)); QVERIFY(!verifyDevicePackage(target,nullptr,&error));
-    manifest.insert(QStringLiteral("sourceSnapshot"),QStringLiteral("lite-project-json")); manifest.insert(QStringLiteral("inputProjectSha256"),QStringLiteral("wrong-input"));
+    manifest.insert(QStringLiteral("sourceSnapshot"),QStringLiteral("native-sm")); manifest.insert(QStringLiteral("inputProjectSha256"),QStringLiteral("wrong-input"));
     QVERIFY(testWriteBytes(target+QStringLiteral("/compiler-manifest.json"),QJsonDocument(manifest).toJson(),&error)); QVERIFY(!verifyDevicePackage(target,nullptr,&error));
 }
 
