@@ -3,6 +3,7 @@
 import argparse
 import gzip
 import hashlib
+import io
 import json
 import ntpath
 import os
@@ -11,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import uuid
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / "docs/文件规则/样例/原厂编译字节复核_20261127.json"
@@ -64,15 +66,21 @@ def compare(exe, scratch, require_all, media_driver, replay_directory):
     revision = baseline["sourceRevision"]
     current = REFERENCE.with_name("原厂SM与介质散件增量复验_20261128.json")
     pinned = {}
-    if current.is_file() and media_driver in (None, "reference"):
+    if media_driver in (None, "reference"):  # 20261128-9 change
         receipt = json.loads(current.read_bytes())
         if receipt["revision"] != revision:
             raise ValueError("wrong source revision in regression receipt")
         outputs = receipt["compiledOutputs"]
         mode = "usb" if media_driver is None else "media"
-        if replay_directory and "loggedMedia" in outputs:
+        if replay_directory:
             mode = "loggedMedia"
         pinned = outputs[mode]["bySource"]
+        if not pinned:
+            raise ValueError("empty regression receipt: " + mode)
+    cases = baseline["sourceToCompiledFiles"]["allCases"]
+    sources = {case["sourceSHA256"] for case in cases}
+    if not cases or len(sources) != len(cases) or (pinned and sources != pinned.keys()):
+        raise ValueError("empty, duplicate or mismatched source set in the frozen comparison corpus")
     preferred = {x["sourceSHA256"]: x for x in baseline["preferredSameSourceOriginalBuild"]["preferredSourceRows"]}
     git_tree = subprocess.check_output(["git", "ls-tree", "-rz", revision], cwd=ROOT)
     blobs = {}
@@ -103,12 +111,20 @@ def compare(exe, scratch, require_all, media_driver, replay_directory):
     compiler_env = dict(os.environ, TEMP=str(scratch), TMP=str(scratch), TMPDIR=str(scratch))
     rows = []
     try:
-        for case in baseline["sourceToCompiledFiles"]["allCases"]:
+        for case in cases:
             key = case["sourceSHA256"]
             oracle = preferred.get(key, {})
             folder = oracle.get("selectedReference", case["path"])
             filenames = members.get(folder, [])
             full_reference = "load.kns" in filenames and "Usbload.bin" in filenames
+            if blobs.get(folder + "/input-native.sm") != blobs[case["path"] + "/input-native.sm"]:
+                raise ValueError("selected original output is for a different source: " + folder)
+            if full_reference:  # 20261128-9 change
+                # Every member of this original package must also have a loose comparison file.
+                with zipfile.ZipFile(io.BytesIO(blob(folder + "/load.kns"))) as archive:
+                    archived = archive.namelist()
+                full_reference = (len(archived) == len(set(archived))
+                                  and set(archived) == set(filenames) - {"load.kns"})
             source = blob(case["path"] + "/input-native.sm")
             if hashlib.sha256(source).hexdigest() != key:
                 raise ValueError("reference source SHA mismatch: " + case["path"])
@@ -153,14 +169,21 @@ def compare(exe, scratch, require_all, media_driver, replay_directory):
                                                                  if x != y), min(len(original), len(actual)))
                     row["extra"] = sorted(p.name for p in output.iterdir() if p.name not in filenames)
             expected = {name for name, fields in oracle.get("files", {}).items() if fields["equal"]}
+            # Preserve previously emitted files while their contents are still being matched.
+            previously_emitted = set(oracle.get("files", {}))  # 20261128-9 add
             newer = pinned.get(key, {})
             if newer:
                 if newer["reference"] != folder:
                     raise ValueError("regression reference changed: " + folder)
                 expected.update(newer["identical"])
+                previously_emitted.update(newer["identical"])
+                previously_emitted.update(newer.get("differences", {}))
             if media_driver == "omit":
                 expected.discard("Modbus_RTU_com1.bin")
-            row["regressed"] = bool((oracle or newer.get("compiled")) and not row["compiled"]) or not expected.issubset(row["identical"])
+                previously_emitted.discard("Modbus_RTU_com1.bin")
+            row["lostOutputs"] = sorted(previously_emitted.difference(row["identical"], row["differences"]))
+            row["regressed"] = (bool((oracle or newer.get("compiled")) and not row["compiled"])
+                                or bool(row["lostOutputs"]) or not expected.issubset(row["identical"]))
             row["allExact"] = full_reference and row["compiled"] and not (row["missing"] or row["differences"] or row.get("extra"))
             rows.append(row)
     finally:
@@ -169,6 +192,11 @@ def compare(exe, scratch, require_all, media_driver, replay_directory):
     totals = dict(sources=len(rows), compiled=sum(r["compiled"] for r in rows),
                   equal=sum(len(r["identical"]) for r in rows), common=sum(len(r["identical"]) + len(r["differences"]) for r in rows),
                   regressed=sum(r["regressed"] for r in rows), allFilesExact=sum(r["allExact"] for r in rows))
+    # These counts use compiled cases only. A rejected source never supplies an output directory.
+    totals["different"] = totals["common"] - totals["equal"]
+    totals["missing"] = sum(len(r["missing"]) for r in rows)
+    totals["referenceFilesForCompiled"] = totals["common"] + totals["missing"]
+    totals["extra"] = sum(len(r.get("extra", [])) for r in rows)
     ok = totals["regressed"] == 0 and (not require_all or totals["allFilesExact"] == len(rows))
     return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, totals=totals, rows=rows), ok
 
