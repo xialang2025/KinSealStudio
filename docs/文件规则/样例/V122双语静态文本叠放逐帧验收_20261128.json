@@ -1,0 +1,97 @@
+{
+  "revision": "e3b72657",
+  "exeSha256": "8eaaa50a048048e562ae4fa212423eb3a58161a5b72e712327caf1ed00a6b42a",
+  "cases": [
+    {
+      "name": "transparent-top",
+      "sourceSha256": "76c352d3f58a3c4e93bc04d90580c42ca11c60b8014cc0fd5ae33354a1bb6acb",
+      "routes": [
+        {
+          "option": "--compile-project",
+          "files": {
+            "ControlPixel.dat": {
+              "bytes": 704,
+              "sha256": "f052ea87626859d1a5fe119259d6f37a48823e02ee32804ba712cd8d56bf4f46"
+            },
+            "PicLenPara.dat": {
+              "bytes": 2448,
+              "sha256": "d69097c156bff1ee5abdd2e6108852a5d9ee83f478147f2d487de88a92022339"
+            },
+            "SheetPixel.dat": {
+              "bytes": 3655,
+              "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+            }
+          },
+          "controlDifferentBytes": 242
+        },
+        {
+          "option": "--compile-native-media-parts",
+          "files": {
+            "ControlPixel.dat": {
+              "bytes": 704,
+              "sha256": "f052ea87626859d1a5fe119259d6f37a48823e02ee32804ba712cd8d56bf4f46"
+            },
+            "PicLenPara.dat": {
+              "bytes": 2448,
+              "sha256": "d69097c156bff1ee5abdd2e6108852a5d9ee83f478147f2d487de88a92022339"
+            },
+            "SheetPixel.dat": {
+              "bytes": 3655,
+              "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+            }
+          },
+          "controlDifferentBytes": 242
+        }
+      ]
+    },
+    {
+      "name": "opacity128-top",
+      "sourceSha256": "7dca1a39027d2038133f7ca79f96ab82e0b9f63b21b420e718ecd149862be7b8",
+      "routes": [
+        {
+          "option": "--compile-project",
+          "files": {
+            "ControlPixel.dat": {
+              "bytes": 704,
+              "sha256": "4ecc31f72ef208b2d6351000bf3d6807862ace6dbf959bdbb5a1396696f24389"
+            },
+            "PicLenPara.dat": {
+              "bytes": 2448,
+              "sha256": "d69097c156bff1ee5abdd2e6108852a5d9ee83f478147f2d487de88a92022339"
+            },
+            "SheetPixel.dat": {
+              "bytes": 3655,
+              "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+            }
+          },
+          "controlDifferentBytes": 247
+        },
+        {
+          "option": "--compile-native-media-parts",
+          "files": {
+            "ControlPixel.dat": {
+              "bytes": 704,
+              "sha256": "4ecc31f72ef208b2d6351000bf3d6807862ace6dbf959bdbb5a1396696f24389"
+            },
+            "PicLenPara.dat": {
+              "bytes": 2448,
+              "sha256": "d69097c156bff1ee5abdd2e6108852a5d9ee83f478147f2d487de88a92022339"
+            },
+            "SheetPixel.dat": {
+              "bytes": 3655,
+              "sha256": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697"
+            }
+          },
+          "controlDifferentBytes": 247
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    "lower-language-changes",
+    "upper-conditional",
+    "partial-overlap",
+    "third-layer",
+    "different-opacity"
+  ]
+}

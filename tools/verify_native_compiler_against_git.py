@@ -64,7 +64,8 @@ def compare(exe, scratch, require_all, media_driver, replay_directory):
     """Select one original run per source before compiling and compare the complete shared files."""
     baseline = json.loads(REFERENCE.read_bytes())
     revision = baseline["sourceRevision"]
-    current = REFERENCE.with_name("原厂SM与介质散件增量复验_20261128.json")
+    # Protect the latest whole files, including native text, curve pages and exact sprite padding.
+    current = REFERENCE.with_name("原厂文件逐件复验与差异_20261128.json")  # 20261128-15 change
     pinned = {}
     if media_driver in (None, "reference"):  # 20261128-9 change
         receipt = json.loads(current.read_bytes())

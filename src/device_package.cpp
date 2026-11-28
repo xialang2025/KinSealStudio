@@ -14,6 +14,7 @@
 #include <QSaveFile>
 #include <QTemporaryDir>
 #include <QtEndian>
+#include <cstring> //20261128-12 add
 #include <memory>
 
 using u16 = unsigned short;
@@ -57,7 +58,7 @@ static QString packageSha(const QByteArray &bytes) //20261113-11 add
  * Return Value    : The unsigned field, or zero outside its validated containing header.
  * Date            : 2026.11.13
  ******************************************************************************/
-static u32 packageU32(const QByteArray &bytes, int offset) //20261113-11 add
+static u32 packageU32(const QByteArray &bytes, qsizetype offset) //20261128-12 change
 {
     u32 value = 0;
     int index;
@@ -182,6 +183,72 @@ static bool decodePackageFrame(const QByteArray &compressed, u32 rawLength) //20
 }
 
 /******************************************************************************
+ * Function Name   : nativeControlFrameTail
+ * Description     : Read the unmodified compressed-output tail before overlaying the next LZO frame at offset zero.
+ * Input Parameters: workspace seeded with the compressed background, actual compressed bytes, aligned length
+ * Return Value    : Exactly the native padding bytes for this frame.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static QByteArray nativeControlFrameTail(QByteArray *workspace, QByteArrayView frame, qsizetype aligned) //20261128-12 add
+{
+    const qsizetype actual = frame.size();
+    const qsizetype retained = qMin(workspace->size(), aligned) - actual;
+    QByteArray tail(aligned - actual, char(0));
+
+    if (retained > 0) {
+        std::memcpy(tail.data(), workspace->constData() + actual, size_t(retained));
+    }
+    // Shorter frames leave all older bytes above their end available to later frames.
+    if (workspace->size() < actual) {
+        workspace->resize(actual);
+    }
+    std::memcpy(workspace->data(), frame.data(), size_t(actual));
+    return tail;
+}
+
+/******************************************************************************
+ * Function Name   : applyNativeControlPixelPadding
+ * Description     : Finalize sprite frame alignment after the page background and all actual compressed lengths are known.
+ * Input Parameters: compressed background, 12-byte control image records without the page header, pixels, error
+ * Return Value    : True after replacing only alignment bytes; invalid indexes leave the caller's pixels intact.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool applyNativeControlPixelPadding(const QByteArray &background, const QByteArray &records,
+                                    QByteArray *pixels, QString *error) //20261128-12 add
+{
+    QByteArray workspace = background;
+    QByteArray result;
+    QByteArray tail;
+    qsizetype offset = 0;
+    qsizetype index;
+    u32 actual;
+    u32 aligned;
+
+    if (!pixels || records.size() % 12 != 0) {
+        return packageFailure(error, QStringLiteral("控件图帧的补齐索引无效。"));
+    }
+    result = *pixels;
+    for (index = 0; index < records.size(); index += 12) {
+        aligned = packageU32(records, index + 4);
+        actual = packageU32(records, index + 8);
+        if (packageU32(records, index) != 0 || !actual ||
+            ((quint64(actual) + 31) & ~quint64(31)) != aligned || quint64(result.size() - offset) < aligned) {
+            return packageFailure(error, QStringLiteral("控件图帧长度与补齐索引不符。"));
+        }
+        tail = nativeControlFrameTail(&workspace, QByteArrayView(*pixels).sliced(offset, actual), aligned);
+        if (!tail.isEmpty()) {
+            std::memcpy(result.data() + offset + actual, tail.constData(), size_t(tail.size()));
+        }
+        offset += aligned;
+    }
+    if (offset != result.size()) {
+        return packageFailure(error, QStringLiteral("控件像素段末尾存在未索引的字节。"));
+    }
+    *pixels = result;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : validateDevicePayloadStructure
  * Description     : Cross-check segment counts, control raw offsets, every frame, padding, and all single-page image indexes.
  * Input Parameters: payloads, error
@@ -210,6 +277,11 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     int count;
     int slot;
     QString snapshotKind;
+    QByteArray spriteWorkspace; //20261128-12 add
+    QByteArray observedTail;
+    QByteArray nativeTail;
+    bool allNativeTails = true;
+    bool allZeroTails = true;
 
     if (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
     if (staticMacros)
@@ -249,6 +321,7 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     }
     if (count == 0 || payloads[10].size() != count*640 || packageU32(*lengths,0x320) != u32(payloads[11].size()))
     { return packageFailure(error,QStringLiteral("控制记录数量或控制像素长度不一致。")); }
+    spriteWorkspace = payloads[8]; //20261128-12 add: The original compressor writes the page immediately before the first control frame.
     for (index=0;index<count;++index)
     {
         record = payloads[10].mid(index*640,640);
@@ -270,8 +343,17 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
             if (packageU32(*lengths,slot) != 0 || actual == 0 || padded%32 != 0 || padded != ((quint64(actual)+31)&~quint64(31)) || quint64(compressedOffset)+padded > quint64(payloads[11].size()))
             { return packageFailure(error,QStringLiteral("控件图块长度、编码或32字节补齐错误。")); }
             chunk = payloads[11].mid(compressedOffset,actual);
-            if (!decodePackageFrame(chunk,frameBytes) || payloads[11].mid(compressedOffset+actual,padded-actual) != QByteArray(padded-actual,char(0)))
-            { return packageFailure(error,QStringLiteral("控件图块解压或填充字节错误。")); }
+            if (!decodePackageFrame(chunk,frameBytes)) { //20261128-12 change
+                return packageFailure(error,QStringLiteral("控件图块解压失败。"));
+            }
+            observedTail = payloads[11].mid(compressedOffset + actual, padded - actual); //20261128-12 change
+            nativeTail = nativeControlFrameTail(&spriteWorkspace, chunk, padded);
+            allNativeTails = allNativeTails && observedTail == nativeTail;
+            allZeroTails = allZeroTails && observedTail.count(char(0)) == observedTail.size();
+            // One encoding must explain the entire payload, including every frame of every control.
+            if (!allNativeTails && !allZeroTails) {
+                return packageFailure(error, QStringLiteral("控件图块的补齐字节不符合整包编码。"));
+            }
             compressedOffset += padded; ++pictureIndex;
         }
         rawOffset += objectBytes;

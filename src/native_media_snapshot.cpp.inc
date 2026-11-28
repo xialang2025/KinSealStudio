@@ -1,5 +1,7 @@
 #include <QDataStream>
 #include <QRegularExpression>
+#include <QSet>
+#include <QtEndian>
 
 /******************************************************************************
  * Function Name   : nativeMediaWorkDirectory
@@ -51,6 +53,55 @@ static bool nativeMediaWorkDirectory(const QString &input, QByteArray *wire, QSt
 }
 
 /******************************************************************************
+ * Function Name   : pruneNativeMediaPictureGallery
+ * Description     : Retain a single referenced project PNG in an image-only V122 archive copy.
+ * Input Parameters: original SM, validated field spans, gallery count span and mutable archive copy
+ * Return Value    : None.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static void pruneNativeMediaPictureGallery(const QByteArray &source, const QList<NativeSourceFieldSpan> &fields,
+                                         const NativeSourceFieldSpan &count, QByteArray *snapshot) //20261128-13 add
+{
+    HmiProject project;
+    QByteArray key, record;
+    QSet<QByteArray> otherKeys;
+    QDataStream encodedKey(&key, QIODevice::WriteOnly);
+    qsizetype end = count.end, start = -1;
+    bool keep = false;
+
+    // The complete picture importer checks bindings, PNG records, preview children and state indices.
+    if (count.kind != 'i' || count.end - count.start != 4 || qFromBigEndian<u32>(source.constData() + count.start) <= 1 ||
+        !importNativeProjectSource(source, &project) || project.objects.size() != 1 ||
+        !project.objects.first().hasImageDisplayProperties) { return; }
+    const QList<ImageDisplayState> &states = project.objects.first().imageDisplay.states;
+    if (states.isEmpty() || states.first().picturePng.isEmpty()) { return; }
+    for (const ImageDisplayState &state : states) {
+        if (state.picture != states.first().picture || state.picturePng.isEmpty()) { return; }
+    }
+    encodedKey.setVersion(QDataStream::Qt_4_8);
+    encodedKey << states.first().picture;
+    for (const NativeSourceFieldSpan &field : fields) {
+        if (!field.path.startsWith(QStringLiteral("config.284["))) { continue; }
+        if (field.path.endsWith(QStringLiteral("].0"))) {
+            const QByteArray id = source.mid(field.start, field.end - field.start);
+            start = field.start;
+            keep = id == key;
+            if (!keep) { otherKeys.insert(id); }
+        } else if (field.path.endsWith(QStringLiteral("].5"))) {
+            end = field.end;
+            if (keep && start >= count.end) { record = source.mid(start, end - start); }
+        }
+    }
+    if (record.isEmpty() || otherKeys.isEmpty()) { return; }
+    // A reference anywhere else in the source may belong to a page background or another native subsystem.
+    for (const NativeSourceFieldSpan &field : fields) {
+        if (field.kind == 'q' && (field.end <= count.start || field.start >= end) &&
+            otherKeys.contains(source.mid(field.start, field.end - field.start))) { return; }
+    }
+    snapshot->replace(count.start, end - count.start, QByteArray::fromHex("00000001") + record);
+}
+
+/******************************************************************************
  * Function Name   : buildNativeMediaSnapshot
  * Description     : Reproduce selected-page and optional run-directory fields on an independent V122 source copy.
  * Input Parameters: exported SM, destination archive, optional diagnostic and original editor working directory
@@ -62,7 +113,7 @@ static bool buildNativeMediaSnapshot(const QByteArray &source, QByteArray *archi
 {
     NativeProjectEnvelope envelope;
     QList<NativeSourceFieldSpan> fields;
-    NativeSourceFieldSpan currentPage, pageName, pageCount, directory;
+    NativeSourceFieldSpan currentPage, pageName, pageCount, directory, galleryCount;
     QByteArray snapshot = source;
     QByteArray compressed, directoryWire;
     bool startupPage = false;
@@ -73,6 +124,7 @@ static bool buildNativeMediaSnapshot(const QByteArray &source, QByteArray *archi
     }
     for (const NativeSourceFieldSpan &field : fields) {
         if (field.path == QStringLiteral("config.head.12")) { currentPage = field; }
+        if (field.path == QStringLiteral("config.284.count")) { galleryCount = field; } //20261128-13 add
         if (field.path == QStringLiteral("page.head.18")) { pageName = field; }
         if (field.path == QStringLiteral("project.pages.count")) { pageCount = field; }
         if (field.path == QStringLiteral("trailer.settings.0")) { directory = field; }
@@ -92,6 +144,7 @@ static bool buildNativeMediaSnapshot(const QByteArray &source, QByteArray *archi
         if (!nativeMediaWorkDirectory(nativeWorkDirectory, &directoryWire, error)) { return false; }
         snapshot.replace(directory.start, directory.end - directory.start, directoryWire);
     }
+    pruneNativeMediaPictureGallery(source, fields, galleryCount, &snapshot); //20261128-13 add
     if (source.mid(currentPage.start, currentPage.end - currentPage.start) == QByteArray(4, char(0xff)) &&
         pageName.end - pageName.start > 4) {
         snapshot.replace(currentPage.start, currentPage.end - currentPage.start,

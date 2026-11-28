@@ -516,6 +516,7 @@ int main(int argc, char *argv[]) //20261107-6 add
         const bool snapshotOnly = arguments.at(1) == QStringLiteral("--build-native-media-snapshot");
         bool omitDriver = false;
         QString directory;
+        QString compileTime; //20261128-10 add
         int index;
         if (arguments.size() < 4) {
             writeDownloadResult(false, QStringLiteral("请指定输入工程与新散件目录，或指定输入 SM 与输出 KNR。"));
@@ -527,8 +528,11 @@ int main(int argc, char *argv[]) //20261107-6 add
             } else if (directory.isEmpty() && arguments.at(index) == QStringLiteral("--native-work-directory") &&
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
                 directory = arguments.at(++index);
+            } else if (!snapshotOnly && compileTime.isEmpty() && arguments.at(index) == QStringLiteral("--native-compile-time") &&
+                       index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
+                compileTime = arguments.at(++index);
             } else {
-                writeDownloadResult(false, QStringLiteral("介质选项无效。原厂工作目录通过 --native-work-directory 指定。"));
+                writeDownloadResult(false, QStringLiteral("介质选项无效。可指定原厂工作目录 --native-work-directory，编译散件时可用 --native-compile-time 指定本地时间。"));
                 return 24;
             }
         }
@@ -541,7 +545,7 @@ int main(int argc, char *argv[]) //20261107-6 add
             return 0;
         }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, &validation_error)) {
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, compileTime, &validation_error)) {
             writeDownloadResult(false, validation_error);
             return 24;
         }

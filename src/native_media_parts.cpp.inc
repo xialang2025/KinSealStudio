@@ -1,14 +1,16 @@
 #include "native_media_snapshot.cpp.inc" //20261128-7 add
+#include "native_system_compile_time.cpp.inc" //20261128-10 add
 
 /******************************************************************************
  * Function Name   : compileNativeMediaParts
  * Description     : Publish the supported loose V122 media members from a fresh verified USB build.
- * Input Parameters: project, new output directory, omit COM1 media driver, original working directory, error
+ * Input Parameters: project, destination, omitDriver, nativeWorkDirectory, nativeCompileTime, error
  * Return Value    : True after the staged directory has been published.
  * Date            : 2026.11.28
  ******************************************************************************/
 static bool compileNativeMediaParts(const HmiProject &project, const QString &destination,
-                                    bool omitDriver, const QString &nativeWorkDirectory, QString *error) //20261128-3 add
+                                    bool omitDriver, const QString &nativeWorkDirectory,
+                                    const QString &nativeCompileTime, QString *error) //20261128-10 change
 {
     const QFileInfo target(destination);
     const QDir parent(target.absolutePath());
@@ -23,6 +25,7 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     QByteArray source;
     QByteArray context;
     QByteArray mediaSnapshot;
+    QByteArray systemBytes;
     QStringList payloadNames;
     QJsonObject manifest;
 
@@ -57,6 +60,22 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     payloadNames = manifest.value(QStringLiteral("files")).toObject().keys();
     for (const QString &name : payloadNames) {
         if (omitDriver && name == driverName) { continue; }
+        if (!nativeCompileTime.isEmpty() && name == QStringLiteral("SysPara.dat")) { //20261128-10 add
+            // Replay the local clock on the staged media copy, after validating the USB package.
+            file.setFileName(usb.filePath(name));
+            if (!file.open(QIODevice::ReadOnly)) { *error = file.errorString(); return false; }
+            systemBytes = file.readAll();
+            if (file.error() != QFileDevice::NoError) { *error = file.errorString(); return false; }
+            file.close();
+            if (!applyNativeSystemCompileTime(&systemBytes, nativeCompileTime, error)) { return false; }
+            file.setFileName(media.filePath(name));
+            if (!file.open(QIODevice::WriteOnly | QIODevice::NewOnly) ||
+                file.write(systemBytes) != systemBytes.size() || !file.flush()) {
+                *error = file.errorString(); return false;
+            }
+            file.close();
+            continue;
+        }
         if (name == QStringLiteral("upLoad.knr")) { //20261128-7 add
             // The original media writer fills its current-page slot before compressing its own copy.
             file.setFileName(media.filePath(name));

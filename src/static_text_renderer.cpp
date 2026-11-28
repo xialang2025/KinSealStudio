@@ -5,6 +5,10 @@
 #include <QPainter>
 #include <QRadialGradient>
 #include <cmath>
+#include <algorithm>
+#ifdef Q_OS_WIN
+#include "native_text_kerning.cpp.inc" //20261128-10 add
+#endif
 
 /******************************************************************************
  * Function Name   : staticTextContent
@@ -96,6 +100,12 @@ void paintStaticText(QPainter *painter, const QRectF &rect, const QString &text,
     //20261110-8 change: The shared font uses target-page pixels at every view/device DPI.
     painter->setFont(font);
     painter->setPen(properties.textColor);
+#ifdef Q_OS_WIN
+    if (paintNativeKernedText(painter, rect, text, properties, font)) { //20261128-10 add
+        painter->restore();
+        return;
+    }
+#endif
     alignment = Qt::AlignVCenter | (properties.alignment == 1 ? Qt::AlignLeft :
                                     properties.alignment == 2 ? Qt::AlignRight : Qt::AlignHCenter);
     if (properties.adaptive && !text.isEmpty())

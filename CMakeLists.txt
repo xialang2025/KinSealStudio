@@ -72,6 +72,8 @@ qt_add_executable(KinSealStudioLite WIN32
     src/device_roundrect_raster.h
     src/device_polygon_raster.cpp #20261114-1 add: Independent bounded cell-area coverage.
     src/device_polygon_raster.h
+    src/device_thin_curve_raster.cpp #20261128-11 add: Original 16.16 coverage for flat-ended curve segments.
+    src/device_thin_curve_raster.h
     src/device_ellipse_raster.cpp #20261114-2 add: Independent fixed-point ellipse geometry.
     src/device_ellipse_raster.h
     src/device_sector_raster.cpp #20261114-3 add: Default-angle local paths use independent fixed coverage.

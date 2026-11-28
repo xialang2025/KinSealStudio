@@ -14,4 +14,8 @@ struct StaticTextSpriteSet
 bool buildStaticTextSprites(const HmiObject &object, const QStringList &languages,
                             StaticTextSpriteSet *sprites, QString *error); //20261109-0 add
 
+//20261128-14 add: Recover the upper sprite only for independently compiled bilingual text layers.
+bool prepareIndependentStaticTextStack(const QList<HmiObject> &objects, const QStringList &languages,
+                                       HmiObject *upperSprite);
+
 #endif

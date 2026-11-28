@@ -2,6 +2,7 @@
 #include "device_target.h" //20261122-3 add
 #include "device_roundrect_raster.h" //20261113-16 add
 #include "device_polygon_raster.h" //20261114-1 add
+#include "device_thin_curve_raster.h" //20261128-11 add
 #include "device_sector_raster.h" //20261114-3 add
 #include "device_ellipse_raster.h" //20261114-2 add
 #include "device_compile_plan.h" //20261113-11 add
@@ -108,6 +109,23 @@ struct PayloadSpec
     const char *sha256;
     int length;
 };
+
+/******************************************************************************
+ * Function Name   : writeNativeSheetTitle
+ * Description     : Fill the 40-byte ordinary-page title slot using the compiler host's local encoding.
+ * Input Parameters: sheet (validated 72-byte descriptor), title
+ * Return Value    : None
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static void writeNativeSheetTitle(QByteArray &sheet, const QString &title) //20261128-10 add
+{
+    const QByteArray name = title.toLocal8Bit().left(40);
+    char *slot = sheet.data() + 7;
+
+    // V5.1 clears exactly 40 bytes and truncates after conversion, even inside a multibyte character.
+    std::fill_n(slot, 40, char(0));
+    std::copy(name.cbegin(), name.cend(), slot);
+}
 
 // 20261108-10 add: These files are the exact TEST-only compiled fixture, not a general compiler.
 static const PayloadSpec payload_specs[] = {
@@ -735,16 +753,18 @@ static bool buildSingleTextPayloadImpl(const HmiProject &project, bool ordinaryP
         replacementText.append(char((characterCode >> 8) & 0xff)); //20261108-12 change: Preserve every UTF-16 code unit.
         replacementText.append(char(characterCode & 0xff));
     }
-    if (!loadPayloads(&generated, error))
+    if (!loadPayloads(&generated, error) ||
+        !applyNativeDeviceSystemSettings(project.nativeSourceSnapshot, &generated[0], error)) //20261128-10 change
     {
         return false;
     }
     //20261127-2 add: Keep the exact historical template for its original schema-1 fixture and diagnostic entry.
+    writeNativeSheetTitle(generated[1], project.pageName); //20261128-10 add
     hasLiteOnlyMetadata = !project.objects.first().address.isEmpty() || !project.activePageExtensions.isEmpty() ||
                           !project.objects.first().extensions.isEmpty() || !project.extensions.isEmpty();
     preserveTemplateMetadata = !project.objects.first().hasStaticTextProperties && project.nativeSourceSnapshot.isEmpty() &&
-        project.languages == QStringList{QStringLiteral("中文")} && (!ordinaryProject ||
-            (project.name == QStringLiteral("CodexProbeTest") && project.pageName == QStringLiteral("画面1") &&
+        project.languages == QStringList{QStringLiteral("中文")} && project.pageName == QStringLiteral("画面1") && (!ordinaryProject ||
+            (project.name == QStringLiteral("CodexProbeTest") &&
              project.objects.first().name == QStringLiteral("测试文字") && !hasLiteOnlyMetadata));
     if (!preserveTemplateMetadata)
     {
@@ -982,6 +1002,8 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     QList<HmiObject> overlays; //20261109-0 add
     HmiObject object;
     HmiObject related;
+    HmiObject independentUpperText;
+    bool independentTextStack;
     QImage underlay;
     QImage image(800, 480, QImage::Format_RGB16);
     QPainter painter;
@@ -1043,7 +1065,8 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         return buildSingleTextPayloadImpl(project, true, payloads, error); //20261127-2 change
     }
     //20261127-2 change: prepareDeviceCompilePlan has already checked target, language and object limits, including empty static pages.
-    if (!loadPayloads(&generated, error))
+    if (!loadPayloads(&generated, error) ||
+        !applyNativeDeviceSystemSettings(project.nativeSourceSnapshot, &generated[0], error)) //20261128-10 change
     {
         return false;
     }
@@ -1059,6 +1082,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     std::stable_sort(objects.begin(), objects.end(), [](const HmiObject &left, const HmiObject &right) {
         return left.layer < right.layer;
     });
+    independentTextStack = prepareIndependentStaticTextStack(objects, project.languages, &independentUpperText); //20261128-14 add
     image.fill(Qt::black);
     painter.begin(&image);
     painter.fillRect(QRect(1, 1, 799, 479), QColor(197, 223, 255));
@@ -1083,13 +1107,14 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
             {
                 for (relatedIndex = 0; relatedIndex < objects.size(); ++relatedIndex)
                 {
-                    if (relatedIndex != objectIndex && objects.at(relatedIndex).geometry.intersects(object.geometry))
+                    if (!independentTextStack && relatedIndex != objectIndex && objects.at(relatedIndex).geometry.intersects(object.geometry)) //20261128-14 change
                     {
                         if (error != nullptr) { *error = QStringLiteral("动态文本与其它控件重叠的实时合成尚未恢复，未打开USB。"); }
                         return false;
                     }
                 }
-                if (!buildStaticTextSprites(object, project.languages, &textSprites, error)) { return false; }
+                if (!buildStaticTextSprites(independentTextStack && objectIndex == 1 ? independentUpperText : object,
+                                            project.languages, &textSprites, error)) { return false; } //20261128-14 change
                 textOptions = NativeStaticTextControlOptions();
                 textOptions.uncompressedPixelOffset = rawOffset;
                 textOptions.uncompressedPixelBytes = textSprites.rawLength;
@@ -1203,7 +1228,9 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         }
         else if (object.type == QStringLiteral("linecurve")) //20261125-85 add: Native curves feed the page image without a runtime control record.
         {
-            paintGraphic(&painter, object.type, QRectF(object.geometry), object.graphic);
+            if (!paintDeviceThinCurve(&painter, image, object.geometry, object.graphic)) { //20261128-11 change
+                paintGraphic(&painter, object.type, QRectF(object.geometry), object.graphic);
+            }
         }
         else if (object.type == QStringLiteral("polyline")) //20261113-11 add: Only the independently gated static orthogonal slice reaches this branch.
         {
@@ -1259,7 +1286,8 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     }
     painter.end();
     background = QByteArray(reinterpret_cast<const char *>(image.constBits()), image.sizeInBytes());
-    if (!compressRgb565Frame(background, &compressedBackground, error))
+    if (!compressRgb565Frame(background, &compressedBackground, error) ||
+        !applyNativeControlPixelPadding(compressedBackground, pictureRecords, &pictures, error)) //20261128-12 change
     {
         return false;
     }
@@ -1267,6 +1295,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     qToLittleEndian<u16>(initialLanguageIndex, generated[0].data() + 2172); //20261109-0 add: Startup language is distinct from the editor's current language.
     qToLittleEndian<u16>(u16(project.languages.size()), generated[0].data() + 2174);
     generated[1][2] = char(controlCount & 0xff);
+    writeNativeSheetTitle(generated[1], project.pageName); //20261128-10 add
     //20261109-0 change: Byte 3 is an independent native page flag, not the high byte of the count.
     storePayloadLength(&generated[1], 0x44, rawOffset);
     storePayloadLength(&generated[5], 0, u32(compressedBackground.size()));

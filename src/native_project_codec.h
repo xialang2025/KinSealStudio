@@ -118,6 +118,8 @@ bool discardNativeFilePassword(QByteArray *data, QString *error = nullptr); //20
  ******************************************************************************/
 bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data,
                                                 QString *error = nullptr); //20261109-0 add
+bool applyNativeDeviceSystemSettings(const QByteArray &source, QByteArray *systemSegment,
+                                     QString *error = nullptr); //20261128-10 add
 
 /******************************************************************************
  * Function Name   : nativeProjectInitialLanguageIndex

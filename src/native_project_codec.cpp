@@ -1582,6 +1582,7 @@ bool sourceStaticText(const SourceDocument &document, const QString &prefix, int
     int flags;
     int language;
     int field;
+    int alignmentCode; //20261128-10 add
     QString other;
     const int styleFields[13] = {0, 1, 3, 5, 6, 7, 9, 12, 13, 14, 15, 16, 8};
 
@@ -1615,7 +1616,11 @@ bool sourceStaticText(const SourceDocument &document, const QString &prefix, int
     properties.fontFamily = document.value(row + QStringLiteral(".3")).toString();
     properties.fontSize = document.value(row + QStringLiteral(".5")).toInt();
     properties.spacing = document.value(row + QStringLiteral(".16")).toInt();
-    properties.alignment = document.value(prefix + QStringLiteral("static.head.2")).toInt();
+    // The per-language graphic uses the native 4/5/6 left/center/right codes.
+    // Older saves can retain an editor header that disagrees with the rendered row.
+    alignmentCode = document.value(row + QStringLiteral(".8")).toInt(); //20261128-10 change
+    properties.alignment = alignmentCode == 4 ? 1 : alignmentCode == 5 ? 0 : alignmentCode == 6 ? 2 :
+                           document.value(prefix + QStringLiteral("static.head.2")).toInt();
     properties.adaptive = document.value(row + QStringLiteral(".0")).toInt() != 0;
     properties.bold = document.value(row + QStringLiteral(".1")).toInt() != 0;
     properties.italic = document.value(row + QStringLiteral(".6")).toInt() != 0;
@@ -2960,7 +2965,6 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
     int flags;
     int language;
     int sourceIndex;
-    int field;
     QStringList sourceLanguages;
     QStringList keys;
     QString languageRow;
@@ -2973,7 +2977,8 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
     qsizetype listStart;
     qsizetype listEnd;
     QMap<qsizetype, QPair<qsizetype, QByteArray>>::iterator replacement;
-    const int languageFields[13] = {0, 1, 5, 6, 7, 9, 10, 12, 13, 14, 15, 16, 3};
+    const int languageFields[] = {0, 1, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 3}; //20261128-10 change
+    const int graphicAlignment[] = {5, 4, 6};
     qsizetype fontStart;
     qsizetype fontEnd;
 
@@ -3063,7 +3068,9 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
     }
     patchScalar(&before, &after, QStringLiteral("alignment"), prefix + QStringLiteral("static.head.2"), updates);
     if (properties.alignment != original.staticText.alignment) {
-        updates->set(prefix + QStringLiteral("text.tail.4"), properties.alignment);
+        // The cached text child and every language row store a graphics code rather than the combo index.
+        updates->set(prefix + QStringLiteral("text.tail.3"), graphicAlignment[properties.alignment]); //20261128-10 change
+        updates->set(row + QStringLiteral(".8"), graphicAlignment[properties.alignment]);
     }
     colorKeys = QStringList{QStringLiteral("textColor"), QStringLiteral("backgroundColor"), QStringLiteral("foregroundColor")};
     for (i = 0; i < colorKeys.size(); ++i) {
@@ -3090,7 +3097,7 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
     patchScalar(&before, &after, QStringLiteral("style"), row + QStringLiteral(".15"), updates);
     if (properties.style != original.staticText.style) {
         updates->set(prefix + QStringLiteral("static.head.10"), properties.style);
-        updates->set(prefix + QStringLiteral("text.tail.3"), properties.style);
+        updates->set(prefix + QStringLiteral("text.tail.4"), properties.style); //20261128-10 change
         updates->set(prefix + QStringLiteral("rectangle.8"), properties.style);
     }
     patchScalar(&before, &after, QStringLiteral("opacity"), row + QStringLiteral(".14"), updates);
@@ -3112,11 +3119,11 @@ bool patchStaticText(const HmiObject &original, const HmiObject &current, const 
         sourceIndex = sourceLanguages.indexOf(languages.at(language));
         languageRow = SourceDocument::indexed(prefix + QStringLiteral("static.194"), sourceIndex >= 0 ? sourceIndex : 0);
         rowUpdates.replacements = updates->replacements;
-        for (field = 0; field < 13; ++field) {
-            firstFieldName = firstRow + QLatin1Char('.') + QString::number(languageFields[field]);
-            fieldName = languageRow + QLatin1Char('.') + QString::number(languageFields[field]);
+        for (int styleField : languageFields) {
+            firstFieldName = firstRow + QLatin1Char('.') + QString::number(styleField);
+            fieldName = languageRow + QLatin1Char('.') + QString::number(styleField);
             sourceField = updates->document.values.value(firstFieldName);
-            if (languageFields[field] != 10 && updates->replacements.contains(sourceField.start)) {
+            if (styleField != 10 && updates->replacements.contains(sourceField.start)) {
                 sourceField = updates->document.values.value(fieldName);
                 rowUpdates.replacements.insert(sourceField.start, qMakePair(sourceField.end,
                     updates->replacements.value(updates->document.values.value(firstFieldName).start).second));
@@ -4270,14 +4277,16 @@ static bool supportsUnassignedSerialDefaults(const SourceDocument &document,
     return true;
 }
 
+#include "native_system_settings.cpp.inc" //20261128-10 add
+
 /******************************************************************************
- * Function Name   : nativeProjectUsesSupportedDeviceDefaults
+ * Function Name   : validateNativeDeviceSystem
  * Description     : Restrict device compilation to independently verified native configuration bytes.
- * Input Parameters: data, error
+ * Input Parameters: data, optional output system segment, error
  * Return Value    : True for the observed system and project configuration fingerprints.
  * Date            : 2026.11.09
  ******************************************************************************/
-bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *error) //20261109-0 add
+static bool validateNativeDeviceSystem(const QByteArray &data, QByteArray *systemSegment, QString *error) //20261128-10 change
 {
     SourceDocument document(data);
     qsizetype systemStart;
@@ -4300,9 +4309,23 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     int count;
     int current;
     int i;
+    int screensaver;
+    int flicker;
+    int sound;
+    int userLevel;
+    int hexAddress;
 
     if (!document.parse()) {
         return fail(error, document.error);
+    }
+    screensaver = document.value(QStringLiteral("config.head.5")).toInt();
+    flicker = document.value(QStringLiteral("config.head.6")).toInt();
+    sound = document.value(QStringLiteral("config.head.8")).toInt();
+    userLevel = document.value(QStringLiteral("config.head.14")).toInt();
+    hexAddress = document.value(QStringLiteral("config.flags.1")).toInt();
+    if (screensaver < 0 || screensaver > 60 || flicker < 1 || flicker > 50 || userLevel < 1 || userLevel > 8 ||
+        (sound != 0 && sound != 1) || (hexAddress != 0 && hexAddress != 1)) {
+        return fail(error, QStringLiteral("原生系统参数超出屏保、闪烁、声音、用户等级或地址显示的有效范围。"));
     }
     if (hasRetainedMacroAddresses(document)) { //20261127-10 add
         return fail(error, QStringLiteral("工程包含原厂宏地址表，独立设备编译器尚不能生成对应变量记录。"));
@@ -4322,6 +4345,16 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     {
         return fail(error, QStringLiteral("当前设备后端仅支持普通画面编号 000。"));
     }
+    // V5.1 resolves these names to page list indices. A matching sole page always resolves to zero.
+    name = document.value(QStringLiteral("page.head.18")).toString(); //20261128-10 change
+    if (name.isEmpty() || document.value(QStringLiteral("config.head.4")).toString() != name ||
+        document.value(QStringLiteral("config.head.11")).toString() != name ||
+        document.value(QStringLiteral("trailer.settings.11")).toString() != name)
+    {
+        return fail(error, QStringLiteral("原生启动或屏保画面引用与唯一普通画面的名称不符。"));
+    }
+    updates.set(QStringLiteral("config.head.4"), QStringLiteral("画面1"));
+    updates.set(QStringLiteral("config.head.11"), QStringLiteral("画面1"));
     systemStart = document.values.value(QStringLiteral("system.identity.0")).start;
     configStart = document.values.value(QStringLiteral("config.head.0")).start;
     configEnd = document.values.value(QStringLiteral("project.pages.count")).start;
@@ -4398,6 +4431,12 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
         updates.replacements.insert(registryStart, qMakePair(registryEnd, languages));
     }
     normalizedSystem = updates.render(systemStart, configStart);
+    // Only the five typed, bounded fields are removed from the fingerprint. The wire image keeps their original values.
+    updates.set(QStringLiteral("config.head.5"), 1);
+    updates.set(QStringLiteral("config.head.6"), 10);
+    updates.set(QStringLiteral("config.head.8"), 1);
+    updates.set(QStringLiteral("config.head.14"), 1);
+    updates.set(QStringLiteral("config.flags.1"), 0);
     normalizedConfig = updates.render(configStart, configEnd);
     if (!updates.error.isEmpty()) {
         return fail(error, updates.error);
@@ -4406,11 +4445,49 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *e
     configHash = QCryptographicHash::hash(normalizedConfig, QCryptographicHash::Sha256).toHex();
     if (systemHash != QByteArray("61a579ec33b23d2872dc3d31f9900a72b24f6e56b1826bcd40b73dd7fbbc14a6") ||
         (configHash != QByteArray("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba") &&
-         !supportsUnassignedSerialDefaults(document, configHash))) { //20261127-12 change
+         !supportsUnassignedSerialDefaults(document, configHash) &&
+         !supportsNativeSystemDialogProfile(document, configHash))) { //20261128-10 change
         return fail(error, QStringLiteral("该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"));
+    }
+    if (systemSegment != nullptr) {
+        // Offsets 3, 4, 8 and 22 are byte stores. The original writer inverts its source sound flag.
+        (*systemSegment)[3] = char(screensaver);
+        (*systemSegment)[4] = char(flicker);
+        (*systemSegment)[8] = char(sound ^ 1);
+        (*systemSegment)[22] = char(userLevel);
     }
     clearError(error);
     return true;
+}
+
+/******************************************************************************
+ * Function Name   : nativeProjectUsesSupportedDeviceDefaults
+ * Description     : Validate the complete configuration before any device data is produced.
+ * Input Parameters: data, error
+ * Return Value    : True for a supported configuration and parameter range.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data, QString *error) //20261128-10 change
+{
+    return validateNativeDeviceSystem(data, nullptr, error);
+}
+
+/******************************************************************************
+ * Function Name   : applyNativeDeviceSystemSettings
+ * Description     : Transfer supported source system options to a prepared V122 device segment.
+ * Input Parameters: source snapshot, system segment, error
+ * Return Value    : True on success, including projects that use the original template defaults.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool applyNativeDeviceSystemSettings(const QByteArray &source, QByteArray *systemSegment, QString *error) //20261128-10 add
+{
+    if (source.isEmpty()) {
+        return true;
+    }
+    if (systemSegment == nullptr || systemSegment->size() != 4998) {
+        return fail(error, QStringLiteral("原厂系统参数段长度必须为 4998 字节。"));
+    }
+    return validateNativeDeviceSystem(source, systemSegment, error);
 }
 
 /******************************************************************************

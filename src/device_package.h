@@ -5,6 +5,8 @@
 #include <functional>
 
 using DevicePackageWriter = std::function<bool(const QString &, const QByteArray &, QString *)>;
+bool applyNativeControlPixelPadding(const QByteArray &background, const QByteArray &records,
+                                    QByteArray *pixels, QString *error); //20261128-12 add
 bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString *error); //20261113-11 add
 bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QString *error); //20261113-11 add
 bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &payloads,
