@@ -10,7 +10,7 @@
  ******************************************************************************/
 static bool compileNativeMediaParts(const HmiProject &project, const QString &destination,
                                     bool omitDriver, const QString &nativeWorkDirectory,
-                                    const QString &nativeCompileTime, QString *error) //20261128-10 change
+                                    const QString &nativeCompileTime, bool createdDrawing, QString *error) //20261128-19 change
 {
     const QFileInfo target(destination);
     const QDir parent(target.absolutePath());
@@ -41,7 +41,7 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     }
     usb = QDir(stage->filePath(QStringLiteral("usb")));
     media = QDir(stage->filePath(QStringLiteral("media")));
-    if (!exportProjectPayload(project, usb.absolutePath(), error) ||
+    if (!exportProjectPayload(project, usb.absolutePath(), error, createdDrawing) ||
         !verifyDevicePackage(usb.absolutePath(), &manifest, error)) {
         return false;
     }

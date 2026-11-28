@@ -4446,7 +4446,8 @@ static bool validateNativeDeviceSystem(const QByteArray &data, QByteArray *syste
     if (systemHash != QByteArray("61a579ec33b23d2872dc3d31f9900a72b24f6e56b1826bcd40b73dd7fbbc14a6") ||
         (configHash != QByteArray("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba") &&
          !supportsUnassignedSerialDefaults(document, configHash) &&
-         !supportsNativeSystemDialogProfile(document, configHash))) { //20261128-10 change
+         !supportsNativeSystemDialogProfile(document, configHash) &&
+         !applyNativeLocalPageIoProfile(document, updates, configStart, configEnd, systemSegment))) { //20261128-17 change
         return fail(error, QStringLiteral("该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"));
     }
     if (systemSegment != nullptr) {
@@ -5552,3 +5553,5 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
 
 #include "native_load_metadata.cpp.inc" //20261128-0 add
 #include "native_source_edits.cpp.inc" //20261127-11 add
+
+#include "native_lamp_source_monitor.cpp.inc" //20261128-16 add

@@ -60,7 +60,7 @@ namespace
  * Return Value    : None
  * Date            : 2026.11.13
  ******************************************************************************/
-static void paintDeviceStraightLine(QPainter *painter, const HmiObject &object) //20261113-14 add
+static void paintDeviceStraightLine(QPainter *painter, const HmiObject &object, bool createdDrawing) //20261128-19 change
 {
     QVector<QPointF> endpoints = graphicHandles(object.type,QRectF(object.geometry),object.graphic);
     int sx = qRound(endpoints[0].x());
@@ -99,6 +99,10 @@ static void paintDeviceStraightLine(QPainter *painter, const HmiObject &object) 
             error -= 2*dx;
             if (error < 0) { x += step; error += 2*dy; }
         }
+    }
+    // The editor's newly created pen covers the otherwise excluded high major-axis endpoint.
+    if (createdDrawing) {
+        painter->fillRect(QRect(ex, ey, 1, 1), Qt::black);
     }
     painter->restore();
 }
@@ -994,7 +998,7 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
  * Date            : 2026.11.09
  ******************************************************************************/
 static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
-                         QString *error, QJsonObject *issue) //20261125-84 change
+                                       QString *error, QJsonObject *issue, bool createdDrawing) //20261128-19 change: Rasterize only after the original compiler's half-pixel quantization boundary.
 {
     DeviceCompilePlan compilePlan; //20261113-11 add: Freeze bounded semantics before the existing five-family compilers run.
     QVector<QByteArray> generated;
@@ -1038,13 +1042,27 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     int stateIndex; //20261109-8 add
     bool needsUnderlay;
     bool hasSwitch;
-    bool secondStateActive; //20261109-6 add
+    bool secondStateActive;
+    bool shareFrames; //20261128-16 add
 
     if (issue != nullptr) { *issue = {}; } //20261125-84 add: Locations are scoped to one compilation.
     if (payloads == nullptr || !prepareDeviceCompilePlan(project,&compilePlan,error,issue)) { return false; } //20261113-11 add
     if (!project.validateSinglePageBackend(error)) //20261110-5 add: Block uncompiled pages/configuration before loading payloads or opening USB.
     {
         return false;
+    }
+    if (createdDrawing) { //20261128-19 add
+        // A historical drawing state applies to one active object; SM stores no per-object cache state.
+        const HmiObject item = compilePlan.objects.value(0);
+        const bool line = item.type == QStringLiteral("line") || item.type == QStringLiteral("freeline") ||
+                          item.type == QStringLiteral("polyline");
+        const QVector<QPointF> tips = line ? graphicHandles(item.type, QRectF(item.geometry), item.graphic) : QVector<QPointF>();
+        const bool drawnLine = tips.size() == 2 && qMax(qAbs(tips[1].x() - tips[0].x()), qAbs(tips[1].y() - tips[0].y())) > 2;
+        if (project.objects.size() != 1 || compilePlan.objects.size() != 1 || item.graphic.nativeDrawingDraft ||
+            (item.type != QStringLiteral("table") && !drawnLine)) {
+            if (error) { *error = QStringLiteral("刚绘制状态仅核实单个静态表格或非微小的两点实线。"); }
+            return false;
+        }
     }
     if (!project.nativeSourceSnapshot.isEmpty() &&
         !nativeProjectUsesSupportedDeviceDefaults(project.nativeSourceSnapshot, error)) //20261109-0 add
@@ -1176,8 +1194,10 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
                 for (stateIndex = 0; stateIndex < object.lamp.stateCount(); ++stateIndex) { stateIndices.append(stateIndex); }
             }
             sprites = BitButtonSpriteSet();
-            spriteLanguages = (object.hasLampProperties || object.hasFunctionButtonProperties) && object.bitButton.states[0].sameLanguage ?
-                              QStringList{backgroundLanguage} : project.languages; //20261110-0 change: Shared-text lamps and functions reuse one complete image set.
+            // The record's shared-language flag and the encoded number of frame sets must describe the same layout.
+            shareFrames = object.hasLampProperties || object.hasFunctionButtonProperties ? object.bitButton.states[0].sameLanguage :
+                          nativeButtonSharesFrames(object.bitButton, secondStateActive); //20261128-16 change
+            spriteLanguages = shareFrames ? QStringList{backgroundLanguage} : project.languages;
             Q_FOREACH (language, spriteLanguages) //20261109-8 change: Localized controls retain language-first order; shared-text lamps emit only one set.
             {
                 if (!buildBitButtonSprites(object, language, stateIndices, &languageSprites, error, underlay, overlays))
@@ -1224,7 +1244,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         }
         else if (object.type == QStringLiteral("line") || object.type == QStringLiteral("freeline")) //20261113-15 change: The source-bound two-endpoint families share the proven integer raster, without admitting sampled freehand paths.
         {
-            paintDeviceStraightLine(&painter,object);
+            paintDeviceStraightLine(&painter, object, createdDrawing);
         }
         else if (object.type == QStringLiteral("linecurve")) //20261125-85 add: Native curves feed the page image without a runtime control record.
         {
@@ -1236,12 +1256,16 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         {
             // Saved-and-reopened native cap zero is FlatCap; a newly created native object retains a different cached pen.
             painter.save(); painter.setRenderHint(QPainter::Antialiasing,false); painter.setBrush(Qt::NoBrush);
-            painter.setPen(QPen(Qt::black,1,Qt::SolidLine,Qt::FlatCap));
+            painter.setPen(QPen(Qt::black,1,Qt::SolidLine,createdDrawing ? Qt::SquareCap : Qt::FlatCap));
             painter.drawPath(graphicPath(object.type,QRectF(object.geometry),object.graphic)); painter.restore();
         }
         else if (object.type == QStringLiteral("table")) //20261113-12 add: A pure image table has no PLC state, control record or dynamic image index.
         {
-            paintDeviceTableGraphic(&painter,QRectF(object.geometry),object.graphic);
+            if (createdDrawing) { //20261128-19 add: The editor grid retains square caps until the saved SM is reopened.
+                paintGraphic(&painter, object.type, QRectF(object.geometry), object.graphic);
+            } else {
+                paintDeviceTableGraphic(&painter, QRectF(object.geometry), object.graphic);
+            }
         }
         else if (object.type==QStringLiteral("sector")) //20261114-3 add: Publish no caller payload until both open-path masks and the isolated patch succeed.
         {
@@ -1311,6 +1335,10 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     }
     if (controlCount > 0)
     {
+        // The current source archive contains dormant lamp fields that the native writer also serializes.
+        if (controlCount == 1 && project.objects.size() == 1 && project.objects.first().hasLampProperties) {
+            applyNativeSingleLampMonitorFields(qUncompress(generated.at(7)), &controls); //20261128-16 add
+        }
         generated.append(controls);
         generated.append(pictures);
     }
@@ -1931,7 +1959,7 @@ bool downloadSingleTextProject(const HmiProject &project, QString *error) //2026
  * Return Value    : True with a complete offline payload; failed preparation preserves output data.
  * Date            : 2026.11.25
  ******************************************************************************/
-bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error, QJsonObject *issue) //20261125-83 add
+bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error, QJsonObject *issue, bool createdDrawing) //20261128-19 change
 {
     HmiProject raster;
     QVector<QByteArray> generated;
@@ -1955,7 +1983,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         raster.objects[index].subpixelOffset = QPointF();
         quantized = true;
     }
-    if (!buildIntegerProjectPayload(raster, &generated, error, issue)) { return false; }
+    if (!buildIntegerProjectPayload(raster, &generated, error, issue, createdDrawing)) { return false; }
     if (quantized)
     {
         // The firmware consumes integer pixels; the recoverable editor archive keeps the original half-pixel geometry.
@@ -2026,11 +2054,11 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
  * Date            : 2026.11.09
  ******************************************************************************/
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
-                          QString *error) //20261113-11 change
+                          QString *error, bool createdDrawing) //20261128-19 change
 {
     QVector<QByteArray> payloads;
 
-    if (!buildProjectPayload(project,&payloads,error)) { return false; }
+    if (!buildProjectPayload(project, &payloads, error, nullptr, createdDrawing)) { return false; }
     return publishDevicePackage(project,payloads,outputDirectory,error);
 }
 

@@ -128,7 +128,7 @@ bool buildNativeWordButtonControl(const HmiObject &object,
     encoded.replace(0x100, 8, QByteArray(8, char(0)));
     encoded[0x103] = char(word->pressedEffect ? 1 : 0);
     qToLittleEndian<u16>(u16(1), encoded.data() + 0x106);
-    encoded.replace(0x10c, 0x1bd - 0x10c, QByteArray(0x1bd - 0x10c, char(0)));
+    encoded.replace(0x10c, 0x1bc - 0x10c, QByteArray(0x1bc - 0x10c, char(0))); //20261128-16 change: Keep the common shared-frame selector at 0x1bc.
     if (!word->pressedEffect) { encoded[0x10b] = 0; }
     // Unexposed flags at10c/10d and the secondary address at15c contain native constructor residue and remain zero here.
     if (word->usesTotalDigits()) {

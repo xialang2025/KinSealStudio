@@ -26,6 +26,15 @@ struct NativeBitButtonControlOptions
 };
 
 /******************************************************************************
+ * Function Name   : nativeButtonSharesFrames
+ * Description     : Select a single native image set when every displayed bit/word button state shares its text.
+ * Input Parameters: properties, secondStateActive
+ * Return Value    : True for one image set shared across the project languages.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool nativeButtonSharesFrames(const BitButtonProperties &properties, bool secondStateActive); //20261128-16 add
+
+/******************************************************************************
  * Function Name   : buildNativeBitButtonControl
  * Description     : Encode verified V5.1 bit-button fields into a clean 640-byte record.
  * Input Parameters: object, options, control, error

@@ -120,6 +120,7 @@ bool nativeProjectUsesSupportedDeviceDefaults(const QByteArray &data,
                                                 QString *error = nullptr); //20261109-0 add
 bool applyNativeDeviceSystemSettings(const QByteArray &source, QByteArray *systemSegment,
                                      QString *error = nullptr); //20261128-10 add
+void applyNativeSingleLampMonitorFields(const QByteArray &source, QByteArray *control); //20261128-16 add
 
 /******************************************************************************
  * Function Name   : nativeProjectInitialLanguageIndex

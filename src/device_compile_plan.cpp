@@ -231,6 +231,55 @@ static bool prepareDeviceSector(const HmiProject &project, const HmiObject &obje
 }
 
 /******************************************************************************
+ * Function Name   : prepareNativeTranslatedBoundaryStroke
+ * Description     : Project an edge-translated one-pixel pen into the native non-antialiased page raster.
+ * Input Parameters: Two-point graphic with its saved page geometry.
+ * Return Value    : True for an axial polyline or a free line translated off the page border by its pen extent.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool prepareNativeTranslatedBoundaryStroke(HmiObject &object) //20261128-19 add
+{
+    const QRect &rect = object.geometry;
+    const QVector<QPointF> &vertices = object.graphic.points;
+    QPointF a, b, delta, origin, expectedShift;
+    qreal length, extent;
+    QPoint rasterShift;
+    int index;
+
+    if (vertices.size() != 2 || (rect.left() != 0 && rect.top() != 0) ||
+        (object.type != QStringLiteral("freeline") && object.type != QStringLiteral("polyline"))) {
+        return false;
+    }
+    a = QPointF(rect.x() + vertices[0].x() * rect.width(), rect.y() + vertices[0].y() * rect.height());
+    b = QPointF(rect.x() + vertices[1].x() * rect.width(), rect.y() + vertices[1].y() * rect.height());
+    delta = b - a;
+    length = std::hypot(delta.x(), delta.y());
+    if (!std::isfinite(length) || length == 0 || std::abs(delta.x() - std::round(delta.x())) > 1e-8 ||
+        std::abs(delta.y() - std::round(delta.y())) > 1e-8) {
+        return false;
+    }
+    if (object.type == QStringLiteral("polyline") && std::abs(delta.x()) > 1e-8 && std::abs(delta.y()) > 1e-8) {
+        return false;
+    }
+    // A square pen projects half its tangent plus half its normal on each coordinate axis.
+    extent = (std::abs(delta.x()) + std::abs(delta.y())) / (2 * length);
+    origin = QPointF(qMin(a.x(), b.x()), qMin(a.y(), b.y()));
+    expectedShift = QPointF(rect.left() == 0 ? extent : 0, rect.top() == 0 ? extent : 0);
+    if (std::abs(origin.x() - rect.x() - expectedShift.x()) > 1e-8 ||
+        std::abs(origin.y() - rect.y() - expectedShift.y()) > 1e-8) {
+        return false;
+    }
+    // The native cosmetic raster rounds a half-pixel translation down. Oblique pen extents exceed one half.
+    rasterShift = QPoint(expectedShift.x() > 0.5 ? 1 : 0, expectedShift.y() > 0.5 ? 1 : 0);
+    for (index = 0; index < vertices.size(); ++index) {
+        const QPointF relative = (index == 0 ? a : b) - origin;
+        object.graphic.points[index] = QPointF(qreal(qRound(relative.x()) + rasterShift.x()) / rect.width(),
+                                               qreal(qRound(relative.y()) + rasterShift.y()) / rect.height());
+    }
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : prepareDeviceCompilePlan
  * Description     : Freeze supported ordered semantics and reject unproved graphics before allocating output segments.
  * Input Parameters: project, plan, error, issue
@@ -247,6 +296,7 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
     QPointF previous;
     QPointF absolute;
     bool first;
+    bool translatedBoundary; //20261128-19 add
     QString diagnostic;
 
     if (plan == nullptr) { return compilationIssue(project,empty,QStringLiteral("output"),QJsonValue(),QStringLiteral("编译计划输出为空。"),error,issue); }
@@ -428,17 +478,22 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
         { return compilationIssue(project,object,QStringLiteral("graphic.endArrow"),object.graphic.endArrow,QStringLiteral("本切片只开放无箭头。"),error,issue); }
         if (object.graphic.endCap != 0)
         { return compilationIssue(project,object,QStringLiteral("graphic.endCap"),object.graphic.endCap,QStringLiteral("本切片只开放已核端点0。"),error,issue); }
+        translatedBoundary = prepareNativeTranslatedBoundaryStroke(object); //20261128-19 add
+        if (translatedBoundary) {
+            // Keep saved SM and KSP points intact; only the compiler's drawing copy uses snapped pixel positions.
+            prepared.objects[index].graphic.points = object.graphic.points;
+        }
         first = true;
         Q_FOREACH (point,object.graphic.points)
         {
             absolute = QPointF(object.geometry.x()+point.x()*object.geometry.width(),object.geometry.y()+point.y()*object.geometry.height());
             if (std::abs(absolute.x()-std::round(absolute.x())) > 1e-8 || std::abs(absolute.y()-std::round(absolute.y())) > 1e-8 || absolute.x() > 799 || absolute.y() > 479 || (object.type == QStringLiteral("polyline") && !first && absolute.x() != previous.x() && absolute.y() != previous.y())) //20261113-14 change: Oblique straight lines do not relax the orthogonal polyline contract.
-            { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("只开放屏内整数像素端点；折线仍只支持水平或垂直线段。"),error,issue); }
+            { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("端点须为屏内整数或已核定的边界整体平移，折线须为水平或垂直线段。"),error,issue); }
             if (object.type != QStringLiteral("polyline") && !first && qRound(absolute.x()) == qRound(previous.x()) && qRound(absolute.y()) == qRound(previous.y())) //20261113-15 change: Both admitted two-point families require distinct device pixels.
             { return compilationIssue(project,object,QStringLiteral("graphic.points"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("直线取整后端点不能重合。"),error,issue); }
             if (object.type == QStringLiteral("freeline") && !first && qMax(qAbs(qRound(absolute.x())-qRound(previous.x())),qAbs(qRound(absolute.y())-qRound(previous.y()))) < 40) //20261113-15 add
             { return compilationIssue(project,object,QStringLiteral("graphic.sampledSpan"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("自由直线本切片保守开放主轴跨度至少40像素；小尺寸有效原厂路径未核。"),error,issue); }
-            if (object.type == QStringLiteral("freeline") && (absolute.x() < 1 || absolute.y() < 1)) //20261113-15 add: The native boundary source retains a fractional item translation outside this identity-transform slice.
+            if (object.type == QStringLiteral("freeline") && !translatedBoundary && (absolute.x() < 1 || absolute.y() < 1)) //20261113-15 add: The native boundary source retains a fractional item translation outside this identity-transform slice.
             { return compilationIssue(project,object,QStringLiteral("graphic.sceneBoundary"),QJsonArray{absolute.x(),absolute.y()},QStringLiteral("自由直线本切片仅开放端点X/Y至少1像素；贴上/左边界的原厂小数场景变换待恢复。"),error,issue); }
             previous = absolute; first = false;
         }

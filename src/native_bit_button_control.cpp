@@ -271,6 +271,19 @@ static bool encodeNotification(const BitButtonProperties &properties,
 }
 
 /******************************************************************************
+ * Function Name   : nativeButtonSharesFrames
+ * Description     : Select a single native image set when every displayed bit/word button state shares its text.
+ * Input Parameters: properties, secondStateActive
+ * Return Value    : True for one image set shared across the project languages.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool nativeButtonSharesFrames(const BitButtonProperties &properties, bool secondStateActive) //20261128-16 add
+{
+    // Older KSPs can keep per-state flags. Keep all language frames when any displayed state uses localized text.
+    return properties.states[0].sameLanguage && (!secondStateActive || properties.states[1].sameLanguage);
+}
+
+/******************************************************************************
  * Function Name   : buildNativeBitButtonControl
  * Description     : Construct the observed 640-byte record while clearing native stack padding.
  * Input Parameters: object, options, control, error
@@ -290,6 +303,7 @@ bool buildNativeBitButtonControl(const HmiObject &object,
     int stateCount;
     bool wordMonitor;
     bool sameMonitor;
+    bool sharedFrames; //20261128-16 add
 
     if (control == nullptr || object.type != QStringLiteral("switch") ||
         !object.hasBitButtonProperties)
@@ -334,10 +348,11 @@ bool buildNativeBitButtonControl(const HmiObject &object,
     {
         ++stateCount;
     }
+    sharedFrames = nativeButtonSharesFrames(*properties, properties->indicator && properties->dualMonitor); //20261128-16 change
     expectedPixelBytes = static_cast<unsigned long long>(object.geometry.width()) *
                          static_cast<unsigned long long>(object.geometry.height()) *
                          2 * static_cast<unsigned long long>(stateCount) *
-                         static_cast<unsigned long long>(options.languageCount); //20261109-0 change: Each language owns a complete ordered state/flash image set.
+                         static_cast<unsigned long long>(sharedFrames ? 1U : options.languageCount); //20261128-16 change
     pixelEnd = static_cast<unsigned long long>(options.uncompressedPixelOffset) +
                options.uncompressedPixelBytes;
     if (expectedPixelBytes > std::numeric_limits<u32>::max() ||
@@ -404,6 +419,7 @@ bool buildNativeBitButtonControl(const HmiObject &object,
             return false;
         }
     }
+    encoded[0x1bc] = char(sharedFrames); //20261128-16 add: The firmware skips its language stride when this byte is one.
     encoded[0x1bd] = char(properties->pressTimeEnabled ? 1 : 0);
     writeControlWord(&encoded, 0x1be,
                      u16(u32(properties->pressTime <= 655 ? properties->pressTime : 255) * 100U));

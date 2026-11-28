@@ -515,6 +515,7 @@ int main(int argc, char *argv[]) //20261107-6 add
         arguments.value(1) == QStringLiteral("--build-native-media-snapshot")) { //20261128-8 change
         const bool snapshotOnly = arguments.at(1) == QStringLiteral("--build-native-media-snapshot");
         bool omitDriver = false;
+        bool createdDrawing = false; //20261128-19 add
         QString directory;
         QString compileTime; //20261128-10 add
         int index;
@@ -525,6 +526,8 @@ int main(int argc, char *argv[]) //20261107-6 add
         for (index = 4; index < arguments.size(); ++index) {
             if (!snapshotOnly && !omitDriver && arguments.at(index) == QStringLiteral("--without-com1-driver")) {
                 omitDriver = true;
+            } else if (!snapshotOnly && !createdDrawing && arguments.at(index) == QStringLiteral("--native-created-drawing")) {
+                createdDrawing = true;
             } else if (directory.isEmpty() && arguments.at(index) == QStringLiteral("--native-work-directory") &&
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
                 directory = arguments.at(++index);
@@ -545,7 +548,7 @@ int main(int argc, char *argv[]) //20261107-6 add
             return 0;
         }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, compileTime, &validation_error)) {
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, compileTime, createdDrawing, &validation_error)) {
             writeDownloadResult(false, validation_error);
             return 24;
         }
@@ -625,8 +628,13 @@ int main(int argc, char *argv[]) //20261107-6 add
     if (arguments.size() >= 4 &&
         arguments.at(1) == QStringLiteral("--compile-project")) //20261109-0 add
     {
+        const bool createdDrawing = arguments.size() == 5 && arguments.at(4) == QStringLiteral("--native-created-drawing");
+        if (arguments.size() != 4 && !createdDrawing) { //20261128-19 add
+            writeDownloadResult(false, QStringLiteral("离线工程编译可指定 --native-created-drawing 重放刚绘制的原厂画面。"));
+            return 24;
+        }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !exportProjectPayload(validation_project, arguments.at(3), &validation_error))
+            !exportProjectPayload(validation_project, arguments.at(3), &validation_error, createdDrawing))
         {
             writeDownloadResult(false, validation_error);
             return 19;
