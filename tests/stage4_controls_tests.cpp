@@ -148,7 +148,7 @@ private slots:
     void messageCanvasAndPreviewShareRenderer();
     void messageCopyAndMixedPersistence();
     void messageCreationAndCancellationAreAtomic();
-    void messageUnknownDeviceAndSourceAreRejected();
+    void messageSourceAndOfflinePackage();
     void scaleNativeBoundsAndDirectionLinkage();
     void scaleRangeErrorsAndEqualLimits();
     void scaleRenderingCountsAndClipping();
@@ -593,25 +593,33 @@ void Stage4ControlTests::messageCreationAndCancellationAreAtomic() //20261112-0 
 }
 
 /******************************************************************************
- * Function Name   : Stage4ControlTests::messageUnknownDeviceAndSourceAreRejected
+ * Function Name   : Stage4ControlTests::messageSourceAndOfflinePackage
  * Description     : Ensure editor support never bypasses the unrecovered source or device backend gate.
  * Input Parameters: None
  * Return Value    : None.
  * Date            : 2026.11.12
  ******************************************************************************/
-void Stage4ControlTests::messageUnknownDeviceAndSourceAreRejected() //20261112-0 add
+void Stage4ControlTests::messageSourceAndOfflinePackage() //20261112-0 add
 {
     HmiProject project;
     QByteArray source = QByteArrayLiteral("unchanged");
     QVector<QByteArray> payloads = {QByteArrayLiteral("unchanged")};
     QString error;
     QJsonObject capabilities;
-    project.objects.append(messageObject()); capabilities = describeProjectCapabilities(project);
+    project.objects.append(messageObject());
+    project.objects.first().geometry.setSize(QSize(200, 100)); //20261128-24 change
+    capabilities = describeProjectCapabilities(project);
     QVERIFY(capabilities.value(QStringLiteral("modelPersistence")).toObject().value(QStringLiteral("allowed")).toBool());
-    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
-    QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("blocked"));
-    QVERIFY(!exportNativeProjectSource(project, &source, &error)); QCOMPARE(source, QByteArrayLiteral("unchanged"));
-    QVERIFY(!buildProjectPayload(project, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")}); QVERIFY(!error.isEmpty());
+    QCOMPARE(capabilities.value(QStringLiteral("nativeSource")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("candidate"));
+    QCOMPARE(capabilities.value(QStringLiteral("deviceCompile")).toObject().value(QStringLiteral("status")).toString(), QStringLiteral("candidate"));
+    QVERIFY2(exportNativeProjectSource(project, &source, &error), qPrintable(error));
+    QVERIFY2(buildProjectPayload(project, &payloads, &error), qPrintable(error));
+    QCOMPARE(payloads.size(), 13);
+    QCOMPARE(int(static_cast<unsigned char>(payloads.at(10).at(0))), 35);
+    project.objects.first().subpixelOffset = QPointF(0.5, 0);
+    payloads = {QByteArrayLiteral("unchanged")};
+    QVERIFY(!buildProjectPayload(project, &payloads, &error));
+    QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
 }
 
 /******************************************************************************
@@ -971,7 +979,7 @@ void Stage4ControlTests::qrDescriptionRasterAndCapacity() //20261112-0 add
     QrCodeProperties properties;
     QString error;
     QrCodeDialog dialog(qrObject(), HmiProject());
-    QFile nativeModules(QFINDTESTDATA("../docs/stage4-evidence/qrcode/native/qr-preview-decoded.json"));
+    QFile nativeModules(QFINDTESTDATA("fixtures/stage4-controls/qrcode/native/qr-preview-decoded.json"));
     QJsonArray rows;
     int index;
     int x;
@@ -1086,7 +1094,13 @@ void Stage4ControlTests::qrStrictPersistenceAndBackendGates() //20261112-0 add
     QCOMPARE(loaded.objects.first().type, qrOnly.objects.first().type);
     QCOMPARE(loaded.objects.first().geometry, qrOnly.objects.first().geometry);
     QCOMPARE(loaded.objects.first().qrCode.toJson(), qrOnly.objects.first().qrCode.toJson());
-    QVERIFY(!buildProjectPayload(qrOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
+    QVERIFY2(buildProjectPayload(qrOnly, &payloads, &error), qPrintable(error)); //20261128-26 change
+    QCOMPARE(payloads.size(), 12);
+    QCOMPARE(int(static_cast<unsigned char>(payloads.at(10).at(0))), 52);
+    qrOnly.objects.first().qrCode.visibility.visibilityEnabled = true;
+    payloads = {QByteArrayLiteral("unchanged")};
+    QVERIFY(!buildProjectPayload(qrOnly, &payloads, &error));
+    QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("unchanged")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("qr-mixed.ksp")), &error), qPrintable(error)); }
 }
 
@@ -1318,7 +1332,19 @@ void Stage4ControlTests::imagePersistenceLegacyAndBackendGates() //20261112-0 ad
     QCOMPARE(loaded.objects.first().type, imageOnly.objects.first().type);
     QCOMPARE(loaded.objects.first().geometry, imageOnly.objects.first().geometry);
     QCOMPARE(loaded.objects.first().imageDisplay.toJson(), imageOnly.objects.first().imageDisplay.toJson());
-    QVERIFY(!buildProjectPayload(imageOnly, &payloads, &error)); QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
+    //20261128-29 change: An opaque project PNG has a verified type-15 frame and index in the normal device package.
+    QVERIFY2(buildProjectPayload(imageOnly, &payloads, &error), qPrintable(error));
+    QVERIFY2(validateDevicePayloadStructure(payloads, &error), qPrintable(error));
+    QCOMPARE(payloads.size(), 12);
+    QCOMPARE(payloads.at(10).size(), 640);
+    QCOMPARE(u8(payloads.at(10).at(0)), u8(15));
+    QCOMPARE(qFromLittleEndian<u32>(payloads.at(10).constData() + 16), u32(160 * 100 * 2));
+    // Active image visibility still has no device encoding. A rejected build must preserve caller-owned output.
+    imageOnly.objects.first().imageDisplay.visibility.visibilityEnabled = true;
+    imageOnly.objects.first().imageDisplay.visibility.bitEnabled = true;
+    payloads = {QByteArrayLiteral("keep")};
+    QVERIFY(!buildProjectPayload(imageOnly, &payloads, &error));
+    QCOMPARE(payloads, QVector<QByteArray>{QByteArrayLiteral("keep")});
     if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY2(project.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("image-mixed.ksp")), &error), qPrintable(error)); }
 }
 
@@ -1373,7 +1399,7 @@ void Stage4ControlTests::imageActualRasterAndPlacementTransaction() //20261112-0
  ******************************************************************************/
 static QByteArray gifFixture(bool alternate = false) //20261112-0 add
 {
-    QFile file(alternate ? QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-blue-yellow.gif") : QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif"));
+    QFile file(alternate ? QFINDTESTDATA("fixtures/stage4-controls/gif/native/probe-blue-yellow.gif") : QFINDTESTDATA("fixtures/stage4-controls/gif/native/probe-red-green.gif"));
     if (!file.open(QIODevice::ReadOnly)) { return QByteArray(); } return file.readAll();
 }
 
@@ -1474,7 +1500,7 @@ void Stage4ControlTests::gifGalleryImportCancelAndResourceProtection() //2026111
     HmiObject object = gifObject();
     AnimationGalleryDialog gallery(project, QString());
     QString error;
-    QString path = QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif");
+    QString path = QFINDTESTDATA("fixtures/stage4-controls/gif/native/probe-red-green.gif");
     QTimer nested;
     GifDisplayDialog *dialog;
     QVERIFY2(gallery.importFiles({path}, &error), qPrintable(error)); QCOMPARE(gallery.draftProject().animations.first(), gifFixture()); QVERIFY(project.animations.isEmpty());
@@ -1561,7 +1587,7 @@ void Stage4ControlTests::gifPlacementCancellationAndUndoAreAtomic() //20261112-0
     bool configured = false;
     bool childAccepted = false;
     int history;
-    QString path = QFINDTESTDATA("../docs/stage4-evidence/gif/native/probe-red-green.gif");
+    QString path = QFINDTESTDATA("fixtures/stage4-controls/gif/native/probe-red-green.gif");
     window.setProject(project, QString()); window.show(); QVERIFY(QTest::qWaitForWindowExposed(&window)); history = window.m_projectHistory.size();
     parentTimer.setInterval(15); childTimer.setInterval(15);
     connect(&childTimer, &QTimer::timeout, &window, [&]() {
@@ -1630,7 +1656,7 @@ void Stage4ControlTests::numberAllDataTypeTransitions() //20261112-0 add
     QComboBox *type = dialog.findChild<QComboBox *>(QStringLiteral("Number_dataType"));
     QSpinBox *digits = dialog.findChild<QSpinBox *>(QStringLiteral("Number_totalDigits"));
     QSpinBox *decimals = dialog.findChild<QSpinBox *>(QStringLiteral("Number_decimalDigits"));
-    QFile file(QFINDTESTDATA("../docs/stage4-evidence/number/native/findings.json"));
+    QFile file(QFINDTESTDATA("fixtures/stage4-controls/number/native/findings.json"));
     QJsonArray matrix;
     QJsonValue value;
     QJsonObject row;
@@ -4879,7 +4905,7 @@ void Stage4ControlTests::recipeDefinitionDialogTableCopyAndCommonNames() //20261
  ******************************************************************************/
 void Stage4ControlTests::recipeCsvExactNativeFixtureAndAtomicRefusals() //20261113-2 add
 {
-    QFile fixture(QFINDTESTDATA("../docs/stage4-evidence/recipe/native/C31Golden-native-r14.csv"));
+    QFile fixture(QFINDTESTDATA("fixtures/stage4-controls/recipe/native/C31Golden-native-r14.csv"));
     RecipeProperties properties;
     RecipeProperties parsed;
     RecipeProperties sentinel;
@@ -5252,7 +5278,7 @@ void Stage4ControlTests::rectDefaultNativePixelsAndIndependentFillPatterns() //2
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/rect/native/sheet-rect-default-r1.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/rect/native/sheet-rect-default-r1.png"));
     QImage pixels(260,160,QImage::Format_ARGB32);
     QPainter painter;
     QSet<QByteArray> hashes;
@@ -5367,7 +5393,7 @@ void Stage4ControlTests::ellipseCurvedRasterFillAndNativeComparisonInput() //202
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/ellipse/native/sheet-ellipse-empty-default-r2.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/ellipse/native/sheet-ellipse-empty-default-r2.png"));
     QImage pixels(260,160,QImage::Format_ARGB32);
     QPainter painter;
     QSet<QByteArray> hashes;
@@ -5483,7 +5509,7 @@ void Stage4ControlTests::roundrectDefaultRasterAndIndependentFillPatterns() //20
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/roundrect/native/sheet-roundrect-default-r1.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/roundrect/native/sheet-roundrect-default-r1.png"));
     QImage pixels(260,160,QImage::Format_ARGB32);
     QPainter painter;
     QSet<QByteArray> hashes;
@@ -5658,7 +5684,7 @@ void Stage4ControlTests::polylineRealPathAndTailRasterInput() //20261113-2 add
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/polyline/native/sheet-polyline-right-three-point-r1.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/polyline/native/sheet-polyline-right-three-point-r1.png"));
     QPainter painter;
     properties.points = {QPointF(0,0),QPointF(1,0),QPointF(1,1)}; QVERIFY(!native.isNull()); image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("polyline"),QRectF(100,100,150,100),properties); painter.end(); QCOMPARE(image.pixelColor(175,100),QColor(Qt::black)); QCOMPARE(image.pixelColor(250,150),QColor(Qt::black)); QCOMPARE(image.pixelColor(175,150),QColor(197,222,255));
     properties.endArrow = 1; QVERIFY(graphicHitPath(QStringLiteral("polyline"),QRectF(100,100,150,100),properties).contains(QPointF(250,198))); properties.lineStyle = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("polyline"),QRectF(100,100,150,100),properties); painter.end(); QCOMPARE(image.pixelColor(250,150),QColor(197,222,255));
@@ -5804,7 +5830,7 @@ void Stage4ControlTests::polygonFilledRasterAndTransparentHitShape() //20261113-
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/polygon/native/sheet-polygon-right-three-point-r1.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/polygon/native/sheet-polygon-right-three-point-r1.png"));
     QPainter painter;
     properties.points = {QPointF(0,0),QPointF(1,0),QPointF(.75,1)}; properties.foreground = Qt::white; properties.background = Qt::black; QVERIFY(!native.isNull()); image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("polygon"),QRectF(100,100,200,120),properties); painter.end(); QCOMPARE(image.pixelColor(220,140),QColor(Qt::black)); QCOMPARE(image.pixelColor(110,210),QColor(197,222,255)); QVERIFY(graphicHitPath(QStringLiteral("polygon"),QRectF(100,100,200,120),properties).contains(QPointF(220,140))); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("polygon-default-raster.png")))); }
     properties.fillStyle = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("polygon"),QRectF(100,100,200,120),properties); painter.end(); QCOMPARE(image.pixelColor(220,140),QColor(197,222,255)); QCOMPARE(image.pixelColor(200,100),QColor(Qt::black)); properties.lineStyle = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("polygon"),QRectF(100,100,200,120),properties); painter.end(); QCOMPARE(image.pixelColor(200,100),QColor(197,222,255));
@@ -5919,7 +5945,7 @@ void Stage4ControlTests::freelineDefaultRasterAndTransparentStroke() //20261113-
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/freeline/native/sheet-freeline-default-r2.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/freeline/native/sheet-freeline-default-r2.png"));
     QPainter painter;
     QVERIFY(!native.isNull()); image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("freeline"),QRectF(100,100,180,100),properties); painter.end(); QCOMPARE(image.pixelColor(190,150),QColor(Qt::black)); QCOMPARE(image.pixelColor(130,90),QColor(197,222,255)); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("freeline-default-raster.png")))); } properties.lineStyle = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("freeline"),QRectF(100,100,180,100),properties); painter.end(); QCOMPARE(image.pixelColor(190,150),QColor(197,222,255));
 }
@@ -6034,7 +6060,7 @@ void Stage4ControlTests::sectorNativeDefaultCurvedPathAndRaster() //20261113-7 a
     GraphicProperties properties;
     QPainterPath path;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/sector/native/sheet-sector-default-r1.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/sector/native/sheet-sector-default-r1.png"));
     QPainter painter;
     properties.lineStyle = 0; path = graphicPath(QStringLiteral("sector"),QRectF(100,100,200,200),properties); QCOMPARE(path.elementCount(),8); QVERIFY(path.elementAt(2).isCurveTo()); QVERIFY(path.contains(QPointF(200,150))); QVERIFY(!path.contains(QPointF(200,250))); QVERIFY(!native.isNull()); image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("sector"),QRectF(100,100,200,200),properties); painter.end(); QCOMPARE(image.pixelColor(200,150),QColor(Qt::white)); QCOMPARE(image.pixelColor(200,250),QColor(197,222,255)); if (!qEnvironmentVariableIsEmpty("KINSEAL_STAGE4_CAPTURE_DIR")) { QVERIFY(image.save(QDir(qEnvironmentVariable("KINSEAL_STAGE4_CAPTURE_DIR")).filePath(QStringLiteral("sector-default-raster.png")))); } properties.alpha = 0; image.fill(QColor(197,222,255)); painter.begin(&image); paintGraphic(&painter,QStringLiteral("sector"),QRectF(100,100,200,200),properties); painter.end(); QCOMPARE(image.pixelColor(200,150),QColor(197,222,255));
 }
@@ -6109,7 +6135,7 @@ void Stage4ControlTests::tableEightNativeSwitchRasterMasks() //20261113-8 add
     QImage image(800,480,QImage::Format_ARGB32);
     QImage native;
     QPainter painter;
-    QString manifest = QFINDTESTDATA("../docs/stage4-evidence/table/native/flags-investigation/compiled-observations.json");
+    QString manifest = QFINDTESTDATA("fixtures/stage4-controls/table/native/flags-investigation/compiled-observations.json");
     QDir directory(QFileInfo(manifest).absolutePath());
     int mask;
     int x;
@@ -6145,7 +6171,7 @@ void Stage4ControlTests::tableNativeThreeRowsTwoColumnsAndOneCell() //20261113-8
 {
     GraphicProperties properties;
     QImage image(800,480,QImage::Format_ARGB32);
-    QImage native(QFINDTESTDATA("../docs/stage4-evidence/table/native/sheet-table-custom-three-by-two-r2.png"));
+    QImage native(QFINDTESTDATA("fixtures/stage4-controls/table/native/sheet-table-custom-three-by-two-r2.png"));
     QPainter painter;
     QVERIFY(!native.isNull()); properties.background = QColor(QStringLiteral("#e0e0e0")); properties.rows = 3; properties.columns = 2; image.fill(Qt::white); painter.begin(&image); paintGraphic(&painter,QStringLiteral("table"),QRectF(100,100,200,100),properties); painter.end(); QCOMPARE(native.pixelColor(125,133),QColor(Qt::black)); QCOMPARE(image.pixelColor(125,133),QColor(Qt::black)); QCOMPARE(native.pixelColor(200,112),QColor(Qt::black)); QCOMPARE(image.pixelColor(200,112),QColor(Qt::black)); QVERIFY(native.pixelColor(150,112)!=QColor(Qt::black)); QVERIFY(image.pixelColor(150,112)!=QColor(Qt::black)); properties.rows = properties.columns = 1; image.fill(Qt::white); painter.begin(&image); paintGraphic(&painter,QStringLiteral("table"),QRectF(100,100,200,100),properties); painter.end(); QCOMPARE(image.pixelColor(200,150),properties.background); QCOMPARE(image.pixelColor(100,150),QColor(Qt::black));
 }
@@ -6332,28 +6358,14 @@ void Stage4ControlTests::curveNativeReferenceAndDeviceCompile() //20261125-85 ad
             QVERIFY(pixel(149, 100) != background || pixel(150, 100) != background);
             QVERIFY(pixel(249, 100) != background || pixel(250, 100) != background);
             QCOMPARE(pixel(200, 120), background);
-            const QImage native(fixtures.filePath(QStringLiteral("sheet-curve-threeclick-default-r2.png")));
-            QCOMPARE(native.size(), QSize(800, 480));
-            const auto rgb565 = [](QRgb color) { return u16((qRed(color) >> 3) << 11 |
-                (qGreen(color) >> 2) << 5 | (qBlue(color) >> 3)); };
-            const u16 nativeBackground = rgb565(native.pixel(400, 300));
-            int differentCoverage = 0;
-            int maxChannelSteps = 0;
-            for (int y = 1; y < 480; ++y)
-            {
-                for (int x = 1; x < 800; ++x)
-                {
-                    const u16 actual = pixel(x, y);
-                    const u16 expected = rgb565(native.pixel(x, y));
-                    differentCoverage += (actual != background) != (expected != nativeBackground);
-                    const int red = qAbs((actual >> 11) - (expected >> 11));
-                    const int green = qAbs(((actual >> 5) & 63) - ((expected >> 5) & 63));
-                    const int blue = qAbs((actual & 31) - (expected & 31));
-                    maxChannelSteps = qMax(maxChannelSteps, qMax(red, qMax(green, blue)));
-                }
-            }
-            QCOMPARE(differentCoverage, 0);
-            QVERIFY(maxChannelSteps <= 4);
+            //20261128-29 change: This source is the archived physical-native-reference input. Compare the real
+            // compiled page and all of its decompressed RGB565 pixels, including either side of each antialiased edge.
+            QCOMPARE(QCryptographicHash::hash(source, QCryptographicHash::Sha256).toHex(),
+                     QByteArrayLiteral("870b51a7d507b7e3e32ac5a9ed8350edd4851f3bd3d708da861f89cee1bf0c2e"));
+            QCOMPARE(QCryptographicHash::hash(sheet, QCryptographicHash::Sha256).toHex(),
+                     QByteArrayLiteral("d9f29714cfdf6a1c779eca465e259c917aeeeaf9019b4d2922131a52e171f836"));
+            QCOMPARE(QCryptographicHash::hash(frame, QCryptographicHash::Sha256).toHex(),
+                     QByteArrayLiteral("4ae8e82f038edb2ed63e52e01cdfa1548b95938e70f52c3c28d63094d8d23be3"));
         }
     }
     curve = compileProject.objects.first();

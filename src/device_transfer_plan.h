@@ -16,6 +16,7 @@ struct HmiDownloadStep
     QByteArray bytes;
 };
 
+bool hasOfflineDisplayPayloads(const QVector<QByteArray> &payloads); //20261128-27 add
 bool hasStaticMacroPayloads(const QVector<QByteArray> &payloads); //20261123-22 add
 
 /******************************************************************************

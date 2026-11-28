@@ -1,0 +1,275 @@
+{
+  "date": "2026-11-12",
+  "evidenceLayer": "原生私有副本上位机UI/原厂源保存/原厂离线编译；未验证屏端执行",
+  "installedExeSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+  "runtimeExeSha256": "38100bf47294342119560dadfbd6a35d6ab51180c0eeaf4b7b21517bea20ed89",
+  "corrections": [
+    "显示监控地址默认checked=true；普通click关闭后预览地址行隐藏，开启后显示，旧手册反向结论不成立。",
+    "原生数据类型实际14项且F32的UI索引为8。索引不是已恢复设备枚举声明。",
+    "宏组enabled=false；不把旧合成点击无效解释为真人可启用。",
+    "通知总开关正常启用，勾选后通知位/字enabled=true。",
+    "默认数值背景色Qt样式表为#a0a0ff。",
+    "原厂离线默认为type12/640B，三背景图片；不能套Switch subtype。"
+  ],
+  "dataTypeTransitionObservations": [
+    {
+      "uiIndex": 0,
+      "label": "16位整数",
+      "inputMinimumText": "-32768",
+      "inputMaximumText": "32767",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "5",
+        "value": "5"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 1,
+      "label": "16位正整数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "65535",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "5",
+        "value": "5"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 2,
+      "label": "16位BCD码",
+      "inputMinimumText": "0",
+      "inputMaximumText": "9999",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "4",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 3,
+      "label": "16位8进制数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "177777",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "6",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 4,
+      "label": "16位16进制数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "FFFF",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "4",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 5,
+      "label": "32位整数",
+      "inputMinimumText": "-2147483648",
+      "inputMaximumText": "2147483647",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "10",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 6,
+      "label": "32位正整数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "4294967295",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "10",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 7,
+      "label": "32位BCD码",
+      "inputMinimumText": "0",
+      "inputMaximumText": "99999999",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "8",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 8,
+      "label": "32位浮点数",
+      "inputMinimumText": "-2147483648",
+      "inputMaximumText": "2147483647",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "10",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 1
+      }
+    },
+    {
+      "uiIndex": 9,
+      "label": "32位8进制数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "17777777777",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "11",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 10,
+      "label": "32位16进制数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "FFFFFFFF",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "8",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 11,
+      "label": "16位二进制数",
+      "inputMinimumText": "0",
+      "inputMaximumText": "1111111111111111",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "16",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 12,
+      "label": "*VP高字节",
+      "inputMinimumText": "0",
+      "inputMaximumText": "1111111111111111",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "16",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    },
+    {
+      "uiIndex": 13,
+      "label": "*VP低字节",
+      "inputMinimumText": "0",
+      "inputMaximumText": "1111111111111111",
+      "totalDigits": {
+        "minimum": "1",
+        "maximum": "16",
+        "value": "4"
+      },
+      "decimalDigits": {
+        "minimum": "0",
+        "maximum": "99",
+        "value": "0",
+        "enabled": 0
+      }
+    }
+  ],
+  "bilingualFontSizeExperiment": [
+    {
+      "label": "number-bilingual-Chinese-initial",
+      "fontSize": [
+        "16"
+      ]
+    },
+    {
+      "label": "number-bilingual-English24",
+      "fontSize": [
+        "24"
+      ]
+    },
+    {
+      "label": "number-bilingual-Chinese-after-English24",
+      "fontSize": [
+        "24"
+      ]
+    }
+  ],
+  "bilingualLimit": "只证明该字号样例中文16→English24→中文24；不扩大为所有外观字段均共享或固件全部语言显示通过。"
+}

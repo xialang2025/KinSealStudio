@@ -346,6 +346,19 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             return compilationIssue(project, object, QStringLiteral("appearance.flip"), true,
                 QStringLiteral("此形状的设备翻转尚未支持，设备工程未生成。"), error, issue);
         }
+        if (object.type == QStringLiteral("message") || object.type == QStringLiteral("qrcode")) { //20261128-27 add
+            // A single on-screen control has its own independently measured resource table and drawing order.
+            if (prepared.objects.size() != 1 || !project.macros.isEmpty() || !project.pictures.isEmpty() || !project.animations.isEmpty()) {
+                return compilationIssue(project, object, QStringLiteral("display.resources"), object.type,
+                    QStringLiteral("此显示控件目前支持单控件画面及工程自带的默认资源。"), error, issue);
+            }
+            if (object.type == QStringLiteral("qrcode") && (object.qrCode.visibility.visibilityEnabled ||
+                !object.qrCode.validate(&diagnostic) || !object.qrCode.validateAddresses(project.connections, &diagnostic, true))) {
+                return compilationIssue(project, object, QStringLiteral("qrCode"), object.type,
+                    diagnostic.isEmpty() ? QStringLiteral("二维码显现条件的设备编码尚待核实。") : diagnostic, error, issue);
+            }
+            continue;
+        }
         if ((object.type == QStringLiteral("image") && object.hasImageDisplayProperties) || object.type == QStringLiteral("gif")) { //20261128-21 add
             const bool gif = object.type == QStringLiteral("gif");
             if (gif ? (object.gifDisplay.visibility.visibilityEnabled ||

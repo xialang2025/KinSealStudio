@@ -3,37 +3,62 @@
 #include <QtEndian>
 
 /******************************************************************************
+ * Function Name   : buildNativeMessageRecords
+ * Description     : Encode the same language-major CP936 records for project, media and standalone outputs.
+ * Input Parameters: message control, project language order, output bytes, diagnostic
+ * Return Value    : True when all rows can be encoded with the native 100-byte copy rule.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool buildNativeMessageRecords(const MessageDisplayProperties &message, const QStringList &languages,
+                                      QByteArray *result, QString *error) //20261128-24 add
+{
+    QByteArray records, text;
+    QColor color;
+    QString value;
+    int state;
+    for (const QString &language : languages) {
+        color = message.languageAppearance(language).textColor;
+        for (state = 0; state < message.stateCount; ++state) {
+            value = message.text(state, language);
+            text.clear();
+            if (!color.isValid() || value.contains(QChar(0)) || (!value.isEmpty() && !encodeNativeCp936(value, &text))) {
+                if (error) { *error = QStringLiteral("消息文本须能以简体中文代码页表示，不可含内嵌零字符，并须指定有效文字颜色。"); }
+                return false;
+            }
+            // V5.1 writes R,G,B,0 and copies at most 100 encoded bytes, even across a two-byte character.
+            records.append(char(color.red()));
+            records.append(char(color.green()));
+            records.append(char(color.blue()));
+            records.append(char(0));
+            text.truncate(100);
+            records.append(text);
+            records.append(100 - text.size(), char(0));
+        }
+    }
+    *result = records;
+    return true;
+}
+
+/******************************************************************************
  * Function Name   : writeNativeMessageTable
  * Description     : Write the measured V122 single-message layout, with states contiguous inside each language.
  * Input Parameters: loaded project, new DAT destination, optional native simulator session profile, error
  * Return Value    : True after all rows and encodings have passed validation and the new file is published.
  * Date            : 2026.11.28
  ******************************************************************************/
-static bool writeNativeMessageTable(const HmiProject &project, const QString &path, const QString &session, QString *error) //20261128-23 add
+bool writeNativeMessageTable(const HmiProject &project, const QString &path, const QString &session, QString *error) //20261128-23 add
 {
     const QFileInfo target(path);
     QTemporaryFile output(target.absolutePath() + QStringLiteral("/.kinseal-message-XXXXXX"));
-    QByteArray records, text, header;
-    QString value;
-    int state;
+    QByteArray records, header;
     if (!project.validateSinglePageBackend(error, false)) { return false; }
     if (project.objects.size() != 1 || project.objects.first().type != QStringLiteral("message") ||
         project.languages.isEmpty() || target.suffix().compare(QStringLiteral("dat"), Qt::CaseInsensitive) ||
         target.exists() || target.isSymLink()) {
         *error = QStringLiteral("消息表导出需要单消息控件画面和新的 .dat 文件名。"); return false;
     }
-    const MessageDisplayProperties &message = project.objects.first().messageDisplay;
-    for (const QString &language : project.languages) {
-        for (state = 0; state < message.stateCount; ++state) {
-            value = message.text(state, language);
-            text.clear();
-            if (value.contains(QChar(0)) || (!value.isEmpty() && !encodeNativeCp936(value, &text)) || text.size() > 99) {
-                *error = QStringLiteral("消息文本须能以简体中文代码页表示，并能在 100 字节槽内保留结尾零。"); return false;
-            }
-            records.append(4, char(0));
-            records.append(text);
-            records.append(100 - text.size(), char(0));
-        }
+    if (!buildNativeMessageRecords(project.objects.first().messageDisplay, project.languages, &records, error)) {
+        return false;
     }
     if (!session.isEmpty()) {
         // The V5.1 type-35 writer rounds the scene bounds, then accumulates width * height * 2 at +0x844.

@@ -1,0 +1,719 @@
+{
+ "referenceRevision": "e3b72657",
+ "compilerSha256": "cc31d47e856b3a4e72294dee92368f607c131310a1ef69e269419a9e85ad9348",
+ "firmwareSha256": "7f625b7a967c1ecc0ff5db1fba4d6ed68cb1d9474216e87009395f1d53a88db5",
+ "nativeWriterSha256": "305592b4e4bc1b15a707c7bc832c31f27ca0958b97f9c79a5b50ac6df49e907c",
+ "nativeWriterSettingsChecked": 24,
+ "armLoaderAndLocalWordMonitorChecked": true,
+ "sameSourceNativeControlDelta": {
+  "sha256": [
+   "85c65e76244a74651b0ea02be03521e2dbe86082bd378b9a7f8c1b945e68ecfd",
+   "2de03f3c05e23644ae55091d9a533017e7023bc7d3397048402ac46d3e503546"
+  ],
+  "byteOffsets": [
+   3,
+   83,
+   91,
+   99,
+   108,
+   109,
+   110,
+   111,
+   124,
+   125,
+   126,
+   127,
+   132,
+   133,
+   134,
+   192,
+   193,
+   194,
+   195,
+   208,
+   209,
+   210,
+   219,
+   228,
+   229,
+   230,
+   242,
+   248,
+   249,
+   250,
+   252,
+   253,
+   254,
+   255,
+   288,
+   289,
+   290,
+   291,
+   558
+  ]
+ },
+ "sameSourceNativeSysDelta": {
+  "sha256": [
+   "734c7e03310a9c12eac1111c158aeebf8146d70870acfe943565bd884a83aa35",
+   "5afba8d0982d4673da1bf7f9e898ac4c06db2cf621bb7d8a2c96a2034c3fd835"
+  ],
+  "differentBytes": 154
+ },
+ "size": [
+  200,
+  100
+ ],
+ "editedSize": [
+  101,
+  293
+ ],
+ "testedDescriptionLengths": [
+  255,
+  256
+ ],
+ "cases": [
+  {
+   "source": "default",
+   "sourceSha256": "92d10327b42c961d4f5495787986bc6abd41cab0c56dc0efce091780d0cc2494",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "4a4930614728f4f009154039e48789582883f662fe7de58b5c41d2ddeb891a1d",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "85c65e76244a74651b0ea02be03521e2dbe86082bd378b9a7f8c1b945e68ecfd",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "75147789f7f7bd7f880e035dbe022d36531e5394ee1ea5ae85f2b6578f48d7ed",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "734c7e03310a9c12eac1111c158aeebf8146d70870acfe943565bd884a83aa35",
+    "upLoad.knr": "b7bb4557e490a0c39a4b460f5fbc2cf75937e1c574e749edb4c86c797bb4d9b2",
+    "Usbload.bin": "11085c13bb961e1ecdbfcbe1b6c7a29ff1c1dc0433c4ffe55883e170b03d0532"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 155,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "2ef445ac9885ffbdfdb82f327937a74a5a80f5f4fb447d5da75a1751a314b4ee",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "d6eee7ea5b8096b8adfc65acbb871b78f1e6a78399e889519607f0154fd89e38"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 155,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "2ef445ac9885ffbdfdb82f327937a74a5a80f5f4fb447d5da75a1751a314b4ee",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "b7bb4557e490a0c39a4b460f5fbc2cf75937e1c574e749edb4c86c797bb4d9b2"
+    }
+   }
+  },
+  {
+   "source": "length0",
+   "sourceSha256": "483bbb721dbdecea2e42d00b94ce5c7eb70c3f733cc8b61e68536bad9ed3718a",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "f1a9778c6461c637006e2854635fc7834a3557c6bf396c5f3cec31f7581a58a9",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "87ce7f0e8fa9d7dba819255ef6fb5493589ea83400b35198a225d89f3407ead1",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "0795edabc8ecfe65aeeb6af37032f6ddb520a94d40c8ec25b62e037e533ef640",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "5983d3dd17c0ecd47386f1862d3fefdb4c607a9a54028181fdbf882e22be1fba",
+    "upLoad.knr": "741475c7f092630dd1dbdef2f6d6300970e36f462456fc8379694b88228c0754",
+    "Usbload.bin": "3303d8b7188278731d44ad0ca98bb22a232d37ed7d780419851dbc7c40093f59"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 155,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "a2aac261785ccc42e56ebcdf79bbb0ccb38adf8eb11d8ae1cbc45bdb580a905b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "2e4f472ccb0ad7b8c98ab1ab03073d4058142135974b6bfc847cbc3a50e3bddc"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 155,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "a2aac261785ccc42e56ebcdf79bbb0ccb38adf8eb11d8ae1cbc45bdb580a905b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "741475c7f092630dd1dbdef2f6d6300970e36f462456fc8379694b88228c0754"
+    }
+   }
+  },
+  {
+   "source": "length255",
+   "sourceSha256": "8a2cdd6554ad97eeb669921fd61610b788693a70a9d8aa7b4c77d78b5d864c68",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "8889db01c42bdba43a3d2e47282817d88cf756113b97ec738fd8dd12f23a3dd7",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "0ae7d8cdd421eadaadcf6e61ab30a3fb3e6332df827b2d3ef97b10478bef5b9b",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "d88ba396795508b05c5230afea72bccfc1197db421e64cd1510604f662d34e90",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "ca0bcf79882ad01a968b195a1a67f5384f94d6ae2204c81a931f23d378061716",
+    "upLoad.knr": "6b773f40ee2ed4692ed66b9645c6f7d215959aee4cdf797d35532f28f7bede20",
+    "Usbload.bin": "76282f0b42668f731282f1bd521529a30b51e81835c47876e2ba5db037107072"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 154,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "29e9c02c51deb484f2269e5b87c96f2289b7602f31c52a51bded39f9db9d267b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "9c16d53ac18e4e788b5f594da77c3fcf67699725bbd4d465a7f6f9b5d57bd0c7"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 14,
+    "emittedFlag": 6,
+    "differentControlBytes": 154,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "29e9c02c51deb484f2269e5b87c96f2289b7602f31c52a51bded39f9db9d267b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "6b773f40ee2ed4692ed66b9645c6f7d215959aee4cdf797d35532f28f7bede20"
+    }
+   }
+  },
+  {
+   "source": "swap",
+   "sourceSha256": "ce5112ba8ca8b256453ff7e92cdaf470a9eafde9f5cf141def5010a921d58dea",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "2cb1fcb0ecc2484054306f055f9633ab38e47646b5898155eb0b5f56022f653c",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "164445b07716791f4702eab4a2a26d6fecc75ea134d030e79a26aed88c30f2f7",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "dbd5d3cb95c76ca26b0355e1979fb1efab1be6d6e0f7df8737fd8423cac5dfa8",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "99b63f05c795551d4cc271521f2a5c354d62d9538d595230916bcd8774082efa",
+    "upLoad.knr": "fcb1d57c209796db1592cd2b1c140a87fd26d9785514267b35f8277497f8ac39",
+    "Usbload.bin": "7781cfd3c502dcb4cfa823086ba495e8c34e70e45e6a186eb49e8601f4039aad"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 154,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "cadb6c198d9664adbc8eb1dadc6aaf720032cc27de067f908552e6b271f9df6b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "c842107afd02302b6a53ae71f6847d050b198172d1ffb969bb7b9fb82dee0b27"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 154,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "cadb6c198d9664adbc8eb1dadc6aaf720032cc27de067f908552e6b271f9df6b",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "fcb1d57c209796db1592cd2b1c140a87fd26d9785514267b35f8277497f8ac39"
+    }
+   }
+  },
+  {
+   "source": "description-chinese-ascii",
+   "sourceSha256": "65ff7f7355aa53153f5c28b88b5b89df354222dc9e53a6ddfd7b701d92d9a531",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "ead701176c66cc9d460916a59c6afc618e362365426d595ef636fbe930a821c6",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "af0fe9b240a940b134dbf7c4138351b22b331cd2df82fa2a0cb357671ec1725e",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "4e98a311820b945a197bbc953a9ee9565bf8a2df12e24baa05751a4c503b3ed8",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "d44c182c3efdb14c6a36f8a8cccea18d3146cebc726ede6fdf518ea5ae0861ab",
+    "upLoad.knr": "5d9485995b41f696f5477090b45d95a8c3e2479218f52dec8e49b7c2f4d1891e",
+    "Usbload.bin": "48f4b3df88601b04a1639a22da54b1f3f6b311177548747f33c49f78941b9600"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 150,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "76d36e75a550abd535910ce072d4ab5ce9090d1ee29f2cdc94a87f7b4e0b8c31",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "830ecede0a2020403ce799f209b5097a20d757ff9e212c832e701c1ea084d86e"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 150,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "76d36e75a550abd535910ce072d4ab5ce9090d1ee29f2cdc94a87f7b4e0b8c31",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "5d9485995b41f696f5477090b45d95a8c3e2479218f52dec8e49b7c2f4d1891e"
+    }
+   }
+  },
+  {
+   "source": "description-chinese-gb2312",
+   "sourceSha256": "b482f6495f2fa890a5f761fb8a9e5f5dbb499cdd458afee8bbb621e63cdb6228",
+   "originalFileSha256": {
+    "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+    "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AlarmPara.dat": "cccd2cdbf45dbffcbc5898a0daa202f57690ba167ec5316d10d4f1d295ca1636",
+    "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+    "ControlPara.dat": "e52ad13c0855896740157b8fca31382926b2891a5dab15d2c17c74738afeca18",
+    "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+    "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+    "load.bin": "2423b04f2e8371e9a22dd8b534186ff2f993cc43a45e31ae54adbd5897333303",
+    "load.kns": "935fae3da6b5b26bd591623746bf742e445b7a1aafdd1a8addaaee399bac887f",
+    "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+    "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+    "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+    "SysPara.dat": "3ccd96965a5e2b86a93edddf043dbcf1e997e72c2cd35d0b7f6c8c0e5d5a20e3",
+    "upLoad.knr": "59c130e2a18b4357ff2ddf5957c1752395a35e60157d66de384f4bd5cf3eeeb5",
+    "Usbload.bin": "7af32f9e2ad094e52ac2069df1faa8b3d3d8908db1ec3ee7f3f986d0514d0134"
+   },
+   "--compile-project": {
+    "equal": [
+     "AddrPara.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "upLoad.knr"
+    ],
+    "missing": [
+     "AlarmMuti.dat",
+     "MarcoVar.dat",
+     "Usbload.bin",
+     "load.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 152,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "cdebbbda2b907f6994112483d62391f9b23078a1aef0b23c371d780dee3268da",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "upLoad.knr": "332afdfc00a503d2f1d855b78ea08342f8c10f65d3a5475de0ace0290cdc245c"
+    }
+   },
+   "--compile-native-media-parts": {
+    "equal": [
+     "AddrPara.dat",
+     "AlarmMuti.dat",
+     "Collect.dat",
+     "ControlPixel.dat",
+     "Curve.dat",
+     "MarcoVar.dat",
+     "PicLenPara.dat",
+     "SheetPara.dat",
+     "SheetPixel.dat",
+     "upLoad.knr"
+    ],
+    "different": [
+     "AlarmPara.dat",
+     "ControlPara.dat",
+     "SysPara.dat",
+     "load.bin"
+    ],
+    "missing": [
+     "Usbload.bin",
+     "load.kns"
+    ],
+    "decodedRgb565Sha256": "7fa7f29384564ece33f33f523bd1368fe4d3c53b640737cc5dde475d7caef781",
+    "originalFlag": 6,
+    "emittedFlag": 6,
+    "differentControlBytes": 152,
+    "emittedSha256": {
+     "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+     "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "AlarmPara.dat": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+     "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+     "ControlPara.dat": "cdebbbda2b907f6994112483d62391f9b23078a1aef0b23c371d780dee3268da",
+     "ControlPixel.dat": "61079eb74921afe21f97a2571dc5a45b17bb0f715c3b6a402ae5f4d92c2357ba",
+     "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+     "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "PicLenPara.dat": "fccad6336f203668f28dc3e2578985ed19fb8d315c3eca517668d8e01cc1a6f9",
+     "SheetPara.dat": "a92e905b2d8c3b82653384a339acc589497094b7a9eef552cdbf8baf6e26ba63",
+     "SheetPixel.dat": "23923469650691d6088c0205170b1f57088a3cc4c742b87c381af87974d31697",
+     "SysPara.dat": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+     "load.bin": "0753601d26075d6f9be80e8dbe012ada5266cf305fd22349e3c58b6797e112b5",
+     "upLoad.knr": "59c130e2a18b4357ff2ddf5957c1752395a35e60157d66de384f4bd5cf3eeeb5"
+    }
+   }
+  }
+ ],
+ "matchingCleanBuildSha256": "f7a7c0f6a1f854b7ea6ddc030c0ad6aa519d6eec69fc61458a4e16ef2002435a"
+}

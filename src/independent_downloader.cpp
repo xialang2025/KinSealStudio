@@ -35,6 +35,8 @@
 #include <QVector>
 #include <QCoreApplication> //20261109-0 add
 #include <QImage>
+#include "recipe_csv.h" //20261128-26 add
+#include <QXmlStreamReader>
 #include <QPainter>
 #include <QJsonDocument>
 #include <QtEndian> //20261109-0 add
@@ -991,7 +993,11 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
     return qCompress(source, 9);
 }
 
+#include "native_message_table.cpp.inc" //20261128-24 change
+#include "native_value_display_payload.cpp.inc" //20261128-25 add
 #include "native_picture_payload.cpp.inc" //20261128-21 add
+#include "native_message_payload.cpp.inc" //20261128-24 add
+#include "native_qr_payload.cpp.inc" //20261128-26 add
 
 /******************************************************************************
  * Function Name   : buildIntegerProjectPayload
@@ -1019,6 +1025,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
     QByteArray controls;
     QByteArray pictures;
     QByteArray pictureRecords;
+    QByteArray messageRecords; //20261128-24 add
     QByteArray record;
     BitButtonSpriteSet sprites;
     BitButtonSpriteSet languageSprites; //20261109-0 add
@@ -1245,8 +1252,19 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
             ++controlCount;
             pictureCount += sprites.lengthRecords.size() / 12; //20261109-0 change: Flashing states add one text-free sprite each.
         }
-        else if ((object.type == QStringLiteral("image") && object.hasImageDisplayProperties) || object.type == QStringLiteral("gif")) { //20261128-21 add
-            if (!buildNativePicturePayload(object, addressCompiler, rawOffset, &record, &sprites, &underlay, error)) { return false; }
+        else if ((object.type == QStringLiteral("image") && object.hasImageDisplayProperties) || object.type == QStringLiteral("gif") ||
+                 object.type == QStringLiteral("message") || object.type == QStringLiteral("qrcode")) { //20261128-27 change
+            if (object.type == QStringLiteral("message")) {
+                if (!buildNativeMessagePayload(object, project, addressCompiler, rawOffset, &record, &sprites, &underlay, error) ||
+                    !buildNativeMessageRecords(object.messageDisplay, project.languages, &messageRecords, error)) {
+                    return false;
+                }
+            } else if (object.type == QStringLiteral("qrcode")) {
+                underlay = QImage();
+                if (!buildNativeQrPayload(object, addressCompiler, rawOffset, &record, &sprites, error)) { return false; }
+            } else if (!buildNativePicturePayload(object, addressCompiler, rawOffset, &record, &sprites, &underlay, error)) {
+                return false;
+            }
             if (!underlay.isNull()) { painter.drawImage(object.geometry.topLeft(), underlay); }
             controls.append(record);
             pictures.append(sprites.pixelData);
@@ -1355,6 +1373,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         generated.append(controls);
         generated.append(pictures);
     }
+    if (!messageRecords.isEmpty()) { generated.append(messageRecords); } //20261128-24 add
     if (!macros.marcoRun.isEmpty())
     {
         if (!hasSwitch && !hasSchedule) //20261123-22 change: Native projects with schedules can omit control segments entirely.
@@ -1985,6 +2004,11 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
     for (index = 0; index < raster.objects.size(); ++index)
     {
         if (raster.objects.at(index).subpixelOffset.isNull()) { continue; }
+        // The native type-35 child rectangles and type-52 icon have only been measured on integral device bounds.
+        if (raster.objects.at(index).type == QStringLiteral("message") || raster.objects.at(index).type == QStringLiteral("qrcode")) { //20261128-27 add
+            if (error) { *error = QStringLiteral("消息和二维码设备图帧目前需要整数起点。"); }
+            return false;
+        }
         if (raster.objects.at(index).graphic.nativeDrawingDraft && raster.objects.at(index).graphic.points.size() == 2) //20261128-4 add
         {
             // Preserve the integer-only coverage contract before the general renderer rounds fractional item translations.
@@ -2043,9 +2067,9 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
         if (result != nullptr) { *result = rejected; }
         return false;
     }
-    if (hasStaticMacroPayloads(payloads)) //20261123-22 add: Require a captured device transfer before enabling the new static layout on USB.
+    if (hasStaticMacroPayloads(payloads) || hasOfflineDisplayPayloads(payloads)) //20261128-27 change: Require a captured device transfer before enabling the new static layout on USB.
     {
-        const QString message = QStringLiteral("静态调度宏包已编译，可离线导出。该段组合的直连下载尚未验证。");
+        const QString message = QStringLiteral("已完成离线编译。该设备包的直连下载仍待验证。");
 
         rejected = deviceTransferResultToJson(DeviceTransferResult());
         rejected.insert(QStringLiteral("compiled"), true);

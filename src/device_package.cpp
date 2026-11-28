@@ -40,6 +40,19 @@ static bool packageFailure(QString *error, const QString &message) //20261113-11
 }
 
 /******************************************************************************
+ * Function Name   : packageSegmentName
+ * Description     : Resolve native names for each disk layout including the thirteenth message member.
+ * Input Parameters: segment count, static-macro layout, index
+ * Return Value    : Native file name for the specified validated position.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static QString packageSegmentName(int count, bool staticMacros, int index) //20261128-27 add
+{
+    if (count == 13 && index == 12) { return QStringLiteral("Message.dat"); }
+    return QString::fromLatin1(packageNames[index + (staticMacros && index >= 10 ? 2 : 0)]);
+}
+
+/******************************************************************************
  * Function Name   : packageSha
  * Description     : Hash the exact file bytes used for publication and re-read checks.
  * Input Parameters: bytes
@@ -283,15 +296,15 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     bool allNativeTails = true;
     bool allZeroTails = true;
 
-    if (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
-    if (staticMacros)
+    if (!staticMacros && !hasOfflineDisplayPayloads(payloads) && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
+    if (staticMacros || hasOfflineDisplayPayloads(payloads))
     {
         // The native files establish an offline shape. The live planner still requires its known segment combinations.
         for (const QByteArray &bytes : payloads)
         {
             if (bytes.isEmpty() || bytes.size() > 0x7fffffff)
             {
-                return packageFailure(error, QStringLiteral("静态调度宏包包含空段或超长段。"));
+                return packageFailure(error, QStringLiteral("离线设备包包含空段或超长段。"));
             }
         }
     }
@@ -326,7 +339,7 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     {
         record = payloads[10].mid(index*640,640);
         type = static_cast<unsigned char>(record.at(0)); subtype = qFromLittleEndian<u16>(record.constData()+0x106); // The following byte is a macro flag, not the high byte of a u32 type.
-        if ((type != 10 && type != 15 && type != 28 && type != 34) || (type == 10 && subtype != 0 && subtype != 1 && subtype != 3 && subtype != 4) || //20261128-21 change
+        if ((type != 10 && type != 15 && type != 28 && type != 34 && type != 35 && type != 52) || (type == 10 && subtype != 0 && subtype != 1 && subtype != 3 && subtype != 4) || //20261128-21 change
             u32(qFromLittleEndian<u16>(record.constData()+4))+qFromLittleEndian<u16>(record.constData()+8) > 800 ||
             u32(qFromLittleEndian<u16>(record.constData()+6))+qFromLittleEndian<u16>(record.constData()+10) > 480)
         { return packageFailure(error,QStringLiteral("控制记录type/subtype或屏内几何尚未支持。")); }
@@ -334,6 +347,39 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
         objectBytes = qFromLittleEndian<u32>(record.constData()+0x10);
         if (frameBytes == 0 || frameBytes > 768000 || objectBytes == 0 || objectBytes%frameBytes != 0 || qFromLittleEndian<u32>(record.constData()+0x0c) != rawOffset || quint64(rawOffset)+objectBytes > 0xffffffffULL)
         { return packageFailure(error,QStringLiteral("控件%1的rawOffset/rawBytes或帧尺寸错误。").arg(index)); }
+        // A type-35 record and its language-major text table must be present together.
+        if ((type == 35) != (payloads.size() == 13) || ((type == 35 || type == 52) && (count != 1 || objectBytes != frameBytes))) {
+            return packageFailure(error, QStringLiteral("消息或二维码记录与专用文件布局或单帧尺寸不符。"));
+        }
+        if (type == 35) { //20261128-24 add
+            const u16 states = qFromLittleEndian<u16>(record.constData() + 0x102);
+            const u16 languages = qFromLittleEndian<u16>(payloads[0].constData() + 2174);
+            const QByteArray &messages = payloads.at(12);
+            if (record.at(0x101) != 0 || u8(record.at(0x100)) > 1 || record.at(0x120) != 0 ||
+                record.at(0x121) != 'W' || quint64(packageU32(record, 0x128)) + 1U + u8(record.at(0x100)) > PlcAddressContext().localAddressCount ||
+                states < 1 || states > 128 || languages < 1 || languages > 6 || messages.size() > 65535 ||
+                messages.size() != int(states) * languages * 104) {
+                return packageFailure(error, QStringLiteral("消息控件的状态、语言和 Message.dat 记录数不一致。"));
+            }
+            for (qsizetype start = 4; start < messages.size(); start += 104) {
+                const QByteArray slot = messages.mid(start, 100);
+                const qsizetype end = slot.indexOf(char(0));
+                if (messages.at(start - 1) != 0 || (end >= 0 && slot.mid(end).count(char(0)) != 100 - end)) {
+                    return packageFailure(error, QStringLiteral("消息颜色保留字节或未填满的文字槽尾部无效。"));
+                }
+            }
+        }
+        if (type == 52) { //20261128-26 add: The monitor uses one local word slot and a bounded CP936 description.
+            const QByteArray description = record.mid(0x128, 256);
+            const qsizetype end = description.indexOf(char(0));
+            if (payloads.size() != 12 || record.at(0x104) != 0 || record.at(0x105) != 'W' || record.at(0x107) != 1 ||
+                packageU32(record, 0x228) > 255 ||
+                quint64(packageU32(record, 0x10c)) + QrCodeProperties::monitorAddressSpan(int(packageU32(record, 0x228))) > PlcAddressContext().localAddressCount ||
+                u8(record.at(0x22c)) > 1 || u8(record.at(0x22d)) > 1 ||
+                end < 0 || description.mid(end).count(char(0)) != 256 - end) {
+                return packageFailure(error, QStringLiteral("二维码的本地字、文字容量、编码或说明字段无效。"));
+            }
+        }
         if (type == 15) { //20261128-21 add: Firmware uses the count at 0x106 when indexing type 15 frames.
             const u16 mode = qFromLittleEndian<u16>(record.constData() + 0x100);
             const u16 condition = qFromLittleEndian<u16>(record.constData() + 0x102);
@@ -415,13 +461,13 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
         deviceTargetIdentityByte(candidate.value(QStringLiteral("targetModel")).toString()) < 0 || //20261122-3 change
         !candidate.value(QStringLiteral("deviceAcknowledged")).isBool() || candidate.value(QStringLiteral("deviceAcknowledged")).toBool() ||
         !candidate.value(QStringLiteral("usbAccessed")).isBool() || candidate.value(QStringLiteral("usbAccessed")).toBool() ||
-        (count != 10 && count != 12 && count != 14))
+        (count != 10 && count != 12 && count != 13 && count != 14))
     { return packageFailure(error,QStringLiteral("设备包标识、目标、离线状态或段数量错误。")); }
     staticMacros = count == 12 && entries.contains(QStringLiteral("MarcoVar.dat")) && entries.contains(QStringLiteral("MarcoRun.dat"));
     expected.append(QStringLiteral("compiler-manifest.json"));
     for (index=0;index<count;++index)
     {
-        name = QString::fromLatin1(packageNames[index + (staticMacros && index >= 10 ? 2 : 0)]); //20261123-22 change
+        name = packageSegmentName(count, staticMacros, index); //20261123-22 change
         expected.append(name); entry = entries.value(name).toObject();
         file.close(); file.setFileName(dir.filePath(name));
         if (QFileInfo(file).isSymLink() || !file.open(QIODevice::ReadOnly)) { return packageFailure(error,QStringLiteral("设备包文件缺失或为重定向链接：%1").arg(name)); }
@@ -433,7 +479,7 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
     actual = dir.entryList(QDir::AllEntries|QDir::NoDotAndDotDot|QDir::Hidden|QDir::System); expected.sort(); actual.sort();
     if (actual != expected) { return packageFailure(error,QStringLiteral("设备包包含额外旧文件或未知目录。")); }
     if (staticMacros != hasStaticMacroPayloads(payloads) ||
-        (staticMacros && candidate.value(QStringLiteral("offlineOnly")) != QJsonValue(true))) //20261123-22 add
+        (candidate.value(QStringLiteral("offlineOnly")).toBool() != (staticMacros || hasOfflineDisplayPayloads(payloads)))) //20261123-22 add
     { return packageFailure(error, QStringLiteral("设备包静态调度布局、文件名或离线属性不一致。")); }
     if (!validateDevicePayloadStructure(payloads,error)) { return false; }
     if (!packageSnapshotKind(payloads[7],&snapshotKind,error) || candidate.value(QStringLiteral("sourceSnapshot")).toString() != snapshotKind)
@@ -475,10 +521,10 @@ bool verifyDevicePackage(const QString &directory, QJsonObject *manifest, QStrin
             return packageFailure(error,QStringLiteral("源快照与清单目标型号或输入工程SHA256不一致。"));
         }
     }
-    if (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
+    if (!staticMacros && !hasOfflineDisplayPayloads(payloads) && !buildDeviceTransferPlan(payloads,&steps,error)) { return false; } //20261123-22 change
     Q_FOREACH (step,steps) { transfer.append(QJsonObject{{QStringLiteral("command"),int(step.command)},{QStringLiteral("name"),step.name},
         {QStringLiteral("optionsHex"),QString::fromLatin1(step.options.toHex())},{QStringLiteral("wireBytes"),int(step.bytes.size())},{QStringLiteral("wireSha256"),packageSha(step.bytes)}}); }
-    if (candidate.value(QStringLiteral("transferPlan")).toArray() != transfer)
+    if (!candidate.value(QStringLiteral("transferPlan")).isArray() || candidate.value(QStringLiteral("transferPlan")).toArray() != transfer)
     { return packageFailure(error,QStringLiteral("清单传输计划与实际设备段不一致。")); }
     if (manifest != nullptr) { *manifest = candidate; }
     return true;
@@ -528,13 +574,13 @@ bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &
 
     if (directory.trimmed().isEmpty() || target.exists() || target.isSymLink() || target.fileName().isEmpty())
     { return packageFailure(error,QStringLiteral("请使用尚不存在的新包目录；现有目录和有效包保持不变。")); }
-    if (!validateDevicePayloadStructure(payloads,error) || (!staticMacros && !buildDeviceTransferPlan(payloads,&steps,error))) { return false; } //20261123-22 change
+    if (!validateDevicePayloadStructure(payloads,error) || (!staticMacros && !hasOfflineDisplayPayloads(payloads) && !buildDeviceTransferPlan(payloads,&steps,error))) { return false; } //20261123-22 change
     if (!parent.exists() && !QDir().mkpath(parent.absolutePath())) { return packageFailure(error,QStringLiteral("无法建立输出父目录。")); }
     staging = std::make_unique<QTemporaryDir>(parent.filePath(QStringLiteral(".kinseal-compile-XXXXXX")));
     if (!staging->isValid()) { return packageFailure(error,QStringLiteral("无法在输出所在卷建立暂存目录。")); }
     for (index=0;index<payloads.size();++index)
     {
-        name = QString::fromLatin1(packageNames[index + (staticMacros && index >= 10 ? 2 : 0)]); //20261123-22 change
+        name = packageSegmentName(int(payloads.size()), staticMacros, index); //20261123-22 change
         if (!write(QDir(staging->path()).filePath(name),payloads[index],error)) { return false; }
         entry = {{QStringLiteral("length"),int(payloads[index].size())},{QStringLiteral("sha256"),packageSha(payloads[index])}};
         entries.insert(name,entry);
@@ -548,7 +594,7 @@ bool publishDevicePackage(const HmiProject &project, const QVector<QByteArray> &
         {QStringLiteral("inputProjectSha256"),packageSha(QJsonDocument(project.toJson()).toJson(QJsonDocument::Compact))},
         {QStringLiteral("sourceSnapshot"),snapshot.isObject() && snapshot.object().value(QStringLiteral("format")).toString() == QStringLiteral("KinSealStudio-Prototype") ? QStringLiteral("lite-project-json") : QStringLiteral("native-sm")},
         {QStringLiteral("transferPlan"),transfer}};
-    if (staticMacros) { metadata.insert(QStringLiteral("offlineOnly"), true); } //20261123-22 add
+    if (staticMacros || hasOfflineDisplayPayloads(payloads)) { metadata.insert(QStringLiteral("offlineOnly"), true); } //20261123-22 add
     if (program.open(QIODevice::ReadOnly)) { metadata.insert(QStringLiteral("compilerExecutableSha256"),packageSha(program.readAll())); }
     if (!write(QDir(staging->path()).filePath(QStringLiteral("compiler-manifest.json")),QJsonDocument(metadata).toJson(QJsonDocument::Indented),error) || !verifyDevicePackage(staging->path(),nullptr,error)) { return false; }
     if (QFileInfo::exists(target.absoluteFilePath()) || !parent.rename(QFileInfo(staging->path()).fileName(),target.fileName()))

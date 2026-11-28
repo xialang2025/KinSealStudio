@@ -168,7 +168,12 @@ def verify(exe, directory):
     assert rebuilt["states"] == msg["states"] and rebuilt["languageAppearances"] == msg["languageAppearances"]
     assert rebuilt["monitorAddress"] == "LW27" and rebuilt["movement"] == 1 and rebuilt["speed"] == 9
     target = directory / "new.dat"
-    expected = b"".join(bytes(4) + row[lang].encode("cp936").ljust(100, b"\0")
+    def native_color(language):
+        # V122 KSP stores #AARRGGBB. The V5.1 writer emits the three components then a zero byte.
+        argb = bytes.fromhex(msg["languageAppearances"][language]["textColor"][1:])
+        return argb[1:] + bytes(1)
+
+    expected = b"".join(native_color(lang) + row[lang].encode("cp936").ljust(100, b"\0")
                         for lang in project["languages"] for row in msg["states"])
     run("--compile-native-message-table", output, target)
     assert target.read_bytes() == expected
@@ -180,13 +185,23 @@ def verify(exe, directory):
     assert int.from_bytes(sim.read_bytes()[436:440], "little") == 121 * 57 * 2 and sim.read_bytes()[512:] == expected
     run("--compile-native-message-table", output, target, expect=False)
     assert target.read_bytes() == expected
-    for index, invalid in enumerate(("A" * 100, "A\0B", "\U0001f600")):
+    for index, value in enumerate(("A" * 100, "B" * 101, "A" * 98 + "中", "C" * 99 + "中")):
+        msg["states"][1]["English"] = value
+        msg["languageAppearances"]["English"]["textColor"] = "#ff1234ab"
+        ksp.write_text(json.dumps(project, ensure_ascii=False), encoding="utf8")
+        colored = directory / f"bounded-colored-{index}.dat"
+        run("--compile-native-message-table", ksp, colored)
+        # The second language follows all three first-language states; the high byte of the color DWORD stays zero.
+        offset = 4 * 104
+        assert colored.read_bytes()[offset:offset + 104] == bytes.fromhex("12 34 ab 00") + value.encode("cp936")[:100]
+    for index, invalid in enumerate(("A\0B", "\U0001f600")):
         msg["states"][1]["English"] = invalid
         ksp.write_text(json.dumps(project, ensure_ascii=False), encoding="utf8")
         target = directory / f"invalid-{index}.dat"
         run("--compile-native-message-table", ksp, target, expect=False)
         assert not target.exists()
-    receipts.update(editedAndRestored=True, authoredWithoutSource=True, protectedOutputs=4)
+    receipts.update(editedAndRestored=True, authoredWithoutSource=True, protectedOutputs=3,
+                    nativeColorAndHundredByteSlots=4)
     return receipts
 
 

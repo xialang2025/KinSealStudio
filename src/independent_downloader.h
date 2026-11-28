@@ -107,4 +107,9 @@ bool exportSingleTextPayload(const HmiProject &project,
  ******************************************************************************/
 bool downloadSingleTextProject(const HmiProject &project, QString *error); //20261108-11 add
 
+bool writeNativeMessageTable(const HmiProject &project, const QString &path, const QString &session,
+                             QString *error); //20261128-24 change
+bool exportNativeValueDisplayParts(const HmiProject &project, const QString &destination,
+                                   QString *error); //20261128-25 add
+
 #endif

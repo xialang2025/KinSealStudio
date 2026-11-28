@@ -10,7 +10,7 @@
  ******************************************************************************/
 static bool compileNativeMediaParts(const HmiProject &project, const QString &destination,
                                     bool omitDriver, const NativeMediaSourceLocation &location, //20261128-22 change
-                                    const QString &nativeCompileTime, bool createdDrawing, QString *error) //20261128-19 change
+                                    const QString &nativeCompileTime, bool createdDrawing, const QString &simulatorSession, QString *error) //20261128-19 change
 {
     const QFileInfo target(destination);
     const QDir parent(target.absolutePath());
@@ -96,6 +96,16 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
         }
         file.setFileName(usb.filePath(name));
         if (!file.rename(media.filePath(name))) { *error = file.errorString(); return false; }
+    }
+    // The V122 media archive contains the device message table and a second, simulator-only copy with a header.
+    if (media.exists(QStringLiteral("Message.dat"))) { //20261128-24 add
+        const QString session = simulatorSession.isEmpty() ? QStringLiteral("fresh") : simulatorSession;
+        if (!writeNativeMessageTable(project, media.filePath(QStringLiteral("SimMessage.dat")), session, error)) {
+            return false;
+        }
+    } else if (!simulatorSession.isEmpty()) {
+        *error = QStringLiteral("模拟器会话选项仅适用于单消息控件的介质工程。");
+        return false;
     }
     if (!media.exists(macroName)) {
         if (!project.macros.isEmpty()) {

@@ -106,7 +106,25 @@ def original_opened_project(source, reference, originals, read_blob):  # 2026112
     return None
 
 
-def compare(exe, scratch, require_all, media_driver, replay_directory, replay_drawing=False, replay_opened=False):
+def original_message_sessions(originals, read_blob):  # 20261128-27 add
+    """Bind each message-table profile to its own open process, source SHA and native compilation directory."""
+    prefix = "docs/stage4-evidence/message/native/"
+    sessions = {}
+    for path in originals:
+        if not path.startswith(prefix) or not path.endswith(".json") or "/native-probe-" not in path:
+            continue
+        log = json.loads(read_blob(path))
+        for ordinal, build in enumerate(log.get("nativeCompilations", [])):
+            key = (build["sourceSha256"], prefix + "compiled/" + build["label"])
+            if key in sessions:
+                raise ValueError("two different native sessions claim a message compilation: " + key[1])
+            sessions[key] = ("download-defaults" if ordinal else "fresh", path)
+    if not sessions:
+        raise ValueError("missing original message compiler logs")
+    return sessions
+
+
+def compare(exe, scratch, require_all, media_driver, replay_directory, replay_drawing=False, replay_opened=False, replay_message=False):
     """Select one original run per source before compiling and compare the complete shared files."""
     baseline = json.loads(REFERENCE.read_bytes())
     revision = baseline["sourceRevision"]
@@ -132,6 +150,12 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
             latest = json.loads(REFERENCE.with_name("V122源档与原厂编译第七次逐件复验_20261128.json").read_bytes())
             if latest["revision"] != revision:
                 raise ValueError("wrong source revision in the latest regression receipt")
+            if replay_mode in ("usb", "opened"):
+                latest = json.loads(REFERENCE.with_name("V122显示控件第八次逐工程与逐文件复验_20261128.json").read_bytes())
+                if latest["revision"] != revision:
+                    raise ValueError("wrong native display comparison revision")
+                if replay_mode == "opened" and replay_message:
+                    replay_mode = "messageSession"
             pinned = latest["compiledOutputs"][replay_mode]["bySource"]
         else:
             pinned = outputs[mode]["bySource"]
@@ -169,6 +193,7 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
         log_index = json.loads(REFERENCE.with_name("介质KNR原厂248源对照_20261128.json").read_bytes())
         history = {x["source"]: x for x in log_index["historicalWorkingDirectoryExperiment"]["records"]}
     drawing_sessions = original_drawing_sessions(blob) if replay_drawing else {}  # 20261128-19 add
+    message_sessions = original_message_sessions(blobs, blob) if replay_message else {}
     compiler_env = dict(os.environ, TEMP=str(scratch), TMP=str(scratch), TMPDIR=str(scratch))
     rows = []
     try:
@@ -214,6 +239,10 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
                             raise ValueError("work-directory log is for a different build")
                         command.extend(["--native-work-directory", original_work_directory(evidence, blob)])
                         row["workDirectoryLog"] = evidence["log"]
+                if (key, folder) in message_sessions:
+                    profile, row["messageSessionLog"] = message_sessions[(key, folder)]
+                    command.extend(["--simulator-session", profile])
+                    row["simulatorSession"] = profile
                 if (key, folder) in drawing_sessions:
                     row["createdDrawingLog"] = drawing_sessions[(key, folder)]
                     command.append("--native-created-drawing")
@@ -268,7 +297,7 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
     totals["referenceFilesForCompiled"] = totals["common"] + totals["missing"]
     totals["extra"] = sum(len(r.get("extra", [])) for r in rows)
     ok = totals["regressed"] == 0 and (not require_all or totals["allFilesExact"] == len(rows))
-    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, **({"replayOpenedProject": True} if replay_opened else {}), totals=totals, rows=rows), ok
+    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, **({"replayOpenedProject": True} if replay_opened else {}), **({"replayMessageSession": True} if replay_message else {}), totals=totals, rows=rows), ok
 
 
 def main():
@@ -285,15 +314,17 @@ def main():
                         help="Replay both path fields when the open and compile logs match the selected source and run.")
     parser.add_argument("--replay-drawing-state", action="store_true",
                         help="Replay the freshly drawn pen only for source/run pairs in the three independent editor logs.")
+    parser.add_argument("--replay-message-session", action="store_true",
+                        help="Use V5.1 process logs to replay the default download-window flags of message projects.")
     parser.add_argument("--require-all", action="store_true")
     parser.add_argument("--child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
-    if (args.replay_work_directory or args.replay_opened_project) and args.media_driver != "reference":
+    if (args.replay_work_directory or args.replay_opened_project or args.replay_message_session) and args.media_driver != "reference":
         parser.error("the historical path options require --media-driver reference")
     if sys.platform == "win32" and not args.child:
         return on_private_desktop(sys.argv[1:])
     args.temp_root.mkdir(parents=True, exist_ok=True)
-    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver, args.replay_work_directory, args.replay_drawing_state, args.replay_opened_project)
+    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver, args.replay_work_directory, args.replay_drawing_state, args.replay_opened_project, args.replay_message_session)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(report["totals"]))

@@ -17,6 +17,25 @@ bool hasStaticMacroPayloads(const QVector<QByteArray> &payloads) //20261123-22 a
 }
 
 /******************************************************************************
+ * Function Name   : hasOfflineDisplayPayloads
+ * Description     : Detect disk-only display layouts before constructing any USB commands.
+ * Input Parameters: generated or reloaded package segments
+ * Return Value    : True for the message-table layout or a control table containing a QR display.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool hasOfflineDisplayPayloads(const QVector<QByteArray> &payloads) //20261128-27 add
+{
+    if (payloads.size() == 13) { return true; }
+    if (payloads.size() != 12 && payloads.size() != 14) { return false; }
+    if (hasStaticMacroPayloads(payloads)) { return false; }
+    const QByteArray &records = payloads.at(10);
+    for (qsizetype pos = 0; pos < records.size(); pos += 640) {
+        if (u8(records.at(pos)) == 35 || u8(records.at(pos)) == 52) { return true; }
+    }
+    return false;
+}
+
+/******************************************************************************
  * Function Name   : buildDeviceTransferPlan
  * Description     : Frame the source snapshot and insert only observed control segments.
  * Input Parameters: payloads, steps, error
@@ -49,6 +68,10 @@ bool buildDeviceTransferPlan(const QVector<QByteArray> &payloads,
     int index;
     int byteIndex;
 
+    if (hasOfflineDisplayPayloads(payloads)) { //20261128-27 add
+        if (error) { *error = QStringLiteral("该显示控件包已支持离线编译，直连下载仍待现场验证。"); }
+        return false;
+    }
     if (steps == nullptr || (payloads.size() != 10 && payloads.size() != 12 && payloads.size() != 14))
     {
         if (error != nullptr)

@@ -35,7 +35,7 @@
 #include <cstdio> //20261108-10 add
 #include <memory>
 
-#include "native_message_table.cpp.inc" //20261128-23 add
+
 #include "native_media_parts.cpp.inc" //20261128-3 add
 
 /******************************************************************************
@@ -512,6 +512,15 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
     }
+    if (arguments.value(1) == QStringLiteral("--compile-native-value-display-parts")) { //20261128-25 add
+        if (arguments.size() != 4 || !HmiProject::load(arguments.value(2), &validation_project, &validation_error) ||
+            !exportNativeValueDisplayParts(validation_project, arguments.value(3), &validation_error)) {
+            writeDownloadResult(false, validation_error.isEmpty() ? QStringLiteral("请指定单数据显示器工程和新输出目录。") : validation_error);
+            return 19;
+        }
+        writeDownloadResult(true, QStringLiteral("已导出本地数据显示器的页表、地址表、图像索引、控件图和页图。"));
+        return 0;
+    }
     if (arguments.value(1) == QStringLiteral("--compile-native-message-table")) { //20261128-23 add
         const bool simulator = arguments.size() == 6 && arguments.at(4) == QStringLiteral("--simulator-session") && !arguments.at(5).isEmpty();
         if ((arguments.size() != 4 && !simulator) || !HmiProject::load(arguments.value(2), &validation_project, &validation_error) ||
@@ -528,6 +537,7 @@ int main(int argc, char *argv[]) //20261107-6 add
         bool omitDriver = false;
         bool createdDrawing = false; //20261128-19 add
         NativeMediaSourceLocation location; //20261128-22 change
+        QString simulatorSession; //20261128-24 add
         QString compileTime; //20261128-10 add
         int index;
         if (arguments.size() < 4) {
@@ -544,6 +554,9 @@ int main(int argc, char *argv[]) //20261107-6 add
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
                 location.projectFile = arguments.at(index) == QStringLiteral("--native-opened-project");
                 location.path = arguments.at(++index);
+            } else if (!snapshotOnly && simulatorSession.isEmpty() && arguments.at(index) == QStringLiteral("--simulator-session") &&
+                       (arguments.value(index + 1) == QStringLiteral("fresh") || arguments.value(index + 1) == QStringLiteral("download-defaults"))) {
+                simulatorSession = arguments.at(++index);
             } else if (!snapshotOnly && compileTime.isEmpty() && arguments.at(index) == QStringLiteral("--native-compile-time") &&
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
                 compileTime = arguments.at(++index);
@@ -561,7 +574,7 @@ int main(int argc, char *argv[]) //20261107-6 add
             return 0;
         }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, location, compileTime, createdDrawing, &validation_error)) {
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, location, compileTime, createdDrawing, simulatorSession, &validation_error)) {
             writeDownloadResult(false, validation_error);
             return 24;
         }
