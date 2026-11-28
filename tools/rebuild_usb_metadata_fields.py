@@ -133,7 +133,28 @@ def earliest_native_seed_time(system, load_dos_time):
     return max(system_time, datetime(*load_dos_time))
 
 
-def render_descriptor(metadata, lengths, seconds, encoding="cp936", prior=None):
+def same_build_alarm_ranges(metadata, native_alarm):  # 20261128-30 add
+    """Predict observed non-semantic byte ranges from a caller-supplied companion of the same native run."""
+    if len(native_alarm) != 47840:
+        raise ValueError("Expected the 47840-byte AlarmPara.dat from the same original compilation")
+    page_table_end = 0x388 + 4 * len(read_metadata(metadata)["sizes"])
+    # A declared ordinary page owns its u32 size slot, even where shorter projects retain compiler workspace bytes.
+    # These are empirical arithmetic relationships in disk artifacts; no process or device memory is accessed.
+    rules = ((264, 46164, 4, 18045), (298, 46166, 1, 0),
+             (648, 46164, 4, 14690), (672, 46164, 4, 14804),
+             (1324, 46164, 4, 3843), (1328, 46164, 4, 10732),
+             (1336, 46232, 4, 0), (1490, 46234, 1, 0),
+             (1548, 46232, 4, 192), (1554, 46234, 1, 0), (1628, 46232, 4, 0))
+    fields = {}
+    for destination, source, size, addend in rules:
+        if destination >= 0x388 and destination < page_table_end:
+            continue
+        value = int.from_bytes(native_alarm[source:source + size], "little") + addend
+        fields[destination] = (value % (1 << (8 * size))).to_bytes(size, "little")
+    return fields
+
+
+def render_descriptor(metadata, lengths, seconds, encoding="cp936", prior=None, native_alarm=None):
     """Render a disk comparison specimen using explicit seconds and optional earlier-build context."""
     required = {"sheetpixel.dat", "piclenpara.dat", "addrpara.dat"}
     if seconds is None or not required <= lengths.keys():
@@ -143,6 +164,9 @@ def render_descriptor(metadata, lengths, seconds, encoding="cp936", prior=None):
     data = bytearray(prior) if prior is not None else bytearray(1704)
     for start, field in build_fields(metadata, lengths, seconds, encoding).items():
         data[start:start + len(field)] = field
+    if native_alarm is not None:  # 20261128-30 add
+        for start, field in same_build_alarm_ranges(metadata, native_alarm).items():
+            data[start:start + len(field)] = field
     return bytes(data)
 
 
@@ -159,6 +183,8 @@ def main():
     output.add_argument("--output", type=Path, help="Write the known byte ranges as JSON")
     output.add_argument("--comparison-bin", type=Path, help="Create a new 1704-byte offline comparison specimen; uncovered bytes default to zero")
     parser.add_argument("--prior-descriptor", type=Path, help="In comparison mode retain uncovered bytes from an explicitly supplied earlier build")
+    parser.add_argument("--same-build-native-alarm", type=Path,
+                        help="Opt in to observed disk correlations using AlarmPara.dat from this same original compilation")
     options = parser.parse_args()
     directory = {p.name.lower(): p for p in options.directory.iterdir() if p.is_file()}
     lengths = {name: directory[name].stat().st_size for name in LENGTH_FILES if name in directory}
@@ -171,21 +197,33 @@ def main():
         options.seconds = estimate.hour * 3600 + estimate.minute * 60 + estimate.second
     if options.prior_descriptor and options.comparison_bin is None:
         parser.error("--prior-descriptor requires --comparison-bin")
+    native_alarm = None
+    if options.same_build_native_alarm is not None:
+        with options.same_build_native_alarm.open("rb") as companion:
+            native_alarm = companion.read(47841)
+        if len(native_alarm) != 47840:
+            parser.error("--same-build-native-alarm requires the original 47840-byte file")
     if options.comparison_bin is not None:
         if options.comparison_bin.suffix.lower() != ".bin":
             parser.error("--comparison-bin requires a new .bin filename")
         prior = options.prior_descriptor.read_bytes() if options.prior_descriptor else None
-        result = render_descriptor(data, lengths, options.seconds, options.encoding, prior)
+        result = render_descriptor(data, lengths, options.seconds, options.encoding, prior, native_alarm)
         from stage6_media_bundle import _ordinary_path, _publish_archive_bytes
         target = options.comparison_bin.absolute()
         _publish_archive_bytes(target, result, _ordinary_path(target.parent))
-        print(json.dumps({"bytes": len(result), "uncoveredSource": "prior-build" if prior is not None else "zero",
-                          "seedSource": "estimated" if options.preceding_load_time else "explicit", "seconds": options.seconds}))
+        summary = {"bytes": len(result), "uncoveredSource": "prior-build" if prior is not None else "zero",
+                   "seedSource": "estimated" if options.preceding_load_time else "explicit", "seconds": options.seconds}
+        if native_alarm is not None:
+            summary["observedAlarmBytes"] = sum(map(len, same_build_alarm_ranges(data, native_alarm).values()))
+        print(json.dumps(summary))
         return
     fields = build_fields(data, lengths, options.seconds, options.encoding)
     estimated = fields.pop(4) if options.preceding_load_time is not None else None
     result = {"format": "Usbload.bin", "size": 1704, "knownBytes": sum(map(len, fields.values())),
               "ranges": [{"offset": offset, "hex": value.hex()} for offset, value in sorted(fields.items())]}
+    if native_alarm is not None:
+        result["observedAlarmRanges"] = [{"offset": start, "hex": value.hex()}
+                                         for start, value in same_build_alarm_ranges(data, native_alarm).items()]
     if estimated is not None:
         following = native_seed_word((options.seconds + 1) % 86400)
         result["estimatedClock"] = {"offset": 4, "hex": estimated.hex(), "seconds": options.seconds,
