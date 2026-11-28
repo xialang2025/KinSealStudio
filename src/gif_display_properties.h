@@ -7,6 +7,9 @@
 
 //20261112-0 add: Original animation bytes stay separate from the PNG-only picture pool.
 bool validateGifData(const QByteArray &data, QString *error = nullptr);
+bool nativeGifPngFrames(const QByteArray &table, QList<QByteArray> *frames = nullptr,
+                        QSize *size = nullptr); //20261128-21 add
+bool validateAnimationResource(const QByteArray &data, QString *error = nullptr); //20261128-21 add
 QImage gifFirstFrame(const QByteArray &data);
 
 struct GifDisplayProperties

@@ -4,12 +4,12 @@
 /******************************************************************************
  * Function Name   : compileNativeMediaParts
  * Description     : Publish the supported loose V122 media members from a fresh verified USB build.
- * Input Parameters: project, destination, omitDriver, nativeWorkDirectory, nativeCompileTime, error
+ * Input Parameters: project, destination, omitDriver, original source location, nativeCompileTime, createdDrawing, error
  * Return Value    : True after the staged directory has been published.
  * Date            : 2026.11.28
  ******************************************************************************/
 static bool compileNativeMediaParts(const HmiProject &project, const QString &destination,
-                                    bool omitDriver, const QString &nativeWorkDirectory,
+                                    bool omitDriver, const NativeMediaSourceLocation &location, //20261128-22 change
                                     const QString &nativeCompileTime, bool createdDrawing, QString *error) //20261128-19 change
 {
     const QFileInfo target(destination);
@@ -51,8 +51,16 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     source = qUncompress(file.readAll());
     file.close();
     if (!nativeProjectUsesSupportedDeviceDefaults(source, error) ||
-        !buildNativeMediaSnapshot(source, &mediaSnapshot, error, nativeWorkDirectory)) { return false; }
-    if (!project.pictures.isEmpty() || !project.animations.isEmpty()) {
+        !buildNativeMediaSnapshot(source, &mediaSnapshot, error, location)) { return false; }
+    //20261128-21 change: Five original picture-only projects, including unused gallery PNGs,
+    // emit the same empty assetPairs list. The images travel in the control frames and source snapshot.
+    const bool pngPicturePage = !project.objects.isEmpty() &&
+        std::all_of(project.objects.cbegin(), project.objects.cend(), [](const HmiObject &object) {
+            return object.type == QStringLiteral("image") && object.hasImageDisplayProperties;
+        });
+    const bool gifPage = !project.objects.isEmpty() && std::all_of(project.objects.cbegin(), project.objects.cend(),
+        [](const HmiObject &object) { return object.type == QStringLiteral("gif"); });
+    if ((!project.pictures.isEmpty() && !pngPicturePage) || (!project.animations.isEmpty() && !gifPage)) {
         *error = QStringLiteral("此介质导出尚未核实工程图库资源对表。");
         return false;
     }
@@ -130,12 +138,12 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
 /******************************************************************************
  * Function Name   : exportNativeMediaSnapshot
  * Description     : Write the verified native project archive without compiling device payloads.
- * Input Parameters: input SM, destination KNR, optional original working directory, error
+ * Input Parameters: input SM, destination KNR, original directory or opened SM path, error
  * Return Value    : True after the complete snapshot is committed.
  * Date            : 2026.11.28
  ******************************************************************************/
 static bool exportNativeMediaSnapshot(const QString &inputPath, const QString &outputPath,
-                                      const QString &nativeWorkDirectory, QString *error) //20261128-8 add
+                                      const NativeMediaSourceLocation &location, QString *error) //20261128-22 change
 {
     QFile input(inputPath);
     QSaveFile output(outputPath);
@@ -155,7 +163,7 @@ static bool exportNativeMediaSnapshot(const QString &inputPath, const QString &o
     if (input.error() != QFileDevice::NoError) { *error = input.errorString(); return false; }
     // A source-only public command must observe the same active protection as the editor.
     if (!authenticateNativeProjectFile(source, QString(), nullptr, nullptr, error) ||
-        !buildNativeMediaSnapshot(source, &archive, error, nativeWorkDirectory)) { return false; }
+        !buildNativeMediaSnapshot(source, &archive, error, location)) { return false; }
     if (!output.open(QIODevice::WriteOnly) || output.write(archive) != archive.size() || !output.commit()) {
         *error = output.errorString(); return false;
     }

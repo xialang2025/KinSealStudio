@@ -27,12 +27,21 @@ def gallery_controls(exe, work, reference):
         data = [raw[fs[f"config.284[{i}].0"].start:fs[f"config.284[{i}].5"].stop] for i in range(2)]
         span = slice(fs["config.284.count"].start, fs["config.284[1].5"].stop)
         if name == "picture-distinct-red-green":
-            cases.append(("both row bindings remain", raw, len(data), set(data)))
+            cases.append(("both row bindings in native ID order", raw, [data[1], data[0]]))
+            cases.append(("source gallery already sorted", raw[:span.start+4] + data[1] + data[0] + raw[span.stop:],
+                          [data[1], data[0]]))
+            # Give the red resource a key that sorts first despite its longer wire length and later filename.
+            red, green = (raw[fs[f"config.284[{i}].0"]] for i in range(2))
+            keys = [s.encode("utf-16-be") for s in ("Ared-longer", "z")]
+            new_red, new_green = (len(key).to_bytes(4, "big") + key for key in keys)
+            renamed = raw.replace(red, new_red).replace(green, new_green)
+            cases.append(("renamed IDs take precedence over filenames and length prefixes", renamed,
+                          [data[0].replace(red, new_red), data[1].replace(green, new_green)]))
             continue
         green = raw[fs["config.284[1].0"]]
         # An equal QString outside this object's image state rows also stops pruning.
         outside = fs["trailer.settings.1"]
-        cases.append(("outside reference", raw[:outside.start] + green + raw[outside.stop:], 2, set(data)))
+        cases.append(("outside reference", raw[:outside.start] + green + raw[outside.stop:], data))
         # Append a second real picture object whose preview and state rows reference the other PNG.
         obj = [bounds for field, bounds in fs.items() if field.startswith("object[0].")]
         start, end = min(s.start for s in obj), max(s.stop for s in obj)
@@ -42,9 +51,9 @@ def gallery_controls(exe, work, reference):
         inspected = fields(exe, work, mixed)
         if mixed[inspected["object[1].image.row[0].0"]] != green:
             raise ValueError("second picture fixture does not reference the expected PNG")
-        cases.append(("second picture uses green", mixed, 2, set(data)))
-        cases.append(("unused first record", raw[:span.start+4] + data[1] + data[0] + raw[span.stop:], 1, {data[0]}))
-    for label, source, count, records in cases:
+        cases.append(("second picture uses green", mixed, data))
+        cases.append(("unused first record", raw[:span.start+4] + data[1] + data[0] + raw[span.stop:], [data[0]]))
+    for label, source, records in cases:
         sm, archive = work / "test.sm", work / "test.knr"
         sm.write_bytes(source)
         archive.unlink(missing_ok=True)
@@ -54,7 +63,7 @@ def gallery_controls(exe, work, reference):
         actual_count = int.from_bytes(snapshot[fs["config.284.count"]], "big")
         actual = [snapshot[fs[f"config.284[{i}].0"].start:fs[f"config.284[{i}].5"].stop] for i in range(actual_count)]
         directory = snapshot[fs["trailer.settings.0"]][4:].decode("utf-16be")
-        if (actual_count != count or set(actual) != records or sm.read_bytes() != source
+        if (actual != records or sm.read_bytes() != source
                 or directory != "Z:\\长目录\\Archive\\"
                 or snapshot[fs["config.head.12"]] != snapshot[fs["page.head.18"]]):
             raise ValueError("media gallery control failed: " + label)
@@ -67,7 +76,8 @@ def verify(exe, scratch):
     reports = []
     with tempfile.TemporaryDirectory(dir=scratch) as temp:
         work = Path(temp).resolve()
-        for name in ("picture-multiple-bit", "picture-multiple-numeric", "picture-multiple-time", "picture-static-red"):
+        for name in ("picture-multiple-bit", "picture-multiple-numeric", "picture-multiple-time",
+                     "picture-static-red", "picture-distinct-red-green"):  # 20261128-22 change
             source = git_blob(reference + name, "input-native.sm")
             sm, archive = work / "input.sm", work / "generated.knr"
             sm.write_bytes(source)

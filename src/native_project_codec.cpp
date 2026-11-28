@@ -478,6 +478,8 @@ static bool sourceNativeImageDisplay(const SourceDocument &source, const QString
 static void readNativeDataDisplay(SourceDocument &document, const QString &prefix, int type); //20261127-13 add
 static bool sourceDataDisplay(const SourceDocument &document, const QString &prefix, int index,
                               HmiObject *object, bool *external, QString *error);
+static bool sourceMessageDisplay(const SourceDocument &, const QString &, int, const QStringList &,
+                                 HmiObject *, QStringList *, bool *, QString *); //20261128-23 add
 static void readTableFields(SourceDocument &document, const QString &prefix); //20261127-9 add
 static bool sourceTable(const SourceDocument &document, const QString &prefix, int index,
                         HmiObject *output, QString *error); //20261127-9 add
@@ -1883,9 +1885,12 @@ static bool hasRetainedMacroAddresses(const SourceDocument &document) //20261127
  * Return Value    : True after complete bounded PNG-pool validation.
  * Date            : 2026.11.11
  ******************************************************************************/
-bool sourcePictures(const SourceDocument &document, QMap<QString, QByteArray> *pictures, QString *error) //20261127-14 add
+bool sourcePictures(const SourceDocument &document, QMap<QString, QByteArray> *pictures, QString *error,
+                    QMap<QString, QByteArray> *animations = nullptr) //20261128-21 change
 {
     QMap<QString, QByteArray> result;
+    QMap<QString, QByteArray> frameTables;
+    QSize dimensions;
     QByteArray png;
     QImage image;
     QString prefix;
@@ -1905,9 +1910,20 @@ bool sourcePictures(const SourceDocument &document, QMap<QString, QByteArray> *p
         png = document.value(prefix + QStringLiteral(".5")).toByteArray();
         bytes += png.size();
         if (name.trimmed().isEmpty() || name.size() > 256 || result.contains(name) ||
-            document.value(prefix + QStringLiteral(".2")).toString() != QStringLiteral("PNG") ||
-            bytes > MaximumSourceBytes) {
+            frameTables.contains(name) || bytes > MaximumSourceBytes) {
             return fail(error, QStringLiteral("原生工程图片名称重复、格式未恢复或资源大小超过读取保护；请保留原源归档。"));
+        }
+        if (document.value(prefix + QStringLiteral(".2")).toString() == QStringLiteral("GIF")) {
+            if (!nativeGifPngFrames(png, nullptr, &dimensions) ||
+                dimensions != QSize(document.value(prefix + QStringLiteral(".3")).toInt(),
+                                    document.value(prefix + QStringLiteral(".4")).toInt())) {
+                return fail(error, QStringLiteral("原厂动画的 PNG 帧表或图库尺寸无效。"));
+            }
+            frameTables.insert(name, png);
+            continue;
+        }
+        if (document.value(prefix + QStringLiteral(".2")).toString() != QStringLiteral("PNG")) {
+            return fail(error, QStringLiteral("原厂工程的图库资源格式尚未恢复。"));
         }
         image = decodedControlPng(png);
         if (image.isNull() || image.width() != document.value(prefix + QStringLiteral(".3")).toInt() ||
@@ -1917,6 +1933,7 @@ bool sourcePictures(const SourceDocument &document, QMap<QString, QByteArray> *p
         result.insert(name, png);
     }
     *pictures = result;
+    if (animations) { *animations = frameTables; }
     return true;
 }
 
@@ -1972,7 +1989,7 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
     if (document.value(QStringLiteral("project.pages.count")).toInt() != 1) { //20261110-5 add: Read-only multi-page boundary recognition is not a semantic editing contract.
         return fail(error, QStringLiteral("原生源含多个页面；当前语义互通仅支持一个普通页面，请保留整源归档，不能截取第一页导入。"));
     }
-    if (!sourcePictures(document, &result.pictures, error)) { return false; } //20261127-14 add
+    if (!sourcePictures(document, &result.pictures, error, &result.animations)) { return false; } //20261127-14 add
     result.name = QFileInfo(document.value(QStringLiteral("trailer.settings.1")).toString()).completeBaseName();
     if (result.name.isEmpty()) {
         result.name = QStringLiteral("NativeProject");
@@ -2033,6 +2050,13 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
             return fail(error, QStringLiteral("原厂控件使用独立的预览子图元组合，请使用原厂源工程窗口保留该外观。"));
         }
 
+        if (document.value(prefix + QStringLiteral("type")).toInt() == 35) { //20261128-23 add
+            if (!sourceMessageDisplay(document, prefix, i, result.languages, &object, &result.nativeSourceWarnings,
+                                      &external, error)) { return false; }
+            object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
+            result.objects.append(object);
+            continue;
+        }
         if (retainedContainer(document.value(prefix + QStringLiteral("type")).toInt()) ||
             (document.value(prefix + QStringLiteral("type")).toInt() == 10 &&
              (document.value(prefix + QStringLiteral("switch.mode")).toInt() == 2 ||
@@ -2041,7 +2065,8 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
                                .arg(document.value(prefix + QStringLiteral("type")).toInt()));
         }
         if (isImageDisplayType(document.value(prefix + QStringLiteral("type")).toInt())) { //20261127-14 add
-            if (!sourceNativeImageDisplay(document, prefix, i, result.pictures, &object,
+            const bool gif = document.value(prefix + QStringLiteral("type")).toInt() == 34; //20261128-21 add
+            if (!sourceNativeImageDisplay(document, prefix, i, gif ? result.animations : result.pictures, &object,
                                           &result.nativeSourceWarnings, &external, error)) { return false; }
             object.layer = document.value(prefix + QStringLiteral("z")).toDouble();
             result.objects.append(object);
@@ -2551,6 +2576,9 @@ bool patchSourcePictures(const SourceDocument &document, const HmiProject &origi
     int i;
 
     pictures = current.pictures;
+    if (current.animations != original.animations) { //20261128-21 add: Retained frame archives carry their native description and exact PNG stream.
+        return fail(error, QStringLiteral("原厂动画图库新增或替换资源的源记录尚未核实。"));
+    }
     for (i = 0; i < current.objects.size(); ++i) {
         if (current.objects.at(i).hasImageDisplayProperties) { //20261127-14 add
             for (const ImageDisplayState &entry : current.objects.at(i).imageDisplay.states) {
@@ -2577,6 +2605,9 @@ bool patchSourcePictures(const SourceDocument &document, const HmiProject &origi
     updates->picturePool = pictures;
     if (pictures == original.pictures) {
         return true;
+    }
+    if (!current.animations.isEmpty()) {
+        return fail(error, QStringLiteral("混合原厂动画帧表与修改后的 PNG 图库尚待核实。"));
     }
     count = document.value(QStringLiteral("config.284.count")).toInt();
     for (i = 0; i < count; ++i) {
@@ -2932,6 +2963,7 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
     return before == after;
 }
 
+#include "native_message_source.cpp.inc" //20261128-23 add
 #include "native_image_display_source.cpp.inc" //20261127-14 add
 
 /******************************************************************************
@@ -4334,6 +4366,15 @@ static bool validateNativeDeviceSystem(const QByteArray &data, QByteArray *syste
         if (retainedLocalMacroBinding(document, prefix)) {
             return fail(error, QStringLiteral("原厂按钮使用另一组本地宏选择标志，独立设备绑定尚待核对。"));
         }
+        if (document.value(prefix + QStringLiteral("type")).toInt() == 15) { //20261128-21 add
+            const int selected = document.value(prefix + QStringLiteral("image.head.0")).toInt();
+            const QString rows = prefix + QStringLiteral("image.row");
+            // A native timed project was saved on state 1 with the same PNG in both rows.
+            if (selected != 0 && document.value(SourceDocument::indexed(rows, selected) + QStringLiteral(".1")) !=
+                                 document.value(SourceDocument::indexed(rows, 0) + QStringLiteral(".1"))) {
+                return fail(error, QStringLiteral("图片显示的非零预览状态使用不同图像，设备首帧尚待原厂对照。"));
+            }
+        }
     }
     if (document.values.contains(QStringLiteral("startup.head.0"))) { //20261128-5 add
         return fail(error, QStringLiteral("独立启动画面的设备编译尚待原厂包对照。"));
@@ -4430,6 +4471,14 @@ static bool validateNativeDeviceSystem(const QByteArray &data, QByteArray *syste
         registryEnd = document.values.value(QStringLiteral("config.290.0")).start;
         updates.replacements.insert(registryStart, qMakePair(registryEnd, languages));
     }
+    //20261128-21 add: Check every gallery record before excluding its bytes from the independent device settings fingerprint.
+    QMap<QString, QByteArray> verifiedPictures;
+    if (!sourcePictures(document, &verifiedPictures, error)) { return false; }
+    languages.clear();
+    appendWord(&languages, 0);
+    registryStart = document.values.value(QStringLiteral("config.284.count")).start;
+    registryEnd = document.values.value(QStringLiteral("project.pages.count")).start;
+    updates.replacements.insert(registryStart, qMakePair(registryEnd, languages));
     normalizedSystem = updates.render(systemStart, configStart);
     // Only the five typed, bounded fields are removed from the fingerprint. The wire image keeps their original values.
     updates.set(QStringLiteral("config.head.5"), 1);
@@ -4848,7 +4897,7 @@ static bool writeSourceLineCurve(const HmiObject &object, const HmiObject *origi
         if (!writeNativeSourceAddress(lb, &address, error)) { return false; }
         stream << 0 << 0 << false << 0;
         stream.writeRawData(address.constData(), address.size());
-        stream << 0 << 0 << false << -1;
+        stream << 0 << 0 << false << 0; //20261128-22 change: V5.1 only loads 0/1 for the inactive notification enum.
         stream.writeRawData(address.constData(), address.size());
         stream << false << 0;
         stream.writeRawData(address.constData(), address.size());
@@ -4941,6 +4990,16 @@ static bool writeSourceBoxGraphic(const HmiObject &object, const HmiObject *orig
     }
     box = prefix + QStringLiteral("box.");
     SourceUpdates updates(*source);
+    if (!original) { //20261128-22 add: A new item must supply values accepted by V5.1's enum reader.
+        static constexpr std::pair<const char *, int> fields[] = {
+            {"touch.1", 3}, {"gate.0", 1}, {"gate.3", 1}, {"visibility.1", 3}, {"end.0", 1}
+        };
+        for (const auto &[field, maximum] : fields) {
+            const QString key = box + QLatin1String(field);
+            const int value = source->value(key).toInt();
+            if (value < 0 || value > maximum) { updates.set(key, 0); }
+        }
+    }
     // Compare decoded values first. The original 11-byte QColor or dormant bit pattern may differ even for equal editor values.
     const auto setChanged = [&](const QString &key, const QVariant &value) {
         if (source->value(box + key) != value) { updates.set(box + key, value); }
@@ -5244,7 +5303,29 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         originalIndices.insert(original.objects.at(i).id, i);
     }
     for (i = 0; i < project.objects.size(); ++i) {
-        if (project.objects.at(i).type == QStringLiteral("image") || project.objects.at(i).type == QStringLiteral("qrcode")) { //20261127-14 add
+        if (project.objects.at(i).type == QStringLiteral("message")) { //20261128-23 add
+            const HmiObject &message = project.objects.at(i);
+            originalIndex = newProject ? -1 : originalIndices.value(message.id, -1);
+            if (message.id.isEmpty() || ids.contains(message.id) ||
+                (originalIndex >= 0 && original.objects.at(originalIndex).type != message.type)) {
+                return fail(error, QStringLiteral("消息控件的编号重复、为空或与原厂类型不符。"));
+            }
+            ids.insert(message.id);
+            prefix = originalIndex < 0 ? QString() : document.objectPrefixes.at(originalIndex);
+            if (!writeNativeMessage(message, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
+                                    document, prefix, original.languages, project.languages, &objectBytes, error)) { return false; }
+            QByteArray record;
+            QDataStream stream(&record, QIODevice::WriteOnly);
+            stream.setVersion(QDataStream::Qt_4_8);
+            stream << (originalIndex < 0 || document.value(prefix + QStringLiteral("movable")).toBool());
+            stream.writeRawData(objectBytes.constData(), objectBytes.size());
+            stream << message.layer;
+            if (stream.status() != QDataStream::Ok) { return fail(error, QStringLiteral("消息对象层级编码失败。")); }
+            objectBlock.append(record);
+            continue;
+        }
+        if (project.objects.at(i).type == QStringLiteral("image") || project.objects.at(i).type == QStringLiteral("qrcode") ||
+            project.objects.at(i).type == QStringLiteral("gif")) { //20261128-21 change
             const HmiObject &display = project.objects.at(i);
             if (!display.group.isEmpty() || display.id.isEmpty() || ids.contains(display.id)) { return fail(error, QStringLiteral("图片或二维码的分组尚未映射，或控件编号为空或重复。")); }
             ids.insert(display.id);

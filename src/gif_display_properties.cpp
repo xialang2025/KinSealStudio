@@ -1,6 +1,79 @@
 #include "gif_display_properties.h"
 #include <QBuffer>
 #include <QImageReader>
+#include <QtEndian> //20261128-21 add
+using u32 = unsigned int;
+
+/******************************************************************************
+ * Function Name   : nativeGifPngFrames
+ * Description     : Check every V122 little-endian frame boundary and decode its complete, same-size PNG.
+ * Input Parameters: table, optional original PNG spans and dimensions
+ * Return Value    : True for a complete native animation table within the existing GIF resource limits.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool nativeGifPngFrames(const QByteArray &table, QList<QByteArray> *frames, QSize *size) //20261128-21 add
+{
+    QList<QByteArray> result;
+    QByteArray png;
+    QImage image;
+    QSize dimensions;
+    u32 count;
+    u32 start;
+    u32 end;
+    u32 width;
+    u32 height;
+    u32 length;
+    u32 cursor;
+    u32 i;
+    if (table.size() < 8 || table.size() > 1024 * 1024) { return false; }
+    count = qFromLittleEndian<u32>(table.constData());
+    if (count < 1 || count > 512 || table.size() < (count + 1) * 4 ||
+        qFromLittleEndian<u32>(table.constData() + 4) != (count + 1) * 4) { return false; }
+    for (i = 0; i < count; ++i) {
+        start = qFromLittleEndian<u32>(table.constData() + 4 * (i + 1));
+        end = i + 1 == count ? u32(table.size()) : qFromLittleEndian<u32>(table.constData() + 4 * (i + 2));
+        if (start > end || end > u32(table.size()) || end - start < 45) { return false; }
+        png = table.mid(start, end - start);
+        if (!png.startsWith(QByteArray::fromHex("89504e470d0a1a0a0000000d49484452")) ||
+            !png.endsWith(QByteArray::fromHex("0000000049454e44ae426082"))) { return false; }
+        cursor = 8;
+        while (cursor < u32(png.size())) {
+            if (u32(png.size()) - cursor < 12) { return false; }
+            length = qFromBigEndian<u32>(png.constData() + cursor);
+            if (length > u32(png.size()) - cursor - 12) { return false; }
+            if (png.mid(cursor + 4, 4) == "IEND" &&
+                (length != 0 || cursor + 12 != u32(png.size()))) { return false; }
+            cursor += length + 12;
+        }
+        width = qFromBigEndian<u32>(png.constData() + 16);
+        height = qFromBigEndian<u32>(png.constData() + 20);
+        if (width < 1 || height < 1 || width > 4096 || height > 4096 ||
+            quint64(width) * height * count > 16 * 1024 * 1024) { return false; }
+        image = QImage::fromData(png, "PNG");
+        if (image.isNull() || image.size() != QSize(int(width), int(height)) ||
+            (i > 0 && image.size() != dimensions)) { return false; }
+        dimensions = image.size();
+        if (frames) { result.append(png); }
+    }
+    if (frames) { *frames = result; }
+    if (size) { *size = dimensions; }
+    return true;
+}
+
+/******************************************************************************
+ * Function Name   : validateAnimationResource
+ * Description     : Accept the two stored animation encodings without treating a packed PNG table as a GIF file.
+ * Input Parameters: resource, error
+ * Return Value    : True for a bounded original GIF or a complete native frame table.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+bool validateAnimationResource(const QByteArray &data, QString *error) //20261128-21 add
+{
+    if (data.startsWith("GIF")) { return validateGifData(data, error); }
+    if (nativeGifPngFrames(data)) { return true; }
+    if (error) { *error = QStringLiteral("动画资源没有可完整读取的 GIF 或原厂 PNG 帧表。"); }
+    return false;
+}
 
 /******************************************************************************
  * Function Name   : validateGifData
@@ -46,6 +119,10 @@ QImage gifFirstFrame(const QByteArray &data) //20261112-0 add
 {
     QBuffer buffer;
     QImageReader reader;
+    QList<QByteArray> frames; //20261128-21 add
+    if (!data.startsWith("GIF") && nativeGifPngFrames(data, &frames)) {
+        return QImage::fromData(frames.first(), "PNG");
+    }
     buffer.setData(data); buffer.open(QIODevice::ReadOnly); reader.setDevice(&buffer); reader.setFormat(QByteArrayLiteral("gif"));
     return reader.read();
 }
@@ -107,7 +184,7 @@ bool GifDisplayProperties::fromJson(const QJsonObject &json, GifDisplayPropertie
  ******************************************************************************/
 bool GifDisplayProperties::validate(QString *error) const //20261112-0 add
 {
-    if (animation.trimmed().isEmpty() || animation.size() > 256 || controlAddress.size() > 256 || activeState < 0 || activeState > 1 || !validateGifData(gifData))
+    if (animation.trimmed().isEmpty() || animation.size() > 256 || controlAddress.size() > 256 || activeState < 0 || activeState > 1 || !validateAnimationResource(gifData)) //20261128-21 change
     { if (error != nullptr) { *error = QStringLiteral("没有选择图片或图片已损坏！"); } return false; }
     return visibility.validate(error);
 }

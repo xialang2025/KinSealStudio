@@ -6,6 +6,7 @@
 
 #include <QImage>
 #include <QPainter>
+#include "native_lamp_artwork.cpp.inc" //20261128-20 add
 
 /******************************************************************************
  * Function Name   : appendLittleEndian32
@@ -38,6 +39,8 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
 {
     BitButtonSpriteSet generated;
     QImage image;
+    QImage lampArtwork; //20261128-20 add
+    QImage::Format surface;
     QPainter painter;
     QByteArray pixels;
     QByteArray compressed;
@@ -106,6 +109,8 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
         }
         variantCount = sourceState->flash && !(object.hasLampProperties && object.lamp.monitorMode == 2) &&
                        !(object.hasFunctionButtonProperties && stateIndex == 1) ? 2 : 1; //20261110-0 change: Functions emit normal/flash OFF followed by the hidden pressed ON frame.
+        lampArtwork = object.hasLampProperties ? nativeLampArtwork(*sourceState, object.geometry.size()) : QImage();
+        surface = lampArtwork.isNull() ? QImage::Format_RGB16 : QImage::Format_RGB32; //20261128-20 add
         for (variant = 0; variant < variantCount; ++variant) //20261109-0 change: A flashing state is immediately followed by its text-free image.
         {
             renderedState = *sourceState;
@@ -117,17 +122,25 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
             }
             if (underlay.isNull())
             {
-                image = QImage(width, height, QImage::Format_RGB16);
+                image = QImage(width, height, surface); //20261128-20 change
                 image.fill(QColor(197, 223, 255));
             }
             else
             {
-                image = underlay.convertToFormat(QImage::Format_RGB16).copy(); //20261109-0 add: Preserve static pixels beneath translucent button content.
+                image = underlay.convertToFormat(surface).copy(); //20261128-20 change: Composite native lamp edges in full precision before RGB565 packing.
             }
             painter.begin(&image);
             painter.save(); //20261124-15 add: Reflect only this state, preserving the underlying page.
             painter.setWorldTransform(object.appearanceTransform(image.rect()), true);
-            paintBitButton(&painter, image.rect(), renderedState, language);
+            if (!lampArtwork.isNull()) { //20261128-20 add
+                painter.setOpacity(renderedState.opacity / 255.0);
+                painter.drawImage(image.rect(), lampArtwork);
+                painter.setOpacity(1);
+                // The ordinary caption renderer still handles translations, flash suppression and font selection.
+                renderedState.useImage = false;
+                renderedState.transparent = true;
+            }
+            paintBitButton(&painter, image.rect(), renderedState, language, false, object.hasLampProperties); //20261128-20 change
             painter.restore();
             painter.translate(-object.geometry.topLeft()); //20261109-0 add: Static objects above this control must remain above every normal and flash image.
             Q_FOREACH (overlay, overlays)
@@ -138,6 +151,7 @@ bool buildBitButtonSprites(const HmiObject &object, const QString &language,
                 painter.restore();
             }
             painter.end();
+            if (!lampArtwork.isNull()) { image = image.convertToFormat(QImage::Format_RGB16); } //20261128-20 add
             pixels.clear();
             pixels.reserve(width * height * 2);
             //20261109-0 add: QImage pads odd-width rows; the device image stream does not.

@@ -326,7 +326,7 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
     {
         record = payloads[10].mid(index*640,640);
         type = static_cast<unsigned char>(record.at(0)); subtype = qFromLittleEndian<u16>(record.constData()+0x106); // The following byte is a macro flag, not the high byte of a u32 type.
-        if ((type != 10 && type != 28) || (type == 10 && subtype != 0 && subtype != 1 && subtype != 3 && subtype != 4) ||
+        if ((type != 10 && type != 15 && type != 28 && type != 34) || (type == 10 && subtype != 0 && subtype != 1 && subtype != 3 && subtype != 4) || //20261128-21 change
             u32(qFromLittleEndian<u16>(record.constData()+4))+qFromLittleEndian<u16>(record.constData()+8) > 800 ||
             u32(qFromLittleEndian<u16>(record.constData()+6))+qFromLittleEndian<u16>(record.constData()+10) > 480)
         { return packageFailure(error,QStringLiteral("控制记录type/subtype或屏内几何尚未支持。")); }
@@ -334,6 +334,19 @@ bool validateDevicePayloadStructure(const QVector<QByteArray> &payloads, QString
         objectBytes = qFromLittleEndian<u32>(record.constData()+0x10);
         if (frameBytes == 0 || frameBytes > 768000 || objectBytes == 0 || objectBytes%frameBytes != 0 || qFromLittleEndian<u32>(record.constData()+0x0c) != rawOffset || quint64(rawOffset)+objectBytes > 0xffffffffULL)
         { return packageFailure(error,QStringLiteral("控件%1的rawOffset/rawBytes或帧尺寸错误。").arg(index)); }
+        if (type == 15) { //20261128-21 add: Firmware uses the count at 0x106 when indexing type 15 frames.
+            const u16 mode = qFromLittleEndian<u16>(record.constData() + 0x100);
+            const u16 condition = qFromLittleEndian<u16>(record.constData() + 0x102);
+            if (mode > 1 || condition > 2 || subtype != objectBytes / frameBytes ||
+                subtype < 1 || subtype > 128 || (mode == 0 && subtype != 1) ||
+                (mode == 1 && (subtype < 2 || (condition == 1 && subtype != 2)))) {
+                return packageFailure(error, QStringLiteral("图片显示的模式、状态数和图帧长度不一致。"));
+            }
+        }
+        if (type == 34 && (qFromLittleEndian<u16>(record.constData() + 0x100) != objectBytes / frameBytes ||
+            objectBytes / frameBytes > 512 || qFromLittleEndian<u16>(record.constData() + 0x108) > 1)) {
+            return packageFailure(error, QStringLiteral("动画帧数或播放门控与数据长度不符。"));
+        }
         for (frame=0;frame<objectBytes/frameBytes;++frame)
         {
             if (pictureIndex >= pictureCount) { return packageFailure(error,QStringLiteral("控件帧数量超过图片长度表。")); }

@@ -1467,7 +1467,7 @@ bool HmiProject::fromJson(const QJsonObject &json, HmiProject *project, QString 
             if (!item.value().isString() || encoded.size() > ((1024 * 1024 + 2) / 3) * 4 || QString::fromLatin1(encoded) != text)
             { return modelError(error, QStringLiteral("动画编码字段无效或超限。")); }
             decoded = QByteArray::fromBase64(encoded); resourceBytes += decoded.size();
-            if (decoded.toBase64() != encoded || resourceBytes > 32 * 1024 * 1024 || !validateGifData(decoded, error)) { return false; }
+            if (decoded.toBase64() != encoded || resourceBytes > 32 * 1024 * 1024 || !validateAnimationResource(decoded, error)) { return false; } //20261128-21 change
             loaded.animations.insert(item.key(), decoded);
         }
     }
@@ -2091,7 +2091,7 @@ bool HmiProject::validateModel(QString *error) const //20261110-5 add
     for (picture = animations.constBegin(); picture != animations.constEnd(); ++picture)
     {
         pictureBytes += picture.value().size();
-        if (picture.key().trimmed().isEmpty() || picture.key().size() > 256 || pictureBytes > 32 * 1024 * 1024 || !validateGifData(picture.value(), error))
+        if (picture.key().trimmed().isEmpty() || picture.key().size() > 256 || pictureBytes > 32 * 1024 * 1024 || !validateAnimationResource(picture.value(), error)) //20261128-21 change
         { return modelError(error, QStringLiteral("动画名称、内容或资源总量无效。")); }
         entities[QStringLiteral("animation")].insert(picture.key());
     }
@@ -2163,8 +2163,9 @@ bool HmiProject::validateSinglePageBackend(QString *error, bool requirePageZero)
             return modelError(error, QStringLiteral("项目已保存「%1」配置，其原厂源和设备编码尚未验收。").arg(node.name));
         }
     }
-    if (!animations.isEmpty()) //20261112-0 add: Unreferenced GIF resources also need a recovered native resource format.
-    { return modelError(error, QStringLiteral("工程包含尚未恢复原厂源/设备格式的GIF动画资源。")); }
+    for (const QByteArray &animation : animations) { //20261128-21 change: Original timing-bearing GIF streams require a separate native conversion.
+        if (!nativeGifPngFrames(animation)) { return modelError(error, QStringLiteral("工程包含尚未恢复原厂源/设备格式的GIF动画资源。")); }
+    }
     if (pageCount() != 1 || activePageKind != QStringLiteral("normal") || startupPageId != activePageId ||
         pageWidth != 800 || pageHeight != 480 || scheduleOwners.size() != configurationNodes.size() ||
         std::any_of(references.cbegin(), references.cend(), [&](const HmiReference &reference) {

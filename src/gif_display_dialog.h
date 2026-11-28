@@ -44,6 +44,8 @@ private:
     QLabel *m_preview;
     HmiPermissionEditor *m_visibility;
     bool m_playing = false;
+    QList<QByteArray> m_nativeFrames; //20261128-21 add: V122 retains PNG frames and omits original GIF delays.
+    qsizetype m_frameIndex = 0;
 };
 
 #endif

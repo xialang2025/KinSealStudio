@@ -19,13 +19,13 @@ static bool csvError(QString *error, const QString &message) //20261113-2 add
 }
 
 /******************************************************************************
- * Function Name   : recipeGbkEncode
+ * Function Name   : encodeNativeCp936
  * Description     : Encode native CP936 bytes exactly and reject best-fit character replacement.
  * Input Parameters: text, output
  * Return Value    : True after exact CP936 encoding.
  * Date            : 2026.11.13
  ******************************************************************************/
-static bool recipeGbkEncode(const QString &text, QByteArray *output) //20261113-2 add
+bool encodeNativeCp936(const QString &text, QByteArray *output) //20261128-23 change
 {
 #ifdef Q_OS_WIN
     int size;
@@ -55,7 +55,7 @@ static bool recipeGbkDecode(const QByteArray &bytes, QString *output) //20261113
     QByteArray encoded;
     if (bytes.isEmpty() || bytes.size() > 8 * 1024 * 1024 || bytes.contains(char(0))) { return false; }
     size = MultiByteToWideChar(936, MB_ERR_INVALID_CHARS, bytes.constData(), int(bytes.size()), nullptr, 0); if (size <= 0) { return false; } text.resize(size);
-    if (MultiByteToWideChar(936, MB_ERR_INVALID_CHARS, bytes.constData(), int(bytes.size()), reinterpret_cast<wchar_t *>(text.data()), size) != size || !recipeGbkEncode(text, &encoded) || encoded != bytes) { return false; }
+    if (MultiByteToWideChar(936, MB_ERR_INVALID_CHARS, bytes.constData(), int(bytes.size()), reinterpret_cast<wchar_t *>(text.data()), size) != size || !encodeNativeCp936(text, &encoded) || encoded != bytes) { return false; }
     *output = text; return true;
 #else
     Q_UNUSED(bytes); Q_UNUSED(output); return false;
@@ -82,7 +82,7 @@ bool exportRecipeCsv(const QString &name, const RecipeProperties &properties, QB
     text = QStringLiteral("名称:%1\r\n描述:%2\r\n配方长度:%3\r\n配方总数:%4\r\n数据类型:%5\r\n是否写配方到PLC:%6\r\n写入地址:%7\r\n是否从PLC中读配方:%8\r\n是否与写地址相同:%9\r\n读取地址:%10\r\n").arg(name, properties.description).arg(properties.length).arg(properties.count).arg(RecipeProperties::dataTypes().value(properties.dataType)).arg(properties.writeEnabled ? 1 : 0).arg(properties.writeAddress).arg(properties.readEnabled ? 1 : 0).arg(properties.sameReadWrite ? 1 : 0).arg(properties.readAddress);
     for (column = 0; column < properties.count; ++column) { text += properties.recipeNames[column] + QLatin1Char(','); } text += QStringLiteral("\r\n");
     for (row = 0; row < properties.length; ++row) { for (column = 0; column < properties.count; ++column) { text += properties.values[row][column] + QLatin1Char(','); } text += QStringLiteral("\r\n"); }
-    if (!recipeGbkEncode(text, &bytes)) { return csvError(error, QStringLiteral("配方CSV需要可无损表示的GBK字符及Windows编码支持。")); } *output = bytes; return true;
+    if (!encodeNativeCp936(text, &bytes)) { return csvError(error, QStringLiteral("配方CSV需要可无损表示的GBK字符及Windows编码支持。")); } *output = bytes; return true;
 }
 
 /******************************************************************************

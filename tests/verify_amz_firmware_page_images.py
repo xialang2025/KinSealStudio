@@ -26,8 +26,10 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def firmware_frame(firmware, data):
-    """Run the pinned, standalone ARM page decoder on a complete positive-test page."""
+def firmware_frame(firmware, data, frame_bytes=FRAME_BYTES):  # 20261128-20 change
+    """Run the pinned ARM reader for the expected RGB565 page or control dimensions."""
+    if frame_bytes <= 0 or frame_bytes > FRAME_BYTES:
+        raise ValueError("invalid native RGB565 frame size")
     decoder, stop = 0x800AB414, 0x800AB000
     source, destination, stack = 0x1000000, 0x2000000, 0x3000000
     cpu = Uc(UC_ARCH_ARM, UC_MODE_ARM)
@@ -35,17 +37,17 @@ def firmware_frame(firmware, data):
     cpu.mem_write(decoder, firmware[0x8B434:0x8B698])
     cpu.mem_map(source, ((len(data) + 4095) // 4096) * 4096)
     cpu.mem_write(source, data)
-    cpu.mem_map(destination, ((FRAME_BYTES + 4095) // 4096) * 4096)
+    cpu.mem_map(destination, ((frame_bytes + 4095) // 4096) * 4096)
     cpu.mem_map(stack, 4096)
     for register, value in ((UC_ARM_REG_R0, source), (UC_ARM_REG_R1, len(data)),
                             (UC_ARM_REG_R2, destination), (UC_ARM_REG_R3, stack),
                             (UC_ARM_REG_SP, stack + 0xFC0), (UC_ARM_REG_LR, stop)):
         cpu.reg_write(register, value)
-    cpu.emu_start(decoder, stop, timeout=5000000, count=FRAME_BYTES * 20 + 10000)
+    cpu.emu_start(decoder, stop, timeout=5000000, count=frame_bytes * 20 + 10000)
     if (cpu.reg_read(UC_ARM_REG_PC) != stop or cpu.reg_read(UC_ARM_REG_R0) != 0 or
-            int.from_bytes(cpu.mem_read(stack, 4), "little") != FRAME_BYTES):
-        raise ValueError("AMZ decoder did not finish a complete 800 x 480 RGB565 frame")
-    return bytes(cpu.mem_read(destination, FRAME_BYTES))
+            int.from_bytes(cpu.mem_read(stack, 4), "little") != frame_bytes):
+        raise ValueError("AMZ decoder did not finish the complete RGB565 frame")
+    return bytes(cpu.mem_read(destination, frame_bytes))
 
 
 def compile_page(exe, work, source, mode, created, firmware):

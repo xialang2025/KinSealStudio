@@ -16,7 +16,7 @@
  * Date            : 2026.11.09
  ******************************************************************************/
 static void paintBitButtonCaption(QPainter *painter, const QRectF &rect, const QString &content,
-                                   const StaticTextProperties &properties) //20261109-0 add
+                                   const StaticTextProperties &properties, bool nativeLampCaption) //20261128-20 change
 {
     QFont font = controlPixelFont(properties, painter->device()->logicalDpiY()); //20261110-8 change
     int alignment;
@@ -27,6 +27,15 @@ static void paintBitButtonCaption(QPainter *painter, const QRectF &rect, const Q
     //20261110-8 change: The shared font uses target-page pixels at every view/device DPI.
     painter->setFont(font);
     painter->setPen(properties.textColor);
+#ifdef Q_OS_WIN
+    // Native lamps position kerned pairs with GDI cell metrics; other captions keep the button baseline.
+    if (nativeLampCaption && paintNativeKernedText(painter, rect, content, properties, font)) {
+        painter->restore();
+        return;
+    }
+#else
+    Q_UNUSED(nativeLampCaption);
+#endif
     alignment = Qt::AlignVCenter | (properties.alignment == 1 ? Qt::AlignLeft :
                                     properties.alignment == 2 ? Qt::AlignRight : Qt::AlignHCenter);
     // Original ON/OFF captions match this rectangle exactly; static text has a separate calibration.
@@ -102,7 +111,7 @@ bool bitButtonNeedsUnderlay(const BitButtonState &state, const QSize &size) //20
  * Date            : 2026.11.08
  ******************************************************************************/
 void paintBitButton(QPainter *painter, const QRectF &rect, const BitButtonState &state,
-                    const QString &language, bool pressed) //20261109-4 change
+                    const QString &language, bool pressed, bool nativeLampCaption) //20261128-20 change
 {
     StaticTextProperties text;
     QImage image;
@@ -151,7 +160,7 @@ void paintBitButton(QPainter *painter, const QRectF &rect, const BitButtonState 
     }
     else
     {
-        paintBitButtonCaption(painter, rect, content, text); //20261109-0 add: Button captions do not inherit the static-text minus-one offset.
+        paintBitButtonCaption(painter, rect, content, text, nativeLampCaption); //20261128-20 change
     }
     painter->restore();
 }

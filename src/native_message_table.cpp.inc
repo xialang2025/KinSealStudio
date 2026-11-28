@@ -1,0 +1,63 @@
+#include "recipe_csv.h"
+#include <QTemporaryFile>
+#include <QtEndian>
+
+/******************************************************************************
+ * Function Name   : writeNativeMessageTable
+ * Description     : Write the measured V122 single-message layout, with states contiguous inside each language.
+ * Input Parameters: loaded project, new DAT destination, optional native simulator session profile, error
+ * Return Value    : True after all rows and encodings have passed validation and the new file is published.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool writeNativeMessageTable(const HmiProject &project, const QString &path, const QString &session, QString *error) //20261128-23 add
+{
+    const QFileInfo target(path);
+    QTemporaryFile output(target.absolutePath() + QStringLiteral("/.kinseal-message-XXXXXX"));
+    QByteArray records, text, header;
+    QString value;
+    int state;
+    if (!project.validateSinglePageBackend(error, false)) { return false; }
+    if (project.objects.size() != 1 || project.objects.first().type != QStringLiteral("message") ||
+        project.languages.isEmpty() || target.suffix().compare(QStringLiteral("dat"), Qt::CaseInsensitive) ||
+        target.exists() || target.isSymLink()) {
+        *error = QStringLiteral("消息表导出需要单消息控件画面和新的 .dat 文件名。"); return false;
+    }
+    const MessageDisplayProperties &message = project.objects.first().messageDisplay;
+    for (const QString &language : project.languages) {
+        for (state = 0; state < message.stateCount; ++state) {
+            value = message.text(state, language);
+            text.clear();
+            if (value.contains(QChar(0)) || (!value.isEmpty() && !encodeNativeCp936(value, &text)) || text.size() > 99) {
+                *error = QStringLiteral("消息文本须能以简体中文代码页表示，并能在 100 字节槽内保留结尾零。"); return false;
+            }
+            records.append(4, char(0));
+            records.append(text);
+            records.append(100 - text.size(), char(0));
+        }
+    }
+    if (!session.isEmpty()) {
+        // The V5.1 type-35 writer rounds the scene bounds, then accumulates width * height * 2 at +0x844.
+        // The simulator's 512-byte copy begins at +0x690, placing that RGB565 size at file offset 436.
+        const bool initialized = session == QStringLiteral("download-defaults");
+        const QSize size = project.objects.first().geometry.size();
+        if ((!initialized && session != QStringLiteral("fresh")) || records.size() > 65535 ||
+            size.width() < 1 || size.height() < 1 || size.width() > 4096 || size.height() > 4096 ||
+            project.pageWidth != 800 || project.pageHeight != 480 ||
+            !project.macros.isEmpty() || !project.pictures.isEmpty() || !project.animations.isEmpty()) {
+            *error = QStringLiteral("模拟消息头支持 800×480 单页单消息及 fresh/download-defaults 会话。"); return false;
+        }
+        header = QByteArray(512, char(0));
+        header[0] = 1;
+        qToLittleEndian<quint16>(quint16(records.size()), header.data() + 2);
+        for (int offset : {404, 408, 412}) { qToLittleEndian<quint32>(initialized ? 1U : 0U, header.data() + offset); }
+        qToLittleEndian<quint32>(1U, header.data() + 428);
+        qToLittleEndian<quint32>(1U, header.data() + 432);
+        qToLittleEndian<quint32>(quint32(size.width() * size.height() * 2), header.data() + 436);
+    }
+    if (!output.open() || output.write(header) != header.size() || output.write(records) != records.size() ||
+        !output.flush() || !output.rename(target.absoluteFilePath())) {
+        *error = output.errorString(); return false;
+    }
+    output.setAutoRemove(false);
+    return true;
+}

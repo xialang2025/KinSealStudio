@@ -7,7 +7,7 @@ import io
 import json
 import ntpath
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import subprocess
 import sys
 import tempfile
@@ -74,7 +74,39 @@ def original_drawing_sessions(read_blob):
     return sessions
 
 
-def compare(exe, scratch, require_all, media_driver, replay_directory, replay_drawing=False):
+def original_opened_project(source, reference, originals, read_blob):  # 20261128-22 add
+    """Bind one historical working copy to this exact source hash and original compile directory."""
+    if "/compiled/" not in reference:
+        return None
+    root, label = reference.rsplit("/compiled/", 1)
+    run_name = root.rsplit("/", 1)[-1]
+    if root == "docs/stage2-evidence/lamp-regression-restore":
+        candidates = [f"{root}/native-probe-{label}.json"]
+    elif root == "docs/stage3-evidence/native" and label.startswith("static-odd2-"):
+        tag = label.removeprefix("static-odd2-")
+        candidates = [f"{root}/native-probe-pixel-{tag}-r1.json.gz"]
+    elif root.startswith("docs/stage4-evidence/") and "/physical/" in root and label == "physical-native-reference":
+        candidates = [f"{root}/native-probe-{run_name}.json", f"{root}/native-probe.json.gz"]
+    elif root.startswith("docs/stage5-evidence/native/") and label == "fresh-process-3":
+        candidates = [f"{root}/native-probe.json.gz"]
+    else:
+        return None
+    for name in candidates:
+        if name not in originals:
+            continue
+        data = read_blob(name)
+        log = json.loads(gzip.decompress(data) if name.endswith(".gz") else data)
+        working = log.get("workingCopyAfter") or {}
+        matches = [c for c in log.get("nativeCompilations", []) if c["label"] == label and c.get("sourceSha256") == source]
+        if log.get("input", {}).get("sha256") != source or working.get("sha256") != source or len(matches) != 1:
+            continue
+        opened = PureWindowsPath(working["path"])
+        if opened.is_absolute() and opened.suffix.lower() == ".sm":
+            return dict(source=source, reference=reference, log=name, openedProject=working["path"])
+    return None
+
+
+def compare(exe, scratch, require_all, media_driver, replay_directory, replay_drawing=False, replay_opened=False):
     """Select one original run per source before compiling and compare the complete shared files."""
     baseline = json.loads(REFERENCE.read_bytes())
     revision = baseline["sourceRevision"]
@@ -89,7 +121,20 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
         mode = "usb" if media_driver is None else "media"
         if replay_directory:
             mode = "drawing" if replay_drawing else "loggedMedia"
-        pinned = outputs[mode]["bySource"]
+        # The newer run froze default USB and the two fully specified historical replays.
+        # Preserve the earlier baselines for other media options with a different set of inputs.
+        replay_mode = None
+        if media_driver is None and not replay_drawing:
+            replay_mode = "usb"
+        elif media_driver == "reference" and replay_directory and replay_drawing:
+            replay_mode = "opened" if replay_opened else "drawing"
+        if replay_mode is not None:
+            latest = json.loads(REFERENCE.with_name("V122源档与原厂编译第七次逐件复验_20261128.json").read_bytes())
+            if latest["revision"] != revision:
+                raise ValueError("wrong source revision in the latest regression receipt")
+            pinned = latest["compiledOutputs"][replay_mode]["bySource"]
+        else:
+            pinned = outputs[mode]["bySource"]
         if not pinned:
             raise ValueError("empty regression receipt: " + mode)
     cases = baseline["sourceToCompiledFiles"]["allCases"]
@@ -157,7 +202,13 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
                     row["mediaCom1Driver"] = "omitted" if omit else "included"
                     if omit:
                         command.append("--without-com1-driver")
-                    if key in history:
+                    opened = original_opened_project(key, folder, blobs, blob) if replay_opened else None
+                    if opened is not None:
+                        if (opened["source"], opened["reference"]) != (key, folder):
+                            raise ValueError("the opened-project log refers to a different source or compile directory")
+                        command.extend(["--native-opened-project", opened["openedProject"]])
+                        row["openedProjectLog"] = opened["log"]
+                    elif key in history:
                         evidence = history[key]
                         if evidence["reference"] != folder:
                             raise ValueError("work-directory log is for a different build")
@@ -217,7 +268,7 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
     totals["referenceFilesForCompiled"] = totals["common"] + totals["missing"]
     totals["extra"] = sum(len(r.get("extra", [])) for r in rows)
     ok = totals["regressed"] == 0 and (not require_all or totals["allFilesExact"] == len(rows))
-    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, totals=totals, rows=rows), ok
+    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, **({"replayOpenedProject": True} if replay_opened else {}), totals=totals, rows=rows), ok
 
 
 def main():
@@ -230,17 +281,19 @@ def main():
                         help="Compare offline media parts. 'reference' supplies only the original COM1 driver presence.")
     parser.add_argument("--replay-work-directory", action="store_true",
                         help="Use original logs where available with --media-driver reference.")
+    parser.add_argument("--replay-opened-project", action="store_true",
+                        help="Replay both path fields when the open and compile logs match the selected source and run.")
     parser.add_argument("--replay-drawing-state", action="store_true",
                         help="Replay the freshly drawn pen only for source/run pairs in the three independent editor logs.")
     parser.add_argument("--require-all", action="store_true")
     parser.add_argument("--child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
-    if args.replay_work_directory and args.media_driver != "reference":
-        parser.error("--replay-work-directory requires --media-driver reference")
+    if (args.replay_work_directory or args.replay_opened_project) and args.media_driver != "reference":
+        parser.error("the historical path options require --media-driver reference")
     if sys.platform == "win32" and not args.child:
         return on_private_desktop(sys.argv[1:])
     args.temp_root.mkdir(parents=True, exist_ok=True)
-    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver, args.replay_work_directory, args.replay_drawing_state)
+    report, ok = compare(args.exe.resolve(), args.temp_root.resolve(), args.require_all, args.media_driver, args.replay_work_directory, args.replay_drawing_state, args.replay_opened_project)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(report["totals"]))

@@ -98,7 +98,7 @@ static bool layoutNativeKernedLine(const QTextLine &line, QStringView text, int 
  * Return Value    : True after drawing every line, false to use the general layout.
  * Date            : 2026.11.28
  ******************************************************************************/
-static bool paintNativeKernedText(QPainter *painter, const QRectF &rect, const QString &text,
+bool paintNativeKernedText(QPainter *painter, const QRectF &rect, const QString &text, //20261128-20 change
                                   const StaticTextProperties &properties, const QFont &font) //20261128-10 add
 {
     LOGFONTW description = {};

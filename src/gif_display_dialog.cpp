@@ -107,6 +107,13 @@ void GifDisplayDialog::loadPreview() //20261112-0 add
 {
     m_movie.stop(); m_movie.setDevice(nullptr); m_buffer.close(); m_buffer.setData(m_draft.gifData); m_buffer.open(QIODevice::ReadOnly);
     m_movie.setDevice(&m_buffer); m_movie.setFormat(QByteArrayLiteral("gif")); m_playing = false; m_run->setText(QStringLiteral("运行测试")); m_preview->clear();
+    m_nativeFrames.clear(); //20261128-21 add
+    m_frameIndex = 0;
+    if (nativeGifPngFrames(m_draft.gifData, &m_nativeFrames)) {
+        m_run->setText(QStringLiteral("下一帧"));
+        refreshFrame();
+        return;
+    }
     if (!m_draft.gifData.isEmpty()) { m_movie.jumpToFrame(0); refreshFrame(); }
 }
 
@@ -119,6 +126,11 @@ void GifDisplayDialog::loadPreview() //20261112-0 add
  ******************************************************************************/
 void GifDisplayDialog::refreshFrame() //20261112-0 add
 {
+    if (!m_nativeFrames.isEmpty()) { //20261128-21 add
+        m_preview->setPixmap(QPixmap::fromImage(QImage::fromData(m_nativeFrames.at(m_frameIndex), "PNG"))
+                             .scaled(100, 100, Qt::IgnoreAspectRatio, Qt::FastTransformation));
+        return;
+    }
     m_preview->setPixmap(m_movie.currentPixmap().scaled(100, 100, Qt::IgnoreAspectRatio, Qt::FastTransformation));
 }
 
@@ -131,6 +143,11 @@ void GifDisplayDialog::refreshFrame() //20261112-0 add
  ******************************************************************************/
 void GifDisplayDialog::togglePlayback() //20261112-0 add
 {
+    if (!m_nativeFrames.isEmpty()) { //20261128-21 add
+        m_frameIndex = (m_frameIndex + 1) % m_nativeFrames.size();
+        refreshFrame();
+        return;
+    }
     if (m_draft.gifData.isEmpty() || !m_movie.isValid())
     { QMessageBox::warning(this, QStringLiteral("KinSealStudio"), QStringLiteral("GIF数据为空，请重新选择。")); return; }
     if (m_playing) { m_movie.setPaused(true); m_playing = false; }

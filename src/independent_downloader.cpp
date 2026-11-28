@@ -1,4 +1,5 @@
 #include "independent_downloader.h"
+#include "control_rendering.h" //20261128-21 add
 #include "device_target.h" //20261122-3 add
 #include "device_roundrect_raster.h" //20261113-16 add
 #include "device_polygon_raster.h" //20261114-1 add
@@ -990,6 +991,8 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
     return qCompress(source, 9);
 }
 
+#include "native_picture_payload.cpp.inc" //20261128-21 add
+
 /******************************************************************************
  * Function Name   : buildIntegerProjectPayload
  * Description     : Generate control records, RGB565 sprites and a recoverable Lite project snapshot.
@@ -1241,6 +1244,16 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
             rawOffset += sprites.rawLength;
             ++controlCount;
             pictureCount += sprites.lengthRecords.size() / 12; //20261109-0 change: Flashing states add one text-free sprite each.
+        }
+        else if ((object.type == QStringLiteral("image") && object.hasImageDisplayProperties) || object.type == QStringLiteral("gif")) { //20261128-21 add
+            if (!buildNativePicturePayload(object, addressCompiler, rawOffset, &record, &sprites, &underlay, error)) { return false; }
+            if (!underlay.isNull()) { painter.drawImage(object.geometry.topLeft(), underlay); }
+            controls.append(record);
+            pictures.append(sprites.pixelData);
+            pictureRecords.append(sprites.lengthRecords);
+            rawOffset += sprites.rawLength;
+            ++controlCount;
+            pictureCount += sprites.lengthRecords.size() / 12;
         }
         else if (object.type == QStringLiteral("line") || object.type == QStringLiteral("freeline")) //20261113-15 change: The source-bound two-endpoint families share the proven integer raster, without admitting sampled freehand paths.
         {

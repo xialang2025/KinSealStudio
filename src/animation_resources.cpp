@@ -151,7 +151,7 @@ bool mergeAnimation(HmiProject *project, const QString &name, const QByteArray &
     QString key = name;
     QString digest = QString::fromLatin1(QCryptographicHash::hash(gif, QCryptographicHash::Sha256).toHex());
     int length = 12;
-    if (project == nullptr || resolvedName == nullptr || !validateGifData(gif, error)) { return false; }
+    if (project == nullptr || resolvedName == nullptr || !validateAnimationResource(gif, error)) { return false; } //20261128-21 change
     for (entry = project->animations.constBegin(); entry != project->animations.constEnd(); ++entry)
     { if (entry.value() == gif) { *resolvedName = entry.key(); return true; } }
     if (key.trimmed().isEmpty()) { key = QStringLiteral("animation.gif"); }

@@ -346,6 +346,24 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             return compilationIssue(project, object, QStringLiteral("appearance.flip"), true,
                 QStringLiteral("此形状的设备翻转尚未支持，设备工程未生成。"), error, issue);
         }
+        if ((object.type == QStringLiteral("image") && object.hasImageDisplayProperties) || object.type == QStringLiteral("gif")) { //20261128-21 add
+            const bool gif = object.type == QStringLiteral("gif");
+            if (gif ? (object.gifDisplay.visibility.visibilityEnabled ||
+                       (object.gifDisplay.bitControl && object.gifDisplay.controlAddress.startsWith(QLatin1Char('@')))) :
+                      (object.imageDisplay.visibility.visibilityEnabled ||
+                       (object.imageDisplay.displayType == 0 && object.imageDisplay.conditionEnabled) ||
+                       object.imageDisplay.monitorAddress.startsWith(QLatin1Char('@')))) {
+                return compilationIssue(project, object, QStringLiteral("imageDisplay"), object.type,
+                    QStringLiteral("图片设备编码已核实不闪烁单图、内部位/字及时间切换，显现条件和外部地址待核。"), error, issue);
+            }
+            for (const HmiObject &other : prepared.objects) {
+                if (other.id != object.id && other.geometry.intersects(object.geometry)) {
+                    return compilationIssue(project, object, QStringLiteral("geometry.overlap"), other.id,
+                        QStringLiteral("图片与其他对象重叠时的背景合成尚待核实。"), error, issue);
+                }
+            }
+            continue;
+        }
         if (object.type == QStringLiteral("linecurve")) //20261125-85 add
         {
             if (!object.graphic.validate(object.type, &diagnostic))

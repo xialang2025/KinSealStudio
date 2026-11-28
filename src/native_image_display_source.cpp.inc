@@ -105,9 +105,9 @@ static bool sourceNativeImageDisplay(const SourceDocument &d, const QString &p, 
     double height;
     StaticTextProperties visible;
 
-    if (type == 34) { return fail(error, QStringLiteral("原厂 GIF 工程保存的是帧资源表，尚未映射为完整动画及帧延时。")); }
     if ((qr && (kind != 13 || count != 2 || d.value(p + QStringLiteral("child[0].type")).toInt() != 0x1000f)) ||
-        (!qr && (count != 1 || (!projectImage && kind != 13)))) {
+        (!qr && ((count != 1 && !(type == 34 && count == 2 &&
+          d.value(p + QStringLiteral("child[1].type")).toInt() == 0x1000f)) || (!projectImage && kind != 13)))) {
         return fail(error, QStringLiteral("图片或二维码的原厂缓存子图元布局尚未核实。"));
     }
     child += projectImage ? QStringLiteral("project-picture.") : QStringLiteral("pixmap.");
@@ -127,14 +127,40 @@ static bool sourceNativeImageDisplay(const SourceDocument &d, const QString &p, 
     }
     object.geometry = QRect(qRound(x), qRound(y), qRound(width), qRound(height));
     object.subpixelOffset = QPointF(x - object.geometry.x(), y - object.geometry.y());
-    object.type = qr ? QStringLiteral("qrcode") : QStringLiteral("image");
+    object.type = type == 34 ? QStringLiteral("gif") : qr ? QStringLiteral("qrcode") : QStringLiteral("image"); //20261128-21 change
     object.id = QStringLiteral("native-%1-%2").arg(object.type).arg(index);
     object.name = d.value(p + QStringLiteral("group.metadata-name")).toString();
     if (object.name.isEmpty()) { object.name = (qr ? QStringLiteral("二维码") : QStringLiteral("图片显示")) + QString::number(index + 1); }
     // Disabled visibility fields sometimes contain uninitialized native integers. The full record remains in the source.
     visible = sourceCondition(d, p, false, warnings);
     if (!visible.validate(error)) { return false; }
-    if (qr) {
+    if (type == 34) { //20261128-21 add: These V122 image IDs bind to expanded PNG frames, not to a GIF89a container.
+        const int enabled = d.value(p + QStringLiteral("gif.head.0")).toInt();
+        const int active = d.value(p + QStringLiteral("gif.head.1")).toInt();
+        QSize dimensions;
+        if (count == 2) {
+            const QString rect = p + QStringLiteral("child[1].rectangle.");
+            if (d.value(rect + QStringLiteral("2")).toDouble() != width || d.value(rect + QStringLiteral("3")).toDouble() != height ||
+                d.value(rect + QStringLiteral("9")).toDouble() != x || d.value(rect + QStringLiteral("10")).toDouble() != y) {
+                return fail(error, QStringLiteral("原厂动画的辅助矩形与帧控件位置大小不一致。"));
+            }
+        }
+        object.gifDisplay.animation = d.value(p + QStringLiteral("gif.tail.0")).toString();
+        object.gifDisplay.gifData = pictures.value(object.gifDisplay.animation);
+        if (!projectImage || d.value(child + QStringLiteral("5")).toString() != object.gifDisplay.animation ||
+            !nativeGifPngFrames(object.gifDisplay.gifData, nullptr, &dimensions) ||
+            dimensions != QSize(d.value(p + QStringLiteral("gif.tail.2")).toInt(), d.value(p + QStringLiteral("gif.tail.1")).toInt()) ||
+            (enabled != 0 && enabled != 1) || (enabled && active != 0 && active != 1)) {
+            return fail(error, QStringLiteral("原厂动画的帧引用、图元尺寸或播放条件不一致。"));
+        }
+        object.gifDisplay.bitControl = enabled != 0;
+        object.gifDisplay.activeState = enabled ? active : 1;
+        if (!modelSourceAddress(d, p + QStringLiteral("gif.address"), &object.gifDisplay.controlAddress, external, error)) { return false; }
+        if (enabled && d.value(p + QStringLiteral("gif.head.2")).toString() != object.gifDisplay.controlAddress) {
+            return fail(error, QStringLiteral("原厂动画播放地址与显示文本不一致。"));
+        }
+        object.gifDisplay.visibility = visible;
+    } else if (qr) {
         if (!modelSourceAddress(d, p + QStringLiteral("qr.address"), &monitored, external, error)) { return false; }
         object.address = object.qrCode.monitorAddress = monitored;
         object.qrCode.description = d.value(p + QStringLiteral("qr.head.1")).toString();
@@ -252,6 +278,7 @@ static bool writeNativeImageDisplay(const HmiObject &object, const HmiObject *or
         return fail(error, QStringLiteral("图片或二维码存在未映射的变换、文字、扩展字段或尺寸。"));
     }
     if (!previous) {
+        if (object.type == QStringLiteral("gif")) { return fail(error, QStringLiteral("新建 GIF 控件缺少原厂动画源记录。")); } //20261128-21 add
         if (!file.open(QIODevice::ReadOnly)) { return fail(error, QStringLiteral("缺少原厂图片或二维码种子。")); }
         seed.bytes = file.readAll();
         if (!seed.parse() || seed.objectPrefixes.size() != 1 || !sourcePictures(seed, &seedPictures, error)) { return false; }
@@ -304,7 +331,23 @@ static bool writeNativeImageDisplay(const HmiObject &object, const HmiObject *or
             }
         }
     }
-    if (qr) {
+    if (object.type == QStringLiteral("gif")) { //20261128-21 add: Preserve dormant address text and active-state bytes unless their editor properties change.
+        const GifDisplayProperties &old = previous->gifDisplay;
+        const GifDisplayProperties &gif = object.gifDisplay;
+        if (old.animation != gif.animation || old.gifData != gif.gifData || !gif.validate(error) ||
+            !patchCondition(old.visibility.toJson(), gif.visibility.toJson(), prefix, false, &updates)) {
+            return fail(error, QStringLiteral("原厂动画资源或显现属性尚不能按当前修改写回。"));
+        }
+        if (old.bitControl != gif.bitControl) { updates.set(prefix + QStringLiteral("gif.head.0"), int(gif.bitControl)); }
+        if (old.activeState != gif.activeState || (!old.bitControl && gif.bitControl)) {
+            updates.set(prefix + QStringLiteral("gif.head.1"), gif.activeState);
+        }
+        if (old.controlAddress != gif.controlAddress || (!old.bitControl && gif.bitControl)) {
+            updates.address(prefix + QStringLiteral("gif.address"), gif.controlAddress);
+            updates.set(prefix + QStringLiteral("gif.head.2"), gif.controlAddress);
+        }
+        end = d.values.value(prefix + QStringLiteral("gif.tail.3")).end;
+    } else if (qr) {
         const QrCodeProperties &a = previous->qrCode;
         const QrCodeProperties &z = object.qrCode;
         if (!z.validate(error) || object.address != z.monitorAddress ||

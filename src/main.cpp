@@ -35,6 +35,7 @@
 #include <cstdio> //20261108-10 add
 #include <memory>
 
+#include "native_message_table.cpp.inc" //20261128-23 add
 #include "native_media_parts.cpp.inc" //20261128-3 add
 
 /******************************************************************************
@@ -511,12 +512,22 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
     }
+    if (arguments.value(1) == QStringLiteral("--compile-native-message-table")) { //20261128-23 add
+        const bool simulator = arguments.size() == 6 && arguments.at(4) == QStringLiteral("--simulator-session") && !arguments.at(5).isEmpty();
+        if ((arguments.size() != 4 && !simulator) || !HmiProject::load(arguments.value(2), &validation_project, &validation_error) ||
+            !writeNativeMessageTable(validation_project, arguments.value(3), arguments.value(5), &validation_error)) {
+            writeDownloadResult(false, validation_error.isEmpty() ? QStringLiteral("用法：--compile-native-message-table 工程.sm 新文件.dat [--simulator-session fresh|download-defaults]") : validation_error);
+            return 19;
+        }
+        writeDownloadResult(true, QStringLiteral("已生成消息显示器的原厂格式文字表。"));
+        return 0;
+    }
     if (arguments.value(1) == QStringLiteral("--compile-native-media-parts") ||
         arguments.value(1) == QStringLiteral("--build-native-media-snapshot")) { //20261128-8 change
         const bool snapshotOnly = arguments.at(1) == QStringLiteral("--build-native-media-snapshot");
         bool omitDriver = false;
         bool createdDrawing = false; //20261128-19 add
-        QString directory;
+        NativeMediaSourceLocation location; //20261128-22 change
         QString compileTime; //20261128-10 add
         int index;
         if (arguments.size() < 4) {
@@ -528,19 +539,21 @@ int main(int argc, char *argv[]) //20261107-6 add
                 omitDriver = true;
             } else if (!snapshotOnly && !createdDrawing && arguments.at(index) == QStringLiteral("--native-created-drawing")) {
                 createdDrawing = true;
-            } else if (directory.isEmpty() && arguments.at(index) == QStringLiteral("--native-work-directory") &&
+            } else if (location.path.isEmpty() && (arguments.at(index) == QStringLiteral("--native-work-directory") ||
+                       arguments.at(index) == QStringLiteral("--native-opened-project")) &&
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
-                directory = arguments.at(++index);
+                location.projectFile = arguments.at(index) == QStringLiteral("--native-opened-project");
+                location.path = arguments.at(++index);
             } else if (!snapshotOnly && compileTime.isEmpty() && arguments.at(index) == QStringLiteral("--native-compile-time") &&
                        index + 1 < arguments.size() && !arguments.at(index + 1).trimmed().isEmpty()) {
                 compileTime = arguments.at(++index);
             } else {
-                writeDownloadResult(false, QStringLiteral("介质选项无效。可指定原厂工作目录 --native-work-directory，编译散件时可用 --native-compile-time 指定本地时间。"));
+                writeDownloadResult(false, QStringLiteral("介质选项无效。可用 --native-work-directory 指定目录或 --native-opened-project 指定完整 SM 路径，编译散件时可用 --native-compile-time 指定本地时间。"));
                 return 24;
             }
         }
         if (snapshotOnly) {
-            if (!exportNativeMediaSnapshot(arguments.at(2), arguments.at(3), directory, &validation_error)) {
+            if (!exportNativeMediaSnapshot(arguments.at(2), arguments.at(3), location, &validation_error)) {
                 writeDownloadResult(false, validation_error);
                 return 24;
             }
@@ -548,7 +561,7 @@ int main(int argc, char *argv[]) //20261107-6 add
             return 0;
         }
         if (!HmiProject::load(arguments.at(2), &validation_project, &validation_error) ||
-            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, directory, compileTime, createdDrawing, &validation_error)) {
+            !compileNativeMediaParts(validation_project, arguments.at(3), omitDriver, location, compileTime, createdDrawing, &validation_error)) {
             writeDownloadResult(false, validation_error);
             return 24;
         }
