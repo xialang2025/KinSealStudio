@@ -1,13 +1,15 @@
 /******************************************************************************
  * Function Name   : hasLocalStaticSystemPage
  * Description     : Check the separately verified object and macro restrictions on system-dialog snapshots.
- * Input Parameters: parsed native document, permitted object type, optional local message visibility
+ * Input Parameters: parsed native document, permitted object types, optional local message visibility
  * Return Value    : True for a local static page without schedule or external-address dependencies.
  * Date            : 2026.11.28
  ******************************************************************************/
-static bool hasLocalStaticSystemPage(const SourceDocument &document, int type = 28,
-                                     bool localMessageVisibility = false) //20261128-22 change
+static bool hasLocalStaticSystemPage(const SourceDocument &document, const QList<int> &permitted = {28},
+                                     bool localMessageVisibility = false) //20261128-40 change
 {
+    int type;
+
     if (document.value(QStringLiteral("system.174.count")).toInt() != 0 ||
         document.value(QStringLiteral("system.178.count")).toInt() != 0 ||
         document.value(QStringLiteral("system.194.count")).toInt() != 0) {
@@ -15,7 +17,9 @@ static bool hasLocalStaticSystemPage(const SourceDocument &document, int type = 
     }
     for (const QString &prefix : document.objectPrefixes) {
         // The original message probe enables the local bit and level tests together.
-        if (document.value(prefix + QStringLiteral("type")).toInt() != type ||
+        type = document.value(prefix + QStringLiteral("type")).toInt();
+        if (!permitted.contains(type) ||
+            (permitted.size() > 1 && document.value(prefix + QStringLiteral("common.58.2")).toInt() != 0) ||
             (document.value(prefix + QStringLiteral("common.visibility.0")).toInt() != 0 &&
              !(localMessageVisibility && type == 35 &&
                document.value(prefix + QStringLiteral("common.visibility.0")).toInt() == 1 &&
@@ -67,7 +71,7 @@ static bool hasLocalDisplaySystemPage(const SourceDocument &document, bool dataD
     if (type != 35 && !(dataDisplays && (type == 12 || type == 16 || type == 17))) {
         return false;
     }
-    if (!hasLocalStaticSystemPage(document, type, type == 35) ||
+    if (!hasLocalStaticSystemPage(document, {type}, type == 35) ||
         document.value(prefix + QStringLiteral("common.58.2")).toInt() != 0) {
         return false;
     }
@@ -102,6 +106,36 @@ static bool hasLocalDisplaySystemPage(const SourceDocument &document, bool dataD
 }
 
 /******************************************************************************
+ * Function Name   : supportsReopenedStaticDrawing
+ * Description     : Verify that a local drawing restored by V5.1 differs from the base profile only in its remembered page and two descriptor fields.
+ * Input Parameters: parsed V122 document, validated normalization edits, byte range of the configuration.
+ * Return Value    : True for local static objects without a scan, touch condition or macro dependency.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static bool supportsReopenedStaticDrawing(const SourceDocument &document, const SourceUpdates &validated,
+                                          qsizetype start, qsizetype end) //20261128-40 add
+{
+    const QString remembered = document.value(QStringLiteral("config.head.12")).toString();
+    SourceUpdates base(validated);
+    QByteArray bytes;
+
+    if (remembered.isEmpty() || remembered != document.value(QStringLiteral("page.head.18")).toString() ||
+        document.value(QStringLiteral("project.pages.count")).toInt() != 1 || document.objectPrefixes.isEmpty() ||
+        document.value(QStringLiteral("config.200.7")).toInt() != 7 ||
+        document.value(QStringLiteral("config.240.7")).toInt() != 7 ||
+        !hasLocalStaticSystemPage(document, {28, 36, 0x1002a})) {
+        return false;
+    }
+    // Restore the null QString and the two original words for comparison only. Keep the saved SM intact.
+    base.set(QStringLiteral("config.head.12"), QString());
+    base.set(QStringLiteral("config.200.7"), 1);
+    base.set(QStringLiteral("config.240.7"), 1);
+    bytes = base.render(start, end);
+    return base.error.isEmpty() && QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex() ==
+           QByteArrayLiteral("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba");
+}
+
+/******************************************************************************
  * Function Name   : supportsNativeSystemDialogProfile
  * Description     : Admit the complete known static-text and static-table configuration profiles.
  * Input Parameters: parsed native document, normalized configuration digest
@@ -118,8 +152,8 @@ static bool supportsNativeSystemDialogProfile(const SourceDocument &document, co
     //20261128-21 add: The original picture-only probes use both complete serial profiles.
     // Neither profile has an external consumer in these projects, including the inactive address slots.
     if ((defaultPage || rememberedPage) &&
-        !document.objectPrefixes.isEmpty() && (hasLocalStaticSystemPage(document, 15) ||
-        (defaultPage && hasLocalStaticSystemPage(document, 34)))) {
+        !document.objectPrefixes.isEmpty() && (hasLocalStaticSystemPage(document, {15}) ||
+        (defaultPage && hasLocalStaticSystemPage(document, {34})))) {
         for (const QString &prefix : document.objectPrefixes) {
             if (document.value(prefix + QStringLiteral("image.address.1")).toInt() != 0 ||
                 document.value(prefix + QStringLiteral("gif.address.1")).toInt() != 0 ||
@@ -132,7 +166,7 @@ static bool supportsNativeSystemDialogProfile(const SourceDocument &document, co
     // Seven saved table configurations share this complete fingerprint; their inactive clock descriptors
     // and remembered page name differ from the original draw-only profile. The runtime gets only a page image.
     if (rememberedPage) {
-        return document.objectPrefixes.size() == 1 && hasLocalStaticSystemPage(document, 36);
+        return document.objectPrefixes.size() == 1 && hasLocalStaticSystemPage(document, {36});
     }
     return (digest == QByteArrayLiteral("2e4607316f881af776e1bc9d5992c28cbb4253d4fe2a948627587fe5908bc282") ||
             digest == QByteArrayLiteral("31f411f41c760b5fdb97ee4c21a361c54fe21ca5a4ca2da79e9bbbffab60fa39")) &&

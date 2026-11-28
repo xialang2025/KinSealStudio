@@ -1,0 +1,139 @@
+{
+  "productionSha256": "a58d7eb8664f80c67362843f5fbc1b67a96b7c091846746ddb27daed6da78f50",
+  "cleanSha256": "2fa5afb072f700cb0442bdb64ca401063aa6acef9b69398c4649717fefc7c561",
+  "outputsIdenticalAcrossBuilds": true,
+  "qtProcessDesktop": "Explicit per-process WinSta0 private desktop, never switched",
+  "comparedFilesPerBuild": 16,
+  "originalPackages": {
+    "native01FirstExport": {
+      "sha256": "cc4b81adb12461f745433d38e4eed2930cebd1733b3249787b287795d2b09af1",
+      "length": 1819551,
+      "fixtureLabel": "01",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    "native01SecondExport": {
+      "sha256": "cc4b81adb12461f745433d38e4eed2930cebd1733b3249787b287795d2b09af1",
+      "length": 1819551,
+      "fixtureLabel": "01",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    "native01Reopened": {
+      "sha256": "e106a48dafc362572bbb3b61effd880e4132e6a39d414a2f91c93580efbae3aa",
+      "length": 1819316,
+      "fixtureLabel": "01",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    "native02ChangedMarker": {
+      "sha256": "cd6d8ae21f1f054775f2d0594faaf3782de06cf86e25dddb6b6357d4a0809687",
+      "length": 1819317,
+      "fixtureLabel": "02",
+      "members": {
+        "SheetPixel.dat": "c1230f0e422f2a167eb1a4cfe6e67890206f3af2d94967e964fb059b51761e0c",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    }
+  },
+  "historicalPerBuild": {
+    "nativeTwoRoutes": true,
+    "unchangedQt4ControlledEndpointFrames": 18
+  },
+  "initialPixelDifferences": {
+    "authored": {
+      "upper": 383,
+      "lower": 565
+    },
+    "readerFixedReopened": {
+      "upper": 383,
+      "lower": 467
+    },
+    "final": {
+      "upper": 0,
+      "lower": 0
+    }
+  },
+  "checks": [
+    {
+      "input": "AMZ-LIVE-01.ksp",
+      "inputSha256": "0196e7bec25b1075021b1c6eef5019d9d3e3c9de911d0d9194d6355d8a55894a",
+      "command": "--compile-project",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "AMZ-LIVE-01.ksp",
+      "inputSha256": "0196e7bec25b1075021b1c6eef5019d9d3e3c9de911d0d9194d6355d8a55894a",
+      "command": "--compile-native-media-parts",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "AMZ-LIVE-01.sm",
+      "inputSha256": "07c7344644c2e820f391845056eeb08f10011546fcc5e32862b7adbb9ccdfca4",
+      "command": "--compile-project",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "AMZ-LIVE-01.sm",
+      "inputSha256": "07c7344644c2e820f391845056eeb08f10011546fcc5e32862b7adbb9ccdfca4",
+      "command": "--compile-native-media-parts",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "native-saved.sm",
+      "inputSha256": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f",
+      "command": "--compile-project",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "native-saved.sm",
+      "inputSha256": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f",
+      "command": "--compile-native-media-parts",
+      "members": {
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "AMZ-LIVE-02.sm",
+      "inputSha256": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+      "command": "--compile-project",
+      "members": {
+        "SheetPixel.dat": "c1230f0e422f2a167eb1a4cfe6e67890206f3af2d94967e964fb059b51761e0c",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    },
+    {
+      "input": "AMZ-LIVE-02.sm",
+      "inputSha256": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+      "command": "--compile-native-media-parts",
+      "members": {
+        "SheetPixel.dat": "c1230f0e422f2a167eb1a4cfe6e67890206f3af2d94967e964fb059b51761e0c",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      }
+    }
+  ],
+  "native01PackageSha256": "cc4b81adb12461f745433d38e4eed2930cebd1733b3249787b287795d2b09af1",
+  "native02PackageSha256": "cd6d8ae21f1f054775f2d0594faaf3782de06cf86e25dddb6b6357d4a0809687"
+}

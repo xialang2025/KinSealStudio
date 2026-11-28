@@ -1373,7 +1373,14 @@ static bool sourceLineCurve(const SourceDocument &document, const QString &prefi
         { return fail(error, QStringLiteral("线图元含多个子路径、空路径或未知顶点。")); }
         vertices = elements;
     }
-    for (element = 0; object.type == QStringLiteral("linecurve") && element < tags.size();)
+    // V5.1 can flatten a cubic on reopen to one MoveTo followed by a continuous run of LineTo samples.
+    // Keep those actual vertices and retain the serialized cache when the geometry has not been edited.
+    else if (tags.size() > 1 && tags.first() == 0 && object.graphic.endArrow == 0 &&
+             std::all_of(tags.cbegin() + 1, tags.cend(), [](int tag) { return tag == 1; })) //20261128-38 add
+    {
+        vertices = elements;
+    }
+    for (element = vertices.isEmpty() ? 0 : tags.size(); object.type == QStringLiteral("linecurve") && element < tags.size();)
     {
         if (tags[element] != 0 || element + 1 >= tags.size() || (!vertices.isEmpty() && vertices.last() != elements[element]))
         { return fail(error, QStringLiteral("曲线含非连续或未识别的路径子段。")); }
@@ -4506,6 +4513,7 @@ static bool validateNativeDeviceSystem(const QByteArray &data, QByteArray *syste
         (configHash != QByteArray("ca3da07ec299bf5bedab28b73682a1b8ea0ee4867413dfc1a1ca4e91fda3c6ba") &&
          !supportsUnassignedSerialDefaults(document, configHash) &&
          !supportsNativeSystemDialogProfile(document, configHash) &&
+         !supportsReopenedStaticDrawing(document, updates, configStart, configEnd) && //20261128-40 add
          !applyNativeLocalPageIoProfile(document, updates, configStart, configEnd, systemSegment))) { //20261128-17 change
         return fail(error, QStringLiteral("该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"));
     }

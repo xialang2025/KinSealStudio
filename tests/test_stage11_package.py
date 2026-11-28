@@ -54,7 +54,15 @@ class PackageTests(unittest.TestCase):  #20261114-10 add
         self.write(self.runtime / "KinSealStudioLite.exe", b"OLD-EXE-MUST-NOT-COPY")
         self.write(self.runtime / "unlisted-sdk.exe", b"DO-NOT-COPY")
         self.write_json(self.runtime / "manifest.json", {"stage": 9, "files": sorted(rows, key=lambda row: row["path"])})
+        supplement = self.worktree / "build" / PACKAGE.OFFSCREEN_PLUGIN
+        self.write(supplement, b"separate-current-kit-plugin")
+        pin = (supplement.stat().st_size, PACKAGE.sha_file(supplement))
+        pinned_fixture = patch.object(PACKAGE, "OFFSCREEN_IDENTITY", pin)
+        pinned_fixture.start()
+        self.addCleanup(pinned_fixture.stop)
         self.write_json(self.root / "dependencies.json", {
+            "components": [{"id": "QT-6.12", "files": [{
+                "relativePath": PACKAGE.OFFSCREEN_PLUGIN, "architecture": "x86_64", "bytes": pin[0], "sha256": pin[1]}]}],
             "format": "KinSealLite-stage11-dependency-policy-v1",
             "releaseChannel": "restricted_internal_validation", "publicRedistribution": False,
             "baselineManifestSha256": PACKAGE.sha_file(self.runtime / "manifest.json"),
@@ -101,6 +109,60 @@ class PackageTests(unittest.TestCase):  #20261114-10 add
         self.assertFalse(manifest["publicRedistribution"])
         self.assertTrue(any(row["path"] == "resources/not-for-redistribution.sm" for row in manifest["sourceFiles"]))
         self.assertFalse(any("inputPath" in row for row in manifest["files"]))
+
+    def test_offscreen_uses_current_build_and_rejects_substitution(self):  # 20261128-41 add
+        """Use the new EXE's pinned plugin even when an unrelated DLL is in the old runtime."""
+        self.write(self.runtime / PACKAGE.OFFSCREEN_PLUGIN, b"other-kit")
+        self.create()
+        self.assertEqual((self.args.package / PACKAGE.OFFSCREEN_PLUGIN).read_bytes(), b"separate-current-kit-plugin")
+        self.args.package = self.root / "tamper-package"
+        self.args.evidence = self.root / "tamper-evidence"
+        self.write(self.args.executable.parent / PACKAGE.OFFSCREEN_PLUGIN, b"wrong")
+        with self.assertRaisesRegex(ValueError, "differs from the frozen Qt kit"):
+            self.create()
+        self.assertFalse(self.args.package.exists())
+
+    def test_missing_current_plugin_cannot_be_replaced_by_old_runtime(self):
+        """Reject an incomplete deployed build before emitting a package."""
+        plugin = self.args.executable.parent / PACKAGE.OFFSCREEN_PLUGIN
+        self.write(self.runtime / PACKAGE.OFFSCREEN_PLUGIN, plugin.read_bytes())
+        plugin.unlink()
+        with self.assertRaises(ValueError):
+            self.create()
+        self.assertFalse(self.args.package.exists())
+
+    def test_wrong_qt_architecture_in_plugin_policy_is_rejected(self):
+        """Reject an otherwise valid supplement when its independently declared architecture conflicts."""
+        p = self.args.dependencies
+        policy = PACKAGE.load_json(p)
+        policy["components"][0]["files"][0]["architecture"] = "x86"
+        self.write_json(p, policy)
+        with self.assertRaisesRegex(ValueError, "exact offscreen platform plugin identity"):
+            self.create()
+        self.assertFalse(self.args.package.exists())
+
+    def test_legacy_and_current_manifests_have_distinct_required_plugins(self):
+        """The previous release can verify without the new plugin, but a v2 manifest must include it."""
+        self.create()
+        package = self.args.package
+        (package / PACKAGE.OFFSCREEN_PLUGIN).unlink()
+        manifest = self.read_manifest()
+        manifest["files"] = [row for row in manifest["files"] if row["path"] != PACKAGE.OFFSCREEN_PLUGIN]
+        manifest["fileContentSha256"] = PACKAGE.content_digest(manifest["files"])
+        self.write_json(package / "manifest.json", manifest)
+        with self.assertRaisesRegex(ValueError, "allowlist"):
+            PACKAGE.verify_package(package)
+        # Genuine pre-plugin policies have no supplement record in their packaged dependency inventory.
+        dependency_row = next(row for row in manifest["files"] if row["kind"] == "dependency-policy")
+        policy_path = package / dependency_row["path"]
+        policy = PACKAGE.load_json(policy_path)
+        del policy["components"]
+        self.write_json(policy_path, policy)
+        dependency_row.update(PACKAGE.identity(policy_path, dependency_row["path"]))
+        manifest["fileContentSha256"] = PACKAGE.content_digest(manifest["files"])
+        manifest["format"] = PACKAGE.LEGACY_FORMAT
+        self.write_json(package / "manifest.json", manifest)
+        self.assertTrue(PACKAGE.verify_package(package)["verified"])
 
     def test_repeated_packages_are_content_and_manifest_identical(self):
         """Keep timestamps and absolute execution paths outside the reproducible package."""

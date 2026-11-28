@@ -1,5 +1,7 @@
 #include "device_thin_curve_raster.h"
 #include "graphic_properties.h"
+#include "device_polygon_raster.h" //20261128-39 add
+#include <QPainterPathStroker>
 #include <QImage>
 #include <QPainter>
 #include <algorithm>
@@ -118,7 +120,7 @@ void applyBlack(QImage *patch, QPoint origin, int x, int y, int alpha) //2026112
  * Return Value    : None.
  * Date            : 2026.11.28
  ******************************************************************************/
-void paintObliqueSegment(QImage *patch, QPoint origin, QPoint a, QPoint b) //20261128-11 add
+void paintObliqueSegment(QImage *patch, QPoint origin, QPointF a, QPointF b) //20261128-39 change
 {
     long double dx = b.x() - a.x();
     long double dy = b.y() - a.y();
@@ -177,32 +179,35 @@ void paintObliqueSegment(QImage *patch, QPoint origin, QPoint a, QPoint b) //202
  * Date            : 2026.11.28
  ******************************************************************************/
 bool paintDeviceThinCurve(QPainter *painter, const QImage &page, const QRect &geometry,
-                          const GraphicProperties &properties) //20261128-11 add
+                          const GraphicProperties &properties, bool connected) //20261128-39 change
 {
     QVector<QPointF> vertices;
-    QVector<QPoint> points;
+    QList<QPolygonF> subpaths;
+    QPainterPath path;
+    QPainterPathStroker stroker;
+    QByteArray coverage;
     QRect bounds;
     QImage patch;
     QRgb *row;
-    QPoint a;
-    QPoint b;
-    QPoint point;
-    int i;
-    int x;
-    int y;
+    QPointF a, b;
+    int i, x, y;
 
     if (!painter || std::numeric_limits<long double>::digits < 64 || properties.lineStyle != 1 ||
         properties.lineWidth != 1 || properties.alpha != 255 || properties.lineColor != QColor(Qt::black) ||
-        properties.endArrow != 0 || properties.endCap != 0 || !properties.curveControls.isEmpty()) {
-        return false;
-    }
+        properties.endArrow != 0 || properties.endCap != 0) { return false; }
     vertices = graphicHandles(QStringLiteral("linecurve"), QRectF(geometry), properties);
     if (vertices.size() < 2) { return false; }
     for (const QPointF &vertex : vertices) {
-        point = vertex.toPoint();
-        if (vertex != QPointF(point) || !page.rect().adjusted(1, 1, -1, -1).contains(point)) { return false; }
-        points.append(point);
-        bounds = bounds.united(QRect(point, QSize(1, 1)));
+        if (!std::isfinite(vertex.x()) || !std::isfinite(vertex.y()) ||
+            !QRectF(page.rect().adjusted(1, 1, -1, -1)).contains(vertex)) { return false; }
+        bounds = bounds.united(QRect(vertex.toPoint(), QSize(1, 1)));
+    }
+    if (connected) {
+        subpaths.append(QPolygonF(vertices));
+    } else {
+        // A V122 cubic is flattened by the editor before its single connected contour is stroked.
+        // Each explicit move in a drawing separates two strokes even when the endpoints coincide.
+        subpaths = curveDrawingPath(vertices, properties.curveControls).toSubpathPolygons();
     }
     bounds = bounds.adjusted(-1, -1, 1, 1).intersected(page.rect());
     patch = page.copy(bounds).convertToFormat(QImage::Format_RGB32);
@@ -210,23 +215,46 @@ bool paintDeviceThinCurve(QPainter *painter, const QImage &page, const QRect &ge
     for (y = 0; y < patch.height(); ++y) {
         row = reinterpret_cast<QRgb *>(patch.scanLine(y));
         for (x = 0; x < patch.width(); ++x) {
-            // The native page's background loses its low-order bits when expanded back from RGB565.
             if (row[x] == qRgb(198, 223, 255)) { row[x] = qRgb(197, 222, 255); }
         }
     }
-    for (i = 1; i < points.size(); ++i) {
-        a = points[i - 1];
-        b = points[i];
-        if (a.y() > b.y()) { std::swap(a, b); }
-        if (a.y() == b.y()) {
-            for (x = std::min(a.x(), b.x()); x < std::max(a.x(), b.x()); ++x) {
-                applyBlack(&patch, bounds.topLeft(), x, a.y() - 1, 127);
-                applyBlack(&patch, bounds.topLeft(), x, a.y(), 127);
+    stroker.setWidth(1);
+    stroker.setCapStyle(Qt::FlatCap);
+    stroker.setJoinStyle(Qt::BevelJoin);
+    for (const QPolygonF &subpath : subpaths) {
+        if (subpath.size() < 2) { continue; }
+        if (subpath.size() > 2) {
+            path = QPainterPath();
+            path.moveTo(subpath.first());
+            for (i = 1; i < subpath.size(); ++i) { path.lineTo(subpath.at(i)); }
+            // The original continuous-path engine integrates the entire stroke on a 26.6 grid.
+            if (!deviceStraightPathCoverage(stroker.createStroke(path), DeviceStraightCoveragePrecision::Quantized26_6,
+                                            &coverage, nullptr)) { return false; }
+            for (y = bounds.top(); y <= bounds.bottom(); ++y) {
+                for (x = bounds.left(); x <= bounds.right(); ++x) {
+                    applyBlack(&patch, bounds.topLeft(), x, y, static_cast<unsigned char>(coverage.at(y * 800 + x)));
+                }
             }
-        } else if (a.x() == b.x()) {
-            for (y = a.y(); y < b.y(); ++y) {
-                applyBlack(&patch, bounds.topLeft(), a.x() - 1, y, 127);
-                applyBlack(&patch, bounds.topLeft(), a.x(), y, 127);
+            continue;
+        }
+        // The dedicated line engine snaps its centerline down to 1/64 before computing edge coverage.
+        a = QPointF(std::floor(subpath[0].x() * 64) / 64, std::floor(subpath[0].y() * 64) / 64);
+        b = QPointF(std::floor(subpath[1].x() * 64) / 64, std::floor(subpath[1].y() * 64) / 64);
+        if (a == b) { continue; }
+        if (a.y() > b.y()) { std::swap(a, b); }
+        if (a.y() == b.y() || a.x() == b.x()) {
+            // The retained axis-aligned strip rule has only been verified for integer ends.
+            if (a != QPointF(a.toPoint()) || b != QPointF(b.toPoint())) { return false; }
+            if (a.y() == b.y()) {
+                for (x = int(std::min(a.x(), b.x())); x < int(std::max(a.x(), b.x())); ++x) {
+                    applyBlack(&patch, bounds.topLeft(), x, int(a.y()) - 1, 127);
+                    applyBlack(&patch, bounds.topLeft(), x, int(a.y()), 127);
+                }
+            } else {
+                for (y = int(a.y()); y < int(b.y()); ++y) {
+                    applyBlack(&patch, bounds.topLeft(), int(a.x()) - 1, y, 127);
+                    applyBlack(&patch, bounds.topLeft(), int(a.x()), y, 127);
+                }
             }
         } else {
             paintObliqueSegment(&patch, bounds.topLeft(), a, b);

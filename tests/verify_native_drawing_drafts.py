@@ -2,12 +2,14 @@
 # 20261128-4 add
 import argparse
 import collections
+from contextlib import ExitStack
 import hashlib
 import json
 import os
 from pathlib import Path
 import subprocess
 import tempfile
+import uuid
 import zlib
 
 
@@ -21,13 +23,67 @@ def git_blob(folder, name):
     return subprocess.check_output(["git", "show", REVISION + ":" + folder + "/" + name], cwd=ROOT)
 
 
+def run_on_private_desktop(command, directory, environment, timeout):  # 20261128-41 add
+    """Capture both streams while keeping even Qt loader error dialogs on an unshown Windows desktop."""
+    import msvcrt
+    import win32con
+    import win32event
+    import win32process
+    import win32service
+
+    name = "KsDrawing_" + uuid.uuid4().hex
+    startup = win32process.STARTUPINFO()
+    startup.lpDesktop = "WinSta0\\" + name
+    startup.dwFlags = win32con.STARTF_USESTDHANDLES
+    flags = subprocess.CREATE_NO_WINDOW | win32con.CREATE_UNICODE_ENVIRONMENT
+    # File-backed capture avoids pipe-buffer deadlocks for full JSON source inspections.
+    with ExitStack() as resources:
+        desktop = win32service.CreateDesktop(name, 0, 0x1ff, None)
+        resources.callback(desktop.CloseDesktop)
+        stdin = resources.enter_context(open(os.devnull, "rb"))
+        stdout = resources.enter_context(tempfile.TemporaryFile(dir=directory))
+        stderr = resources.enter_context(tempfile.TemporaryFile(dir=directory))
+        handles = [msvcrt.get_osfhandle(stream.fileno()) for stream in (stdin, stdout, stderr)]
+        startup.hStdInput, startup.hStdOutput, startup.hStdError = handles
+        try:
+            for handle in handles:
+                os.set_handle_inheritable(handle, True)
+            process, thread, _, _ = win32process.CreateProcess(
+                command[0], subprocess.list2cmdline(command), None, None, True, flags,
+                environment, str(directory), startup)
+            resources.callback(process.Close)
+            thread.Close()
+        finally:
+            for handle in handles:
+                os.set_handle_inheritable(handle, False)
+        try:
+            waited = win32event.WaitForSingleObject(process, int(timeout * 1000))
+        finally:
+            if win32event.WaitForSingleObject(process, 0) != win32event.WAIT_OBJECT_0:
+                win32process.TerminateProcess(process, 1)
+                win32event.WaitForSingleObject(process, win32event.INFINITE)
+        stdout.seek(0)
+        stderr.seek(0)
+        output, errors = stdout.read(), stderr.read()
+        if waited == win32event.WAIT_TIMEOUT:
+            raise subprocess.TimeoutExpired(command, timeout, output=output, stderr=errors)
+        return subprocess.CompletedProcess(command, win32process.GetExitCodeProcess(process), output, errors)
+
+
 def run(exe, directory, option, *args, success=True):
-    """Use public file actions under the offscreen Qt platform without opening a device."""
-    proc = subprocess.run([str(exe), option, *map(str, args)], cwd=directory, capture_output=True, timeout=90,
-                          env=dict(os.environ, QT_QPA_PLATFORM="offscreen", TEMP=str(directory), TMP=str(directory)),
-                          creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    """Run a public file action, respecting the selected Qt platform and isolating Windows UI."""
+    child_env = dict(os.environ, TEMP=str(directory), TMP=str(directory))
+    child_env.setdefault("QT_QPA_PLATFORM", "offscreen")  # 20261128-41 change: Respect a private desktop runner's chosen platform.
+    if os.name == "nt" and child_env["QT_QPA_PLATFORM"] == "offscreen":
+        child_env.setdefault("QT_QPA_FONTDIR", str(Path(os.environ["SystemRoot"]) / "Fonts"))
+    command = [str(exe), option, *map(str, args)]
+    if os.name == "nt":
+        proc = run_on_private_desktop(command, directory, child_env, 90)
+    else:
+        proc = subprocess.run(command, cwd=directory, capture_output=True, timeout=90, env=child_env)
     if (proc.returncode == 0) != success:
-        raise ValueError(option + " " + str(proc.returncode) + " " + proc.stdout.decode("utf8", "replace")[:400])
+        raise ValueError(f"{option} {proc.returncode} stdout={proc.stdout.decode('utf8', 'replace')[:400]} "
+                         f"stderr={proc.stderr.decode('utf8', 'replace')[:400]}")
     return proc.stdout
 
 

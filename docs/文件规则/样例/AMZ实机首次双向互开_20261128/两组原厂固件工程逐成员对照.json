@@ -1,0 +1,528 @@
+{
+  "compilers": {
+    "production": "a58d7eb8664f80c67362843f5fbc1b67a96b7c091846746ddb27daed6da78f50",
+    "git-release": "2fa5afb072f700cb0442bdb64ca401063aa6acef9b69398c4649717fefc7c561"
+  },
+  "environment": "Windows private desktop",
+  "bothExecutablesReturnedIdenticalResults": true,
+  "comparison": "Each route compared against every member in its captured KNS. usb=compile-project on disk; no hardware transfer tested by this comparison.",
+  "captures": {
+    "native-runtime-2103.kns": {
+      "packageSHA": "cc4b81adb12461f745433d38e4eed2930cebd1733b3249787b287795d2b09af1",
+      "originalMemberHashes": {
+        "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "AlarmPara.dat": "18379f1363ef57dd08905bcbdd235a70c2f37c13f00ab51f0416842259a02635",
+        "AMZ070W01.bin": "7f625b7a967c1ecc0ff5db1fba4d6ed68cb1d9474216e87009395f1d53a88db5",
+        "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "HZ.bin": "54990e3a62437b2859fbfcff43334efca60e197252123642e99bf4cb10fe017f",
+        "load.bin": "90a58fc03c3baf687624a031c404bb0633dedf0b2d64089335386731f8c4ce31",
+        "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Modbus_RTU_com1.bin": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0",
+        "SheetPara.dat": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+        "SheetPixel.dat": "ce38005fb9756856df9d0e045743b4f1245628bebf6a01d6ed01a342e7479a81",
+        "SysPara.dat": "b79cbe3a223a7dfcf22418d9b5dbbabd5cd0b02165d3435be508790b1bc6de89",
+        "upLoad.knr": "9c9863f54ff83939a34b979adc7eeee330f826c3663a89f375c7e61a3d145563",
+        "Usbload.bin": "298cdf5c3a0ca7cd81726f68bef7e153581c0add65d27f7ba2de64460e78231c"
+      },
+      "nativeClock": "2026-11-28T21:03:42",
+      "sources": {
+        "AMZ-LIVE-01": {
+          "sourceSHA": "07c7344644c2e820f391845056eeb08f10011546fcc5e32862b7adbb9ccdfca4",
+          "routes": {
+            "usb": {
+              "exact": [
+                "AddrPara.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 168
+                },
+                "upLoad.knr": {
+                  "liteSHA": "897c9d0c1b96d9154d3147531807f2de9939f046c5d34f0a3b27aa316970d602",
+                  "firstDifference": 2,
+                  "differentBytes": 1670
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "AlarmMuti.dat",
+                "HZ.bin",
+                "MarcoVar.dat",
+                "Usbload.bin",
+                "load.bin"
+              ],
+              "extra": [
+                "compiler-manifest.json"
+              ],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-default": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 168
+                },
+                "upLoad.knr": {
+                  "liteSHA": "4bfc7558ea2d902b0d41c75f75717ce2656c5fd4fa5067bbe7ecdc02d1eaf4eb",
+                  "firstDifference": 2,
+                  "differentBytes": 1671
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "bbca6e853929dc91623b993bf4843987ed4837b4d8ac0d7a0767fe6fcaf715dc",
+                  "firstDifference": 168,
+                  "differentBytes": 163
+                },
+                "upLoad.knr": {
+                  "liteSHA": "4bfc7558ea2d902b0d41c75f75717ce2656c5fd4fa5067bbe7ecdc02d1eaf4eb",
+                  "firstDifference": 2,
+                  "differentBytes": 1671
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-opened-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "bbca6e853929dc91623b993bf4843987ed4837b4d8ac0d7a0767fe6fcaf715dc",
+                  "firstDifference": 168,
+                  "differentBytes": 163
+                },
+                "upLoad.knr": {
+                  "liteSHA": "68de3d85ef74e250a6fe8a74f514c593b99f4b1be3240dd60285813b1c82ed5b",
+                  "firstDifference": 2,
+                  "differentBytes": 1666
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            }
+          }
+        },
+        "native-saved": {
+          "sourceSHA": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f",
+          "routes": {
+            "usb": {
+              "exact": [
+                "AddrPara.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 168
+                },
+                "upLoad.knr": {
+                  "liteSHA": "552e8092a1bbbc3d9dffaebed426ead63f178dcf82834d3f1e9d9a06c27bd0ca",
+                  "firstDifference": 3,
+                  "differentBytes": 1607
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "AlarmMuti.dat",
+                "HZ.bin",
+                "MarcoVar.dat",
+                "Usbload.bin",
+                "load.bin"
+              ],
+              "extra": [
+                "compiler-manifest.json"
+              ],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-default": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin",
+                "upLoad.knr"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 168
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin",
+                "upLoad.knr"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "bbca6e853929dc91623b993bf4843987ed4837b4d8ac0d7a0767fe6fcaf715dc",
+                  "firstDifference": 168,
+                  "differentBytes": 163
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            },
+            "media-opened-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2152
+                },
+                "SysPara.dat": {
+                  "liteSHA": "bbca6e853929dc91623b993bf4843987ed4837b4d8ac0d7a0767fe6fcaf715dc",
+                  "firstDifference": 168,
+                  "differentBytes": 163
+                },
+                "upLoad.knr": {
+                  "liteSHA": "56cbeeecd95dd68b0807609081e01b1db6e4694e9f1e81b09ba0ae6a39e47a5b",
+                  "firstDifference": 3,
+                  "differentBytes": 57
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "bc603e9b2ea1eb7cb20550e8aa6200912b7edf20a9bd178ce3b440a2ed758e08"
+            }
+          }
+        }
+      }
+    },
+    "native-runtime-2115.kns": {
+      "packageSHA": "cd6d8ae21f1f054775f2d0594faaf3782de06cf86e25dddb6b6357d4a0809687",
+      "originalMemberHashes": {
+        "AddrPara.dat": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a",
+        "AlarmMuti.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "AlarmPara.dat": "7624ee0e58ae50d07ed9fcb515e9ca266aedd827eb92d57cc419b897f118bfc0",
+        "AMZ070W01.bin": "7f625b7a967c1ecc0ff5db1fba4d6ed68cb1d9474216e87009395f1d53a88db5",
+        "Collect.dat": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c",
+        "Curve.dat": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586",
+        "HZ.bin": "54990e3a62437b2859fbfcff43334efca60e197252123642e99bf4cb10fe017f",
+        "load.bin": "90a58fc03c3baf687624a031c404bb0633dedf0b2d64089335386731f8c4ce31",
+        "MarcoVar.dat": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Modbus_RTU_com1.bin": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c",
+        "PicLenPara.dat": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0",
+        "SheetPara.dat": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90",
+        "SheetPixel.dat": "c1230f0e422f2a167eb1a4cfe6e67890206f3af2d94967e964fb059b51761e0c",
+        "SysPara.dat": "07522900427e998916383f4a249f62b940626d23860cbc9621326f1165ac0584",
+        "upLoad.knr": "3979caab1bac72c41104a6dbc79e094bf9f637c0aa69a50b701e21fb1ac8d716",
+        "Usbload.bin": "e877749e71c1cfb0c0458939b1fdca1873523f7b0fb3c0f39407b50c22ef94ec"
+      },
+      "nativeClock": "2026-11-28T21:15:04",
+      "sources": {
+        "AMZ-LIVE-02": {
+          "sourceSHA": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+          "routes": {
+            "usb": {
+              "exact": [
+                "AddrPara.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "upLoad.knr"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2645
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 164
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "AlarmMuti.dat",
+                "HZ.bin",
+                "MarcoVar.dat",
+                "Usbload.bin",
+                "load.bin"
+              ],
+              "extra": [
+                "compiler-manifest.json"
+              ],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "1b63d23a6f4f7bc81ccff8c08b0f65336fc6c6682b9afd31b15f76ac630c4063"
+            },
+            "media-default": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin",
+                "upLoad.knr"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2645
+                },
+                "SysPara.dat": {
+                  "liteSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+                  "firstDifference": 168,
+                  "differentBytes": 164
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "1b63d23a6f4f7bc81ccff8c08b0f65336fc6c6682b9afd31b15f76ac630c4063"
+            },
+            "media-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin",
+                "upLoad.knr"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2645
+                },
+                "SysPara.dat": {
+                  "liteSHA": "43573974321769c35f048440c8c5fe5951b850d093ecc70623baee03f821d361",
+                  "firstDifference": 168,
+                  "differentBytes": 159
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "1b63d23a6f4f7bc81ccff8c08b0f65336fc6c6682b9afd31b15f76ac630c4063"
+            },
+            "media-opened-clock": {
+              "exact": [
+                "AddrPara.dat",
+                "AlarmMuti.dat",
+                "Collect.dat",
+                "Curve.dat",
+                "MarcoVar.dat",
+                "Modbus_RTU_com1.bin",
+                "PicLenPara.dat",
+                "SheetPara.dat",
+                "SheetPixel.dat",
+                "load.bin"
+              ],
+              "different": {
+                "AlarmPara.dat": {
+                  "liteSHA": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10",
+                  "firstDifference": 39952,
+                  "differentBytes": 2645
+                },
+                "SysPara.dat": {
+                  "liteSHA": "43573974321769c35f048440c8c5fe5951b850d093ecc70623baee03f821d361",
+                  "firstDifference": 168,
+                  "differentBytes": 159
+                },
+                "upLoad.knr": {
+                  "liteSHA": "a200f73dc3f00958ed22b35f719dc3f8a0d17333a9c9db7701899e2323502ce6",
+                  "firstDifference": 29,
+                  "differentBytes": 1492
+                }
+              },
+              "missing": [
+                "AMZ070W01.bin",
+                "HZ.bin",
+                "Usbload.bin"
+              ],
+              "extra": [],
+              "differentRGB565Pixels": 0,
+              "rgb565SHA": "1b63d23a6f4f7bc81ccff8c08b0f65336fc6c6682b9afd31b15f76ac630c4063"
+            }
+          }
+        }
+      }
+    }
+  }
+}

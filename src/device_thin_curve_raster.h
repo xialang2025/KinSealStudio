@@ -9,5 +9,5 @@ struct GraphicProperties;
 
 //20261128-11 add: Return false before drawing if the path needs the general renderer.
 bool paintDeviceThinCurve(QPainter *painter, const QImage &page, const QRect &geometry,
-                          const GraphicProperties &properties);
+                          const GraphicProperties &properties, bool connected = false); //20261128-39 change
 #endif

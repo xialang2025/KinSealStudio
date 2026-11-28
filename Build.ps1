@@ -308,7 +308,8 @@ if ($Deploy) {
     }
     Copy-Item -LiteralPath (Join-Path $ProjectRoot 'third_party\lzokay\LICENSE') `
         -Destination (Join-Path $DeployDirectory 'LZO-MIT-LICENSE.txt') -Force # 20261108-11 add: Ship the bundled codec attribution.
-    & $Windeployqt --release --compiler-runtime --no-translations --dir $DeployDirectory `
+    #20261128-41 change: Ship the offscreen platform alongside the Windows editor backend.
+    & $Windeployqt --release --compiler-runtime --no-translations --include-plugins qoffscreen --dir $DeployDirectory `
         (Join-Path $DeployDirectory 'KinSealStudioLite.exe')
     if ($LASTEXITCODE -ne 0) {
         throw "windeployqt failed with code $LASTEXITCODE."

@@ -1001,6 +1001,43 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
 #include "native_qr_payload.cpp.inc" //20261128-26 add
 
 /******************************************************************************
+ * Function Name   : retainedContinuousDeviceCurves
+ * Description     : Identify curves whose exported V122 path joins the first two segments in one stroke.
+ * Input Parameters: current single-page project
+ * Return Value    : Editable object IDs that use the continuous native path representation.
+ * Date            : 2026.11.28
+ ******************************************************************************/
+static QSet<QString> retainedContinuousDeviceCurves(const HmiProject &project) //20261128-39 add
+{
+    QHash<QString, QString> thirdTag;
+    QList<NativeSourceFieldSpan> fields;
+    QSet<QString> ids;
+    QByteArray source;
+    int index;
+
+    if (project.nativeSourceSnapshot.isEmpty()) { return ids; }
+    for (index = 0; index < project.objects.size(); ++index) {
+        const HmiObject &item = project.objects.at(index);
+        if (item.type == QStringLiteral("linecurve") && item.graphic.curveControls.isEmpty() &&
+            item.graphic.points.size() > 2) {
+            thirdTag.insert(QStringLiteral("object[%1].curve.element[2].0").arg(index), item.id);
+        }
+    }
+    // Export resolves deletions, edits and reordering before the device painter sorts by layer.
+    if (thirdTag.isEmpty() || !exportNativeProjectSource(project, &source, nullptr) ||
+        !inspectNativeProjectSourceFields(source, &fields, nullptr)) { return ids; }
+    for (const NativeSourceFieldSpan &field : fields) {
+        const auto id = thirdTag.constFind(field.path);
+        if (id != thirdTag.cend() && field.end - field.start == 4 &&
+            qFromBigEndian<u32>(source.constData() + field.start) == 1) {
+            ids.insert(id.value()); // Single M,L,L instead of independent M,L,M,L subpaths.
+        }
+    }
+    return ids;
+}
+
+
+/******************************************************************************
  * Function Name   : buildIntegerProjectPayload
  * Description     : Generate control records, RGB565 sprites and a recoverable Lite project snapshot.
  * Input Parameters: project, payloads, error
@@ -1108,6 +1145,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         return false;
     }
     objects = compilePlan.objects; //20261113-11 change: Persisted layer ties keep their original stable ordering.
+    const QSet<QString> continuousCurves = retainedContinuousDeviceCurves(project); //20261128-39 add
     std::stable_sort(objects.begin(), objects.end(), [](const HmiObject &left, const HmiObject &right) {
         return left.layer < right.layer;
     });
@@ -1284,7 +1322,7 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
         }
         else if (object.type == QStringLiteral("linecurve")) //20261125-85 add: Native curves feed the page image without a runtime control record.
         {
-            if (!paintDeviceThinCurve(&painter, image, object.geometry, object.graphic)) { //20261128-11 change
+            if (!paintDeviceThinCurve(&painter, image, object.geometry, object.graphic, continuousCurves.contains(object.id))) { //20261128-39 change
                 paintGraphic(&painter, object.type, QRectF(object.geometry), object.graphic);
             }
         }

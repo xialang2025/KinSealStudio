@@ -16,7 +16,11 @@ import subprocess
 import sys
 
 
-FORMAT = "KinSealLite-stage11-package-v1"
+LEGACY_FORMAT = "KinSealLite-stage11-package-v1"
+FORMAT = "KinSealLite-stage11-package-v2"  # 20261128-41 change
+OFFSCREEN_PLUGIN = "platforms/qoffscreen.dll"
+# This release kit's QtCore and qwindows binaries also match the immutable Stage9 inventory.
+OFFSCREEN_IDENTITY = (114536, "c0551bafb85c4cb9773e3c840a21f7f89bf7cecbfaa7623b2984458682a80022")
 RUNTIME_FILES = (
     "D3Dcompiler_47.dll", "Qt6Core.dll", "Qt6Gui.dll", "Qt6Network.dll",
     "Qt6SerialPort.dll", "Qt6Svg.dll", "Qt6Widgets.dll",
@@ -228,7 +232,7 @@ def allowed_content(row: dict) -> bool:  #20261114-10 add
     path = row["path"]
     kind = row.get("kind")
     if kind == "runtime":
-        return path in RUNTIME_FILES
+        return path in RUNTIME_FILES or path == OFFSCREEN_PLUGIN
     if kind == "current-executable":
         return path == "KinSealStudioLite.exe"
     if kind == "verifier":
@@ -246,13 +250,27 @@ def allowed_content(row: dict) -> bool:  #20261114-10 add
     return False
 
 
-def check_dependency_policy(policy: object, rows: list[dict], runtime_manifest_sha: str) -> None:  #20261114-10 add
+def check_dependency_policy(policy: object, rows: list[dict], runtime_manifest_sha: str, *, legacy: bool = False) -> None:  #20261114-10 add
     """Bind conservative dependency policy and its complete declared license identities."""
     if (not isinstance(policy, dict) or policy.get("format") != "KinSealLite-stage11-dependency-policy-v1" or
             policy.get("releaseChannel") != "restricted_internal_validation" or
             policy.get("publicRedistribution") is not False or
             policy.get("baselineManifestSha256") != runtime_manifest_sha):
         raise ValueError("Dependency policy must bind restricted distribution and frozen runtime manifest")
+    if not legacy:  # 20261128-41 add: Both the installed plugin and its declared Qt provenance must match the reviewed kit.
+        plugin = next((row for row in rows if row["path"] == OFFSCREEN_PLUGIN and row.get("kind") == "runtime"), {})
+        if (plugin.get("bytes"), plugin.get("sha256")) != OFFSCREEN_IDENTITY:
+            raise ValueError("Offscreen platform plugin differs from the frozen Qt kit")
+        components = policy.get("components")
+        if not isinstance(components, list):
+            raise ValueError("Dependency policy must declare its Qt kit")
+        qt_rows = [row for row in components if isinstance(row, dict) and row.get("id") == "QT-6.12"]
+        if len(qt_rows) != 1 or not isinstance(qt_rows[0].get("files"), list):
+            raise ValueError("Dependency policy must identify the Qt kit uniquely")
+        declarations = [row for row in qt_rows[0]["files"] if isinstance(row, dict) and row.get("relativePath") == OFFSCREEN_PLUGIN]
+        if (len(declarations) != 1 or declarations[0].get("architecture") != "x86_64" or
+                (declarations[0].get("bytes"), declarations[0].get("sha256")) != OFFSCREEN_IDENTITY):
+            raise ValueError("Dependency policy lacks the exact offscreen platform plugin identity")
     declared = policy.get("licenseFiles")
     if not isinstance(declared, list):
         raise ValueError("Dependency policy lacks complete license identities")
@@ -278,7 +296,7 @@ def verify_package(package: Path, expected_manifest_sha: str | None = None) -> d
     if expected_manifest_sha and manifest_sha != expected_manifest_sha.lower():
         raise ValueError("Manifest SHA256 differs from independently frozen identity")
     manifest = load_json(manifest_path)
-    if (not isinstance(manifest, dict) or manifest.get("format") != FORMAT or
+    if (not isinstance(manifest, dict) or manifest.get("format") not in (LEGACY_FORMAT, FORMAT) or
             manifest.get("stage") != 11 or manifest.get("distributionStatus") != "restricted_internal_validation" or
             manifest.get("publicRedistribution") is not False):
         raise ValueError("Unsupported or unsafe package policy manifest")
@@ -305,7 +323,9 @@ def verify_package(package: Path, expected_manifest_sha: str | None = None) -> d
     runtime_names = {row["path"] for row in rows if row.get("kind") == "runtime"}
     if executable is None or executable["sha256"] != manifest.get("executableSha256"):
         raise ValueError("Executable identity is absent or inconsistent")
-    if runtime_names != set(RUNTIME_FILES):
+    legacy = manifest["format"] == LEGACY_FORMAT
+    expected_runtime = set(RUNTIME_FILES) if legacy else {*RUNTIME_FILES, OFFSCREEN_PLUGIN}
+    if runtime_names != expected_runtime:
         raise ValueError("Complete frozen runtime allowlist is required")
     kinds = [row.get("kind") for row in rows]
     if any(kinds.count(kind) != 1 for kind in ("current-executable", "verifier", "user-guide", "dependency-policy")):
@@ -314,8 +334,8 @@ def verify_package(package: Path, expected_manifest_sha: str | None = None) -> d
         raise ValueError("Nonempty help, license and sample sets are required")
     if not errors:
         check_dependency_policy(load_json(package / "release/stage11-dependencies.json"), rows,
-                                manifest.get("runtimeManifestSha256"))
-    return {"format": FORMAT, "verified": not errors, "errors": errors,
+                                manifest.get("runtimeManifestSha256"), legacy=legacy)
+    return {"format": manifest["format"], "verified": not errors, "errors": errors,
             "manifestSha256": manifest_sha, "fileCountIncludingManifest": len(actual),
             "fileContentSha256": manifest["fileContentSha256"],
             "sourceContentSha256": manifest["sourceContentSha256"],
@@ -370,6 +390,8 @@ def create_package(args) -> dict:  #20261114-10 add
         if relative not in old_rows or any(row[key] != old_rows[relative][key] for key in ("bytes", "sha256")):
             raise ValueError("Runtime DLL/license differs from frozen manifest: " + relative)
         add(path, relative, "runtime")
+    # The new EXE's deployment carries the matching Qt platform plugin absent from the Stage9 package.
+    add(executable.parent / OFFSCREEN_PLUGIN, OFFSCREEN_PLUGIN, "runtime")  # 20261128-41 add
     for path in tree_files(help_root):
         if path.suffix.lower() not in HELP_SUFFIXES:
             raise ValueError("Unlisted help file extension: " + str(path))

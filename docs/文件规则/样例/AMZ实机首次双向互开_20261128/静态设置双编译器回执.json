@@ -1,0 +1,264 @@
+{
+  "compilers": {
+    "production": "a58d7eb8664f80c67362843f5fbc1b67a96b7c091846746ddb27daed6da78f50",
+    "git-release": "2fa5afb072f700cb0442bdb64ca401063aa6acef9b69398c4649717fefc7c561"
+  },
+  "test": "tests/verify_native_static_reopen_profile.py",
+  "environment": "Windows private desktop",
+  "systems": {
+    "nativeStableBytes": 4798,
+    "nativeStableBytesExact": 4798,
+    "nativeWholeFileDifferences": 95,
+    "observedNativeClockChanges": [
+      324,
+      328
+    ],
+    "observedNativeVariableChanges": 93,
+    "outputs": [
+      {
+        "source": "native-saved.sm",
+        "sourceSHA": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f",
+        "nativeSHA": "b79cbe3a223a7dfcf22418d9b5dbbabd5cd0b02165d3435be508790b1bc6de89",
+        "route": "--compile-project",
+        "nativeClockRequested": false,
+        "nativeClock": "2026-11-28T21:03:42",
+        "generatedSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "wholeFileExact": false,
+        "differentBytes": 168,
+        "firstDifference": 168,
+        "stableDifferentOffsets": [
+          171,
+          207,
+          215,
+          219,
+          231,
+          383,
+          863,
+          903
+        ]
+      },
+      {
+        "source": "native-saved.sm",
+        "sourceSHA": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f",
+        "nativeSHA": "b79cbe3a223a7dfcf22418d9b5dbbabd5cd0b02165d3435be508790b1bc6de89",
+        "route": "--compile-native-media-parts",
+        "nativeClockRequested": true,
+        "nativeClock": "2026-11-28T21:03:42",
+        "generatedSHA": "bbca6e853929dc91623b993bf4843987ed4837b4d8ac0d7a0767fe6fcaf715dc",
+        "wholeFileExact": false,
+        "differentBytes": 163,
+        "firstDifference": 168,
+        "stableDifferentOffsets": [
+          171,
+          207,
+          215,
+          219,
+          231,
+          383,
+          863,
+          903
+        ]
+      },
+      {
+        "source": "AMZ-LIVE-02.sm",
+        "sourceSHA": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+        "nativeSHA": "07522900427e998916383f4a249f62b940626d23860cbc9621326f1165ac0584",
+        "route": "--compile-project",
+        "nativeClockRequested": false,
+        "nativeClock": "2026-11-28T21:15:04",
+        "generatedSHA": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+        "wholeFileExact": false,
+        "differentBytes": 164,
+        "firstDifference": 168,
+        "stableDifferentOffsets": [
+          171,
+          207,
+          215,
+          219,
+          231,
+          383,
+          863,
+          903
+        ]
+      },
+      {
+        "source": "AMZ-LIVE-02.sm",
+        "sourceSHA": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+        "nativeSHA": "07522900427e998916383f4a249f62b940626d23860cbc9621326f1165ac0584",
+        "route": "--compile-native-media-parts",
+        "nativeClockRequested": true,
+        "nativeClock": "2026-11-28T21:15:04",
+        "generatedSHA": "43573974321769c35f048440c8c5fe5951b850d093ecc70623baee03f821d361",
+        "wholeFileExact": false,
+        "differentBytes": 159,
+        "firstDifference": 168,
+        "stableDifferentOffsets": [
+          171,
+          207,
+          215,
+          219,
+          231,
+          383,
+          863,
+          903
+        ]
+      }
+    ]
+  },
+  "variants": [
+    {
+      "label": "defaults-000",
+      "sourceSHA": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+      "expectedSuccess": true,
+      "messages": [
+        "工程设备数据编译完成，尚未访问USB。",
+        "已生成离线介质散件。完整介质包还有独立的 Usbload.bin 等生成条件。"
+      ]
+    },
+    {
+      "label": "defaults-001",
+      "sourceSHA": "2d3a8a6f6867718e29ea8ef23de8ecfd2aa11b6d343435133b2c7d460a486010",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-010",
+      "sourceSHA": "3e42c2e250b115f0f91a826cd3e839d36f320c0f2a0fb2c17027cacbf9773ae3",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-011",
+      "sourceSHA": "d86258b43e9ce1369235c170966194fabd34ade90fadf25ab93f1297016d4131",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-100",
+      "sourceSHA": "c9e5e5228cc8f91a9299dd36562dedcdcc5e57d016ce1ef5c25af76c7a5465d2",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-101",
+      "sourceSHA": "e71800623f5251dd78cf41f3fa866ff6b8c00ea167a39c5fc0a2bdd3d287f537",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-110",
+      "sourceSHA": "7b1ab414e312f6d81b9f62f3e6b51256e46f2b6381bad1093712be65616aca40",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "defaults-111",
+      "sourceSHA": "07dfa1717764311ff4373f04aa3356247d769fb613eb1a0ef8ef2fada848afc8",
+      "expectedSuccess": true,
+      "messages": [
+        "工程设备数据编译完成，尚未访问USB。",
+        "已生成离线介质散件。完整介质包还有独立的 Usbload.bin 等生成条件。"
+      ]
+    },
+    {
+      "label": "object[0].common.40.1",
+      "sourceSHA": "0ac573c2b9bc96dda1d0a5f97ac6113697b43c486a1c1400ff38ddea357152e6",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "object[0].common.visibility.0",
+      "sourceSHA": "e51d20a9abe03a15d98bf233da225748a054df03fa6ea9ed962891260c9e8622",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "object[0].common.touch.0",
+      "sourceSHA": "dd8a6d21f1f88c4d43d3f6eb97201dbab5454e630e881e8e80cebecc7e3c6522",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "object[1].curve.visibility.0",
+      "sourceSHA": "470cd253f8fbc9682f96afff5da1938c1c0b2763a35f6a64e274143b6c5d0b48",
+      "expectedSuccess": false,
+      "messages": [
+        "曲线含未支持的显示条件或颜色数据。",
+        "曲线含未支持的显示条件或颜色数据。"
+      ]
+    },
+    {
+      "label": "object[1].curve.touch.0",
+      "sourceSHA": "0cbb4bcfe84a90eba42b3ee336337989388a24b51f43131d7cc8fe0c9fd00e36",
+      "expectedSuccess": false,
+      "messages": [
+        "曲线含未支持的显示条件或颜色数据。",
+        "曲线含未支持的显示条件或颜色数据。"
+      ]
+    },
+    {
+      "label": "object[3].table.columnAddress.1",
+      "sourceSHA": "eb94c5820e67333d6d9781870a976574b58c4ede5e76a9b0f91d5f6777233e6a",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "unrelated-page-name",
+      "sourceSHA": "d079b6bf224a72d1f38926718a37b7f6eee961e5e69a74dea08134b74d3c71f8",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "dynamic-lamp",
+      "sourceSHA": "db78ca0b1d59f914dadb32be4228aacfc089594cad2cc68ad5defc87b4b53d8a",
+      "expectedSuccess": false,
+      "messages": [
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。",
+        "页面page-1，控件，nativeSourceSnapshot：该原生工程的系统、通信、语言或工程配置与已验证设备默认配置不同；可保留原始快照，但不能用默认系统段覆盖后下载。"
+      ]
+    },
+    {
+      "label": "scheduled-static-host",
+      "sourceSHA": "27dd6377a9a691db2f50b830ae39b354c40c7f2ba3f032bd04fec24a0f57530c",
+      "expectedSuccess": false,
+      "messages": [
+        "原厂宏调度引用的源码不存在：GlobalLocal11。",
+        "原厂宏调度引用的源码不存在：GlobalLocal11。"
+      ]
+    }
+  ],
+  "bothExecutablesReturnedIdenticalResults": true
+}

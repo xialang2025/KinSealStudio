@@ -1,0 +1,414 @@
+{
+  "frozenGitRevision": "e3b72657c8be107392cb1a5d090dc9071cbe4a87",
+  "offsetsDecimalZeroBased": [
+    171,
+    207,
+    215,
+    219,
+    231,
+    383,
+    863,
+    903
+  ],
+  "containingLE32StartOffsets": [
+    168,
+    204,
+    212,
+    216,
+    228,
+    380,
+    860,
+    900
+  ],
+  "confirmed": {
+    "conclusion": "七份输入 SM 的 SHA-256 分别相同，但每份输入均有八处全为 04 与全为 06 的原厂输出。仅凭输入 SM 无法唯一决定这八个字节。现场三个 KNS 的这八处全为 07。",
+    "interpretation": "接收值是八处32位小端字的最高字节。前五处在原厂复制出的 100–323 区块，末三处位于系统 I/O 行内 +31（行起点 352、832、872）。",
+    "counterexamples": [
+      {
+        "sourceSHA256": "1310460d3b69d942798cf732e2e5149002ed83d6a41b04ae4764cb54a9750452",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/history-trend/physical/history-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/history-trend/native/compiled/history-default-r2/SysPara.dat",
+            "systemSHA256": "305f6b146f0b787cbb277921703639d3b177cf18fbfa41877b0a193d55cd1c39",
+            "sourceAndSystemManifest": "docs/stage4-evidence/history-trend/native/native-manifest.json",
+            "compileLabel": "history-default-r2",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "043d00c0",
+              "043d00b0",
+              "043d8cc0",
+              "043d8cc0",
+              "043d8cb0",
+              "042b0908",
+              "042b0908",
+              "042b0908"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/history-trend/physical/history-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "58161609268f908a22a0a93a7ab7f03ce540f7edd673966b0593ae5956f9ac04",
+            "inputSource": "docs/stage4-evidence/history-trend/physical/history-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "062100d8",
+              "062100c8",
+              "06213fd8",
+              "06213fd8",
+              "06213fc8",
+              "061b75f8",
+              "061b75f8",
+              "061b75f8"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "183b821250b18450dd25e523eb52b3ef0049fa63068af9fa125dfb2b4fe7570e",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/alarm-display/physical/alarm-display-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/alarm-display/native/compiled/alarm-display-default-r2/SysPara.dat",
+            "systemSHA256": "9f509d52df5f4faa760ecb5c6574b00303c7b631c7bf9e184cfe9aab087e2301",
+            "sourceAndSystemManifest": "docs/stage4-evidence/alarm-display/native/native-manifest.json",
+            "compileLabel": "alarm-display-default-r2",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "044900c0",
+              "044900b0",
+              "04490ac0",
+              "04490ac0",
+              "04490ab0",
+              "0454b0f0",
+              "0454b0f0",
+              "0454b0f0"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/alarm-display/physical/alarm-display-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "0a16259ca7ee20517a626ff044131f8b4499ea2da6a33ac15b11c6c0373a4430",
+            "inputSource": "docs/stage4-evidence/alarm-display/physical/alarm-display-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "06080000",
+              "060800f0",
+              "06088400",
+              "06088400",
+              "060883f0",
+              "06163658",
+              "06163658",
+              "06163658"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "526117795f66b88c0c2c25f603d563a8c45a5fb9021ab2d291260e171f7fc7c1",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/history-data/native/compiled/history-data-default-r2/SysPara.dat",
+            "systemSHA256": "9f0d7f85b99a2f5ac66f4b84d4d3049b7aa171549dd827eb109ba774524b54d4",
+            "sourceAndSystemManifest": "docs/stage4-evidence/history-data/native/native-manifest.json",
+            "compileLabel": "history-data-default-r2",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "043000c8",
+              "043000b8",
+              "04303cc8",
+              "04303cc8",
+              "04303cb8",
+              "04412c70",
+              "04412c70",
+              "04412c70"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "2d2f70f7fd9d9719b4a84d7acf0519f7ecc0e8a3ff4250b0243161046d3a43ca",
+            "inputSource": "docs/stage4-evidence/history-data/physical/history-data-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "06160020",
+              "06160010",
+              "06160220",
+              "06160220",
+              "06160210",
+              "06123ff8",
+              "06123ff8",
+              "06123ff8"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "6a036e0defa26debf2e34572143afeabdc11fcf6e1952d1e2f9d82a873a56ca1",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/alarm-bar/physical/alarm-bar-lifecycle-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/alarm-bar/native/compiled/alarm-default-r4/SysPara.dat",
+            "systemSHA256": "e74666c0972ad6af97f159a7979edf878704a3df6619e4178ca5d18ba538e286",
+            "sourceAndSystemManifest": "docs/stage4-evidence/alarm-bar/native/native-manifest.json",
+            "compileLabel": "alarm-default-r4",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "04530010",
+              "04530000",
+              "0453f810",
+              "0453f810",
+              "0453f800",
+              "04551ff8",
+              "04551ff8",
+              "04551ff8"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/alarm-bar/physical/alarm-bar-lifecycle-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "b99d758a61ba40f57d4bf2a0313051f506e090612840e08ad76b39ab44f366e8",
+            "inputSource": "docs/stage4-evidence/alarm-bar/physical/alarm-bar-lifecycle-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "062100e0",
+              "062100d0",
+              "0621bfe0",
+              "0621bfe0",
+              "0621bfd0",
+              "06236520",
+              "06236520",
+              "06236520"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "79f7281944a2acce2c9a52dfd25f79f11af21615ba4673fa48501c5e6005d543",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/trend/physical/trend-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/trend/native/compiled/trend-default-r1/SysPara.dat",
+            "systemSHA256": "0415113e956bffca84f437c6a42a3d617372a6a9d922b10dcf24d55ef7e1ac7a",
+            "sourceAndSystemManifest": "docs/stage4-evidence/trend/native/native-manifest.json",
+            "compileLabel": "trend-default-r1",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "045c0060",
+              "045c0050",
+              "045c9860",
+              "045c9860",
+              "045c9850",
+              "0450b1f8",
+              "0450b1f8",
+              "0450b1f8"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/trend/physical/trend-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "01708da4eb51807bbb11b8d7b224813af95adbeff139b7c774874060ecefbe7d",
+            "inputSource": "docs/stage4-evidence/trend/physical/trend-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "06190090",
+              "06190080",
+              "06198690",
+              "06198690",
+              "06198680",
+              "06198928",
+              "06198928",
+              "06198928"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "df0cd7c6bed642225a2564797d14d4fe98a7a977fd2f5649b9c21be6d80bb9fb",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/xy-curve/native/compiled/xy-default-r1/SysPara.dat",
+            "systemSHA256": "8a2b84cf131c4c1014fc6e95979af59ad0f2beb7276cd12d45b7850d92077500",
+            "sourceAndSystemManifest": "docs/stage4-evidence/xy-curve/native/native-manifest.json",
+            "compileLabel": "xy-default-r1",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "04540030",
+              "04540020",
+              "04545b30",
+              "04545b30",
+              "04545b20",
+              "044fd1c8",
+              "044fd1c8",
+              "044fd1c8"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "6caa09b48d3043069c875584166e84267ec6ddf12e7b3ef261eb491e4c12c847",
+            "inputSource": "docs/stage4-evidence/xy-curve/physical/xy-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "061e0048",
+              "061e0038",
+              "061e6a48",
+              "061e6a48",
+              "061e6a38",
+              "06088338",
+              "06088338",
+              "06088338"
+            ]
+          }
+        ]
+      },
+      {
+        "sourceSHA256": "f6bea40885204f6726612129e049b90534e1d83786e13a308ded3c74484ee0fa",
+        "sourceFileInFrozenGit": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/compiled/physical-native-reference/input-native.sm",
+        "variants": [
+          {
+            "system": "docs/stage4-evidence/history-alarm/native/compiled/history-history-alarm-default-r2/SysPara.dat",
+            "systemSHA256": "de55bceb69e355aa0a665e408a0aa6e8388a554e56ddb2560028c8b4c73df067",
+            "sourceAndSystemManifest": "docs/stage4-evidence/history-alarm/native/native-manifest.json",
+            "compileLabel": "history-history-alarm-default-r2",
+            "evidence": "compile-log-with-source-and-system-digests",
+            "highBytesHex": "0404040404040404",
+            "wordsLE32": [
+              "044b00e0",
+              "044b00d0",
+              "044ba5e0",
+              "044ba5e0",
+              "044ba5d0",
+              "04568968",
+              "04568968",
+              "04568968"
+            ]
+          },
+          {
+            "system": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/compiled/physical-native-reference/SysPara.dat",
+            "systemSHA256": "fe152de5289d16fce970e0624d227e4d2f5ce67159f2cf3981e8e57e4fce93ea",
+            "inputSource": "docs/stage4-evidence/history-alarm/physical/history-alarm-baseline-r1/compiled/physical-native-reference/input-native.sm",
+            "evidence": "raw-adjacent",
+            "highBytesHex": "0606060606060606",
+            "wordsLE32": [
+              "06090078",
+              "06090068",
+              "06097978",
+              "06097978",
+              "06097968",
+              "06146f68",
+              "06146f68",
+              "06146f68"
+            ]
+          }
+        ]
+      }
+    ],
+    "fieldCaptures": [
+      {
+        "packagePath": "build/native-live-20261128-check/device-oracle/native-runtime-2103.kns",
+        "packageSHA256": "cc4b81adb12461f745433d38e4eed2930cebd1733b3249787b287795d2b09af1",
+        "embeddedSourcePath": "build/native-live-20261128-check/device-oracle/native-runtime-2103.sm",
+        "embeddedSourceSHA256": "2e478d391e708c0703e0d9f037df3f6cd03c1a8ad59d89315d05a1105aa6503e",
+        "systemSHA256": "b79cbe3a223a7dfcf22418d9b5dbbabd5cd0b02165d3435be508790b1bc6de89",
+        "highBytesHex": "0707070707070707",
+        "wordsLE32": [
+          "07cd0058",
+          "07cd0048",
+          "07cdb458",
+          "07cdb458",
+          "07cdb448",
+          "07c48ac0",
+          "07c48ac0",
+          "07c48ac0"
+        ]
+      },
+      {
+        "packagePath": "build/native-live-20261128-check/device-oracle/native-runtime-2115.kns",
+        "packageSHA256": "cd6d8ae21f1f054775f2d0594faaf3782de06cf86e25dddb6b6357d4a0809687",
+        "embeddedSourcePath": "build/native-live-20261128-check/device-oracle/native-runtime-2115.sm",
+        "embeddedSourceSHA256": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf",
+        "systemSHA256": "07522900427e998916383f4a249f62b940626d23860cbc9621326f1165ac0584",
+        "highBytesHex": "0707070707070707",
+        "wordsLE32": [
+          "07cd0058",
+          "07cd0048",
+          "07cdb458",
+          "07cdb458",
+          "07cdb448",
+          "07c48ac0",
+          "07c48ac0",
+          "07c48ac0"
+        ]
+      },
+      {
+        "packagePath": "build/native-live-20261128-check/device-oracle/native-01-reopen.kns",
+        "packageSHA256": "e106a48dafc362572bbb3b61effd880e4132e6a39d414a2f91c93580efbae3aa",
+        "embeddedSourcePath": "build/native-live-20261128-check/device-oracle/native-01-reopen.sm",
+        "embeddedSourceSHA256": "67ac48569bc81633d3392709b89432850537eb0767ec40bd3b434a4db1d39cf1",
+        "systemSHA256": "01b3b60eecc13c9677b4f87a9006659c85c6a5a20c2874fa7d75fb1537c408bd",
+        "highBytesHex": "0707070707070707",
+        "wordsLE32": [
+          "07be0008",
+          "07be00f8",
+          "07befe08",
+          "07befe08",
+          "07befdf8",
+          "07c48ac0",
+          "07c48ac0",
+          "07c48ac0"
+        ]
+      }
+    ],
+    "lite": {
+      "template": "samples/native-device-test/compile-test/SysPara.dat",
+      "compiledOutput": "build/native-live-20261128-check/lite-compiled/SysPara.dat",
+      "sysParaSHA256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f",
+      "highBytesHex": "0606060606060606",
+      "wordsLE32": [
+        "061800e8",
+        "061800d8",
+        "0618d9e8",
+        "0618d9e8",
+        "0618d9d8",
+        "0609ca28",
+        "0609ca28",
+        "0609ca28"
+      ]
+    },
+    "olderCorpus": {
+      "pairedCompilations": 437,
+      "uniquePairedSources": 248,
+      "pairedHighBytesHistogram": {
+        "0606060606060606": 437
+      },
+      "distinctArchived4998ByteSystemBlobs": 526,
+      "archivedHighBytesHistogram": {
+        "0606060606060606": 506,
+        "0404040404040404": 16,
+        "0505050505050505": 2,
+        "0606060606030303": 1,
+        "6a6a6a6a6a060606": 1
+      },
+      "wordRelationsOnPairedCompilations": {
+        "LE32(212) - LE32(216) = 0": 437,
+        "LE32(212) - LE32(228) = 16": 437,
+        "LE32(380) - LE32(860) = 0": 437,
+        "LE32(380) - LE32(900) = 0": 437
+      }
+    }
+  },
+  "hypothesis": "同批重复的32位数值及固定的16字节间距，与宿主进程地址特征吻合。内存对象、指针归属及设备如何解释这些位置仍缺直接证据。",
+  "sources": [
+    "docs/文件规则/SysPara系统参数与编译时钟逐字节复核_20261128.md",
+    "docs/文件规则/AMZ固件与V122系统页地址和静态表格编译_20261128.md"
+  ]
+}

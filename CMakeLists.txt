@@ -291,6 +291,7 @@ if(WIN32 AND NOT CMAKE_CROSSCOMPILING AND TARGET Qt6::windeployqt AND TARGET Qt6
             "$<TARGET_FILE:Qt6::windeployqt>"
             --qtpaths "$<TARGET_FILE:Qt6::qtpaths>"
             --compiler-runtime --no-translations --no-system-dxc-compiler #20261125-5 change: Avoid replacing DLLs shared with parallel test links.
+            --include-plugins qoffscreen #20261128-41 add: Deploy the platform used by unattended Qt tools.
             "$<TARGET_FILE:KinSealStudioLite>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             "${CMAKE_CURRENT_BINARY_DIR}/KinSealStudioLite.qt.conf"

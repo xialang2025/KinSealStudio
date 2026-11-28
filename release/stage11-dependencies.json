@@ -3,7 +3,7 @@
   "scope": "阶段11受限内部验证包，非公开完整发行授权",
   "releaseChannel": "restricted_internal_validation",
   "publicRedistribution": false,
-  "appliesTo": "Stage9 runtime baseline inventory plus unchanged resource inputs; Stage11 final EXE identity is frozen by its own release manifest",
+  "appliesTo": "Stage9 runtime baseline inventory plus the qoffscreen plugin pinned separately from the matching build kit and unchanged resource inputs; Stage11 final EXE identity is frozen by its own release manifest",
   "baselineExecutableSha256": "aee3c13a5b3ad36ea67c4d68e4033858b3f1d31e952dbf02520186819c962709",
   "baselineManifestSha256": "2b6e2a668fa84915378bb082f4fbc75e11a70f0d508fbd9d2fb92a202e2f10da",
   "inventory": {
@@ -80,6 +80,12 @@
           "relativePath": "networkinformation/qnetworklistmanager.dll",
           "bytes": 102248,
           "sha256": "a6d1ff4c5692d04033f7e1c07ed4dbb364a80e246c37b149f44213ac1a8781eb",
+          "architecture": "x86_64"
+        },
+        {
+          "relativePath": "platforms/qoffscreen.dll",
+          "bytes": 114536,
+          "sha256": "c0551bafb85c4cb9773e3c840a21f7f89bf7cecbfaa7623b2984458682a80022",
           "architecture": "x86_64"
         },
         {
@@ -886,7 +892,7 @@
       "id": "DEP-03",
       "scenario": "缺qwindows平台插件",
       "safeMethod": "只在自有测试副本去除platforms/qwindows.dll，隔离QT_PLUGIN_PATH",
-      "expected": "Windows GUI初始化应失败；不能假称可回退offscreen，Stage9包未带qoffscreen",
+      "expected": "默认 Windows 界面需要 qwindows.dll。Stage11 v2 的后台离屏验证显式选用 qoffscreen.dll。",
       "executionStatus": "not_run_by_static_audit",
       "actualEvidence": "由本轮部署测试回执单独记录"
     },

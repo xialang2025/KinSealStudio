@@ -1,0 +1,183 @@
+{
+  "model": "AMZ070W01R",
+  "identity": {
+    "firmwareVersion": "Version:122-2026.03.04",
+    "modelIdentityByte": 70,
+    "files": {
+      "AddrPara.dat": {
+        "length": 200,
+        "sha256": "6d9c54dee5660c46886f32d80e57e9dd0ffa57ee0cd2a762b036d9c8e0c3a33a"
+      },
+      "AlarmPara.dat": {
+        "length": 47840,
+        "sha256": "12d43ec809fb64507247b520958c99813143fb4c12e63a872d50a7a0aa5c7b10"
+      },
+      "Collect.dat": {
+        "length": 1424,
+        "sha256": "5e796fbf009f80334fea0839be003bfbcc320f4dcacdfa2f53c6ca00c7d99e8c"
+      },
+      "Curve.dat": {
+        "length": 501,
+        "sha256": "01064fb25c62c76b1f0b7b12de7a44b021b320a735eb9361639500029cb11586"
+      },
+      "Modbus_RTU_com1.bin": {
+        "length": 12496,
+        "sha256": "fddf11ab2cfec2b06fcdb408de1bb82fbe26707a97a9c2b2b4b0be382bc0290c"
+      },
+      "PicLenPara.dat": {
+        "length": 2400,
+        "sha256": "3ee28dd71ffc1f4941ec018540a3519c614169b3ff75348d76efd1e64807c5a0"
+      },
+      "SheetPara.dat": {
+        "length": 72,
+        "sha256": "9ddd74c4c47d461ab48cb089cf1037b36769c35f8e6e5a830eab23b1381e1c90"
+      },
+      "SheetPixel.dat": {
+        "length": 9956,
+        "sha256": "c1230f0e422f2a167eb1a4cfe6e67890206f3af2d94967e964fb059b51761e0c"
+      },
+      "SysPara.dat": {
+        "length": 4998,
+        "sha256": "b22f00a160e3dec23d54fdf9e595f6e0b842dee494f95cc9d43ca104c687a01f"
+      },
+      "upLoad.knr": {
+        "length": 1668,
+        "sha256": "3979caab1bac72c41104a6dbc79e094bf9f637c0aa69a50b701e21fb1ac8d716"
+      }
+    },
+    "exeSha256": "a58d7eb8664f80c67362843f5fbc1b67a96b7c091846746ddb27daed6da78f50",
+    "sourceSha256": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf"
+  },
+  "sources": {
+    "AMZ-LIVE-01.sm": {
+      "bytes": 5890,
+      "sha256": "07c7344644c2e820f391845056eeb08f10011546fcc5e32862b7adbb9ccdfca4"
+    },
+    "native-saved.sm": {
+      "bytes": 6406,
+      "sha256": "676ec3a2fe967141fae229d0c1fadd059ca2d788d92302d332df89599ee6485f"
+    },
+    "AMZ-LIVE-02.sm": {
+      "bytes": 6412,
+      "sha256": "dd95f5a0a00724a2d53b43ae25b8d7b984251dc37da9893502ac0a0fbb4c95bf"
+    }
+  },
+  "observations": [
+    {
+      "sender": "Lite",
+      "source": "AMZ-LIVE-01.sm",
+      "transfer": {
+        "outcome": "transport_complete",
+        "ok": true,
+        "modelReplyHex": "460103000102030432303135303731330000004100000000",
+        "parametersReplyHex": "0000007a0102030432303135303731330000004100000000",
+        "startOptionsHex": "000000",
+        "writtenSegments": [
+          "SysPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "Collect.dat",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ],
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ],
+        "completedSteps": 12,
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "closed": true,
+        "firstError": {
+          "command": -1,
+          "expectedReplyLength": 0,
+          "kind": "",
+          "message": "",
+          "phase": "",
+          "present": false,
+          "requested": 0,
+          "returned": 0,
+          "segment": ""
+        }
+      },
+      "screen": "用户确认标识、表格和两条线都正常"
+    },
+    {
+      "sender": "原厂 V5.1",
+      "source": "AMZ-LIVE-02.sm",
+      "transfer": "用户现场使用原厂 USB 下载",
+      "screen": "用户确认实屏显示 02，表格和两条线正常"
+    },
+    {
+      "sender": "本轮正式 Lite",
+      "source": "AMZ-LIVE-02.sm",
+      "transfer": {
+        "outcome": "transport_complete",
+        "ok": true,
+        "modelReplyHex": "460103000102030432303135303731330000004100000000",
+        "parametersReplyHex": "0000007a0102030432303135303731330000004100000000",
+        "startOptionsHex": "000000",
+        "writtenSegments": [
+          "SysPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "Collect.dat",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ],
+        "acknowledgedSegments": [
+          "SysPara.dat",
+          "SheetPara.dat",
+          "AlarmPara.dat",
+          "0x16",
+          "Collect.dat",
+          "0x19",
+          "AddrPara.dat",
+          "PicLenPara.dat",
+          "Curve.dat",
+          "upLoad.knr",
+          "SheetPixel.dat",
+          "Modbus_RTU_com1.bin"
+        ],
+        "completedSteps": 12,
+        "commitAccepted": true,
+        "resetWritten": true,
+        "postResetReadCompleted": true,
+        "postResetReadResult": -5,
+        "closed": true,
+        "firstError": {
+          "command": -1,
+          "expectedReplyLength": 0,
+          "kind": "",
+          "message": "",
+          "phase": "",
+          "present": false,
+          "requested": 0,
+          "returned": 0,
+          "segment": ""
+        }
+      },
+      "screen": "用户于设备重启后确认 02、表格和两条线都正常。此前原厂下载的标识同为 02。"
+    }
+  ]
+}
