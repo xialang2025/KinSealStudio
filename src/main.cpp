@@ -512,6 +512,15 @@ int main(int argc, char *argv[]) //20261107-6 add
         writeStructuredTransferResult(transferResult);
         return queried ? 0 : 30;
     }
+    if (arguments.value(1) == QStringLiteral("--export-native-value-record-fields")) { //20261128-31 add
+        if (arguments.size() != 4 || !HmiProject::load(arguments.value(2), &validation_project, &validation_error) ||
+            !exportNativeValueRecordFields(validation_project, arguments.value(3), &validation_error)) {
+            writeDownloadResult(false, validation_error.isEmpty() ? QStringLiteral("请指定工程和新的 JSON 对照文件。") : validation_error);
+            return 19;
+        }
+        writeDownloadResult(true, QStringLiteral("已导出有原厂依据的显示器控制记录字段。"));
+        return 0;
+    }
     if (arguments.value(1) == QStringLiteral("--compile-native-value-display-parts")) { //20261128-25 add
         if (arguments.size() != 4 || !HmiProject::load(arguments.value(2), &validation_project, &validation_error) ||
             !exportNativeValueDisplayParts(validation_project, arguments.value(3), &validation_error)) {

@@ -995,6 +995,7 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
 
 #include "native_message_table.cpp.inc" //20261128-24 change
 #include "native_value_display_payload.cpp.inc" //20261128-25 add
+#include "native_value_record.cpp.inc" //20261128-31 add
 #include "native_picture_payload.cpp.inc" //20261128-21 add
 #include "native_message_payload.cpp.inc" //20261128-24 add
 #include "native_qr_payload.cpp.inc" //20261128-26 add
@@ -1007,7 +1008,7 @@ static QByteArray deviceProjectArchive(const HmiProject &project) //20261127-12 
  * Date            : 2026.11.09
  ******************************************************************************/
 static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
-                                       QString *error, QJsonObject *issue, bool createdDrawing) //20261128-19 change: Rasterize only after the original compiler's half-pixel quantization boundary.
+                                       QString *error, QJsonObject *issue, bool createdDrawing, bool reopenedProject) //20261128-37 change: Rasterize only after the original compiler's half-pixel quantization boundary.
 {
     DeviceCompilePlan compilePlan; //20261113-11 add: Freeze bounded semantics before the existing five-family compilers run.
     QVector<QByteArray> generated;
@@ -1128,6 +1129,10 @@ static bool buildIntegerProjectPayload(const HmiProject &project, QVector<QByteA
                 *error = QStringLiteral("控件必须完整位于800×480画面内。");
             }
             return false;
+        }
+        if (object.type == QStringLiteral("scale")) { //20261128-34 add
+            if (!paintNativeScaleSource(project, &painter, error, reopenedProject)) { return false; }
+            continue;
         }
         if (object.type == QStringLiteral("text"))
         {
@@ -1991,7 +1996,7 @@ bool downloadSingleTextProject(const HmiProject &project, QString *error) //2026
  * Return Value    : True with a complete offline payload; failed preparation preserves output data.
  * Date            : 2026.11.25
  ******************************************************************************/
-bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error, QJsonObject *issue, bool createdDrawing) //20261128-19 change
+bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads, QString *error, QJsonObject *issue, bool createdDrawing, bool reopenedProject) //20261128-37 change
 {
     HmiProject raster;
     QVector<QByteArray> generated;
@@ -2020,7 +2025,7 @@ bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payload
         raster.objects[index].subpixelOffset = QPointF();
         quantized = true;
     }
-    if (!buildIntegerProjectPayload(raster, &generated, error, issue, createdDrawing)) { return false; }
+    if (!buildIntegerProjectPayload(raster, &generated, error, issue, createdDrawing, reopenedProject && !quantized)) { return false; }
     if (quantized)
     {
         // The firmware consumes integer pixels; the recoverable editor archive keeps the original half-pixel geometry.
@@ -2091,11 +2096,11 @@ bool downloadProjectDetailed(const HmiProject &project, QJsonObject *result, QSt
  * Date            : 2026.11.09
  ******************************************************************************/
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
-                          QString *error, bool createdDrawing) //20261128-19 change
+                          QString *error, bool createdDrawing, bool reopenedProject) //20261128-37 change
 {
     QVector<QByteArray> payloads;
 
-    if (!buildProjectPayload(project, &payloads, error, nullptr, createdDrawing)) { return false; }
+    if (!buildProjectPayload(project, &payloads, error, nullptr, createdDrawing, reopenedProject)) { return false; }
     return publishDevicePackage(project,payloads,outputDirectory,error);
 }
 

@@ -7,6 +7,9 @@
 #include <QList> //20261110-5 add: Publish inspected typed spans without exposing editable parser state.
 
 struct HmiProject;
+class QPainter;
+//20261128-34 add: Paint retained V122 scale primitives only after validating the original drawing style.
+bool paintNativeScaleSource(const HmiProject &project, QPainter *painter, QString *error, bool reopenedProject); //20261128-37 change
 
 using u8 = unsigned char;
 using u16 = unsigned short;

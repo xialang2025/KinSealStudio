@@ -126,6 +126,7 @@ def original_message_sessions(originals, read_blob):  # 20261128-27 add
 
 def compare(exe, scratch, require_all, media_driver, replay_directory, replay_drawing=False, replay_opened=False, replay_message=False):
     """Select one original run per source before compiling and compare the complete shared files."""
+    initial_exe_hash = hashlib.sha256(exe.read_bytes()).hexdigest()  # 20261128-34 add
     baseline = json.loads(REFERENCE.read_bytes())
     revision = baseline["sourceRevision"]
     # Protect the latest whole files, including native text, curve pages and exact sprite padding.
@@ -151,9 +152,9 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
             if latest["revision"] != revision:
                 raise ValueError("wrong source revision in the latest regression receipt")
             if replay_mode in ("usb", "opened"):
-                latest = json.loads(REFERENCE.with_name("V122显示控件第八次逐工程与逐文件复验_20261128.json").read_bytes())
+                latest = json.loads(REFERENCE.with_name("V122刻度图表与原厂编译第九次逐件复验_20261128.json").read_bytes())
                 if latest["revision"] != revision:
-                    raise ValueError("wrong native display comparison revision")
+                    raise ValueError("wrong source revision in the ninth whole-file comparison")
                 if replay_mode == "opened" and replay_message:
                     replay_mode = "messageSession"
             pinned = latest["compiledOutputs"][replay_mode]["bySource"]
@@ -297,7 +298,9 @@ def compare(exe, scratch, require_all, media_driver, replay_directory, replay_dr
     totals["referenceFilesForCompiled"] = totals["common"] + totals["missing"]
     totals["extra"] = sum(len(r.get("extra", [])) for r in rows)
     ok = totals["regressed"] == 0 and (not require_all or totals["allFilesExact"] == len(rows))
-    return dict(exeSha256=hashlib.sha256(exe.read_bytes()).hexdigest(), revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, **({"replayOpenedProject": True} if replay_opened else {}), **({"replayMessageSession": True} if replay_message else {}), totals=totals, rows=rows), ok
+    if hashlib.sha256(exe.read_bytes()).hexdigest() != initial_exe_hash:
+        raise RuntimeError("the compiler was replaced during the original-file comparison")
+    return dict(exeSha256=initial_exe_hash, revision=revision, mediaDriver=media_driver, replayWorkDirectory=replay_directory, replayDrawingState=replay_drawing, **({"replayOpenedProject": True} if replay_opened else {}), **({"replayMessageSession": True} if replay_message else {}), totals=totals, rows=rows), ok
 
 
 def main():

@@ -41,7 +41,7 @@ static bool compileNativeMediaParts(const HmiProject &project, const QString &de
     }
     usb = QDir(stage->filePath(QStringLiteral("usb")));
     media = QDir(stage->filePath(QStringLiteral("media")));
-    if (!exportProjectPayload(project, usb.absolutePath(), error, createdDrawing) ||
+    if (!exportProjectPayload(project, usb.absolutePath(), error, createdDrawing, location.projectFile) ||
         !verifyDevicePackage(usb.absolutePath(), &manifest, error)) {
         return false;
     }

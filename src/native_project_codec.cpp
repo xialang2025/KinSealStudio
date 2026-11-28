@@ -478,6 +478,7 @@ static bool sourceNativeImageDisplay(const SourceDocument &source, const QString
 static void readNativeDataDisplay(SourceDocument &document, const QString &prefix, int type); //20261127-13 add
 static bool sourceDataDisplay(const SourceDocument &document, const QString &prefix, int index,
                               HmiObject *object, bool *external, QString *error);
+static bool sourceNativeChart(const SourceDocument &, const QString &, int, HmiObject *, QString *); //20261128-32 add
 static bool sourceNativeScale(const SourceDocument &, const QString &, int, HmiObject *, QString *); //20261128-28 add
 static bool sourceMessageDisplay(const SourceDocument &, const QString &, int, const QStringList &,
                                  HmiObject *, QStringList *, bool *, QString *); //20261128-23 add
@@ -2052,8 +2053,10 @@ bool sourceProject(const SourceDocument &document, HmiProject *project, QString 
         }
 
         const int nativeType = document.value(prefix + QStringLiteral("type")).toInt();
-        if (nativeType == 31 || nativeType == 35) { //20261128-28 change
-            if (nativeType == 31) {
+        if (nativeType == 11 || nativeType == 31 || nativeType == 35) { //20261128-32 change
+            if (nativeType == 11) {
+                if (!sourceNativeChart(document, prefix, i, &object, error)) { return false; }
+            } else if (nativeType == 31) {
                 if (!sourceNativeScale(document, prefix, i, &object, error)) { return false; }
             } else if (!sourceMessageDisplay(document, prefix, i, result.languages, &object, &result.nativeSourceWarnings,
                                              &external, error)) { return false; }
@@ -2969,6 +2972,8 @@ bool patchState(QJsonObject before, QJsonObject after, const QString &prefix,
 
 #include "native_message_source.cpp.inc" //20261128-23 add
 #include "native_scale_source.cpp.inc" //20261128-28 add
+#include "native_scale_draft.cpp.inc" //20261128-35 add
+#include "native_chart_source.cpp.inc" //20261128-32 add
 #include "native_image_display_source.cpp.inc" //20261127-14 add
 
 /******************************************************************************
@@ -5308,7 +5313,8 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
         originalIndices.insert(original.objects.at(i).id, i);
     }
     for (i = 0; i < project.objects.size(); ++i) {
-        if (project.objects.at(i).type == QStringLiteral("message") || project.objects.at(i).type == QStringLiteral("scale")) { //20261128-23 add
+        if (project.objects.at(i).type == QStringLiteral("message") || project.objects.at(i).type == QStringLiteral("scale") ||
+            project.objects.at(i).type == QStringLiteral("chart")) { //20261128-32 change
             const HmiObject &item = project.objects.at(i);
             originalIndex = newProject ? -1 : originalIndices.value(item.id, -1);
             if (item.id.isEmpty() || ids.contains(item.id) ||
@@ -5317,9 +5323,13 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
             }
             ids.insert(item.id);
             prefix = originalIndex < 0 ? QString() : document.objectPrefixes.at(originalIndex);
-            if (item.type == QStringLiteral("scale")) { //20261128-28 add
-                if (originalIndex < 0) { return fail(error, QStringLiteral("刻度写回需要已有原厂对象的子图元快照。")); }
-                if (!writeNativeScale(item, original.objects.at(originalIndex), document, prefix, &objectBytes, error)) { return false; }
+            if (item.type == QStringLiteral("chart")) { //20261128-32 add
+                if (!writeNativeChart(item, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
+                                      document, prefix, &objectBytes, error)) { return false; }
+            } else if (item.type == QStringLiteral("scale")) {
+                if (originalIndex < 0) { //20261128-35 add
+                    if (!writeNewNativeScale(item, &objectBytes, error)) { return false; }
+                } else if (!writeNativeScale(item, original.objects.at(originalIndex), document, prefix, &objectBytes, error)) { return false; }
             } else if (!writeNativeMessage(item, originalIndex < 0 ? nullptr : &original.objects.at(originalIndex),
                                     document, prefix, original.languages, project.languages, &objectBytes, error)) { return false; }
             QByteArray record;
@@ -5643,4 +5653,5 @@ bool exportNativeProjectSource(const HmiProject &project, QByteArray *data,
 #include "native_load_metadata.cpp.inc" //20261128-0 add
 #include "native_source_edits.cpp.inc" //20261127-11 add
 
+#include "native_scale_raster.cpp.inc" //20261128-34 add
 #include "native_lamp_source_monitor.cpp.inc" //20261128-16 add

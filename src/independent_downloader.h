@@ -53,10 +53,10 @@ bool buildSingleTextPayload(const HmiProject &project,
  * Date            : 2026.11.09
  ******************************************************************************/
 bool buildProjectPayload(const HmiProject &project, QVector<QByteArray> *payloads,
-                         QString *error, QJsonObject *issue = nullptr, bool createdDrawing = false); //20261128-19 change
+                         QString *error, QJsonObject *issue = nullptr, bool createdDrawing = false, bool reopenedProject = false); //20261128-37 change
 
 bool exportProjectPayload(const HmiProject &project, const QString &outputDirectory,
-                          QString *error, bool createdDrawing = false); //20261128-19 change
+                          QString *error, bool createdDrawing = false, bool reopenedProject = false); //20261128-37 change
 bool downloadProject(const HmiProject &project, QString *error); //20261109-0 add
 
 /******************************************************************************
@@ -109,6 +109,8 @@ bool downloadSingleTextProject(const HmiProject &project, QString *error); //202
 
 bool writeNativeMessageTable(const HmiProject &project, const QString &path, const QString &session,
                              QString *error); //20261128-24 change
+//20261128-31 add: Export only independently identified control-record fields for offline comparison.
+bool exportNativeValueRecordFields(const HmiProject &project, const QString &destination, QString *error);
 bool exportNativeValueDisplayParts(const HmiProject &project, const QString &destination,
                                    QString *error); //20261128-25 add
 

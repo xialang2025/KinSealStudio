@@ -346,6 +346,23 @@ bool prepareDeviceCompilePlan(const HmiProject &project, DeviceCompilePlan *plan
             return compilationIssue(project, object, QStringLiteral("appearance.flip"), true,
                 QStringLiteral("此形状的设备翻转尚未支持，设备工程未生成。"), error, issue);
         }
+        if (object.type == QStringLiteral("scale")) { //20261128-34 add
+            if (prepared.objects.size() != 1 || !object.subpixelOffset.isNull() ||
+                !project.macros.isEmpty() || !project.pictures.isEmpty() || !project.animations.isEmpty() ||
+                object.scale.fontSize != 16 || object.scale.lineColor != Qt::black ||
+                object.scale.textColor != Qt::black || object.geometry.right() >= 799 || object.geometry.bottom() >= 479) {
+                return compilationIssue(project, object, QStringLiteral("scale.layout"), object.type,
+                    QStringLiteral("刻度页图要求已核实的刻度布局、16 像素黑色宋体及完整单控件页面。"), error, issue);
+            }
+            if (project.nativeSourceSnapshot.isEmpty()) {
+                QByteArray source;
+                if (!exportNativeProjectSource(project, &source, &diagnostic) ||
+                    !nativeProjectUsesSupportedDeviceDefaults(source, &diagnostic)) {
+                    return compilationIssue(project, object, QStringLiteral("scale.source"), object.type, diagnostic, error, issue);
+                }
+            }
+            continue;
+        }
         if (object.type == QStringLiteral("message") || object.type == QStringLiteral("qrcode")) { //20261128-27 add
             // A single on-screen control has its own independently measured resource table and drawing order.
             if (prepared.objects.size() != 1 || !project.macros.isEmpty() || !project.pictures.isEmpty() || !project.animations.isEmpty()) {
